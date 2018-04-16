@@ -54,6 +54,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
@@ -66,6 +67,10 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.InterBankTitle;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
 @Cacheable
@@ -179,6 +184,10 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    /**
+     * @deprecated As of version 5.0, replaced by {@link AccountingCode}
+     */
+    @Deprecated
     @Column(name = "discount_accounting_code", length = 255)
     @Size(max = 255)
     private String discountAccountingCode;

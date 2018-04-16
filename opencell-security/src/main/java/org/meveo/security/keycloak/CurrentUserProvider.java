@@ -11,78 +11,163 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 
 import org.keycloak.KeycloakPrincipal;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
-import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 @Stateless
 public class CurrentUserProvider {
 
-    private static Map<String, Set<String>> roleToPermissionMapping;
+    /**
+     * Map<providerCode, Map<roleName, rolePermissions>>
+     */
+    private static Map<String, Map<String, Set<String>>> roleToPermissionMapping;
 
     @Resource
     private SessionContext ctx;
 
-    @PersistenceContext(unitName = "MeveoAdmin")
-    private EntityManager em;
-    
     @Inject
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
-    private String forcedUserUsername;
+    @Inject
+    private Logger log;
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    /**
+     * Contains a current tenant
+     */
+    private static final ThreadLocal<String> currentTenant = new ThreadLocal<String>() {
+        @Override
+        protected String initialValue() {
+            return "NA";
+        }
+    };
 
-    public void forceAuthentication(String currentUserUserName) {
+    /**
+     * Contains a forced authentication user username
+     */
+    private static final ThreadLocal<String> forcedUserUsername = new ThreadLocal<String>();
 
+    /**
+     * Simulate authentication of a user. Allowed only when no security context is present, mostly used in jobs.
+     * 
+     * @param userName User name
+     * @param providerCode Provider code
+     */
+    public void forceAuthentication(String userName, String providerCode) {
         // Current user is already authenticated, can't overwrite it
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal || this.forcedUserUsername != null) {
-            log.debug("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
+        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
+            log.warn("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
-        this.forcedUserUsername = currentUserUserName;
+
+        if (providerCode == null) {
+            MDC.remove("providerCode");
+        } else {
+            MDC.put("providerCode", providerCode);
+        }
+        log.debug("Force authentication to {}/{}", providerCode, userName);
+        setForcedUsername(userName);
+        setCurrentTenant(providerCode);
     }
 
     /**
-     * Produce a current user from JAAS security context
+     * Reestablish authentication of a user. Allowed only when no security context is present.In case of multitenancy, when user authentication is forced as result of a fired
+     * trigger (scheduled jobs, other timed event expirations), current user might be lost, thus there is a need to reestablish.
+     * 
+     * @param lastCurrentUser Last authenticated user. Note: Pass a unproxied version of MeveoUser (currentUser.unProxy()), as otherwise it will access CurrentUser producer method
+     */
+    public void reestablishAuthentication(MeveoUser lastCurrentUser) {
+
+        // Current user is already authenticated, can't overwrite it
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
+
+            if (lastCurrentUser.getProviderCode() == null) {
+                MDC.remove("providerCode");
+            } else {
+                MDC.put("providerCode", lastCurrentUser.getProviderCode());
+            }
+
+            setForcedUsername(lastCurrentUser.getUserName());
+            setCurrentTenant(lastCurrentUser.getProviderCode());
+            log.debug("Reestablished authentication to {}/{}", lastCurrentUser.getUserName(), lastCurrentUser.getProviderCode());
+        }
+    }
+
+    /**
+     * Get a current provider code. If value is currently not initialized, obtain it from a current user's security context
+     * 
+     * @return Current provider's code
+     */
+    public String getCurrentUserProviderCode() {
+
+        String providerCode = null;
+
+        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
+            providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+
+            if (providerCode == null) {
+                MDC.remove("providerCode");
+            } else {
+                MDC.put("providerCode", providerCode);
+            }
+
+            // log.trace("Will setting current provider to extracted value from KC token: {}", providerCode);
+            setCurrentTenant(providerCode);
+
+        } else if (isCurrentTenantSet()) {
+            providerCode = getCurrentTenant();
+
+            if (providerCode == null) {
+                MDC.remove("providerCode");
+            } else {
+                MDC.put("providerCode", providerCode);
+            }
+
+            // log.trace("Current provider is {}", providerCode);
+
+        } else {
+            log.trace("Current provider is not set");
+        }
+
+        return providerCode;
+
+    }
+
+    /**
+     * Return a current user from JAAS security context
+     * 
+     * @param providerCode Provider code. Passed here, so not to look it up again
+     * @param em Entity manager to use to retrieve user info
      * 
      * @return Current user implementation
      */
-    @Produces
-    @RequestScoped
-    @Named("currentUser")
-    @CurrentUser
-    public MeveoUser getCurrentUser() {
+    public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername);
+        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, getForcedUsername());
 
         MeveoUser user = null;
 
         // User was forced authenticated, so need to lookup the rest of user information
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, getAdditionalRoles(username), getRoleToPermissionMapping());
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && getForcedUsername() != null) {
+            user = new MeveoUserKeyCloakImpl(ctx, getForcedUsername(), getCurrentTenant(), getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode, em));
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null, getAdditionalRoles(username), getRoleToPermissionMapping());
+            user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode, em));
         }
-
-        supplementOrCreateUserInApp(user);
+        // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
+        // getCurrentTenant());
+        supplementOrCreateUserInApp(user, em);
 
         log.trace("Current user is {}", user);
         return user;
@@ -93,7 +178,7 @@ public class CurrentUserProvider {
      * 
      * @param currentUser Authenticated current user
      */
-    private void supplementOrCreateUserInApp(MeveoUser currentUser) {
+    private void supplementOrCreateUserInApp(MeveoUser currentUser, EntityManager em) {
 
         // Takes care of anonymous users
         if (currentUser.getUserName() == null) {
@@ -112,7 +197,7 @@ public class CurrentUserProvider {
                     em.merge(user);
                     em.flush();
                 }
-                
+
                 currentUser.setFullName(user.getNameOrUsername());
 
             } catch (NoResultException e) {
@@ -135,8 +220,8 @@ public class CurrentUserProvider {
                 user.updateAudit(currentUser);
                 em.persist(user);
                 em.flush();
-                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
-         
+                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
+
             } catch (ContextNotActiveException e) {
                 log.error("No session context={}", e.getMessage());
             }
@@ -152,14 +237,15 @@ public class CurrentUserProvider {
      * 
      * @return A mapping between roles and permissions
      */
-    private Map<String, Set<String>> getRoleToPermissionMapping() {
+    private Map<String, Set<String>> getRoleToPermissionMapping(String providerCode, EntityManager em) {
 
         synchronized (this) {
-            if (CurrentUserProvider.roleToPermissionMapping == null) {
+            if (CurrentUserProvider.roleToPermissionMapping == null || roleToPermissionMapping.get(providerCode) == null) {
                 CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
 
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
+                    Map<String, Set<String>> roleToPermissionMappingForProvider = new HashMap<>();
 
                     for (Role role : userRoles) {
                         Set<String> rolePermissions = new HashSet<>();
@@ -167,15 +253,15 @@ public class CurrentUserProvider {
                             rolePermissions.add(permission.getPermission());
                         }
 
-                        CurrentUserProvider.roleToPermissionMapping.put(role.getName(), rolePermissions);
+                        roleToPermissionMappingForProvider.put(role.getName(), rolePermissions);
                     }
-
+                    CurrentUserProvider.roleToPermissionMapping.put(providerCode, roleToPermissionMappingForProvider);
                 } catch (Exception e) {
                     log.error("Failed to construct role to permission mapping", e);
                 }
             }
 
-            return CurrentUserProvider.roleToPermissionMapping;
+            return CurrentUserProvider.roleToPermissionMapping.get(providerCode);
         }
     }
 
@@ -192,7 +278,7 @@ public class CurrentUserProvider {
      * @param username Username to check
      * @return A set of role names that given username has in application
      */
-    private Set<String> getAdditionalRoles(String username) {
+    private Set<String> getAdditionalRoles(String username, EntityManager em) {
 
         // Takes care of anonymous users
         if (username == null) {
@@ -217,5 +303,52 @@ public class CurrentUserProvider {
             log.error("Failed to retrieve additional roles for a user {}", username, e);
             return null;
         }
+    }
+
+    /**
+     * Check if current tenant value is set (differs from the initial value)
+     * 
+     * @return If current tenant value was set
+     */
+    private static boolean isCurrentTenantSet() {
+        return !"NA".equals(currentTenant.get());
+    }
+
+    /**
+     * Returns a current tenant/provider code. Note, this is raw storage only and might not be initialized. Use currentUserProvider.getCurrentUserProviderCode(); to retrieve and/or
+     * initialize current provider value instead.
+     * 
+     * @return Current provider code
+     */
+    private static String getCurrentTenant() {
+        return currentTenant.get();
+    }
+
+    /**
+     * Set current tenant/provider value
+     * 
+     * @param tenantName Current tenant/provider code
+     */
+    private static void setCurrentTenant(final String tenantName) {
+        currentTenant.remove();
+        currentTenant.set(tenantName);
+    }
+
+    /**
+     * Get forced authentication username value
+     * 
+     * @return Forced authentication username
+     */
+    private static String getForcedUsername() {
+        return forcedUserUsername.get();
+    }
+
+    /**
+     * Set forced authentication username value
+     * 
+     * @param username Forced authentication username
+     */
+    private static void setForcedUsername(final String username) {
+        forcedUserUsername.set(username);
     }
 }

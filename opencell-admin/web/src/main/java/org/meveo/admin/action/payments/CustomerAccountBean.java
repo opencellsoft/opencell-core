@@ -38,6 +38,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
@@ -58,6 +59,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -77,8 +81,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     @Inject
     private CustomerService customerService;
 
-    
-
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
      * Account.
@@ -91,6 +93,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private PaymentMethodEnum newPaymentMethodType = PaymentMethodEnum.CARD;
     private PaymentMethod selectedPaymentMethod;
+    private boolean bicRequired = true;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -101,7 +104,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * @return customer account 
+     * 
+     * @return customer account
      */
     @Override
     public CustomerAccount initEntity() {
@@ -125,13 +129,13 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         }
 
         if (entity.getId() != null) {
-           if(!entity.getCardPaymentMethods(false).isEmpty()){
-        	   if(entity.isNoMoreValidCard()){
-        		   messages.warn(new BundleKey("messages", "customerAccount.noMoreValidCard")); 
-        	   }        	 
-           }
+            if (!entity.getCardPaymentMethods(false).isEmpty()) {
+                if (entity.isNoMoreValidCard()) {
+                    messages.warn(new BundleKey("messages", "customerAccount.noMoreValidCard"));
+                }
+            }
         }
-        
+
         return entity;
     }
 
@@ -168,7 +172,10 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     public String transferAccount() {
         try {
-            customerAccountService.transferAccount(entity, getCustomerAccountTransfer(), getAmountToTransfer());
+            entity = customerAccountService.refreshOrRetrieve(entity);
+            customerAccountTransfer = customerAccountService.refreshOrRetrieve(customerAccountTransfer);
+
+            customerAccountService.transferAccount(entity, customerAccountTransfer, getAmountToTransfer());
             messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
             setCustomerAccountTransfer(null);
             setAmountToTransfer(BigDecimal.ZERO);
@@ -239,6 +246,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public String closeCustomerAccount() {
         log.info("closeAccount customerAccountId:" + entity.getId());
         try {
+            entity = customerAccountService.refreshOrRetrieve(entity);
             customerAccountService.closeCustomerAccount(entity);
             messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
 
@@ -362,10 +370,10 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     @ActionMethod
     public void savePaymentMethod() {
-
         try {
+            checkIsBicRequired();
 
-        	selectedPaymentMethod.updateAudit(currentUser);
+            selectedPaymentMethod.updateAudit(currentUser);
             if (selectedPaymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) selectedPaymentMethod).getTokenId() == null && ((CardPaymentMethod) selectedPaymentMethod).getCardNumber() != null) {
                     ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(((CardPaymentMethod) selectedPaymentMethod).getCardNumber()));
@@ -375,11 +383,11 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             if (entity.getPaymentMethods() == null) {
                 entity.setPaymentMethods(new ArrayList<PaymentMethod>());
             }
-            
+
             if (entity.getPreferredPaymentMethod() == null) {
                 selectedPaymentMethod.setPreferred(true);
             }
-            
+
             if (!entity.getPaymentMethods().contains(selectedPaymentMethod)) {
                 selectedPaymentMethod.setCustomerAccount(getEntity());
                 entity.getPaymentMethods().add(selectedPaymentMethod);
@@ -445,27 +453,47 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         entity.getPaymentMethods().remove(paymentMethod);
         messages.info(new BundleKey("messages", "paymentMethod.removed.ok"));
     }
-    
+
     @ActionMethod
-    public void disablePaymentMethod(PaymentMethod paymentMethod) {    	
-    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
-    		return;
-    	}        
-    	paymentMethod.setDisabled(true);
-    	paymentMethod.setPreferred(false);
-    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
-    	messages.info(new BundleKey("messages", "disabled.successful"));
+    public void disablePaymentMethod(PaymentMethod paymentMethod) {
+        if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+            return;
+        }
+        paymentMethod.setDisabled(true);
+        paymentMethod.setPreferred(false);
+        entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);
+        messages.info(new BundleKey("messages", "disabled.successful"));
 
     }
+
     @ActionMethod
     public void enablePaymentMethod(PaymentMethod paymentMethod) {
-    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
-    		return;
-    	}        
-    	paymentMethod.setDisabled(false);
-    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);  
-    	entity.ensureOnePreferredPaymentMethod();
-    	messages.info(new BundleKey("messages", "enabled.successful"));
+        if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+            return;
+        }
+        paymentMethod.setDisabled(false);
+        entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);
+        entity.ensureOnePreferredPaymentMethod();
+        messages.info(new BundleKey("messages", "enabled.successful"));
 
     }
+
+    /**
+     * If Seller country is different from IBAN customer country (two first letter), then the BIC is mandatory. If no country on seller, check this on "Application configuration"
+     * Bank information Iban two first letters. If no seller nor system country information, BIC stay mandatory.
+     * 
+     * @throws Exception exception
+     */
+    public void checkIsBicRequired() throws Exception {
+        if (selectedPaymentMethod instanceof DDPaymentMethod && ((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates() != null) {
+            String iban = ((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates().getIban();
+            String bic = ((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates().getBic();
+            if (!StringUtils.isBlank(iban) && iban.length() > 1) {
+                if (StringUtils.isBlank(bic) && customerService.isBicRequired(entity.getCustomer(), iban)) {
+                    throw new Exception("Missing BIC.");
+                }
+            }
+        }
+    }
+
 }

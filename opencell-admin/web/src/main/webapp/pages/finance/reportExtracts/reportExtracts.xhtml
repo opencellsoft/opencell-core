@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:hftl="http://hftl.org"
+	xmlns:f="http://xmlns.jcp.org/jsf/core" template="/layout/template.xhtml"
+			xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{revenueScheduleListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
+			</p:breadCrumb>
+		</h:form>	
+
+		<hftl:searchPanel label="#{messages['reportExtract.search']}" backingBean="#{reportExtractListBean}">
+			<hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{reportExtractListBean}" label="#{messages['reportExtract']}" sortBy="code">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['reportExtract.category']}" field="category" />
+			<hftl:column label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
+			<hftl:column label="#{messages['reportExtract.scriptType']}" field="scriptType" />
+			<hftl:column label="#{messages['enableEntity.active']}" field="active" />
+			<hftl:actionsColumn width="10%" renderEnableLink="true">
+				<p:commandButton id="runReport" icon="fa fa-fw fa-play" actionListener="#{reportExtractBean.initEntity(entity)}" oncomplete="PF('dlgRunReport').show()" update=":runReportDialog">
+		        </p:commandButton>
+		        <p:tooltip for="runReport" value="#{messages['action.run']}" showEffect="slide" hideEffect="slide" />
+			</hftl:actionsColumn>
+		</hftl:dataList>
+		
+		<p:dialog header="Run Report" widgetVar="dlgRunReport" width="80%" id="runReportDialog">
+			<h:form id="runReportForm">
+				<div class="ui-g">
+					<hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" showFormButtons="false">
+						<hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
+						<div class="ui-g-8"></div>
+						<ui:insert name="form-panel-actions">
+							<div class="ui-g-4">
+				    			<p:commandButton id="runReport" value="#{messages['action.run']}" action="#{reportExtractBean.runReportFromList()}" update=":results_panel" onclick="dlgRunReport.hide()">
+				        		</p:commandButton>
+			        		</div>
+		        		</ui:insert>
+	        		</hftl:formPanel>
+		        </div>
+	        </h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

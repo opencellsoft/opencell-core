@@ -7,50 +7,103 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.catalog.DigitalResource;
 
+/**
+ * The Class DigitalResourcesDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "DigitalResource")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DigitalResourcesDto extends BusinessDto {
 
-	private static final long serialVersionUID = 5517448250177253851L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5517448250177253851L;
 
-	private String uri;
+    /** The uri. */
+    private String uri;
 
-	private String mimeType;
-	
-	private boolean disabled;
+    /** The mime type. */
+    private String mimeType;
 
-	public DigitalResourcesDto() {
-	}
+    /** The disabled. */
+    private boolean disabled;
 
-	public DigitalResourcesDto(DigitalResource resource) {
-		super(resource);
-		this.setUri(resource.getUri());
-		this.setMimeType(resource.getMimeType());
-		this.setDisabled(resource.isDisabled());
-	}
-	
-	public String getUri() {
-		return uri;
-	}
+    /**
+     * Instantiates a new digital resources dto.
+     */
+    public DigitalResourcesDto() {
+    }
 
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
+    /**
+     * Instantiates a new digital resources dto.
+     *
+     * @param resource the resource
+     */
+    public DigitalResourcesDto(DigitalResource resource) {
+        super(resource);
+        this.setUri(resource.getUri());
+        this.setMimeType(resource.getMimeType());
+        this.setDisabled(resource.isDisabled());
+    }
 
-	public String getMimeType() {
-		return mimeType;
-	}
+    /**
+     * Gets the uri.
+     *
+     * @return the uri
+     */
+    public String getUri() {
+        return uri;
+    }
 
-	public void setMimeType(String mimeType) {
-		this.mimeType = mimeType;
-	}
-	
-	public boolean isDisabled() {
-		return disabled;
-	}
-	
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+    /**
+     * Sets the uri.
+     *
+     * @param uri the new uri
+     */
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    /**
+     * Gets the mime type.
+     *
+     * @return the mime type
+     */
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    /**
+     * Sets the mime type.
+     *
+     * @param mimeType the new mime type
+     */
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * Checks if is disabled.
+     *
+     * @return true, if is disabled
+     */
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    /**
+     * Sets the disabled.
+     *
+     * @param disabled the new disabled
+     */
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+
+    @Override
+    public String toString() {
+        return "DigitalResourcesDto [uri=" + uri + ", mimeType=" + mimeType + ", disabled=" + disabled + "]";
+    }
 
 }

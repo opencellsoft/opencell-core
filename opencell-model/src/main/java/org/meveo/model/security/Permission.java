@@ -116,7 +116,7 @@ public class Permission implements IEntity, Serializable {
         Permission other = (Permission) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+             return true;
         }
 
         return StringUtils.compare(this.getPermission(), other.getPermission()) == 0;

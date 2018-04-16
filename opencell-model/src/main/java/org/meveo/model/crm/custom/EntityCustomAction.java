@@ -3,8 +3,10 @@ package org.meveo.model.crm.custom;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -23,6 +25,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code", "appliesTo" })
 @Table(name = "crm_custom_action", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -48,7 +51,7 @@ public class EntityCustomAction extends BusinessEntity {
     @Column(name = "label_i18n", columnDefinition = "text")
     private Map<String, String> labelI18n;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
 
@@ -111,7 +114,7 @@ public class EntityCustomAction extends BusinessEntity {
         EntityCustomAction other = (EntityCustomAction) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+            return true;
         }
 
         if (code == null && other.getCode() != null) {

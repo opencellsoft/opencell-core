@@ -56,7 +56,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     public JobInstance initEntity() {
         super.initEntity();
 
-        createMissingCustomFieldTemplates();
+        try {
+            refreshCustomFieldsAndActions();
+        } catch (BusinessException e) {
+        }
 
         return entity;
     }
@@ -125,7 +128,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * Get JobInstance name from a jobId
      * 
      * @param jobId
-     * @return
+     * @return timename
      */
     public String translateToTimerName(Long jobId) {
         if (jobId != null) {

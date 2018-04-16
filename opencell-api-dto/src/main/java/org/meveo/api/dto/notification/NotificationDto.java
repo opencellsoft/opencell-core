@@ -14,6 +14,8 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Notification")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,11 +38,18 @@ public class NotificationDto extends BusinessDto {
     private Map<String,String> scriptParams = new HashMap<String,String>();
 	private String counterTemplate;
 	private int priority;
+	private Boolean active = null;
 
 	public NotificationDto() {
 
 	}
 
+	/**
+     * v5.0: add active field
+     * @author akadid abdelmounaim
+     * @param e Notification
+     * @lastModifiedVersion 5.0
+     */
 	public NotificationDto(Notification e) {
 		super(e);
 		classNameFilter = e.getClassNameFilter();
@@ -54,6 +63,7 @@ public class NotificationDto extends BusinessDto {
 			scriptParams.putAll(e.getParams());
 		}
 		priority = e.getPriority();
+		active = e.isActive();
 //		scriptParams = e.getParams();
 	}	
 
@@ -131,5 +141,25 @@ public class NotificationDto extends BusinessDto {
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
+	
+	/**
+	 * Getter for active state
+	 * @author akadid abdelmounaim
+	 * @return isActive
+	 * @lastModifiedVersion 5.0
+	 */
+    public Boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Setter for active state
+     * @param active active state
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
 }

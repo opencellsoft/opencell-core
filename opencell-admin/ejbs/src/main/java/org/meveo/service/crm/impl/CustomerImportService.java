@@ -28,6 +28,7 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -61,6 +62,9 @@ public class CustomerImportService extends ImportService {
 
     @Inject
     private TitleService titleService;
+    
+    @Inject
+    private CountryService countryService;
 
     @Inject
     private CustomerAccountService customerAccountService;
@@ -137,8 +141,8 @@ public class CustomerImportService extends ImportService {
         if (paymentMethod == null) {
             List<PaymentMethod> paymentMethods = customerAccount.getPaymentMethods();
             if (paymentMethods == null) {
-            	paymentMethods = new ArrayList<PaymentMethod>();
-            	customerAccount.setPaymentMethods(paymentMethods);
+                paymentMethods = new ArrayList<PaymentMethod>();
+                customerAccount.setPaymentMethods(paymentMethods);
             }
             CheckPaymentMethod checkPaymentMethod = new CheckPaymentMethod();
             checkPaymentMethod.setPaymentType(PaymentMethodEnum.CHECK);
@@ -153,7 +157,7 @@ public class CustomerImportService extends ImportService {
             address.setAddress2(custAcc.getAddress().getAddress2());
             address.setAddress3(custAcc.getAddress().getAddress3());
             address.setCity(custAcc.getAddress().getCity());
-            address.setCountry(custAcc.getAddress().getCountry());
+            address.setCountry(countryService.findByCode(custAcc.getAddress().getCountry()));
             address.setZipCode("" + custAcc.getAddress().getZipCode());
             address.setState(custAcc.getAddress().getState());
             customerAccount.setAddress(address);
@@ -208,6 +212,9 @@ public class CustomerImportService extends ImportService {
         if (tradingLanguage == null) {
             TradingLanguage findByTradingLanguageCode = tradingLanguageService.findByTradingLanguageCode(tradingLanguageCode);
             tradingLanguageMap.put(tradingLanguageCode, findByTradingLanguageCode);
+            if (findByTradingLanguageCode != null) {
+                customerAccount.setTradingLanguage(findByTradingLanguageCode);
+            }
         } else {
             customerAccount.setTradingLanguage(tradingLanguage);
         }
@@ -265,7 +272,7 @@ public class CustomerImportService extends ImportService {
             address.setAddress2(custAcc.getAddress().getAddress2());
             address.setAddress3(custAcc.getAddress().getAddress3());
             address.setCity(custAcc.getAddress().getCity());
-            address.setCountry(custAcc.getAddress().getCountry());
+            address.setCountry(countryService.findByCode(custAcc.getAddress().getCountry()));
             address.setZipCode("" + custAcc.getAddress().getZipCode());
             address.setState(custAcc.getAddress().getState());
             customerAccount.setAddress(address);

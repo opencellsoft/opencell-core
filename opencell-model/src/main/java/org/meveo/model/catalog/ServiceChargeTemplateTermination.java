@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -28,41 +29,43 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
+@Cacheable
+@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code" })
 @Table(name = "cat_serv_trm_charge_template")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_trmchrg_templt_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_serv_trmchrg_templt_seq"), })
 public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneShotChargeTemplate> {
 
-	private static final long serialVersionUID = 7811269692204342428L;
+    private static final long serialVersionUID = 7811269692204342428L;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cat_serv_trm_wallet_template", joinColumns = @JoinColumn(name = "service_trm_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
-	@OrderColumn(name = "INDX")
-	private List<WalletTemplate> walletTemplates;
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_serv_trm_wallet_template", joinColumns = @JoinColumn(name = "service_trm_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
+    @OrderColumn(name = "INDX")
+    private List<WalletTemplate> walletTemplates;
 
-	public List<WalletTemplate> getWalletTemplates() {
-		return walletTemplates;
-	}
+    public List<WalletTemplate> getWalletTemplates() {
+        return walletTemplates;
+    }
 
-	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
-		this.walletTemplates = walletTemplates;
-	}
+    public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+        this.walletTemplates = walletTemplates;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        return 961 + ("ServiceChargeTemplateTermination" + id).hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -71,14 +74,14 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
         } else if (!(obj instanceof ServiceChargeTemplateTermination)) {
             return false;
         }
-        
-		ServiceChargeTemplateTermination other = (ServiceChargeTemplateTermination) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+
+        ServiceChargeTemplateTermination other = (ServiceChargeTemplateTermination) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 
 }

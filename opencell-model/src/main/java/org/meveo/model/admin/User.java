@@ -78,7 +78,7 @@ import org.meveo.model.shared.Name;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_user_seq"), })
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
-        @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u LEFT JOIN u.roles WHERE lower(u.userName)=:username", hints = {
+        @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class User extends EnableEntity implements ICustomFieldEntity {
 
@@ -122,7 +122,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
 
     @Transient
     private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_login_date")
     private Date lastLoginDate;
@@ -180,10 +180,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime * 1;// super.hashCode();
-        result = result + ((getUserName() == null) ? 0 : getUserName().hashCode());
-        return result;
+        return 961 + (("User" + (userName == null ? "" : userName)).hashCode());
     }
 
     @Override
@@ -199,7 +196,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
         User other = (User) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+            return true;
         }
 
         if (userName == null) {

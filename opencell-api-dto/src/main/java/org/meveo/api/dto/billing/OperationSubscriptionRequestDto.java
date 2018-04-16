@@ -10,39 +10,63 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 
 /**
+ * The Class OperationSubscriptionRequestDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "OperationSubscriptionRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OperationSubscriptionRequestDto extends BaseDto {
 
-	private static final long serialVersionUID = -4477259461644796968L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -4477259461644796968L;
 
-	@XmlElement(required = true)
-	private String subscriptionCode;	
-	
-	private Date actionDate;
+    /** The subscription code. */
+    @XmlElement(required = true)
+    private String subscriptionCode;
 
-	public String getSubscriptionCode() {
-		return subscriptionCode;
-	}
+    /** The action date. */
+    private Date actionDate;
 
-	public void setSubscriptionCode(String subscriptionCode) {
-		this.subscriptionCode = subscriptionCode;
-	}
+    /**
+     * Gets the subscription code.
+     *
+     * @return the subscription code
+     */
+    public String getSubscriptionCode() {
+        return subscriptionCode;
+    }
 
-	public Date getActionDate() {
-		return actionDate;
-	}
+    /**
+     * Sets the subscription code.
+     *
+     * @param subscriptionCode the new subscription code
+     */
+    public void setSubscriptionCode(String subscriptionCode) {
+        this.subscriptionCode = subscriptionCode;
+    }
 
-	public void setActionDate(Date suspensionDate) {
-		this.actionDate = suspensionDate;
-	}
+    /**
+     * Gets the action date.
+     *
+     * @return the action date
+     */
+    public Date getActionDate() {
+        return actionDate;
+    }
 
-	@Override
-	public String toString() {
-		return "OperationSubscriptionRequestDto  [subscriptionCode=" + subscriptionCode + ", actionDate=" + actionDate + "]";
-	}
-	
+    /**
+     * Sets the action date.
+     *
+     * @param suspensionDate the new action date
+     */
+    public void setActionDate(Date suspensionDate) {
+        this.actionDate = suspensionDate;
+    }
+
+    @Override
+    public String toString() {
+        return "OperationSubscriptionRequestDto  [subscriptionCode=" + subscriptionCode + ", actionDate=" + actionDate + "]";
+    }
 
 }

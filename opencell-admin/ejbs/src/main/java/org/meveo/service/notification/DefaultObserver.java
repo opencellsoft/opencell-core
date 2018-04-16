@@ -19,7 +19,6 @@ import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.event.CounterPeriodEvent;
@@ -43,7 +42,6 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -57,6 +55,8 @@ import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
@@ -93,7 +93,7 @@ public class DefaultObserver {
     private CounterInstanceService counterInstanceService;
 
     @Inject
-    private NotificationCacheContainerProvider notificationCacheContainerProvider;
+    private GenericNotificationService genericNotificationService;
 
     // @Inject
     // private RemoteInstanceNotifier remoteInstanceNotifier;
@@ -103,6 +103,10 @@ public class DefaultObserver {
 
     @Inject
     private JobTriggerLauncher jobTriggerLauncher;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     private boolean matchExpression(String expression, Object entityOrEvent) throws BusinessException {
         Boolean result = true;
@@ -168,8 +172,7 @@ public class DefaultObserver {
             // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
-                    CounterInstance counterInstance = counterInstanceService.refreshOrRetrieve(notif.getCounterInstance());
-                    counterInstanceService.deduceCounterValue(counterInstance, new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
+                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
                 } catch (CounterValueInsufficientException ex) {
                     sendNotify = false;
                 }
@@ -200,16 +203,20 @@ public class DefaultObserver {
                 }
 
             } else if (notif instanceof EmailNotification) {
-                emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof WebHook) {
-                webHookNotifier.sendRequest((WebHook) notif, entityOrEvent, context);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                webHookNotifier.sendRequest((WebHook) notif, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof InstantMessagingNotification) {
-                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, entityOrEvent);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, entityOrEvent, lastCurrentUser);
 
             } else if (notif instanceof JobTrigger) {
-                jobTriggerLauncher.launch((JobTrigger) notif, entityOrEvent);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                jobTriggerLauncher.launch((JobTrigger) notif, entityOrEvent, lastCurrentUser);
             }
 
         } catch (Exception e1) {
@@ -251,11 +258,11 @@ public class DefaultObserver {
      * @param type Notification type
      * @param entityOrEvent Entity or event triggered
      * @return True if at least one notification has been triggered
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;
-        for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entityOrEvent)) {
+        for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
             result = fireNotification(notif, entityOrEvent) || result;
         }
         return result;
@@ -308,7 +315,7 @@ public class DefaultObserver {
 
     public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {
         log.debug("Defaut observer : cdr {} rejected", cdr);
-        for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
+        for (Notification notif : genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
             fireCdrNotification(notif, cdr);
         }
     }

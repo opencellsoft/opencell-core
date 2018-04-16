@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -19,26 +20,26 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt;
  * &lt;li&gt;Custom: The administrator can define the implementation in a script.&lt;/li&gt;
- * &lt;li&gt;Native: The business implementation code is available on the opencell core, currently the available PSP are Inginico Global Collect, and SEPA format payment file generation
- * and Paynum format.&lt;/li&gt;
+ * &lt;li&gt;Native: The business implementation code is available on the opencell core, currently the available PSP are Inginico Ogone, and  Slimpay .&lt;/li&gt;
  *  &lt;/ul&gt;
  *
  *
  * @author anasseh
  * @since Opencell 4.8
+ * @lastModifiedVersion 5.0.1
  */
 
 @Entity
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "PAYMENT_GW")
-@Table(name = "ar_payment_gateway")
+@Table(name = "ar_payment_gateway", uniqueConstraints = @UniqueConstraint(columnNames = { "payment_method","country_id","trading_currency_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_gateway_seq"), })
 public class PaymentGateway extends BusinessCFEntity {
@@ -74,8 +75,8 @@ public class PaymentGateway extends BusinessCFEntity {
 
     /** The trading country. */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trading_country_id")
-    private TradingCountry tradingCountry;
+    @JoinColumn(name = "country_id")
+    private Country country;
 
     /** The trading currency. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -86,6 +87,18 @@ public class PaymentGateway extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
     private CreditCardTypeEnum cardType;
+    
+    /** The nb tries. */
+    @Column(name = "nb_tries")
+    private Integer nbTries;
+    
+    /** The replay cause. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "replay_cause")
+    private PaymentReplayCauseEnum replayCause;
+    
+    @Column(name = "errors_to_replay")
+    private String errorsToReplay ;
 
     public PaymentGateway() {
 
@@ -147,18 +160,20 @@ public class PaymentGateway extends BusinessCFEntity {
         this.applicationEL = applicationEL;
     }
 
+    
+
     /**
-     * @return the tradingCountry
+     * @return the country
      */
-    public TradingCountry getTradingCountry() {
-        return tradingCountry;
+    public Country getCountry() {
+        return country;
     }
 
     /**
-     * @param tradingCountry the tradingCountry to set
+     * @param country the country to set
      */
-    public void setTradingCountry(TradingCountry tradingCountry) {
-        this.tradingCountry = tradingCountry;
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
     /**
@@ -202,11 +217,55 @@ public class PaymentGateway extends BusinessCFEntity {
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
         this.paymentMethodType = paymentMethodType;
     }
+    
+    
+
+    /**
+     * @return the nbTries
+     */
+    public Integer getNbTries() {
+        return nbTries;
+    }
+
+    /**
+     * @param nbTries the nbTries to set
+     */
+    public void setNbTries(Integer nbTries) {
+        this.nbTries = nbTries;
+    }
+
+    /**
+     * @return the replayCause
+     */
+    public PaymentReplayCauseEnum getReplayCause() {
+        return replayCause;
+    }
+
+    /**
+     * @param replayCause the replayCause to set
+     */
+    public void setReplayCause(PaymentReplayCauseEnum replayCause) {
+        this.replayCause = replayCause;
+    }
+
+    /**
+     * @return the errorsToReplay
+     */
+    public String getErrorsToReplay() {
+        return errorsToReplay;
+    }
+
+    /**
+     * @param errorsToReplay the errorsToReplay to set
+     */
+    public void setErrorsToReplay(String errorsToReplay) {
+        this.errorsToReplay = errorsToReplay;
+    }
 
     @Override
     public String toString() {
         return "PaymentGateway [type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance=" + (scriptInstance == null ? null : scriptInstance.getCode())
-                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", tradingCountry=" + tradingCountry + ", tradingCurrency="
-                + tradingCurrency + ", cardType=" + cardType + "]";
+                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", Country=" + (country == null ? null : country.getCountryCode()) + ", tradingCurrency="
+                + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode()) + ", cardType=" + cardType + "]";
     }
 }

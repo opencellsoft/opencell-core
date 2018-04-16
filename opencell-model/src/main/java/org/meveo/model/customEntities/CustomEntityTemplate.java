@@ -1,5 +1,6 @@
 package org.meveo.model.customEntities;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -18,6 +19,7 @@ import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code"})
 @Table(name = "cust_cet", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cust_cet_seq"), })

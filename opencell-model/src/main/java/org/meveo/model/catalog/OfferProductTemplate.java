@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import org.meveo.model.IEntity;
  * @author Edward P. Legaspi
  */
 @Entity
+@Cacheable
 @ExportIdentifier({ "offerTemplate.code", "offerTemplate.validity.from", "offerTemplate.validity.to", "productTemplate.code", "productTemplate.validity.from",
         "productTemplate.validity.to" })
 @Table(name = "cat_offer_product_template")
@@ -32,9 +34,6 @@ import org.meveo.model.IEntity;
         @Parameter(name = "sequence_name", value = "cat_offer_product_template_seq"), })
 public class OfferProductTemplate implements IEntity, Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -3681938016130405800L;
 
     @Id
@@ -43,7 +42,7 @@ public class OfferProductTemplate implements IEntity, Serializable {
     @Access(AccessType.PROPERTY)
     protected Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 
@@ -99,10 +98,8 @@ public class OfferProductTemplate implements IEntity, Serializable {
         if (id != null) {
             return id.intValue();
         }
-        final int prime = 31;
-        int result = prime * 1; // super.hashCode();
-        result = prime * result + ((offerTemplate == null) ? 0 : offerTemplate.getId().hashCode());
-        result = prime * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
+        int result = 961 + ((offerTemplate == null) ? 0 : offerTemplate.getId().hashCode());
+        result = 31 * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
 
         return result;
     }
@@ -118,9 +115,13 @@ public class OfferProductTemplate implements IEntity, Serializable {
             return false;
         }
 
-        OfferProductTemplate that = (OfferProductTemplate) obj;
+        OfferProductTemplate other = (OfferProductTemplate) obj;
 
-        ProductTemplate thatProductTemplate = that.getProductTemplate();
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        ProductTemplate thatProductTemplate = other.getProductTemplate();
         if (productTemplate == null) {
             if (thatProductTemplate != null) {
                 return false;
@@ -129,7 +130,7 @@ public class OfferProductTemplate implements IEntity, Serializable {
             return false;
         }
 
-        OfferTemplate thatOfferTemplate = that.getOfferTemplate();
+        OfferTemplate thatOfferTemplate = other.getOfferTemplate();
         if (offerTemplate == null) {
             if (thatOfferTemplate != null) {
                 return false;

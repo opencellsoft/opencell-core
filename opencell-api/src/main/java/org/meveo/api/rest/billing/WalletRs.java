@@ -22,10 +22,14 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
+import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
+ * Wallet operation and balance related REST API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @Path("/billing/wallet")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -74,34 +78,34 @@ public interface WalletRs extends IBaseRs {
     GetWalletTemplateResponseDto findWalletTemplate(@QueryParam("walletTemplateCode") String walletTemplateCode);
 
     /**
-     * Gets the current balance amount given provider, seller, user account and date. In wallet operation, status='OPEN OR RESERVED'.
+     * Gets the current (open or reserved) wallet balance amount at a given level and date period. In wallet operation, status='OPEN OR RESERVED'.
      * 
-     * @param postData WalletBalanceDto
-     * @return Request processing status
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Request processing status and balance amounts
      */
     @POST
     @Path("/balance/current")
-    ActionStatus currentBalance(WalletBalanceDto postData);
+    WalletBalanceResponseDto currentBalance(WalletBalanceDto calculateParameters);
 
     /**
-     * Gets the reserved balance amount given provider, seller, user account and date. In wallet operation, status='RESERVED'.
+     * Gets the reserved wallet balance amount at a given level and date period. In wallet operation, status='RESERVED'.
      * 
-     * @param postData WalletBalanceDto
-     * @return Request processing status
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Request processing status and balance amounts
      */
     @POST
     @Path("/balance/reserved")
-    ActionStatus reservedBalance(WalletBalanceDto postData);
+    WalletBalanceResponseDto reservedBalance(WalletBalanceDto calculateParameters);
 
     /**
-     * Gets the open balance amount given provider, seller, user account and date. In wallet operation, status='OPEN'.
+     * Gets the open wallet balance amount at a given level and date period. In wallet operation, status='OPEN'.
      * 
-     * @param postData WalletBalanceDto
-     * @return Request processing status
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Request processing status and balance amounts status
      */
     @POST
     @Path("/balance/open")
-    ActionStatus openBalance(WalletBalanceDto postData);
+    WalletBalanceResponseDto openBalance(WalletBalanceDto calculateParameters);
 
     /**
      * Create reservation for a given offer, user account, seller, provider and date.

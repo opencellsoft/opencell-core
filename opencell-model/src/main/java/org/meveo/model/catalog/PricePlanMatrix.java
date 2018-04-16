@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -54,13 +56,15 @@ import org.meveo.model.scripts.ScriptInstance;
 @Entity
 @ModuleItem
 @ObservableEntity
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_price_plan_matrix", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_price_plan_matrix_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.eventCode, ppm.priority ASC") })
+        @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCode", query = "SELECT ppm from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode order by ppm.priority ASC", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 
@@ -143,6 +147,9 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * The lower number, the higher the priority is
+     */
     @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
 
@@ -168,26 +175,21 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Column(name = "wo_description_el", length = 2000)
     @Size(max = 2000)
     private String woDescriptionEL;
-    
+
+    /**
+     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     */
     @Column(name = "rating_el", length = 2000)
     @Size(max = 2000)
     private String ratingEL;
-    
+
     @Column(name = "minimum_amount_without_tax_el", length = 2000)
     @Size(max = 2000)
-    private String minimumAmountWithoutTaxEl ;
-    
+    private String minimumAmountWithoutTaxEl;
+
     @Column(name = "minimum_amount_with_tax_el", length = 2000)
     @Size(max = 2000)
-    private String minimumAmountWithTaxEl ;
-    
-    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
-    @Digits(integer = 23, fraction = 12)
-    private BigDecimal rawAmountWithoutTax;
-    
-    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
-    @Digits(integer = 23, fraction = 12)
-    private BigDecimal rawAmountWithTax;
+    private String minimumAmountWithTaxEl;
 
     public String getEventCode() {
         return eventCode;
@@ -402,8 +404,7 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
+        int result = 961 + ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
         result = prime * result + ((criteria2Value == null) ? 0 : criteria2Value.hashCode());
         result = prime * result + ((criteria3Value == null) ? 0 : criteria3Value.hashCode());
         result = prime * result + ((endRatingDate == null) ? 0 : endRatingDate.hashCode());
@@ -552,7 +553,7 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
     }
-    
+
     public String getMinimumAmountWithoutTaxEl() {
         return minimumAmountWithoutTaxEl;
     }
@@ -569,19 +570,4 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
         this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
     }
 
-    public BigDecimal getRawAmountWithoutTax() {
-        return rawAmountWithoutTax;
-    }
-
-    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
-        this.rawAmountWithoutTax = rawAmountWithoutTax;
-    }
-
-    public BigDecimal getRawAmountWithTax() {
-        return rawAmountWithTax;
-    }
-
-    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
-        this.rawAmountWithTax = rawAmountWithTax;
-    }
 }

@@ -48,6 +48,11 @@ import org.primefaces.model.SortOrder;
 /**
  * Standard backing bean for {@link BillingRun} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped
@@ -156,7 +161,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(),
             entity.getLastTransactionDate());
         try {
-            ParamBean param = ParamBean.getInstance();
+            ParamBean param = paramBeanFactory.getInstance();
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
             boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
             log.info("launchInvoicing allowManyInvoicing={}", isAllowed);

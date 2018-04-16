@@ -19,7 +19,8 @@ public interface FilteredListWs extends IBaseWs {
      * @param filter - if the code is set we lookup the filter in DB, else we parse the inputXml to create a transient filter
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
-     * @return
+     * @param parameters - filter parameters
+     * @return FilteredListResponseDto
      */
     @WebMethod
     public FilteredListResponseDto listByFilter(@WebParam(name = "filter") FilterDto filter, @WebParam(name = "from") Integer from,
@@ -33,7 +34,7 @@ public interface FilteredListWs extends IBaseWs {
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
-     * @return	
+     * @return	FilteredListResponseDto 
      */
     @WebMethod
     public FilteredListResponseDto search(@WebParam(name = "classnamesOrCetCodes") String[] classnamesOrCetCodes, @WebParam(name = "query") String query,
@@ -46,7 +47,7 @@ public interface FilteredListWs extends IBaseWs {
      * @param query Fields and values to match in a form of a map
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
-     * @return
+     * @return FilteredListResponseDto
      */
     @WebMethod
     public FilteredListResponseDto searchByField(@WebParam(name = "classnamesOrCetCodes") String[] classnamesOrCetCodes, @WebParam(name = "query") Map<String, String> query,
@@ -55,7 +56,7 @@ public interface FilteredListWs extends IBaseWs {
     /**
      * Clean and reindex Elastic Search repository
      * 
-     * @return
+     * @return ActionStatus
      */
     public ActionStatus reindex();
 }

@@ -9,52 +9,94 @@ import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
 
 /**
+ * The Class LanguageDto.
+ *
  * @author Edward P. Legaspi
- * 
  * @deprecated will be renammed to TradingLanguageDto
- **/
+ */
 @XmlRootElement(name = "Language")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguageDto extends BaseDto {
 
-	private static final long serialVersionUID = 725968016559888810L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 725968016559888810L;
 
-	@XmlAttribute(required = true)
-	private String code;
-	private String description;
+    /** The code. */
+    @XmlAttribute(required = true)
+    private String code;
+    
+    /** The description. */
+    private String description;
 
-	public LanguageDto() {
+    /**
+     * Instantiates a new language dto.
+     */
+    public LanguageDto() {
 
-	}
+    }
 
-	public LanguageDto(TradingLanguage e) {
-		code = e.getLanguageCode();
-		description = e.getPrDescription();
-	}
-	public LanguageDto(Language e) {
-		code = e.getLanguageCode();
-		description = e.getDescriptionEn();
-	}
+    /**
+     * Instantiates a new language dto.
+     *
+     * @param tradingLanguage the trading language
+     */
+    public LanguageDto(TradingLanguage tradingLanguage) {
+        code = tradingLanguage.getLanguageCode();
+        description = tradingLanguage.getPrDescription();
+    }
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Instantiates a new language dto.
+     *
+     * @param language the language
+     */
+    public LanguageDto(Language language) {
+        code = language.getLanguageCode();
+        description = language.getDescriptionEn();
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	@Override
-	public String toString() {
-		return "LanguageDto [code=" + code + ", description=" + description + "]";
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "LanguageDto [code=" + code + ", description=" + description + "]";
+    }
 
 }

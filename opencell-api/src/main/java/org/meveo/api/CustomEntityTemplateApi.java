@@ -35,6 +35,8 @@ import org.meveo.util.EntityCustomizationUtils;
 
 /**
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, CustomEntityTemplateDto> {
@@ -53,6 +55,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
     @Inject
     private EntityCustomActionApi entityCustomActionApi;
+    
+    @Inject
+    private EntityCustomActionService entityCustomActionService;
 
     public CustomEntityTemplate create(CustomEntityTemplateDto dto) throws MeveoApiException, BusinessException {
 
@@ -330,6 +335,15 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 		return result;
 	}
 
+    /**
+     * Finds an entity that match the given criterion. Evaluates applicableEL on custom fields and actions of the entity, if false it will not be included in the resulting object.
+     * 
+     * @param appliesTo type of entity
+     * @param entityCode code of the entity
+     * @return an object with a list of custom fields and actions
+     * @throws MissingParameterException when there is a missing parameter
+     * @throws BusinessException business logic is violated
+     */
 	public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode)
 			throws MissingParameterException, BusinessException {
 		EntityCustomizationDto result = new EntityCustomizationDto();
@@ -361,16 +375,26 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
 		// custom fields that applies to an entity type, eg. OFFER
 		Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
-		result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), null);
+		Map<String, EntityCustomAction> caFields = entityCustomActionService.findByAppliesTo(appliesTo);
+		result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), caFields.values());
 
 		// evaluate the CFT againsts the entity
 		List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
 		for (CustomFieldTemplateDto cft : result.getFields()) {
-			if (ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entityInstance)) {
+			if (ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entityInstance)) {
 				evaluatedCFTDto.add(cft);
 			}
 		}
 		result.setFields(evaluatedCFTDto);
+		
+        // evaluate the CA againsts the entity
+        List<EntityCustomActionDto> evaluatedCA = new ArrayList<>();
+        for (EntityCustomActionDto eca : result.getActions()) {
+            if (ValueExpressionWrapper.evaluateToBooleanOneVariable(eca.getApplicableOnEl(), "entity", entityInstance)) {
+                evaluatedCA.add(eca);
+            }
+        }
+        result.setActions(evaluatedCA);
 
 		return result;
 	}

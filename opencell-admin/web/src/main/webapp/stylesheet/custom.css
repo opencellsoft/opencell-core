@@ -1266,7 +1266,7 @@ footer .footer-copyright {
   padding: 0 0 10px;
 }
 
-.ui-widget {
+.ui-widget .ui-messages-info-summary {
 	font-family: Roboto;
 }
 

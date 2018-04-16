@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomFields;
@@ -30,6 +31,10 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class ExportSubscriptionsJobBean {
 
@@ -49,14 +54,15 @@ public class ExportSubscriptionsJobBean {
     private JobExecutionService jobExecutionService;
 
     private Subscriptions subscriptions;
-    private ParamBean param = ParamBean.getInstance();
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
-
-        String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator
-                + "subscriptions" + File.separator;
+        ParamBean param = paramBeanFactory.getInstance();
+        String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "subscriptions" + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);
         if (!dir.exists()) {

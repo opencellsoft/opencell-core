@@ -5,8 +5,6 @@ import java.io.Serializable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.service.script.ScriptInstanceService;
@@ -20,15 +18,8 @@ public class GatewayPaymentFactory implements Serializable {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @Inject
-    private PaymentGatewayService paymentGatewayService;
-
-    public GatewayPaymentInterface getInstance(CustomerAccount customerAccount, CardPaymentMethod cardPaymentMethod) throws Exception {
+    public GatewayPaymentInterface getInstance(PaymentGateway paymentGateway) throws Exception {
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod);
-        if (paymentGateway == null) {
-            throw new Exception("No payment gateway");
-        }
 
         if (paymentGateway.getType() == PaymentGatewayTypeEnum.CUSTOM) {
             gatewayPaymentInterface = new CustomApiGatewayPayment((PaymentScriptInterface) scriptInstanceService.getScriptInstance(paymentGateway.getScriptInstance().getCode()));

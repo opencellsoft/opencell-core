@@ -8,12 +8,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.notification.HttpProtocol;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "WebhookNotification")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -21,6 +23,7 @@ public class WebHookDto extends NotificationDto {
 
 	private static final long serialVersionUID = -24934196712758476L;
 
+	private HttpProtocol httpProtocol;
 	@XmlElement(required = true)
 	private String host;
 	@XmlElement(required=true)
@@ -58,6 +61,7 @@ public class WebHookDto extends NotificationDto {
 		if (e.getParams() != null) {
 			params.putAll(e.getParams());
 		}
+		httpProtocol = e.getHttpProtocol();
 	}
 
 	public String getHost() {
@@ -128,5 +132,13 @@ public class WebHookDto extends NotificationDto {
 		return "WebhookDto [host=" + host + ", port=" + port + ", page=" + page + ", httpMethod=" + httpMethod + ", username=" + username + ", password=" + password + ", headers="
 				+ headers + ", params=" + params + "]";
 	}
+
+    public HttpProtocol getHttpProtocol() {
+        return httpProtocol;
+    }
+
+    public void setHttpProtocol(HttpProtocol httpProtocol) {
+        this.httpProtocol = httpProtocol;
+    }
 
 }

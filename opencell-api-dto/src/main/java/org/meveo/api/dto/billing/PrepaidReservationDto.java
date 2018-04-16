@@ -9,31 +9,63 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 
+/**
+ * The Class PrepaidReservationDto.
+ */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PrepaidReservationDto extends BaseDto {
 
-	private static final long serialVersionUID = -1511340678838442101L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1511340678838442101L;
 
-	@XmlAttribute(required = true)
-	public long reservationId;
+    /** The reservation id. */
+    @XmlAttribute(required = true)
+    public long reservationId;
 
-	public BigDecimal consumedQuantity;
+    /** The consumed quantity. */
+    public BigDecimal consumedQuantity;
 
-	public long getReservationId() {
-		return reservationId;
-	}
+    /**
+     * Gets the reservation id.
+     *
+     * @return the reservation id
+     */
+    public long getReservationId() {
+        return reservationId;
+    }
 
-	public void setReservationId(long reservationId) {
-		this.reservationId = reservationId;
-	}
+    /**
+     * Sets the reservation id.
+     *
+     * @param reservationId the new reservation id
+     */
+    public void setReservationId(long reservationId) {
+        this.reservationId = reservationId;
+    }
 
-	public BigDecimal getConsumedQuantity() {
-		return consumedQuantity;
-	}
+    /**
+     * Gets the consumed quantity.
+     *
+     * @return the consumed quantity
+     */
+    public BigDecimal getConsumedQuantity() {
+        return consumedQuantity;
+    }
 
-	public void setConsumedQuantity(BigDecimal consumedQuantity) {
-		this.consumedQuantity = consumedQuantity;
-	}
+    /**
+     * Sets the consumed quantity.
+     *
+     * @param consumedQuantity the new consumed quantity
+     */
+    public void setConsumedQuantity(BigDecimal consumedQuantity) {
+        this.consumedQuantity = consumedQuantity;
+    }
+
+
+    @Override
+    public String toString() {
+        return "PrepaidReservationDto [reservationId=" + reservationId + ", consumedQuantity=" + consumedQuantity + "]";
+    }
 
 }

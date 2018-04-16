@@ -31,10 +31,8 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * A basic converter that works with any kind of object. NOTE: It should only be used in long
- * running conversations!
+ * A basic converter that works with any kind of object. NOTE: It should only be used in long running conversations!
  *
  * @author <a href="http://community.jboss.org/people/LightGuard">Jason Porter</a>
  */

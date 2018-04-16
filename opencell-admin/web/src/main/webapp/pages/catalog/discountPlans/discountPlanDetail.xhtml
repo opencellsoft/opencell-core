@@ -111,7 +111,7 @@
 									value="#{messages['commons.delete']}" showEffect="slide"
 									hideEffect="slide" />
 								<p:commandButton id="deleteDiscountPlanItemLink"
-									action="#{discountPlanBean.deleteDiscountPlan(entity)}"
+									action="#{discountPlanBean.deleteDiscountPlanItem(entity)}"
 									icon="ui-icon-trash"
 									update=":tabView:discountPlanItemPanel,:tabView:formDiscountPlanItem" />
 									 
@@ -164,12 +164,12 @@
 								<p:commandButton id="saveButton"
 									rendered="#{discountPlanBean.discountPlanItem.id==null}"
 									value="#{messages['discountPlanItem.addNew']}"
-									action="#{discountPlanBean.saveOrUpdateDiscountPlan()}"
+									action="#{discountPlanBean.saveOrUpdateDiscountPlanItem()}"
 									icon="ui-icon-check"
 									update=":tabView:discountPlanItemPanel,:tabView:formDiscountPlanItem,:tabView:discountPlanItemdiv"/>
 								<p:commandButton
 											rendered="#{discountPlanBean.discountPlanItem.id!=null}"
-											action="#{discountPlanBean.saveOrUpdateDiscountPlan}"
+											action="#{discountPlanBean.saveOrUpdateDiscountPlanItem}"
 											value="#{messages['discountPlanItem.modifyDiscountPlantItem']}"
 											update=":tabView:discountPlanItemPanel,:tabView:formDiscountPlanItem,:tabView:discountPlanItemdiv"
 											icon="ui-icon-check"

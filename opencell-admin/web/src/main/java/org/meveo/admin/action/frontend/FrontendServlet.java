@@ -19,10 +19,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
-
 
 /* originally from @author BalusC in LGPL licence
 ** @link http://balusc.blogspot.com/2009/02/fileservlet-supporting-resume-and.html
@@ -30,27 +29,28 @@ import org.slf4j.Logger;
 @WebServlet("/frontend/*")
 public class FrontendServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3071886877749196748L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3071886877749196748L;
     private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 10KB.
     private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1 week.
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
-    
-	@Inject
-	private Logger log;
-	
-	@Inject
-	ProviderService providerService;
-    
+
+    @Inject
+    private Logger log;
+
+    @Inject
+    ProviderService providerService;
+
+    /** paramBeanFactory */
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * Process HEAD request. This returns the same headers as GET request, but without content.
      */
-    protected void doHead(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
-    {
+    protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Process request without content.
         processRequest(request, response, false);
     }
@@ -58,67 +58,58 @@ public class FrontendServlet extends HttpServlet {
     /**
      * Process GET request.
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
-    {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Process request with content.
         processRequest(request, response, true);
     }
 
     /**
      * Process the actual request.
+     * 
      * @param request The request to be processed.
      * @param response The response to be created.
      * @param content Whether the request body should be written (GET) or not (HEAD).
      * @throws IOException If something fails at I/O level.
      */
-    private void processRequest
-        (HttpServletRequest request, HttpServletResponse response, boolean content)
-            throws IOException
-    {
+    private void processRequest(HttpServletRequest request, HttpServletResponse response, boolean content) throws IOException {
 
         // Get requested file by path info.
         String requestedFile = request.getPathInfo();
-        log.debug("requestedFile={}",requestedFile);
+        log.debug("requestedFile={}", requestedFile);
         String providerCode = null;
         // Validate the requested file ------------------------------------------------------------
-    	if (requestedFile.startsWith("/")) {
-    		requestedFile = requestedFile.substring(1);
+        if (requestedFile.startsWith("/")) {
+            requestedFile = requestedFile.substring(1);
         }
-        if(requestedFile.contains("/")){
+        if (requestedFile.contains("/")) {
             providerCode = requestedFile.substring(0, requestedFile.indexOf('/'));
         } else {
-        	throw new IOException("FrontendServlet requestedFile '"
-                    + requestedFile + "' must contain provider code.");
+            throw new IOException("FrontendServlet requestedFile '" + requestedFile + "' must contain provider code.");
         }
-        if(providerCode.trim().length()==0){
-        	throw new IOException("FrontendServlet requestedFile '"
-                    + requestedFile + "' must contain provider code.");
+        if (providerCode.trim().length() == 0) {
+            throw new IOException("FrontendServlet requestedFile '" + requestedFile + "' must contain provider code.");
         }
-        requestedFile=requestedFile.substring(providerCode.length());
-        String basePath = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata/") + File.separator + providerCode; 
-        File dir =  new File(basePath);
+        requestedFile = requestedFile.substring(providerCode.length());
+        String basePath = paramBeanFactory.getInstance().getProperty("providers.rootDir", "./opencelldata/") + File.separator + providerCode;
+        File dir = new File(basePath);
         if (!dir.exists() || !dir.isDirectory() || !dir.canRead()) {
-            throw new IOException("FrontendServlet dir '"
-                    + dir + "' is not a writable directory.");
-		}
-        
-		basePath += File.separator + "frontend" + File.separator;
-
-		File path = new File(basePath);
-		if (!path.exists()) {
-			path.mkdirs();
-		}
-        if (!path.isDirectory()) {
-             throw new IOException("FrontendServlet path '"
-                 + basePath + "' is not a directory.");
-        } else if (!path.canRead()) {
-                throw new IOException("FrontendServlet path '"
-                    + basePath + "' is readable.");
+            throw new IOException("FrontendServlet dir '" + dir + "' is not a writable directory.");
         }
 
-    	log.debug("requestedFile="+requestedFile);
-    	
+        basePath += File.separator + "frontend" + File.separator;
+
+        File path = new File(basePath);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        if (!path.isDirectory()) {
+            throw new IOException("FrontendServlet path '" + basePath + "' is not a directory.");
+        } else if (!path.canRead()) {
+            throw new IOException("FrontendServlet path '" + basePath + "' is readable.");
+        }
+
+        log.debug("requestedFile=" + requestedFile);
+
         // Check if file is actually supplied to the request URL.
         if (requestedFile == null) {
             // Do your thing if the file is not supplied to the request URL.
@@ -135,7 +126,7 @@ public class FrontendServlet extends HttpServlet {
             // Do your thing if the file appears to be non-existing.
             // Throw an exception, or send 404, or show default/warning page, or just ignore it.
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        	log.debug("!file.exists");
+            log.debug("!file.exists");
             return;
         }
 
@@ -146,7 +137,6 @@ public class FrontendServlet extends HttpServlet {
         String eTag = fileName + "_" + length + "_" + lastModified;
         long expires = System.currentTimeMillis() + DEFAULT_EXPIRE_TIME;
 
-
         // Validate request headers for caching ---------------------------------------------------
 
         // If-None-Match header should contain "*" or ETag. If so, then return 304.
@@ -155,7 +145,7 @@ public class FrontendServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             response.setHeader("ETag", eTag); // Required in 304.
             response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
-        	log.debug("If-None-Match");
+            log.debug("If-None-Match");
             return;
         }
 
@@ -166,10 +156,9 @@ public class FrontendServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             response.setHeader("ETag", eTag); // Required in 304.
             response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
-        	log.debug("If-Modified-Match");
+            log.debug("If-Modified-Match");
             return;
         }
-
 
         // Validate request headers for resume ----------------------------------------------------
 
@@ -177,7 +166,7 @@ public class FrontendServlet extends HttpServlet {
         String ifMatch = request.getHeader("If-Match");
         if (ifMatch != null && !matches(ifMatch, eTag)) {
             response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
-        	log.debug("If-Match");
+            log.debug("If-Match");
             return;
         }
 
@@ -185,10 +174,9 @@ public class FrontendServlet extends HttpServlet {
         long ifUnmodifiedSince = request.getDateHeader("If-Unmodified-Since");
         if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
             response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
-        	log.debug("If-Unmodified-Since");
+            log.debug("If-Unmodified-Since");
             return;
         }
-
 
         // Validate and process range -------------------------------------------------------------
 
@@ -204,7 +192,7 @@ public class FrontendServlet extends HttpServlet {
             if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
                 response.setHeader("Content-Range", "bytes */" + length); // Required in 416.
                 response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-            	log.debug("Range header do not match format");
+                log.debug("Range header do not match format");
                 return;
             }
 
@@ -241,7 +229,7 @@ public class FrontendServlet extends HttpServlet {
                     if (start > end) {
                         response.setHeader("Content-Range", "bytes */" + length); // Required in 416.
                         response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-                    	log.debug("Range is not syntactically valid");
+                        log.debug("Range is not syntactically valid");
                         return;
                     }
 
@@ -251,12 +239,11 @@ public class FrontendServlet extends HttpServlet {
             }
         }
 
-
         // Prepare and initialize response --------------------------------------------------------
 
         // Get content type by file name and set default GZIP support and content disposition.
         String contentType = getServletContext().getMimeType(fileName);
-        log.debug("Servlet context found MIME="+contentType);
+        log.debug("Servlet context found MIME=" + contentType);
         boolean acceptsGzip = false;
         String disposition = "inline";
 
@@ -264,9 +251,9 @@ public class FrontendServlet extends HttpServlet {
         // For all content types, see: http://www.w3schools.com/media/media_mimeref.asp
         // To add new content types, add new mime-mapping entry in web.xml.
         if (contentType == null) {
-        	if(fileName.endsWith(".js")){
-                contentType = "application/javascript";        		
-        	}
+            if (fileName.endsWith(".js")) {
+                contentType = "application/javascript";
+            }
             contentType = "application/octet-stream";
         }
 
@@ -276,7 +263,7 @@ public class FrontendServlet extends HttpServlet {
             String acceptEncoding = request.getHeader("Accept-Encoding");
             acceptsGzip = acceptEncoding != null && accepts(acceptEncoding, "gzip");
             contentType += ";charset=UTF-8";
-        } 
+        }
 
         // Else, expect for images, determine content disposition. If content type is supported by
         // the browser, then set to inline, else attachment which will pop a 'save as' dialogue.
@@ -285,7 +272,7 @@ public class FrontendServlet extends HttpServlet {
             disposition = accept != null && accepts(accept, contentType) ? "inline" : "attachment";
         }
 
-        log.debug("before Initialize content-type:"+contentType);
+        log.debug("before Initialize content-type:" + contentType);
 
         // Initialize response.
         response.reset();
@@ -295,7 +282,6 @@ public class FrontendServlet extends HttpServlet {
         response.setHeader("ETag", eTag);
         response.setDateHeader("Last-Modified", lastModified);
         response.setDateHeader("Expires", expires);
-
 
         // Send requested file (part(s)) to client ------------------------------------------------
 
@@ -370,7 +356,7 @@ public class FrontendServlet extends HttpServlet {
                     sos.println("--" + MULTIPART_BOUNDARY + "--");
                 }
             }
-            log.debug("content-type:"+response.getContentType());
+            log.debug("content-type:" + response.getContentType());
         } finally {
             // Gently close streams.
             close(output);
@@ -382,6 +368,7 @@ public class FrontendServlet extends HttpServlet {
 
     /**
      * Returns true if the given accept header accepts the given value.
+     * 
      * @param acceptHeader The accept header.
      * @param toAccept The value to be accepted.
      * @return True if the given accept header accepts the given value.
@@ -389,13 +376,13 @@ public class FrontendServlet extends HttpServlet {
     private static boolean accepts(String acceptHeader, String toAccept) {
         String[] acceptValues = acceptHeader.split("\\s*(,|;)\\s*");
         Arrays.sort(acceptValues);
-        return Arrays.binarySearch(acceptValues, toAccept) > -1
-            || Arrays.binarySearch(acceptValues, toAccept.replaceAll("/.*$", "/*")) > -1
-            || Arrays.binarySearch(acceptValues, "*/*") > -1;
+        return Arrays.binarySearch(acceptValues, toAccept) > -1 || Arrays.binarySearch(acceptValues, toAccept.replaceAll("/.*$", "/*")) > -1
+                || Arrays.binarySearch(acceptValues, "*/*") > -1;
     }
 
     /**
      * Returns true if the given match header matches the given value.
+     * 
      * @param matchHeader The match header.
      * @param toMatch The value to be matched.
      * @return True if the given match header matches the given value.
@@ -403,13 +390,12 @@ public class FrontendServlet extends HttpServlet {
     private static boolean matches(String matchHeader, String toMatch) {
         String[] matchValues = matchHeader.split("\\s*,\\s*");
         Arrays.sort(matchValues);
-        return Arrays.binarySearch(matchValues, toMatch) > -1
-            || Arrays.binarySearch(matchValues, "*") > -1;
+        return Arrays.binarySearch(matchValues, toMatch) > -1 || Arrays.binarySearch(matchValues, "*") > -1;
     }
 
     /**
-     * Returns a substring of the given string value from the given begin index to the given end
-     * index as a long. If the substring is empty, then -1 will be returned
+     * Returns a substring of the given string value from the given begin index to the given end index as a long. If the substring is empty, then -1 will be returned
+     * 
      * @param value The string value to return a substring as long for.
      * @param beginIndex The begin index of the substring to be returned as long.
      * @param endIndex The end index of the substring to be returned as long.
@@ -422,15 +408,14 @@ public class FrontendServlet extends HttpServlet {
 
     /**
      * Copy the given byte range of the given input to the given output.
+     * 
      * @param input The input to copy the given range to the given output for.
      * @param output The output to copy the given range from the given input for.
      * @param start Start of the byte range.
      * @param length Length of the byte range.
      * @throws IOException If something fails at I/O level.
      */
-    private static void copy(RandomAccessFile input, OutputStream output, long start, long length)
-        throws IOException
-    {
+    private static void copy(RandomAccessFile input, OutputStream output, long start, long length) throws IOException {
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         int read;
 
@@ -457,6 +442,7 @@ public class FrontendServlet extends HttpServlet {
 
     /**
      * Close the given resource.
+     * 
      * @param resource The resource to be closed.
      */
     private static void close(Closeable resource) {
@@ -483,6 +469,7 @@ public class FrontendServlet extends HttpServlet {
 
         /**
          * Construct a byte range.
+         * 
          * @param start Start of the byte range.
          * @param end End of the byte range.
          * @param total Total length of the byte source.
@@ -496,4 +483,3 @@ public class FrontendServlet extends HttpServlet {
 
     }
 }
-

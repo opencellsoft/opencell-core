@@ -8,30 +8,44 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class SubscriptionsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubscriptionsDto implements Serializable {
 
-	private static final long serialVersionUID = 4086241876387501134L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4086241876387501134L;
 
-	private List<SubscriptionDto> subscription;
+    /** The subscription. */
+    private List<SubscriptionDto> subscription;
 
-	public List<SubscriptionDto> getSubscription() {
-		if (subscription == null) {
-			subscription = new ArrayList<SubscriptionDto>();
-		}
+    /**
+     * Gets the subscription.
+     *
+     * @return the subscription
+     */
+    public List<SubscriptionDto> getSubscription() {
+        if (subscription == null) {
+            subscription = new ArrayList<SubscriptionDto>();
+        }
 
-		return subscription;
-	}
+        return subscription;
+    }
 
-	public void setSubscription(List<SubscriptionDto> subscription) {
-		this.subscription = subscription;
-	}
+    /**
+     * Sets the subscription.
+     *
+     * @param subscription the new subscription
+     */
+    public void setSubscription(List<SubscriptionDto> subscription) {
+        this.subscription = subscription;
+    }
 
-	@Override
-	public String toString() {
-		return "SubscriptionsDto [subscription=" + subscription + "]";
-	}
+    @Override
+    public String toString() {
+        return "SubscriptionsDto [subscription=" + subscription + "]";
+    }
 
 }

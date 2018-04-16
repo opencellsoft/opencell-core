@@ -72,10 +72,10 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
-import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
@@ -90,6 +90,9 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 /**
  * Standard backing bean for {@link Order} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -97,14 +100,14 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     private static final long serialVersionUID = 7399464661886086329L;
 
+    @Inject
+    private SubscriptionService subscriptionService;
+
     /**
      * Injected @{link Order} service. Extends {@link PersistenceService}.
      */
     @Inject
     private OrderService orderService;
-
-    @Inject
-    private OrderItemService orderItemService;
 
     @Inject
     private OrderApi orderApi;
@@ -144,6 +147,14 @@ public class OrderBean extends CustomFieldBean<Order> {
     @Override
     public Order initEntity() {
         super.initEntity();
+
+        if (entity.getOrderItems() != null) {
+            for (OrderItem orderItem : entity.getOrderItems()) {
+                PersistenceUtils.initializeAndUnproxy(orderItem.getOrderItemProductOfferings());
+                PersistenceUtils.initializeAndUnproxy(orderItem.getProductInstances());
+            }
+        }
+
         if (entity.getPaymentMethod() != null) {
             paymentMethodType = entity.getPaymentMethod().getPaymentType();
             paymentMethod = PersistenceUtils.initializeAndUnproxy(entity.getPaymentMethod());
@@ -196,13 +207,9 @@ public class OrderBean extends CustomFieldBean<Order> {
     public void editOrderItem(OrderItem orderItemToEdit) {
 
         try {
-            if (orderItemToEdit.isTransient()) {
-                this.selectedOrderItem = orderItemToEdit;
+            this.selectedOrderItem = orderItemToEdit;
 
-            } else {
-
-                this.selectedOrderItem = orderItemService.refreshOrRetrieve(orderItemToEdit);
-
+            if (!orderItemToEdit.isTransient()) {
                 try {
                     this.selectedOrderItem.setOrderItemDto(org.tmf.dsmapi.catalog.resource.order.ProductOrderItem.deserializeOrderItem(selectedOrderItem.getSource()));
                 } catch (BusinessException e) {
@@ -262,7 +269,9 @@ public class OrderBean extends CustomFieldBean<Order> {
             List<BillingAccount> billingAccountDtos = new ArrayList<>();
             BillingAccount billingAccountDto = new BillingAccount();
             if (selectedOrderItem.getAction() != OrderItemActionEnum.ADD) {
-                billingAccountDto.setId(selectedOrderItem.getSubscription().getUserAccount().getCode());
+                Subscription subscription = selectedOrderItem.getSubscription();
+                subscription = subscriptionService.refreshOrRetrieve(subscription);
+                billingAccountDto.setId(subscription.getUserAccount().getCode());
             } else if (selectedOrderItem.getUserAccount() != null) {
                 billingAccountDto.setId(selectedOrderItem.getUserAccount().getCode());
             }
@@ -377,7 +386,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             selectedOrderItem.setSource(org.tmf.dsmapi.catalog.resource.order.ProductOrderItem.serializeOrderItem(orderItemDto));
 
             if (selectedOrderItem.getUserAccount() == null && selectedOrderItem.getSubscription() != null) {
-                selectedOrderItem.setUserAccount(userAccountService.refreshOrRetrieve(selectedOrderItem.getSubscription().getUserAccount()));
+                selectedOrderItem.setUserAccount(userAccountService.retrieveIfNotManaged(selectedOrderItem.getSubscription().getUserAccount()));
             }
 
             if (entity.getOrderItems() == null) {
@@ -421,6 +430,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     /**
      * Initiate processing of order
+     * 
      * @return output view
      * 
      */
@@ -428,6 +438,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     public String sendToProcess() {
 
         try {
+            entity = orderService.refreshOrRetrieve(entity);
             entity = orderApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "order.sendToProcess.ok"));
             return "orderDetail";
@@ -456,7 +467,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         TreeNode root = new DefaultTreeNode("Offer details", null);
         root.setExpanded(true);
 
-        ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedOrderItem.getMainOffering());
+        ProductOffering mainOffering = productOfferingService.retrieveIfNotManaged(this.selectedOrderItem.getMainOffering());
 
         // Take offer characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering order item to modify
         // or delete and subscription is selected)
@@ -701,7 +712,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
         }
 
-        offersTree = constructOfferItemsTreeAndConfiguration(selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY, false, subscriptionConfiguration, subscriptionEntities);
+        offersTree = constructOfferItemsTreeAndConfiguration(selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY, true, subscriptionConfiguration, subscriptionEntities);
 
     }
 
@@ -942,7 +953,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         boolean editable = entity.getStatus() != OrderStatusEnum.CANCELLED && entity.getStatus() != OrderStatusEnum.COMPLETED && entity.getStatus() != OrderStatusEnum.REJECTED;
 
         if (editable && entity.getRoutedToUserGroup() != null) {
-            UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
+            UserHierarchyLevel userGroup = userHierarchyLevelService.retrieveIfNotManaged(entity.getRoutedToUserGroup());
             User user = userService.findByUsername(currentUser.getUserName());
             editable = userGroup.isUserBelongsHereOrHigher(user);
         }

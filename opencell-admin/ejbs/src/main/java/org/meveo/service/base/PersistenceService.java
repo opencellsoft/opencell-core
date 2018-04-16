@@ -40,11 +40,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -60,20 +62,27 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
+ * 
+ * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
@@ -86,14 +95,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_FILTER = "$FILTER";
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     @Inject
-    @MeveoJpa
+    @MeveoJpaForMultiTenancy
     private EntityManager em;
 
     @Inject
-    @MeveoJpaForJobs
+    @MeveoJpaForMultiTenancyForJobs
     private EntityManager emfForJobs;
 
     @Inject
@@ -101,9 +108,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     private Conversation conversation;
-    //
-    // @Resource
-    // protected TransactionSynchronizationRegistry txReg;
 
     @Inject
     @Created
@@ -127,6 +131,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * Constructor.
@@ -295,28 +302,31 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        getEntityManager().remove(entity);
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityRemovedEventProducer.fire((BaseEntity) entity);
-        }
-        // getEntityManager().flush();
+        entity = findById((Long) entity.getId());
+        if (entity != null) {
+            getEntityManager().remove(entity);
+            if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityRemovedEventProducer.fire((BaseEntity) entity);
+            }
+            // getEntityManager().flush();
 
-        // Remove entity from Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.remove((BusinessEntity) entity);
-        }
+            // Remove entity from Elastic Search
+            if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
+                elasticClient.remove((BusinessEntity) entity);
+            }
 
-        // Remove custom field values from cache if applicable
-        if (entity instanceof ICustomFieldEntity) {
-            customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
-        }
+            // Remove custom field values from cache if applicable
+            if (entity instanceof ICustomFieldEntity) {
+                customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
+            }
 
-        if (entity instanceof IImageUpload) {
-            try {
-                ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
-                imageUploadEventHandler.deleteImage(entity);
-            } catch (IOException e) {
-                log.error("Failed deleting image file");
+            if (entity instanceof IImageUpload) {
+                try {
+                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(currentUser.getProviderCode());
+                    imageUploadEventHandler.deleteImage(entity);
+                } catch (IOException e) {
+                    log.error("Failed deleting image file");
+                }
             }
         }
 
@@ -344,13 +354,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         query.executeUpdate();
     }
 
-   
     /**
      * @see org.meveo.service.base.local.IPersistenceService#update(org.meveo.model.IEntity)
      */
     @Override
     public E update(E entity) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
+
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
@@ -372,12 +385,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // partially, as entity itself does not have Custom field values
         if (entity instanceof BusinessCFEntity) {
             elasticClient.partialUpdate((BusinessEntity) entity);
-
-        } else if (entity instanceof BusinessEntity) {
-            elasticClient.createOrFullUpdate((BusinessEntity) entity);
-
-            // validate code
-            validateCode((BusinessEntity) entity);
+        } else if (entity instanceof ISearchable) {
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
@@ -385,21 +394,24 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entity;
     }
 
-    private boolean validateCode(BusinessEntity entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-            throw new BusinessException("Invalid characters found in entity code.");
-        }
+    private boolean validateCode(ISearchable entity) throws BusinessException {
+       // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+         //   throw new BusinessException("Invalid characters found in entity code.");
+       // }
 
         return true;
     }
 
- 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
      */
     @Override
     public void create(E entity) throws BusinessException {
-        // log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+        log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
@@ -418,11 +430,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.createOrFullUpdate((BusinessEntity) entity);
-
-            // validate code
-            validateCode((BusinessEntity) entity);
+        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
@@ -523,12 +532,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         getEntityManager().detach(entity);
     }
 
-
     /**
      * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.IEntity)
      */
     @Override
-    public void refresh(E entity) {
+    public void refresh(IEntity entity) {
         // entity manager throws exception if trying to refresh not managed
         // entity (ejb spec requires this).
         /*
@@ -541,17 +549,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
     }
 
-
     /**
      * @see org.meveo.service.base.local.IPersistenceService#refreshOrRetrieve(org.meveo.model.IEntity)
      */
     @Override
     public E refreshOrRetrieve(E entity) {
 
-        if (entity == null){
+        if (entity == null) {
             return null;
         }
-        
+
         if (getEntityManager().contains(entity)) {
             log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
             getEntityManager().refresh(entity);
@@ -589,6 +596,61 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         Set<E> refreshedEntities = new HashSet<E>();
         for (E entity : entities) {
             refreshedEntities.add(refreshOrRetrieve(entity));
+        }
+
+        return refreshedEntities;
+    }
+
+    /**
+     * Retrieve an entity if it is not managed by EM
+     * 
+     * @param entity Entity to retrieve
+     * @return New instance of an entity
+     */
+    @Override
+    public E retrieveIfNotManaged(E entity) {
+
+        if (entity.getId() == null) {
+            return entity;
+        }
+
+        // Entity is managed already
+        if (getEntityManager().contains(entity)) {
+            return entity;
+
+        } else {
+            return findById((Long) entity.getId());
+        }
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#retrieveIfNotManaged(java.util.List)
+     */
+    @Override
+    public List<E> retrieveIfNotManaged(List<E> entities) {
+
+        if (entities == null) {
+            return null;
+        }
+
+        List<E> refreshedEntities = new ArrayList<E>();
+        for (E entity : entities) {
+            refreshedEntities.add(retrieveIfNotManaged(entity));
+        }
+
+        return refreshedEntities;
+    }
+
+    @Override
+    public Set<E> retrieveIfNotManaged(Set<E> entities) {
+
+        if (entities == null) {
+            return null;
+        }
+
+        Set<E> refreshedEntities = new HashSet<E>();
+        for (E entity : entities) {
+            refreshedEntities.add(retrieveIfNotManaged(entity));
         }
 
         return refreshedEntities;
@@ -643,36 +705,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
      * same in case when quering a customer account: customer.code=aaa OR customer=aaa
      * 
-     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
-     * sellers=code1,code2
+     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList sellers=code1,code2
      * 
      * 
-     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists 
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists
      * 
      * 
      * Examples:
      * <ul>
-     * <li>invoice number equals "1578AU":
-     * Filter key: invoiceNumber. Filter value: 1578AU</li>
-     * <li>invoice number is not "1578AU":
-     * Filter key: ne invoiceNumber. Filter value: 1578AU</li>
-     * <li>invoice number is null:
-     * Filter key: invoiceNumber. Filter value: IS_NULL</li>
-     * <li>invoice number is not empty:
-     * Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
-     * <li>Invoice date is between 2017-05-01 and 2017-06-01:
-     * Filter key: fromRange invoiceDate. Filter value: 2017-05-01
-     * Filter key: toRange invoiceDate. Filter value: 2017-06-01</li>
-     * <li>Date is between creation and update dates:
-     * Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
-     * <li>invoice number is any of 158AU, 159KU or 189LL:
-     * Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
-     * <li>any of param1, param2 or param3 fields contains "energy":
-     * Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
-     * <li>any of param1, param2 or param3 fields start with "energy":
-     * Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
-     * <li>any of param1, param2 or param3 fields is "energy":
-     * Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
+     * <li>invoice number equals "1578AU": Filter key: invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is not "1578AU": Filter key: ne invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is null: Filter key: invoiceNumber. Filter value: IS_NULL</li>
+     * <li>invoice number is not empty: Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
+     * <li>Invoice date is between 2017-05-01 and 2017-06-01: Filter key: fromRange invoiceDate. Filter value: 2017-05-01 Filter key: toRange invoiceDate. Filter value:
+     * 2017-06-01</li>
+     * <li>Date is between creation and update dates: Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
+     * <li>invoice number is any of 158AU, 159KU or 189LL: Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
+     * <li>any of param1, param2 or param3 fields contains "energy": Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
+     * <li>any of param1, param2 or param3 fields start with "energy": Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
+     * <li>any of param1, param2 or param3 fields is "energy": Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
      * </ul>
      * 
      * 
@@ -986,21 +1037,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return false;
     }
 
-    public EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
-
-        // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-        // em.hashCode());
-        return result;
-    }
-
     public void updateAudit(E e) {
         if (e instanceof IAuditable) {
             ((IAuditable) e).updateAudit(currentUser);
@@ -1025,5 +1061,35 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         return q.getResultList();
+    }
+
+    public EntityManager getEntityManager() {
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                return em;
+            } catch (Exception e) {
+                return emfForJobs;
+            }
+        }
+
+        return emfForJobs;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery q = session.createSQLQuery(query);
+
+        q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                q.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        List<Map<String, Object>> aliasToValueMapList = q.list();
+
+        return aliasToValueMapList;
     }
 }

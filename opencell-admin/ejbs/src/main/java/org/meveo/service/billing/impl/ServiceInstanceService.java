@@ -48,13 +48,16 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
  * ServiceInstanceService.
  * 
+ * @author Edward P. Legaspi
  * @author anasseh
- *
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -93,6 +96,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      */
     @Inject
     ServiceTemplateService serviceTemplateService;
+    
+    
+    ParamBean paramBean = ParamBean.getInstance();
+
+    @Inject
+    private OrderHistoryService orderHistoryService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -129,6 +138,42 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return serviceInstances;
     }
+    
+    /**
+     * Find a service instance list by subscription entity, service template code and service instance status list.
+     * 
+     * @param code the service template code
+     * @param subscriptionCode the subscription entity
+     * @param statuses service instance statuses
+     * @return the ServiceInstance list found
+     */
+    @SuppressWarnings("unchecked")
+    public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, String subscriptionCode, InstanceStatusEnum... statuses) {
+        List<ServiceInstance> serviceInstances = null;
+        try {
+            log.debug("start of find {} by code and subscription/status (code={}) ..", "ServiceInstance", code);
+            QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+            qb.addCriterion("c.code", "=", code, true);
+            qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+            qb.startOrClause();
+            if (statuses != null && statuses.length > 0) {
+                for (InstanceStatusEnum status : statuses) {
+                    qb.addCriterionEnum("c.status", status);
+                }
+            }
+            qb.endOrClause();
+
+            serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by code and subscription/status (code={}). Result found={}.", "ServiceInstance", code,
+                serviceInstances != null && !serviceInstances.isEmpty());
+        } catch (NoResultException nre) {
+            log.debug("findByCodeAndSubscription : no service has been found");
+        } catch (Exception e) {
+            log.error("findByCodeAndSubscription error={} ", e);
+        }
+
+        return serviceInstances;
+    }
 
     /**
      * Instantiate a service
@@ -143,6 +188,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
+     * 
      * @param serviceInstance service instance to instantiate
      * @param descriptionOverride overridden description
      * @throws IncorrectSusbcriptionException incorrect subscription exception
@@ -176,12 +222,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
      * @param serviceInstance service instance
      * @param descriptionOverride overridden description
      * @param subscriptionAmount subscription amount
      * @param terminationAmount termination amount
      * @param isVirtual true/false
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws BusinessException {
@@ -197,7 +248,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("Subscription is not active");
         }
         if (!isVirtual) {
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
                 if (serviceInstances != null && !serviceInstances.isEmpty()) {
                     throw new IncorrectServiceInstanceException(
@@ -261,6 +312,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
             }
         }
+        
+        if(serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
+            orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
+        }
     }
 
     /**
@@ -274,12 +329,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            throws BusinessException {
         serviceActivation(serviceInstance, true, amountWithoutTax, amountWithoutTax2);
     }
 
     /**
      * Activate a service, the subscription charges can be applied or not.
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
      * @param serviceInstance service instance
      * @param applySubscriptionCharges true/false
@@ -288,6 +344,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -309,7 +368,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("Can not activate a ServiceInstance that is " + serviceInstance.getStatus());
         }
 
-        if (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+        if (!paramBean.isServiceMultiInstantiation()) {
             List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceInstance.getCode(), subscription, InstanceStatusEnum.ACTIVE);
             if (serviceInstances != null && !serviceInstances.isEmpty()) {
                 throw new IncorrectServiceInstanceException(
@@ -374,6 +433,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.activateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
         }
+        
+        if(serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
+            orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
+        }
     }
 
     /**
@@ -410,7 +473,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
-            String orderNumber, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            String orderNumber, SubscriptionTerminationReason terminationReason) throws BusinessException {
 
         if (serviceInstance.getId() != null) {
             log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);
@@ -427,7 +490,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
             throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
-        serviceInstance = refreshOrRetrieve(serviceInstance);
 
         // execute termination script
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
@@ -668,6 +730,29 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return entity;
 
+    }
+
+    /**
+     * Check of service template has any instances
+     * 
+     * @param serviceTemplate Service template
+     * @param status Instance status. Opptional
+     * @return True if any instances are found
+     */
+    public boolean hasInstances(ServiceTemplate serviceTemplate, InstanceStatusEnum status) {
+        QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
+
+        try {
+            qb.addCriterionEntity("serviceTemplate", serviceTemplate);
+
+            if (status != null) {
+                qb.addCriterionEnum("status", status);
+            }
+
+            return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult()).longValue() > 0;
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")

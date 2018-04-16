@@ -61,7 +61,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
                 chargeTemplate.getEdrTemplates().add(edrTemplate);
             }
         }
-        chargeTemplate.setChargeInstances(null);
         chargeTemplate.setCode(code);
         create(chargeTemplate);
     }
@@ -70,7 +69,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
      * @param table name of table(cat_serv_usage_charge_template, cat_serv_rec_charge_template, cat_serv_sub_charge_template, cat_serv_trm_charge_template)
      * @param chargeId id of the charge which is used to check
      * @return list of service's Id linked to charge
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     @SuppressWarnings("unchecked")
     private synchronized List<Long> getServiceIdsLinkedToCharge(String table, Long chargeId) throws BusinessException {
@@ -96,7 +95,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
      * @param table name of table(cat_serv_usage_charge_template, cat_serv_rec_charge_template, cat_serv_sub_charge_template, cat_serv_trm_charge_template)
      * @param chargeId id of the charge which is used to check
      * @return list of service's Id linked to charge
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private synchronized int remove(String table, Long chargeId) throws BusinessException {
         int result = 0;

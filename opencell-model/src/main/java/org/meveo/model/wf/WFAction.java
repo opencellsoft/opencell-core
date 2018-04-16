@@ -39,34 +39,35 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "uuid"})
-@Table(name = "wf_action", uniqueConstraints = @UniqueConstraint(columnNames = {"uuid" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_action_seq"), })
+@ExportIdentifier({ "uuid" })
+@Table(name = "wf_action", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "wf_action_seq"), })
 @NamedQueries({ @NamedQuery(name = "WFAction.listByTransition", query = "SELECT wfa FROM WFAction wfa where  wfa.wfTransition=:wfTransition order by priority ASC") })
 public class WFAction extends EnableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-	@Column(name = "action_el", length = 2000)
-	@Size(max = 2000)
+    @Column(name = "action_el", length = 2000)
+    @Size(max = 2000)
     @NotNull
-	private String actionEl;
+    private String actionEl;
 
-	@Column(name = "priority")
-	private int priority;
-	
-	@Column(name = "condition_el", length = 2000)
-	@Size(max = 2000)
-	private String conditionEl;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "wf_transition_id")
-	private WFTransition wfTransition;
+    @Column(name = "priority")
+    private int priority;
+
+    @Column(name = "condition_el", length = 2000)
+    @Size(max = 2000)
+    private String conditionEl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wf_transition_id")
+    private WFTransition wfTransition;
 
     public String getUuid() {
         return uuid;
@@ -77,54 +78,54 @@ public class WFAction extends EnableEntity {
     }
 
     /**
-	 * @return the actionEl
-	 */
-	public String getActionEl() {
-		return actionEl;
-	}
+     * @return the actionEl
+     */
+    public String getActionEl() {
+        return actionEl;
+    }
 
-	/**
-	 * @param actionEl the actionEl to set
-	 */
-	public void setActionEl(String actionEl) {
-		this.actionEl = actionEl;
-	}
+    /**
+     * @param actionEl the actionEl to set
+     */
+    public void setActionEl(String actionEl) {
+        this.actionEl = actionEl;
+    }
 
-	/**
-	 * @return the priority
-	 */
-	public int getPriority() {
-		return priority;
-	}
+    /**
+     * @return the priority
+     */
+    public int getPriority() {
+        return priority;
+    }
 
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	/**
-	 * @return the wfTransition
-	 */
-	public WFTransition getWfTransition() {
-		return wfTransition;
-	}
+    /**
+     * @return the wfTransition
+     */
+    public WFTransition getWfTransition() {
+        return wfTransition;
+    }
 
-	/**
-	 * @param wfTransition the wfTransition to set
-	 */
-	public void setWfTransition(WFTransition wfTransition) {
-		this.wfTransition = wfTransition;
-	}
+    /**
+     * @param wfTransition the wfTransition to set
+     */
+    public void setWfTransition(WFTransition wfTransition) {
+        this.wfTransition = wfTransition;
+    }
 
-	public String getConditionEl() {
-		return conditionEl;
-	}
+    public String getConditionEl() {
+        return conditionEl;
+    }
 
-	public void setConditionEl(String conditionEl) {
-		this.conditionEl = conditionEl;
-	}
+    public void setConditionEl(String conditionEl) {
+        this.conditionEl = conditionEl;
+    }
 
     public String getUserGroupCode() {
         if (!StringUtils.isBlank(actionEl) && actionEl.indexOf(",") >= 0) {
@@ -136,16 +137,13 @@ public class WFAction extends EnableEntity {
         return null;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        return 961 + ("WfAction" + id).hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -154,27 +152,27 @@ public class WFAction extends EnableEntity {
         } else if (!(obj instanceof WFAction)) {
             return false;
         }
-        
-		WFAction other = (WFAction) obj;
-		if (getId() == null) {
+
+        WFAction other = (WFAction) obj;
+        if (getId() == null) {
             if (other.getId() != null) {
-				return false;
+                return false;
             }
         } else if (!getId().equals(other.getId())) {
-			return false;
+            return false;
         }
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("WFAction [actionEl=%s, conditionEl=%s]", actionEl, conditionEl);
-	}
+    @Override
+    public String toString() {
+        return String.format("WFAction [actionEl=%s, conditionEl=%s]", actionEl, conditionEl);
+    }
 
-	public String clearUuid() {
-		String oldUuid = uuid;
-		uuid = UUID.randomUUID().toString();
-		return oldUuid;
-	}
-    
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
+
 }

@@ -258,8 +258,8 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     /**
      * Define a new entity action
      * 
-     * @param dto
-     * @return
+     * @param dto The entity custom action dto
+     * @return The action status dto
      */
     @Override
     public ActionStatus createAction(EntityCustomActionDto dto) {
@@ -278,8 +278,8 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     /**
      * Update existing entity action definition
      * 
-     * @param dto
-     * @return
+     * @param dto The entity custom action dto
+     * @return The action status dto
      */
     @Override
     public ActionStatus updateAction(EntityCustomActionDto dto) {
@@ -300,7 +300,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      * 
      * @param actionCode Entity action code
      * @param appliesTo Entity that action applies to
-     * @return
+     * @return The action status dto
      */
     @Override
     public ActionStatus removeAction(String actionCode, String appliesTo) {
@@ -322,7 +322,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      * 
      * @param actionCode Entity action code
      * @param appliesTo Entity that action applies to
-     * @return
+     * @return The entity action definition dto
      */
     @Override
     public EntityCustomActionResponseDto findAction(String actionCode, String appliesTo) {
@@ -342,8 +342,8 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     /**
      * Define new or update existing entity action definition
      * 
-     * @param dto
-     * @return
+     * @param dto The entity custom action dto
+     * @return The action status dto
      */
     @Override
     public ActionStatus createOrUpdateAction(EntityCustomActionDto dto) {
@@ -379,6 +379,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      * Get customizations made on a standard Meveo entity given its class
      * 
      * @param customizedEntityClass Standard Meveo entity class name
+     * @return The entity customization response dto
      */
     @Override
     public EntityCustomizationResponseDto findEntityCustomizations(String customizedEntityClass) {

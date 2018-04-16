@@ -31,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -92,6 +93,12 @@ public class JobInstance extends BusinessCFEntity {
     @Column(name = "single_node", nullable = false)
     @NotNull
     private boolean limitToSingleNode = true;
+
+    /**
+     * Code of provider, that job belongs to
+     */
+    @Transient
+    private String providerCode;
 
     /**
      * @return the jobTemplate
@@ -225,4 +232,13 @@ public class JobInstance extends BusinessCFEntity {
         return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres,
             jobCategoryEnum, timerEntity, followingJob != null ? followingJob.getCode() : null);
     }
+
+    public String getProviderCode() {
+        return providerCode;
+    }
+
+    public void setProviderCode(String providerCode) {
+        this.providerCode = providerCode;
+    }
+
 }

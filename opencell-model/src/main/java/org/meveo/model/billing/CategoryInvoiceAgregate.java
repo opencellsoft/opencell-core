@@ -33,74 +33,73 @@ import javax.persistence.OneToMany;
 @DiscriminatorValue("R")
 public class CategoryInvoiceAgregate extends InvoiceAgregate {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoicecategory")
-	private InvoiceCategory invoiceCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoicecategory")
+    private InvoiceCategory invoiceCategory;
 
-	@OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
+    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
 
-	public CategoryInvoiceAgregate() {
+    public CategoryInvoiceAgregate() {
 
-	}
+    }
 
-	public CategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
-		this.setInvoiceCategory(categoryInvoiceAgregate.getInvoiceCategory());
-		this.setItemNumber(categoryInvoiceAgregate.getItemNumber());
-		this.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-		this.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
-		this.setAmountTax(categoryInvoiceAgregate.getAmountTax());
-		this.setBillingAccount(categoryInvoiceAgregate.getBillingAccount());
-		this.setBillingRun(categoryInvoiceAgregate.getBillingRun());
-		this.setUserAccount(categoryInvoiceAgregate.getUserAccount());
-		this.setDiscountAggregate(false);
-	}
+    public CategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
+        this.setInvoiceCategory(categoryInvoiceAgregate.getInvoiceCategory());
+        this.setItemNumber(categoryInvoiceAgregate.getItemNumber());
+        this.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+        this.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+        this.setAmountTax(categoryInvoiceAgregate.getAmountTax());
+        this.setBillingAccount(categoryInvoiceAgregate.getBillingAccount());
+        this.setBillingRun(categoryInvoiceAgregate.getBillingRun());
+        this.setUserAccount(categoryInvoiceAgregate.getUserAccount());
+        this.setDiscountAggregate(false);
+    }
 
-	public InvoiceCategory getInvoiceCategory() {
-		return invoiceCategory;
-	}
+    public InvoiceCategory getInvoiceCategory() {
+        return invoiceCategory;
+    }
 
-	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
-		this.invoiceCategory = invoiceCategory;
-	}
+    public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
+        this.invoiceCategory = invoiceCategory;
+    }
 
-	public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
-		return subCategoryInvoiceAgregates;
-	}
+    public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
+        return subCategoryInvoiceAgregates;
+    }
 
-	public void setSubCategoryInvoiceAgregates(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
-		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
-	}
+    public void setSubCategoryInvoiceAgregates(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
+        this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
+    }
 
-	public void addSubCategoryInvoiceAggregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
-		if (subCategoryInvoiceAgregates == null) {
-			subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
-		}
+    public void addSubCategoryInvoiceAggregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+        if (subCategoryInvoiceAgregates == null) {
+            subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
+        }
 
-		if (subCategoryInvoiceAgregate != null) {
-			if (!subCategoryInvoiceAgregates.contains(subCategoryInvoiceAgregate)) {
-				subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
-			}
-		}
-	}
+        if (subCategoryInvoiceAgregate != null) {
+            if (!subCategoryInvoiceAgregates.contains(subCategoryInvoiceAgregate)) {
+                subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+            }
+        }
+    }
 
-	@Override
-	public int hashCode() {
-		if (id != null)
-			return id.intValue();
-		if (invoiceCategory != null)
-			return invoiceCategory.hashCode();
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.intValue();
+        }
+        if (invoiceCategory != null) {
+            return invoiceCategory.hashCode();
+        }
 
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result;
-		return result;
-	}
+        return 961;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -108,14 +107,18 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
         } else if (!(obj instanceof CategoryInvoiceAgregate)) {
             return false;
         }
-        
-		CategoryInvoiceAgregate other = (CategoryInvoiceAgregate) obj;
-		if (invoiceCategory == null) {
-			if (other.getInvoiceCategory() != null)
-				return false;
-		} else if (!invoiceCategory.equals(other.getInvoiceCategory()))
-			return false;
-		return true;
-	}
+
+        CategoryInvoiceAgregate other = (CategoryInvoiceAgregate) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (invoiceCategory == null) {
+            if (other.getInvoiceCategory() != null)
+                return false;
+        } else if (!invoiceCategory.equals(other.getInvoiceCategory()))
+            return false;
+        return true;
+    }
 
 }

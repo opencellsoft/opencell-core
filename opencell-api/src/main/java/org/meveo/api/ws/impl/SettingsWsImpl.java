@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BillingCycleApi;
 import org.meveo.api.CalendarApi;
 import org.meveo.api.ConfigurationApi;
@@ -76,6 +77,7 @@ import org.meveo.api.dto.response.GetInvoiceTypesResponse;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
+import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
@@ -86,6 +88,7 @@ import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
@@ -102,11 +105,15 @@ import org.meveo.api.ws.SettingsWs;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @SuppressWarnings("deprecation")
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
+    
+    @Inject
+    private OccTemplateApi occTemplateApi;
 
     @Inject
     private CustomFieldTemplateApi customFieldTemplateApi;
@@ -146,9 +153,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private CalendarApi calendarApi;
-
-    @Inject
-    private OccTemplateApi occTemplateApi;
 
     @Inject
     private PermissionApi permissionApi;
@@ -521,7 +525,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.create(postData);
+            throw new BusinessException("There should already be a provider setup");
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1941,6 +1945,21 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         } catch (Exception e) {
             processException(e, result);
         }
+        return result;
+    }
+    
+    @Override
+    public GetOccTemplatesResponseDto listOccTemplate(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+        GetOccTemplatesResponseDto result = new GetOccTemplatesResponseDto();
+
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(query, null, offset, limit, sortBy, sortOrder);
+        
+        try {
+            result = occTemplateApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
         return result;
     }
    

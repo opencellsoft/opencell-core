@@ -32,6 +32,10 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ */
 @Stateful
 public class InvoiceAgregateHandler {
 	private Logger log = LoggerFactory.getLogger(InvoiceAgregateHandler.class);
@@ -46,6 +50,10 @@ public class InvoiceAgregateHandler {
 
 	@Inject 
 	private InvoiceSubCategoryService invoiceSubCategoryService;	
+	
+	@Inject 
+    private BillingAccountService billingAccountService;    
+    
 	
     @Inject
     @CurrentUser
@@ -164,6 +172,7 @@ public class InvoiceAgregateHandler {
     }
 
 	/**
+	 * v5.0: Fix tax added to invoice net amount when a customer has "no tax applied"
 	 * 
 	 * @param invoiceSubCategory invoice sub-category
 	 * @param billingAccount billing account
@@ -173,7 +182,11 @@ public class InvoiceAgregateHandler {
 	 * @param ratedTransaction rated transaction.
 	 * @param isToAdd  true if it is to be added.
 	 * @throws BusinessException business exception
+	 * 
+	 * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
 	 */
+    
     public void addOrRemoveLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
             RatedTransaction ratedTransaction, boolean isToAdd) throws BusinessException {
         log.debug("addOrRemoveLine amountWithoutTax {} ...", amountWithoutTax);
@@ -192,9 +205,13 @@ public class InvoiceAgregateHandler {
 			throw new BusinessException("AmountWithoutTax is null");
 		}
 
-        amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
+		if(billingAccountService.isExonerated(billingAccount)) {
+		    amountWithTax = amountWithoutTax;
+		} else {
+		    amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
+		    amountTax = getAmountTax(amountWithTax, amountWithoutTax);
+		}
         log.trace("addOrRemoveLine amountWithTax {}", amountWithTax);
-        amountTax = getAmountTax(amountWithTax, amountWithoutTax);
         log.trace("addOrRemoveLine amountTax {}", amountTax);
 
         invoiceAmountWithoutTax = addOrSubtract(invoiceAmountWithoutTax, amountWithoutTax, isToAdd);
@@ -317,11 +334,13 @@ public class InvoiceAgregateHandler {
                             || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
                     && matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
 
-                if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
-                    currentTax = invoicesubcatCountry.getTax();
-                } else {
+                
+                if (!StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
                     currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, null);
-                }
+                 }else {
+                     currentTax = invoicesubcatCountry.getTax();
+                 }                
+               
                 if (currentTax != null) {
                     return currentTax;
                 }

@@ -6,16 +6,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
 
+/**
+ * The Class DiscountPlanDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "DiscountPlan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DiscountPlanDto extends BusinessDto {
 
-	private static final long serialVersionUID = 1L;
-		
-	@Override
-	public String toString() {
-		return "DiscountPlanDto [code=" + getCode() + ", description=" + getDescription()
-				+ "]";
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public String toString() {
+        return "DiscountPlanDto [code=" + getCode() + ", description=" + getDescription() + "]";
+    }
 
 }

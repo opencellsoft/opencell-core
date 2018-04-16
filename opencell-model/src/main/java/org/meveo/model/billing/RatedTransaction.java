@@ -42,6 +42,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.rating.EDR;
@@ -106,7 +107,7 @@ import org.meveo.model.rating.EDR;
                 + " WHERE r.invoice=:invoice AND r.wallet IS null"),
         
         @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)") })
-public class RatedTransaction extends BaseEntity {
+public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -229,7 +230,7 @@ public class RatedTransaction extends BaseEntity {
     @JoinColumn(name = "edr_id")
     private EDR edr;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adjusted_rated_tx")
     private RatedTransaction adjustedRatedTx;
 

@@ -9,29 +9,42 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class TaxesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "Taxes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaxesDto implements Serializable {
 
-	private static final long serialVersionUID = 2521572799898861284L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 2521572799898861284L;
 
-	private List<TaxDto> tax;
+    /** The tax. */
+    private List<TaxDto> tax;
 
-	public List<TaxDto> getTax() {
-		if (tax == null)
-			tax = new ArrayList<TaxDto>();
-		return tax;
-	}
+    /**
+     * Gets the tax.
+     *
+     * @return the tax
+     */
+    public List<TaxDto> getTax() {
+        if (tax == null)
+            tax = new ArrayList<TaxDto>();
+        return tax;
+    }
 
-	public void setTax(List<TaxDto> tax) {
-		this.tax = tax;
-	}
+    /**
+     * Sets the tax.
+     *
+     * @param tax the new tax
+     */
+    public void setTax(List<TaxDto> tax) {
+        this.tax = tax;
+    }
 
-	@Override
-	public String toString() {
-		return "TaxesDto [tax=" + tax + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "TaxesDto [tax=" + tax + "]";
+    }
 }

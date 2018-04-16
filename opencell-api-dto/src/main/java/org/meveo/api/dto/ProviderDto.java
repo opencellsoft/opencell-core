@@ -11,255 +11,499 @@ import org.meveo.api.dto.invoice.InvoiceConfigurationDto;
 import org.meveo.model.crm.Provider;
 
 /**
+ * The Class ProviderDto.
+ *
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "Provider")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProviderDto extends BaseDto {
 
-	private static final long serialVersionUID = 5599223889050605880L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5599223889050605880L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    /** The code. */
+    @XmlAttribute(required = true)
+    private String code;
 
-	private String description;
-	private String currency;
-	private String country;
-	private String language;
-	private Boolean multiCurrency;
-	private Boolean multiCountry;
-	private Boolean multiLanguage;
-	private String userAccount;
-	
-	private Boolean enterprise;
-	private Boolean levelDuplication;	
-	private Integer rounding;
-	private Long prepaidReservationExpirationDelayinMillisec;
-	private String discountAccountingCode;
-	private String email;
-	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	private Boolean recognizeRevenue;
-	private InvoiceConfigurationDto invoiceConfiguration = new InvoiceConfigurationDto();
+    /** The description. */
+    private String description;
+    
+    /** The currency. */
+    private String currency;
+    
+    /** The country. */
+    private String country;
+    
+    /** The language. */
+    private String language;
+    
+    /** The multi currency. */
+    private Boolean multiCurrency;
+    
+    /** The multi country. */
+    private Boolean multiCountry;
+    
+    /** The multi language. */
+    private Boolean multiLanguage;
+    
+    /** The user account. */
+    private String userAccount;
 
-	@XmlElement(required = false)
-	private CustomFieldsDto customFields;
+    /** The enterprise. */
+    private Boolean enterprise;
+    
+    /** The level duplication. */
+    private Boolean levelDuplication;
+    
+    /** The rounding. */
+    private Integer rounding;
+    
+    /** The prepaid reservation expiration delayin millisec. */
+    private Long prepaidReservationExpirationDelayinMillisec;
+    
+    /**
+     * The discount accounting code.
+     *
+     * @deprecated Not used.
+     */
+    @Deprecated
+    private String discountAccountingCode;
+    
+    /** The email. */
+    private String email;
+    
+    /** The bank coordinates. */
+    private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
+    
+    /** The recognize revenue. */
+    private Boolean recognizeRevenue;
+    
+    /** The invoice configuration. */
+    private InvoiceConfigurationDto invoiceConfiguration = new InvoiceConfigurationDto();
 
-	public ProviderDto() {
-	}
-	
-	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
-		this(e, customFieldInstances, true);
-	}
+    /** The custom fields. */
+    @XmlElement(required = false)
+    private CustomFieldsDto customFields;
 
-	public ProviderDto(Provider provider, CustomFieldsDto customFieldInstances, boolean loadProviderData) {
-		code = provider.getCode();
-		
-		if (loadProviderData) {			
-			description = provider.getDescription();			
-			if (provider.getCurrency() != null) {
-				currency = provider.getCurrency().getCurrencyCode();
-			}
-			if (provider.getCountry() != null) {
-				country = provider.getCountry().getCountryCode();
-			}
-			if (provider.getLanguage() != null) {
-				language = provider.getLanguage().getLanguageCode();
-			}
-			multiCurrency = provider.getMulticurrencyFlag();
-			multiCountry = provider.getMulticountryFlag();
-			multiLanguage = provider.getMultilanguageFlag();
-			rounding = provider.getRounding();
-			prepaidReservationExpirationDelayinMillisec = provider.getPrepaidReservationExpirationDelayinMillisec();
-			discountAccountingCode = provider.getDiscountAccountingCode();
-			email = provider.getEmail();			
+    /**
+     * Instantiates a new provider dto.
+     */
+    public ProviderDto() {
+    }
 
-			this.setEnterprise(provider.isEntreprise());
-			this.setLevelDuplication(provider.isLevelDuplication());
-			
-			this.setRecognizeRevenue(provider.isRecognizeRevenue());
+    /**
+     * Instantiates a new provider dto.
+     *
+     * @param e the e
+     * @param customFieldInstances the custom field instances
+     */
+    public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
+        this(e, customFieldInstances, true);
+    }
 
-			if (provider.getBankCoordinates() != null) {
-				this.setBankCoordinates(new BankCoordinatesDto(provider.getBankCoordinates()));
-			}
+    /**
+     * Instantiates a new provider dto.
+     *
+     * @param provider the provider
+     * @param customFieldInstances the custom field instances
+     * @param loadProviderData the load provider data
+     */
+    public ProviderDto(Provider provider, CustomFieldsDto customFieldInstances, boolean loadProviderData) {
+        code = provider.getCode();
 
-			if (provider.getInvoiceConfiguration() != null) {
-				this.setInvoiceConfiguration(new InvoiceConfigurationDto(provider.getInvoiceConfiguration()));
-			}else{
-				this.setInvoiceConfiguration(new InvoiceConfigurationDto());
-			}
-			this.getInvoiceConfiguration().setDisplayFreeTransacInInvoice(provider.isDisplayFreeTransacInInvoice());
-		}
-		
-		customFields = customFieldInstances;
-	}
+        if (loadProviderData) {
+            description = provider.getDescription();
+            if (provider.getCurrency() != null) {
+                currency = provider.getCurrency().getCurrencyCode();
+            }
+            if (provider.getCountry() != null) {
+                country = provider.getCountry().getCountryCode();
+            }
+            if (provider.getLanguage() != null) {
+                language = provider.getLanguage().getLanguageCode();
+            }
+            multiCurrency = provider.getMulticurrencyFlag();
+            multiCountry = provider.getMulticountryFlag();
+            multiLanguage = provider.getMultilanguageFlag();
+            rounding = provider.getRounding();
+            prepaidReservationExpirationDelayinMillisec = provider.getPrepaidReservationExpirationDelayinMillisec();
+            discountAccountingCode = provider.getDiscountAccountingCode();
+            email = provider.getEmail();
 
-	public String getCode() {
-		return code;
-	}
+            this.setEnterprise(provider.isEntreprise());
+            this.setLevelDuplication(provider.isLevelDuplication());
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+            this.setRecognizeRevenue(provider.isRecognizeRevenue());
 
-	public String getDescription() {
-		return description;
-	}
+            if (provider.getBankCoordinates() != null) {
+                this.setBankCoordinates(new BankCoordinatesDto(provider.getBankCoordinates()));
+            }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+            if (provider.getInvoiceConfiguration() != null) {
+                this.setInvoiceConfiguration(new InvoiceConfigurationDto(provider.getInvoiceConfiguration()));
+            } else {
+                this.setInvoiceConfiguration(new InvoiceConfigurationDto());
+            }
+            this.getInvoiceConfiguration().setDisplayFreeTransacInInvoice(provider.isDisplayFreeTransacInInvoice());
+        }
 
-	public String getCurrency() {
-		return currency;
-	}
+        customFields = customFieldInstances;
+    }
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	public String getCountry() {
-		return country;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public String getLanguage() {
-		return language;
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+    /**
+     * Gets the currency.
+     *
+     * @return the currency
+     */
+    public String getCurrency() {
+        return currency;
+    }
 
-	public Boolean isMultiCurrency() {
-		return multiCurrency;
-	}
+    /**
+     * Sets the currency.
+     *
+     * @param currency the new currency
+     */
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
-	public void setMultiCurrency(Boolean multiCurrency) {
-		this.multiCurrency = multiCurrency;
-	}
+    /**
+     * Gets the country.
+     *
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
 
-	public Boolean isMultiCountry() {
-		return multiCountry;
-	}
+    /**
+     * Sets the country.
+     *
+     * @param country the new country
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public void setMultiCountry(Boolean multiCountry) {
-		this.multiCountry = multiCountry;
-	}
+    /**
+     * Gets the language.
+     *
+     * @return the language
+     */
+    public String getLanguage() {
+        return language;
+    }
 
-	public Boolean isMultiLanguage() {
-		return multiLanguage;
-	}
+    /**
+     * Sets the language.
+     *
+     * @param language the new language
+     */
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
-	public void setMultiLanguage(Boolean multiLanguage) {
-		this.multiLanguage = multiLanguage;
-	}
+    /**
+     * Checks if is multi currency.
+     *
+     * @return the boolean
+     */
+    public Boolean isMultiCurrency() {
+        return multiCurrency;
+    }
 
-	public String getUserAccount() {
-		return userAccount;
-	}
+    /**
+     * Sets the multi currency.
+     *
+     * @param multiCurrency the new multi currency
+     */
+    public void setMultiCurrency(Boolean multiCurrency) {
+        this.multiCurrency = multiCurrency;
+    }
 
-	public void setUserAccount(String userAccount) {
-		this.userAccount = userAccount;
-	}
+    /**
+     * Checks if is multi country.
+     *
+     * @return the boolean
+     */
+    public Boolean isMultiCountry() {
+        return multiCountry;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /**
+     * Sets the multi country.
+     *
+     * @param multiCountry the new multi country
+     */
+    public void setMultiCountry(Boolean multiCountry) {
+        this.multiCountry = multiCountry;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    /**
+     * Checks if is multi language.
+     *
+     * @return the boolean
+     */
+    public Boolean isMultiLanguage() {
+        return multiLanguage;
+    }
 
+    /**
+     * Sets the multi language.
+     *
+     * @param multiLanguage the new multi language
+     */
+    public void setMultiLanguage(Boolean multiLanguage) {
+        this.multiLanguage = multiLanguage;
+    }
 
-	public Boolean isEnterprise() {
-		return enterprise;
-	}
+    /**
+     * Gets the user account.
+     *
+     * @return the user account
+     */
+    public String getUserAccount() {
+        return userAccount;
+    }
 
-	public void setEnterprise(Boolean enterprise) {
-		this.enterprise = enterprise;
-	}
+    /**
+     * Sets the user account.
+     *
+     * @param userAccount the new user account
+     */
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public Boolean isLevelDuplication() {
-		return levelDuplication;
-	}
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public void setLevelDuplication(Boolean levelDuplication) {
-		this.levelDuplication = levelDuplication;
-	}
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-	public BankCoordinatesDto getBankCoordinates() {
-		return bankCoordinates;
-	}
+    /**
+     * Checks if is enterprise.
+     *
+     * @return the boolean
+     */
+    public Boolean isEnterprise() {
+        return enterprise;
+    }
 
-	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
-		this.bankCoordinates = bankCoordinates;
-	}
+    /**
+     * Sets the enterprise.
+     *
+     * @param enterprise the new enterprise
+     */
+    public void setEnterprise(Boolean enterprise) {
+        this.enterprise = enterprise;
+    }
 
-	public InvoiceConfigurationDto getInvoiceConfiguration() {
-		return invoiceConfiguration;
-	}
+    /**
+     * Checks if is level duplication.
+     *
+     * @return the boolean
+     */
+    public Boolean isLevelDuplication() {
+        return levelDuplication;
+    }
 
-	public void setInvoiceConfiguration(InvoiceConfigurationDto invoiceConfiguration) {
-		this.invoiceConfiguration = invoiceConfiguration;
-	}
+    /**
+     * Sets the level duplication.
+     *
+     * @param levelDuplication the new level duplication
+     */
+    public void setLevelDuplication(Boolean levelDuplication) {
+        this.levelDuplication = levelDuplication;
+    }
 
-	public Integer getRounding() {
-		return rounding;
-	}
+    /**
+     * Gets the bank coordinates.
+     *
+     * @return the bank coordinates
+     */
+    public BankCoordinatesDto getBankCoordinates() {
+        return bankCoordinates;
+    }
 
-	public void setRounding(Integer rounding) {
-		this.rounding = rounding;
-	}
+    /**
+     * Sets the bank coordinates.
+     *
+     * @param bankCoordinates the new bank coordinates
+     */
+    public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
+        this.bankCoordinates = bankCoordinates;
+    }
 
-	public Long getPrepaidReservationExpirationDelayinMillisec() {
-		return prepaidReservationExpirationDelayinMillisec;
-	}
+    /**
+     * Gets the invoice configuration.
+     *
+     * @return the invoice configuration
+     */
+    public InvoiceConfigurationDto getInvoiceConfiguration() {
+        return invoiceConfiguration;
+    }
 
-	public void setPrepaidReservationExpirationDelayinMillisec(Long prepaidReservationExpirationDelayinMillisec) {
-		this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
-	}
+    /**
+     * Sets the invoice configuration.
+     *
+     * @param invoiceConfiguration the new invoice configuration
+     */
+    public void setInvoiceConfiguration(InvoiceConfigurationDto invoiceConfiguration) {
+        this.invoiceConfiguration = invoiceConfiguration;
+    }
 
-	public String getDiscountAccountingCode() {
-		return discountAccountingCode;
-	}
+    /**
+     * Gets the rounding.
+     *
+     * @return the rounding
+     */
+    public Integer getRounding() {
+        return rounding;
+    }
 
-	public void setDiscountAccountingCode(String discountAccountingCode) {
-		this.discountAccountingCode = discountAccountingCode;
-	}
+    /**
+     * Sets the rounding.
+     *
+     * @param rounding the new rounding
+     */
+    public void setRounding(Integer rounding) {
+        this.rounding = rounding;
+    }
 
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * Gets the prepaid reservation expiration delayin millisec.
+     *
+     * @return the prepaid reservation expiration delayin millisec
+     */
+    public Long getPrepaidReservationExpirationDelayinMillisec() {
+        return prepaidReservationExpirationDelayinMillisec;
+    }
 
-	/**
-	 * @param email
-	 *            the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * Sets the prepaid reservation expiration delayin millisec.
+     *
+     * @param prepaidReservationExpirationDelayinMillisec the new prepaid reservation expiration delayin millisec
+     */
+    public void setPrepaidReservationExpirationDelayinMillisec(Long prepaidReservationExpirationDelayinMillisec) {
+        this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
+    }
 
-	public Boolean isRecognizeRevenue() {
-		return recognizeRevenue;
-	}
+    /**
+     * Gets the discount accounting code.
+     *
+     * @return the discount accounting code
+     */
+    public String getDiscountAccountingCode() {
+        return discountAccountingCode;
+    }
 
-	public void setRecognizeRevenue(Boolean recognizeRevenue) {
-		this.recognizeRevenue = recognizeRevenue;
-	}
+    /**
+     * Sets the discount accounting code.
+     *
+     * @param discountAccountingCode the new discount accounting code
+     */
+    public void setDiscountAccountingCode(String discountAccountingCode) {
+        this.discountAccountingCode = discountAccountingCode;
+    }
 
-	@Override
-	public String toString() {
-		return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication +  ", rounding=" + rounding
-				+ ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
-	}
+    /**
+     * Gets the email.
+     *
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
 
+    /**
+     * Sets the email.
+     *
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	
+    /**
+     * Checks if is recognize revenue.
+     *
+     * @return the boolean
+     */
+    public Boolean isRecognizeRevenue() {
+        return recognizeRevenue;
+    }
+
+    /**
+     * Sets the recognize revenue.
+     *
+     * @param recognizeRevenue the new recognize revenue
+     */
+    public void setRecognizeRevenue(Boolean recognizeRevenue) {
+        this.recognizeRevenue = recognizeRevenue;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency="
+                + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise
+                + ", levelDuplication=" + levelDuplication + ", rounding=" + rounding + ", prepaidReservationExpirationDelayinMillisec="
+                + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates
+                + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
+    }
 
 }

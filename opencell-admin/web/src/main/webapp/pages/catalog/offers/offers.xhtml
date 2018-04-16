@@ -255,104 +255,58 @@
                                 </p:panel>
 
                                 <p:panel styleClass="VAlignTop Wid60 Responsive100">
-                                    <p:panel
-                                            styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
-                                        <f:facet name="header">
-                                            <h:outputText
-                                                    value="#{messages['marketingManager.catalog.OneTimeFee']}"
-                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]!=null}"/>
-                                        </f:facet>
-
+                                    <p:panel styleClass="Wid50 Responsive100 VAlignTop no-border-radius">
                                         <p:dataList styleClass="dataList" paginatorPosition="bottom"
                                                     paginatorAlwaysVisible="false"
-                                                    value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]}"
-                                                    var="service" type="ordered"
-                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]!=null}">
-                                            <h:outputText value="#{service.descriptionOrCode}"
-                                                          styleClass="text-bold"/>
-                                            <h:panelGroup layout="block">
-                                                <ul class="no-list-style">
-                                                    <ui:repeat var="charge"
-                                                               value="#{service.serviceSubscriptionCharges}">
-                                                        <li><h:outputText
-                                                                value="#{charge.chargeTemplate.descriptionOrCode}"/></li>
-                                                    </ui:repeat>
-                                                </ul>
-                                            </h:panelGroup>
+                                                    value="#{entity.offerServiceTemplates}"
+                                                    var="ost" type="ordered"
+                                                    rendered="#{entity.offerServiceTemplates!=null}">
+                                            <div class="ui-g ui-g-nopad">
+	                                            <div class="ui-g-2">
+	                                            	<p:graphicImage value="#{defaultImageStreamer.image}"
+	                                                            cache="false" width="100" height="100">
+		                                                <f:param name="providerCode" value="#{appProvider.code}"/>
+		                                                <f:param name="fileName" value="#{ost.serviceTemplate.imagePath}"/>
+		                                                <f:param name="pictureGroupName" value="service"/>
+		                                            </p:graphicImage>
+	                                           	</div>
+	                                           	<div class="ui-g-1"></div>
+												<div class="ui-g-9">
+													<div>
+														<h:outputText styleClass="text-bold" value="#{ost.serviceTemplate.descriptionOrCode}" />
+													</div>
+													<div>
+														<h:outputText value="#{of:abbreviate(ost.serviceTemplate.longDescription, 300)}" />
+													</div>
+												</div>
+											</div>
                                         </p:dataList>
                                     </p:panel>
-                                    <p:panel
-                                            styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
-                                        <f:facet name="header">
-                                            <h:outputText
-                                                    value="#{messages['marketingManager.catalog.recurringFee']}"
-                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]!=null}"/>
-                                        </f:facet>
+                                    <p:panel styleClass="Wid50 Responsive100 VAlignTop no-border-radius">
                                         <p:dataList styleClass="dataList" paginatorPosition="bottom"
                                                     paginatorAlwaysVisible="false"
-                                                    value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]}"
-                                                    var="service" type="ordered"
-                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]!=null}">
-                                            <h:outputText value="#{service.descriptionOrCode}"
-                                                          styleClass="text-bold"/>
-                                            <h:panelGroup layout="block">
-                                                <ul class="no-list-style">
-                                                    <ui:repeat var="charge"
-                                                               value="#{service.serviceRecurringCharges}">
-                                                        <li><h:outputText
-                                                                value="#{charge.chargeTemplate.descriptionOrCode}"/></li>
-                                                    </ui:repeat>
-                                                </ul>
-                                            </h:panelGroup>
-                                        </p:dataList>
-                                    </p:panel>
-                                    <p:panel
-                                            styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
-                                        <f:facet name="header">
-                                            <h:outputText
-                                                    value="#{messages['marketingManager.catalog.usageFee']}"
-                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}"/>
-                                        </f:facet>
-                                        <p:dataList styleClass="dataList" paginatorPosition="bottom"
-                                                    paginatorAlwaysVisible="false"
-                                                    value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]}"
-                                                    var="service" type="ordered"
-                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}">
-                                            <h:outputText value="#{service.descriptionOrCode}"
-                                                          styleClass="text-bold"/>
-                                            <h:panelGroup layout="block">
-                                                <ul class="no-list-style">
-                                                    <ui:repeat var="charge"
-                                                               value="#{service.serviceUsageCharges}">
-                                                        <li><h:outputText
-                                                                value="#{charge.chargeTemplate.descriptionOrCode}"/></li>
-                                                    </ui:repeat>
-                                                </ul>
-                                            </h:panelGroup>
-                                        </p:dataList>
-                                    </p:panel>
-                                    <p:panel
-                                            styleClass="Wid20 Responsive100 VAlignTop no-border-radius">
-                                        <f:facet name="header">
-                                            <h:outputText
-                                                    value="#{messages['menu.productTemplates']}"
-                                                    rendered="#{entity.productTemplates!=null and entity.productTemplates.size()!=0}"/>
-                                        </f:facet>
-                                        <p:dataList styleClass="dataList" paginatorPosition="bottom"
-                                                    paginatorAlwaysVisible="false"
-                                                    value="#{entity.productTemplates}"
-                                                    var="prod" type="ordered"
-                                                    rendered="#{entity.productTemplates!=null and entity.productTemplates.size()!=0}">
-                                            <h:outputText value="#{prod.descriptionOrCode}"
-                                                          styleClass="text-bold"/>
-                                            <h:panelGroup layout="block">
-                                                <ul class="no-list-style">
-                                                    <ui:repeat var="charge"
-                                                               value="#{prod.productChargeTemplates}">
-                                                        <li><h:outputText value="#{charge.descriptionOrCode}"/></li>
-                                                    </ui:repeat>
-                                                </ul>
-                                            </h:panelGroup>
+                                                    value="#{entity.offerProductTemplates}"
+                                                    var="opt" type="ordered"
+                                                    rendered="#{entity.offerProductTemplates!=null}">
+                                            <div class="ui-g ui-g-nopad">
+	                                            <div class="ui-g-2">
+	                                            	<p:graphicImage value="#{defaultImageStreamer.image}"
+	                                                            cache="false" width="100" height="100">
+		                                                <f:param name="providerCode" value="#{appProvider.code}"/>
+		                                                <f:param name="fileName" value="#{opt.productTemplate.imagePath}"/>
+		                                                <f:param name="pictureGroupName" value="product"/>
+		                                            </p:graphicImage>
+	                                           	</div>
+	                                           	<div class="ui-g-1"></div>
+												<div class="ui-g-9">
+													<div>
+														<h:outputText styleClass="text-bold" value="#{opt.productTemplate.descriptionOrCode}" />
+													</div>
+													<div>
+														<h:outputText value="#{of:abbreviate(opt.productTemplate.longDescription, 300)}" />
+													</div>
+												</div>
+											</div>
                                         </p:dataList>
                                     </p:panel>
                                 </p:panel>

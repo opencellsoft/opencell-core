@@ -4,10 +4,13 @@ import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.ParamBean;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class ConfigurationApi extends BaseApi {
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * Set configuration/settings property
@@ -16,7 +19,7 @@ public class ConfigurationApi extends BaseApi {
      * @param value Property value as string
      */
     public void setProperty(String property, String value) {
-
+        ParamBean paramBean = paramBeanFactory.getInstance();
         paramBean.setProperty(property, value);
         paramBean.saveProperties();
     }

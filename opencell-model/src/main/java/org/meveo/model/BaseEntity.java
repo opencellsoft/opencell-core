@@ -79,7 +79,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return 961 + (this.getClass().getName() + id).hashCode();
     }
 
     /**

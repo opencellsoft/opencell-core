@@ -73,9 +73,9 @@ import org.primefaces.model.LazyDataModel;
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- *
- * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -236,12 +236,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
         }
-        
-        ///
+      
+        // build sub categories for min amounts
         InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
         headerCat.setDescription("-");
         headerCat.setCode("min_amount");
-        
+
         LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
         for (RatedTransaction ratedTransaction : entity.getRatedTransactions()) {
             if (ratedTransaction.getWallet() == null) {
@@ -261,10 +261,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
         headerCat.setInvoiceSubCategoryDTOMap(headerSubCategories);
         headerCategories.put("min_amount", headerCat);
-        
+
         return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
     }
-
+    
     public void deletePdfInvoice() {
         try {
             entity = invoiceService.refreshOrRetrieve(entity);
@@ -402,7 +402,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isXmlInvoiceAlreadyGenerated() {
-        if (xmlGenerated == null) {
+        if (entity.getXmlFilename() == null) {
+            return false;
+
+        } else if (xmlGenerated == null) {
             xmlGenerated = invoiceService.isInvoiceXmlExist(entity);
         }
         return xmlGenerated;
@@ -411,7 +414,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public boolean isPdfInvoiceAlreadyGenerated() {
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
-        }
+    }
 
         return pdfGenerated.get(entity.getId());
     }
@@ -607,6 +610,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return adjustedInvoiceIdParam;
     }
     
+    /**
+     * Saves or Update an invoice
+     * 
+     * @param killConversation kill Conversation
+     * @return outcome page outcome
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
       
         String outcome = super.saveOrUpdate(killConversation);
@@ -634,7 +645,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
         if (isDetailed()) {
-            ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, null, null, null, new Date());
+            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, null, new Date());
+            entity = invoiceService.update(entity);
+
         } else {
             if (entity.getAmountWithoutTax() == null) {
                 invoiceService.recomputeAggregates(entity);
@@ -707,9 +720,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public Set<Invoice> getLinkedInvoices(Invoice invoice) {
-        if (invoice!=null){
-        return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
-        } return null;
+        if (invoice != null) {
+            return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+        }
+        return null;
     }
 
     public boolean isSelectedInvoices() {

@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -90,6 +89,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -103,8 +103,8 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -120,20 +120,16 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 /**
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
-    /** Configuration parameter bean. */
-    private ParamBean paramBean = ParamBean.getInstance();
-
     @Inject
     private InvoiceService invoiceService;
-
-    @Inject
-    private CountryService countryService;
 
     @Inject
     private RatedTransactionService ratedTransactionService;
@@ -175,7 +171,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     /** list of service's id, order's id, price plan's id. */
     private List<Long> serviceIds = null, offerIds = null, priceplanIds = null;
 
-    /** description map . */
+    /** description translation map . */
     private Map<String, String> descriptionMap = new HashMap<String, String>();
 
     /** default date format. */
@@ -259,17 +255,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
 
+            invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
+
             File xmlFile = new File(invoiceService.getFullXmlFilePath(invoice, true));
-
             StreamResult result = new StreamResult(xmlFile);
-
-            StringWriter writer = new StringWriter();
-            trans.transform(new DOMSource(doc), new StreamResult(writer));
-            log.trace("XML invoice: " + writer.getBuffer().toString().replaceAll("\n|\r", ""));
-
             trans.transform(source, result);
 
-            invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
+            log.info("XML file '{}' produced for invoice {}", invoice.getXmlFilename(), invoice.getInvoiceNumberOrTemporaryNumber());
 
             return xmlFile;
 
@@ -280,6 +272,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
 
     /**
+     * Create Invoice XML document v5.0: Added seller tag, vatNo and registrationNo on customerTag
+     * 
      * @param invoice invoice used to create xml
      * @param isVirtual true/false
      * @return xml document
@@ -287,6 +281,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws ParserConfigurationException parsing exception
      * @throws SAXException sax exception
      * @throws IOException IO exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
         long startDate = System.currentTimeMillis();
@@ -319,6 +316,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         log.debug("Creating xml for invoice id={} number={}. {}", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         serviceIds = new ArrayList<>();
         offerIds = new ArrayList<>();
@@ -397,6 +395,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         String externalRef1 = customer.getExternalRef1();
         String externalRef2 = customer.getExternalRef2();
+        String vatNo = customer.getVatNo();
+        String registrationNo = customer.getRegistrationNo();
+        String jobTitle = customer.getJobTitle();
         CustomerBrand customerBrand = customer.getCustomerBrand();
         Seller seller = customer.getSeller();
         CustomerCategory customerCategory = customer.getCustomerCategory();
@@ -408,6 +409,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerTag.setAttribute("sellerCode", seller.getCode() != null ? seller.getCode() : "");
         customerTag.setAttribute("brand", customerBrand != null ? customerBrand.getCode() : "");
         customerTag.setAttribute("category", customerCategory != null ? customerCategory.getCode() : "");
+        customerTag.setAttribute("vatNo", vatNo != null ? vatNo : "");
+        customerTag.setAttribute("registrationNo", registrationNo != null ? registrationNo : "");
+        customerTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
 
         PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
 
@@ -418,8 +422,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
 
         addCustomFields(customer, doc, customerTag);
-
         addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
+        customerTag.appendChild(toContactTag(doc, customer.getContactInformation()));
+        header.appendChild(customerTag);
+        
+        Element sellerTag = doc.createElement("seller");
+        sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
+        sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
+        addCustomFields(seller, doc, sellerTag);
+        addAdress(seller, doc, sellerTag, billingAccountLanguage);
+        sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
+        header.appendChild(sellerTag);
 
         // log.debug("creating ca");
         // CustomerAccount customerAccount = customerAccount;
@@ -427,6 +440,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String currencyCode = tradingCurrency.getCurrencyCode();
         String externalRef12 = customerAccount.getExternalRef1();
         String externalRef22 = customerAccount.getExternalRef2();
+        String jobTitleCA = customerAccount.getJobTitle();
         TradingLanguage tradingLanguage = customerAccount.getTradingLanguage();
         String prDescription = null;
         if (tradingLanguage != null) {
@@ -440,11 +454,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerAccountTag.setAttribute("externalRef2", externalRef22 != null ? externalRef22 : "");
         customerAccountTag.setAttribute("currency", currencyCode != null ? currencyCode : "");
         customerAccountTag.setAttribute("language", prDescription != null ? prDescription : "");
+        customerAccountTag.setAttribute("jobTitle", jobTitleCA != null ? jobTitleCA : "");
 
         if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
             customerAccountTag.setAttribute("mandateIdentification", mandateIdentification != null ? mandateIdentification : "");
         }
         addCustomFields(customerAccount, doc, customerAccountTag);
+        customerAccountTag.appendChild(toContactTag(doc, customerAccount.getContactInformation()));
         header.appendChild(customerAccountTag);
 
         /*
@@ -619,6 +635,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         return doc;
 
     }
+    
+    public Element toContactTag(Document doc, ContactInformation contactInfo) {
+        Element contactTag = doc.createElement("contact");
+        if(contactInfo != null) {
+            contactTag.setAttribute("email", contactInfo.getEmail() == null ? "" : contactInfo.getEmail());
+            contactTag.setAttribute("fax", contactInfo.getFax() == null ? "" : contactInfo.getFax());
+            contactTag.setAttribute("mobile", contactInfo.getMobile() == null ? "" : contactInfo.getMobile());
+            contactTag.setAttribute("phone", contactInfo.getPhone() == null ? "" : contactInfo.getPhone());
+        }
+        return contactTag;
+    }
 
     /**
      * @param invoice invoice used to build xml
@@ -638,7 +665,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAggre, List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates)
             throws BusinessException {
         // log.debug("add user account");
-        long startDate = System.currentTimeMillis();
         Element userAccountsTag = null;
         if (displayDetail) {
             userAccountsTag = doc.createElement("userAccounts");
@@ -655,6 +681,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             String code = userAccount.getCode();
             userAccountTag.setAttribute("code", code != null ? code : "");
+            String jobTitle = userAccount.getCode();
+            userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             String description = userAccount.getDescription();
             userAccountTag.setAttribute("description", description != null ? description : "");
             addCustomFields(userAccount, doc, userAccountTag);
@@ -683,6 +711,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private List<ServiceInstance> addSubscriptions(UserAccount userAccount, Document doc, Element userAccountTag, Element invoiceTag, List<Subscription> subscriptions) {
         long startDate = System.currentTimeMillis();
         List<ServiceInstance> allServiceInstances = new ArrayList<>();
+        ParamBean paramBean = paramBeanFactory.getInstance();
         // List<Subscription> subscriptions = userAccountService.listByUserAccount(userAccount);//userAccount.getSubscriptions();//
         if (subscriptions != null && subscriptions.size() > 0) {
             log.info(" :" + (System.currentTimeMillis() - startDate));
@@ -892,13 +921,85 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
 
     /**
+     * Add seller address to seller tag
+     * 
+     * @param seller instance of entity
+     * @param doc document
+     * @param parent parent node
+     * @param languageCode code of language
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    public void addAdress(Seller seller, Document doc, Element parent, String languageCode) {
+        log.debug("add address to seller");
+
+        Element addressTag = doc.createElement("address");
+        Element address1 = doc.createElement("address1");
+        if (seller.getAddress() != null && seller.getAddress().getAddress1() != null) {
+            Text adress1Txt = doc.createTextNode(seller.getAddress().getAddress1());
+            address1.appendChild(adress1Txt);
+        }
+        addressTag.appendChild(address1);
+
+        Element address2 = doc.createElement("address2");
+        if (seller.getAddress() != null && seller.getAddress().getAddress2() != null) {
+            Text adress2Txt = doc.createTextNode(seller.getAddress().getAddress2());
+            address2.appendChild(adress2Txt);
+        }
+        addressTag.appendChild(address2);
+
+        Element address3 = doc.createElement("address3");
+        if (seller.getAddress() != null && seller.getAddress().getAddress3() != null) {
+            Text adress3Txt = doc.createTextNode(seller.getAddress().getAddress3() != null ? seller.getAddress().getAddress3() : "");
+            address3.appendChild(adress3Txt);
+        }
+        addressTag.appendChild(address3);
+
+        Element city = doc.createElement("city");
+        if (seller.getAddress() != null && seller.getAddress().getCity() != null) {
+            Text cityTxt = doc.createTextNode(seller.getAddress().getCity() != null ? seller.getAddress().getCity() : "");
+            city.appendChild(cityTxt);
+        }
+        addressTag.appendChild(city);
+
+        Element postalCode = doc.createElement("postalCode");
+        if (seller.getAddress() != null && seller.getAddress().getZipCode() != null) {
+            Text postalCodeTxt = doc.createTextNode(seller.getAddress().getZipCode() != null ? seller.getAddress().getZipCode() : "");
+            postalCode.appendChild(postalCodeTxt);
+        }
+        addressTag.appendChild(postalCode);
+
+        Element state = doc.createElement("state");
+        addressTag.appendChild(state);
+
+        Element country = doc.createElement("country");
+        Element countryName = doc.createElement("countryName");
+        if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
+            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : "");
+            country.appendChild(countryTxt);
+            Country countryEntity = seller.getAddress().getCountry();
+            Text countryNameTxt;
+            if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
+                // get country description by language code
+                countryNameTxt = doc.createTextNode(countryEntity.getDescriptionI18n().get(languageCode));
+            } else {
+                countryNameTxt = doc.createTextNode(countryEntity.getDescription());
+            }
+            countryName.appendChild(countryNameTxt);
+        }
+        addressTag.appendChild(country);
+        addressTag.appendChild(countryName);
+        parent.appendChild(addressTag);
+    }
+
+    /**
      * @param account instance of entity
      * @param doc document
      * @param parent parent node
      * @param languageCode code of language
      */
     public void addNameAndAdress(AccountEntity account, Document doc, Element parent, String languageCode) {
-        log.debug("add name and address");
+        log.debug("add name and address for {}", account.getClass().getSimpleName());
 
         if (!(account instanceof Customer)) {
             Element nameTag = doc.createElement("name");
@@ -978,19 +1079,24 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "");
+            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
             country.appendChild(countryTxt);
 
-            Country countrybyCode = countryService.findByCode(account.getAddress().getCountry());
-            Text countryNameTxt;
-            if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
-                // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18n().get(languageCode));
-            } else if (countrybyCode != null) {
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescription());
-            } else {
-                countryNameTxt = doc.createTextNode("");
+            String translationKey = "C_" + account.getAddress().getCountry() + "_" + languageCode;
+            String descTranslated = descriptionMap.get(translationKey);
+            if (descTranslated == null) {
+                Country countrybyCode = account.getAddress().getCountry();
+                if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
+                    // get country description by language code
+                    descTranslated = countrybyCode.getDescriptionI18n().get(languageCode);
+                } else if (countrybyCode != null) {
+                    descTranslated = countrybyCode.getDescription();
+                } else {
+                    descTranslated = "";
+                }
+                descriptionMap.put(translationKey, descTranslated);
             }
+            Text countryNameTxt = doc.createTextNode(descTranslated);
             countryName.appendChild(countryNameTxt);
         }
         addressTag.appendChild(country);
@@ -1164,6 +1270,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             boolean isVirtual, List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAgregates, List<ServiceInstance> allServiceInstances,
             List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
         long startDate = System.currentTimeMillis();
+        ParamBean paramBean = paramBeanFactory.getInstance();
 
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
@@ -1176,8 +1283,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
 
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
-
-        Long id = userAccount.getId();
 
         if (hasInvoiceAgregates) {
             for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
@@ -1272,17 +1377,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     }
                     subCategory.setAttribute("taxCode", taxesCode);
                     subCategory.setAttribute("taxPercent", taxesPercent);
-                    
+
                     for (RatedTransaction ratedTransaction : ratedTransactions) {
                         if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
                                 && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
                             continue;
-                        }   
-                        
+                        }
                         if (!isVirtual) {
                             getEntityManager().refresh(ratedTransaction);
                         }
-                        
                         BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax() : ratedTransaction.getAmountWithoutTax();
                         if (transactionAmount == null) {
                             transactionAmount = BigDecimal.ZERO;
@@ -1320,7 +1423,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 // get periodStartDate and periodEndDate for usages
                                 // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
                                 Date operationDate = walletOperation.getOperationDate();
-                                if (usageChargeTemplateService.findById(chargeTemplate.getId()) != null && operationDate != null) {
+                                if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
                                     CounterPeriod counterPeriod = null;
                                     CounterInstance counter = walletOperation.getCounter();
                                     if (!isVirtual) {
@@ -1490,8 +1593,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 }
             }
         }
-        
-                
+
         // generate invoice line for min amount RT
         boolean hasMinAmountRT = false;
         Element subCategories = doc.createElement("subCategories");
@@ -1541,11 +1643,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
             }   
         }
-        
+
         for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
             subCategories.appendChild(entry.getValue());
         }
-        
+
         if(hasMinAmountRT) {
             Element category = doc.createElement("category");
             category.setAttribute("label", "-");
@@ -1623,7 +1725,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     throw new BusinessException("Billing account must have a trading language.");
                 }
 
-                String translationKey = "T_" + taxInvoiceAgregate.getTax().getCode() + "_" + languageCode;
+                String translationKey = "TX_" + taxInvoiceAgregate.getTax().getCode() + "_" + languageCode;
                 String descTranslated = descriptionMap.get(translationKey);
                 if (descTranslated == null) {
                     descTranslated = taxInvoiceAgregate.getTax().getDescriptionOrCode();

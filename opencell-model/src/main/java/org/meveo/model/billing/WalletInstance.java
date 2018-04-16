@@ -52,10 +52,8 @@ import org.meveo.model.catalog.WalletTemplate;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_wallet_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
-                + "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE"),
-        @NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatch", query = "SELECT c FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
-                + "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE " + " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) "), })
+        @NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE"),
+        @NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatch", query = "SELECT c FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) "), })
 public class WalletInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -104,8 +102,8 @@ public class WalletInstance extends BusinessEntity {
 
     @Override
     public String toString() {
-        return String.format("WalletInstance [%s, walletTemplate=%s, userAccount=%s]", super.toString(), walletTemplate != null ? walletTemplate.getCode() : null,
-            userAccount != null ? userAccount.getCode() : null);
+        return String.format("WalletInstance [%s, walletTemplate=%s, userAccount=%s]", super.toString(), walletTemplate != null ? walletTemplate.getId() : null,
+            userAccount != null ? userAccount.getId() : null);
     }
 
     public UserAccount getUserAccount() {

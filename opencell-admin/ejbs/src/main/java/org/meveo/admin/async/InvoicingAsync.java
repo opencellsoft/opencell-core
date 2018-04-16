@@ -16,6 +16,8 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
@@ -47,18 +49,27 @@ public class InvoicingAsync {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+
     /**
-     * Update billing account total amounts async.
+     * Update billing account total amounts async. One billing account at a time in a separate transaction.
      *
-     * @param billingAccountIds the billing account ids
-     * @param billingRun the billing run
-     * @param jobInstanceId the job instance id
+     * @param billingAccountIds Billing account ids
+     * @param billingRun The billing run
+     * @param jobInstanceId Job instance id
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      * @throws BusinessException the business exception
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId) throws BusinessException {
+    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
+            throws BusinessException {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         int count = 0;
         for (Long billingAccountId : billingAccountIds) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
@@ -73,16 +84,20 @@ public class InvoicingAsync {
     }
 
     /**
-     * Creates the agregates and invoice async.
+     * Creates the agregates and invoice async. One billing account at a time in a separate transaction.
      *
      * @param billingAccountIds the billing account ids
      * @param billingRun the billing run
      * @param jobInstanceId the job instance id
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         for (Long billingAccountId : billingAccountIds) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
@@ -98,16 +113,21 @@ public class InvoicingAsync {
     }
 
     /**
-     * Assign invoice number and increment BA invoice dates async.
+     * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.
      *
      * @param invoiceIds the invoice ids
      * @param invoicesToNumberInfo the invoices to number info
      * @param jobInstanceId the job instance id
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo, Long jobInstanceId) {
+    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo, Long jobInstanceId,
+            MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         for (Long invoiceId : invoiceIds) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
@@ -123,15 +143,20 @@ public class InvoicingAsync {
     }
 
     /**
-     * Generate pdf async.
+     * Generate pdf async for a list of given invoice ids. One invoice at a time in a separate transaction.
      *
      * @param invoiceIds the invoice ids
      * @param result the result
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> generatePdfAsync(List<Long> invoiceIds, JobExecutionResultImpl result) {
+    public Future<String> generatePdfAsync(List<Long> invoiceIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         for (Long invoiceId : invoiceIds) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
@@ -149,15 +174,19 @@ public class InvoicingAsync {
     }
 
     /**
-     * Generate xml async.
+     * Generate xml async for a list of given invoice ids. One invoice at a time in a separate transaction.
      *
      * @param invoiceIds the invoice ids
      * @param result the result
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Boolean> generateXmlAsync(List<Long> invoiceIds, JobExecutionResultImpl result) {
+    public Future<Boolean> generateXmlAsync(List<Long> invoiceIds, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         boolean allOk = true;
 

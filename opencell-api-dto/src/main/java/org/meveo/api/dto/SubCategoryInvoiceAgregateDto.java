@@ -32,203 +32,413 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
 /**
- * @author R.AITYAAZZA
+ * The Class SubCategoryInvoiceAgregateDto.
  *
+ * @author Edward P. Legaspi
+ * @author R.AITYAAZZA
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "SubCategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubCategoryInvoiceAgregateDto implements Serializable {
 
-	private static final long serialVersionUID = 6165612614574594919L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 6165612614574594919L;
 
-	private String type;
-	private Integer itemNumber;
-	private String accountingCode;
-	private String description;
-	private BigDecimal taxPercent;
-	private BigDecimal quantity;
-	private BigDecimal discount;
-	private BigDecimal amountWithoutTax;
-	private BigDecimal amountTax;
-	private BigDecimal amountWithTax;
-	
+    /** The type. */
+    private String type;
+
+    /** The item number. */
+    private Integer itemNumber;
+
+    /** The accounting code. */
+    private String accountingCode;
+
+    /** The description. */
+    private String description;
+
+    /** The tax percent. */
+    private BigDecimal taxPercent;
+
+    /** The quantity. */
+    private BigDecimal quantity;
+
+    /** The discount. */
+    private BigDecimal discount;
+
+    /** The amount without tax. */
+    private BigDecimal amountWithoutTax;
+
+    /** The amount tax. */
+    private BigDecimal amountTax;
+
+    /** The amount with tax. */
+    private BigDecimal amountWithTax;
+
+    /** The invoice sub category code. */
     @XmlElement(required = true)
-	private String invoiceSubCategoryCode;
-	private List<String> taxesCodes=new ArrayList<String>();
-	private String userAccountCode;
-	@XmlElementWrapper
-    @XmlElement(name="ratedTransaction")
-	private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
-	
-	private String discountPlanCode;
-	private String discountPlanItemCode;
-	private BigDecimal discountPercent;
+    private String invoiceSubCategoryCode;
 
-	public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate e) {
-		if (e != null) {
-			discountPlanCode = e.getDiscountPlanCode();
-			discountPlanItemCode = e.getDiscountPlanItemCode();
-			discountPercent = e.getDiscountPercent();
-			itemNumber = e.getItemNumber();
-			accountingCode = e.getAccountingCode();
-			description = e.getDescription();
-			taxPercent = e.getTaxPercent();
-			quantity = e.getQuantity();
-			amountWithoutTax = e.getAmountWithoutTax();
-			amountTax = e.getAmountTax();
-			amountWithTax = e.getAmountTax();
+    /** The taxes codes. */
+    private List<String> taxesCodes = new ArrayList<String>();
 
-			if (e.getInvoiceSubCategory() != null) {
-				invoiceSubCategoryCode = e.getInvoiceSubCategory().getCode();
-			}
-			if (e.getUserAccount() != null) {
-				userAccountCode = e.getUserAccount().getCode();
-			}
-		}
-	}
+    /** The user account code. */
+    private String userAccountCode;
 
-	public SubCategoryInvoiceAgregateDto() {
+    /** The rated transactions. */
+    @XmlElementWrapper
+    @XmlElement(name = "ratedTransaction")
+    private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
 
-	}
-	
-	public Integer getItemNumber() {
-		return itemNumber;
-	}
+    /** The discount plan code. */
+    private String discountPlanCode;
 
-	public void setItemNumber(Integer itemNumber) {
-		this.itemNumber = itemNumber;
-	}
+    /** The discount plan item code. */
+    private String discountPlanItemCode;
 
-	public String getAccountingCode() {
-		return accountingCode;
-	}
+    /** The discount percent. */
+    private BigDecimal discountPercent;
 
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    /**
+     * Instantiates a new sub category invoice agregate dto.
+     *
+     * @param e the e
+     */
+    public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate e) {
+        if (e != null) {
+            discountPlanCode = e.getDiscountPlanCode();
+            discountPlanItemCode = e.getDiscountPlanItemCode();
+            discountPercent = e.getDiscountPercent();
+            itemNumber = e.getItemNumber();
+            if (e.getAccountingCode() != null) {
+                accountingCode = e.getAccountingCode().getCode();
+            }
+            description = e.getDescription();
+            taxPercent = e.getTaxPercent();
+            quantity = e.getQuantity();
+            amountWithoutTax = e.getAmountWithoutTax();
+            amountTax = e.getAmountTax();
+            amountWithTax = e.getAmountTax();
 
-	public String getDescription() {
-		return description;
-	}
+            if (e.getInvoiceSubCategory() != null) {
+                invoiceSubCategoryCode = e.getInvoiceSubCategory().getCode();
+            }
+            if (e.getUserAccount() != null) {
+                userAccountCode = e.getUserAccount().getCode();
+            }
+        }
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Instantiates a new sub category invoice agregate dto.
+     */
+    public SubCategoryInvoiceAgregateDto() {
 
-	public BigDecimal getTaxPercent() {
-		return taxPercent;
-	}
+    }
 
-	public void setTaxPercent(BigDecimal taxPercent) {
-		this.taxPercent = taxPercent;
-	}
+    /**
+     * Gets the item number.
+     *
+     * @return the item number
+     */
+    public Integer getItemNumber() {
+        return itemNumber;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    /**
+     * Sets the item number.
+     *
+     * @param itemNumber the new item number
+     */
+    public void setItemNumber(Integer itemNumber) {
+        this.itemNumber = itemNumber;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    /**
+     * Gets the accounting code.
+     *
+     * @return the accounting code
+     */
+    public String getAccountingCode() {
+        return accountingCode;
+    }
 
-	public BigDecimal getDiscount() {
-		return discount;
-	}
+    /**
+     * Sets the accounting code.
+     *
+     * @param accountingCode the new accounting code
+     */
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    /**
+     * Gets the tax percent.
+     *
+     * @return the tax percent
+     */
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
 
-	public BigDecimal getAmountTax() {
-		return amountTax;
-	}
+    /**
+     * Sets the tax percent.
+     *
+     * @param taxPercent the new tax percent
+     */
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
 
-	public void setAmountTax(BigDecimal amountTax) {
-		this.amountTax = amountTax;
-	}
+    /**
+     * Gets the quantity.
+     *
+     * @return the quantity
+     */
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    /**
+     * Sets the quantity.
+     *
+     * @param quantity the new quantity
+     */
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    /**
+     * Gets the discount.
+     *
+     * @return the discount
+     */
+    public BigDecimal getDiscount() {
+        return discount;
+    }
 
-	public List<RatedTransactionDto> getRatedTransactions() {
-		return ratedTransactions;
-	}
+    /**
+     * Sets the discount.
+     *
+     * @param discount the new discount
+     */
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
 
-	public void setRatedTransactions(List<RatedTransactionDto> ratedTransactions) {
-		this.ratedTransactions = ratedTransactions;
-	}
+    /**
+     * Gets the amount without tax.
+     *
+     * @return the amount without tax
+     */
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public String getType() {
-		return type;
-	}
+    /**
+     * Sets the amount without tax.
+     *
+     * @param amountWithoutTax the new amount without tax
+     */
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    /**
+     * Gets the amount tax.
+     *
+     * @return the amount tax
+     */
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
 
-	public String getInvoiceSubCategoryCode() {
-		return invoiceSubCategoryCode;
-	}
+    /**
+     * Sets the amount tax.
+     *
+     * @param amountTax the new amount tax
+     */
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 
-	public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
-		this.invoiceSubCategoryCode = invoiceSubCategoryCode;
-	}
+    /**
+     * Gets the amount with tax.
+     *
+     * @return the amount with tax
+     */
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public List<String> getTaxesCodes() {
-		return taxesCodes;
-	}
+    /**
+     * Sets the amount with tax.
+     *
+     * @param amountWithTax the new amount with tax
+     */
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void setTaxesCodes(List<String> taxesCodes) {
-		this.taxesCodes = taxesCodes;
-	}
+    /**
+     * Gets the rated transactions.
+     *
+     * @return the rated transactions
+     */
+    public List<RatedTransactionDto> getRatedTransactions() {
+        return ratedTransactions;
+    }
 
-	public String getUserAccountCode() {
-		return userAccountCode;
-	}
+    /**
+     * Sets the rated transactions.
+     *
+     * @param ratedTransactions the new rated transactions
+     */
+    public void setRatedTransactions(List<RatedTransactionDto> ratedTransactions) {
+        this.ratedTransactions = ratedTransactions;
+    }
 
-	public void setUserAccountCode(String userAccountCode) {
-		this.userAccountCode = userAccountCode;
-	}
+    /**
+     * Gets the type.
+     *
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
 
-	public String getDiscountPlanCode() {
-		return discountPlanCode;
-	}
+    /**
+     * Sets the type.
+     *
+     * @param type the new type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setDiscountPlanCode(String discountPlanCode) {
-		this.discountPlanCode = discountPlanCode;
-	}
+    /**
+     * Gets the invoice sub category code.
+     *
+     * @return the invoice sub category code
+     */
+    public String getInvoiceSubCategoryCode() {
+        return invoiceSubCategoryCode;
+    }
 
-	public String getDiscountPlanItemCode() {
-		return discountPlanItemCode;
-	}
+    /**
+     * Sets the invoice sub category code.
+     *
+     * @param invoiceSubCategoryCode the new invoice sub category code
+     */
+    public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
+        this.invoiceSubCategoryCode = invoiceSubCategoryCode;
+    }
 
-	public void setDiscountPlanItemCode(String discountPlanItemCode) {
-		this.discountPlanItemCode = discountPlanItemCode;
-	}
+    /**
+     * Gets the taxes codes.
+     *
+     * @return the taxes codes
+     */
+    public List<String> getTaxesCodes() {
+        return taxesCodes;
+    }
 
-	public BigDecimal getDiscountPercent() {
-		return discountPercent;
-	}
+    /**
+     * Sets the taxes codes.
+     *
+     * @param taxesCodes the new taxes codes
+     */
+    public void setTaxesCodes(List<String> taxesCodes) {
+        this.taxesCodes = taxesCodes;
+    }
 
-	public void setDiscountPercent(BigDecimal discountPercent) {
-		this.discountPercent = discountPercent;
-	}
+    /**
+     * Gets the user account code.
+     *
+     * @return the user account code
+     */
+    public String getUserAccountCode() {
+        return userAccountCode;
+    }
 
+    /**
+     * Sets the user account code.
+     *
+     * @param userAccountCode the new user account code
+     */
+    public void setUserAccountCode(String userAccountCode) {
+        this.userAccountCode = userAccountCode;
+    }
 
-	
-	
+    /**
+     * Gets the discount plan code.
+     *
+     * @return the discount plan code
+     */
+    public String getDiscountPlanCode() {
+        return discountPlanCode;
+    }
 
+    /**
+     * Sets the discount plan code.
+     *
+     * @param discountPlanCode the new discount plan code
+     */
+    public void setDiscountPlanCode(String discountPlanCode) {
+        this.discountPlanCode = discountPlanCode;
+    }
+
+    /**
+     * Gets the discount plan item code.
+     *
+     * @return the discount plan item code
+     */
+    public String getDiscountPlanItemCode() {
+        return discountPlanItemCode;
+    }
+
+    /**
+     * Sets the discount plan item code.
+     *
+     * @param discountPlanItemCode the new discount plan item code
+     */
+    public void setDiscountPlanItemCode(String discountPlanItemCode) {
+        this.discountPlanItemCode = discountPlanItemCode;
+    }
+
+    /**
+     * Gets the discount percent.
+     *
+     * @return the discount percent
+     */
+    public BigDecimal getDiscountPercent() {
+        return discountPercent;
+    }
+
+    /**
+     * Sets the discount percent.
+     *
+     * @param discountPercent the new discount percent
+     */
+    public void setDiscountPercent(BigDecimal discountPercent) {
+        this.discountPercent = discountPercent;
+    }
 }

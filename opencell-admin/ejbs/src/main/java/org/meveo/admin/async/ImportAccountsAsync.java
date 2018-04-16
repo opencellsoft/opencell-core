@@ -12,6 +12,8 @@ import javax.inject.Inject;
 
 import org.meveo.admin.job.importexport.ImportAccountsJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 
 /**
  * @author anasseh
@@ -24,8 +26,22 @@ public class ImportAccountsAsync {
     @Inject
     private ImportAccountsJobBean importAccountsJobBean;
 
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+
+    /**
+     * Import accounts
+     * 
+     * @param result Job execution result
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return Future String
+     */
     @Asynchronous
-    public Future<String> launchAndForget(JobExecutionResultImpl result) {
+    public Future<String> launchAndForget(JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         importAccountsJobBean.execute(result);
 
         return new AsyncResult<String>("OK");

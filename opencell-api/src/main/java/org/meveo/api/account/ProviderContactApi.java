@@ -16,11 +16,14 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.shared.Address;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.crm.impl.ProviderContactService;
 
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
+ * 
+ * @lastModifiedVersion 5.0
  * @since Jun 3, 2016 1:28:17 AM
  *
  */
@@ -29,6 +32,9 @@ public class ProviderContactApi extends BaseApi {
 
     @Inject
     private ProviderContactService providerContactService;
+    
+    @Inject
+    private  CountryService countryService;
 
     public void create(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(providerContactDto.getCode())) {
@@ -70,7 +76,7 @@ public class ProviderContactApi extends BaseApi {
             address.setAddress3(addressDto.getAddress3());
             address.setZipCode(addressDto.getZipCode());
             address.setCity(addressDto.getCity());
-            address.setCountry(addressDto.getCountry());
+            address.setCountry(countryService.findByCode(addressDto.getCountry()));
             address.setState(addressDto.getState());
         }
         providerContactService.create(providerContact);
@@ -114,7 +120,7 @@ public class ProviderContactApi extends BaseApi {
             address.setAddress3(addressDto.getAddress3());
             address.setZipCode(addressDto.getZipCode());
             address.setCity(addressDto.getCity());
-            address.setCountry(addressDto.getCountry());
+            address.setCountry(countryService.findByCode(addressDto.getCountry()));
             address.setState(addressDto.getState());
         }
         providerContactService.update(providerContact);

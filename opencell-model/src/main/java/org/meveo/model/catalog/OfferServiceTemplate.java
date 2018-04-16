@@ -8,6 +8,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,11 +31,12 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "offerTemplate.code", "offerTemplate.validity.from", "offerTemplate.validity.to", "serviceTemplate.code" })
 @Table(name = "cat_offer_serv_templates")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_serv_templt_seq"), })
-public class OfferServiceTemplate implements IEntity,Serializable {
+public class OfferServiceTemplate implements IEntity, Serializable {
 
     /**
      * 
@@ -109,11 +111,10 @@ public class OfferServiceTemplate implements IEntity,Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime * 1; // super.hashCode();
-        result = prime * result + ((incompatibleServices == null) ? 0 : incompatibleServices.hashCode());
-        result = prime * result + ((offerTemplate == null) ? 0 : offerTemplate.hashCode());
-        result = prime * result + ((serviceTemplate == null) ? 0 : serviceTemplate.hashCode());
+
+        int result = 961 + ((incompatibleServices == null) ? 0 : incompatibleServices.hashCode());
+        result = 31 * result + ((offerTemplate == null) ? 0 : offerTemplate.hashCode());
+        result = 31 * result + ((serviceTemplate == null) ? 0 : serviceTemplate.hashCode());
         return result;
     }
 
@@ -131,7 +132,7 @@ public class OfferServiceTemplate implements IEntity,Serializable {
         OfferServiceTemplate other = (OfferServiceTemplate) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+            return true;
         }
 
         if (offerTemplate != null) {
@@ -187,23 +188,22 @@ public class OfferServiceTemplate implements IEntity,Serializable {
         setValidity(otherOst.getValidity());
         setIncompatibleServices(otherOst.getIncompatibleServices());
     }
-    
-	public OfferServiceTemplate duplicate(OfferTemplate newOfferTemplate) {
-		OfferServiceTemplate newOst = new OfferServiceTemplate();
-		newOst.setIncompatibleServices(incompatibleServices);
-		newOst.setMandatory(mandatory);
-		newOst.setServiceTemplate(serviceTemplate);
-		newOst.setValidity(validity);
-		if (newOfferTemplate != null) {
-			newOst.setOfferTemplate(newOfferTemplate);
-		}
-		return newOst;
-	}
 
-	@Override
-	public String toString() {
-		return "OfferServiceTemplate [id=" + id + ", offerTemplate=" + offerTemplate + ", serviceTemplate="
-				+ serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices
-				+ ", validity=" + validity + "]";
-	}
+    public OfferServiceTemplate duplicate(OfferTemplate newOfferTemplate) {
+        OfferServiceTemplate newOst = new OfferServiceTemplate();
+        newOst.setIncompatibleServices(incompatibleServices);
+        newOst.setMandatory(mandatory);
+        newOst.setServiceTemplate(serviceTemplate);
+        newOst.setValidity(validity);
+        if (newOfferTemplate != null) {
+            newOst.setOfferTemplate(newOfferTemplate);
+        }
+        return newOst;
+    }
+
+    @Override
+    public String toString() {
+        return "OfferServiceTemplate [id=" + id + ", offerTemplate=" + offerTemplate + ", serviceTemplate=" + serviceTemplate + ", mandatory=" + mandatory
+                + ", incompatibleServices=" + incompatibleServices + ", validity=" + validity + "]";
+    }
 }

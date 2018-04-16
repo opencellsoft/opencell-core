@@ -73,7 +73,7 @@ public class CustomFieldValue implements Serializable {
     private DatePeriod period;
 
     /**
-     * Value priority if periods overlapp
+     * Value priority if periods overlapp. The higher the number, the higher the priority is.
      */
     private Integer priority;
 
@@ -657,8 +657,6 @@ public class CustomFieldValue implements Serializable {
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
             StringBuilder builder = new StringBuilder();
 
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("AKK in short rep : map is {}, {}", mapDateValue!=null , mapValuesForGUI!=null);
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
             int i = 0;
             for (Map<String, Object> valueInfo : mapValuesForGUI) {
@@ -1252,8 +1250,10 @@ public class CustomFieldValue implements Serializable {
 
                 String serializedValueWithMetaInfo = null;
 
-                // Add seralization metadata if it is not available in json string
-                if (!valueToConvert.contains(SERIALIZATION_SEPARATOR) || valueToConvert.indexOf("{") < valueToConvert.indexOf(SERIALIZATION_SEPARATOR)) {
+                // Add serialization metadata if it is not available in json string - no | character present, or | is after the serialized json start character {
+                int jsonStartIndex = valueToConvert.indexOf("{");
+                int serialSeparatorIndex = valueToConvert.indexOf(SERIALIZATION_SEPARATOR);
+                if (!(serialSeparatorIndex > -1) || (jsonStartIndex > -1 && jsonStartIndex < serialSeparatorIndex)) {
                     if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                         serializedValueWithMetaInfo = "entity" + SERIALIZATION_SEPARATOR + valueToConvert;
 
@@ -1289,6 +1289,7 @@ public class CustomFieldValue implements Serializable {
 
     /**
      * Convert (serialize) object according to custom field data type definition to a string value (serialized value in case of list, map, entity, childEntity).
+     * 
      * @param cft customer field template.
      * @param valueToConvert Value to convert
      * @return A value corresponding to custom field data type definition

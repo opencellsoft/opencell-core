@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.billing.AmountsDto;
 import org.meveo.api.dto.billing.FindWalletOperationsDto;
 import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -23,6 +24,8 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.Subscription;
@@ -31,7 +34,11 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -40,10 +47,15 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.SortOrder;
 
 /**
+ * Wallet operation and balance related API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @Stateless
 public class WalletApi extends BaseApi {
@@ -70,68 +82,209 @@ public class WalletApi extends BaseApi {
     private SubscriptionService subscriptionService;
 
     @Inject
+    private SellerService sellerService;
+
+    @Inject
+    private CustomerService customerService;
+
+    @Inject
+    private CustomerAccountService customerAccountService;
+
+    @Inject
+    private BillingAccountService billingAccountService;
+
+    @Inject
     private UserAccountService userAccountService;
 
     @Inject
     private CurrencyService currencyService;
 
-    public BigDecimal getCurrentAmount(WalletBalanceDto walletBalance) throws MeveoApiException, BusinessException {
+    /**
+     * Calculate current (open or reserved) wallet balance at a given level
+     * 
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Current balance (open or reserved) amount
+     * @throws MeveoApiException API exception
+     * @throws BusinessException Business exception
+     */
+    public AmountsDto getCurrentAmount(WalletBalanceDto calculateParameters) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(walletBalance.getSellerCode())) {
-            missingParameters.add("sellerCode");
-        }
-        if (StringUtils.isBlank(walletBalance.getUserAccountCode())) {
-            missingParameters.add("userAccountCode");
+        if (StringUtils.isBlank(calculateParameters.getSellerCode()) && StringUtils.isBlank(calculateParameters.getCustomerCode())
+                && StringUtils.isBlank(calculateParameters.getCustomerAccountCode()) && StringUtils.isBlank(calculateParameters.getBillingAccountCode())
+                && StringUtils.isBlank(calculateParameters.getUserAccountCode())) {
+            missingParameters.add("either sellerCode, customerCode, customerAccountCode, billingAccountCode or userAccountCode should be provided");
         }
         handleMissingParameters();
 
-        if (walletBalance.isAmountWithTax()) {
-            return walletReservationService.getCurrentBalanceWithTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
-                walletBalance.getEndDate());
-        } else {
-            return walletReservationService.getCurrentBalanceWithoutTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
-                walletBalance.getEndDate());
+        Seller seller = null;
+        Customer customer = null;
+        CustomerAccount customerAccount = null;
+        BillingAccount billingAccount = null;
+        UserAccount userAccount = null;
+
+        if (!StringUtils.isBlank(calculateParameters.getSellerCode())) {
+            seller = sellerService.findByCode(calculateParameters.getSellerCode());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, calculateParameters.getSellerCode());
+            }
         }
+
+        if (!StringUtils.isBlank(calculateParameters.getCustomerCode())) {
+            customer = customerService.findByCode(calculateParameters.getCustomerCode());
+            if (customer == null) {
+                throw new EntityDoesNotExistsException(Customer.class, calculateParameters.getCustomerCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getCustomerAccountCode())) {
+            customerAccount = customerAccountService.findByCode(calculateParameters.getCustomerAccountCode());
+            if (customerAccount == null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, calculateParameters.getCustomerAccountCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getBillingAccountCode())) {
+            billingAccount = billingAccountService.findByCode(calculateParameters.getBillingAccountCode());
+            if (billingAccount == null) {
+                throw new EntityDoesNotExistsException(BillingAccount.class, calculateParameters.getBillingAccountCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getUserAccountCode())) {
+            userAccount = userAccountService.findByCode(calculateParameters.getUserAccountCode());
+            if (userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, calculateParameters.getUserAccountCode());
+            }
+        }
+
+        return new AmountsDto(walletReservationService.getCurrentBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
+            calculateParameters.getEndDate()));
     }
 
-    public BigDecimal getReservedAmount(WalletBalanceDto walletBalance) throws MeveoApiException, BusinessException {
+    /**
+     * Calculate reserved wallet balance at a given level
+     * 
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Reserved balance amount
+     * @throws MeveoApiException API exception
+     * @throws BusinessException Business exception
+     */
+    public AmountsDto getReservedAmount(WalletBalanceDto calculateParameters) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(walletBalance.getSellerCode())) {
-            missingParameters.add("sellerCode");
-        }
-        if (StringUtils.isBlank(walletBalance.getUserAccountCode())) {
-            missingParameters.add("userAccountCode");
+        if (StringUtils.isBlank(calculateParameters.getSellerCode()) && StringUtils.isBlank(calculateParameters.getCustomerCode())
+                && StringUtils.isBlank(calculateParameters.getCustomerAccountCode()) && StringUtils.isBlank(calculateParameters.getBillingAccountCode())
+                && StringUtils.isBlank(calculateParameters.getUserAccountCode())) {
+            missingParameters.add("either sellerCode, customerCode, customerAccountCode, billingAccountCode or userAccountCode should be provided");
         }
 
         handleMissingParameters();
 
-        if (walletBalance.isAmountWithTax()) {
-            return walletReservationService.getReservedBalanceWithTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
-                walletBalance.getEndDate());
-        } else {
-            return walletReservationService.getReservedBalanceWithoutTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
-                walletBalance.getEndDate());
+        Seller seller = null;
+        Customer customer = null;
+        CustomerAccount customerAccount = null;
+        BillingAccount billingAccount = null;
+        UserAccount userAccount = null;
+
+        if (!StringUtils.isBlank(calculateParameters.getSellerCode())) {
+            seller = sellerService.findByCode(calculateParameters.getSellerCode());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, calculateParameters.getSellerCode());
+            }
         }
+
+        if (!StringUtils.isBlank(calculateParameters.getCustomerCode())) {
+            customer = customerService.findByCode(calculateParameters.getCustomerCode());
+            if (customer == null) {
+                throw new EntityDoesNotExistsException(Customer.class, calculateParameters.getCustomerCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getCustomerAccountCode())) {
+            customerAccount = customerAccountService.findByCode(calculateParameters.getCustomerAccountCode());
+            if (customerAccount == null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, calculateParameters.getCustomerAccountCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getBillingAccountCode())) {
+            billingAccount = billingAccountService.findByCode(calculateParameters.getBillingAccountCode());
+            if (billingAccount == null) {
+                throw new EntityDoesNotExistsException(BillingAccount.class, calculateParameters.getBillingAccountCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getUserAccountCode())) {
+            userAccount = userAccountService.findByCode(calculateParameters.getUserAccountCode());
+            if (userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, calculateParameters.getUserAccountCode());
+            }
+        }
+
+        return new AmountsDto(walletReservationService.getReservedBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
+            calculateParameters.getEndDate()));
     }
 
-    public BigDecimal getOpenAmount(WalletBalanceDto walletBalance) throws MeveoApiException, BusinessException {
+    /**
+     * Calculate open wallet balance at a given level
+     * 
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Open balance amount
+     * @throws MeveoApiException API exception
+     * @throws BusinessException Business exception
+     */
+    public AmountsDto getOpenAmount(WalletBalanceDto calculateParameters) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(walletBalance.getSellerCode())) {
-            missingParameters.add("sellerCode");
-        }
-        if (StringUtils.isBlank(walletBalance.getUserAccountCode())) {
-            missingParameters.add("userAccountCode");
+        if (StringUtils.isBlank(calculateParameters.getSellerCode()) && StringUtils.isBlank(calculateParameters.getCustomerCode())
+                && StringUtils.isBlank(calculateParameters.getCustomerAccountCode()) && StringUtils.isBlank(calculateParameters.getBillingAccountCode())
+                && StringUtils.isBlank(calculateParameters.getUserAccountCode())) {
+            missingParameters.add("either sellerCode, customerCode, customerAccountCode, billingAccountCode or userAccountCode should be provided");
         }
 
         handleMissingParameters();
 
-        if (walletBalance.isAmountWithTax()) {
-            return walletReservationService.getOpenBalanceWithTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
-                walletBalance.getEndDate());
-        } else {
-            return walletReservationService.getOpenBalanceWithoutTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(), walletBalance.getStartDate(),
-                walletBalance.getEndDate());
+        Seller seller = null;
+        Customer customer = null;
+        CustomerAccount customerAccount = null;
+        BillingAccount billingAccount = null;
+        UserAccount userAccount = null;
+
+        if (!StringUtils.isBlank(calculateParameters.getSellerCode())) {
+            seller = sellerService.findByCode(calculateParameters.getSellerCode());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, calculateParameters.getSellerCode());
+            }
         }
+
+        if (!StringUtils.isBlank(calculateParameters.getCustomerCode())) {
+            customer = customerService.findByCode(calculateParameters.getCustomerCode());
+            if (customer == null) {
+                throw new EntityDoesNotExistsException(Customer.class, calculateParameters.getCustomerCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getCustomerAccountCode())) {
+            customerAccount = customerAccountService.findByCode(calculateParameters.getCustomerAccountCode());
+            if (customerAccount == null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, calculateParameters.getCustomerAccountCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getBillingAccountCode())) {
+            billingAccount = billingAccountService.findByCode(calculateParameters.getBillingAccountCode());
+            if (billingAccount == null) {
+                throw new EntityDoesNotExistsException(BillingAccount.class, calculateParameters.getBillingAccountCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(calculateParameters.getUserAccountCode())) {
+            userAccount = userAccountService.findByCode(calculateParameters.getUserAccountCode());
+            if (userAccount == null) {
+                throw new EntityDoesNotExistsException(UserAccount.class, calculateParameters.getUserAccountCode());
+            }
+        }
+
+        return new AmountsDto(walletReservationService.getOpenBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
+            calculateParameters.getEndDate()));
     }
 
     public Long createReservation(WalletReservationDto walletReservation) throws MeveoApiException, BusinessException {
@@ -308,7 +461,8 @@ public class WalletApi extends BaseApi {
         walletOperation.setDescription(postData.getDescription());
         walletOperation.setCode(postData.getCode());
         if (subscription != null) {
-            walletOperation.setOfferCode(subscription.getOffer().getCode());
+            // walletOperation.setOfferCode(subscription.getOffer().getCode()); offerCode is set in walletOperation.setOfferTemplate
+            walletOperation.setOfferTemplate(subscription.getOffer());
         }
         walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         walletOperation.setCurrency(currency);
@@ -386,10 +540,8 @@ public class WalletApi extends BaseApi {
         result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
-        log.error("AKK total found = {} {} {}", totalCount, totalCount > 0, totalCount.intValue() > 0);
         if (totalCount > 0) {
             List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);
-            log.error("AKK list is {}", walletOperations.size());
             for (WalletOperation wo : walletOperations) {
                 result.getWalletOperations().add(new WalletOperationDto(wo));
             }

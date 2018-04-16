@@ -1,13 +1,16 @@
 package org.meveo.api.rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.FilterDto;
+import org.meveo.api.dto.response.GetFilterResponseDto;
 
 /**
  * @author Tyshan Shi
@@ -28,4 +31,14 @@ public interface FilterRs extends IBaseRs {
     @Path("/createOrUpdate")
     @POST
     public ActionStatus createOrUpdate(FilterDto postData);
+
+    /**
+     * Find a filter with a given code
+     *
+     * @param filterCode The job instance's code
+     * @return
+     */
+    @Path("/")
+    @GET
+    public GetFilterResponseDto find(@QueryParam("filterCode") String filterCode);
 }

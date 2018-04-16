@@ -15,6 +15,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
 import org.slf4j.Logger;
@@ -35,8 +37,23 @@ public class EmailNotifier {
     @Inject
     private EmailSender emailSender;
 
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+
+    /**
+     * Send email message as fired notification result
+     * 
+     * @param notification Email type notification that was fired
+     * @param entityOrEvent Entity or event that triggered notification
+     * @param context Execution context
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     */
     @Asynchronous
-    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context) {
+    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         try {
 
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();

@@ -7,29 +7,45 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+/**
+ * The Class CountersInstancesDto.
+ * 
+ * @author anasseh
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountersInstancesDto implements Serializable{
+public class CountersInstancesDto implements Serializable {
 
-	private static final long serialVersionUID = 49018302870831847L;
-	
-	private List<CounterInstanceDto> counterInstance;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 49018302870831847L;
 
-	public List<CounterInstanceDto> getCounterInstance() {
-		if (counterInstance == null) {
-			counterInstance = new ArrayList<CounterInstanceDto>();
-		}
+    /** The counter instance. */
+    private List<CounterInstanceDto> counterInstance;
 
-		return counterInstance;
-	}
+    /**
+     * Gets the counter instance.
+     *
+     * @return the counter instance
+     */
+    public List<CounterInstanceDto> getCounterInstance() {
+        if (counterInstance == null) {
+            counterInstance = new ArrayList<CounterInstanceDto>();
+        }
 
-	public void setCounterInstance(List<CounterInstanceDto> counterInstance) {
-		this.counterInstance = counterInstance;
-	}
+        return counterInstance;
+    }
 
-	@Override
-	public String toString() {
-		return "CountersInstancesDto [counterInstance=" + counterInstance + "]";
-	}
+    /**
+     * Sets the counter instance.
+     *
+     * @param counterInstance the new counter instance
+     */
+    public void setCounterInstance(List<CounterInstanceDto> counterInstance) {
+        this.counterInstance = counterInstance;
+    }
 
-	
+    @Override
+    public String toString() {
+        return "CountersInstancesDto [counterInstance=" + counterInstance + "]";
+    }
+
 }

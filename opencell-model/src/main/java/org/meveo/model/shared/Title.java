@@ -77,34 +77,6 @@ public class Title extends BusinessEntity {
         this.isCompany = isCompany;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((code == null) ? 0 : code.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof Title)) {
-            return false;
-        }
-
-        Title other = (Title) obj;
-        if (code == null) {
-            if (other.code != null)
-                return false;
-        } else if (!code.equals(other.code))
-            return false;
-        return true;
-    }
-
     public String getDescriptionNotNull() {
         return StringUtils.isBlank(super.getDescription()) ? getCode() : super.getDescription();
     }

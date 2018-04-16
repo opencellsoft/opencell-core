@@ -37,6 +37,7 @@ public abstract class SecureMethodResultFilter {
      * @param currentUser Current application user
      * @param user The user matching current user that will be used to verify authorization.
      * @return The filtered result object.
+     * @throws MeveoApiException Meveo api exception
      */
     public abstract Object filterResult(Method methodContext, Object result, MeveoUser currentUser, User user) throws MeveoApiException;
 

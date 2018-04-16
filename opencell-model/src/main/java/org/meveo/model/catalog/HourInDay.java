@@ -18,6 +18,7 @@
  */
 package org.meveo.model.catalog;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -29,9 +30,11 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "hour", "minute" })
 @Table(name = "cat_hour_in_day", uniqueConstraints = @UniqueConstraint(columnNames = { "hour", "min" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_hour_in_day_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_hour_in_day_seq"), })
 public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
 
     private static final long serialVersionUID = 1L;
@@ -71,7 +74,7 @@ public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
+        int result = "HourInDay".hashCode();
         result = prime * result + ((hour == null) ? 0 : hour.hashCode());
         result = prime * result + ((minute == null) ? 0 : minute.hashCode());
         return result;
@@ -87,8 +90,11 @@ public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
         } else if (!(obj instanceof HourInDay)) {
             return false;
         }
-        
+
         HourInDay other = (HourInDay) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
         if (hour == null) {
             if (other.hour != null) {
                 return false;

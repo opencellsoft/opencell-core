@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>info.opencell.tests</groupId>
 	<artifactId>opencelltests</artifactId>
 	<name>Opencell tests</name>
-	<version>5.0-SNAPSHOT</version>
+	<version>5.0.1-SNAPSHOT</version>
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -23,6 +24,16 @@
 		<superPassword>opencell.superadmin</superPassword>
 		<provider>DEMO</provider>
 		<provider_description>Test</provider_description>
+		<!-- Setting up jemeter parameters -->
+		<remote.jmeter>perf1.opencellsoft.com</remote.jmeter>
+		<users>15</users>
+		<period>10</period>
+		<loops>1</loops>
+		<protocol>http</protocol>
+		<host>perf1.opencellsoft.com</host>
+		<port>8080</port>
+		<thinkTime>1000</thinkTime>
+		<firstCustId>100</firstCustId>
 	</properties>
 
 	<build>
@@ -43,10 +54,16 @@
 							<name>opencell.url</name>
 							<value>${opencell.url}</value>
 						</property>
-                			</soapuiProperties>
+					</soapuiProperties>
 					<projectProperties>
 						<value>opencell.url=${opencell.url}</value>
 						<value>opencell.url2=${opencell.url2}</value>
+						<value>elasticSearchUrl=${elasticSearchUrl}</value>
+						<value>ingenico.SecretApiKey=${ingenico.SecretApiKey}</value>
+						<value>ingenico.ApiKeyId=${ingenico.ApiKeyId}</value>
+						<value>ingenico.merchantId=${ingenico.merchantId}</value>
+						<value>slimPay.secretKey=${slimPay.secretKey}</value>
+						<value>slimPay.userId=${slimPay.userId}</value>
 						<value>adminUsername=${adminUsername}</value>
 						<value>adminPassword=${adminPassword}</value>
 						<value>superUsername=${superUsername}</value>
@@ -57,24 +74,66 @@
 				</configuration>
 				<dependencies>
 
-				<dependency>
-					<groupId>com.jgoodies</groupId>
-					<artifactId>forms</artifactId>
-					<version>1.0.7</version>
-				</dependency>
-				<dependency>
-					<groupId>com.smartbear.soapui</groupId>
-                			<artifactId>soapui</artifactId>
-               				<version>5.3.0</version>
-               				<exclusions>
-                  			 <exclusion>
-                    			 <groupId>javafx</groupId>
-                     			 <artifactId>jfxrt</artifactId>
-                   			 </exclusion>
-               				</exclusions>
-				</dependency>
+					<dependency>
+						<groupId>com.jgoodies</groupId>
+						<artifactId>forms</artifactId>
+						<version>1.0.7</version>
+					</dependency>
+					<dependency>
+						<groupId>com.smartbear.soapui</groupId>
+						<artifactId>soapui</artifactId>
+						<version>5.3.0</version>
+						<exclusions>
+							<exclusion>
+								<groupId>javafx</groupId>
+								<artifactId>jfxrt</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
 
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-maven-plugin</artifactId>
+				<version>2.7.0</version>
+				<executions>
+					<execution>
+						<id>jmeter-tests</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jmeter</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- <resultsDirectory>/tmp/jmeter</resultsDirectory> -->
+					<testFilesDirectory>${basedir}/jmeter/</testFilesDirectory>
+					<remoteConfig>
+						<!-- <startServersBeforeTests>true</startServersBeforeTests> -->
+						<!-- <serverList>server1,server2</serverList> -->
+						<!-- <stopServersAfterTests>true</stopServersAfterTests> -->
+						<serverList>${remote.jmeter}</serverList>
+					</remoteConfig>
+					<!-- <propertiesFilesDirectory>${basedir}/jmeter/</propertiesFilesDirectory> -->
+					<propertiesUser>
+						<users>${users}</users>
+						<period>${period}</period>
+						<loops>${loops}</loops>
+						<protocol>${protocol}</protocol>
+						<host>${host}</host>
+						<port>${port}</port>
+						<thinkTime>${thinkTime}</thinkTime>
+						<firstCustId>${firstCustId}</firstCustId>
+					</propertiesUser>
+					<!-- source file that contains jmeter result data. Needs to be XML format 
+						or a GZIPed XML format -->
+					<!-- <source>${project.build.directory}/jmeter/results/*</source> --> 
+
+					<!-- directory where to store analysis report files. At least a file 
+						"summary.txt" will be stored here. -->
+					<!-- <targetDirectory>${project.build.directory}/reports</targetDirectory> -->
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -90,6 +149,9 @@
 					<reportsDirectories>
 						<reportsDirectories>${basedir}/target/surefire-reports/</reportsDirectories>
 					</reportsDirectories>
+					<showSuccess>true</showSuccess>
+					<aggregate>true</aggregate>
+					<linkXRef>false</linkXRef>
 				</configuration>
 			</plugin>
 		</plugins>

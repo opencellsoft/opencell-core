@@ -33,15 +33,20 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
-
 
 /**
  * The Class JobExecutionService.
+ * 
+ * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
@@ -55,6 +60,9 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /** The job cache container provider. */
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     /**
      * Persist job execution results.
@@ -75,7 +83,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 isPersistResult = true;
             } else {
                 log.info(job.getClass().getName() + ": nothing to do");
-                isPersistResult = "true".equals(ParamBean.getInstance().getProperty("meveo.job.persistResult", "true"));
+                isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
                 if (resultToPersist.isTransient()) {
@@ -106,17 +114,22 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @param job Job implementation
      * @param jobInstance Job instance
      * @param continueSameJob Continue executing same job
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob) {
+    public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         try {
             if (continueSameJob) {
                 log.debug("Continue executing job {}", jobInstance);
                 executeJobWithParameters(jobInstance, null);
 
             } else if (jobInstance.getFollowingJob() != null) {
-                JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
+                JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
                 log.debug("Executing next job {}", nextJob.getCode());
                 executeJobWithParameters(nextJob, null);
             }
@@ -326,7 +339,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         }
         jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
     }
-    
+
     /**
      * Check if the job are running on this node.
      * 
@@ -334,9 +347,9 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @return return true if job are running
      */
     public boolean isJobRunningOnThis(JobInstance jobInstance) {
-        return  isJobRunningOnThis(jobInstance.getId());
+        return isJobRunningOnThis(jobInstance.getId());
     }
-    
+
     /**
      * Check if the job are running on this node.
      * 
@@ -346,12 +359,17 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     public boolean isJobRunningOnThis(Long jobInstanceId) {
         return JobRunningStatusEnum.RUNNING_THIS == jobCacheContainerProvider.isJobRunning(jobInstanceId);
     }
-    
+
+    /**
+     * Finds the last job execution result by a given job instance.
+     * @param jobInstance JobInstance filter
+     * @return last job execution result
+     */
     public JobExecutionResultImpl findLastExecutionByInstance(JobInstance jobInstance) {
         QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "j");
         qb.addCriterionEntity("jobInstance", jobInstance);
-        qb.addOrderCriterion("startDate", false);
-        
+        qb.addOrderCriterionAsIs("startDate", false);
+
         return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
     }
 }

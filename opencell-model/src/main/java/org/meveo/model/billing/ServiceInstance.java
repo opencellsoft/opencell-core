@@ -52,7 +52,14 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.order.OrderHistory;
+import org.meveo.model.order.OrderItemActionEnum;
 
+/**
+ * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
+ */
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE")
@@ -72,7 +79,7 @@ public class ServiceInstance extends BusinessCFEntity {
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 
@@ -136,16 +143,27 @@ public class ServiceInstance extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
-    
+
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
-    
+
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
 
-    
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    private List<OrderHistory> orderHistories;
+
+    /**
+     * PK of OrderItem.id.
+     */
+    @Transient
+    private Long orderItemId;
+
+    @Transient
+    private OrderItemActionEnum orderItemAction;
+
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -282,6 +300,7 @@ public class ServiceInstance extends BusinessCFEntity {
         this.rateUntilDate = rateUntilDate;
     }
 
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -325,6 +344,30 @@ public class ServiceInstance extends BusinessCFEntity {
         return previousQuantity;
     }
 
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    public OrderItemActionEnum getOrderItemAction() {
+        return orderItemAction;
+    }
+
+    public void setOrderItemAction(OrderItemActionEnum orderItemAction) {
+        this.orderItemAction = orderItemAction;
+    }
+
+    public List<OrderHistory> getOrderHistories() {
+        return orderHistories;
+    }
+
+    public void setOrderHistories(List<OrderHistory> orderHistories) {
+        this.orderHistories = orderHistories;
+    }
+
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
@@ -340,5 +383,4 @@ public class ServiceInstance extends BusinessCFEntity {
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
-
 }

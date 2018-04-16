@@ -55,6 +55,8 @@ import org.primefaces.model.Visibility;
 /**
  * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @lastModifiedVersion 5.1
  */
 @Named
 @ViewScoped
@@ -173,9 +175,11 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
             ChargeTemplate chargeTemplate = (ChargeTemplate) event.getObject();
             if (chargeTemplate != null) {
                 entity.setEventCode(chargeTemplate.getCode());
-                entity.setCode(getPricePlanCode(chargeTemplate));
-                entity.setDescription(chargeTemplate.getDescription());
-                entity.setSequence(getNextSequence(chargeTemplate));
+                if(entity.isTransient()) {
+                    entity.setCode(getPricePlanCode(chargeTemplate));
+                    entity.setDescription(chargeTemplate.getDescription());
+                    entity.setSequence(getNextSequence(chargeTemplate));
+                }
             }
         }
     }
@@ -227,7 +231,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
         long result = 0;
         try {
             if (chargetemplate != null) {
-                result = pricePlanMatrixService.getLastPricePlanByCharge(chargetemplate.getCode()) + 1;
+                result = pricePlanMatrixService.getLastPricePlanSequenceByChargeCode(chargetemplate.getCode()) + 1;
             }
         } catch (Exception e) {
             log.warn("error while getting next sequence", e);

@@ -24,7 +24,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
@@ -35,9 +34,12 @@ import org.meveo.service.base.MultiLanguageFieldService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 public class MultiLanguageFieldApi extends BaseApi {
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
     private MultiLanguageFieldService multiLanguageFieldService;
@@ -306,7 +308,7 @@ public class MultiLanguageFieldApi extends BaseApi {
                 throw new MeveoApiException(e);
             }
             if (entity == null) {
-                String datePattern = paramBean.getDateTimeFormat();
+                String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
                 throw new EntityDoesNotExistsException(entityClass,
                     code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
             }

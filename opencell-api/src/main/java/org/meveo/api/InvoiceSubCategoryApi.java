@@ -9,16 +9,22 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
+ * CRUD API for managing {@link InvoiceSubCategory}.
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class InvoiceSubCategoryApi extends BaseApi {
@@ -28,6 +34,9 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
     @Inject
     private InvoiceCategoryService invoiceCategoryService;
+    
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     public void create(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -54,13 +63,19 @@ public class InvoiceSubCategoryApi extends BaseApi {
         invoiceSubCategory.setInvoiceCategory(invoiceCategory);
         invoiceSubCategory.setCode(postData.getCode());
         invoiceSubCategory.setDescription(postData.getDescription());
-        invoiceSubCategory.setAccountingCode(postData.getAccountingCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            invoiceSubCategory.setAccountingCode(accountingCode);
+        }
 
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -97,7 +112,13 @@ public class InvoiceSubCategoryApi extends BaseApi {
         invoiceSubCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         invoiceSubCategory.setInvoiceCategory(invoiceCategory);
         invoiceSubCategory.setDescription(postData.getDescription());
-        invoiceSubCategory.setAccountingCode(postData.getAccountingCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            invoiceSubCategory.setAccountingCode(accountingCode);
+        }
 
         if (postData.getLanguageDescriptions() != null) {
             invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), invoiceSubCategory.getDescriptionI18n()));
@@ -107,7 +128,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, false, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

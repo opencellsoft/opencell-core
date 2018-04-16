@@ -24,7 +24,6 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -41,11 +40,17 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
 
@@ -57,6 +62,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private AccessService accessService;
+    
+    @Inject
+    private OrderHistoryService orderHistoryService;
 
     @MeveoAudit
     @Override
@@ -83,18 +91,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.updateSubscribedTillAndRenewalNotifyDates();
 
         return super.update(subscription);
-    }
-
-    @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-
-        if (terminationReason == null) {
-            throw new BusinessException("terminationReason is null");
-        }
-
-        return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-            terminationReason.isApplyTerminationCharges(), orderNumber);
     }
 
     @MeveoAudit
@@ -186,16 +182,31 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         return subscription;
     }
+    
+    @MeveoAudit
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber) throws BusinessException {
+        return terminateSubscription(subscription, terminationDate, terminationReason, orderNumber, null, null);
+    }
+
+    @MeveoAudit
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
+            throws BusinessException {
+
+        if (terminationReason == null) {
+            throw new BusinessException("terminationReason is null");
+        }
+
+        return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
+            terminationReason.isApplyTerminationCharges(), orderNumber, orderItemId, orderItemAction);
+    }
 
     @MeveoAudit
     private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
+            throws BusinessException {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
-
-        subscription = refreshOrRetrieve(subscription);
 
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
@@ -205,6 +216,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 } else {
                     serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, null);
                 }
+                
+                orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
 
@@ -219,6 +232,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             access.setEndDate(terminationDate);
             accessService.update(access);
         }
+        
         // execute termination script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
@@ -227,35 +241,19 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return subscription;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Subscription> findByOfferTemplate(OfferTemplate offerTemplate) {
-        QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
-        qb.addCriterionEntity("offer", offerTemplate);
-
+    public boolean hasSubscriptions(OfferTemplate offerTemplate) {
         try {
-            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            log.warn("failed to find subscription by offer template", e);
-            return null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Subscription> findByOfferTemplate(EntityManager em, OfferTemplate offerTemplate) {
-        QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
-
-        try {
-
+            QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
             qb.addCriterionEntity("offer", offerTemplate);
 
-            return (List<Subscription>) qb.getQuery(em).getResultList();
+            return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult()).longValue() > 0;
         } catch (NoResultException e) {
-            return null;
+            return false;
         }
     }
-    
+
     public List<Subscription> listByUserAccount(UserAccount userAccount) {
-    	return listByUserAccount(userAccount, "code", SortOrder.ASCENDING);
+        return listByUserAccount(userAccount, "code", SortOrder.ASCENDING);
     }
 
     @SuppressWarnings("unchecked")
@@ -263,10 +261,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
         qb.addCriterionEntity("userAccount", userAccount);
         boolean ascending = true;
-		if (sortOrder != null) {
-			ascending = sortOrder.equals(SortOrder.ASCENDING);
-		}
-		qb.addOrderCriterion(sortBy, ascending);
+        if (sortOrder != null) {
+            ascending = sortOrder.equals(SortOrder.ASCENDING);
+        }
+        qb.addOrderCriterion(sortBy, ascending);
 
         try {
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
@@ -288,18 +286,18 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         return ids;
     }
-    
-    
-    @SuppressWarnings("unchecked")
-	public List<ServiceInstance> listBySubscription(Subscription subscription) {
-		QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
-		qb.addCriterionEntity("subscription", subscription);
 
-		try {
-			return (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public List<ServiceInstance> listBySubscription(Subscription subscription) {
+        QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+        qb.addCriterionEntity("subscription", subscription);
+
+        try {
+            return (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting user account list by billing account", e);
+            return null;
+        }
+    }
+
 }

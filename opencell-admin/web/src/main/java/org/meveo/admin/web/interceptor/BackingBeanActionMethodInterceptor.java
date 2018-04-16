@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Commits transaction and handles exceptions of backing bean action methods
+ * Handles exceptions of backing bean action methods
  *
  * @author Andrius Karpavicius
  */
@@ -41,7 +41,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
         Object result = null;
         try {
-            // Call a backing bean method and flush persistence
+            // Call a backing bean method
             result = invocationContext.proceed();
             return result;
 

@@ -13,7 +13,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -26,6 +25,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -45,12 +45,12 @@ public class InternalNotificationJobBean {
     /** The df. */
     // iso 8601 date and datetime format
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    
+
     /** The tf. */
     SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:hh");
 
-    /** The entity manager. */
-    @PersistenceContext(unitName = "MeveoAdmin")
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
     private EntityManager em;
 
     /** The manager. */
@@ -59,11 +59,11 @@ public class InternalNotificationJobBean {
 
     /** The notification service. */
     @Inject
-    NotificationService notificationService;
+    private NotificationService notificationService;
 
     /** The script instance service. */
     @Inject
-    ScriptInstanceService scriptInstanceService;
+    private ScriptInstanceService scriptInstanceService;
 
     /**
      * Execute.
@@ -136,5 +136,4 @@ public class InternalNotificationJobBean {
             result.registerError("filterCode contain invalid SQL query: " + e.getMessage());
         }
     }
-
 }

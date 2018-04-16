@@ -9,6 +9,7 @@ import org.meveo.api.dto.CountryIsoDto;
 import org.meveo.api.dto.CurrencyIsoDto;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.ProvidersDto;
 import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
@@ -38,7 +39,7 @@ public interface SuperAdminSettingsWs extends IBaseWs {
     @WebMethod
     public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
 
-   // language
+    // language
 
     @WebMethod
     public ActionStatus createLanguage(@WebParam(name = "languageIso") LanguageIsoDto languageIsoDto);
@@ -57,7 +58,7 @@ public interface SuperAdminSettingsWs extends IBaseWs {
 
     @WebMethod
     GetLanguagesIsoResponse listIsoLanguages();
-    
+
     // country
 
     @WebMethod
@@ -77,7 +78,7 @@ public interface SuperAdminSettingsWs extends IBaseWs {
 
     @WebMethod
     GetCountriesIsoResponse listIsoCountries();
-    
+
     // currency
 
     @WebMethod
@@ -97,29 +98,57 @@ public interface SuperAdminSettingsWs extends IBaseWs {
 
     @WebMethod
     GetCurrenciesIsoResponse listIsoCurrencies();
-    
+
     // files
     @WebMethod
     GetFilesResponseDto listAllFiles();
-    
-	@WebMethod
-	GetFilesResponseDto listFiles(@WebParam(name = "dir") String dir);
 
-	@WebMethod
-	ActionStatus createDir(@WebParam(name = "dir") String dir);
-	
-	@WebMethod
-	ActionStatus zipFile(@WebParam(name = "file") String file);
+    @WebMethod
+    GetFilesResponseDto listFiles(@WebParam(name = "dir") String dir);
 
-	@WebMethod
-	ActionStatus zipDir(@WebParam(name = "dir") String dir);
+    @WebMethod
+    ActionStatus createDir(@WebParam(name = "dir") String dir);
 
-	@WebMethod
-	ActionStatus suppressFile(@WebParam(name = "file") String file);
+    @WebMethod
+    ActionStatus zipFile(@WebParam(name = "file") String file);
 
-	@WebMethod
-	ActionStatus suppressDir(@WebParam(name = "dir") String dir);
-	
-	@WebMethod
-	ActionStatus downloadFile(@WebParam(name = "file") String file);
+    @WebMethod
+    ActionStatus zipDir(@WebParam(name = "dir") String dir);
+
+    @WebMethod
+    ActionStatus suppressFile(@WebParam(name = "file") String file);
+
+    @WebMethod
+    ActionStatus suppressDir(@WebParam(name = "dir") String dir);
+
+    @WebMethod
+    ActionStatus downloadFile(@WebParam(name = "file") String file);
+
+    // Tenants
+
+    /**
+     * Register a new tenant
+     * 
+     * @param postData Tenant/Provider data
+     * @return Action status
+     */
+    @WebMethod
+    public ActionStatus createTenant(@WebParam(name = "provider") ProviderDto postData);
+
+    /**
+     * List tenants
+     * 
+     * @return A list of Tenant/provider data
+     */
+    @WebMethod
+    public ProvidersDto listTenants();
+
+    /**
+     * Remove a tenant
+     * 
+     * @param providerCode Tenant/provider code
+     * @return Action status
+     */
+    @WebMethod
+    public ActionStatus removeTenant(@WebParam(name = "providerCode") String providerCode);
 }
