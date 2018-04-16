@@ -18,7 +18,8 @@ import org.meveo.model.catalog.WalletTemplate;
  * The Class ServiceTemplateDto.
  *
  * @author Edward P. Legaspi
- * @since Oct 11, 2013
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  */
 @XmlRootElement(name = "ServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,6 +64,12 @@ public class ServiceTemplateDto extends BusinessDto {
     /** The image base 64. */
     private String imageBase64;
 
+    /** The minimum amount El. */
+    private String minimumAmountEl;
+
+    /** The minimum label El. */   
+    private String minimumLabelEl;
+
     /**
      * Instantiates a new service template dto.
      */
@@ -81,6 +88,8 @@ public class ServiceTemplateDto extends BusinessDto {
         longDescription = serviceTemplate.getLongDescription();
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
         imagePath = serviceTemplate.getImagePath();
+        minimumAmountEl = serviceTemplate.getMinimumAmountEl();
+        minimumLabelEl = serviceTemplate.getMinimumLabelEl();
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
@@ -383,5 +392,41 @@ public class ServiceTemplateDto extends BusinessDto {
                 + ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings + ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
                 + ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations + ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields="
                 + customFields + ", mandatory=" + mandatory + ", somCode=" + somCode + ", imagePath=" + imagePath + "]";
+    }
+
+    /**
+     * Get the minimum amount EL.
+     *
+     * @return the minimum amount EL
+     */
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets the minimum amount EL.
+     *
+     * @param minimumAmountEl the minimum amount EL
+     */
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    /**
+     * Get the minimum label EL.
+     *
+     * @return the minimum label EL
+     */
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    /**
+     * Sets the minimum label EL.
+     *
+     * @param minimumLabelEl the minimum label EL
+     */
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
     }
 }

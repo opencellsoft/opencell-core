@@ -96,7 +96,7 @@ import org.meveo.service.order.OrderService;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.1
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -298,7 +298,9 @@ public class SubscriptionApi extends BaseApi {
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
         subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed()));
-
+        subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
+        subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);

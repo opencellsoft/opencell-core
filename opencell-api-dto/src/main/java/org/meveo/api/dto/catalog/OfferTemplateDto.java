@@ -17,6 +17,8 @@ import org.meveo.model.catalog.OfferTemplate;
  * The Class OfferTemplateDto.
  *
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  */
 @XmlRootElement(name = "OfferTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -44,6 +46,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     /** The renewal rule. */
     private SubscriptionRenewalDto renewalRule;
+
+    /** The minimum amount EL. */
+    private String minimumAmountEl;
+
+    /** The minimum label EL. */    
+    private String minimumLabelEl;
 
     /**
      * Instantiates a new offer template dto.
@@ -204,5 +212,41 @@ public class OfferTemplateDto extends ProductOfferingDto {
         return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode="
                 + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields
                 + ", validFrom=" + validFrom + ", validTo=" + validTo + "]";
+    }
+
+    /**
+     * Gets minimum amount El.
+     *
+     * @return the minimum amount El
+     */    
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets minimum amount El.
+     *
+     * @param minimumAmountEl minimum amount El
+     */
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    /**
+     * Gets minimum label El.
+     *
+     * @return the minimum label El
+     */
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    /**
+     * Sets minimum label El.
+     *
+     * @param minimumLabelEl minimum label El
+     */
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
     }
 }

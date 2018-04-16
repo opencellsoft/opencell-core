@@ -16,12 +16,13 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * The Class BillingAccountDto.
- *
  * @author Edward P. Legaspi
- */
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
+ **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-// @FilterResults(propertyToFilter = "userAccounts.userAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserAccount.class) })
+//@FilterResults(propertyToFilter = "userAccounts.userAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserAccount.class) })
 public class BillingAccountDto extends AccountDto {
 
     /** The Constant serialVersionUID. */
@@ -78,6 +79,12 @@ public class BillingAccountDto extends AccountDto {
     
     /** The phone. */
     protected String phone;
+    
+    /** Minimum Amount El. */
+    private String minimumAmountEl;
+
+	/** Minimum Label El. */
+    private String minimumLabelEl;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
@@ -473,4 +480,21 @@ public class BillingAccountDto extends AccountDto {
     public String toString() {
         return "BillingAccountDto [code=" + code + ", description=" + description + "]";
     }
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
 }

@@ -1,5 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
+    >
 
     <ui:define name="metadata">
         <f:metadata>
@@ -51,7 +52,19 @@
                     <hftl:formField label="#{messages['serviceInstance.quantity']}" field="quantity"/>
                     <hftl:formField label="#{messages['serviceInstance.terminationReason']}" allowEdit="false" field="subscriptionTerminationReason"
                         valueLabelField="descriptionOrCode" rendered="#{not empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
-                     <hftl:formField label="#{messages['serviceInstance.rateUntilDate']}" field="rateUntilDate" />    
+                     <hftl:formField label="#{messages['serviceInstance.rateUntilDate']}" field="rateUntilDate" /> 
+                    
+                    <hftl:formField label="#{messages['serviceTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"  />  
+                    <c:choose> 
+	                    <c:when test="${appProvider.entreprise}">
+					        <c:set var="minimumAmountLabel" value="#{messages['serviceTemplate.minimumAmountWithoutTax']} EL" />
+					    </c:when>
+					    <c:otherwise>
+					    	<c:set var="minimumAmountLabel" value="#{messages['serviceTemplate.minimumAmountWithTax']} EL" />
+					    </c:otherwise>
+					</c:choose>
+					<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />  
+                       
                 </p:tab>
                 <p:tab title="#{messages['order.history']}">
                 	<p:dataTable id="selectedEntitiesDatatable" var="ohEntity" value="#{serviceInstanceBean.entity.orderHistories}" paginator="true" rows="10"

@@ -19,6 +19,8 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
  * The Class SubscriptionDto.
  * 
  * @author anasseh
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,6 +83,12 @@ public class SubscriptionDto extends BusinessDto {
 
     /** The order number. */
     private String orderNumber;
+
+    @XmlElement
+    private String minimumAmountEl;
+
+    @XmlElement
+    private String minimumLabelEl;
 
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -425,6 +433,42 @@ public class SubscriptionDto extends BusinessDto {
      */
     public void setProductInstances(List<ProductInstanceDto> productInstances) {
         this.productInstances = productInstances;
+    }
+
+    /**
+     * Gets minimum amount El.
+     *
+     * @return the minimum amount El.
+     */
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets minimum amount El.
+     *
+     * @param minimumAmountEl the new product instances
+     */
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    /**
+     * Gets minimum label El.
+     *
+     * @return the minimum label El
+     */
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    /**
+     * Sets minimum label El.
+     *
+     * @param minimumLabelEl minimum label El
+     */
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
     }
 
     @Override

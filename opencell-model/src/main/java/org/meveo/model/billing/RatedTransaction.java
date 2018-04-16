@@ -31,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -67,15 +68,25 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.sumBillingByWallet", query = "SELECT r.invoiceSubCategory.id, sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax), sum(r.quantity) FROM RatedTransaction r"
                 + " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate " + " AND r.wallet=:wallet"
                 + " GROUP BY r.invoiceSubCategory"),
+        @NamedQuery(name = "RatedTransaction.sumMinBilling", query = "SELECT r.invoiceSubCategory.id, sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax), sum(r.quantity) FROM RatedTransaction r"
+                + " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.usageDate<:lastTransactionDate AND r.wallet is null"
+                + " GROUP BY r.invoiceSubCategory"),
         @NamedQuery(name = "RatedTransaction.sumbillingRunByCycleNoDate", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
                 + " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate "
                 + " AND r.billingAccount.billingCycle=:billingCycle "),
         @NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
                 + "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate "
                 + " AND r.billingAccount IN :billingAccountList"),
-        @NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax) FROM RatedTransaction r "
+        
+        @NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax) FROM RatedTransaction r "
                 + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false " + "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
+        
+        @NamedQuery(name = "RatedTransaction.sumByCharge", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
+                + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.walletOperationEntity.chargeInstance=:chargeInstance"
+                + " GROUP BY r.invoiceSubCategory.id"),
+        
         @NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
                 + "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
                 + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN " + " and r.doNotTriggerInvoicing=false" + " AND r.usageDate<:lastTransactionDate "
@@ -91,6 +102,10 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
         @NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
                 + "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice"),
+
+        @NamedQuery(name = "RatedTransaction.deleteMinRT", query = "DELETE from RatedTransaction r "
+                + " WHERE r.invoice=:invoice AND r.wallet IS null"),
+        
         @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
@@ -106,6 +121,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     @Column(name = "wallet_operation_id")
     private Long walletOperationId;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_operation_id", insertable=false, updatable=false)
+    private WalletOperation walletOperationEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
@@ -585,6 +604,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setWalletOperation(WalletOperation walletOperation) {
         this.walletOperation = walletOperation;
+    }
+    
+    public WalletOperation getWalletOperationEntity() {
+        return walletOperationEntity;
     }
 
     @Override
