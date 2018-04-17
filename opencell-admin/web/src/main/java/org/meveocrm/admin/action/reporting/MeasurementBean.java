@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -60,7 +60,6 @@ import org.primefaces.event.CellEditEvent;
 /**
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
- *
  */
 @Named
 @ViewScoped
@@ -99,6 +98,8 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 
     public void setMeasuredPeriod(String measuredPeriod) {
         this.measuredPeriod = measuredPeriod;
+        this.selectedDate = null;
+        this.mainMVModel = null;
         period = MeasurementPeriodEnum.valueOf(measuredPeriod);
     }
 
@@ -204,6 +205,8 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 
     private void selectMeasurableQuantity() {
         List<MeasurableQuantity> mqlist = null;
+        this.selectedDate = null;
+        this.mainMVModel = null;
         if (StringUtils.isBlank(measurableQuantityCode)) {
             measurableQuantity = null;
         } else {
@@ -369,10 +372,10 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
         if (selectedMV.getValue() != null) {
             if (selectedMV.isTransient() && selectedMV != null) {
                 getPersistenceService().create(selectedMV);
-                Messages.addGlobalInfo("save.successful", new Object[] {});
+                Messages.addGlobalInfo("save.successful", new Object[]{});
             } else if (!selectedMV.isTransient() && selectedMV != null) {
                 getPersistenceService().update(selectedMV);
-                Messages.addGlobalInfo("update.successful", new Object[] {});
+                Messages.addGlobalInfo("update.successful", new Object[]{});
             }
         }
 
@@ -386,18 +389,18 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
             for (MeasurableQuantity mq : mqlist) {
                 String dimension = "";
                 switch (dim) {
-                case 1:
-                    dimension = mq.getDimension1();
-                    break;
-                case 2:
-                    dimension = mq.getDimension2();
-                    break;
-                case 3:
-                    dimension = mq.getDimension3();
-                    break;
-                case 4:
-                    dimension = mq.getDimension4();
-                    break;
+                    case 1:
+                        dimension = mq.getDimension1();
+                        break;
+                    case 2:
+                        dimension = mq.getDimension2();
+                        break;
+                    case 3:
+                        dimension = mq.getDimension3();
+                        break;
+                    case 4:
+                        dimension = mq.getDimension4();
+                        break;
                 }
                 if (!dimList.contains(dimension)) {
                     dimList.add(dimension);
@@ -532,8 +535,8 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
         HSSFCell reportTitleCell = reportTitleRow.createCell(0);
 
         reportTitleCell.setCellValue(
-            messageBundle.getString("menu.measuredValues") + " " + new SimpleDateFormat("MMMM").format(selectedDate) + "," + new SimpleDateFormat("yyyy").format(selectedDate) + " "
-                    + messageBundle.getString("entity.measuredvalue.measurementPeriod") + " : " + messageBundle.getString("enum.measurementperiod." + measuredPeriod));
+                messageBundle.getString("menu.measuredValues") + " " + new SimpleDateFormat("MMMM").format(selectedDate) + "," + new SimpleDateFormat("yyyy").format(selectedDate) + " "
+                        + messageBundle.getString("entity.measuredvalue.measurementPeriod") + " : " + messageBundle.getString("enum.measurementperiod." + measuredPeriod));
 
         sheet.autoSizeColumn(0);
     }
