@@ -36,7 +36,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.admin.exception.InvalidEntityStatusException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -57,7 +57,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
@@ -67,6 +67,11 @@ import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
+/**
+ * A service class to manage CRUD operations on BillingAccount entity
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
 
@@ -82,18 +87,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     @Inject 
     private InvoiceSubCategoryService invoiceSubCategoryService;    
 
-    public void initBillingAccount(BillingAccount billingAccount) {
-        billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-        if (billingAccount.getSubscriptionDate() == null) {
-            billingAccount.setSubscriptionDate(new Date());
-        }
-
-        if (billingAccount.getNextInvoiceDate() == null) {
-            billingAccount.setNextInvoiceDate(new Date());
-        }
-    }
-
-    public void createBillingAccount(BillingAccount billingAccount) throws BusinessException {
+    /**
+     * Initialize if empty SubscriptionDate, NextInvoiceDate fields to a current date and status to Active before creating a Billing account
+     */
+    @Override
+    public void create(BillingAccount billingAccount) throws BusinessException {
 
         billingAccount.setStatus(AccountStatusEnum.ACTIVE);
         if (billingAccount.getSubscriptionDate() == null) {
@@ -104,7 +102,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             billingAccount.setNextInvoiceDate(new Date());
         }
 
-        create(billingAccount);
+        super.create(billingAccount);
     }
 
     public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling) throws BusinessException {
@@ -117,62 +115,137 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return update(billingAccount);
     }
 
+    /**
+     * Terminate Billing account. Status will be changed to Terminated. Action will also terminate related User accounts and Subscriptions.
+     * 
+     * @param billingAccount Billing account
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public BillingAccount billingAccountTermination(BillingAccount billingAccount, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
+    public BillingAccount terminateBillingAccount(BillingAccount billingAccount, Date terminationDate, TerminationReason terminationReason) throws BusinessException {
+
+        if (billingAccount.getStatus() != AccountStatusEnum.ACTIVE) {
+            return billingAccount;
+        }
+        log.debug("Will terminate Billing account " + billingAccount.getCode());
+
         if (terminationDate == null) {
             terminationDate = new Date();
         }
 
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
         for (UserAccount userAccount : userAccounts) {
-            userAccountService.userAccountTermination(userAccount, terminationDate, terminationReason);
+            userAccountService.terminateUserAccount(userAccount, terminationDate, terminationReason);
         }
         billingAccount.setTerminationReason(terminationReason);
         billingAccount.setTerminationDate(terminationDate);
         billingAccount.setStatus(AccountStatusEnum.TERMINATED);
-        return update(billingAccount);
+
+        billingAccount = update(billingAccount);
+
+        log.info("Billing account " + billingAccount.getCode() + " was terminated");
+
+        return billingAccount;
     }
 
+    /**
+     * Cancel Billing account. Status will be changed to Canceled. Action will also cancel related User accounts and Subscriptions.
+     * 
+     * @param billingAccount Billing account
+     * @param cancellationDate Cancellation date
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public BillingAccount billingAccountCancellation(BillingAccount billingAccount, Date terminationDate) throws BusinessException {
-        if (terminationDate == null) {
-            terminationDate = new Date();
+    public BillingAccount cancelBillingAccount(BillingAccount billingAccount, Date cancellationDate) throws BusinessException {
+
+        if (billingAccount.getStatus() != AccountStatusEnum.ACTIVE) {
+            return billingAccount;
+        }
+
+        log.debug("Will cancel Billing account " + billingAccount.getCode());
+
+        if (cancellationDate == null) {
+            cancellationDate = new Date();
         }
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
         for (UserAccount userAccount : userAccounts) {
-            userAccountService.userAccountCancellation(userAccount, terminationDate);
+            userAccountService.cancelUserAccount(userAccount, cancellationDate);
         }
-        billingAccount.setTerminationDate(terminationDate);
+        billingAccount.setTerminationDate(cancellationDate);
         billingAccount.setStatus(AccountStatusEnum.CANCELED);
-        return update(billingAccount);
+
+        billingAccount = update(billingAccount);
+
+        log.info("Billing account " + billingAccount.getCode() + " was canceled");
+
+        return billingAccount;
     }
 
+    /**
+     * Activate previously canceled or terminated Billing account. Status will be changed to Active.
+     * 
+     * @param billingAccount Billing account
+     * @param activationDate Activation date
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public BillingAccount billingAccountReactivation(BillingAccount billingAccount, Date activationDate) throws BusinessException {
+    public BillingAccount reactivateBillingAccount(BillingAccount billingAccount, Date activationDate) throws BusinessException {
+
+        if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED && billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
+            throw new InvalidEntityStatusException(BillingAccount.class, billingAccount.getCode(), "reactivate", billingAccount.getStatus(), AccountStatusEnum.TERMINATED,
+                AccountStatusEnum.CANCELED);
+        }
+
+        log.debug("Will reactivate Billing account " + billingAccount.getCode());
+
         if (activationDate == null) {
             activationDate = new Date();
         }
-        if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED && billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
-            throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
-        }
-
         billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-        return update(billingAccount);
+        billingAccount.setTerminationDate(null);
+        billingAccount.setTerminationReason(null);
+
+        billingAccount = update(billingAccount);
+
+        log.info("Billing account " + billingAccount.getCode() + " was reactivated");
+
+        return billingAccount;
     }
 
+    /**
+     * Close previously canceled or terminated Billing account. Status will be changed to Closed.
+     * 
+     * @param billingAccount Billing account
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
     public BillingAccount closeBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
-        /**
-         * *
-         * 
-         * @Todo : ajouter la condition : l'encours de facturation est vide :
-         */
-        if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED && billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
-            throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
+        if (billingAccount.getStatus() == AccountStatusEnum.CLOSED) {
+            return billingAccount;
         }
+
+        // @Todo : ajouter la condition : l'encours de facturation est vide :
+
+        if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED && billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
+            throw new InvalidEntityStatusException(BillingAccount.class, billingAccount.getCode(), "close", billingAccount.getStatus(), AccountStatusEnum.TERMINATED,
+                AccountStatusEnum.CANCELED);
+        }
+        log.debug("Will close Billing account " + billingAccount.getCode());
+
         billingAccount.setStatus(AccountStatusEnum.CLOSED);
-        return update(billingAccount);
+
+        billingAccount = update(billingAccount);
+
+        log.info("Billing account " + billingAccount.getCode() + " was closed");
+
+        return billingAccount;
     }
 
     public List<Invoice> invoiceList(BillingAccount billingAccount) throws BusinessException {
@@ -184,22 +257,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
         });
         return invoices;
-    }
-
-    public Invoice InvoiceDetail(String invoiceReference) {
-        try {
-            QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
-            qb.addCriterion("i.invoiceNumber", "=", invoiceReference, true);
-            return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException ex) {
-            log.debug("invoice search returns no result for reference={}.", invoiceReference);
-        }
-        return null;
-    }
-
-    public InvoiceSubCategory invoiceSubCategoryDetail(String invoiceReference, String invoiceSubCategoryCode) {
-        // TODO : need to be more clarified
-        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -351,13 +408,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @param lastTransactionDate last transaction date
      * @return computed invoice amount by charge.
      */
-    public List<Object[]> computeChargeInvoiceAmount(ChargeInstance chargeInstance, Date firstTransactionDate,
-            Date lastTransactionDate, BillingAccount billingAccount) {
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumByCharge")
-                .setParameter("chargeInstance", chargeInstance)
-                .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("billingAccount", billingAccount);
+    @SuppressWarnings("unchecked")
+    public List<Object[]> computeChargeInvoiceAmount(ChargeInstance chargeInstance, Date firstTransactionDate, Date lastTransactionDate, BillingAccount billingAccount) {
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumByCharge").setParameter("chargeInstance", chargeInstance)
+            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("billingAccount", billingAccount);
         return (List<Object[]>) q.getResultList();
     }
 
@@ -736,8 +790,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     BigDecimal serviceAmountWithTax = entry.getValue().get("serviceAmountWithTax");
                                     InvoiceSubCategory invoiceSubCategory = entry.getKey();
 
-                                    String serviceMinAmountEL = StringUtils.isBlank(serviceInstance.getMinimumAmountEl())?serviceInstance.getServiceTemplate().getMinimumAmountEl():serviceInstance.getMinimumAmountEl();
-                                    String serviceMinLabelEL = StringUtils.isBlank(serviceInstance.getMinimumLabelEl())?serviceInstance.getServiceTemplate().getMinimumLabelEl():serviceInstance.getMinimumLabelEl();
+                                    String serviceMinAmountEL = StringUtils.isBlank(serviceInstance.getMinimumAmountEl())
+                                            ? serviceInstance.getServiceTemplate().getMinimumAmountEl() : serviceInstance.getMinimumAmountEl();
+                                    String serviceMinLabelEL = StringUtils.isBlank(serviceInstance.getMinimumLabelEl()) ? serviceInstance.getServiceTemplate().getMinimumLabelEl()
+                                            : serviceInstance.getMinimumLabelEl();
                                     if(!StringUtils.isBlank(serviceMinAmountEL)) {
 
                                         BigDecimal serviceMinAmount = new BigDecimal(evaluateDoubleExpression(serviceMinAmountEL, serviceInstance));
@@ -767,16 +823,19 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                                 }
                                             }
 
-                                            BigDecimal unitAmountWithoutTax = appProvider.isEntreprise()?rtMinAmount:rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
-                                            BigDecimal unitAmountWithTax = appProvider.isEntreprise()?rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)):rtMinAmount;
+                                            BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
+                                                    : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                                            BigDecimal unitAmountWithTax = appProvider.isEntreprise()
+                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                                             BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                             BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                             BigDecimal amountWithTax = unitAmountWithTax;
                                             BigDecimal amountTax = unitAmountTax;
 
-                                            RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax,
-                                                unitAmountTax,  BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                                                invoiceSubCategory, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode()+"_"+serviceInstance.getCode(), serviceMinLabel);
+                                            RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax,
+                                                BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
+                                                invoiceSubCategory, "", "", "", "", null, "", "", null, "NO_OFFER", null,
+                                                RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel);
                                             ratedTransactionService.create(ratedTransaction);
                                             ratedTransactionService.commit();
 
@@ -816,8 +875,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                             BigDecimal subscriptionAmountWithTax = entry.getValue().get("subscriptionAmountWithTax");
                             InvoiceSubCategory invoiceSubCategory = entry.getKey();
 
-                            String subscriptionMinAmountEL = StringUtils.isBlank(subscription.getMinimumAmountEl())?subscription.getOffer().getMinimumAmountEl():subscription.getMinimumAmountEl();
-                            String subscriptionMinLabelEL = StringUtils.isBlank(subscription.getMinimumLabelEl())?subscription.getOffer().getMinimumLabelEl():subscription.getMinimumLabelEl();
+                            String subscriptionMinAmountEL = StringUtils.isBlank(subscription.getMinimumAmountEl()) ? subscription.getOffer().getMinimumAmountEl()
+                                    : subscription.getMinimumAmountEl();
+                            String subscriptionMinLabelEL = StringUtils.isBlank(subscription.getMinimumLabelEl()) ? subscription.getOffer().getMinimumLabelEl()
+                                    : subscription.getMinimumLabelEl();
 
                             if(!StringUtils.isBlank(subscriptionMinAmountEL)) {
                                 BigDecimal subscriptionMinAmount = new BigDecimal(evaluateDoubleExpression(subscriptionMinAmountEL, subscription));
@@ -848,16 +909,19 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                         }
                                     }
 
-                                    BigDecimal unitAmountWithoutTax = appProvider.isEntreprise()?rtMinAmount:rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
-                                    BigDecimal unitAmountWithTax = appProvider.isEntreprise()?rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)):rtMinAmount;
+                                    BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
+                                            : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                                    BigDecimal unitAmountWithTax = appProvider.isEntreprise()
+                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                     BigDecimal amountWithTax = unitAmountWithTax;
                                     BigDecimal amountTax = unitAmountTax;
 
-                                    RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax,
-                                        unitAmountTax,  BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                                        invoiceSubCategory, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode()+"_"+subscription.getCode(), subscriptionMinLabel);
+                                    RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax,
+                                        BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "",
+                                        "", "", "", null, "", "", null, "NO_OFFER", null,
+                                        RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), subscriptionMinLabel);
                                     ratedTransactionService.create(ratedTransaction);
                                     ratedTransactionService.commit();
 
@@ -869,7 +933,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
                             if(billingAccountAmountMap.get(invoiceSubCategory) != null) {
                                 Map<String, BigDecimal> billingAccountAmount = billingAccountAmountMap.get(invoiceSubCategory);
-                                billingAccountAmount.put("billingAccountAmountWithoutTax", billingAccountAmount.get("billingAccountAmountWithoutTax").add(subscriptionAmountWithoutTax));
+                                billingAccountAmount.put("billingAccountAmountWithoutTax",
+                                    billingAccountAmount.get("billingAccountAmountWithoutTax").add(subscriptionAmountWithoutTax));
                                 billingAccountAmount.put("billingAccountAmountWithTax", billingAccountAmount.get("billingAccountAmountWithTax").add(subscriptionAmountWithTax));
                                 billingAccountAmountMap.put(invoiceSubCategory, billingAccountAmount);
                             } else {
@@ -884,7 +949,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 }
             }
         }
-
 
         BigDecimal totalInvoiceAmountWithoutTax = BigDecimal.ZERO;
         BigDecimal totalBillingAccountAmountWithoutTax = BigDecimal.ZERO;
@@ -930,16 +994,18 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                         }
                     }
 
-                    BigDecimal unitAmountWithoutTax = appProvider.isEntreprise()?rtMinAmount:rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
-                    BigDecimal unitAmountWithTax = appProvider.isEntreprise()?rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)):rtMinAmount;
+                    BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
+                            : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                    BigDecimal unitAmountWithTax = appProvider.isEntreprise()
+                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
                     BigDecimal amountWithTax = unitAmountWithTax;
                     BigDecimal amountTax = unitAmountTax;
 
-                    RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax,
-                        unitAmountTax,  BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                        invoiceSubCategory, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode()+"_"+billingAccount.getCode(), billingAccountMinLabel);
+                    RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, BigDecimal.ONE,
+                        amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null, "", "", null,
+                        "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), billingAccountMinLabel);
                     ratedTransactionService.create(ratedTransaction);
                     ratedTransactionService.commit();
 

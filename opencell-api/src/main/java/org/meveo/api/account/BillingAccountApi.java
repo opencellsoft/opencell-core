@@ -32,7 +32,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.DiscountPlan;
@@ -45,24 +45,25 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
+ * API to manage {@link BillingAccount} information
+ * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0.1
  **/
-
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
-    private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
+    private TerminationReasonService subscriptionTerminationReasonService;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -200,7 +201,7 @@ public class BillingAccountApi extends AccountEntityApi {
             throw e;
         }
 
-        billingAccountService.createBillingAccount(billingAccount);
+        billingAccountService.create(billingAccount);
 
         return billingAccount;
     }
@@ -444,28 +445,119 @@ public class BillingAccountApi extends AccountEntityApi {
         }
     }
 
-    public BillingAccount terminate(BillingAccountDto postData) throws MeveoApiException {
-        SubscriptionTerminationReason terminationReason = null;
-        try {
-            terminationReason = subscriptionTerminationReasonService.findByCodeReason(postData.getTerminationReason());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (terminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());
-        }
+    /**
+     * Terminate Billing account. Status will be changed to Terminated. Action will also terminate related User accounts and Subscriptions.
+     * 
+     * @param code Billing account code
+     * @param terminationReasonCode Termination reason code
+     * @param terminationDate Termination date
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws MissingParameterException Missing parameters
+     */
+    public BillingAccount terminateAccount(String code, String terminationReasonCode, Date terminationDate)
+            throws BusinessException, EntityDoesNotExistsException, MissingParameterException {
 
-        BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode());
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(terminationReasonCode)) {
+            missingParameters.add("terminationReason");
+        }
+        handleMissingParameters();
+
+        BillingAccount billingAccount = billingAccountService.findByCode(code);
         if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, postData.getCode());
+            throw new EntityDoesNotExistsException(BillingAccount.class, code);
         }
 
-        try {
-            billingAccountService.billingAccountTermination(billingAccount, postData.getTerminationDate(), terminationReason);
-        } catch (BusinessException e) {
-            log.error("Failed terminating a billingAccount with code={}. {}", postData.getCode(), e.getMessage());
-            throw new MeveoApiException("Failed terminating billingAccount with code=" + postData.getCode());
+        TerminationReason terminationReason = subscriptionTerminationReasonService.findByCode(terminationReasonCode);
+        if (terminationReason == null) {
+            throw new EntityDoesNotExistsException(TerminationReason.class, terminationReasonCode);
         }
+
+        billingAccount = billingAccountService.terminateBillingAccount(billingAccount, terminationDate, terminationReason);
+
+        return billingAccount;
+    }
+
+    /**
+     * Cancel Billing account. Status will be changed to Canceled. Action will also cancel related User accounts and Subscriptions.
+     * 
+     * @param code Billing account code
+     * @param cancellationDate Cancellation date
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws MissingParameterException Missing parameters
+     */
+    public BillingAccount cancelAccount(String code, Date cancellationDate) throws BusinessException, EntityDoesNotExistsException, MissingParameterException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        BillingAccount billingAccount = billingAccountService.findByCode(code);
+        if (billingAccount == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, code);
+        }
+
+        billingAccount = billingAccountService.cancelBillingAccount(billingAccount, cancellationDate);
+
+        return billingAccount;
+    }
+
+    /**
+     * Activate previously canceled or terminated Billing account. Status will be changed to Active.
+     * 
+     * @param code Billing account code
+     * @param activationDate Activation date
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws MissingParameterException Missing parameters
+     */
+    public BillingAccount reactivateAccount(String code, Date activationDate) throws BusinessException, EntityDoesNotExistsException, MissingParameterException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        BillingAccount billingAccount = billingAccountService.findByCode(code);
+        if (billingAccount == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, code);
+        }
+
+        billingAccount = billingAccountService.reactivateBillingAccount(billingAccount, activationDate);
+
+        return billingAccount;
+    }
+
+    /**
+     * Close previously canceled or terminated Billing account. Status will be changed to Closed.
+     * 
+     * @param code Billing account code
+     * @return Updated Billing account entity
+     * @throws BusinessException Business exception
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws MissingParameterException Missing parameters
+     */
+    public BillingAccount closeAccount(String code) throws BusinessException, EntityDoesNotExistsException, MissingParameterException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        BillingAccount billingAccount = billingAccountService.findByCode(code);
+        if (billingAccount == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, code);
+        }
+
+        billingAccount = billingAccountService.closeBillingAccount(billingAccount);
 
         return billingAccount;
     }
@@ -501,7 +593,8 @@ public class BillingAccountApi extends AccountEntityApi {
                     missingParameters.add("billingAccount.terminationReason");
                     handleMissingParametersAndValidate(postData);
                 }
-                terminate(postData);
+                terminateAccount(postData.getCustomerAccount(), postData.getTerminationReason(), postData.getTerminationDate());
+
             } else {
 
                 if (!StringUtils.isBlank(postData.getCustomerAccount())) {

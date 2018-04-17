@@ -110,7 +110,7 @@ public class UserAccount extends AccountEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
-    private SubscriptionTerminationReason terminationReason;
+    private TerminationReason terminationReason;
 
     public UserAccount() {
         accountType = ACCOUNT_TYPE;
@@ -199,11 +199,11 @@ public class UserAccount extends AccountEntity {
         this.invoiceAgregates = invoiceAgregates;
     }
 
-    public SubscriptionTerminationReason getTerminationReason() {
+    public TerminationReason getTerminationReason() {
         return terminationReason;
     }
 
-    public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+    public void setTerminationReason(TerminationReason terminationReason) {
         this.terminationReason = terminationReason;
     }
 

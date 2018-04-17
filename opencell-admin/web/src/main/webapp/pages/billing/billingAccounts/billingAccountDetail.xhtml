@@ -310,24 +310,31 @@
                                 <ui:define name="buttons">
                                 
                                     <h:panelGroup rendered="#{not empty billingAccountBean.entity.id and billingAccountBean.canUserUpdateEntity()}">
-                                        <div class="action-buttons">
-                                            <p:commandButton value="#{messages['account.buttonResiliateAccount']}" onclick="PF('dlg_billingAccountTerminationPopup').show()" type="button"
-                                                disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
-                                            <p:commandButton action="#{billingAccountBean.cancelAccount()}" value="#{messages['account.buttonCancelAccount']}"
-                                                onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}" immediate="true"
-                                                disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
-                                            <p:commandButton id="terminateButton" action="#{billingAccountBean.closeAccount()}" value="#{messages['account.buttonCloseAccount']}"
-                                                onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}" immediate="true"
-                                                disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString() != 'CANCELLED'}" />
-                                            <p:button outcome="addNewUserAccountAction" value="#{messages['billingAccount.addUserAccount']}"
-                                                disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
-                                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                                            </p:button>
-                                            <p:commandButton action="#{billingAccountBean.generateInvoice()}" value="#{messages['account.generateInvoice']}"
-                                                 immediate="true" disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />                                            
-                                            
-                                        </div>
-                                    </h:panelGroup>
+                                    <div class="action-buttons">
+                                        <p:commandButton value="#{messages['account.buttonResiliateAccount']}" onclick="PF('dlg_billingAccountTerminationPopup').show()" type="button"
+                                            disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
+                                        </p:commandButton>
+                                        <p:commandButton action="#{billingAccountBean.cancelAccount()}" value="#{messages['account.buttonCancelAccount']}" immediate="true"
+                                            disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
+                                            <p:confirm header="#{messages['billingAccount']}" message="#{messages['billingAccount.confirmCancelAccount']}" />
+                                        </p:commandButton>
+                                        <p:commandButton id="accountCloseButton" action="#{billingAccountBean.closeAccount()}" value="#{messages['account.buttonCloseAccount']}" immediate="true"
+                                            disabled="#{billingAccountBean.entity.status != 'TERMINATED' and billingAccountBean.entity.status != 'CANCELED'}">
+                                            <p:confirm header="#{messages['billingAccount']}" message="#{messages['billingAccount.confirmCloseAccount']}" />
+                                        </p:commandButton>
+                                        <p:commandButton id="accountreactivateButton" action="#{billingAccountBean.reactivateAccount()}" value="#{messages['account.buttonReactivateAccount']}" immediate="true"
+                                            disabled="#{billingAccountBean.entity.status != 'TERMINATED' and billingAccountBean.entity.status != 'CANCELED'}">
+                                            <p:confirm header="#{messages['billingAccount']}" message="#{messages['billingAccount.confirmReactivateAccount']}" />
+                                        </p:commandButton>                                        
+                                        <p:button outcome="addNewUserAccountAction" value="#{messages['billingAccount.addUserAccount']}"
+                                            disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
+                                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                        </p:button>
+                                        <p:commandButton action="#{billingAccountBean.generateInvoice()}" value="#{messages['account.generateInvoice']}" immediate="true"
+                                            disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
+
+                                    </div>
+                                </h:panelGroup>
                                 
                                 </ui:define>
 							</hftl:formPanel>

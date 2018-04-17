@@ -38,7 +38,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
@@ -1035,7 +1035,7 @@ public class OrderApi extends BaseApi {
             String.class, null);
 
         if (terminationReasonCode != null) {
-            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+            TerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
             if (terminationReason == null) {
                 throw new InvalidParameterException(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON.getCharacteristicName(), terminationReasonCode);
             }
@@ -1079,7 +1079,7 @@ public class OrderApi extends BaseApi {
             String.class, null);
 
         if (terminationReasonCode != null) {
-            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+            TerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
             if (terminationReason != null) {
                 renewRuleDto.setTerminationReasonCode(terminationReasonCode);
 

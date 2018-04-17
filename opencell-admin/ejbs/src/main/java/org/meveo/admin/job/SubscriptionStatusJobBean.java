@@ -57,7 +57,7 @@ public class SubscriptionStatusJobBean {
                         subscription.getEndAgreementDate());
 
                 } else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
-                    subscription = subscriptionService.subscriptionSuspension(subscription, subscription.getSubscribedTillDate());
+                    subscription = subscriptionService.suspendSubscription(subscription, subscription.getSubscribedTillDate());
 
                 } else if (subscription.getSubscriptionRenewal().getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
                     subscription = subscriptionService.terminateSubscription(subscription, subscription.getSubscribedTillDate(),

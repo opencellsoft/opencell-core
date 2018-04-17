@@ -113,6 +113,7 @@ public interface AccountWs extends IBaseWs {
     CustomersResponseDto listCustomerWithFilter(@Deprecated @WebParam(name = "customer") CustomerDto postData, @Deprecated @WebParam(name = "firstRow") Integer firstRow,
             @Deprecated @WebParam(name = "numberOfRows") Integer numberOfRows, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
+    
     // customer brand
 
     /**
@@ -238,6 +239,15 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     CustomerAccountsResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
 
+    /**
+     * Close Customer account. Status will be changed to Closed. Action will also close related Billing accounts.
+     * 
+     * @param code Customer account code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus closeCustomerAccount(@WebParam(name="code") String code);
+    
     // credit category
 
     /**
@@ -311,6 +321,47 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus createOrUpdateBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
 
+    /**
+     * Terminate Billing account. Status will be changed to Terminated. Action will also terminate related User accounts and Subscriptions.
+     * 
+     * @param code Billing account code
+     * @param terminationReasonCode Termination reason code
+     * @param terminationDate Termination date
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus terminateBillingAccount(@WebParam(name = "code") String code, @WebParam(name = "terminationReason") String terminationReasonCode,
+            @WebParam(name = "terminationDate") Date terminationDate);
+
+    /**
+     * Cancel Billing account. Status will be changed to Canceled. Action will also cancel related User accounts and Subscriptions.
+     * 
+     * @param code Billing account code
+     * @param cancellationDate Cancellation date
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus cancelBillingAccount(@WebParam(name = "code") String code, @WebParam(name = "cancellationDate") Date cancellationDate);
+
+    /**
+     * Activate previously canceled or terminated Billing account. Status will be changed to Active.
+     * 
+     * @param code Billing account code
+     * @param activationDate Activation date
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus reactivateBillingAccount(@WebParam(name = "code") String code, @WebParam(name = "activationDate") Date activationDate);
+
+    /**
+     * Close previously canceled or terminated Billing account. Status will be changed to Closed.
+     * 
+     * @param code Billing account code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus closeBillingAccount(@WebParam(name = "code") String code);
+    
     // user account
 
     @WebMethod
@@ -334,6 +385,39 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus createOrUpdateUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
 
+
+    /**
+     * Terminate User account. Status will be changed to Terminated. Action will also terminate related Subscriptions.
+     * 
+     * @param code User account code
+     * @param terminationReasonCode Termination reason code
+     * @param terminationDate Termination date
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus terminateUserAccount(@WebParam(name = "code") String code, @WebParam(name = "terminationReason") String terminationReasonCode,
+            @WebParam(name = "terminationDate") Date terminationDate);
+
+    /**
+     * Cancel User account. Status will be changed to Canceled. Action will also cancel related Subscriptions.
+     * 
+     * @param code User account code
+     * @param cancellationDate Cancellation date
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus cancelUserAccount(@WebParam(name = "code") String code, @WebParam(name = "cancellationDate") Date cancellationDate);
+
+    /**
+     * Activate previously canceled or terminated User account. Status will be changed to Active.
+     * 
+     * @param code User account code
+     * @param activationDate Activation date
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus reactivateUserAccount(@WebParam(name = "code") String code, @WebParam(name = "activationDate") Date activationDate);
+    
     // access
 
     @WebMethod

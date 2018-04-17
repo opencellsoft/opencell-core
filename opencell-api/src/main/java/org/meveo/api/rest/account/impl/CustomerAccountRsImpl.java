@@ -144,4 +144,16 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         return result;
     }
 
+    @Override
+    public ActionStatus close(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customerAccountApi.closeAccount(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 }

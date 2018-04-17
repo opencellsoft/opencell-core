@@ -48,7 +48,7 @@ import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
@@ -641,7 +641,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         try {
             Date terminationDate = selectedServiceInstance.getTerminationDate();
 
-            SubscriptionTerminationReason newSubscriptionTerminationReason = selectedServiceInstance.getSubscriptionTerminationReason();
+            TerminationReason newSubscriptionTerminationReason = selectedServiceInstance.getSubscriptionTerminationReason();
             log.debug("selected subscriptionTerminationReason={},terminationDate={},selectedServiceInstanceId={},status={}",
                 new Object[] { newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason.getId() : null, terminationDate, selectedServiceInstance.getId(),
                         selectedServiceInstance.getStatus() });
@@ -678,7 +678,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public String terminateSubscription() {
         try {
 
-            SubscriptionTerminationReason reason = entity.getSubscriptionTerminationReason();
+            TerminationReason reason = entity.getSubscriptionTerminationReason();
             Date terminationDate = entity.getTerminationDate();
 
             entity = subscriptionService.refreshOrRetrieve(entity);

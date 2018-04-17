@@ -36,7 +36,9 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 
 /**
- * @author phung
+ * A foundation service class to manage CRUD operations on AccountEntity subclasses
+ * 
+ * @author Andrius Karpavicius
  *
  * @param <P> extends account entity.
  * 
@@ -62,7 +64,7 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
             return null;
         }
         P e = (P) query.getResultList().get(0);
-        log.debug("end of find {} by externalRef1 (externalRef1={}). Result found={}.", new Object[] {getEntityClass().getSimpleName(), externalRef1, e != null });
+        log.debug("end of find {} by externalRef1 (externalRef1={}). Result found={}.", new Object[] { getEntityClass().getSimpleName(), externalRef1, e != null });
         return e;
     }
 

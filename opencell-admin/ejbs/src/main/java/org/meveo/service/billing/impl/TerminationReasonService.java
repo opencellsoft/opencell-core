@@ -19,29 +19,16 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
+import javax.inject.Named;
 
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.model.billing.TerminationReason;
+import org.meveo.service.base.BusinessService;
 
+/**
+ * A service class to manage CRUD operations on TerminationReason entity
+ */
+@Named
 @Stateless
-public class TerminationReasonService extends PersistenceService<SubscriptionTerminationReason> {
+public class TerminationReasonService extends BusinessService<TerminationReason> {
 
-	public SubscriptionTerminationReason findByCode(String code) {
-		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class, "s");
-		qb.addCriterion("code", "=", code, true);
-		
-
-		try {
-			return (SubscriptionTerminationReason) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
-            return null;
-        } catch (NonUniqueResultException e) {
-            log.error("More than one entity of type {} with code {} found", entityClass, code);
-            return null;
-        }
-	}
 }

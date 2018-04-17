@@ -49,7 +49,6 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -557,6 +556,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (entity == null) {
             return null;
+        }
+        
+        if (entity.getId() == null) {
+            return entity;
         }
 
         if (getEntityManager().contains(entity)) {

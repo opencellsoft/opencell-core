@@ -77,7 +77,7 @@ public interface BillingAccountRs extends IBaseRs {
      * List BillingAccount filter by customerAccountCode.
      * 
      * @param customerAccountCode Customer account code
-     * @return  list of billing account
+     * @return list of billing account
      */
     @GET
     @Path("/list")
@@ -92,7 +92,7 @@ public interface BillingAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(BillingAccountDto postData);
-    
+
     /**
      * filter counters by period date.
      *
@@ -103,4 +103,49 @@ public interface BillingAccountRs extends IBaseRs {
     @GET
     @Path("/filterCountersByPeriod")
     GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, @QueryParam("date") @RestDateParam Date date);
+
+    /**
+     * Terminate Billing account. Status will be changed to Terminated. Action will also terminate related User accounts and Subscriptions.
+     * 
+     * @param code Billing account code
+     * @param terminationReasonCode Termination reason code
+     * @param terminationDate Termination date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/terminate")
+    ActionStatus terminate(@PathParam("code") String code, @QueryParam("terminationReason") String terminationReasonCode,
+            @QueryParam("terminationDate") @RestDateParam Date terminationDate);
+
+    /**
+     * Cancel Billing account. Status will be changed to Canceled. Action will also cancel related User accounts and Subscriptions.
+     * 
+     * @param code Billing account code
+     * @param cancellationDate Cancellation date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/cancel")
+    ActionStatus cancel(@PathParam("code") String code, @QueryParam("cancellationDate") @RestDateParam Date cancellationDate);
+
+    /**
+     * Activate previously canceled or terminated Billing account. Status will be changed to Active.
+     * 
+     * @param code Billing account code
+     * @param activationDate Activation date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/reactivate")
+    ActionStatus reactivate(@PathParam("code") String code, @QueryParam("activationDate") @RestDateParam Date activationDate);
+
+    /**
+     * Close previously canceled or terminated Billing account. Status will be changed to Closed.
+     * 
+     * @param code Billing account code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/close")
+    ActionStatus close(@PathParam("code") String code);
 }

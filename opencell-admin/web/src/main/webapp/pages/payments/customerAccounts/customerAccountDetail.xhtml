@@ -119,7 +119,7 @@
                                         <hftl:formField label="#{messages['customerAccount.excludedFromPayment']}" field="excludedFromPayment"  />
                                         <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />                                       
-                                        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
+                                        <hftl:formField label="#{messages['customerAccount.status']}" field="status" edit="false" />                                       
                                          
                                     </p:fieldset>
                                 </p:tab>
@@ -275,9 +275,9 @@
                             <hf:formButtons backingBean="#{customerAccountBean}" edit="#{customerAccountBean.edit}" useCustomIdParam="true" ajaxSubmit="true"
                                 submitPartialProcess=":parentTab:formCustomerAccount:childTab">
                                 <p:commandButton rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" action="#{customerAccountBean.closeCustomerAccount}"
-                                    value="#{messages['customerAccount.buttonCloseAccount']}" immediate="true"
-                                    onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
+                                    value="#{messages['customerAccount.buttonCloseAccount']}" immediate="true">
                                     <!-- 										<f:attribute name="backView" value="#{backView}" /> -->
+                                    <p:confirm header="#{messages['customerAccount']}" message="#{messages['customerAccount.confirmCloseAccount']}" />
                                 </p:commandButton>
                                 <p:button rendered="#{customerAccountBean.isActiveAccount() and customerAccountBean.canUserUpdateEntity()}" outcome="addBillingAccount"
                                     value="#{messages['customerAccount.buttonAddBillingAccount']}">

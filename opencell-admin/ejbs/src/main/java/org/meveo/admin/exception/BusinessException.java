@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A general Business type exception resulting in transaction rollback
+ * 
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */

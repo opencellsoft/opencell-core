@@ -20,7 +20,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -31,6 +31,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -48,7 +49,7 @@ public class SubscriptionImportService extends ImportService {
     private SubscriptionService subscriptionService;
 
     @Inject
-    private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
+    private TerminationReasonService terminationReasonService;
 
     @Inject
     private ServiceTemplateService serviceTemplateService;
@@ -122,9 +123,9 @@ public class SubscriptionImportService extends ImportService {
         if (subscription != null) {
             if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
 
-                SubscriptionTerminationReason subscriptionTerminationType = null;
+                TerminationReason subscriptionTerminationType = null;
                 try {
-                    subscriptionTerminationType = subscriptionTerminationReasonService.findByCodeReason(jaxbSubscription.getStatus().getReason());
+                    subscriptionTerminationType = terminationReasonService.findByCode(jaxbSubscription.getStatus().getReason());
                 } catch (Exception e) {
                     log.error("failed to find subscriptionTerminationType ", e);
                 }

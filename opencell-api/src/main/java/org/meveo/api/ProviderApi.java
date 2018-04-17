@@ -47,7 +47,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Language;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
@@ -272,9 +272,9 @@ public class ProviderApi extends BaseApi {
         }
 
         // terminationReasons
-        List<SubscriptionTerminationReason> terminationReasons = terminationReasonService.list();
+        List<TerminationReason> terminationReasons = terminationReasonService.list();
         if (terminationReasons != null) {
-            for (SubscriptionTerminationReason terminationReason : terminationReasons) {
+            for (TerminationReason terminationReason : terminationReasons) {
                 result.getTerminationReasons().getTerminationReason().add(new TerminationReasonDto(terminationReason));
             }
         }

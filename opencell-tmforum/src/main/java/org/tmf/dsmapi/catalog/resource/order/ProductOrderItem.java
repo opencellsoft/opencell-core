@@ -14,8 +14,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
-import org.tmf.dsmapi.quote.ProductQuoteItem;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 

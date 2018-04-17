@@ -62,7 +62,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
@@ -93,6 +93,8 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
 
 /**
+ * API to manage {@link Subscription} information
+ * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
@@ -756,10 +758,11 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * Terminate subscription
-     * @param postData Terminate subscription request dto
-     * @param orderNumber order number
-     * @throws MeveoApiException Meveo api exception
+     * Terminate active, created or suspended Subscription. Status will be changed to Terminated. Action will also terminate the services.
+     * 
+     * @param postData Termination information
+     * @param orderNumber Order number, requesting termination
+     * @throws MeveoApiException
      */
     public void terminateSubscription(TerminateSubscriptionRequestDto postData, String orderNumber) throws MeveoApiException {
 
@@ -784,9 +787,9 @@ public class SubscriptionApi extends BaseApi {
             throw new MeveoApiException("Subscription is already RESILIATED.");
         }
 
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getTerminationReason());
+        TerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getTerminationReason());
         if (subscriptionTerminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());
+            throw new EntityDoesNotExistsException(TerminationReason.class, postData.getTerminationReason());
         }
 
         try {
@@ -826,9 +829,9 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, terminateSubscriptionDto.getSubscriptionCode());
         }
 
-        SubscriptionTerminationReason serviceTerminationReason = terminationReasonService.findByCode(terminateSubscriptionDto.getTerminationReason());
+        TerminationReason serviceTerminationReason = terminationReasonService.findByCode(terminateSubscriptionDto.getTerminationReason());
         if (serviceTerminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, terminateSubscriptionDto.getTerminationReason());
+            throw new EntityDoesNotExistsException(TerminationReason.class, terminateSubscriptionDto.getTerminationReason());
         }
 
         if (terminateSubscriptionDto.getServices() != null) {
@@ -1066,7 +1069,8 @@ public class SubscriptionApi extends BaseApi {
         return dto;
     }
 
-    public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws MeveoApiException, BusinessException {
+    public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
+            throws MeveoApiException, BusinessException {
 
         SubscriptionDto existedSubscriptionDto = null;
         try {
@@ -1265,14 +1269,15 @@ public class SubscriptionApi extends BaseApi {
     }
     
     /**
-     * Suspend subscription
-     * @param subscriptionCode subscription code
-     * @param suspensionDate suspension date
+     * Suspend active or created Subscription. Status will be changed to Suspended. Action will also suspend the services and access points.
+     * 
+     * @param subscriptionCode Subscription code
+     * @param suspensionDate Suspension date
      * @throws MissingParameterException Missing parameter exception
-     * @throws EntityDoesNotExistsException Entity does not exists exception
-     * @throws IncorrectSusbcriptionException Incorrect susbcription exception
+     * @throws EntityDoesNotExistsException Entity does not exist exception
+     * @throws IncorrectSusbcriptionException Incorrect subscription exception
      * @throws IncorrectServiceInstanceException Incorrect service instance exception
-     * @throws BusinessException Business exception
+     * @throws BusinessException Business exception.
      */
     public void suspendSubscription(String subscriptionCode, Date suspensionDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -1284,20 +1289,21 @@ public class SubscriptionApi extends BaseApi {
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
-        subscriptionService.subscriptionSuspension(subscription, suspensionDate);
+        subscriptionService.suspendSubscription(subscription, suspensionDate);
     }
 
     /**
-     * Resume subscription
-     * @param subscriptionCode subscription code
-     * @param suspensionDate suspension data
-     * @throws MissingParameterException missiong parameter exeption
-     * @throws EntityDoesNotExistsException entity does not exist exception
-     * @throws IncorrectSusbcriptionException incorrect subscription exception
-     * @throws IncorrectServiceInstanceException incorrection service isntance exception
-     * @throws BusinessException business exception.
+     * Activate previously canceled, terminated or suspended Subscription. Status will be changed to Active. Action will also reactivate previously suspended Services.
+     *
+     * @param subscriptionCode Subscription code
+     * @param reactivationDate Reactivation data
+     * @throws MissingParameterException Missing parameter exception
+     * @throws EntityDoesNotExistsException Entity does not exist exception
+     * @throws IncorrectSusbcriptionException Incorrect subscription exception
+     * @throws IncorrectServiceInstanceException Incorrect service instance exception
+     * @throws BusinessException Business exception.
      */
-    public void resumeSubscription(String subscriptionCode, Date suspensionDate)
+    public void resumeSubscription(String subscriptionCode, Date reactivationDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
@@ -1307,7 +1313,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
-        subscriptionService.subscriptionReactivation(subscription, suspensionDate);
+        subscriptionService.reactivateSubscription(subscription, reactivationDate);
     }
 
     /**
@@ -1563,7 +1569,7 @@ public class SubscriptionApi extends BaseApi {
         renewalInfo.setEndOfTermAction(renewalInfoDto.getEndOfTermAction());
         renewalInfo.setExtendAgreementPeriodToSubscribedTillDate(renewalInfoDto.isExtendAgreementPeriodToSubscribedTillDate());
         if (renewalInfoDto.getTerminationReasonCode() != null) {
-            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(renewalInfoDto.getTerminationReasonCode());
+            TerminationReason terminationReason = terminationReasonService.findByCode(renewalInfoDto.getTerminationReasonCode());
             if (terminationReason == null) {
                 throw new InvalidParameterException("renewalInfo/terminationReason");
             }

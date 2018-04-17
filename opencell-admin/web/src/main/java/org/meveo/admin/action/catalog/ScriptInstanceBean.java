@@ -39,7 +39,6 @@ import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.CustomScriptService;
-import org.meveo.service.script.GenericScriptService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.DualListModel;
 
