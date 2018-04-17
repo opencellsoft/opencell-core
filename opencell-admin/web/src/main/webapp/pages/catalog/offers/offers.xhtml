@@ -256,22 +256,25 @@
 
                                 <p:panel styleClass="VAlignTop Wid60 Responsive100">
                                     <p:panel styleClass="Wid50 Responsive100 VAlignTop no-border-radius">
+                                    	<div class="Wid100 TexAlCenter">
+                                    		<h:outputText styleClass="text-bold" value="#{messages['menu.serviceInstances']}" />
+                                    	</div>
                                         <p:dataList styleClass="dataList" paginatorPosition="bottom"
                                                     paginatorAlwaysVisible="false"
                                                     value="#{entity.offerServiceTemplates}"
                                                     var="ost" type="ordered"
                                                     rendered="#{entity.offerServiceTemplates!=null}">
                                             <div class="ui-g ui-g-nopad">
-	                                            <div class="ui-g-2">
+	                                            <div class="ui-g-1">
 	                                            	<p:graphicImage value="#{defaultImageStreamer.image}"
-	                                                            cache="false" width="100" height="100">
+	                                                            cache="false" width="50" height="50">
 		                                                <f:param name="providerCode" value="#{appProvider.code}"/>
 		                                                <f:param name="fileName" value="#{ost.serviceTemplate.imagePath}"/>
 		                                                <f:param name="pictureGroupName" value="service"/>
 		                                            </p:graphicImage>
 	                                           	</div>
 	                                           	<div class="ui-g-1"></div>
-												<div class="ui-g-9">
+												<div class="ui-g-10">
 													<div>
 														<h:outputText styleClass="text-bold" value="#{ost.serviceTemplate.descriptionOrCode}" />
 													</div>
@@ -283,22 +286,25 @@
                                         </p:dataList>
                                     </p:panel>
                                     <p:panel styleClass="Wid50 Responsive100 VAlignTop no-border-radius">
+                                    	<div class="Wid100 TexAlCenter">
+                                    		<h:outputText styleClass="text-bold" value="#{messages['menu.marketingManager.products']}" />
+                                    	</div>
                                         <p:dataList styleClass="dataList" paginatorPosition="bottom"
                                                     paginatorAlwaysVisible="false"
                                                     value="#{entity.offerProductTemplates}"
                                                     var="opt" type="ordered"
                                                     rendered="#{entity.offerProductTemplates!=null}">
                                             <div class="ui-g ui-g-nopad">
-	                                            <div class="ui-g-2">
+	                                            <div class="ui-g-1">
 	                                            	<p:graphicImage value="#{defaultImageStreamer.image}"
-	                                                            cache="false" width="100" height="100">
+	                                                            cache="false" width="50" height="50">
 		                                                <f:param name="providerCode" value="#{appProvider.code}"/>
 		                                                <f:param name="fileName" value="#{opt.productTemplate.imagePath}"/>
 		                                                <f:param name="pictureGroupName" value="product"/>
 		                                            </p:graphicImage>
 	                                           	</div>
 	                                           	<div class="ui-g-1"></div>
-												<div class="ui-g-9">
+												<div class="ui-g-10">
 													<div>
 														<h:outputText styleClass="text-bold" value="#{opt.productTemplate.descriptionOrCode}" />
 													</div>
