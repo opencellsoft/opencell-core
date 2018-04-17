@@ -50,14 +50,14 @@ public class OccTemplateDto extends BusinessDto {
     /**
      * Instantiates a new occ template dto.
      *
-     * @param e the e
+     * @param occTemplate the OCCTemplate entity
      */
-    public OccTemplateDto(OCCTemplate e) {
-        super(e);
-        accountingCode = e.getAccountingCode().getCode();
-        accountCode = e.getAccountingCode().getCode();
-        occCategory = e.getOccCategory();
-        accountCodeClientSide = e.getAccountCodeClientSide();
+    public OccTemplateDto(OCCTemplate occTemplate) {
+        super(occTemplate);
+        accountingCode = occTemplate.getAccountingCode().getCode();
+        accountCode = occTemplate.getAccountingCode().getCode();
+        occCategory = occTemplate.getOccCategory();
+        accountCodeClientSide = occTemplate.getAccountCodeClientSide();
     }
 
     /**

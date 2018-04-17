@@ -32,105 +32,154 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 
+/**
+ * The Class WorkflowDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowDto extends BaseDto {
 
-	private static final long serialVersionUID = 8309866046667741458L;
-	
-	@XmlAttribute(required=true)
-	private String code;
-	
-	@XmlAttribute
-	private String description;
-	
-	@XmlElement(required = true)	
-	private String wfType;
-		
-	private Boolean enableHistory =false;
-	
-	@XmlElementWrapper(name="transitions")
-    @XmlElement(name="transition")
-	private List<WFTransitionDto> listWFTransitionDto = new ArrayList<WFTransitionDto>();
-	
-	public WorkflowDto(){
-	}
-	public WorkflowDto(Workflow workflow) {
-		this.code=workflow.getCode();
-		this.description=workflow.getDescription();
-	    this.wfType = workflow.getWfType();	   
-	    this.enableHistory = workflow.isEnableHistory();
-	    for(WFTransition wfTransition : workflow.getTransitions()){
-	    	WFTransitionDto wftdto = new WFTransitionDto(wfTransition);
-	    	listWFTransitionDto.add(wftdto);
-	    }
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 8309866046667741458L;
 
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	/**
-	 * @return the wfType
-	 */
-	public String getWfType() {
-		return wfType;
-	}
-	/**
-	 * @param wfType the wfType to set
-	 */
-	public void setWfType(String wfType) {
-		this.wfType = wfType;
-	}
+    /** The code. */
+    @XmlAttribute(required = true)
+    private String code;
 
-	/**
-	 * @return the enableHistory
-	 */
-	public Boolean getEnableHistory() {
-		return enableHistory;
-	}
-	/**
-	 * @param enableHistory the enableHistory to set
-	 */
-	public void setEnableHistory(Boolean enableHistory) {
-		this.enableHistory = enableHistory;
-	}
-	/**
-	 * @return the listWFTransitionDto
-	 */
-	public List<WFTransitionDto> getListWFTransitionDto() {
-		return listWFTransitionDto;
-	}
-	/**
-	 * @param listWFTransitionDto the listWFTransitionDto to set
-	 */
-	public void setListWFTransitionDto(List<WFTransitionDto> listWFTransitionDto) {
-		this.listWFTransitionDto = listWFTransitionDto;
-	}
+    /** The description. */
+    @XmlAttribute
+    private String description;
 
-	@Override
-	public String toString() {
-		return "WorkflowDto [code=" + code + ", description=" + description + ", wfType=" + wfType + " enableHistory=" + enableHistory + ", listWFTransitionDto=" + listWFTransitionDto + "]";
-	}
-	
+    /** The wf type. */
+    @XmlElement(required = true)
+    private String wfType;
+
+    /** The enable history. */
+    private Boolean enableHistory = false;
+
+    /** The list WF transition dto. */
+    @XmlElementWrapper(name = "transitions")
+    @XmlElement(name = "transition")
+    private List<WFTransitionDto> listWFTransitionDto = new ArrayList<WFTransitionDto>();
+
+    /**
+     * Instantiates a new workflow dto.
+     */
+    public WorkflowDto() {
+    }
+
+    /**
+     * Instantiates a new workflow dto.
+     *
+     * @param workflow the workflow entity
+     */
+    public WorkflowDto(Workflow workflow) {
+        this.code = workflow.getCode();
+        this.description = workflow.getDescription();
+        this.wfType = workflow.getWfType();
+        this.enableHistory = workflow.isEnableHistory();
+        for (WFTransition wfTransition : workflow.getTransitions()) {
+            WFTransitionDto wftdto = new WFTransitionDto(wfTransition);
+            listWFTransitionDto.add(wftdto);
+        }
+    }
+
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Sets the code.
+     *
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Gets the wf type.
+     *
+     * @return the wfType
+     */
+    public String getWfType() {
+        return wfType;
+    }
+
+    /**
+     * Sets the wf type.
+     *
+     * @param wfType the wfType to set
+     */
+    public void setWfType(String wfType) {
+        this.wfType = wfType;
+    }
+
+    /**
+     * Gets the enable history.
+     *
+     * @return the enableHistory
+     */
+    public Boolean getEnableHistory() {
+        return enableHistory;
+    }
+
+    /**
+     * Sets the enable history.
+     *
+     * @param enableHistory the enableHistory to set
+     */
+    public void setEnableHistory(Boolean enableHistory) {
+        this.enableHistory = enableHistory;
+    }
+
+    /**
+     * Gets the list WF transition dto.
+     *
+     * @return the listWFTransitionDto
+     */
+    public List<WFTransitionDto> getListWFTransitionDto() {
+        return listWFTransitionDto;
+    }
+
+    /**
+     * Sets the list WF transition dto.
+     *
+     * @param listWFTransitionDto the listWFTransitionDto to set
+     */
+    public void setListWFTransitionDto(List<WFTransitionDto> listWFTransitionDto) {
+        this.listWFTransitionDto = listWFTransitionDto;
+    }
+
+    @Override
+    public String toString() {
+        return "WorkflowDto [code=" + code + ", description=" + description + ", wfType=" + wfType + " enableHistory=" + enableHistory + ", listWFTransitionDto="
+                + listWFTransitionDto + "]";
+    }
+
 }

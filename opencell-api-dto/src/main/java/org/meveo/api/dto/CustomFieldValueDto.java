@@ -82,20 +82,10 @@ public class CustomFieldValueDto implements Serializable {
     /**
      * Instantiates a new custom field value dto.
      *
-     * @param e the e
+     * @param object the CustomFieldValue
      */
-    public CustomFieldValueDto(Object e) {
-        this.value = e;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return String.format("CustomFieldValueDto [value=%s]", value);
+    public CustomFieldValueDto(Object object) {
+        this.value = object;
     }
 
     /**
@@ -131,5 +121,10 @@ public class CustomFieldValueDto implements Serializable {
      */
     public Object getValue() {
         return value;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("CustomFieldValueDto [value=%s]", value);
     }
 }

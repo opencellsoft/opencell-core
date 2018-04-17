@@ -7,32 +7,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CountryIsoDto;
 
 /**
+ * The Class GetCountryIsoResponse.
+ *
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
- **/
+ */
 @XmlRootElement(name = "GetCountryIsoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetCountryIsoResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -7308813550235264178L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7308813550235264178L;
 
-	private CountryIsoDto country;
+    /** The country. */
+    private CountryIsoDto country;
 
-	public GetCountryIsoResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new gets the country iso response.
+     */
+    public GetCountryIsoResponse() {
+        super();
+    }
 
-	public CountryIsoDto getCountry() {
-		return country;
-	}
+    /**
+     * Gets the country.
+     *
+     * @return the country
+     */
+    public CountryIsoDto getCountry() {
+        return country;
+    }
 
-	public void setCountry(CountryIsoDto country) {
-		this.country = country;
-	}
+    /**
+     * Sets the country.
+     *
+     * @param country the new country
+     */
+    public void setCountry(CountryIsoDto country) {
+        this.country = country;
+    }
 
-	@Override
-	public String toString() {
-		return "GetCountryIsoResponse [country=" + country + ", toString()=" + super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetCountryIsoResponse [country=" + country + ", toString()=" + super.toString() + "]";
+    }
 }

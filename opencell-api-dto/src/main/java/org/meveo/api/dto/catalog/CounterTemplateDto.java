@@ -59,18 +59,18 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
     /**
      * Instantiates a new counter template dto.
      *
-     * @param e the e
+     * @param counterTemplate the CounterTemplate entity
      */
-    public CounterTemplateDto(CounterTemplate e) {
-        super(e);
-        unity = e.getUnityDescription();
-        type = e.getCounterType();
-        ceiling = e.getCeiling();
-        disabled = e.isDisabled();
-        calendar = e.getCalendar().getCode();
-        counterLevel = e.getCounterLevel();
-        ceilingExpressionEl = e.getCeilingExpressionEl();
-        notificationLevels = e.getNotificationLevels();
+    public CounterTemplateDto(CounterTemplate counterTemplate) {
+        super(counterTemplate);
+        unity = counterTemplate.getUnityDescription();
+        type = counterTemplate.getCounterType();
+        ceiling = counterTemplate.getCeiling();
+        disabled = counterTemplate.isDisabled();
+        calendar = counterTemplate.getCalendar().getCode();
+        counterLevel = counterTemplate.getCounterLevel();
+        ceilingExpressionEl = counterTemplate.getCeilingExpressionEl();
+        notificationLevels = counterTemplate.getNotificationLevels();
     }
 
     /**

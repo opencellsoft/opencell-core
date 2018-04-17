@@ -4,24 +4,38 @@ import org.meveo.api.dto.account.ParentEntitiesDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class ParentEntitiesResponseDto.
+ *
  * @author Tony Alejandro.
  */
 public class ParentEntitiesResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	private ParentEntitiesDto parentEntities;
+    /** The parent entities. */
+    private ParentEntitiesDto parentEntities;
 
-	public ParentEntitiesDto getParentEntities() {
-		return parentEntities;
-	}
+    /**
+     * Gets the parent entities.
+     *
+     * @return the parent entities
+     */
+    public ParentEntitiesDto getParentEntities() {
+        return parentEntities;
+    }
 
-	public void setParentEntities(ParentEntitiesDto parentEntities) {
-		this.parentEntities = parentEntities;
-	}
+    /**
+     * Sets the parent entities.
+     *
+     * @param parentEntities the new parent entities
+     */
+    public void setParentEntities(ParentEntitiesDto parentEntities) {
+        this.parentEntities = parentEntities;
+    }
 
-	@Override
-	public String toString() {
-		return "ParentEntitiesResponseDto [parentEntities=" + parentEntities + ", toString()=" + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "ParentEntitiesResponseDto [parentEntities=" + parentEntities + ", toString()=" + super.toString() + "]";
+    }
 }

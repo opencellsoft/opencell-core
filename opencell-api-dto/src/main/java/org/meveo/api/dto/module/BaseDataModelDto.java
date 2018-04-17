@@ -4,19 +4,30 @@ import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 
+/**
+ * The Class BaseDataModelDto.
+ * 
+ * @author andrius
+ */
 abstract class BaseDataModelDto extends BusinessDto implements IEntity {
-	
-	public BaseDataModelDto() {
-		
-	}
 
-	public BaseDataModelDto(BusinessEntity e) {
-		super(e);
-	}
+    /**
+     * Instantiates a new base data model dto.
+     */
+    public BaseDataModelDto() {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    }
+
+    /**
+     * Instantiates a new base data model dto.
+     *
+     * @param businessEntity the businessEntity
+     */
+    public BaseDataModelDto(BusinessEntity businessEntity) {
+        super(businessEntity);
+    }
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
 }

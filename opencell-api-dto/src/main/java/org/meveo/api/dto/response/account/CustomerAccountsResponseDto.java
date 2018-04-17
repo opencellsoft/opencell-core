@@ -8,28 +8,40 @@ import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class CustomerAccountsResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CustomerAccountsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerAccountsResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 7705676034964165327L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 7705676034964165327L;
 
-	private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
+    /** The customer accounts. */
+    private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
 
-	public CustomerAccountsDto getCustomerAccounts() {
-		return customerAccounts;
-	}
+    /**
+     * Gets the customer accounts.
+     *
+     * @return the customer accounts
+     */
+    public CustomerAccountsDto getCustomerAccounts() {
+        return customerAccounts;
+    }
 
-	public void setCustomerAccounts(CustomerAccountsDto customerAccounts) {
-		this.customerAccounts = customerAccounts;
-	}
+    /**
+     * Sets the customer accounts.
+     *
+     * @param customerAccounts the new customer accounts
+     */
+    public void setCustomerAccounts(CustomerAccountsDto customerAccounts) {
+        this.customerAccounts = customerAccounts;
+    }
 
-	@Override
-	public String toString() {
-		return "ListCustomerAccountResponseDto [customerAccounts=" + customerAccounts + ", toString()="
-				+ super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "ListCustomerAccountResponseDto [customerAccounts=" + customerAccounts + ", toString()=" + super.toString() + "]";
+    }
 }

@@ -7,39 +7,46 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.billing.InvoiceTypesDto;
 
 /**
+ * The Class GetInvoiceTypesResponse.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetInvoiceTypesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetInvoiceTypesResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 1336652304727158329L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1336652304727158329L;
 
-	private InvoiceTypesDto invoiceTypesDto;
+    /** The invoice types dto. */
+    private InvoiceTypesDto invoiceTypesDto;
 
-	public GetInvoiceTypesResponse() {		
-	}
+    /**
+     * Instantiates a new gets the invoice types response.
+     */
+    public GetInvoiceTypesResponse() {
+    }
 
-	/**
-	 * @return the invoiceTypesDto
-	 */
-	public InvoiceTypesDto getInvoiceTypesDto() {
-		return invoiceTypesDto;
-	}
+    /**
+     * Gets the invoice types dto.
+     *
+     * @return the invoiceTypesDto
+     */
+    public InvoiceTypesDto getInvoiceTypesDto() {
+        return invoiceTypesDto;
+    }
 
-	/**
-	 * @param invoiceTypesDto the invoiceTypesDto to set
-	 */
-	public void setInvoiceTypesDto(InvoiceTypesDto invoiceTypesDto) {
-		this.invoiceTypesDto = invoiceTypesDto;
-	}
+    /**
+     * Sets the invoice types dto.
+     *
+     * @param invoiceTypesDto the invoiceTypesDto to set
+     */
+    public void setInvoiceTypesDto(InvoiceTypesDto invoiceTypesDto) {
+        this.invoiceTypesDto = invoiceTypesDto;
+    }
 
-	
-	@Override
-	public String toString() {
-		return "GetInvoiceTypesResponse [invoiceTypesDto=" + invoiceTypesDto + "]";
-	}
-
-	
-
+    @Override
+    public String toString() {
+        return "GetInvoiceTypesResponse [invoiceTypesDto=" + invoiceTypesDto + "]";
+    }
 }

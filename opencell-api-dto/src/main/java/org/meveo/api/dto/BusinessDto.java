@@ -47,12 +47,12 @@ public abstract class BusinessDto extends AuditableDto {
     /**
      * Instantiates a new business dto.
      *
-     * @param e the e
+     * @param businessEntity the BusinessEntity entity
      */
-    public BusinessDto(BusinessEntity e) {
-        if (e != null) {
-            code = e.getCode();
-            description = e.getDescription();
+    public BusinessDto(BusinessEntity businessEntity) {
+        if (businessEntity != null) {
+            code = businessEntity.getCode();
+            description = businessEntity.getDescription();
         }
     }
 

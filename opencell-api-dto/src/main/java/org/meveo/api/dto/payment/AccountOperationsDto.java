@@ -9,30 +9,45 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class AccountOperationsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "AccountOperationsDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccountOperationsDto implements Serializable {
 
-	private static final long serialVersionUID = -6969737909477126088L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6969737909477126088L;
 
-	private List<AccountOperationDto> accountOperation;
+    /** The account operation. */
+    private List<AccountOperationDto> accountOperation;
 
-	public List<AccountOperationDto> getAccountOperation() {
-		if (accountOperation == null) {
-			accountOperation = new ArrayList<AccountOperationDto>();
-		}
-		return accountOperation;
-	}
+    /**
+     * Gets the account operation.
+     *
+     * @return the account operation
+     */
+    public List<AccountOperationDto> getAccountOperation() {
+        if (accountOperation == null) {
+            accountOperation = new ArrayList<AccountOperationDto>();
+        }
+        return accountOperation;
+    }
 
-	public void setAccountOperation(List<AccountOperationDto> accountOperation) {
-		this.accountOperation = accountOperation;
-	}
+    /**
+     * Sets the account operation.
+     *
+     * @param accountOperation the new account operation
+     */
+    public void setAccountOperation(List<AccountOperationDto> accountOperation) {
+        this.accountOperation = accountOperation;
+    }
 
-	@Override
-	public String toString() {
-		return "AccountOperationsDto [accountOperation=" + accountOperation + "]";
-	}
+
+    @Override
+    public String toString() {
+        return "AccountOperationsDto [accountOperation=" + accountOperation + "]";
+    }
 
 }

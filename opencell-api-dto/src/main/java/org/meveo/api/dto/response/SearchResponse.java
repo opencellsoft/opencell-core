@@ -17,10 +17,17 @@ import org.meveo.model.BusinessEntity;
  */
 public abstract class SearchResponse extends BaseResponse {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -2374431968882480529L;
 
+    /** The paging. */
     private PagingAndFiltering paging;
 
+    /**
+     * Sets the paging.
+     *
+     * @param paging the new paging
+     */
     @SuppressWarnings("rawtypes")
     public void setPaging(PagingAndFiltering paging) {
         paging = SerializationUtils.clone(paging);
@@ -57,6 +64,11 @@ public abstract class SearchResponse extends BaseResponse {
         }
     }
 
+    /**
+     * Gets the paging.
+     *
+     * @return the paging
+     */
     public PagingAndFiltering getPaging() {
         return paging;
     }

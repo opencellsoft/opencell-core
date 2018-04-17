@@ -55,21 +55,21 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     /**
      * Instantiates a new recurring charge template dto.
      *
-     * @param e the e
+     * @param recurringChargeTemplate the RecurringChargeTemplate entity
      * @param customFieldInstances the custom field instances
      */
-    public RecurringChargeTemplateDto(RecurringChargeTemplate e, CustomFieldsDto customFieldInstances) {
-        super(e, customFieldInstances);
-        durationTermInMonth = e.getDurationTermInMonth();
-        subscriptionProrata = e.getSubscriptionProrata();
-        terminationProrata = e.getTerminationProrata();
-        applyInAdvance = e.getApplyInAdvance();
-        setFilterExpression(e.getFilterExpression());
-        if (e.getShareLevel() != null) {
-            shareLevel = e.getShareLevel().getId();
+    public RecurringChargeTemplateDto(RecurringChargeTemplate recurringChargeTemplate, CustomFieldsDto customFieldInstances) {
+        super(recurringChargeTemplate, customFieldInstances);
+        durationTermInMonth = recurringChargeTemplate.getDurationTermInMonth();
+        subscriptionProrata = recurringChargeTemplate.getSubscriptionProrata();
+        terminationProrata = recurringChargeTemplate.getTerminationProrata();
+        applyInAdvance = recurringChargeTemplate.getApplyInAdvance();
+        setFilterExpression(recurringChargeTemplate.getFilterExpression());
+        if (recurringChargeTemplate.getShareLevel() != null) {
+            shareLevel = recurringChargeTemplate.getShareLevel().getId();
         }
-        if (e.getCalendar() != null) {
-            calendar = e.getCalendar().getCode();
+        if (recurringChargeTemplate.getCalendar() != null) {
+            calendar = recurringChargeTemplate.getCalendar().getCode();
         }
     }
 

@@ -33,6 +33,7 @@ import org.meveo.security.MeveoUser;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentMethodDto extends BaseDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4815935377652350103L;
 
     /**
@@ -135,7 +136,7 @@ public class PaymentMethodDto extends BaseDto {
      * User identifier.
      */
     private String userId;
-    
+
     /**
      * Customer code, used only on dtp validation.
      */
@@ -177,7 +178,7 @@ public class PaymentMethodDto extends BaseDto {
      *
      * @param paymentMethod the paymentMethod entity.
      */
-    public PaymentMethodDto(PaymentMethod paymentMethod) {               
+    public PaymentMethodDto(PaymentMethod paymentMethod) {
         this.id = paymentMethod.getId();
         this.disabled = paymentMethod.isDisabled();
         this.alias = paymentMethod.getAlias();
@@ -197,8 +198,8 @@ public class PaymentMethodDto extends BaseDto {
             this.mandateDate = ((DDPaymentMethod) paymentMethod).getMandateDate();
             this.mandateIdentification = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
             this.bankCoordinates = new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates());
-        }        
-        if (paymentMethod instanceof CardPaymentMethod) {           
+        }
+        if (paymentMethod instanceof CardPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.CARD);
             this.cardNumber = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
             this.owner = ((CardPaymentMethod) paymentMethod).getOwner();
@@ -207,7 +208,7 @@ public class PaymentMethodDto extends BaseDto {
             this.yearExpiration = ((CardPaymentMethod) paymentMethod).getYearExpiration();
             this.issueNumber = ((CardPaymentMethod) paymentMethod).getIssueNumber();
             this.tokenId = ((CardPaymentMethod) paymentMethod).getTokenId();
-        }       
+        }
         if (paymentMethod instanceof CheckPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.CHECK);
         }
@@ -372,6 +373,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the payment method type.
+     *
      * @return the paymentMethodType
      */
     public PaymentMethodEnum getPaymentMethodType() {
@@ -379,6 +382,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the payment method type.
+     *
      * @param paymentMethodType the paymentMethodType to set
      */
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
@@ -386,6 +391,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the id.
+     *
      * @return the id
      */
     public Long getId() {
@@ -393,6 +400,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the id.
+     *
      * @param id the id to set
      */
     public void setId(Long id) {
@@ -400,6 +409,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Checks if is disabled.
+     *
      * @return the disabled
      */
     public boolean isDisabled() {
@@ -407,6 +418,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the disabled.
+     *
      * @param disabled the disabled to set
      */
     public void setDisabled(boolean disabled) {
@@ -414,6 +427,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the alias.
+     *
      * @return the alias
      */
     public String getAlias() {
@@ -421,6 +436,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the alias.
+     *
      * @param alias the alias to set
      */
     public void setAlias(String alias) {
@@ -428,6 +445,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Checks if is preferred.
+     *
      * @return the preferred
      */
     public boolean isPreferred() {
@@ -435,6 +454,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the preferred.
+     *
      * @param preferred the preferred to set
      */
     public void setPreferred(boolean preferred) {
@@ -442,6 +463,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the customer account code.
+     *
      * @return the customerAccountCode
      */
     public String getCustomerAccountCode() {
@@ -449,6 +472,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the customer account code.
+     *
      * @param customerAccountCode the customerAccountCode to set
      */
     public void setCustomerAccountCode(String customerAccountCode) {
@@ -456,6 +481,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the info 1.
+     *
      * @return the info1
      */
     public String getInfo1() {
@@ -463,6 +490,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the info 1.
+     *
      * @param info1 the info1 to set
      */
     public void setInfo1(String info1) {
@@ -470,6 +499,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the info 2.
+     *
      * @return the info2
      */
     public String getInfo2() {
@@ -477,6 +508,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the info 2.
+     *
      * @param info2 the info2 to set
      */
     public void setInfo2(String info2) {
@@ -484,6 +517,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the info 3.
+     *
      * @return the info3
      */
     public String getInfo3() {
@@ -491,6 +526,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the info 3.
+     *
      * @param info3 the info3 to set
      */
     public void setInfo3(String info3) {
@@ -498,6 +535,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the info 4.
+     *
      * @return the info4
      */
     public String getInfo4() {
@@ -505,6 +544,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the info 4.
+     *
      * @param info4 the info4 to set
      */
     public void setInfo4(String info4) {
@@ -512,6 +553,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the info 5.
+     *
      * @return the info5
      */
     public String getInfo5() {
@@ -519,6 +562,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the info 5.
+     *
      * @param info5 the info5 to set
      */
     public void setInfo5(String info5) {
@@ -526,6 +571,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the bank coordinates.
+     *
      * @return the bankCoordinates
      */
     public BankCoordinatesDto getBankCoordinates() {
@@ -533,6 +580,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the bank coordinates.
+     *
      * @param bankCoordinates the bankCoordinates to set
      */
     public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
@@ -540,6 +589,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the mandate identification.
+     *
      * @return the mandateIdentification
      */
     public String getMandateIdentification() {
@@ -547,6 +598,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the mandate identification.
+     *
      * @param mandateIdentification the mandateIdentification to set
      */
     public void setMandateIdentification(String mandateIdentification) {
@@ -554,6 +607,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the mandate date.
+     *
      * @return the mandateDate
      */
     public Date getMandateDate() {
@@ -561,6 +616,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the mandate date.
+     *
      * @param mandateDate the mandateDate to set
      */
     public void setMandateDate(Date mandateDate) {
@@ -568,6 +625,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the card type.
+     *
      * @return the cardType
      */
     public CreditCardTypeEnum getCardType() {
@@ -575,6 +634,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the card type.
+     *
      * @param cardType the cardType to set
      */
     public void setCardType(CreditCardTypeEnum cardType) {
@@ -582,6 +643,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the owner.
+     *
      * @return the owner
      */
     public String getOwner() {
@@ -589,6 +652,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the owner.
+     *
      * @param owner the owner to set
      */
     public void setOwner(String owner) {
@@ -596,6 +661,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the month expiration.
+     *
      * @return the monthExpiration
      */
     public Integer getMonthExpiration() {
@@ -603,6 +670,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the month expiration.
+     *
      * @param monthExpiration the monthExpiration to set
      */
     public void setMonthExpiration(Integer monthExpiration) {
@@ -610,6 +679,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the year expiration.
+     *
      * @return the yearExpiration
      */
     public Integer getYearExpiration() {
@@ -617,6 +688,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the year expiration.
+     *
      * @param yearExpiration the yearExpiration to set
      */
     public void setYearExpiration(Integer yearExpiration) {
@@ -624,6 +697,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the token id.
+     *
      * @return the tokenId
      */
     public String getTokenId() {
@@ -631,6 +706,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the token id.
+     *
      * @param tokenId the tokenId to set
      */
     public void setTokenId(String tokenId) {
@@ -638,6 +715,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the card number.
+     *
      * @return the cardNumber
      */
     public String getCardNumber() {
@@ -648,6 +727,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the card number.
+     *
      * @param cardNumber the cardNumber to set
      */
     public void setCardNumber(String cardNumber) {
@@ -655,6 +736,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the issue number.
+     *
      * @return the issueNumber
      */
     public String getIssueNumber() {
@@ -662,6 +745,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the issue number.
+     *
      * @param issueNumber the issueNumber to set
      */
     public void setIssueNumber(String issueNumber) {
@@ -669,6 +754,8 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Gets the user id.
+     *
      * @return the userId
      */
     public String getUserId() {
@@ -676,15 +763,17 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the user id.
+     *
      * @param userId the userId to set
      */
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    
-    
-    
+
     /**
+     * Gets the customer code.
+     *
      * @return the customerCode
      */
     public String getCustomerCode() {
@@ -692,12 +781,17 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
+     * Sets the customer code.
+     *
      * @param customerCode the customerCode to set
      */
     public void setCustomerCode(String customerCode) {
         this.customerCode = customerCode;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public final String toString() {
         return "PaymentMethodDto [paymentMethodType=" + paymentMethodType + ", id=" + id + ", disabled=" + disabled + ", alias=" + alias + ", preferred=" + preferred

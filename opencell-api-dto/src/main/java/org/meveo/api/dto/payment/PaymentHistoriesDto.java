@@ -3,8 +3,6 @@
  */
 package org.meveo.api.dto.payment;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,31 +15,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.response.SearchResponse;
 
 /**
- * @author anasseh
+ * The Class PaymentHistoriesDto.
  *
+ * @author anasseh
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentHistoriesDto extends SearchResponse {
-    
-    /**
-     * 
-     */
+
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    @XmlElementWrapper(name = "paymentHistories")  
-    @XmlElement(name="paymentHistory")
-    private List<PaymentHistoryDto> paymentHistories = new ArrayList<PaymentHistoryDto>();
     
-    public PaymentHistoriesDto() {
-        
-    }
+    /** The payment histories. */
+    @XmlElementWrapper(name = "paymentHistories")
+    @XmlElement(name = "paymentHistory")
+    private List<PaymentHistoryDto> paymentHistories = new ArrayList<PaymentHistoryDto>();
+
     /**
+     * Instantiates a new payment histories dto.
+     */
+    public PaymentHistoriesDto() {
+
+    }
+
+    /**
+     * Gets the payment histories.
+     *
      * @return the paymentHistories
      */
     public List<PaymentHistoryDto> getPaymentHistories() {
         return paymentHistories;
     }
+
     /**
+     * Sets the payment histories.
+     *
      * @param paymentHistories the paymentHistories to set
      */
     public void setPaymentHistories(List<PaymentHistoryDto> paymentHistories) {

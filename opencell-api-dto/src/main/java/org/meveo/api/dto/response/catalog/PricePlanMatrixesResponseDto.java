@@ -8,31 +8,43 @@ import org.meveo.api.dto.catalog.PricePlansDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class PricePlanMatrixesResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "PricePlanMatrixesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixesResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -7527987531474820250L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7527987531474820250L;
 
-	private PricePlansDto pricePlanMatrixes;
+    /** The price plan matrixes. */
+    private PricePlansDto pricePlanMatrixes;
 
-	public PricePlansDto getPricePlanMatrixes() {
-		if (pricePlanMatrixes == null) {
-			pricePlanMatrixes = new PricePlansDto();
-		}
-		return pricePlanMatrixes;
-	}
+    /**
+     * Gets the price plan matrixes.
+     *
+     * @return the price plan matrixes
+     */
+    public PricePlansDto getPricePlanMatrixes() {
+        if (pricePlanMatrixes == null) {
+            pricePlanMatrixes = new PricePlansDto();
+        }
+        return pricePlanMatrixes;
+    }
 
-	public void setPricePlanMatrixes(PricePlansDto pricePlanMatrixes) {
-		this.pricePlanMatrixes = pricePlanMatrixes;
-	}
+    /**
+     * Sets the price plan matrixes.
+     *
+     * @param pricePlanMatrixes the new price plan matrixes
+     */
+    public void setPricePlanMatrixes(PricePlansDto pricePlanMatrixes) {
+        this.pricePlanMatrixes = pricePlanMatrixes;
+    }
 
-	@Override
-	public String toString() {
-		return "PricePlanMatrixesResponseDto [pricePlanMatrixes=" + pricePlanMatrixes + ", getActionStatus()="
-				+ getActionStatus() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "PricePlanMatrixesResponseDto [pricePlanMatrixes=" + pricePlanMatrixes + ", getActionStatus()=" + getActionStatus() + "]";
+    }
 }

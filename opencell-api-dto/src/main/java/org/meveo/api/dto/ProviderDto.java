@@ -96,11 +96,11 @@ public class ProviderDto extends BaseDto {
     /**
      * Instantiates a new provider dto.
      *
-     * @param e the e
+     * @param provider the provider entity
      * @param customFieldInstances the custom field instances
      */
-    public ProviderDto(Provider e, CustomFieldsDto customFieldInstances) {
-        this(e, customFieldInstances, true);
+    public ProviderDto(Provider provider, CustomFieldsDto customFieldInstances) {
+        this(provider, customFieldInstances, true);
     }
 
     /**

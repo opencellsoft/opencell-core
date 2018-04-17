@@ -49,50 +49,50 @@ public class CountryDto extends BaseDto {
     /**
      * Instantiates a new country dto.
      *
-     * @param e the e
+     * @param country the Country enntity
      */
-    public CountryDto(Country e) {
-        countryCode = e.getCountryCode();
-        name = e.getDescription();
-        currencyCode = e.getCurrency().getCurrencyCode();
+    public CountryDto(Country country) {
+        countryCode = country.getCountryCode();
+        name = country.getDescription();
+        currencyCode = country.getCurrency().getCurrencyCode();
 
-        if (e.getLanguage() != null) {
-            languageCode = e.getLanguage().getLanguageCode();
+        if (country.getLanguage() != null) {
+            languageCode = country.getLanguage().getLanguageCode();
         }
     }
 
     /**
      * Instantiates a new country dto.
      *
-     * @param e the e
+     * @param tradingCountry the TradingCountry entity
      */
-    public CountryDto(TradingCountry e) {
-        countryCode = e.getCountryCode();
-        name = e.getPrDescription();
+    public CountryDto(TradingCountry tradingCountry) {
+        countryCode = tradingCountry.getCountryCode();
+        name = tradingCountry.getPrDescription();
 
-        if (e.getCountry() != null && e.getCountry().getCurrency() != null) {
-            currencyCode = e.getCountry().getCurrency().getCurrencyCode();
+        if (tradingCountry.getCountry() != null && tradingCountry.getCountry().getCurrency() != null) {
+            currencyCode = tradingCountry.getCountry().getCurrency().getCurrencyCode();
         }
 
-        if (e.getCountry() != null && e.getCountry().getLanguage() != null) {
-            languageCode = e.getCountry().getLanguage().getLanguageCode();
+        if (tradingCountry.getCountry() != null && tradingCountry.getCountry().getLanguage() != null) {
+            languageCode = tradingCountry.getCountry().getLanguage().getLanguageCode();
         }
     }
 
     /**
      * Instantiates a new country dto.
      *
-     * @param e the e
-     * @param c the c
+     * @param tradingCountry the TradingCountry entity
+     * @param country the Country entity
      */
-    public CountryDto(TradingCountry e, Country c) {
-        countryCode = e.getCountryCode();
-        name = e.getPrDescription();
+    public CountryDto(TradingCountry tradingCountry, Country country) {
+        countryCode = tradingCountry.getCountryCode();
+        name = tradingCountry.getPrDescription();
 
-        currencyCode = c.getCurrency().getCurrencyCode();
+        currencyCode = country.getCurrency().getCurrencyCode();
 
-        if (c.getLanguage() != null) {
-            languageCode = c.getLanguage().getLanguageCode();
+        if (country.getLanguage() != null) {
+            languageCode = country.getLanguage().getLanguageCode();
         }
     }
 

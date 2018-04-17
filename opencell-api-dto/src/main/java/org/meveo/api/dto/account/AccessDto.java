@@ -52,16 +52,16 @@ public class AccessDto extends BaseDto {
     /**
      * Instantiates a new access dto.
      *
-     * @param e the e
+     * @param access the Access entity
      * @param customFieldInstances the custom field instances
      */
-    public AccessDto(Access e, CustomFieldsDto customFieldInstances) {
-        code = e.getAccessUserId();
-        startDate = e.getStartDate();
-        endDate = e.getEndDate();
+    public AccessDto(Access access, CustomFieldsDto customFieldInstances) {
+        code = access.getAccessUserId();
+        startDate = access.getStartDate();
+        endDate = access.getEndDate();
 
-        if (e.getSubscription() != null) {
-            subscription = e.getSubscription().getCode();
+        if (access.getSubscription() != null) {
+            subscription = access.getSubscription().getCode();
         }
 
         customFields = customFieldInstances;

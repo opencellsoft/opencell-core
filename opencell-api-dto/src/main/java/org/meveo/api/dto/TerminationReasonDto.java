@@ -37,14 +37,14 @@ public class TerminationReasonDto extends BusinessDto {
     /**
      * Instantiates a new termination reason dto.
      *
-     * @param e the e
+     * @param subscriptionTerminationReason the SubscriptionTerminationReason entity
      */
-    public TerminationReasonDto(SubscriptionTerminationReason e) {
-        setCode(e.getCode());
-        setDescription(e.getDescription());
-        applyAgreement = e.isApplyAgreement();
-        applyReimbursment = e.isApplyReimbursment();
-        applyTerminationCharges = e.isApplyTerminationCharges();
+    public TerminationReasonDto(SubscriptionTerminationReason subscriptionTerminationReason) {
+        setCode(subscriptionTerminationReason.getCode());
+        setDescription(subscriptionTerminationReason.getDescription());
+        applyAgreement = subscriptionTerminationReason.isApplyAgreement();
+        applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
+        applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
     }
 
     /**

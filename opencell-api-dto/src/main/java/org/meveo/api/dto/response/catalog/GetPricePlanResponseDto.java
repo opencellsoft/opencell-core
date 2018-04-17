@@ -8,27 +8,40 @@ import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetPricePlanResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetPricePlanResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetPricePlanResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 9135612368906230878L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 9135612368906230878L;
 
-	private PricePlanMatrixDto pricePlan;
+    /** The price plan. */
+    private PricePlanMatrixDto pricePlan;
 
-	public PricePlanMatrixDto getPricePlan() {
-		return pricePlan;
-	}
+    /**
+     * Gets the price plan.
+     *
+     * @return the price plan
+     */
+    public PricePlanMatrixDto getPricePlan() {
+        return pricePlan;
+    }
 
-	public void setPricePlan(PricePlanMatrixDto pricePlan) {
-		this.pricePlan = pricePlan;
-	}
+    /**
+     * Sets the price plan.
+     *
+     * @param pricePlan the new price plan
+     */
+    public void setPricePlan(PricePlanMatrixDto pricePlan) {
+        this.pricePlan = pricePlan;
+    }
 
-	@Override
-	public String toString() {
-		return "GetPricePlanResponse [pricePlan=" + pricePlan + ", toString()=" + super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetPricePlanResponse [pricePlan=" + pricePlan + ", toString()=" + super.toString() + "]";
+    }
 }

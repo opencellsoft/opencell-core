@@ -8,27 +8,40 @@ import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.response.SearchResponse;
 
 /**
+ * The Class AccountOperationsResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "AccountOperationsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccountOperationsResponseDto extends SearchResponse {
 
-	private static final long serialVersionUID = 6443115315543724968L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 6443115315543724968L;
 
-	private AccountOperationsDto accountOperations = new AccountOperationsDto();
+    /** The account operations. */
+    private AccountOperationsDto accountOperations = new AccountOperationsDto();
 
-	public AccountOperationsDto getAccountOperations() {
-		return accountOperations;
-	}
+    /**
+     * Gets the account operations.
+     *
+     * @return the account operations
+     */
+    public AccountOperationsDto getAccountOperations() {
+        return accountOperations;
+    }
 
-	public void setAccountOperations(AccountOperationsDto accountOperations) {
-		this.accountOperations = accountOperations;
-	}
+    /**
+     * Sets the account operations.
+     *
+     * @param accountOperations the new account operations
+     */
+    public void setAccountOperations(AccountOperationsDto accountOperations) {
+        this.accountOperations = accountOperations;
+    }
 
-	@Override
-	public String toString() {
-		return "ListAccountOperationsDto [accountOperations=" + accountOperations + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "ListAccountOperationsDto [accountOperations=" + accountOperations + "]";
+    }
 }

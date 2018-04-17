@@ -8,30 +8,50 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.invoice.InvoiceDto;
 
+/**
+ * The Class CustomerInvoicesResponse.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "CustomerInvoicesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerInvoicesResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -954637537391623233L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -954637537391623233L;
 
-	private List<InvoiceDto> CustomerInvoiceDtoList;
+    /** The Customer invoice dto list. */
+    private List<InvoiceDto> CustomerInvoiceDtoList;
 
-	public CustomerInvoicesResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new customer invoices response.
+     */
+    public CustomerInvoicesResponse() {
+        super();
+    }
 
-	public List<InvoiceDto> getCustomerInvoiceDtoList() {
-		return CustomerInvoiceDtoList;
-	}
+    /**
+     * Gets the customer invoice dto list.
+     *
+     * @return the customer invoice dto list
+     */
+    public List<InvoiceDto> getCustomerInvoiceDtoList() {
+        return CustomerInvoiceDtoList;
+    }
 
-	public void setCustomerInvoiceDtoList(List<InvoiceDto> customerInvoiceDtoList) {
-		CustomerInvoiceDtoList = customerInvoiceDtoList;
-	}
+    /**
+     * Sets the customer invoice dto list.
+     *
+     * @param customerInvoiceDtoList the new customer invoice dto list
+     */
+    public void setCustomerInvoiceDtoList(List<InvoiceDto> customerInvoiceDtoList) {
+        CustomerInvoiceDtoList = customerInvoiceDtoList;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerInvoicesResponse [CustomerInvoiceDtoList=" + CustomerInvoiceDtoList + ", toString()="
-				+ super.toString() + "]";
-	}
+
+    @Override
+    public String toString() {
+        return "CustomerInvoicesResponse [CustomerInvoiceDtoList=" + CustomerInvoiceDtoList + ", toString()=" + super.toString() + "]";
+    }
 
 }

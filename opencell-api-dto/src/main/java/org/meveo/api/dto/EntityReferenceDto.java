@@ -45,12 +45,12 @@ public class EntityReferenceDto implements Serializable {
     /**
      * Instantiates a new entity reference dto.
      *
-     * @param e the e
+     * @param entityReferenceWrapper the EntityReferenceWrapper
      */
-    public EntityReferenceDto(EntityReferenceWrapper e) {
-        classname = e.getClassname();
-        classnameCode = e.getClassnameCode();
-        code = e.getCode();
+    public EntityReferenceDto(EntityReferenceWrapper entityReferenceWrapper) {
+        classname = entityReferenceWrapper.getClassname();
+        classnameCode = entityReferenceWrapper.getClassnameCode();
+        code = entityReferenceWrapper.getCode();
     }
 
     /**

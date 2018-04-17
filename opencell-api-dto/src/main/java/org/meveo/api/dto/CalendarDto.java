@@ -73,22 +73,22 @@ public class CalendarDto extends BusinessDto {
     /**
      * Instantiates a new calendar dto.
      *
-     * @param e the e
+     * @param calendarEntity the Calendar entity
      */
-    public CalendarDto(Calendar e) {
-        super(e);
-        calendarType = CalendarTypeEnum.valueOf(e.getCalendarTypeWSubtypes());
+    public CalendarDto(Calendar calendarEntity) {
+        super(calendarEntity);
+        calendarType = CalendarTypeEnum.valueOf(calendarEntity.getCalendarTypeWSubtypes());
 
-        if (e instanceof CalendarYearly) {
-            CalendarYearly calendar = (CalendarYearly) e;
+        if (calendarEntity instanceof CalendarYearly) {
+            CalendarYearly calendar = (CalendarYearly) calendarEntity;
             if (calendar.getDays() != null && calendar.getDays().size() > 0) {
                 days = new ArrayList<DayInYearDto>();
                 for (DayInYear d : calendar.getDays()) {
                     days.add(new DayInYearDto(d));
                 }
             }
-        } else if (e instanceof CalendarDaily) {
-            CalendarDaily calendar = (CalendarDaily) e;
+        } else if (calendarEntity instanceof CalendarDaily) {
+            CalendarDaily calendar = (CalendarDaily) calendarEntity;
             if (calendar.getHours() != null && calendar.getHours().size() > 0) {
                 hours = new ArrayList<HourInDayDto>();
                 for (HourInDay d : calendar.getHours()) {
@@ -96,14 +96,14 @@ public class CalendarDto extends BusinessDto {
                 }
             }
 
-        } else if (e instanceof CalendarPeriod) {
-            CalendarPeriod calendar = (CalendarPeriod) e;
+        } else if (calendarEntity instanceof CalendarPeriod) {
+            CalendarPeriod calendar = (CalendarPeriod) calendarEntity;
             periodLength = calendar.getPeriodLength();
             periodUnit = CalendarPeriodUnitEnum.getValueByUnit(calendar.getPeriodUnit());
             nbPeriods = calendar.getNbPeriods();
 
-        } else if (e instanceof CalendarInterval) {
-            CalendarInterval calendar = (CalendarInterval) e;
+        } else if (calendarEntity instanceof CalendarInterval) {
+            CalendarInterval calendar = (CalendarInterval) calendarEntity;
             intervalType = calendar.getIntervalType();
 
             if (calendar.getIntervals() != null && calendar.getIntervals().size() > 0) {
@@ -113,8 +113,8 @@ public class CalendarDto extends BusinessDto {
                 }
             }
 
-        } else if (e instanceof CalendarJoin) {
-            CalendarJoin calendar = (CalendarJoin) e;
+        } else if (calendarEntity instanceof CalendarJoin) {
+            CalendarJoin calendar = (CalendarJoin) calendarEntity;
 
             joinCalendar1Code = calendar.getJoinCalendar1().getCode();
             joinCalendar2Code = calendar.getJoinCalendar2().getCode();

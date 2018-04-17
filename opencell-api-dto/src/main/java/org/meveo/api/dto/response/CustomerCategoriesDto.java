@@ -11,29 +11,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 
 /**
+ * The Class CustomerCategoriesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CustomerCategories")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerCategoriesDto implements Serializable {
 
-	private static final long serialVersionUID = 88289090554367171L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 88289090554367171L;
 
-	private List<CustomerCategoryDto> customerCategory;
+    /** The customer category. */
+    private List<CustomerCategoryDto> customerCategory;
 
-	public List<CustomerCategoryDto> getCustomerCategory() {
-		if (customerCategory == null)
-			customerCategory = new ArrayList<CustomerCategoryDto>();
-		return customerCategory;
-	}
+    /**
+     * Gets the customer category.
+     *
+     * @return the customer category
+     */
+    public List<CustomerCategoryDto> getCustomerCategory() {
+        if (customerCategory == null)
+            customerCategory = new ArrayList<CustomerCategoryDto>();
+        return customerCategory;
+    }
 
-	public void setCustomerCategory(List<CustomerCategoryDto> customerCategory) {
-		this.customerCategory = customerCategory;
-	}
+    /**
+     * Sets the customer category.
+     *
+     * @param customerCategory the new customer category
+     */
+    public void setCustomerCategory(List<CustomerCategoryDto> customerCategory) {
+        this.customerCategory = customerCategory;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerCategoriesDto [customerCategory=" + customerCategory + "]";
-	}
+
+    @Override
+    public String toString() {
+        return "CustomerCategoriesDto [customerCategory=" + customerCategory + "]";
+    }
 
 }

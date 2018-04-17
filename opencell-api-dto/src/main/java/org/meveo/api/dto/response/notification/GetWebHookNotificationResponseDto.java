@@ -8,22 +8,35 @@ import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetWebHookNotificationResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetWebHookNotificationResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetWebHookNotificationResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1520769709468268817L;
-	
-	private WebHookDto webhookDto;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1520769709468268817L;
 
-	public WebHookDto getWebhookDto() {
-		return webhookDto;
-	}
+    /** The webhook dto. */
+    private WebHookDto webhookDto;
 
-	public void setWebhookDto(WebHookDto webhookDto) {
-		this.webhookDto = webhookDto;
-	}
+    /**
+     * Gets the webhook dto.
+     *
+     * @return the webhook dto
+     */
+    public WebHookDto getWebhookDto() {
+        return webhookDto;
+    }
 
+    /**
+     * Sets the webhook dto.
+     *
+     * @param webhookDto the new webhook dto
+     */
+    public void setWebhookDto(WebHookDto webhookDto) {
+        this.webhookDto = webhookDto;
+    }
 }

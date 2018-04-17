@@ -11,36 +11,45 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class UsageResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "UsageResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UsageResponseDto extends BaseResponse {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@XmlElementWrapper
-    @XmlElement(name="catUsage")
-	List<CatUsageDto> listCatUsage = new ArrayList<CatUsageDto>();
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public UsageResponseDto() {
+    /** The list cat usage. */
+    @XmlElementWrapper
+    @XmlElement(name = "catUsage")
+    List<CatUsageDto> listCatUsage = new ArrayList<CatUsageDto>();
 
-	}
+    /**
+     * Instantiates a new usage response dto.
+     */
+    public UsageResponseDto() {
 
-	/**
-	 * @return the listCatUsage
-	 */
-	public List<CatUsageDto> getListCatUsage() {
-		return listCatUsage;
-	}
+    }
 
-	/**
-	 * @param listCatUsage
-	 *            the listCatUsage to set
-	 */
-	public void setListCatUsage(List<CatUsageDto> listCatUsage) {
-		this.listCatUsage = listCatUsage;
-	}
+    /**
+     * Gets the list cat usage.
+     *
+     * @return the listCatUsage
+     */
+    public List<CatUsageDto> getListCatUsage() {
+        return listCatUsage;
+    }
 
+    /**
+     * Sets the list cat usage.
+     *
+     * @param listCatUsage the listCatUsage to set
+     */
+    public void setListCatUsage(List<CatUsageDto> listCatUsage) {
+        this.listCatUsage = listCatUsage;
+    }
 }

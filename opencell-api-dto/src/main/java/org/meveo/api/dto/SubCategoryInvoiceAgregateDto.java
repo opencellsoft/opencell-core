@@ -102,29 +102,29 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     /**
      * Instantiates a new sub category invoice agregate dto.
      *
-     * @param e the e
+     * @param subCategoryInvoiceAgregate the SubCategoryInvoiceAgregate entity
      */
-    public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate e) {
-        if (e != null) {
-            discountPlanCode = e.getDiscountPlanCode();
-            discountPlanItemCode = e.getDiscountPlanItemCode();
-            discountPercent = e.getDiscountPercent();
-            itemNumber = e.getItemNumber();
-            if (e.getAccountingCode() != null) {
-                accountingCode = e.getAccountingCode().getCode();
+    public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+        if (subCategoryInvoiceAgregate != null) {
+            discountPlanCode = subCategoryInvoiceAgregate.getDiscountPlanCode();
+            discountPlanItemCode = subCategoryInvoiceAgregate.getDiscountPlanItemCode();
+            discountPercent = subCategoryInvoiceAgregate.getDiscountPercent();
+            itemNumber = subCategoryInvoiceAgregate.getItemNumber();
+            if (subCategoryInvoiceAgregate.getAccountingCode() != null) {
+                accountingCode = subCategoryInvoiceAgregate.getAccountingCode().getCode();
             }
-            description = e.getDescription();
-            taxPercent = e.getTaxPercent();
-            quantity = e.getQuantity();
-            amountWithoutTax = e.getAmountWithoutTax();
-            amountTax = e.getAmountTax();
-            amountWithTax = e.getAmountTax();
+            description = subCategoryInvoiceAgregate.getDescription();
+            taxPercent = subCategoryInvoiceAgregate.getTaxPercent();
+            quantity = subCategoryInvoiceAgregate.getQuantity();
+            amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
+            amountTax = subCategoryInvoiceAgregate.getAmountTax();
+            amountWithTax = subCategoryInvoiceAgregate.getAmountTax();
 
-            if (e.getInvoiceSubCategory() != null) {
-                invoiceSubCategoryCode = e.getInvoiceSubCategory().getCode();
+            if (subCategoryInvoiceAgregate.getInvoiceSubCategory() != null) {
+                invoiceSubCategoryCode = subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode();
             }
-            if (e.getUserAccount() != null) {
-                userAccountCode = e.getUserAccount().getCode();
+            if (subCategoryInvoiceAgregate.getUserAccount() != null) {
+                userAccountCode = subCategoryInvoiceAgregate.getUserAccount().getCode();
             }
         }
     }

@@ -13,6 +13,8 @@ import org.meveo.api.dto.response.SearchResponse;
 
 /**
  * The Class PaymentMethodTokensDto.
+ * 
+ * @author anasseh
  */
 @XmlRootElement(name = "PaymentMethodTokens")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -32,7 +34,7 @@ public class PaymentMethodTokensDto extends SearchResponse {
      * @return the payment methods
      */
     public List<PaymentMethodDto> getPaymentMethods() {
-	return paymentMethods;
+        return paymentMethods;
     }
 
     /**
@@ -41,7 +43,7 @@ public class PaymentMethodTokensDto extends SearchResponse {
      * @param paymentMethods the new payment methods
      */
     public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
-	this.paymentMethods = paymentMethods;
+        this.paymentMethods = paymentMethods;
     }
 
 }
