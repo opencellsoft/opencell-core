@@ -4,6 +4,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -30,7 +31,7 @@ public class MeveoModuleItem extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "module_id")
     private MeveoModule meveoModule;
 
@@ -131,8 +132,7 @@ public class MeveoModuleItem extends BaseEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime * 1;// super.hashCode();
+        int result = 31;
         result += itemClass != null ? itemClass.hashCode() : 0;
         result += itemCode != null ? itemCode.hashCode() : 0;
         result += appliesTo != null ? appliesTo.hashCode() : 0;
@@ -152,6 +152,9 @@ public class MeveoModuleItem extends BaseEntity {
         }
 
         MeveoModuleItem other = (MeveoModuleItem) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
 
         if (!itemClass.equals(other.getItemClass()) || !itemCode.equalsIgnoreCase(other.getItemCode()) || StringUtils.compare(appliesTo, other.getAppliesTo()) != 0) {
             return false;

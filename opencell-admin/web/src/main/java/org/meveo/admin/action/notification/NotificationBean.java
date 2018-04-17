@@ -40,48 +40,51 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 @ViewScoped
 public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
 
-	private static final long serialVersionUID = 6473465285480945644L;
+    private static final long serialVersionUID = 6473465285480945644L;
 
-	@Inject
-	private NotificationService notificationService;
-	
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
-	
-	ParamBean paramBean = ParamBean.getInstance();
+    @Inject
+    private NotificationService notificationService;
 
-	CsvReader csvReader = null;
-	private UploadedFile file;
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-	private static final int CODE = 0;
-	private static final int CLASS_NAME_FILTER = 1;
-	private static final int EL_FILTER = 2;
-	private static final int ACTIVE = 3;
-	private static final int SCRIPT_INSTANCE_CODE = 4;
-	private static final int EVENT_TYPE_FILTER = 5;
+    CsvReader csvReader = null;
+    private UploadedFile file;
 
-	private StrategyImportTypeEnum strategyImportType;
-	
-	CsvBuilder csv = null;
-	private String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
-	private String existingEntitiesCsvFile = null;
+    private static final int CODE = 0;
+    private static final int CLASS_NAME_FILTER = 1;
+    private static final int EL_FILTER = 2;
+    private static final int ACTIVE = 3;
+    private static final int SCRIPT_INSTANCE_CODE = 4;
+    private static final int EVENT_TYPE_FILTER = 5;
 
-	public NotificationBean() {
-		super(ScriptNotification.class);
-	}
+    private StrategyImportTypeEnum strategyImportType;
 
-	@Override
-	protected IPersistenceService<ScriptNotification> getPersistenceService() {
-		return notificationService;
-	}
+    CsvBuilder csv = null;
+    private String providerDir;
+    private String existingEntitiesCsvFile = null;
+
+    public NotificationBean() {
+        super(ScriptNotification.class);
+    }
+
+    @Override
+    protected IPersistenceService<ScriptNotification> getPersistenceService() {
+        return notificationService;
+    }
 
     @Override
     public ScriptNotification initEntity() {
-    	ScriptNotification scriptNotification = super.initEntity();
+        ScriptNotification scriptNotification = super.initEntity();
         extractMapTypeFieldFromEntity(scriptNotification.getParams(), "params");
         return scriptNotification;
     }
@@ -90,33 +93,32 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-    
-       updateMapTypeFieldInEntity(entity.getParams(), "params");
+        updateMapTypeFieldInEntity(entity.getParams(), "params");
 
         return super.saveOrUpdate(killConversation);
     }
-    
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("El filter");
-		csv.appendValue("Active");
-		csv.appendValue("Script instance code");
-		csv.appendValue("Event type filter");
-		csv.startNewLine();
-		for (ScriptNotification scriptNotification :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationService.list()) {
-			csv.appendValue(scriptNotification.getCode());
-			csv.appendValue(scriptNotification.getClassNameFilter());
-			csv.appendValue(scriptNotification.getElFilter());
-			csv.appendValue(scriptNotification.isDisabled() + "");
-			csv.appendValue((scriptNotification.getScriptInstance()==null?"":scriptNotification.getScriptInstance().getCode()));
-			csv.appendValue(scriptNotification.getEventTypeFilter() + "");
-			csv.startNewLine();
-		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
-		csv.download(inputStream, "Notifications.csv");
-	}
+
+    public void exportToFile() throws Exception {
+        CsvBuilder csv = new CsvBuilder();
+        csv.appendValue("Code");
+        csv.appendValue("Classename filter");
+        csv.appendValue("El filter");
+        csv.appendValue("Active");
+        csv.appendValue("Script instance code");
+        csv.appendValue("Event type filter");
+        csv.startNewLine();
+        for (ScriptNotification scriptNotification : (!filters.isEmpty() && filters.size() > 0) ? getLazyDataModel() : notificationService.list()) {
+            csv.appendValue(scriptNotification.getCode());
+            csv.appendValue(scriptNotification.getClassNameFilter());
+            csv.appendValue(scriptNotification.getElFilter());
+            csv.appendValue(scriptNotification.isDisabled() + "");
+            csv.appendValue((scriptNotification.getScriptInstance() == null ? "" : scriptNotification.getScriptInstance().getCode()));
+            csv.appendValue(scriptNotification.getEventTypeFilter() + "");
+            csv.startNewLine();
+        }
+        InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
+        csv.download(inputStream, "Notifications.csv");
+    }
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
@@ -137,8 +139,10 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
+        providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
+        File dir = new File(providerDir + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "Notifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
@@ -150,15 +154,15 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
             } else {
-            	ScriptNotification notif = new ScriptNotification();
+                ScriptNotification notif = new ScriptNotification();
                 notif.setCode(values[CODE]);
                 notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
                 notif.setElFilter(values[EL_FILTER]);
-                notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));                
+                notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                     notif.setScriptInstance(scriptInstance);
-                }  
+                }
                 notif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 notificationService.create(notif);
             }
@@ -169,47 +173,46 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
     }
 
     public void checkSelectedStrategy(String[] values, ScriptNotification existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
-		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
-			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
-			existingEntity.setElFilter(values[EL_FILTER]);
-			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+        if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
+            existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
+            existingEntity.setElFilter(values[EL_FILTER]);
+            existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                 existingEntity.setScriptInstance(scriptInstance);
-            } 
-			existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
-			notificationService.update(existingEntity);
-		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
-			throw new RejectedImportException("notification.rejectImport");
-		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
-			if (!isEntityAlreadyExist) {
-				csv.appendValue("Code");
-				csv.appendValue("Classename filter");
-				csv.appendValue("El filter");
-				csv.appendValue("Active");
-				csv.appendValue("Script instance code");
-				csv.appendValue("Event type filter");
-			}
-			csv.startNewLine();
-			csv.appendValue(values[CODE]);
-			csv.appendValue(values[CLASS_NAME_FILTER]);
-			csv.appendValue(values[EL_FILTER]);
-			csv.appendValue(values[ACTIVE]);
-			csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
-			csv.appendValue(values[EVENT_TYPE_FILTER]);
-		}
+            }
+            existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+            notificationService.update(existingEntity);
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
+            throw new RejectedImportException("notification.rejectImport");
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            if (!isEntityAlreadyExist) {
+                csv.appendValue("Code");
+                csv.appendValue("Classename filter");
+                csv.appendValue("El filter");
+                csv.appendValue("Active");
+                csv.appendValue("Script instance code");
+                csv.appendValue("Event type filter");
+            }
+            csv.startNewLine();
+            csv.appendValue(values[CODE]);
+            csv.appendValue(values[CLASS_NAME_FILTER]);
+            csv.appendValue(values[EL_FILTER]);
+            csv.appendValue(values[ACTIVE]);
+            csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
+            csv.appendValue(values[EVENT_TYPE_FILTER]);
+        }
 
-	}
+    }
 
-	public StrategyImportTypeEnum getStrategyImportType() {
-		return strategyImportType;
-	}
+    public StrategyImportTypeEnum getStrategyImportType() {
+        return strategyImportType;
+    }
 
-	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
-		this.strategyImportType = strategyImportType;
-	}
+    public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+        this.strategyImportType = strategyImportType;
+    }
 
-    
     /**
      * Autocomplete method for class filter field - search entity type classes with @ObservableEntity annotation
      * 
@@ -230,8 +233,8 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-            if (clazz.isAnnotationPresent(Entity.class) && clazz.getName().toLowerCase().contains(queryLc) 
-            		&& (clazz.isAnnotationPresent(ObservableEntity.class) ||  clazz.isAnnotationPresent(NotifiableEntity.class))) {
+            if (clazz.isAnnotationPresent(Entity.class) && clazz.getName().toLowerCase().contains(queryLc)
+                    && (clazz.isAnnotationPresent(ObservableEntity.class) || clazz.isAnnotationPresent(NotifiableEntity.class))) {
                 classNames.add(clazz.getName());
             }
         }
@@ -239,6 +242,7 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
         Collections.sort(classNames);
         return classNames;
     }
+
     public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
         return mapTypeFieldValues;
     }
@@ -247,7 +251,7 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
         this.mapTypeFieldValues = mapTypeFieldValues;
     }
 
-	/**
+    /**
      * Remove a value from a map type field attribute used to gather field values in GUI
      * 
      * @param fieldName Field name
@@ -308,13 +312,14 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
             }
         }
     }
-    
+
     @Override
     public String getEditViewName() {
         return "notificationDetail";
     }
+
     @Override
-	protected String getListViewName() {
-		return "notifications";
-	}
+    protected String getListViewName() {
+        return "notifications";
+    }
 }

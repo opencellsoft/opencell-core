@@ -1,5 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" 
+    xmlns:c="http://java.sun.com/jsp/jstl/core" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -66,6 +67,18 @@
                                         
                                     <hftl:formField id="scriptSelectId" label="#{messages['offerTemplate.globalRatingScript']}" field="globalRatingScriptInstance" valueLabelField="code" required="false"
                                         popup="true" popupId="offerTemplateScriptPopup" showResetButton="true" /> 
+                                     
+                                    <c:choose> 
+	                                    <c:when test="${appProvider.entreprise}">
+									        <c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithoutTax']} EL" />
+									    </c:when>
+									    <c:otherwise>
+									    	<c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithTax']} EL" />
+									    </c:otherwise>
+									</c:choose>   
+								    
+                                    <hftl:formField label="#{messages['offerTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" />   
+	                        		<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" />	
 
                                     <o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
                                         validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
@@ -76,8 +89,8 @@
                                     valueLabelField="descriptionOrCode" listBean="#{offerTemplateCategoryListBean}" componentWidth="30" />
                                 <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="selectCheckbox" valueLabelField="descriptionOrCode"
                                     listBean="#{channelListBean}" componentWidth="30" />
-                                <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
-                                    valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" componentWidth="30" />
+                                <hftl:formField id="customerCategories" label="#{messages['marketingManager.catalog.targetSegment']}" field="customerCategories" listType="selectCheckbox"
+                                    valueLabelField="descriptionOrCode" listBean="#{customerCategoryListBean}" componentWidth="30" />
                                 <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
                                     valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />    
                             </h:panelGrid>

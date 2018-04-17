@@ -107,7 +107,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -190,7 +190,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

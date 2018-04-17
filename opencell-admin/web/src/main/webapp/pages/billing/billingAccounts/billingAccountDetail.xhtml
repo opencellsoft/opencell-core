@@ -226,7 +226,20 @@
                                                 rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>                                                
                                     
-                                 	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />               
+                                 	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />     
+                                 	
+                                 	<c:choose> 
+		                                <c:when test="${appProvider.entreprise}">
+									        <c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithoutTax']} EL" />
+									    </c:when>
+									    <c:otherwise>
+									    	<c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithTax']} EL" />
+									    </c:otherwise>
+									</c:choose>   
+                                 	
+                                 	<hftl:formField label="#{messages['billingAccount.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />   
+                                 	<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
+                                 	       
 							     </p:fieldset>		
 							     
                                  <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >
@@ -255,12 +268,7 @@
                                                 <hftl:formField label="#{messages['address.address3']}" field="address" childField="address3" />
                                                 <hftl:formField label="#{messages['address.zipCode']}" field="address" childField="zipCode" newLine="true" />
                                                 <hftl:formField label="#{messages['address.city']}" field="address" childField="city" />
-                                                <hftl:formField label="#{messages['address.country']}" field="address" childField="country" />
-<!-- 													<hftl:formField id="countryPanel" -->
-<!-- 														label="#{messages['address.country']}" fkToEntity="true" -->
-<!-- 														field="address" childField="country" -->
-<!-- 														valueLabelField="description" valueField="countryCode" -->
-<!-- 														listBean="#{countryBean}"/> -->
+                                                <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/>
 												
 											</p:fieldset>
 
@@ -409,7 +417,7 @@
 								<hftl:column label="#{messages['invoice.amountWithTax']}"
 									field="amountWithTax" />
 								<hftl:column label="#{messages['invoice.paymentMethod']}"
-									field="paymentMethod.label" isMessage="true" />
+									field="paymentMethodType.label" isMessage="true" />
 								<p:column width="100">
 									<f:facet name="header">
 										<h:outputText value="#{messages['billingAccount.status']}" />

@@ -23,66 +23,92 @@ import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductOffering;
 
+/**
+ * The Class ProductOfferingDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "ProductOffering")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductOfferingDto extends BusinessDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4599063410509766484L;
 
+    /** The valid from. */
     @XmlAttribute()
     protected Date validFrom;
 
+    /** The valid to. */
     @XmlAttribute()
     protected Date validTo;
 
+    /** The name. */
     @XmlElement(required = true)
     protected String name;
 
+    /** The offer template categories. */
     @XmlElementWrapper(name = "offerTemplateCategories")
     @XmlElement(name = "offerTemplateCategory")
     protected List<OfferTemplateCategoryDto> offerTemplateCategories;
 
+    /** The channels. */
     @XmlElementWrapper(name = "channels")
     @XmlElement(name = "channel")
     private List<ChannelDto> channels;
 
+    /** The attachments. */
     @XmlElementWrapper(name = "digitalResources")
     @XmlElement(name = "digitalResource")
     protected List<DigitalResourcesDto> attachments;
 
+    /** The model code. */
     protected String modelCode;
 
+    /** The life cycle status. */
     @XmlElement(required = true)
     protected LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
 
+    /** The custom fields. */
     protected CustomFieldsDto customFields;
 
     /**
      * This field is populated on find and list. Use to pull the image from a servlet later on.
      */
     protected String imagePath;
+
+    /** The image base 64. */
     protected String imageBase64;
 
+    /** The disabled. */
     protected boolean disabled = false;
 
+    /** The language descriptions. */
     protected List<LanguageDescriptionDto> languageDescriptions;
 
+    /** The long description. */
     protected String longDescription;
 
+    /** The long descriptions translated. */
     protected List<LanguageDescriptionDto> longDescriptionsTranslated;
-    
+
+    /** The global rating script instance. */
     private String globalRatingScriptInstance;
 
+    /** The sellers. */
     @XmlElementWrapper(name = "sellers")
     @XmlElement(name = "seller")
     private List<String> sellers;
 
+    /**
+     * Instantiates a new product offering dto.
+     */
     public ProductOfferingDto() {
     }
 
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
      * @param productOffering Product offering entity
      * @param customFieldsDto Custom fields DTO
      * @param asLink Convert to DTO with minimal information only - code and validity dates
@@ -130,9 +156,9 @@ public class ProductOfferingDto extends BusinessDto {
         setLongDescription(productOffering.getLongDescription());
         setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
 
-        if(productOffering.getGlobalRatingScriptInstance() != null) {
+        if (productOffering.getGlobalRatingScriptInstance() != null) {
             setGlobalRatingScriptInstance(productOffering.getGlobalRatingScriptInstance().getCode());
-        }        
+        }
 
         if (productOffering.getSellers() != null && !productOffering.getSellers().isEmpty()) {
             this.sellers = new ArrayList<>();
@@ -141,8 +167,8 @@ public class ProductOfferingDto extends BusinessDto {
             }
             Collections.sort(this.sellers);
         }
-        
-        if(productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
+
+        if (productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
             setChannels(productOffering.getChannels().stream().map(p -> {
                 return new ChannelDto(p);
             }).collect(Collectors.toList()));
@@ -151,127 +177,279 @@ public class ProductOfferingDto extends BusinessDto {
         this.customFields = customFieldsDto;
     }
 
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name.
+     *
+     * @param name the new name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the offer template categories.
+     *
+     * @return the offer template categories
+     */
     public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
         return offerTemplateCategories;
     }
 
+    /**
+     * Sets the offer template categories.
+     *
+     * @param offerTemplateCategories the new offer template categories
+     */
     public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
         this.offerTemplateCategories = offerTemplateCategories;
     }
 
+    /**
+     * Gets the attachments.
+     *
+     * @return the attachments
+     */
     public List<DigitalResourcesDto> getAttachments() {
         return attachments;
     }
 
+    /**
+     * Sets the attachments.
+     *
+     * @param attachments the new attachments
+     */
     public void setAttachments(List<DigitalResourcesDto> attachments) {
         this.attachments = attachments;
     }
 
+    /**
+     * Gets the model code.
+     *
+     * @return the model code
+     */
     public String getModelCode() {
         return modelCode;
     }
 
+    /**
+     * Sets the model code.
+     *
+     * @param modelCode the new model code
+     */
     public void setModelCode(String modelCode) {
         this.modelCode = modelCode;
     }
 
+    /**
+     * Gets the valid from.
+     *
+     * @return the valid from
+     */
     public Date getValidFrom() {
         return validFrom;
     }
 
+    /**
+     * Sets the valid from.
+     *
+     * @param validFrom the new valid from
+     */
     public void setValidFrom(Date validFrom) {
         this.validFrom = validFrom;
     }
 
+    /**
+     * Gets the valid to.
+     *
+     * @return the valid to
+     */
     public Date getValidTo() {
         return validTo;
     }
 
+    /**
+     * Sets the valid to.
+     *
+     * @param validTo the new valid to
+     */
     public void setValidTo(Date validTo) {
         this.validTo = validTo;
     }
 
+    /**
+     * Gets the life cycle status.
+     *
+     * @return the life cycle status
+     */
     public LifeCycleStatusEnum getLifeCycleStatus() {
         return lifeCycleStatus;
     }
 
+    /**
+     * Sets the life cycle status.
+     *
+     * @param lifeCycleStatus the new life cycle status
+     */
     public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
         this.lifeCycleStatus = lifeCycleStatus;
     }
 
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
     public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
 
+    /**
+     * Gets the image path.
+     *
+     * @return the image path
+     */
     public String getImagePath() {
         return imagePath;
     }
 
+    /**
+     * Sets the image path.
+     *
+     * @param imagePath the new image path
+     */
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
 
+    /**
+     * Gets the image base 64.
+     *
+     * @return the image base 64
+     */
     public String getImageBase64() {
         return imageBase64;
     }
 
+    /**
+     * Sets the image base 64.
+     *
+     * @param imageBase64 the new image base 64
+     */
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
     }
 
+    /**
+     * Checks if is disabled.
+     *
+     * @return true, if is disabled
+     */
     public boolean isDisabled() {
         return disabled;
     }
 
+    /**
+     * Sets the disabled.
+     *
+     * @param disabled the new disabled
+     */
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
 
+    /**
+     * Gets the channels.
+     *
+     * @return the channels
+     */
     public List<ChannelDto> getChannels() {
         return channels;
     }
 
+    /**
+     * Sets the channels.
+     *
+     * @param channels the new channels
+     */
     public void setChannels(List<ChannelDto> channels) {
         this.channels = channels;
     }
 
+    /**
+     * Gets the language descriptions.
+     *
+     * @return the language descriptions
+     */
     public List<LanguageDescriptionDto> getLanguageDescriptions() {
         return languageDescriptions;
     }
 
+    /**
+     * Sets the language descriptions.
+     *
+     * @param languageDescriptions the new language descriptions
+     */
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
     }
 
+    /**
+     * Gets the long description.
+     *
+     * @return the long description
+     */
     public String getLongDescription() {
         return longDescription;
     }
 
+    /**
+     * Sets the long description.
+     *
+     * @param longDescription the new long description
+     */
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
 
+    /**
+     * Gets the long descriptions translated.
+     *
+     * @return the long descriptions translated
+     */
     public List<LanguageDescriptionDto> getLongDescriptionsTranslated() {
         return longDescriptionsTranslated;
     }
 
+    /**
+     * Sets the long descriptions translated.
+     *
+     * @param longDescriptionsTranslated the new long descriptions translated
+     */
     public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
         this.longDescriptionsTranslated = longDescriptionsTranslated;
     }
 
     /**
+     * Gets the global rating script instance.
+     *
      * @return the globalRatingScriptInstance
      */
     public String getGlobalRatingScriptInstance() {
@@ -279,16 +457,28 @@ public class ProductOfferingDto extends BusinessDto {
     }
 
     /**
+     * Sets the global rating script instance.
+     *
      * @param globalRatingScriptInstance the globalRatingScriptInstance to set
      */
     public void setGlobalRatingScriptInstance(String globalRatingScriptInstance) {
         this.globalRatingScriptInstance = globalRatingScriptInstance;
     }
-    
+
+    /**
+     * Gets the sellers.
+     *
+     * @return the sellers
+     */
     public List<String> getSellers() {
         return sellers;
     }
 
+    /**
+     * Sets the sellers.
+     *
+     * @param sellers the new sellers
+     */
     public void setSellers(List<String> sellers) {
         this.sellers = sellers;
     }

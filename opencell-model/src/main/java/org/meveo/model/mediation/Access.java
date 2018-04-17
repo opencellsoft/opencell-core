@@ -59,8 +59,8 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "medina_access_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false order by a.accessUserId", hints = {
-                @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
+        @NamedQuery(name = "Access.getAccessesByUserId", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false and a.accessUserId=:accessUserId", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class Access extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

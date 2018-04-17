@@ -8,27 +8,40 @@ import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetBusinessOfferModelResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetBusinessOfferModelResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetBusinessOfferModelResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -6781250820569600144L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6781250820569600144L;
 
-	private BusinessOfferModelDto businessOfferModel;
+    /** The business offer model. */
+    private BusinessOfferModelDto businessOfferModel;
 
-	public BusinessOfferModelDto getBusinessOfferModel() {
-		return businessOfferModel;
-	}
+    /**
+     * Gets the business offer model.
+     *
+     * @return the business offer model
+     */
+    public BusinessOfferModelDto getBusinessOfferModel() {
+        return businessOfferModel;
+    }
 
-	public void setBusinessOfferModel(BusinessOfferModelDto businessOfferModel) {
-		this.businessOfferModel = businessOfferModel;
-	}
+    /**
+     * Sets the business offer model.
+     *
+     * @param businessOfferModel the new business offer model
+     */
+    public void setBusinessOfferModel(BusinessOfferModelDto businessOfferModel) {
+        this.businessOfferModel = businessOfferModel;
+    }
 
-	@Override
-	public String toString() {
-		return "GetBusinessOfferModelResponseDto [businessOfferModel=" + businessOfferModel + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetBusinessOfferModelResponseDto [businessOfferModel=" + businessOfferModel + "]";
+    }
 }

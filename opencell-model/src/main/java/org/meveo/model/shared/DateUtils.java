@@ -18,6 +18,7 @@
  */
 package org.meveo.model.shared;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,12 +34,18 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 public class DateUtils {
 
     private static long lastTime = System.currentTimeMillis() / 1000;
 
     public static String DATE_PATTERN = "yyyy-MM-dd";
     public static String DATE_TIME_PATTERN = "yyyy-MM-dd'T'hh:mm:ssXXX";
+    private static final String START_DATE_DELIMITER = "[";
+    private static final String END_DATE_DELIMITER = "]";
 
     public static synchronized Date getCurrentDateWithUniqueSeconds() {
         long current = System.currentTimeMillis();
@@ -63,6 +70,22 @@ public class DateUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Evaluates a date inside a pre-determined delimiters in a string.
+     * 
+     * @param input string that contains the date
+     * @return
+     */
+    public static String evaluteDateFormat(String input) {
+        if (!(input.contains(START_DATE_DELIMITER) && input.contains(END_DATE_DELIMITER))) {
+            return input;
+        }
+        String dateFormatStr = input.substring(input.indexOf(START_DATE_DELIMITER) + 1, input.lastIndexOf(END_DATE_DELIMITER));
+        DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
+        Calendar cal = Calendar.getInstance();
+        return input.substring(0, input.indexOf(START_DATE_DELIMITER)) + dateFormat.format(cal.getTime()) + input.substring(input.lastIndexOf(END_DATE_DELIMITER) + 1);
     }
 
     public static Date setTimeToZero(Date date) {
@@ -121,6 +144,14 @@ public class DateUtils {
         return isDateWithinPeriod(new Date(), periodStart, periodEnd);
     }
 
+    /**
+     * Check if given date are in period [periodStart,periodEnd[
+     * 
+     * @param date date to check
+     * @param periodStart periodStart
+     * @param periodEnd periodEnd
+     * @return true if date are in period
+     */
     public static boolean isDateWithinPeriod(Date date, Date periodStart, Date periodEnd) {
         if (date == null)
             return true;
@@ -136,13 +167,16 @@ public class DateUtils {
 
         Date dateToCheck = setDateToStartOfDay(date);
         boolean result = false;
-        if (start != null && end != null)
-            result = (dateToCheck.after(start) || dateToCheck.equals(start)) && (dateToCheck.before(end) || dateToCheck.equals(end));
-        else if (start != null)
-            result = (dateToCheck.after(start) || dateToCheck.equals(start));
-        else
-            result = (dateToCheck.before(end) || dateToCheck.equals(end));
 
+        // case 1 end and start not nunll
+
+        if (start != null && end != null) {
+            result = (dateToCheck.after(start) || dateToCheck.equals(start)) && (dateToCheck.before(end));
+        } else if (end == null) {
+            result = (dateToCheck.after(start) || dateToCheck.equals(start));
+        } else {
+            result = (dateToCheck.before(end) );
+        }
         return result;
 
     }

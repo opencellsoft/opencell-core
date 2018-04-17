@@ -25,55 +25,79 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WorkflowHistoryAction;
 
+/**
+ * The Class WorkflowHistoryActionDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowHistoryActionDto extends BaseDto {
 
-	private static final long serialVersionUID = 8309866046667741458L;
-	
-	private String action;
-	
-	private String result;
-	
-	
-	public WorkflowHistoryActionDto(){
-	}
-	
-	public WorkflowHistoryActionDto(WorkflowHistoryAction workflowHistoryAction) {
-		this.action=workflowHistoryAction.getAction();
-		this.result=workflowHistoryAction.getResult();	   
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 8309866046667741458L;
 
-	/**
-	 * @return the action
-	 */
-	public String getAction() {
-		return action;
-	}
+    /** The action. */
+    private String action;
 
-	/**
-	 * @param action the action to set
-	 */
-	public void setAction(String action) {
-		this.action = action;
-	}
+    /** The result. */
+    private String result;
 
-	/**
-	 * @return the result
-	 */
-	public String getResult() {
-		return result;
-	}
+    /**
+     * Instantiates a new workflow history action dto.
+     */
+    public WorkflowHistoryActionDto() {
+    }
 
-	/**
-	 * @param result the result to set
-	 */
-	public void setResult(String result) {
-		this.result = result;
-	}
+    /**
+     * Instantiates a new workflow history action dto.
+     *
+     * @param workflowHistoryAction the workflow history action
+     */
+    public WorkflowHistoryActionDto(WorkflowHistoryAction workflowHistoryAction) {
+        this.action = workflowHistoryAction.getAction();
+        this.result = workflowHistoryAction.getResult();
+    }
 
-	@Override
-	public String toString() {
-		return "WorkflowHistoryActionDto [action=" + action + ", result=" + result + "]";
-	}
+    /**
+     * Gets the action.
+     *
+     * @return the action
+     */
+    public String getAction() {
+        return action;
+    }
+
+    /**
+     * Sets the action.
+     *
+     * @param action the action to set
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    /**
+     * Gets the result.
+     *
+     * @return the result
+     */
+    public String getResult() {
+        return result;
+    }
+
+    /**
+     * Sets the result.
+     *
+     * @param result the result to set
+     */
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "WorkflowHistoryActionDto [action=" + action + ", result=" + result + "]";
+    }
 }

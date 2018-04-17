@@ -41,6 +41,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -50,12 +51,18 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
  * Account Transaction.
+ *
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Entity
 @ObservableEntity
@@ -66,17 +73,17 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 @NamedQueries({
-    @NamedQuery(name = "AccountOperation.listAOIdsToPay", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' and "
-            + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
-    @NamedQuery(name = "RecordedInvoice.listAOToPayByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' "
-            + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
-            + " and pm.preferred is true and ao.unMatchingAmount <> 0"),
-    @NamedQuery(name = "AccountOperation.listAOIdsToRefund", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and "
-            + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
-    @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
-            + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
-            + " and pm.preferred is true and ao.unMatchingAmount <> 0")})
-public class AccountOperation extends EnableEntity implements ICustomFieldEntity {
+        @NamedQuery(name = "AccountOperation.listAOIdsToPay", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' and "
+                + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
+        @NamedQuery(name = "RecordedInvoice.listAOToPayByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' "
+                + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
+                + " and pm.preferred is true and ao.unMatchingAmount <> 0"),
+        @NamedQuery(name = "AccountOperation.listAOIdsToRefund", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and "
+                + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
+        @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
+                + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
+                + " and pm.preferred is true and ao.unMatchingAmount <> 0") })
+public class AccountOperation extends EnableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -100,16 +107,23 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Size(max = 255)
     private String reference;
 
-    @Column(name = "account_code", length = 255)
-    @Size(max = 255)
-    private String accountCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
+    @Deprecated
     @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
     private String accountCodeClientSide;
 
     @Column(name = "amount", precision = 23, scale = 12)
     private BigDecimal amount;
+
+    @Column(name = "amount_without_tax", precision = 23, scale = 12)
+    private BigDecimal amountWithoutTax;
+
+    @Column(name = "tax_amount", precision = 23, scale = 12)
+    private BigDecimal taxAmount;
 
     @Column(name = "matching_amount", precision = 23, scale = 12)
     private BigDecimal matchingAmount = BigDecimal.ZERO;
@@ -168,6 +182,16 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Column(name = "bank_collection_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bankCollectionDate;
+
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
+
+    @Transient
+    private String code;
+
+    @Transient
+    private String description;
 
     public Date getDueDate() {
         return dueDate;
@@ -233,14 +257,6 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
         this.customerAccount = customerAccount;
     }
 
-    public void setAccountCode(String accountCode) {
-        this.accountCode = accountCode;
-    }
-
-    public String getAccountCode() {
-        return accountCode;
-    }
-
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
     }
@@ -275,10 +291,7 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((occCode == null) ? 0 : occCode.hashCode());
-        return result;
+        return 961 + ("AccountOperation" + occCode).hashCode();
     }
 
     @Override
@@ -293,6 +306,9 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
         }
 
         AccountOperation other = (AccountOperation) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
         if (occCode == null) {
             if (other.occCode != null)
                 return false;
@@ -411,5 +427,71 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     public void setBankCollectionDate(Date bankCollectionDate) {
         this.bankCollectionDate = bankCollectionDate;
+    }
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
+    /**
+     * @return the amountWithoutTax
+     */
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    /**
+     * @param amountWithoutTax the amountWithoutTax to set
+     */
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
+
+    /**
+     * @return the taxAmount
+     */
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
+
+    /**
+     * @param taxAmount the taxAmount to set
+     */
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    /**
+     * @return the paymentMethod
+     */
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    /**
+     * @param paymentMethod the paymentMethod to set
+     */
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getCode() {
+        return occCode;
+    }
+
+    public void setCode(String code) {
+        this.occCode = code;
+    }
+
+    public String getDescription() {
+        return occDescription;
+    }
+
+    public void setDescription(String description) {
+        this.occDescription = description;
     }
 }

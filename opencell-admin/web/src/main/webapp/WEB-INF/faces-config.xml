@@ -490,8 +490,13 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>providerSelfDetail</from-outcome>
-		<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml</to-view-id>
-		<redirect include-view-params="true" />
+		<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml?</to-view-id>
+		<redirect include-view-params="true">
+			<view-param>
+				<name>mode</name>
+				<value>appConfiguration</value>
+			</view-param>
+		</redirect>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>providerContacts</from-outcome>
@@ -1956,6 +1961,20 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		</to-view-id>
 		<redirect include-view-params="true" />
 	</navigation-case>
+	
+	<navigation-case>
+		<from-outcome>reportExtracts</from-outcome>
+		<to-view-id>/pages/finance/reportExtracts/reportExtracts.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>reportExtract</from-outcome>
+		<to-view-id>/pages/finance/reportExtracts/reportExtractDetail.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	
 	<navigation-case>
 		<from-outcome>indexing</from-outcome>
 		<to-view-id>/pages/index/index.xhtml
@@ -2177,6 +2196,17 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<from-outcome>mm_fullTextSearch</from-outcome>
 		<to-view-id>/pages/index/fullTextSearch.xhtml</to-view-id>
 		<redirect include-view-params="true" />
+	</navigation-case>
+	
+	<navigation-case>
+		<from-outcome>accountingCodes</from-outcome>
+		<to-view-id>/pages/billing/accountingCodes/accountingCodes.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>accountingCodeDetail</from-outcome>
+		<to-view-id>/pages/billing/accountingCodes/accountingCodeDetail.xhtml</to-view-id>
+		<redirect />
 	</navigation-case>
 
 </navigation-rule>

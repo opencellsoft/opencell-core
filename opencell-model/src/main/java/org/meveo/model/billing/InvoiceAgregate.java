@@ -37,285 +37,289 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @Table(name = "billing_invoice_agregate")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
 public abstract class InvoiceAgregate extends EnableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_account_id")
-	private BillingAccount billingAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id")
+    private BillingAccount billingAccount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoice_id")
-	private Invoice invoice;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_id")
+    private Invoice invoice;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_run_id")
-	private BillingRun billingRun;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run_id")
+    private BillingRun billingRun;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_account_id")
-	private UserAccount userAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
-	@Column(name = "item_number")
-	private Integer itemNumber;
+    @Column(name = "item_number")
+    private Integer itemNumber;
 
-	@Column(name = "accounting_code", length = 255)
-	@Size(max = 255)
-	private String accountingCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
-	@Column(name = "description", length = 255)
+    @Column(name = "description", length = 255)
     @Size(max = 255)
-	private String description;
+    private String description;
 
-	@Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal taxPercent;
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal taxPercent;
 
-	@Column(name = "quantity")
-	private BigDecimal quantity;
+    @Column(name = "quantity")
+    private BigDecimal quantity;
 
-	@Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amount;
+    @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amount;
 
-	@Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal discount;
+    @Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal discount;
 
-	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithoutTax;
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithoutTax;
 
-	@Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountTax;
+    @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountTax;
 
-	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithTax;
+    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithTax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_currency_id")
-	private TradingCurrency tradingCurrency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id")
+    private TradingCurrency tradingCurrency;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_country_id")
-	private TradingCountry tradingCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_country_id")
+    private TradingCountry tradingCountry;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	@Column(name = "pr_description", length = 255)
-	@Size(max = 255)
-	private String prDescription;
+    @Column(name = "pr_description", length = 255)
+    @Size(max = 255)
+    private String prDescription;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "discount_aggregate", nullable = false)
-	@NotNull
-	private boolean discountAggregate;
-	
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
-	}
+    @NotNull
+    private boolean discountAggregate;
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
-	}
+    public TradingCurrency getTradingCurrency() {
+        return tradingCurrency;
+    }
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
+    public void setTradingCurrency(TradingCurrency tradingCurrency) {
+        this.tradingCurrency = tradingCurrency;
+    }
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
+    public TradingCountry getTradingCountry() {
+        return tradingCountry;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public void setTradingCountry(TradingCountry tradingCountry) {
+        this.tradingCountry = tradingCountry;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public String getPrDescription() {
-		return prDescription;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+    public String getPrDescription() {
+        return prDescription;
+    }
 
+    public void setPrDescription(String prDescription) {
+        this.prDescription = prDescription;
+    }
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public BillingRun getBillingRun() {
-		return billingRun;
-	}
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
 
-	public void setBillingRun(BillingRun billingRun) {
-		this.billingRun = billingRun;
-	}
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
+    }
 
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
 
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public Integer getItemNumber() {
-		return itemNumber;
-	}
+    public Integer getItemNumber() {
+        return itemNumber;
+    }
 
-	public void setItemNumber(Integer itemNumber) {
-		this.itemNumber = itemNumber;
-	}
+    public void setItemNumber(Integer itemNumber) {
+        this.itemNumber = itemNumber;
+    }
 
-	public String getAccountingCode() {
-		return accountingCode;
-	}
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
 
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public BigDecimal getTaxPercent() {
-		return taxPercent;
-	}
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
 
-	public void setTaxPercent(BigDecimal taxPercent) {
-		this.taxPercent = taxPercent;
-	}
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public BigDecimal getDiscount() {
-		return discount;
-	}
+    public BigDecimal getDiscount() {
+        return discount;
+    }
 
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public BigDecimal getAmountTax() {
-		return amountTax;
-	}
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
 
-	public void setAmountTax(BigDecimal amountTax) {
-		this.amountTax = amountTax;
-	}
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public Invoice getInvoice() {
-		return invoice;
-	}
+    public Invoice getInvoice() {
+        return invoice;
+    }
 
-	public void setInvoice(Invoice invoice) {
-		this.invoice = invoice;
-		if (invoice != null) {
-			invoice.getInvoiceAgregates().add(this);
-		}
-	}
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
+        if (invoice != null) {
+            invoice.getInvoiceAgregates().add(this);
+        }
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public void addQuantity(BigDecimal quantity) {
-		this.quantity = this.quantity.add(quantity);
-	}
+    public void addQuantity(BigDecimal quantity) {
+        this.quantity = this.quantity.add(quantity);
+    }
 
-	public void addAmount(BigDecimal amountToAdd) {
-		if (amount == null) {
-			amount = new BigDecimal("0");
-		}
-		amount = amount.add(amountToAdd);
-	}
+    public void addAmount(BigDecimal amountToAdd) {
+        if (amount == null) {
+            amount = new BigDecimal("0");
+        }
+        amount = amount.add(amountToAdd);
+    }
 
-	public void addAmountWithTax(BigDecimal amountToAdd) {
-		if (amountWithTax == null) {
-			amountWithTax = new BigDecimal("0");
-		}
-		amountWithTax = amountWithTax.add(amountToAdd);
-	}
+    public void addAmountWithTax(BigDecimal amountToAdd) {
+        if (amountWithTax == null) {
+            amountWithTax = new BigDecimal("0");
+        }
+        amountWithTax = amountWithTax.add(amountToAdd);
+    }
 
-	public void addAmountWithoutTax(BigDecimal amountToAdd) {
-		if(amountToAdd!=null){
-		if (amountWithoutTax == null) {
-			amountWithoutTax = new BigDecimal("0");
-		}
-		amountWithoutTax = amountWithoutTax.add(amountToAdd);
-	}
-	}
+    public void addAmountWithoutTax(BigDecimal amountToAdd) {
+        if (amountToAdd != null) {
+            if (amountWithoutTax == null) {
+                amountWithoutTax = new BigDecimal("0");
+            }
+            amountWithoutTax = amountWithoutTax.add(amountToAdd);
+        }
+    }
 
-	public void addAmountTax(BigDecimal amountToAdd) {
-		if(amountToAdd!=null){
-		if (amountTax == null) {
-			amountTax = new BigDecimal("0");
-		}
-		amountTax = amountTax.add(amountToAdd);
-	}
-	}
+    public void addAmountTax(BigDecimal amountToAdd) {
+        if (amountToAdd != null) {
+            if (amountTax == null) {
+                amountTax = new BigDecimal("0");
+            }
+            amountTax = amountTax.add(amountToAdd);
+        }
+    }
 
-	public boolean isDiscountAggregate() {
-		return discountAggregate;
-	}
+    public boolean isDiscountAggregate() {
+        return discountAggregate;
+    }
 
-	public void setDiscountAggregate(boolean discountAggregate) {
-		this.discountAggregate = discountAggregate;
-	}
+    public void setDiscountAggregate(boolean discountAggregate) {
+        this.discountAggregate = discountAggregate;
+    }
 
-	public void resetAmounts() {
-		setAmount(new BigDecimal(0));
-		setAmountTax(new BigDecimal(0));
-		setAmountWithoutTax(new BigDecimal(0));
-		setAmountWithTax(new BigDecimal(0));
-	}
-	
-	@Override
-	public boolean equals(Object obj) {	    
+    public void resetAmounts() {
+        setAmount(new BigDecimal(0));
+        setAmountTax(new BigDecimal(0));
+        setAmountWithoutTax(new BigDecimal(0));
+        setAmountWithTax(new BigDecimal(0));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -324,23 +328,27 @@ public abstract class InvoiceAgregate extends EnableEntity {
         } else if (!(obj instanceof InvoiceAgregate)) {
             return false;
         }
-        
-		InvoiceAgregate temp = (InvoiceAgregate) obj;
-		if (temp instanceof CategoryInvoiceAgregate && this instanceof CategoryInvoiceAgregate) {
-			CategoryInvoiceAgregate temp1 = (CategoryInvoiceAgregate) this;
-			CategoryInvoiceAgregate temp2 = (CategoryInvoiceAgregate) temp;
-			return temp1.getInvoiceCategory().getCode().equals(temp2.getInvoiceCategory().getCode());
-		} else if (temp instanceof SubCategoryInvoiceAgregate && this instanceof SubCategoryInvoiceAgregate) {
-			SubCategoryInvoiceAgregate temp1 = (SubCategoryInvoiceAgregate) this;
-			SubCategoryInvoiceAgregate temp2 = (SubCategoryInvoiceAgregate) temp;
-			return temp1.getInvoiceSubCategory().getCode().equals(temp2.getInvoiceSubCategory().getCode());
-		} else if (temp instanceof TaxInvoiceAgregate && this instanceof TaxInvoiceAgregate) {
-			TaxInvoiceAgregate temp1 = (TaxInvoiceAgregate) this;
-			TaxInvoiceAgregate temp2 = (TaxInvoiceAgregate) temp;
-			return temp1.getTax().getCode().equals(temp2.getTax().getCode());
-		}
 
-		return false;
-	}
-	
+        InvoiceAgregate other = (InvoiceAgregate) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (other instanceof CategoryInvoiceAgregate && this instanceof CategoryInvoiceAgregate) {
+            CategoryInvoiceAgregate temp1 = (CategoryInvoiceAgregate) this;
+            CategoryInvoiceAgregate temp2 = (CategoryInvoiceAgregate) other;
+            return temp1.getInvoiceCategory().getCode().equals(temp2.getInvoiceCategory().getCode());
+        } else if (other instanceof SubCategoryInvoiceAgregate && this instanceof SubCategoryInvoiceAgregate) {
+            SubCategoryInvoiceAgregate temp1 = (SubCategoryInvoiceAgregate) this;
+            SubCategoryInvoiceAgregate temp2 = (SubCategoryInvoiceAgregate) other;
+            return temp1.getInvoiceSubCategory().getCode().equals(temp2.getInvoiceSubCategory().getCode());
+        } else if (other instanceof TaxInvoiceAgregate && this instanceof TaxInvoiceAgregate) {
+            TaxInvoiceAgregate temp1 = (TaxInvoiceAgregate) this;
+            TaxInvoiceAgregate temp2 = (TaxInvoiceAgregate) other;
+            return temp1.getTax().getCode().equals(temp2.getTax().getCode());
+        }
+
+        return false;
+    }
+
 }

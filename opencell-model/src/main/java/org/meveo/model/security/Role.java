@@ -48,12 +48,12 @@ public class Role extends BaseEntity {
     @NotNull
     private String description;
 
-    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> permissions = new HashSet<Permission>();
 
-    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "child_role_id"))
     private Set<Role> roles = new HashSet<Role>();
@@ -126,10 +126,7 @@ public class Role extends BaseEntity {
 
     @Override
     public int hashCode() {
-        if (getId() == null) {
-            return super.hashCode();
-        }
-        return getId().hashCode();
+        return 961 + ("Role" + id).hashCode();
     }
 
     @Override

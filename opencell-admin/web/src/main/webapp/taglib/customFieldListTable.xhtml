@@ -43,7 +43,8 @@
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
-    <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired and !hasInheritedValue and !inherited?' *':''} #{inherited?messages['customField.inheritedValue']:''}"
+    <hftl:decorateFormField
+        label="#{cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cft.valueRequired and !hasInheritedValue and !inherited?' *':''} #{inherited?messages['customField.inheritedValue']:''}"
         componentWidth="#{componentWidth}" displayOneLine="false">
 
         <p:messages id="#{idPrefix}_cfMessages" globalOnly="false" redisplay="false" />
@@ -125,8 +126,7 @@
                             oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{cfValueHolder.populateNewValueDefaults(null, cft)}">
                         </p:commandButton>
 
-                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}"
-                            onclick="PF('#{popupWidgetVar}').hide();return false;">
+                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}" onclick="PF('#{popupWidgetVar}').hide();return false;">
                         </p:button>
 
                     </f:facet>
@@ -150,7 +150,7 @@
                             <h:inputText value="#{mapValues[column.code]}" size="9" maxlength="15" rendered="#{column.keyType eq CustomFieldMapKeyEnum.LONG}" converter="javax.faces.Long" />
                             <h:inputText value="#{mapValues[column.code]}" size="9" maxlength="15" rendered="#{column.keyType eq CustomFieldMapKeyEnum.DOUBLE}" converter="javax.faces.Double" />
                             <p:inputText value="#{mapValues[column.code]}" size="20" maxlength="30" rendered="#{column.keyType eq CustomFieldMapKeyEnum.RON}">
-                                <!--                                 <p:keyFilter regEx="/[0-9.&lt;]/" /> -->
+                                <p:keyFilter regEx="/[0-9.&lt;]/" />
                                 <o:validator validatorId="javax.faces.RegularExpression" pattern="(([0-9]+)(\.[0-9]+)?)?&lt;(([0-9]+)(\.[0-9]+)?)?"
                                     message="#{messages['customFieldTemplate.ronInvalid']}" />
                             </p:inputText>
@@ -178,6 +178,10 @@
                     <f:facet name="footer" layout="block">
 
                         <p:messages id="cfNewFieldsMessage" globalOnly="false" redisplay="false" rendered="#{edit and !disabled}" />
+
+                        <div>
+                            <span class="text-red">#{messages['message.allFields.areRequired']}</span>
+                        </div>
 
                         <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
 
@@ -233,8 +237,7 @@
                             oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{cfValueHolder.populateNewValueDefaults(null, cft)}">
                         </p:commandButton>
 
-                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}"
-                            onclick="PF('#{popupWidgetVar}').hide();return false;">
+                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}" onclick="PF('#{popupWidgetVar}').hide();return false;">
                         </p:button>
 
                     </f:facet>

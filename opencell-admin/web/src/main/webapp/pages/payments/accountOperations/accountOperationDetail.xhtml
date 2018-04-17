@@ -24,7 +24,7 @@
 					<hftl:formField label="#{messages['accountOperation.customerAccount']}" field="customerAccount" valueLabelField="code" edit="false" />
 			       	<hftl:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" edit="false" />	       	  
 			      	<hftl:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />
-			      	<hftl:formField label="#{messages['accountOperation.accountCode']}" field="accountCode" edit="false" />			       
+			      	<hftl:formField label="#{messages['accountOperation.accountCode']}" field="accountingCode" listBean="#{accountingCodeListBean}" valueLabelField="code" edit="false" />			       
 			      	<hftl:formField label="#{messages['accountOperation.occDescription']}" required="true" field="occDescription" useConverter="false" size="50" />         						      
 		  			<hftl:formField label="#{messages['accountOperation.dueDate']}" required="true" field="dueDate" />     			
 		   			<hftl:formField label="#{messages['accountOperation.amount']}" required="true" field="amount" />

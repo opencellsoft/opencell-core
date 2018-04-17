@@ -33,180 +33,190 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 public class AccountingDetail extends FileProducer implements Reporting {
-	@Inject
-	protected Logger log;
+    @Inject
+    protected Logger log;
 
-	@Inject
-	private CustomerAccountService customerAccountService;
-	
-	@Inject
-	private DWHAccountOperationService accountOperationTransformationService;
-	
-	@Inject
-	private AccountOperationService accountOperationService;
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-	private String reportsFolder;
-	private String templateFilename;
-	public Map<String, Object> parameters = new HashMap<String, Object>();
-	public HashMap<String, BigDecimal> balances = new HashMap<String, BigDecimal>();
-	public HashMap<String, String> customerNames = new HashMap<String, String>();
+    @Inject
+    private DWHAccountOperationService accountOperationTransformationService;
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    @Inject
+    private AccountOperationService accountOperationService;
 
-	public void generateAccountingDetailFile(Date startDate, Date endDate,
-			OutputFormatEnum outputFormat) {
-		try {
-			File file = null;
-			if (outputFormat == OutputFormatEnum.PDF) {
-				file = File.createTempFile("tempAccountingDetail", ".csv");
-			} else if (outputFormat == OutputFormatEnum.CSV) {
-				StringBuilder sb = new StringBuilder(getFilename());
-				sb.append(".csv");
-				file = new File(sb.toString());
-			}
-			FileWriter writer = new FileWriter(file);
-			writer.append("N° compte client;Nom du compte client;Code operation;Référence comptable;Date de l'opération;Date d'exigibilité;Débit;Credit;Solde client");
-			writer.append('\n');
-			List<DWHAccountOperation> list = accountOperationTransformationService
-					.getAccountingDetailRecords(new Date());
-			Iterator<DWHAccountOperation> itr = list.iterator();
-			String previousAccountCode = null;
-			BigDecimal solde = BigDecimal.ZERO;
-			BigDecimal amount = BigDecimal.ZERO;
-			while (itr.hasNext()) {
-				DWHAccountOperation accountOperationTransformation = itr.next();
-				if (previousAccountCode != null) {
-					if (!previousAccountCode
-							.equals(accountOperationTransformation.getAccountCode())) {
-						writer.append(String.valueOf(solde).replace('.', ','));
-						solde = BigDecimal.ZERO;
-					}
-					writer.append('\n');
-				}
-				if (accountOperationTransformation.getStatus() == 2) {
-					AccountOperation accountOperation = accountOperationService
-							.findById(accountOperationTransformation.getId());
-					amount = accountOperation.getUnMatchingAmount();
-				} else {
-					amount = accountOperationTransformation.getAmount();
-				}
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
-				amount = accountOperationTransformation.getAmount();
-				if (accountOperationTransformation.getCategory() == 1) {
-					solde = solde.subtract(amount);
-				} else {
-					solde = solde.add(amount);
-				}
-				previousAccountCode = accountOperationTransformation.getAccountCode();
-				writer.append(accountOperationTransformation.getAccountCode() + ";"); // Num
-																						// compte
-																						// client
-				writer.append(accountOperationTransformation.getAccountDescription() + ";");
-				writer.append(accountOperationTransformation.getOccCode() + ";");
-				writer.append(accountOperationTransformation.getReference() + ";");
-				writer.append(sdf.format(accountOperationTransformation.getTransactionDate()) + ";");
-				writer.append(sdf.format(accountOperationTransformation.getDueDate()) + ";");
-				if (accountOperationTransformation.getCategory() == 0) {
-					writer.append((amount + ";").replace('.', ','));
-				} else {
-					writer.append("0;");
-				}
-				if (accountOperationTransformation.getCategory() == 1) {
-					writer.append((amount + ";").replace('.', ','));
-				} else {
-					writer.append("0;");
-				}
-			}
-			writer.append(String.valueOf(solde).replace('.', ','));
-			writer.append('\n');
+    public Map<String, Object> parameters = new HashMap<String, Object>();
+    public HashMap<CacheKeyStr, BigDecimal> balances = new HashMap<CacheKeyStr, BigDecimal>();
+    public HashMap<CacheKeyStr, String> customerNames = new HashMap<CacheKeyStr, String>();
 
-			writer.flush();
-			writer.close();
-			if (outputFormat == OutputFormatEnum.PDF) {
-				parameters.put("startDate", startDate);
-				parameters.put("endDate", endDate);
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-				StringBuilder sb = new StringBuilder(getFilename());
-				sb.append(".pdf");
-				generatePDFfile(file, sb.toString(), templateFilename, parameters);
-			}
-		} catch (IOException e) {
-			log.error("failed to generate accounting detail File",e);
-		}
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-	}
+    public void generateAccountingDetailFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        try {
+            File file = null;
+            if (outputFormat == OutputFormatEnum.PDF) {
+                file = File.createTempFile("tempAccountingDetail", ".csv");
+            } else if (outputFormat == OutputFormatEnum.CSV) {
+                StringBuilder sb = new StringBuilder(getFilename());
+                sb.append(".csv");
+                file = new File(sb.toString());
+            }
+            FileWriter writer = new FileWriter(file);
+            writer.append("N° compte client;Nom du compte client;Code operation;Référence comptable;Date de l'opération;Date d'exigibilité;Débit;Credit;Solde client");
+            writer.append('\n');
+            List<DWHAccountOperation> list = accountOperationTransformationService.getAccountingDetailRecords(new Date());
+            Iterator<DWHAccountOperation> itr = list.iterator();
+            String previousAccountCode = null;
+            BigDecimal solde = BigDecimal.ZERO;
+            BigDecimal amount = BigDecimal.ZERO;
+            while (itr.hasNext()) {
+                DWHAccountOperation accountOperationTransformation = itr.next();
+                if (previousAccountCode != null) {
+                    if (!previousAccountCode.equals(accountOperationTransformation.getAccountCode())) {
+                        writer.append(String.valueOf(solde).replace('.', ','));
+                        solde = BigDecimal.ZERO;
+                    }
+                    writer.append('\n');
+                }
+                if (accountOperationTransformation.getStatus() == 2) {
+                    AccountOperation accountOperation = accountOperationService.findById(accountOperationTransformation.getId());
+                    amount = accountOperation.getUnMatchingAmount();
+                } else {
+                    amount = accountOperationTransformation.getAmount();
+                }
 
-	public String getCustomerName(String customerAccountCode) {
-		String result = "";
-		if (customerNames.containsKey(customerAccountCode)) {
-			result = customerNames.get(customerAccountCode);
-		} else {
-			CustomerAccount account = customerAccountService.findByCode(customerAccountCode);
-			if (account.getName() != null) {
-				result = account.getName().getTitle().getCode();
-				if (account.getName().getFirstName() != null) {
-					result += " " + account.getName().getFirstName();
-				}
-				if (account.getName().getLastName() != null) {
-					result += " " + account.getName().getLastName();
-				}
-			}
-		}
-		return result;
-	}
+                amount = accountOperationTransformation.getAmount();
+                if (accountOperationTransformation.getCategory() == 1) {
+                    solde = solde.subtract(amount);
+                } else {
+                    solde = solde.add(amount);
+                }
+                previousAccountCode = accountOperationTransformation.getAccountCode();
+                writer.append(accountOperationTransformation.getAccountCode() + ";"); // Num
+                                                                                      // compte
+                                                                                      // client
+                writer.append(accountOperationTransformation.getAccountDescription() + ";");
+                writer.append(accountOperationTransformation.getOccCode() + ";");
+                writer.append(accountOperationTransformation.getReference() + ";");
+                writer.append(sdf.format(accountOperationTransformation.getTransactionDate()) + ";");
+                writer.append(sdf.format(accountOperationTransformation.getDueDate()) + ";");
+                if (accountOperationTransformation.getCategory() == 0) {
+                    writer.append((amount + ";").replace('.', ','));
+                } else {
+                    writer.append("0;");
+                }
+                if (accountOperationTransformation.getCategory() == 1) {
+                    writer.append((amount + ";").replace('.', ','));
+                } else {
+                    writer.append("0;");
+                }
+            }
+            writer.append(String.valueOf(solde).replace('.', ','));
+            writer.append('\n');
 
-	public BigDecimal getCustomerBalanceDue(String customerAccountCode, Date atDate) {
-		BigDecimal result = BigDecimal.ZERO;
-		if (balances.containsKey(customerAccountCode)) {
-			result = balances.get(customerAccountCode);
-		} else {
-			try {
-				result = customerAccountService.customerAccountBalanceDue(null,
-						customerAccountCode, atDate);
-				balances.put(customerAccountCode, result);
-			} catch (BusinessException e) {
-				log.error("Error while getting balance dues", e);
-			}
-		}
-		return result;
-	}
+            writer.flush();
+            writer.close();
+            if (outputFormat == OutputFormatEnum.PDF) {
+                parameters.put("startDate", startDate);
+                parameters.put("endDate", endDate);
 
-	public String getFilename() {
+                StringBuilder sb = new StringBuilder(getFilename());
+                sb.append(".pdf");
+                String jasperTemplatesFolder = paramBeanFactory.getInstance().getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
+                String templateFilename = jasperTemplatesFolder + "accountingDetail.jasper";
+                generatePDFfile(file, sb.toString(), templateFilename, parameters);
+            }
+        } catch (IOException e) {
+            log.error("failed to generate accounting detail File", e);
+        }
 
-		String DATE_FORMAT = "dd-MM-yyyy";
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-		StringBuilder sb = new StringBuilder();
-		sb.append(reportsFolder);
-		sb.append(appProvider.getCode() + "_");
-		sb.append("INVENTAIRE_CCLIENT_");
-		sb.append(sdf.format(new Date()).toString());
-		return sb.toString();
-	}
+    }
 
-	public void export(Report report) {
-		ParamBean param = ParamBean.getInstance();
-		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
-		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
-		templateFilename = jasperTemplatesFolder + "accountingDetail.jasper";
-		accountOperationTransformationService = null;
-		customerAccountService = null; 
-		accountOperationService = null; 
+    public String getCustomerName(String customerAccountCode) {
+        String result = "";
+        if (customerNames.containsKey(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode))) {
+            result = customerNames.get(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode));
+        } else {
+            CustomerAccount account = customerAccountService.findByCode(customerAccountCode);
+            if (account.getName() != null) {
+                result = account.getName().getTitle().getCode();
+                if (account.getName().getFirstName() != null) {
+                    result += " " + account.getName().getFirstName();
+                }
+                if (account.getName().getLastName() != null) {
+                    result += " " + account.getName().getLastName();
+                }
+            }
+        }
+        return result;
+    }
 
-		generateAccountingDetailFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
+    public BigDecimal getCustomerBalanceDue(String customerAccountCode, Date atDate) {
+        BigDecimal result = BigDecimal.ZERO;
+        if (balances.containsKey(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode))) {
+            result = balances.get(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode));
+        } else {
+            try {
+                result = customerAccountService.customerAccountBalanceDue(null, customerAccountCode, atDate);
+                balances.put(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode), result);
+            } catch (BusinessException e) {
+                log.error("Error while getting balance dues", e);
+            }
+        }
+        return result;
+    }
 
-	}
+    public String getFilename() {
+
+        String DATE_FORMAT = "dd-MM-yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        StringBuilder sb = new StringBuilder();
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
+        sb.append(reportsFolder);
+        sb.append(appProvider.getCode() + "_");
+        sb.append("INVENTAIRE_CCLIENT_");
+        sb.append(sdf.format(new Date()).toString());
+        return sb.toString();
+    }
+
+    public void export(Report report) {
+
+        accountOperationTransformationService = null;
+        customerAccountService = null;
+        accountOperationService = null;
+
+        generateAccountingDetailFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
+
+    }
 
 }

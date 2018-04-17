@@ -19,6 +19,10 @@ import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.JobWs;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @WebService(serviceName = "JobWs", endpointInterface = "org.meveo.api.ws.JobWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class JobWsImpl extends BaseWs implements JobWs {

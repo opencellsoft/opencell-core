@@ -37,6 +37,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
@@ -52,6 +53,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  **/
 
 @Stateless
@@ -157,6 +160,8 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setTerminationDate(postData.getTerminationDate());
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingAccount.setPhone(postData.getPhone());
+        billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
 
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
@@ -185,11 +190,9 @@ public class BillingAccountApi extends AccountEntityApi {
         createOrUpdatePaymentMethodInCA(postData, billingAccount);
 
         // Validate and populate customFields
-        try
-
-        {
+        try {
             populateCustomFields(postData.getCustomFields(), billingAccount, true, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -302,6 +305,12 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getPhone())) {
             billingAccount.setPhone(postData.getPhone());
         }
+        if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+            billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+            billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
             if (discountPlan == null) {
@@ -323,7 +332,7 @@ public class BillingAccountApi extends AccountEntityApi {
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), billingAccount, false, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -342,6 +351,11 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
+        return find(billingAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
+    public BillingAccountDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
             handleMissingParameters();
@@ -351,7 +365,7 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
         }
 
-        return accountHierarchyApi.billingAccountToDto(billingAccount);
+        return accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
@@ -520,6 +534,12 @@ public class BillingAccountApi extends AccountEntityApi {
                 if (!StringUtils.isBlank(postData.getEmail())) {
                     existedBillingAccountDto.setEmail(postData.getEmail());
                 }
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+                    existedBillingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl());
+                }
+                if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+                    existedBillingAccountDto.setMinimumLabelEl(postData.getMinimumLabelEl());
+                }
                 if (postData.getInvoicingThreshold() != null) {
                     existedBillingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
                 }
@@ -595,9 +615,9 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!found) {
             PaymentMethod paymentMethodFromDto = null;
             if (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER) {
-                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod())).fromDto(customerAccount);
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod())).fromDto(customerAccount, currentUser);
             } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
-                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount);
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount, currentUser);
             }
 
             if (customerAccount.getPaymentMethods() == null) {

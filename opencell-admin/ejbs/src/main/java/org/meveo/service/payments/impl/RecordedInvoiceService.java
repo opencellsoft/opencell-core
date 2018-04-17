@@ -46,6 +46,10 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * RecordedInvoice service implementation.
+ * 
+ * @author Edward P. Legaspi
+ * @author anasseh
+ * @lastModifiedVersion 4.8
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
@@ -183,7 +187,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         BillingAccount billingAccount = invoice.getBillingAccount();
 
         if (isRecordedInvoiceExist(invoice.getInvoiceNumber())) {
-            throw new InvoiceExistException("Invoice id" + invoice.getId() + " already exist");
+            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
         }
 
         try {
@@ -200,8 +204,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             throw new ImportInvoiceException("Invoice type is null");
         }
 
-        OCCTemplate invoiceTemplate = invoice.getInvoiceType().getOccTemplate();
-        if (invoiceTemplate == null) {
+        OCCTemplate occTemplate = invoice.getInvoiceType().getOccTemplate();
+        if (occTemplate == null) {
             throw new ImportInvoiceException("Cant find OccTemplate");
         }
         BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
@@ -210,8 +214,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         BigDecimal netToPay = invoice.getNetToPay();
 
         if (netToPay.compareTo(BigDecimal.ZERO) < 0) {
-            invoiceTemplate = invoice.getInvoiceType().getOccTemplateNegative();
-            if (invoiceTemplate == null) {
+            occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+            if (occTemplate == null) {
                 throw new ImportInvoiceException("Cant find negative OccTemplate");
             }
             netToPay = netToPay.abs();
@@ -227,11 +231,11 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
 
         recordedInvoice.setReference(invoice.getInvoiceNumber());
-        recordedInvoice.setAccountCode(invoiceTemplate.getAccountCode());
-        recordedInvoice.setOccCode(invoiceTemplate.getCode());
-        recordedInvoice.setOccDescription(invoiceTemplate.getDescription());
-        recordedInvoice.setTransactionCategory(invoiceTemplate.getOccCategory());
-        recordedInvoice.setAccountCodeClientSide(invoiceTemplate.getAccountCodeClientSide());
+        recordedInvoice.setAccountingCode(occTemplate.getAccountingCode());
+        recordedInvoice.setOccCode(occTemplate.getCode());
+        recordedInvoice.setOccDescription(occTemplate.getDescription());
+        recordedInvoice.setTransactionCategory(occTemplate.getOccCategory());
+        recordedInvoice.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
 
         recordedInvoice.setAmount(amountWithTax);
         recordedInvoice.setUnMatchingAmount(amountWithTax);
@@ -243,7 +247,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         List<String> orderNums = new ArrayList<String>();
         if (invoice.getOrders() != null) {
             for (Order order : invoice.getOrders()) {
-                orderNums.add(order.getOrderNumber());
+                if(order != null) {
+                    orderNums.add(order.getOrderNumber());
+                }
             }
             recordedInvoice.setOrderNumber(StringUtils.concatenate("|", orderNums));
         }

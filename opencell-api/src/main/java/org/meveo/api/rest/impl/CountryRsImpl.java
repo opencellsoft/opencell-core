@@ -30,8 +30,8 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
     /***
      * Creates an instance of @see TradingCountry base on @see Country.
      * 
-     * @param countryDto
-     * @return @see ActionStatus
+     * @param countryDto the data transfer object for Country
+     * @return Request processing status
      */
     @Override
     public ActionStatus create(CountryDto countryDto) {

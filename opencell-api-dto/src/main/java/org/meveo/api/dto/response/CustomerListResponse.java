@@ -6,25 +6,42 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.CustomersDto;
 
+/**
+ * The Class CustomerListResponse.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "CustomerListResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerListResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -7840902324622306237L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7840902324622306237L;
 
-	private CustomersDto customers;
+    /** The customers. */
+    private CustomersDto customers;
 
-	public CustomersDto getCustomers() {
-		return customers;
-	}
+    /**
+     * Gets the customers.
+     *
+     * @return the customers
+     */
+    public CustomersDto getCustomers() {
+        return customers;
+    }
 
-	public void setCustomers(CustomersDto customers) {
-		this.customers = customers;
-	}
+    /**
+     * Sets the customers.
+     *
+     * @param customers the new customers
+     */
+    public void setCustomers(CustomersDto customers) {
+        this.customers = customers;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerListResponse [customers=" + customers + "]";
-	}
+    @Override
+    public String toString() {
+        return "CustomerListResponse [customers=" + customers + "]";
+    }
 
 }

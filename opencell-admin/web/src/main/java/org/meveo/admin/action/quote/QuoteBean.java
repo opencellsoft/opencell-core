@@ -65,14 +65,13 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderService;
-import org.meveo.service.quote.QuoteItemService;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.wf.WorkflowService;
+import org.meveo.util.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -86,6 +85,9 @@ import org.tmf.dsmapi.quote.ProductQuoteItem;
 /**
  * Standard backing bean for {@link Quote} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -98,9 +100,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      */
     @Inject
     private QuoteService quoteService;
-
-    @Inject
-    private QuoteItemService quoteItemService;
 
     @Inject
     private QuoteApi quoteApi;
@@ -124,9 +123,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     private UserAccountService userAccountService;
 
     @Inject
-    private BillingAccountService billingAccountService;
-
-    @Inject
     private UserService userService;
 
     private QuoteItem selectedQuoteItem;
@@ -136,7 +132,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     private List<OfferItemInfo> offerConfigurations;
 
     private Boolean workflowEnabled;
-    
+
     private boolean validationFailed = false;
 
     /**
@@ -144,6 +140,19 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      */
     public QuoteBean() {
         super(Quote.class);
+    }
+
+    @Override
+    public Quote initEntity() {
+        super.initEntity();
+
+        if (entity.getQuoteItems() != null) {
+            for (QuoteItem quoteItem : entity.getQuoteItems()) {
+                PersistenceUtils.initializeAndUnproxy(quoteItem.getQuoteItemProductOfferings());
+            }
+        }
+
+        return entity;
     }
 
     /**
@@ -173,13 +182,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public void editQuoteItem(QuoteItem quoteItemToEdit) {
 
         try {
-            if (quoteItemToEdit.isTransient()) {
-                this.selectedQuoteItem = quoteItemToEdit;
 
-            } else {
+            this.selectedQuoteItem = quoteItemToEdit;
 
-                this.selectedQuoteItem = quoteItemService.refreshOrRetrieve(quoteItemToEdit);
-
+            if (!quoteItemToEdit.isTransient()) {
                 try {
                     this.selectedQuoteItem.setQuoteItemDto(ProductQuoteItem.deserializeQuoteItem(selectedQuoteItem.getSource()));
                 } catch (BusinessException e) {
@@ -341,7 +347,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             }
 
             // set billingAccount
-            UserAccount quoteUa = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());
+            UserAccount quoteUa = userAccountService.retrieveIfNotManaged(selectedQuoteItem.getUserAccount());
             quoteItemDto.addBillingAccount(quoteUa.getCode());
 
             selectedQuoteItem.setQuoteItemDto(quoteItemDto);
@@ -374,7 +380,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         if (entity.getQuoteItems() == null || entity.getQuoteItems().isEmpty()) {
-            //throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
+            // throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
             setValidationFailed(true);
             messages.error(new BundleKey("messages", "quote.itemsRequired"));
             return null;
@@ -384,8 +390,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;
         if (entity.getUserAccount() != null) {
-            UserAccount baUserAccount = userAccountService.refreshOrRetrieve(entity.getUserAccount());
-            billingAccount = billingAccountService.refreshOrRetrieve(baUserAccount.getBillingAccount());
+            entity.setUserAccount(userAccountService.retrieveIfNotManaged(entity.getUserAccount()));
+            billingAccount = entity.getUserAccount().getBillingAccount();
         }
 
         if (entity.getQuoteItems() != null) {
@@ -394,7 +400,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                     quoteItem.setUserAccount(entity.getUserAccount());
                 }
 
-                UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
+                UserAccount itemUa = userAccountService.retrieveIfNotManaged(quoteItem.getUserAccount());
                 if (billingAccount != null && !billingAccount.equals(itemUa.getBillingAccount())) {
                     messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
                     FacesContext.getCurrentInstance().validationFailed();
@@ -414,6 +420,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     /**
      * Initiate processing of quote
+     * 
      * @return output view
      * 
      */
@@ -450,7 +457,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         TreeNode root = new DefaultTreeNode("Offer details", null);
         root.setExpanded(true);
 
-        ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedQuoteItem.getMainOffering());
+        ProductOffering mainOffering = productOfferingService.retrieveIfNotManaged(this.selectedQuoteItem.getMainOffering());
 
         // Take offer characteristics from DTO or default them from offer
         Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
@@ -837,7 +844,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         boolean editable = isValidationFailed() || entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING;
 
         if (editable && entity.getRoutedToUserGroup() != null) {
-            UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
+            UserHierarchyLevel userGroup = userHierarchyLevelService.retrieveIfNotManaged(entity.getRoutedToUserGroup());
             User user = userService.findByUsername(currentUser.getUserName());
             editable = userGroup.isUserBelongsHereOrHigher(user);
         }

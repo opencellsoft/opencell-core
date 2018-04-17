@@ -22,8 +22,17 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.billing.Country;
+
+/**
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
 @Embeddable
 public class Address implements Serializable, Cloneable {
 
@@ -49,9 +58,9 @@ public class Address implements Serializable, Cloneable {
 	@Size(max = 50)
 	protected String city;
 
-	@Column(name = "address_country", length = 50)
-	@Size(max = 50)
-	protected String country;
+    @ManyToOne
+    @JoinColumn(name = "address_country_id")
+	protected Country country;
 
 	@Column(name = "address_state", length = 50)
 	@Size(max = 50)
@@ -65,7 +74,7 @@ public class Address implements Serializable, Cloneable {
 				address.state);
 	}
 
-	public Address(String address1, String address2, String address3, String zipCode, String city, String country,
+	public Address(String address1, String address2, String address3, String zipCode, String city, Country country,
 			String state) {
 		super();
 		this.address1 = address1;
@@ -125,18 +134,18 @@ public class Address implements Serializable, Cloneable {
 		this.state = state;
 	}
 
-	public String getCountry() {
+	public Country getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
+	public void setCountry(Country country) {
 		this.country = country;
 	}
 
 	public String getCountryBundle() {
 		if (country == null)
 			return null;
-		return "countries." + country.toLowerCase();
+		return "countries." + country.getDescription();
 	}
 
 	@Override

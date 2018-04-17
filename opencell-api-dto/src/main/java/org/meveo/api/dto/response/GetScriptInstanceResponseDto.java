@@ -7,22 +7,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.ScriptInstanceDto;
 
 /**
+ * The Class GetScriptInstanceResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetScriptInstanceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetScriptInstanceResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 962231443399621051L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 962231443399621051L;
 
-	private ScriptInstanceDto scriptInstance;
+    /** The script instance. */
+    private ScriptInstanceDto scriptInstance;
 
-	public ScriptInstanceDto getScriptInstance() {
-		return scriptInstance;
-	}
+    /**
+     * Gets the script instance.
+     *
+     * @return the script instance
+     */
+    public ScriptInstanceDto getScriptInstance() {
+        return scriptInstance;
+    }
 
-	public void setScriptInstance(ScriptInstanceDto scriptInstance) {
-		this.scriptInstance = scriptInstance;
-	}
-
+    /**
+     * Sets the script instance.
+     *
+     * @param scriptInstance the new script instance
+     */
+    public void setScriptInstance(ScriptInstanceDto scriptInstance) {
+        this.scriptInstance = scriptInstance;
+    }
 }

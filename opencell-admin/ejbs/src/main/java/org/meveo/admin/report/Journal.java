@@ -32,111 +32,116 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.impl.JournalEntryService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 public class Journal extends FileProducer implements Reporting {
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-	@Inject
-	protected Logger log;
+    @Inject
+    protected Logger log;
 
-	@Inject
-	private JournalEntryService journalEntryService;
+    @Inject
+    private JournalEntryService journalEntryService;
 
-	private String reportsFolder;
-	private String templateFilename;
-	public Map<String, Object> parameters = new HashMap<String, Object>();
+    public Map<String, Object> parameters = new HashMap<String, Object>();
 
-	private String separator;
+    /** paramBeanFactory to instantiate adequate ParamBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-	public void generateJournalFile(Date startDate, Date endDate,
-			OutputFormatEnum outputFormat) {
-		try {
-			File file = null;
-			if (outputFormat == OutputFormatEnum.PDF) {
-				file = File.createTempFile("tempJournal", ".csv");
-			} else if (outputFormat == OutputFormatEnum.CSV) {
-				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
-				sb.append(".csv");
-				file = new File(sb.toString());
-			}
-			FileWriter writer = new FileWriter(file);
-			writer.append("Date G.L.;No de Facture;No de client;Ste;CG;CA;DA;CR;IC;GP;Debit;Credit");
-			writer.append('\n');
-			List<Object> records = journalEntryService.getJournalRecords(startDate,
-					endDate);
-			Iterator<Object> itr = records.iterator();
-			while (itr.hasNext()) {
-				Object[] row = (Object[]) itr.next();
-				String type = row[0] + "";
-				// writer.append(row[0] + ";");
-				writer.append(row[1] == null ? "" : sdf.format(row[1]) + ";");// invoiceDate
-				writer.append(row[2] + ";");// invoiceNumber
-				writer.append(row[3] + ";");// customerAccountCode
-				if (row[4] != null) {// accountingCode
-					writer.append(row[4].toString().replace(separator.toCharArray()[0], ';') + ";");
-				} else {
-					writer.append("00000;00000;0000;000;0000;00000000;00000;");
-				}
-				String credit = "";
-				String debit = "";
-				if ("I".equals(type)) {
-					debit = row[7] + "";// amount with tax
-				} else if ("T".equals(type)) {
-					credit = row[6] + "";// amount tax
-				} else {
-					credit = row[5] + "";// amount without tax
-				}
-				writer.append(debit.replace('.', ',') + ";");// amount Debit
-				writer.append(credit.replace('.', ','));// amount Credit
-				writer.append('\n');
-			}
-			// then write invoices
+    public void generateJournalFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        try {
+            File file = null;
+            if (outputFormat == OutputFormatEnum.PDF) {
+                file = File.createTempFile("tempJournal", ".csv");
+            } else if (outputFormat == OutputFormatEnum.CSV) {
+                StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
+                sb.append(".csv");
+                file = new File(sb.toString());
+            }
+            FileWriter writer = new FileWriter(file);
+            writer.append("Date G.L.;No de Facture;No de client;Ste;CG;CA;DA;CR;IC;GP;Debit;Credit");
+            writer.append('\n');
+            List<Object> records = journalEntryService.getJournalRecords(startDate, endDate);
+            Iterator<Object> itr = records.iterator();
+            while (itr.hasNext()) {
+                Object[] row = (Object[]) itr.next();
+                String type = row[0] + "";
+                // writer.append(row[0] + ";");
+                writer.append(row[1] == null ? "" : sdf.format(row[1]) + ";");// invoiceDate
+                writer.append(row[2] + ";");// invoiceNumber
+                writer.append(row[3] + ";");// customerAccountCode
+                if (row[4] != null) {// accountingCode
+                    ParamBean param = paramBeanFactory.getInstance();
+                    String separator = param.getProperty("reporting.accountingCode.separator", ",");
+                    writer.append(row[4].toString().replace(separator.toCharArray()[0], ';') + ";");
+                } else {
+                    writer.append("00000;00000;0000;000;0000;00000000;00000;");
+                }
+                String credit = "";
+                String debit = "";
+                if ("I".equals(type)) {
+                    debit = row[7] + "";// amount with tax
+                } else if ("T".equals(type)) {
+                    credit = row[6] + "";// amount tax
+                } else {
+                    credit = row[5] + "";// amount without tax
+                }
+                writer.append(debit.replace('.', ',') + ";");// amount Debit
+                writer.append(credit.replace('.', ','));// amount Credit
+                writer.append('\n');
+            }
+            // then write invoices
 
-			writer.flush();
-			writer.close();
-			if (outputFormat == OutputFormatEnum.PDF) {
-				parameters.put("startDate", startDate);
-				parameters.put("endDate", endDate);
-				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
-				sb.append(".pdf");
-				generatePDFfile(file, sb.toString(), templateFilename, parameters);
-			}
-		} catch (IOException e) {
-			log.error("failed to generate journal file",e);
-		}
-	}
+            writer.flush();
+            writer.close();
+            if (outputFormat == OutputFormatEnum.PDF) {
+                parameters.put("startDate", startDate);
+                parameters.put("endDate", endDate);
+                StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
+                sb.append(".pdf");
+                ParamBean param = paramBeanFactory.getInstance();
+                String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
+                String templateFilename = jasperTemplatesFolder + "journal.jasper";
+                generatePDFfile(file, sb.toString(), templateFilename, parameters);
+            }
+        } catch (IOException e) {
+            log.error("failed to generate journal file", e);
+        }
+    }
 
-	public String getFilename(Date startDate, Date endDate) {
+    public String getFilename(Date startDate, Date endDate) {
 
-		String DATE_FORMAT = "dd-MM-yyyy";
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-		StringBuilder sb = new StringBuilder();
-		sb.append(reportsFolder);
-		sb.append(appProvider.getCode() + "_");
-		sb.append("JOURNAL_VENTE_");
-		sb.append(sdf.format(new Date()).toString());
-		sb.append("_du_");
-		sb.append(sdf.format(startDate).toString());
-		sb.append("_au_");
-		sb.append(sdf.format(endDate).toString());
-		return sb.toString();
-	}
+        String DATE_FORMAT = "dd-MM-yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        StringBuilder sb = new StringBuilder();
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
+        sb.append(reportsFolder);
+        sb.append(appProvider.getCode() + "_");
+        sb.append("JOURNAL_VENTE_");
+        sb.append(sdf.format(new Date()).toString());
+        sb.append("_du_");
+        sb.append(sdf.format(startDate).toString());
+        sb.append("_au_");
+        sb.append(sdf.format(endDate).toString());
+        return sb.toString();
+    }
 
-	public void export(Report report) {
-		ParamBean param = ParamBean.getInstance();
-		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
-		separator = param.getProperty("reporting.accountingCode.separator",",");
-		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
-		templateFilename = jasperTemplatesFolder + "journal.jasper";
-		generateJournalFile(
-				report.getStartDate(), report.getEndDate(), report.getOutputFormat());
+    public void export(Report report) {
+        generateJournalFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
 
-	}
+    }
 
 }

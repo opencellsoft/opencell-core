@@ -14,36 +14,42 @@ import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * @author phung
+ * The Class GetOneShotChargesResponseDto.
  *
+ * @author phung
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetOneShotChargesResponseDto extends BaseResponse implements Serializable {
-	
-	/**
-	 * serial version uid
-	 */
-	private static final long serialVersionUID = -1931425527526409004L;
-	
-	
-	private List<OneShotChargeTemplateDto> oneshotCharges;
 
+    /** serial version uid. */
+    private static final long serialVersionUID = -1931425527526409004L;
 
-	@Override
-	public String toString() {
-		return "GetOneShotChargesResponseDto [oneshotCharges=" + oneshotCharges + "]";
-	}
+    /** The oneshot charges. */
+    private List<OneShotChargeTemplateDto> oneshotCharges;
 
-	public List<OneShotChargeTemplateDto> getOneshotCharges() {
-		if (oneshotCharges == null) {
-			oneshotCharges = new ArrayList<OneShotChargeTemplateDto>();
-		}
-		return oneshotCharges;
-	}
+    /**
+     * Gets the oneshot charges.
+     *
+     * @return the oneshot charges
+     */
+    public List<OneShotChargeTemplateDto> getOneshotCharges() {
+        if (oneshotCharges == null) {
+            oneshotCharges = new ArrayList<OneShotChargeTemplateDto>();
+        }
+        return oneshotCharges;
+    }
 
-	public void setOneshotCharges(List<OneShotChargeTemplateDto> oneshotCharges) {
-		this.oneshotCharges = oneshotCharges;
-	}
+    /**
+     * Sets the oneshot charges.
+     *
+     * @param oneshotCharges the new oneshot charges
+     */
+    public void setOneshotCharges(List<OneShotChargeTemplateDto> oneshotCharges) {
+        this.oneshotCharges = oneshotCharges;
+    }
 
-
+    @Override
+    public String toString() {
+        return "GetOneShotChargesResponseDto [oneshotCharges=" + oneshotCharges + "]";
+    }
 }

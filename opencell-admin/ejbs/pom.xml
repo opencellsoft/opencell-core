@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>opencell-admin</artifactId>
 		<groupId>com.opencellsoft</groupId>
-		<version>4.8.1.5</version>
+		<version>5.0.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>opencell-admin-ejbs</artifactId>
@@ -581,13 +581,31 @@
 		<dependency>
    			 <groupId>com.ingenico.connect.gateway</groupId>
   			<artifactId>connect-sdk-java</artifactId>
-  			<version>5.5.1</version>
+  			<version>5.18.0</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.keycloak</groupId>
 			<artifactId>keycloak-admin-client</artifactId>
 			<version>${version.keycloak}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.slimpay</groupId>
+			<artifactId>hapiclient</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>1.0.4</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.1</version>
 		</dependency>
 
 	</dependencies>

@@ -93,7 +93,7 @@ public class ChargeInstance extends BusinessEntity {
     @JoinColumn(name = "charge_template_id")
     protected ChargeTemplate chargeTemplate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     protected Calendar invoicingCalendar;
 

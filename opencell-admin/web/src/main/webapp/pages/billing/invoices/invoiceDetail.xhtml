@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -156,9 +156,21 @@
                                                     <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}">
                                                         <h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter" />
                                                     </p:column>
-                                                    <p:column headerText="#{messages['serviceInstance.quantity']}">
+                                                    <p:column headerText="#{messages['serviceInstance.quantity']}" width="50">
                                                         <h:outputText value="#{rated.quantity}" converter="bigDecimal4DigitsConverter" />
                                                     </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.param1']}">
+                                                        <h:outputText value="#{rated.parameter1}" />
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.param2']}">
+                                                        <h:outputText value="#{rated.parameter2}" />
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.param3']}">
+                                                        <h:outputText value="#{rated.parameter3}" />
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['order.number']}">
+														<h:outputText value="#{rated.orderNumber}" />
+													</p:column>
                                                     <p:column headerText="#{messages['ratedTransaction.status']}">
                                                         <h:outputText value="#{rated.status}" />
                                                     </p:column>
@@ -182,12 +194,6 @@
                         </p:fieldset>
                         <br />
                         <p:outputPanel column="2" id="buttonGenerate">
-                            <p:button value="#{messages['action.back']}" outcome="#{invoiceBean.back()}" includeViewParams="true">
-                                <c:if test="#{conversation.id != null}">
-                                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                                </c:if>
-                            </p:button>
-
                             <p:commandButton value="#{messages['invoice.generatePdf']}" icon="ui-icon-refresh" disabled="#{invoiceBean.pdfInvoiceAlreadyGenerated}"
                                 action="#{invoiceBean.generatePdfInvoice()}" update=":headerForm:messages :headerForm:tabView:attachments buttonGenerate" />
                             <p:commandButton value="#{messages['invoice.generateXml']}" icon="ui-icon-refresh" disabled="#{invoiceBean.xmlInvoiceAlreadyGenerated}"
@@ -228,8 +234,14 @@
                             </p:button>
                         </p:outputPanel>
                     </p:tab>
-                    <hftl:customFields backingBean="#{invoiceBean}" messagesId=":headerForm:messages" />
+                    <hftl:customFields backingBean="#{invoiceBean}" messagesId=":headerForm:messages" edit="true" />
                 </p:tabView>
+                
+                <hf:formButtons ajaxSubmit="true" backingBean="#{invoiceBean}" showBackButton="true" showEnableDisableButton="false" showDeleteButton="false" 
+					showEditButton="false" >
+                    <p:commandButton value="#{messages['action.save']}" icon="ui-icon-check" action="#{invoiceBean.saveOrUpdate(false)}" update="@form" />
+                </hf:formButtons>
+                        
             </hftl:formPanel>
         </p:panel>
     </ui:define>

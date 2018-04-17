@@ -30,6 +30,7 @@ import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -123,7 +124,8 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("/list")
     public SubscriptionsListResponseDto listGet(@Deprecated @QueryParam("userAccountCode") String userAccountCode, @QueryParam("mergedCF") Boolean mergedCF,
             @QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-            @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+            @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * List subscriptions matching a given criteria
@@ -159,7 +161,9 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF);
+    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode,
+            @Deprecated @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Search for a subscription with a given code.

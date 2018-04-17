@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -38,8 +39,9 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code" })
-@Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Cacheable
+@ExportIdentifier({ "code"})
+@Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "cal_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

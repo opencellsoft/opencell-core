@@ -18,10 +18,14 @@
  */
 package org.meveo.model.payments;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
@@ -30,61 +34,61 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.AccountingCode;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "ar_occ_template", uniqueConstraints = @UniqueConstraint(columnNames = {"code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_occ_template_seq"), })
+@Cacheable
+@ExportIdentifier({ "code" })
+@Table(name = "ar_occ_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_occ_template_seq"), })
 public class OCCTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "account_code", length = 255)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
+
+    /**
+     * @deprecated As of version 5.0. All accountingCode now use {@link #accountingCode}
+     */
+    @Deprecated
+    @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
-	private String accountCode;
+    private String accountCodeClientSide;
 
-	@Column(name = "account_code_client_side", length = 255)
-    @Size(max = 255)
-	private String accountCodeClientSide;
+    @Column(name = "occ_category")
+    @Enumerated(EnumType.STRING)
+    private OperationCategoryEnum occCategory;
 
-	@Column(name = "occ_category")
-	@Enumerated(EnumType.STRING)
-	private OperationCategoryEnum occCategory;
+    public String getAccountCodeClientSide() {
+        return accountCodeClientSide;
+    }
 
-	public String getAccountCode() {
-		return accountCode;
-	}
+    public void setAccountCodeClientSide(String accountCodeClientSide) {
+        this.accountCodeClientSide = accountCodeClientSide;
+    }
 
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-	}
+    public OperationCategoryEnum getOccCategory() {
+        return occCategory;
+    }
 
-	public String getAccountCodeClientSide() {
-		return accountCodeClientSide;
-	}
+    public void setOccCategory(OperationCategoryEnum occCategory) {
+        this.occCategory = occCategory;
+    }
 
-	public void setAccountCodeClientSide(String accountCodeClientSide) {
-		this.accountCodeClientSide = accountCodeClientSide;
-	}
+    @Override
+    public int hashCode() {
+        return 961 + ("OCCTemplate" + code).hashCode();
+    }
 
-	public OperationCategoryEnum getOccCategory() {
-		return occCategory;
-	}
-
-	public void setOccCategory(OperationCategoryEnum occCategory) {
-		this.occCategory = occCategory;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -93,14 +97,26 @@ public class OCCTemplate extends BusinessEntity {
         } else if (!(obj instanceof OCCTemplate)) {
             return false;
         }
-        
-		OCCTemplate other = (OCCTemplate) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		return true;
-	}
+
+        OCCTemplate other = (OCCTemplate) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (code == null) {
+            if (other.code != null)
+                return false;
+        } else if (!code.equals(other.code))
+            return false;
+        return true;
+    }
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
 }

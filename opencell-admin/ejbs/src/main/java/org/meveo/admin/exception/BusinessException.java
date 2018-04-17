@@ -26,39 +26,49 @@ import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ */
 @ApplicationException(rollback = true)
 public class BusinessException extends Exception {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public BusinessException() {
-		super();
-		registerEvent();
-	}
+    private static final boolean sendException;
 
-	public BusinessException(String message, Throwable cause) {
-		super(message, cause);
-		registerEvent();
-	}
+    static {
+        sendException = "true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"));
+    }
 
-	public BusinessException(String message) {
-		super(message);
-		registerEvent();
-	}
+    public BusinessException() {
+        super();
+        registerEvent();
+    }
 
-	public BusinessException(Throwable cause) {
-		super(cause);
-		registerEvent();
-	}
+    public BusinessException(String message, Throwable cause) {
+        super(message, cause);
+        registerEvent();
+    }
 
-	public void registerEvent() {
-		if ("true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"))) {
-			try {
-				CreateEventHelper createEventHelper = (CreateEventHelper) EjbUtils.getServiceInterface("CreateEventHelper");
-				createEventHelper.register(this);
-			} catch (Exception e) {
-				Logger log = LoggerFactory.getLogger(this.getClass());
-				log.error("Failed to access event helper", e);
-			}
-		}
-	}
+    public BusinessException(String message) {
+        super(message);
+        registerEvent();
+    }
+
+    public BusinessException(Throwable cause) {
+        super(cause);
+        registerEvent();
+    }
+
+    public void registerEvent() {
+        if (sendException) {
+            try {
+                CreateEventHelper createEventHelper = (CreateEventHelper) EjbUtils.getServiceInterface("CreateEventHelper");
+                createEventHelper.register(this);
+            } catch (Exception e) {
+                Logger log = LoggerFactory.getLogger(this.getClass());
+                log.error("Failed to access event helper", e);
+            }
+        }
+    }
 }

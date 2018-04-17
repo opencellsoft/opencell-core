@@ -5,11 +5,11 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
-import org.meveo.admin.util.NumberUtil;
+import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -73,20 +73,23 @@ public class RealtimeChargingService {
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code=" + chargeTemplate.getCode());
         }
 
-        Long tradingCountryId = tradingCountry.getId();
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), tradingCountryId,
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
             subscriptionDate);
         if (invoiceSubcategoryCountry == null) {
             throw new IncorrectChargeTemplateException(
                 "no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
         }
 
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null && ba != null) {
+        Tax tax = null;
+
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, ba, null);
-            if (tax == null) {
-                throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-            }
+        }
+
+        if (tax == null && ba != null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         WalletOperation op = new WalletOperation();
@@ -100,13 +103,13 @@ public class RealtimeChargingService {
         ci.setCountry(tradingCountry);
         ci.setCurrency(currency);
         op.setChargeInstance(ci);
-		//we do not need charging of this operation so we set its wallet to null
+        // we do not need charging of this operation so we set its wallet to null
         op.setWallet(null);
         op.setCode(chargeTemplate.getCode());
 
         op.setDescription("");
         op.setInputQuantity(inputQuantity);
-        op.setQuantity(NumberUtil.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+        op.setQuantity(NumberUtils.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         op.setTaxPercent(tax == null ? BigDecimal.ZERO : tax.getPercent());
         op.setCurrency(currency.getCurrency());
         op.setStartDate(null);
@@ -115,7 +118,7 @@ public class RealtimeChargingService {
         op.setStatus(WalletOperationStatusEnum.OPEN);
         op.setSeller(seller);
 
-        chargeApplicationRatingService.rateBareWalletOperation(op, null, null, tradingCountryId, currency);
+        chargeApplicationRatingService.rateBareWalletOperation(op, null, null, tradingCountry.getId(), currency);
 
         return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
     }
@@ -132,16 +135,11 @@ public class RealtimeChargingService {
         return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
     }
 
-    public BigDecimal getActivationServicePrice(BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate, String offerCode, BigDecimal quantity, String param1,
-            String param2, String param3, boolean priceWithoutTax) throws BusinessException {
-        return getActivationServicePrice(null, ba, serviceTemplate, subscriptionDate, offerCode, quantity, param1, param2, param3, priceWithoutTax);
-    }
-
     /*
      * Warning : this method does not handle calendars at service level
      */
-    public BigDecimal getActivationServicePrice(EntityManager em, BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate, String offerCode, BigDecimal quantity,
-            String param1, String param2, String param3, boolean priceWithoutTax) throws BusinessException {
+    public BigDecimal getActivationServicePrice(BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate, String offerCode, BigDecimal quantity, String param1,
+            String param2, String param3, boolean priceWithoutTax) throws BusinessException {
 
         BigDecimal result = BigDecimal.ZERO;
 

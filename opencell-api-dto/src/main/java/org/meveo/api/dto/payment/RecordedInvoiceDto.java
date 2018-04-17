@@ -10,152 +10,265 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.model.payments.RecordedInvoice;
 
 /**
+ * The Class RecordedInvoiceDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecordedInvoiceDto extends AccountOperationDto implements Serializable {
 
-	private static final long serialVersionUID = -6965598553420278018L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6965598553420278018L;
 
-	private Date productionDate;
-	private Date invoiceDate;
-	private BigDecimal amountWithoutTax;
-	private BigDecimal taxAmount;
-	private BigDecimal netToPay;
-	private String paymentMethod;
-	private String paymentInfo;// IBAN for direct debit
-	private String paymentInfo1;// bank code
-	private String paymentInfo2;// code guichet
-	private String paymentInfo3;// Num compte
-	private String paymentInfo4;// RIB
-	private String paymentInfo5;// bankName
-	private String paymentInfo6;// bic
-	// private DDRequestLOT ddRequestLOT;
-	// private DDRequestItem ddRequestItem;
-	private String billingAccountName;
+    /** The production date. */
+    private Date productionDate;
+    
+    /** The invoice date. */
+    private Date invoiceDate;
+    
+    /** The net to pay. */
+    private BigDecimal netToPay;
+    
+    /** The payment info. */
+    private String paymentInfo;// IBAN for direct debit
+    
+    /** The payment info 1. */
+    private String paymentInfo1;// bank code
+    
+    /** The payment info 2. */
+    private String paymentInfo2;// code guichet
+    
+    /** The payment info 3. */
+    private String paymentInfo3;// Num compte
+    
+    /** The payment info 4. */
+    private String paymentInfo4;// RIB
+    
+    /** The payment info 5. */
+    private String paymentInfo5;// bankName
+    
+    /** The payment info 6. */
+    private String paymentInfo6;// bic
+    
+    /** The billing account name. */
+    private String billingAccountName;
 
-	public RecordedInvoiceDto() {
-		super.setType("I");
-	}
+    /**
+     * Instantiates a new recorded invoice dto.
+     */
+    public RecordedInvoiceDto() {
+        super.setType("I");
+    }
 
-	public RecordedInvoiceDto(RecordedInvoice recordedInvoice) {
-		super();
-		setMatchingStatus(recordedInvoice.getMatchingStatus());
-		setInvoiceDate(recordedInvoice.getInvoiceDate());
-		setDueDate(recordedInvoice.getDueDate());
-		setReference(recordedInvoice.getReference());
-	}
+    /**
+     * Instantiates a new recorded invoice dto.
+     *
+     * @param recordedInvoice the RecordedInvoice entity
+     */
+    public RecordedInvoiceDto(RecordedInvoice recordedInvoice) {
+        super();
+        setMatchingStatus(recordedInvoice.getMatchingStatus());
+        setInvoiceDate(recordedInvoice.getInvoiceDate());
+        setDueDate(recordedInvoice.getDueDate());
+        setReference(recordedInvoice.getReference());
+    }
 
-	public Date getProductionDate() {
-		return productionDate;
-	}
+    /**
+     * Gets the production date.
+     *
+     * @return the production date
+     */
+    public Date getProductionDate() {
+        return productionDate;
+    }
 
-	public void setProductionDate(Date productionDate) {
-		this.productionDate = productionDate;
-	}
+    /**
+     * Sets the production date.
+     *
+     * @param productionDate the new production date
+     */
+    public void setProductionDate(Date productionDate) {
+        this.productionDate = productionDate;
+    }
 
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
+    /**
+     * Gets the invoice date.
+     *
+     * @return the invoice date
+     */
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
 
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
+    /**
+     * Sets the invoice date.
+     *
+     * @param invoiceDate the new invoice date
+     */
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    /**
+     * Gets the net to pay.
+     *
+     * @return the net to pay
+     */
+    public BigDecimal getNetToPay() {
+        return netToPay;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    /**
+     * Sets the net to pay.
+     *
+     * @param netToPay the new net to pay
+     */
+    public void setNetToPay(BigDecimal netToPay) {
+        this.netToPay = netToPay;
+    }
 
-	public BigDecimal getTaxAmount() {
-		return taxAmount;
-	}
+    /**
+     * Gets the payment info.
+     *
+     * @return the payment info
+     */
+    public String getPaymentInfo() {
+        return paymentInfo;
+    }
 
-	public void setTaxAmount(BigDecimal taxAmount) {
-		this.taxAmount = taxAmount;
-	}
+    /**
+     * Sets the payment info.
+     *
+     * @param paymentInfo the new payment info
+     */
+    public void setPaymentInfo(String paymentInfo) {
+        this.paymentInfo = paymentInfo;
+    }
 
-	public BigDecimal getNetToPay() {
-		return netToPay;
-	}
+    /**
+     * Gets the payment info 1.
+     *
+     * @return the payment info 1
+     */
+    public String getPaymentInfo1() {
+        return paymentInfo1;
+    }
 
-	public void setNetToPay(BigDecimal netToPay) {
-		this.netToPay = netToPay;
-	}
+    /**
+     * Sets the payment info 1.
+     *
+     * @param paymentInfo1 the new payment info 1
+     */
+    public void setPaymentInfo1(String paymentInfo1) {
+        this.paymentInfo1 = paymentInfo1;
+    }
 
-	public String getPaymentMethod() {
-		return paymentMethod;
-	}
+    /**
+     * Gets the payment info 2.
+     *
+     * @return the payment info 2
+     */
+    public String getPaymentInfo2() {
+        return paymentInfo2;
+    }
 
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    /**
+     * Sets the payment info 2.
+     *
+     * @param paymentInfo2 the new payment info 2
+     */
+    public void setPaymentInfo2(String paymentInfo2) {
+        this.paymentInfo2 = paymentInfo2;
+    }
 
-	public String getPaymentInfo() {
-		return paymentInfo;
-	}
+    /**
+     * Gets the payment info 3.
+     *
+     * @return the payment info 3
+     */
+    public String getPaymentInfo3() {
+        return paymentInfo3;
+    }
 
-	public void setPaymentInfo(String paymentInfo) {
-		this.paymentInfo = paymentInfo;
-	}
+    /**
+     * Sets the payment info 3.
+     *
+     * @param paymentInfo3 the new payment info 3
+     */
+    public void setPaymentInfo3(String paymentInfo3) {
+        this.paymentInfo3 = paymentInfo3;
+    }
 
-	public String getPaymentInfo1() {
-		return paymentInfo1;
-	}
+    /**
+     * Gets the payment info 4.
+     *
+     * @return the payment info 4
+     */
+    public String getPaymentInfo4() {
+        return paymentInfo4;
+    }
 
-	public void setPaymentInfo1(String paymentInfo1) {
-		this.paymentInfo1 = paymentInfo1;
-	}
+    /**
+     * Sets the payment info 4.
+     *
+     * @param paymentInfo4 the new payment info 4
+     */
+    public void setPaymentInfo4(String paymentInfo4) {
+        this.paymentInfo4 = paymentInfo4;
+    }
 
-	public String getPaymentInfo2() {
-		return paymentInfo2;
-	}
+    /**
+     * Gets the payment info 5.
+     *
+     * @return the payment info 5
+     */
+    public String getPaymentInfo5() {
+        return paymentInfo5;
+    }
 
-	public void setPaymentInfo2(String paymentInfo2) {
-		this.paymentInfo2 = paymentInfo2;
-	}
+    /**
+     * Sets the payment info 5.
+     *
+     * @param paymentInfo5 the new payment info 5
+     */
+    public void setPaymentInfo5(String paymentInfo5) {
+        this.paymentInfo5 = paymentInfo5;
+    }
 
-	public String getPaymentInfo3() {
-		return paymentInfo3;
-	}
+    /**
+     * Gets the payment info 6.
+     *
+     * @return the payment info 6
+     */
+    public String getPaymentInfo6() {
+        return paymentInfo6;
+    }
 
-	public void setPaymentInfo3(String paymentInfo3) {
-		this.paymentInfo3 = paymentInfo3;
-	}
+    /**
+     * Sets the payment info 6.
+     *
+     * @param paymentInfo6 the new payment info 6
+     */
+    public void setPaymentInfo6(String paymentInfo6) {
+        this.paymentInfo6 = paymentInfo6;
+    }
 
-	public String getPaymentInfo4() {
-		return paymentInfo4;
-	}
+    /**
+     * Gets the billing account name.
+     *
+     * @return the billing account name
+     */
+    public String getBillingAccountName() {
+        return billingAccountName;
+    }
 
-	public void setPaymentInfo4(String paymentInfo4) {
-		this.paymentInfo4 = paymentInfo4;
-	}
-
-	public String getPaymentInfo5() {
-		return paymentInfo5;
-	}
-
-	public void setPaymentInfo5(String paymentInfo5) {
-		this.paymentInfo5 = paymentInfo5;
-	}
-
-	public String getPaymentInfo6() {
-		return paymentInfo6;
-	}
-
-	public void setPaymentInfo6(String paymentInfo6) {
-		this.paymentInfo6 = paymentInfo6;
-	}
-
-	public String getBillingAccountName() {
-		return billingAccountName;
-	}
-
-	public void setBillingAccountName(String billingAccountName) {
-		this.billingAccountName = billingAccountName;
-	}
+    /**
+     * Sets the billing account name.
+     *
+     * @param billingAccountName the new billing account name
+     */
+    public void setBillingAccountName(String billingAccountName) {
+        this.billingAccountName = billingAccountName;
+    }
 
 }

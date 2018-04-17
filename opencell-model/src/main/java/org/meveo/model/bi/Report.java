@@ -44,304 +44,301 @@ import org.meveo.model.crm.Email;
  * Report entity.
  */
 @Entity
-@ExportIdentifier({ "name"})
+@ExportIdentifier({ "name" })
 @Table(name = "bi_report")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "bi_report_seq"), })
 public class Report extends BaseEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "name", length = 50)
+    @Column(name = "name", length = 50)
     @Size(max = 50)
-	private String name;
+    private String name;
 
-	@Column(name = "description", nullable = true, length = 255)
-	@Size(max = 255)
-	protected String description;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "bi_report_emails", joinColumns = @JoinColumn(name = "report_id"), inverseJoinColumns = @JoinColumn(name = "email_id"))
-	private List<Email> emails;
-
-	@Column(name = "schedule")
-	private Date schedule;
-
-	@Column(name = "start_date")
-	private Date startDate;
-
-	@Column(name = "end_date")
-	private Date endDate;
-
-	@Column(name = "report_file_name", length = 255)
+    @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
-	private String fileName;
+    protected String description;
 
-	@Column(name = "producer_class_name", length = 255)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "bi_report_emails", joinColumns = @JoinColumn(name = "report_id"), inverseJoinColumns = @JoinColumn(name = "email_id"))
+    private List<Email> emails;
+
+    @Column(name = "schedule")
+    private Date schedule;
+
+    @Column(name = "start_date")
+    private Date startDate;
+
+    @Column(name = "end_date")
+    private Date endDate;
+
+    @Column(name = "report_file_name", length = 255)
     @Size(max = 255)
-	private String producerClassName;
+    private String fileName;
 
-	@Column(name = "ds_record_path", length = 255)
+    @Column(name = "producer_class_name", length = 255)
     @Size(max = 255)
-	private String recordPath;
+    private String producerClassName;
 
-	@Column(name = "report_frequency", nullable = false)
-	@Enumerated(EnumType.STRING)
-	@NotNull
-	private ExecutionFrequencyEnum frequency;
+    @Column(name = "ds_record_path", length = 255)
+    @Size(max = 255)
+    private String recordPath;
 
-	@Column(name = "execution_hour")
-	private Integer executionHour;
+    @Column(name = "report_frequency", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ExecutionFrequencyEnum frequency;
 
-	@Column(name = "execution_minutes")
-	private Integer executionMinutes;
+    @Column(name = "execution_hour")
+    private Integer executionHour;
 
-	@Column(name = "execution_interval_minutes")
-	private Integer executionIntervalMinutes;
+    @Column(name = "execution_minutes")
+    private Integer executionMinutes;
 
-	@Column(name = "execution_interval_seconds")
-	private Integer executionIntervalSeconds;
+    @Column(name = "execution_interval_minutes")
+    private Integer executionIntervalMinutes;
 
-	@Column(name = "execution_day_of_week")
-	private Integer executionDayOfWeek;
+    @Column(name = "execution_interval_seconds")
+    private Integer executionIntervalSeconds;
 
-	@Column(name = "execution_day_of_month")
-	private Integer executionDayOfMonth;
+    @Column(name = "execution_day_of_week")
+    private Integer executionDayOfWeek;
 
-	@Enumerated(value = EnumType.STRING)
-	@Column(name = "action_name")
-	private JobNameEnum actionName;
+    @Column(name = "execution_day_of_month")
+    private Integer executionDayOfMonth;
 
-	@Column(name = "output_format", nullable = false)
-	@Enumerated(EnumType.STRING)
-	@NotNull
-	private OutputFormatEnum outputFormat;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "action_name")
+    private JobNameEnum actionName;
 
-	public void computeNextExecutionDate() {
-		Calendar calendar = Calendar.getInstance();
-		Calendar startCalendar = Calendar.getInstance();
-		Calendar endCalendar = Calendar.getInstance();
-		switch (frequency) {
-		case INTERVAL:
-			int delay = executionIntervalMinutes * 60 + executionIntervalSeconds;
-			startDate.setTime(startDate.getTime() + delay);
-			endDate.setTime(endDate.getTime() + delay);
-			schedule.setTime(schedule.getTime() + delay);
-			break;
-		case DAILY:
-			calendar.add(Calendar.DAY_OF_MONTH, 1);
-			if (executionHour != null) {
-				calendar.set(Calendar.HOUR_OF_DAY, executionHour);
-			}
-			if (executionMinutes != null) {
-				calendar.set(Calendar.MINUTE, executionMinutes);
-			}
-			schedule = calendar.getTime();
-			startCalendar.setTime(new Date(schedule.getTime()));
-			startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-			startCalendar.set(Calendar.MINUTE, 0);
-			startCalendar.set(Calendar.SECOND, 0);
-			startCalendar.set(Calendar.MILLISECOND, 0);
-			startDate = startCalendar.getTime();
-			endCalendar.setTime(new Date(startDate.getTime()));
-			endCalendar.add(Calendar.DAY_OF_MONTH, 1);
-			endDate = new Date(endCalendar.getTime().getTime() - 1);
-			break;
-		case WEEKLY:
-			if (executionDayOfWeek != null) {
-				calendar.set(Calendar.DAY_OF_WEEK, executionDayOfWeek);
-			}
-			calendar.add(Calendar.WEEK_OF_YEAR, 1);
-			calendar.set(Calendar.HOUR_OF_DAY, executionHour);
-			calendar.set(Calendar.MINUTE, executionMinutes);
-			calendar.set(Calendar.SECOND, 0);
-			schedule = calendar.getTime();
-			startCalendar.setTime(new Date(endDate.getTime() + 1000L * 3600 * 24));
-			startCalendar.set(Calendar.DAY_OF_WEEK, 0);
-			startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-			startCalendar.set(Calendar.MINUTE, 0);
-			startCalendar.set(Calendar.SECOND, 0);
-			startCalendar.set(Calendar.MILLISECOND, 0);
-			endCalendar.setTime(new Date(startDate.getTime()));
-			endCalendar.add(Calendar.WEEK_OF_YEAR, 1);
-			endDate = new Date(endCalendar.getTime().getTime() - 1);
-			break;
-		case MONTHLY:
-			startCalendar.setTime(new Date(endDate.getTime() + 1000L * 3600 * 24));
-			startCalendar.set(Calendar.DAY_OF_MONTH, 1);
-			startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-			startCalendar.set(Calendar.MINUTE, 0);
-			startCalendar.set(Calendar.SECOND, 0);
-			startCalendar.set(Calendar.MILLISECOND, 0);
-			startDate = startCalendar.getTime();
-			endCalendar.setTime(new Date(startDate.getTime()));
-			endCalendar.add(Calendar.MONTH, 1);
-			endDate = new Date(endCalendar.getTime().getTime() - 1);
-			calendar.setTime(new Date(getEndDate().getTime() + 1000L * 3600 * 24 * 3));
-			calendar.set(Calendar.DAY_OF_MONTH, executionDayOfMonth);
-			calendar.set(Calendar.HOUR_OF_DAY, executionHour);
-			calendar.set(Calendar.MINUTE, executionMinutes);
-			calendar.set(Calendar.SECOND, 0);
-			schedule = calendar.getTime();
-			break;
-		default:
-			break;
-		}
-	}
+    @Column(name = "output_format", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private OutputFormatEnum outputFormat;
 
-	public ExecutionFrequencyEnum getFrequency() {
-		return frequency;
-	}
+    public void computeNextExecutionDate() {
+        Calendar calendar = Calendar.getInstance();
+        Calendar startCalendar = Calendar.getInstance();
+        Calendar endCalendar = Calendar.getInstance();
+        switch (frequency) {
+        case INTERVAL:
+            int delay = executionIntervalMinutes * 60 + executionIntervalSeconds;
+            startDate.setTime(startDate.getTime() + delay);
+            endDate.setTime(endDate.getTime() + delay);
+            schedule.setTime(schedule.getTime() + delay);
+            break;
+        case DAILY:
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            if (executionHour != null) {
+                calendar.set(Calendar.HOUR_OF_DAY, executionHour);
+            }
+            if (executionMinutes != null) {
+                calendar.set(Calendar.MINUTE, executionMinutes);
+            }
+            schedule = calendar.getTime();
+            startCalendar.setTime(new Date(schedule.getTime()));
+            startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            startCalendar.set(Calendar.MINUTE, 0);
+            startCalendar.set(Calendar.SECOND, 0);
+            startCalendar.set(Calendar.MILLISECOND, 0);
+            startDate = startCalendar.getTime();
+            endCalendar.setTime(new Date(startDate.getTime()));
+            endCalendar.add(Calendar.DAY_OF_MONTH, 1);
+            endDate = new Date(endCalendar.getTime().getTime() - 1);
+            break;
+        case WEEKLY:
+            if (executionDayOfWeek != null) {
+                calendar.set(Calendar.DAY_OF_WEEK, executionDayOfWeek);
+            }
+            calendar.add(Calendar.WEEK_OF_YEAR, 1);
+            calendar.set(Calendar.HOUR_OF_DAY, executionHour);
+            calendar.set(Calendar.MINUTE, executionMinutes);
+            calendar.set(Calendar.SECOND, 0);
+            schedule = calendar.getTime();
+            startCalendar.setTime(new Date(endDate.getTime() + 1000L * 3600 * 24));
+            startCalendar.set(Calendar.DAY_OF_WEEK, 0);
+            startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            startCalendar.set(Calendar.MINUTE, 0);
+            startCalendar.set(Calendar.SECOND, 0);
+            startCalendar.set(Calendar.MILLISECOND, 0);
+            endCalendar.setTime(new Date(startDate.getTime()));
+            endCalendar.add(Calendar.WEEK_OF_YEAR, 1);
+            endDate = new Date(endCalendar.getTime().getTime() - 1);
+            break;
+        case MONTHLY:
+            startCalendar.setTime(new Date(endDate.getTime() + 1000L * 3600 * 24));
+            startCalendar.set(Calendar.DAY_OF_MONTH, 1);
+            startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            startCalendar.set(Calendar.MINUTE, 0);
+            startCalendar.set(Calendar.SECOND, 0);
+            startCalendar.set(Calendar.MILLISECOND, 0);
+            startDate = startCalendar.getTime();
+            endCalendar.setTime(new Date(startDate.getTime()));
+            endCalendar.add(Calendar.MONTH, 1);
+            endDate = new Date(endCalendar.getTime().getTime() - 1);
+            calendar.setTime(new Date(getEndDate().getTime() + 1000L * 3600 * 24 * 3));
+            calendar.set(Calendar.DAY_OF_MONTH, executionDayOfMonth);
+            calendar.set(Calendar.HOUR_OF_DAY, executionHour);
+            calendar.set(Calendar.MINUTE, executionMinutes);
+            calendar.set(Calendar.SECOND, 0);
+            schedule = calendar.getTime();
+            break;
+        default:
+            break;
+        }
+    }
 
-	public void setFrequency(ExecutionFrequencyEnum frequency) {
-		this.frequency = frequency;
-	}
+    public ExecutionFrequencyEnum getFrequency() {
+        return frequency;
+    }
 
-	public Integer getExecutionHour() {
-		return executionHour;
-	}
+    public void setFrequency(ExecutionFrequencyEnum frequency) {
+        this.frequency = frequency;
+    }
 
-	public void setExecutionHour(Integer executionHour) {
-		this.executionHour = executionHour;
-	}
+    public Integer getExecutionHour() {
+        return executionHour;
+    }
 
-	public Integer getExecutionMinutes() {
-		return executionMinutes;
-	}
+    public void setExecutionHour(Integer executionHour) {
+        this.executionHour = executionHour;
+    }
 
-	public void setExecutionMinutes(Integer executionMinutes) {
-		this.executionMinutes = executionMinutes;
-	}
+    public Integer getExecutionMinutes() {
+        return executionMinutes;
+    }
 
-	public Integer getExecutionIntervalMinutes() {
-		return executionIntervalMinutes;
-	}
+    public void setExecutionMinutes(Integer executionMinutes) {
+        this.executionMinutes = executionMinutes;
+    }
 
-	public void setExecutionIntervalMinutes(Integer executionIntervalMinutes) {
-		this.executionIntervalMinutes = executionIntervalMinutes;
-	}
+    public Integer getExecutionIntervalMinutes() {
+        return executionIntervalMinutes;
+    }
 
-	public Integer getExecutionIntervalSeconds() {
-		return executionIntervalSeconds;
-	}
+    public void setExecutionIntervalMinutes(Integer executionIntervalMinutes) {
+        this.executionIntervalMinutes = executionIntervalMinutes;
+    }
 
-	public void setExecutionIntervalSeconds(Integer executionIntervalSeconds) {
-		this.executionIntervalSeconds = executionIntervalSeconds;
-	}
+    public Integer getExecutionIntervalSeconds() {
+        return executionIntervalSeconds;
+    }
 
-	public Integer getExecutionDayOfWeek() {
-		return executionDayOfWeek;
-	}
+    public void setExecutionIntervalSeconds(Integer executionIntervalSeconds) {
+        this.executionIntervalSeconds = executionIntervalSeconds;
+    }
 
-	public void setExecutionDayOfWeek(Integer executionDayOfWeek) {
-		this.executionDayOfWeek = executionDayOfWeek;
-	}
+    public Integer getExecutionDayOfWeek() {
+        return executionDayOfWeek;
+    }
 
-	public Integer getExecutionDayOfMonth() {
-		return executionDayOfMonth;
-	}
+    public void setExecutionDayOfWeek(Integer executionDayOfWeek) {
+        this.executionDayOfWeek = executionDayOfWeek;
+    }
 
-	public void setExecutionDayOfMonth(Integer executionDayOfMonth) {
-		this.executionDayOfMonth = executionDayOfMonth;
-	}
+    public Integer getExecutionDayOfMonth() {
+        return executionDayOfMonth;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setExecutionDayOfMonth(Integer executionDayOfMonth) {
+        this.executionDayOfMonth = executionDayOfMonth;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Date getSchedule() {
-		return schedule;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setSchedule(Date schedule) {
-		this.schedule = schedule;
-	}
+    public Date getSchedule() {
+        return schedule;
+    }
 
-	public List<Email> getEmails() {
-		return emails;
-	}
+    public void setSchedule(Date schedule) {
+        this.schedule = schedule;
+    }
 
-	public void setEmails(List<Email> emails) {
-		this.emails = emails;
-	}
+    public List<Email> getEmails() {
+        return emails;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public void setEmails(List<Email> emails) {
+        this.emails = emails;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	public String getProducerClassName() {
-		return producerClassName;
-	}
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-	public void setProducerClassName(String producerClassName) {
-		this.producerClassName = producerClassName;
-	}
+    public String getProducerClassName() {
+        return producerClassName;
+    }
 
-	public String getRecordPath() {
-		return recordPath;
-	}
+    public void setProducerClassName(String producerClassName) {
+        this.producerClassName = producerClassName;
+    }
 
-	public void setRecordPath(String recordPath) {
-		this.recordPath = recordPath;
-	}
+    public String getRecordPath() {
+        return recordPath;
+    }
 
-	public JobNameEnum getActionName() {
-		return actionName;
-	}
+    public void setRecordPath(String recordPath) {
+        this.recordPath = recordPath;
+    }
 
-	public void setActionName(JobNameEnum actionName) {
-		this.actionName = actionName;
-	}
+    public JobNameEnum getActionName() {
+        return actionName;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public void setActionName(JobNameEnum actionName) {
+        this.actionName = actionName;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public OutputFormatEnum getOutputFormat() {
-		return outputFormat;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setOutputFormat(OutputFormatEnum outputFormat) {
-		this.outputFormat = outputFormat;
-	}
+    public OutputFormatEnum getOutputFormat() {
+        return outputFormat;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+    public void setOutputFormat(OutputFormatEnum outputFormat) {
+        this.outputFormat = outputFormat;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public int hashCode() {
+        return 961 + (("Report" + (name == null ? "" : name)).hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -350,14 +347,19 @@ public class Report extends BaseEntity {
         } else if (!(obj instanceof Report)) {
             return false;
         }
-        
-		Report other = (Report) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
+
+        Report other = (Report) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
 
 }

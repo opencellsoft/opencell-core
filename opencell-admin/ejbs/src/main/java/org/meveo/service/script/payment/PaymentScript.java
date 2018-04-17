@@ -5,9 +5,12 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.service.script.Script;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class PaymentScript.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 public class PaymentScript extends Script implements PaymentScriptInterface {
 
@@ -75,17 +78,71 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     public static final String CONTEXT_CA = "CONTEXT_CA";
     
     /** The Constant RESULT_TOKEN_ID. */
-    public static final Object RESULT_TOKEN_ID = "RESULT_TOKEN_ID";
+    public static final String RESULT_TOKEN_ID = "RESULT_TOKEN_ID";
+
+    /** The Constant CONTEXT_PAYMENT_ID. */
+    public static final String CONTEXT_PAYMENT_ID = "CONTEXT_PAYMENT_ID";
+
+    /** The Constant CONTEXT_PAYMENT_METHOD_TYPE. */
+    public static final String CONTEXT_PAYMENT_METHOD_TYPE = "CONTEXT_PAYMENT_METHOD_TYPE";
+
+    /** The Constant CONTEXT_MANDAT_REF. */
+    public static final String CONTEXT_MANDAT_REF = "CONTEXT_MANDAT_REF";
+
+    /** The Constant CONTEXT_MANDAT_ID. */
+    public static final String CONTEXT_MANDAT_ID = "CONTEXT_MANDAT_ID";
+
+    /** The Constant RESULT_MANDAT_ID. */
+    public static final String RESULT_MANDAT_ID = "RESULT_MANDAT_ID";
+
+    /** The Constant RESULT_STATE. */
+    public static final String RESULT_STATE = "RESULT_STATE";
+
+    /** The Constant RESULT_STANDARD. */
+    public static final String RESULT_STANDARD = "RESULT_STANDARD";
+
+    /** The Constant RESULT_MANDAT_REF. */
+    public static final String RESULT_MANDAT_REF = "RESULT_MANDAT_REF";
+
+    /** The Constant RESULT_INT_SCORE. */
+    public static final String RESULT_INT_SCORE = "RESULT_INT_SCORE";
+
+    /** The Constant RESULT_DATE_CREATED. */
+    public static final String RESULT_DATE_CREATED = "RESULT_DATE_CREATED";
+   
+    /** The Constant RESULT_DATE_SIGNED. */
+    public static final String RESULT_DATE_SIGNED = "RESULT_DATE_SIGNED";
+
+    /** The Constant RESULT_SCHEME. */
+    public static final String RESULT_SCHEME = "RESULT_SCHEME";
+
+    /** The Constant RESULT_BIC. */
+    public static final String RESULT_BIC = "RESULT_BIC";
+
+    /** The Constant RESULT_IBAN. */
+    public static final String RESULT_IBAN = "RESULT_IBAN";
+    
+    /** The Constant RESULT_BANK_NAME. */
+    public static final String RESULT_BANK_NAME = "RESULT_BANK_NAME";
 
     @Override
     public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {
+    }
+    
+    @Override
+    public void doPaymentSepa(Map<String, Object> methodContext) throws BusinessException {
     }
 
     @Override
     public void cancelPayment(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    @Override
     public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
+    }
+    
+    @Override
+    public void doRefundSepa(Map<String, Object> methodContext) throws BusinessException {
     }
 
     @Override
@@ -100,4 +157,13 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     public void createCardToken(Map<String, Object> methodContext) throws BusinessException {
     }
 
+    @Override
+    public void checkPayment(Map<String, Object> methodContext) throws BusinessException {
+    }
+    
+    @Override
+    public void checkMandat(Map<String, Object> methodContext) throws BusinessException {
+    }
+    
+    
 }

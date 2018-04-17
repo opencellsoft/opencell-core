@@ -67,6 +67,7 @@
         <c:set var="renderTab" value="#{cfTab.hasVisibleCustomFields(entity, cfValueHolder)}" />
 
         <p:tab title="#{tabLabel}" rendered="#{renderTab}">
+        
             <c:if test="#{renderForm}">
                 <h:form id="#{prefix}_form_group_#{cfTabStatus.index}">
                     <h:panelGroup id="form_panel">
@@ -82,6 +83,7 @@
                         dateTimePattern="#{dateTimePattern}" prefix="#{prefix}_panel_#{cfTabStatus.index}" />
                 </h:panelGroup>
             </c:if>
+
         </p:tab>
     </c:forEach>
 

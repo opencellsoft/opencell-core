@@ -18,6 +18,7 @@
  */
 package org.meveo.model.catalog;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,47 +32,49 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "day", "month" })
 @Table(name = "cat_day_in_year", uniqueConstraints = @UniqueConstraint(columnNames = { "day", "month" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_day_in_year_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_day_in_year_seq"), })
 public class DayInYear extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "day")
-	private Integer day;
+    @Column(name = "day")
+    private Integer day;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "month", length = 20)
-	private MonthEnum month;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "month", length = 20)
+    private MonthEnum month;
 
-	public Integer getDay() {
-		return day;
-	}
+    public Integer getDay() {
+        return day;
+    }
 
-	public void setDay(Integer day) {
-		this.day = day;
-	}
+    public void setDay(Integer day) {
+        this.day = day;
+    }
 
-	public MonthEnum getMonth() {
-		return month;
-	}
+    public MonthEnum getMonth() {
+        return month;
+    }
 
-	public void setMonth(MonthEnum month) {
-		this.month = month;
-	}
+    public void setMonth(MonthEnum month) {
+        this.month = month;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((day == null) ? 0 : day.hashCode());
-		result = prime * result + ((month == null) ? 0 : month.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = "DayInYear".hashCode();
+        result = prime * result + ((day == null) ? 0 : day.hashCode());
+        result = prime * result + ((month == null) ? 0 : month.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -80,19 +83,22 @@ public class DayInYear extends AuditableEntity {
         } else if (!(obj instanceof DayInYear)) {
             return false;
         }
-        
-		DayInYear other = (DayInYear) obj;
-		if (day == null) {
-			if (other.day != null)
-				return false;
-		} else if (!day.equals(other.day))
-			return false;
-		if (month == null) {
-			if (other.month != null)
-				return false;
-		} else if (!month.equals(other.month))
-			return false;
-		return true;
-	}
+
+        DayInYear other = (DayInYear) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (day == null) {
+            if (other.day != null)
+                return false;
+        } else if (!day.equals(other.day))
+            return false;
+        if (month == null) {
+            if (other.month != null)
+                return false;
+        } else if (!month.equals(other.month))
+            return false;
+        return true;
+    }
 
 }

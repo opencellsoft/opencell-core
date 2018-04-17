@@ -10,109 +10,202 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 /**
+ * The Class RecurringChargeTemplateDto.
+ *
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "RecurringChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 
-	private static final long serialVersionUID = 1652193975405244532L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1652193975405244532L;
 
-	@XmlElement(required = true)
-	private String calendar;
+    /** The calendar. */
+    @XmlElement(required = true)
+    private String calendar;
 
-	private Integer durationTermInMonth;
-	private Boolean subscriptionProrata;
-	private Boolean terminationProrata;
-	private Boolean applyInAdvance=false;
-	private Integer shareLevel;
-	@Size(max = 255)
-	private String filterExpression = null;
+    /** The duration term in month. */
+    private Integer durationTermInMonth;
 
-	public RecurringChargeTemplateDto() {
+    /** The subscription prorata. */
+    private Boolean subscriptionProrata;
 
-	}
+    /** The termination prorata. */
+    private Boolean terminationProrata;
 
-	public RecurringChargeTemplateDto(RecurringChargeTemplate e, CustomFieldsDto customFieldInstances) {
-		super(e, customFieldInstances);
-		durationTermInMonth = e.getDurationTermInMonth();
-		subscriptionProrata = e.getSubscriptionProrata();
-		terminationProrata = e.getTerminationProrata();
-		applyInAdvance = e.getApplyInAdvance();
-		filterExpression = e.getFilterExpression();
-		if (e.getShareLevel() != null) {
-			shareLevel = e.getShareLevel().getId();
-		}
-		if (e.getCalendar()!=null){
-		    calendar = e.getCalendar().getCode();
-		}
-	}
+    /** The apply in advance. */
+    private Boolean applyInAdvance = false;
 
-	public Integer getDurationTermInMonth() {
-		return durationTermInMonth;
-	}
+    /** The share level. */
+    private Integer shareLevel;
 
-	public void setDurationTermInMonth(Integer durationTermInMonth) {
-		this.durationTermInMonth = durationTermInMonth;
-	}
+    /** The filter expression. */
+    @Size(max = 2000)
+    private String filterExpression = null;
 
-	public Boolean getSubscriptionProrata() {
-		return subscriptionProrata == null ? false : subscriptionProrata;
-	}
+    /**
+     * Instantiates a new recurring charge template dto.
+     */
+    public RecurringChargeTemplateDto() {
 
-	public void setSubscriptionProrata(Boolean subscriptionProrata) {
-		this.subscriptionProrata = subscriptionProrata;
-	}
+    }
 
-	public Boolean getTerminationProrata() {
-		return terminationProrata == null ? false : terminationProrata;
-	}
+    /**
+     * Instantiates a new recurring charge template dto.
+     *
+     * @param recurringChargeTemplate the RecurringChargeTemplate entity
+     * @param customFieldInstances the custom field instances
+     */
+    public RecurringChargeTemplateDto(RecurringChargeTemplate recurringChargeTemplate, CustomFieldsDto customFieldInstances) {
+        super(recurringChargeTemplate, customFieldInstances);
+        durationTermInMonth = recurringChargeTemplate.getDurationTermInMonth();
+        subscriptionProrata = recurringChargeTemplate.getSubscriptionProrata();
+        terminationProrata = recurringChargeTemplate.getTerminationProrata();
+        applyInAdvance = recurringChargeTemplate.getApplyInAdvance();
+        setFilterExpression(recurringChargeTemplate.getFilterExpression());
+        if (recurringChargeTemplate.getShareLevel() != null) {
+            shareLevel = recurringChargeTemplate.getShareLevel().getId();
+        }
+        if (recurringChargeTemplate.getCalendar() != null) {
+            calendar = recurringChargeTemplate.getCalendar().getCode();
+        }
+    }
 
-	public void setTerminationProrata(Boolean terminationProrata) {
-		this.terminationProrata = terminationProrata;
-	}
+    /**
+     * Gets the duration term in month.
+     *
+     * @return the duration term in month
+     */
+    public Integer getDurationTermInMonth() {
+        return durationTermInMonth;
+    }
 
-	public Boolean getApplyInAdvance() {
-		return applyInAdvance;
-	}
+    /**
+     * Sets the duration term in month.
+     *
+     * @param durationTermInMonth the new duration term in month
+     */
+    public void setDurationTermInMonth(Integer durationTermInMonth) {
+        this.durationTermInMonth = durationTermInMonth;
+    }
 
-	public void setApplyInAdvance(Boolean applyInAdvance) {
-		this.applyInAdvance = applyInAdvance;
-	}
+    /**
+     * Gets the subscription prorata.
+     *
+     * @return the subscription prorata
+     */
+    public Boolean getSubscriptionProrata() {
+        return subscriptionProrata == null ? false : subscriptionProrata;
+    }
 
-	public Integer getShareLevel() {
-		return shareLevel;
-	}
+    /**
+     * Sets the subscription prorata.
+     *
+     * @param subscriptionProrata the new subscription prorata
+     */
+    public void setSubscriptionProrata(Boolean subscriptionProrata) {
+        this.subscriptionProrata = subscriptionProrata;
+    }
 
-	public void setShareLevel(Integer shareLevel) {
-		this.shareLevel = shareLevel;
-	}
+    /**
+     * Gets the termination prorata.
+     *
+     * @return the termination prorata
+     */
+    public Boolean getTerminationProrata() {
+        return terminationProrata == null ? false : terminationProrata;
+    }
 
-	public String getCalendar() {
-		return calendar;
-	}
+    /**
+     * Sets the termination prorata.
+     *
+     * @param terminationProrata the new termination prorata
+     */
+    public void setTerminationProrata(Boolean terminationProrata) {
+        this.terminationProrata = terminationProrata;
+    }
 
-	public void setCalendar(String calendar) {
-		this.calendar = calendar;
-	}
+    /**
+     * Gets the apply in advance.
+     *
+     * @return the apply in advance
+     */
+    public Boolean getApplyInAdvance() {
+        return applyInAdvance;
+    }
 
-	@Override
-	public String toString() {
-		return "RecurringChargeTemplateDto [calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth
-				+ ", subscriptionProrata=" + subscriptionProrata + ", terminationProrata=" + terminationProrata
-				+ ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", getCode()=" + getCode()
-				+ ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions()
-				+ ", toString()=" + super.toString() + ", getAmountEditable()=" + getAmountEditable()
-				+ ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
-	}
+    /**
+     * Sets the apply in advance.
+     *
+     * @param applyInAdvance the new apply in advance
+     */
+    public void setApplyInAdvance(Boolean applyInAdvance) {
+        this.applyInAdvance = applyInAdvance;
+    }
 
-	public String getFilterExpression() {
-		return filterExpression;
-	}
+    /**
+     * Gets the share level.
+     *
+     * @return the share level
+     */
+    public Integer getShareLevel() {
+        return shareLevel;
+    }
 
-	public void setFilterExpression(String filterExpression) {
-		this.filterExpression = filterExpression;
-	}
+    /**
+     * Sets the share level.
+     *
+     * @param shareLevel the new share level
+     */
+    public void setShareLevel(Integer shareLevel) {
+        this.shareLevel = shareLevel;
+    }
 
+    /**
+     * Gets the calendar.
+     *
+     * @return the calendar
+     */
+    public String getCalendar() {
+        return calendar;
+    }
+
+    /**
+     * Sets the calendar.
+     *
+     * @param calendar the new calendar
+     */
+    public void setCalendar(String calendar) {
+        this.calendar = calendar;
+    }
+
+   
+    /**
+     * Gets the filter expression.
+     *
+     * @return the filter expression
+     */
+    public String getFilterExpression() {
+        return filterExpression;
+    }
+
+    /**
+     * Sets the filter expression.
+     *
+     * @param filterExpression the new filter expression
+     */
+    public void setFilterExpression(String filterExpression) {
+        this.filterExpression = filterExpression;
+    }
+
+    @Override
+    public String toString() {
+        return "RecurringChargeTemplateDto [calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth + ", subscriptionProrata=" + subscriptionProrata
+                + ", terminationProrata=" + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", getCode()=" + getCode()
+                + ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions() + ", toString()=" + super.toString()
+                + ", getAmountEditable()=" + getAmountEditable() + ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled() + ", getClass()="
+                + getClass() + ", hashCode()=" + hashCode() + "]";
+    }
 }

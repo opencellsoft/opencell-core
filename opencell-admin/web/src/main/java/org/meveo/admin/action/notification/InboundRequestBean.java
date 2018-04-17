@@ -37,6 +37,10 @@ import org.primefaces.model.UploadedFile;
 /**
  * Standard backing bean for {@link InboundRequest} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped
@@ -51,11 +55,10 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
         super(InboundRequest.class);
     }
 
-    ParamBean paramBean = ParamBean.getInstance();
     CsvReader csvReader = null;
     private UploadedFile file;
     CsvBuilder csv = null;
-    private String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
+    private String providerDir;
     private String existingEntitiesCsvFile = null;
 
     private StrategyImportTypeEnum strategyImportType;
@@ -225,8 +228,10 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
+        providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
+        File dir = new File(providerDir + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "InboundRequests_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();

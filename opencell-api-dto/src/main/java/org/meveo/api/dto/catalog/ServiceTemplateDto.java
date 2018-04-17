@@ -15,26 +15,41 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 
 /**
+ * The Class ServiceTemplateDto.
+ *
  * @author Edward P. Legaspi
- * @since Oct 11, 2013
- **/
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
+ */
 @XmlRootElement(name = "ServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceTemplateDto extends BusinessDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6794700715161690227L;
 
+    /** The long description. */
     private String longDescription;
 
+    /** The invoicing calendar. */
     private String invoicingCalendar;
 
+    /** The service charge template recurrings. */
     private ServiceChargeTemplateRecurringsDto serviceChargeTemplateRecurrings;
+
+    /** The service charge template subscriptions. */
     private ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions;
+
+    /** The service charge template terminations. */
     private ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations;
+
+    /** The service charge template usages. */
     private ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages;
 
+    /** The custom fields. */
     private CustomFieldsDto customFields;
 
+    /** The mandatory. */
     @Deprecated
     private boolean mandatory;
 
@@ -42,18 +57,39 @@ public class ServiceTemplateDto extends BusinessDto {
      * BusinessServiceModel code.
      */
     private String somCode;
+
+    /** The image path. */
     private String imagePath;
+
+    /** The image base 64. */
     private String imageBase64;
 
+    /** The minimum amount El. */
+    private String minimumAmountEl;
+
+    /** The minimum label El. */   
+    private String minimumLabelEl;
+
+    /**
+     * Instantiates a new service template dto.
+     */
     public ServiceTemplateDto() {
     }
 
+    /**
+     * Instantiates a new service template dto.
+     *
+     * @param serviceTemplate the service template
+     * @param customFieldInstances the custom field instances
+     */
     public ServiceTemplateDto(ServiceTemplate serviceTemplate, CustomFieldsDto customFieldInstances) {
         super(serviceTemplate);
-        
+
         longDescription = serviceTemplate.getLongDescription();
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
         imagePath = serviceTemplate.getImagePath();
+        minimumAmountEl = serviceTemplate.getMinimumAmountEl();
+        minimumLabelEl = serviceTemplate.getMinimumLabelEl();
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
@@ -132,109 +168,265 @@ public class ServiceTemplateDto extends BusinessDto {
         customFields = customFieldInstances;
     }
 
+    /**
+     * Instantiates a new service template dto.
+     *
+     * @param serviceTemplate the service template
+     */
     public ServiceTemplateDto(ServiceTemplate serviceTemplate) {
-    	 super(serviceTemplate);
-	}
+        super(serviceTemplate);
+    }
 
-	public String getInvoicingCalendar() {
+    /**
+     * Gets the invoicing calendar.
+     *
+     * @return the invoicing calendar
+     */
+    public String getInvoicingCalendar() {
         return invoicingCalendar;
     }
 
+    /**
+     * Sets the invoicing calendar.
+     *
+     * @param invoicingCalendar the new invoicing calendar
+     */
     public void setInvoicingCalendar(String invoicingCalendar) {
         this.invoicingCalendar = invoicingCalendar;
     }
 
+    /**
+     * Gets the service charge template recurrings.
+     *
+     * @return the service charge template recurrings
+     */
     public ServiceChargeTemplateRecurringsDto getServiceChargeTemplateRecurrings() {
         return serviceChargeTemplateRecurrings;
     }
 
+    /**
+     * Sets the service charge template recurrings.
+     *
+     * @param serviceChargeTemplateRecurrings the new service charge template recurrings
+     */
     public void setServiceChargeTemplateRecurrings(ServiceChargeTemplateRecurringsDto serviceChargeTemplateRecurrings) {
         this.serviceChargeTemplateRecurrings = serviceChargeTemplateRecurrings;
     }
 
+    /**
+     * Gets the service charge template subscriptions.
+     *
+     * @return the service charge template subscriptions
+     */
     public ServiceChargeTemplateSubscriptionsDto getServiceChargeTemplateSubscriptions() {
         return serviceChargeTemplateSubscriptions;
     }
 
+    /**
+     * Sets the service charge template subscriptions.
+     *
+     * @param serviceChargeTemplateSubscriptions the new service charge template subscriptions
+     */
     public void setServiceChargeTemplateSubscriptions(ServiceChargeTemplateSubscriptionsDto serviceChargeTemplateSubscriptions) {
         this.serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptions;
     }
 
+    /**
+     * Gets the service charge template terminations.
+     *
+     * @return the service charge template terminations
+     */
     public ServiceChargeTemplateTerminationsDto getServiceChargeTemplateTerminations() {
         return serviceChargeTemplateTerminations;
     }
 
+    /**
+     * Sets the service charge template terminations.
+     *
+     * @param serviceChargeTemplateTerminations the new service charge template terminations
+     */
     public void setServiceChargeTemplateTerminations(ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations) {
         this.serviceChargeTemplateTerminations = serviceChargeTemplateTerminations;
     }
 
+    /**
+     * Gets the service charge template usages.
+     *
+     * @return the service charge template usages
+     */
     public ServiceChargeTemplateUsagesDto getServiceChargeTemplateUsages() {
         return serviceChargeTemplateUsages;
     }
 
+    /**
+     * Sets the service charge template usages.
+     *
+     * @param serviceChargeTemplateUsages the new service charge template usages
+     */
     public void setServiceChargeTemplateUsages(ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages) {
         this.serviceChargeTemplateUsages = serviceChargeTemplateUsages;
     }
 
-    @Override
-	public String toString() {
-		return "ServiceTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", invoicingCalendar=" + invoicingCalendar
-				+ ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings + ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
-				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations + ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields="
-				+ customFields + ", mandatory=" + mandatory + ", somCode=" + somCode + ", imagePath=" + imagePath + "]";
-	}
-
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
     public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
 
+    /**
+     * Checks if is mandatory.
+     *
+     * @return true, if is mandatory
+     */
     public boolean isMandatory() {
         return mandatory;
     }
 
+    /**
+     * Sets the mandatory.
+     *
+     * @param mandatory the new mandatory
+     */
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
 
+    /**
+     * Gets the som code.
+     *
+     * @return the som code
+     */
     public String getSomCode() {
         return somCode;
     }
 
+    /**
+     * Sets the som code.
+     *
+     * @param somCode the new som code
+     */
     public void setSomCode(String somCode) {
         this.somCode = somCode;
     }
 
+    /**
+     * Checks if is code only.
+     *
+     * @return true, if is code only
+     */
     public boolean isCodeOnly() {
         return StringUtils.isBlank(getDescription()) && StringUtils.isBlank(invoicingCalendar) && StringUtils.isBlank(somCode) && serviceChargeTemplateRecurrings == null
                 && serviceChargeTemplateSubscriptions == null && serviceChargeTemplateTerminations == null && serviceChargeTemplateUsages == null
                 && (customFields == null || customFields.isEmpty());
     }
 
-	public String getLongDescription() {
-		return longDescription;
-	}
+    /**
+     * Gets the long description.
+     *
+     * @return the long description
+     */
+    public String getLongDescription() {
+        return longDescription;
+    }
 
-	public void setLongDescription(String longDescription) {
-		this.longDescription = longDescription;
-	}
+    /**
+     * Sets the long description.
+     *
+     * @param longDescription the new long description
+     */
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
 
-	public String getImagePath() {
-		return imagePath;
-	}
+    /**
+     * Gets the image path.
+     *
+     * @return the image path
+     */
+    public String getImagePath() {
+        return imagePath;
+    }
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
+    /**
+     * Sets the image path.
+     *
+     * @param imagePath the new image path
+     */
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
-	public String getImageBase64() {
-		return imageBase64;
-	}
+    /**
+     * Gets the image base 64.
+     *
+     * @return the image base 64
+     */
+    public String getImageBase64() {
+        return imageBase64;
+    }
 
-	public void setImageBase64(String imageBase64) {
-		this.imageBase64 = imageBase64;
-	}
+    /**
+     * Sets the image base 64.
+     *
+     * @param imageBase64 the new image base 64
+     */
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+    
+    @Override
+    public String toString() {
+        return "ServiceTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", invoicingCalendar=" + invoicingCalendar
+                + ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings + ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
+                + ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations + ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields="
+                + customFields + ", mandatory=" + mandatory + ", somCode=" + somCode + ", imagePath=" + imagePath + "]";
+    }
+
+    /**
+     * Get the minimum amount EL.
+     *
+     * @return the minimum amount EL
+     */
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets the minimum amount EL.
+     *
+     * @param minimumAmountEl the minimum amount EL
+     */
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    /**
+     * Get the minimum label EL.
+     *
+     * @return the minimum label EL
+     */
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    /**
+     * Sets the minimum label EL.
+     *
+     * @param minimumLabelEl the minimum label EL
+     */
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
 }

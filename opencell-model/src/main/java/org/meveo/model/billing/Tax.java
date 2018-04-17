@@ -22,13 +22,16 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -38,8 +41,13 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "TAX")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
@@ -55,9 +63,9 @@ import org.meveo.model.ObservableEntity;
 public class Tax extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "accounting_code", length = 255)
-    @Size(max = 255)
-    private String accountingCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
     @Column(name = "tax_percentage", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal percent;
@@ -79,11 +87,11 @@ public class Tax extends BusinessCFEntity {
         this.percent = tax.getPercent();
     }
 
-    public String getAccountingCode() {
+    public AccountingCode getAccountingCode() {
         return accountingCode;
     }
 
-    public void setAccountingCode(String accountingCode) {
+    public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
     }
 

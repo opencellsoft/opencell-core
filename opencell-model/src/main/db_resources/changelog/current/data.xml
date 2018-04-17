@@ -1,189 +1,564 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-	<changeSet id="#2730_20170824 Add Account Operation Types"
-		author="EdwardPLegaspi">
-
-		<insert tableName="ar_occ_template">
-			<column name="id" valueNumeric="-26" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="now()" />
-			<column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
-			<column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
-			<column name="code" value="TRANS_CRED" />
-			<column name="description" value="Transfer Credit" />
-			<column name="occ_category" value="CREDIT" />
-		</insert>
-		
-		<insert tableName="ar_occ_template">
-			<column name="id" valueNumeric="-27" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="now()" />
-			<column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
-			<column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
-			<column name="code" value="TRANS_DEB" />
-			<column name="description" value="Transfer Debit" />
-			<column name="occ_category" value="DEBIT" />
-		</insert>
-
-	</changeSet>
-	
-	<changeSet author="anasseh" id="#1732_13112017_Manual_Invoice_permissions">
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-27" />
-            <column name="name" value="Create invoice" />
-            <column name="permission" value="createInvoice" />
+    <changeSet author="AbdelmounaimAkadid" id="#3224_16022018">
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-6" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="Customer care user" />
+            <column name="role_name" value="CUSTOMER_CARE_USER" />
+        </insert>
+        <insert tableName="adm_role_role">
+            <column name="role_id" valueNumeric="-6" />
+            <column name="child_role_id" valueNumeric="-3" />
         </insert>
         <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-1" />
-            <column name="permission_id" valueNumeric="-27" />
-        </insert>      
-     </changeSet>
-    
-    <changeSet id="#3006_2017-10-31" author="AndriusKarpavicius">
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-28" />
-            <column name="name" value="User visualization" />
-            <column name="permission" value="userVisualization" />
+            <column name="role_id" valueNumeric="-6" />
+            <column name="permission_id" valueNumeric="14" />
         </insert>
         <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-1" />
-            <column name="permission_id" valueNumeric="-28" />
-        </insert>  
-        <!--  assign userVisualization permission to roles that currently have userManament role -->
-        <sql>insert into adm_role_permission (role_id, permission_id) (select role_id, -28 from adm_role_permission where role_id&lt;&gt;-1 and permission_id=-25)</sql>        
+            <column name="role_id" valueNumeric="-6" />
+            <column name="permission_id" valueNumeric="1" />
+        </insert>
     </changeSet>
-
-	<changeSet author="anasseh" id="#1732_13112017_Manual_Invoice_permissions">
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-27" />
-            <column name="name" value="Create invoice" />
-            <column name="permission" value="createInvoice" />
+	
+	<changeSet id="#3260_20180227 - Add finance roles" author="EdwardPLegaspi">
+		<insert tableName="adm_role">
+            <column name="id" value="-7" />
+            <column name="version" value="0" />
+            <column name="role_description" value="Finance Management" />
+            <column name="role_name" value="financeManagement" />
         </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-1" />
-            <column name="permission_id" valueNumeric="-27" />
-        </insert>      
-     </changeSet>
-     
-     <changeSet author="anasseh" id="#3074_23112017_add_refund_service">
-       	<insert tableName="ar_occ_template">
-			<column name="id" valueNumeric="-28" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="now()" />
-			<column name="account_code" value="90590,41110,00000,000,0000,00000000,00000" />
-			<column name="account_code_client_side" value="90590,51214100,00000,000,0000,00000000,00000" />
-			<column name="code" value="FA_N_FACT" />
-			<column name="description" value="Negative invoice" />
-			<column name="occ_category" value="CREDIT" />
-		</insert>   
-       	<insert tableName="ar_occ_template">
-			<column name="id" valueNumeric="-29" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="now()" />
-			<column name="account_code" value="90500,41110,00000,000,0000,00000000,00000" />
-			<column name="account_code_client_side" value="90500,51214100,00000,000,0000,00000000,00000" />
-			<column name="code" value="FA_ADJ" />
-			<column name="description" value="Adjustement" />
-			<column name="occ_category" value="CREDIT" />
-		</insert> 	
-       	<insert tableName="ar_occ_template">
-			<column name="id" valueNumeric="-30" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="now()" />
-			<column name="account_code" value="88500,41110,00000,000,0000,00000000,00000" />
-			<column name="account_code_client_side" value="88500,51214100,00000,000,0000,00000000,00000" />
-			<column name="code" value="RF_CARD" />
-			<column name="description" value="Refund card" />
-			<column name="occ_category" value="DEBIT" />
-		</insert> 				
-		 <sql>update billing_invoice_type set occ_templ_negative_id =-28 where code='COM'</sql>
-		 <sql>update billing_invoice_type set occ_template_id =-29 where code='ADJ'</sql>
-     </changeSet>
-     
-      <changeSet author="anasseh" id="#125CC_13122017_AO-translation">
-      		 <sql>update ar_occ_template set description ='Debit charged directly to the customer account' where id =-16</sql>
-      		 <sql>update ar_occ_template set description ='Invoice' where id =-25</sql>
-      		 <sql>update ar_occ_template set description ='Unpaid check' where id =-5</sql>
-      		 <sql>update ar_occ_template set description ='Direct debit rejected' where id =-6</sql>
-      		 <sql>update ar_occ_template set description ='Unpaid TIP' where id =-7</sql>
-      		 <sql>update ar_occ_template set description ='Payment of a deposit' where id =-20</sql>
-      		 <sql>update ar_occ_template set description ='Transfer customer account - Link account' where id =-12</sql>
-      		 <sql>update ar_occ_template set description ='Transfer link account - Customer account' where id =-15</sql>
-      		 <sql>update ar_occ_template set description ='Transfer link account - NI Account' where id =-13</sql>
-      		 <sql>update ar_occ_template set description ='Recording too much money' where id =-21</sql>
-      		 <sql>update ar_occ_template set description ='Passage in irrecoverable' where id =-22</sql>
-      		 <sql>update ar_occ_template set description ='Loss on payment' where id =-18</sql>
-      		 <sql>update ar_occ_template set description ='Penalty for unpaid' where id =-24</sql>
-      		 <sql>update ar_occ_template set description ='Recovery penalty' where id =-23</sql>
-      		 <sql>update ar_occ_template set description ='Profit on payment' where id =-19</sql>
-      		 <sql>update ar_occ_template set description ='Refund by check' where id =-10</sql>
-      		 <sql>update ar_occ_template set description ='Refund by direct debit' where id =-11</sql>
-      		 <sql>update ar_occ_template set description ='Credit notice (bank transfer)' where id =-4</sql>
-      		 <sql>update ar_occ_template set description ='Payment by bank transfer, NI account' where id =-9</sql>
-      		 <sql>update ar_occ_template set description ='Direct debit' where id =-3</sql>
-      		 <sql>update ar_occ_template set description ='Transfer NI account - Link account' where id =-14</sql>
-      		 <sql>update ar_occ_template set description ='Credit carried directly to customer account' where id =-17</sql>
-      		 <sql>update ar_occ_template set description ='Check payment' where id =-1</sql>
-      		 <sql>update ar_occ_template set description ='Payment by NI account check' where id =-8</sql>
-      		 <sql>update ar_occ_template set description ='Payment by TIP' where id =-2</sql>      		 
-      </changeSet>
-   
-	<changeSet author="anasseh" id="#2857_02102017_2">
-		<insert tableName="ar_payment_gateway">
-			<column name="id" valueNumeric="-1" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="1" />
-			<column name="created" valueDate="now()" />
-			<column name="code" value="INGENICO_GC" />
-			<column name="description" value="Ingenico global collect" />
-			<column name="type" value="NATIF" />
-			<column name="payment_method" value="CARD" />
-			<column name="implementation_class_name" value="org.meveo.service.payments.impl.IngenicoGatewayPayment" />
-			<column name="uuid" value="gateway_INGENICO_GC" />
-		</insert>
-		<insert tableName="ar_payment_gateway">
+        <insert tableName="adm_role">
+            <column name="id" value="-8" />
+            <column name="version" value="0" />
+            <column name="role_description" value="Finance Visualization" />
+            <column name="role_name" value="financeVisualization" />
+        </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-7"></column>
+        </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-8"></column>
+        </insert>
+	</changeSet>
+	<changeSet author="anasseh" id="#3167_20022018">
+	    <sql>update ${db.schema.adapted}ar_payment_gateway set description ='Ingenico API Connect OGONE for Sepa payments', code='INGENICO_OGONE_SEPA', uuid='gateway_INGENICO_ONGONE' ,disabled=0, trading_currency_id = -1 , payment_method ='DIRECTDEBIT' where id =-1</sql> 
+	    <sql>delete from ${db.schema.adapted}ar_payment_gateway where id =-2</sql> 
+	    <sql>delete from ${db.schema.adapted}ar_payment_gateway where id =-3</sql>   
+	   	<insert tableName="ar_payment_gateway">
 			<column name="id" valueNumeric="-2" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="now()" />
-			<column name="code" value="SEPA" />
-			<column name="description" value="Sepa file" />
+			<column name="code" value="SLIMPAY_SEPA" />
+			<column name="description" value="Slimpay for Sepa payments" />
 			<column name="type" value="NATIF" />
 			<column name="payment_method" value="DIRECTDEBIT" />
-			<column name="implementation_class_name" value="org.meveo.admin.sepa.SepaFile" />
-			<column name="uuid" value="gateway_SEPA" />
-		</insert>
-		<insert tableName="ar_payment_gateway">
+			<column name="implementation_class_name" value="org.meveo.service.payments.impl.SlimpayGatewayPayment" />
+			<column name="trading_currency_id" value="-2" /><!-- EUR -->
+			<column name="uuid" value="gateway_SLIMPAY" />
+		</insert>  	
+	   	<insert tableName="ar_payment_gateway">
 			<column name="id" valueNumeric="-3" />
 			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="1" />
+			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="now()" />
-			<column name="code" value="PAYNUM" />
-			<column name="description" value="Paynum file" />
+			<column name="code" value="INGENICO_OGONE_CARD" />
+			<column name="description" value="Ingenico API Connect OGONE for Card payments" />
 			<column name="type" value="NATIF" />
-			<column name="payment_method" value="DIRECTDEBIT" />
-			<column name="implementation_class_name" value="org.meveo.admin.sepa.PaynumFile" />
-			<column name="uuid" value="gateway_PAYNUM" />
-		</insert>
-		<insert tableName="crm_provider_pay_methods">
-			<column name="provider_id" valueNumeric="1" />
-			<column name="payment_method" value="CARD" />			
-		</insert>
-		<insert tableName="crm_provider_pay_methods">
-			<column name="provider_id" valueNumeric="1" />
-			<column name="payment_method" value="DIRECTDEBIT" />			
-		</insert>	
-		<insert tableName="crm_provider_pay_methods">
-			<column name="provider_id" valueNumeric="1" />
-			<column name="payment_method" value="NONE" />			
-		</insert>			
+			<column name="payment_method" value="CARD" />
+			<column name="implementation_class_name" value="org.meveo.service.payments.impl.SlimpayGatewayPayment" />
+			<column name="trading_currency_id" value="-2" /><!-- EUR -->
+			<column name="uuid" value="gateway_SLIMPAY" />
+		</insert> 			 
+    </changeSet>
+    <changeSet author="anasseh" id="#3110_08032018">
+   		 <sql>delete from ${db.schema.adapted}crm_provider_pay_methods where payment_method='NONE'</sql>   
+    </changeSet>
+    
+    <changeSet author="anasseh" id="#3167_20022018_2">
+	    <sql>update ${db.schema.adapted}ar_payment_gateway set country_id = 70, trading_currency_id = null where id =-1 </sql> 
+	    <sql>update ${db.schema.adapted}ar_payment_gateway set country_id = 102, trading_currency_id = null where id =-2</sql> 
 	</changeSet>
+	
+	<changeSet id="#2125_20180328 Report Extracts" author="EdwardPLegaspi">
+		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-1, 0, 0, now(), 'ACCOUNT_OPS', 'Export account operations', 'JAVA', '
+			package org.meveo.service.script.export;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.Date;
+
+public class ExportAccountOperationScript extends ReportExtractScript {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExportAccountOperationScript.class);
+
+    private AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());
+
+
+	@Override
+	public void execute(Map<String, Object> initContext) throws BusinessException {
+		try {
+			LOGGER.debug("#####################Starting of script ExportAccountOperationScript");
+	
+			Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE);	
+			Date endDate = (Date) initContext.get(ReportExtractScript.END_DATE);
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			 
+			List<AccountOperation> accountOperations = accountOperationService.list();
+	        String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR));
+	        File dir = new File(exportDir);
+	        if (!dir.exists()) {
+	            dir.mkdirs();
+	        }
+	        CustomerAccount customerAccount = null;
+	        StringBuilder sb =new StringBuilder();
+	        sb.append("Transaction Date;Transaction Type;Amount;Due Date;Reference;Transaction Category;Invoice Date;"
+	        		+ "Customer Account Code;Customer Account Description\n");
+	        for (AccountOperation accountOperation : accountOperations) { 
+	        	if(accountOperation.getTransactionDate().equals(startDate) || accountOperation.getTransactionDate().equals(endDate)
+	        			|| (accountOperation.getTransactionDate().after(startDate) && accountOperation.getTransactionDate().before(endDate))) {
+	        		
+	        		customerAccount = accountOperation.getCustomerAccount();
+	        		sb.append(nil(accountOperation.getTransactionDate().toString())+ ";");
+		        	sb.append(nil(accountOperation.getType()) + ";");
+		        	sb.append(nil(accountOperation.getAmount().toString()) + ";");
+		        	sb.append(isNull(accountOperation.getDueDate()) + ";");
+		        	sb.append(nil(accountOperation.getReference()) + ";");
+		        	sb.append(nil(accountOperation.getTransactionCategory().toString()) + ";");
+		        	if(accountOperation instanceof RecordedInvoice) {
+		        		RecordedInvoice invoice = (RecordedInvoice) accountOperation;
+			        	sb.append(invoice.getInvoiceDate().toString() + ";");
+		        	} else {
+			        	sb.append(";");
+		        	}
+		        	sb.append(nil(customerAccount.getCode()) + ";");
+		        	sb.append(nil(customerAccount.getDescriptionOrCode()) + ";\n");
+
+		        	
+	        	}
+	        }
+          	String strFilename = String.valueOf(initContext.get(ReportExtractScript.FILENAME));
+          	LOGGER.debug("output={}", strFilename);
+	        File file = new File(dir + File.separator + strFilename);
+	        file.createNewFile();
+	        FileWriter fileWriter = new FileWriter(file);
+	        fileWriter.write(sb.toString());
+	        fileWriter.close();
+	        
+			LOGGER.debug("#####################Ending of script ExportAccountOperationScript");
+		} catch (Exception e) {
+			LOGGER.error("Exception:", e);
+			throw new BusinessException(e.getMessage());
+		}
+		
+	}
+  
+  private String isNull(Object obj) {
+    if(obj == null) {
+      return "";
+    } else {
+      return obj.toString();
+    }
+  }
+  
+	private String nil(String word) {
+		if (word == null || "null".equalsIgnoreCase(word)) {
+			return "";
+		} else {
+			return word;
+		}
+	}
+}		
+		');]]></sql>
+		
+		<sql><![CDATA[
+INSERT INTO ${db.schema.adapted}dwh_report_extract 
+	(id, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
+VALUES 
+	(-1, 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].csv', '
+SELECT
+    TO_CHAR(ao.invoice_date,''MM'') AS "Mois",
+    TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS "Date facture",
+    text(''HG'') AS "Code comptable",
+    ae.code AS "Client facturé",
+    text(''MAI'') AS "Type article",
+    split_part(bac.code, '','', 6) AS "Famille statistique",
+    split_part(bac.code, '','', 2) AS "Article",
+    trim(TO_CHAR(ia.amount_without_tax,''9999990D00'')) AS "Montant HT",
+    trim(TO_CHAR(ia.quantity,''9999990'')) AS "Qté facturée",
+    ao.reference AS "No facture",
+    ao.occ_description AS "Catégorie facture",
+    ao.occ_code AS "Type de pièce",
+    text(''VEN'') AS "Journal"
+FROM
+    account_entity ae
+INNER JOIN ar_account_operation ao ON ao.customer_account_id = ae.id
+INNER JOIN billing_invoice i ON i.invoice_number = ao.reference
+INNER JOIN billing_invoice_agregate ia ON (ia.invoice_id = i.id AND type = ''F'')
+LEFT JOIN billing_accounting_code bac ON bac.id = ia.accounting_code_id
+WHERE :START_DATE<>:END_DATE
+AND ae.account_type = ''ACCT_CA''
+AND ao.invoice_date >= to_date(''01/'' || TO_CHAR(CURRENT_DATE,''MM/YYYY''),''DD/MM/YYYY'') + interval ''-12 month''
+AND ao.invoice_date <= to_date(''01/'' || TO_CHAR(CURRENT_DATE,''MM/YYYY''),''DD/MM/YYYY'') + interval ''0 month''
+ORDER BY
+    ae.code,
+    occ_code,
+    split_part(bac.code, '','', 6),
+    split_part(bac.code, '','', 2);
+')
+		]]></sql>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-1"></column>
+			<column name="params_key" value="START_DATE"></column>
+			<column name="params" value="31/01/2017"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-1"></column>
+			<column name="params_key" value="END_DATE"></column>
+			<column name="params" value="31/12/2018"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="ACCOUNT_OPS" />
+			<column name="description" value="Export account operations" />
+			<column name="category" value="sales"></column>
+			<column name="script_type" value="JAVA"></column>
+			<column name="filename_format" value="accounts-ops-[yyyy_MM_dd].csv"></column>
+			<column name="script_instance_id" value="-1"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-2"></column>
+			<column name="params_key" value="START_DATE"></column>
+			<column name="params" value="31/01/2017"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-2"></column>
+			<column name="params_key" value="END_DATE"></column>
+			<column name="params" value="31/12/2018"></column>
+		</insert>
+		
+	</changeSet>
+	
+	 <changeSet id="#3234_05042018_1 - Homogenization of Account Operation types" author="anansseh" dbms="mysql">
+        <sql>INSERT INTO ${db.schema.adapted}billing_accounting_code (version, disabled, created, code,  creator,  chart_of_account_type, chart_of_account_view_type, migrated)   VALUES (0, 0, CURRENT_TIMESTAMP(), '654100000', 'opencell.admin', 'ASSETS', 'REGULAR', 1)</sql>
+	    <sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),(select id from ${db.schema.adapted}billing_accounting_code where code='512010000'),'411000000','PAY_CRD','Payment - card','CREDIT','opencell.admin')</sql>
+		<sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),(select id from ${db.schema.adapted}billing_accounting_code where code='654100000'),'411000000','EXP_WRT','Expense - bad debt write-off','DEBIT','opencell.admin')</sql>
+        <sql><![CDATA[update ${db.schema.adapted}billing_accounting_code_seq set next_val=(select id+1 from ${db.schema.adapted}billing_accounting_code order by id desc limit 1);]]></sql>
+	</changeSet>
+     
+    <changeSet id="#3234_05042018_2 - Homogenization of Account Operation types" author="anansseh" dbms="postgresql">
+         <sql>INSERT INTO ${db.schema.adapted}billing_accounting_code (id,version, disabled, created, code,  creator,  chart_of_account_type, chart_of_account_view_type, migrated) VALUES (nextval('${db.schema.adapted}billing_accounting_code_seq'),0, 0, current_timestamp, '654100000', 'opencell.admin', 'ASSETS', 'REGULAR', 1)</sql>
+	    <sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,(select id from ${db.schema.adapted}billing_accounting_code where code='512010000'),'411000000','PAY_CRD','Payment - card','CREDIT','opencell.admin')</sql>
+		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,(select id from ${db.schema.adapted}billing_accounting_code where code='654100000'),'411000000','EXP_WRT','Expense - bad debt write-off','DEBIT','opencell.admin')</sql>
+    </changeSet>	
+    
+    <changeSet id="#1705_20180406" author="EdwardPLegaspi">
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-8" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="400000000"></column>
+    		<column name="description" value="Accounts payable"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-9" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="401000000"></column>
+    		<column name="description" value="General AP"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="408000000"></column>
+    		<column name="description" value="Accrued payables"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-11" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="410000000"></column>
+    		<column name="description" value="Accounts receivable"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-13" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="416000000"></column>
+    		<column name="description" value="Doubtful receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-14" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="418100000"></column>
+    		<column name="description" value="Accrued receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-15" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445510000"></column>
+    		<column name="description" value="VAT due"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-16" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445660000"></column>
+    		<column name="description" value="VAT deductible"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-17" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445670000"></column>
+    		<column name="description" value="VAT credit"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-18" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445710000"></column>
+    		<column name="description" value="VAT collected"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-19" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="487000000"></column>
+    		<column name="description" value="Deferred revenue"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="512000000"></column>
+    		<column name="description" value="Cash"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-22" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="512020000"></column>
+    		<column name="description" value="Cash Payment - BNP #345678"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-23" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="622000000"></column>
+    		<column name="description" value="Reseller commission"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-24" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="651100000"></column>
+    		<column name="description" value="Bad debt"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-27" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701000000"></column>
+    		<column name="description" value="Revenue"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-28" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701010000"></column>
+    		<column name="description" value="Gross Revenue"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-29" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701020000"></column>
+    		<column name="description" value="Discounts"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Gross receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='411000000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Payment profit"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='758100000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Cash Deposit - BNP #123456"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='512010000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Bad debt write-off"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='654100000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Payment loss"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='658100000'</where>
+    	</update>
+    </changeSet>
+    
+    <changeSet id="#3260_20180409 - Delete roles, add to permission" author="EdwardPLegaspi">
+    	<delete tableName="adm_user_role">
+    		<where>role_id=-7</where>
+    	</delete>
+    	<delete tableName="adm_user_role">
+    		<where>role_id=-8</where>
+    	</delete>
+    	<delete tableName="adm_role">
+    		<where>id=-7</where>
+    	</delete>
+    	<delete tableName="adm_role">
+    		<where>id=-8</where>
+    	</delete>
+    	<insert tableName="adm_permission">
+            <column name="id" valueNumeric="-29" />
+            <column name="name" value="Finance Management" />
+            <column name="permission" value="financeManagement" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-30" />
+            <column name="name" value="Finance Visualization" />
+            <column name="permission" value="financeVisualization" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-29" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-30" />
+        </insert>
+	</changeSet>
+        
 </databaseChangeLog>

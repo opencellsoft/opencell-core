@@ -41,7 +41,6 @@ import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.action.admin.custom.GroupedDecisionRule;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.wf.DecisionRuleTypeEnum;
 import org.meveo.model.wf.WFAction;
@@ -59,6 +58,10 @@ import org.omnifaces.cdi.Param;
 /**
  * Standard backing bean for {@link Workflow} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components .
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped
@@ -101,9 +104,9 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
     private transient WFDecisionRule newWFDecisionRule = new WFDecisionRule();
 
-	@Inject
-	@Param
-	private String isDunning;
+    @Inject
+    @Param
+    private String isDunning;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -229,7 +232,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
             messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
         }
     }
-    
+
     @ActionMethod
     public void editWfTransition(WFTransition transitionToEdit) {
         this.wfTransition = transitionToEdit;
@@ -449,7 +452,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
     public boolean checkAndPopulateDecisionRules(List<GroupedDecisionRule> groupedDecisionRules, List<WFDecisionRule> wfDecisionRules) {
 
-        String datePattern = ParamBean.getInstance().getDateFormat();
+        String datePattern = paramBeanFactory.getInstance().getDateFormat();
         List<RuleNameValue> uniqueNameValues = new ArrayList<>();
         for (GroupedDecisionRule groupedDecisionRule : groupedDecisionRules) {
             if (groupedDecisionRule.getValue() != null && groupedDecisionRule.getValue().getModel()) {
@@ -646,14 +649,14 @@ public class WorkflowBean extends BaseBean<Workflow> {
             }
         }
     }
-    
+
     @Override
     public Map<String, Object> getFilters() {
         if (filters == null) {
             filters = new HashMap<String, Object>();
         }
-        if(isDunning != null && "true".equals(isDunning)){
-        	filters.put("wfType", "org.meveo.admin.wf.types.DunningWF");
+        if (isDunning != null && "true".equals(isDunning)) {
+            filters.put("wfType", "org.meveo.admin.wf.types.DunningWF");
         }
         return filters;
     }

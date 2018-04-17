@@ -12,6 +12,7 @@ import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -50,11 +51,11 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
     }
 
     @Override
-    public GetServiceTemplateResponseDto find(String serviceTemplateCode) {
+    public GetServiceTemplateResponseDto find(String serviceTemplateCode, CustomFieldInheritanceEnum inheritCF) {
         GetServiceTemplateResponseDto result = new GetServiceTemplateResponseDto();
 
         try {
-            result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode));
+            result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

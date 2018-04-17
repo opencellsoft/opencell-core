@@ -7,44 +7,79 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 /**
+ * The Class ParentEntityDto.
+ *
  * @author Tony Alejandro.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ParentEntityDto implements Serializable {
-	private static final long serialVersionUID = 1L;
+    
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    /** The code. */
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute()
-	private String description;
+    /** The description. */
+    @XmlAttribute()
+    private String description;
 
-	public ParentEntityDto() {
-	}
+    /**
+     * Instantiates a new parent entity dto.
+     */
+    public ParentEntityDto() {
+    }
 
-	public ParentEntityDto(String code, String description) {
-		this.code = code;
-		this.description = description;
-	}
+    /**
+     * Instantiates a new parent entity dto.
+     *
+     * @param code the code
+     * @param description the description
+     */
+    public ParentEntityDto(String code, String description) {
+        this.code = code;
+        this.description = description;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	public String toString() {
-		return "ParentEntityDto [code=" + code + ", description=" + description + "]";
-	}
+    @Override
+    public String toString() {
+        return "ParentEntityDto [code=" + code + ", description=" + description + "]";
+    }
 }

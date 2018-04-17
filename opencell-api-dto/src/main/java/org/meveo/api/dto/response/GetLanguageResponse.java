@@ -7,34 +7,49 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.LanguageDto;
 
 /**
+ * The Class GetLanguageResponse.
+ *
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
- * 
  * @deprecated will be renammed to GetTradingLanguageResponse
- **/
+ */
 @XmlRootElement(name = "GetLanguageResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetLanguageResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -1697478352703038101L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1697478352703038101L;
 
-	private LanguageDto language;
+    /** The language. */
+    private LanguageDto language;
 
-	public GetLanguageResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new gets the language response.
+     */
+    public GetLanguageResponse() {
+        super();
+    }
 
-	public LanguageDto getLanguage() {
-		return language;
-	}
+    /**
+     * Gets the language.
+     *
+     * @return the language
+     */
+    public LanguageDto getLanguage() {
+        return language;
+    }
 
-	public void setLanguage(LanguageDto language) {
-		this.language = language;
-	}
+    /**
+     * Sets the language.
+     *
+     * @param language the new language
+     */
+    public void setLanguage(LanguageDto language) {
+        this.language = language;
+    }
 
-	@Override
-	public String toString() {
-		return "GetLanguageResponse [language=" + language + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetLanguageResponse [language=" + language + "]";
+    }
 }

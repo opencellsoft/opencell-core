@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -23,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OrderBy;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -47,18 +49,25 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ **/
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code", "appliesTo" })
 @Table(name = "crm_custom_field_tmpl", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_custom_fld_tmp_seq"), })
 @NamedQueries({
         @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null ") })
+        @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null "),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTByCodeAndAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.code=:code and cft.appliesTo=:appliesTo", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class CustomFieldTemplate extends BusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -558,7 +567,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         CustomFieldTemplate other = (CustomFieldTemplate) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+             return true;
         }
 
         if (code == null && other.getCode() != null) {
@@ -668,6 +677,14 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         return descriptionI18n;
     }
 
+    /**
+     * Get description in a given language. Will return default description if not found for the language
+     * 
+     * @param language language code
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public String getDescription(String language) {
 
         if (language == null || descriptionI18n == null || descriptionI18n.isEmpty()) {
@@ -675,7 +692,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         }
 
         language = language.toUpperCase();
-        if (!descriptionI18n.containsKey(language)) {
+        if (StringUtils.isBlank(descriptionI18n.get(language))) {
             return description;
         } else {
             return descriptionI18n.get(language);
@@ -692,10 +709,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         if (matrixKeyColumns != null) {
             return matrixKeyColumns;
         }
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.error("AKK matrixColums are {}", matrixColumns.size());
         matrixKeyColumns = matrixColumns.stream().filter(elem -> elem.isColumnForKey()).collect(Collectors.toList());
-        log.error("AKK matrixKeyColums are {}", matrixKeyColumns.size());
         return matrixKeyColumns;
     }
 

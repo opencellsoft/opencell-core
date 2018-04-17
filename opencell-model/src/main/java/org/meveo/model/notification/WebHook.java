@@ -21,6 +21,10 @@ import javax.validation.constraints.Size;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.ModuleItem;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ModuleItem
 @Table(name = "adm_notif_webhooks")
@@ -61,11 +65,16 @@ public class WebHook extends Notification {
     
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notif_webhook_header")
-    private Map<String, String> headers = new HashMap<String, String>();
+    private Map<String, String> headers = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notif_webhook_param")
-    private Map<String, String> webhookParams = new HashMap<String, String>();
+    private Map<String, String> webhookParams = new HashMap<>();
+    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "http_protocol", length = 10, nullable = false)
+    private HttpProtocol httpProtocol = HttpProtocol.HTTP;
     
     @Transient
     private StringBuffer encodedHeaders = new StringBuffer();
@@ -197,6 +206,14 @@ public class WebHook extends Notification {
 	public void setBodyEL(String bodyEL) {
 		this.bodyEL = bodyEL;
 	}
+
+    public HttpProtocol getHttpProtocol() {
+        return httpProtocol;
+    }
+
+    public void setHttpProtocol(HttpProtocol httpProtocol) {
+        this.httpProtocol = httpProtocol;
+    }
 
 	
 }

@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 @MappedSuperclass
-public class BusinessEntity extends EnableEntity {
+public class BusinessEntity extends EnableEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,6 +36,12 @@ public class BusinessEntity extends EnableEntity {
     @Size(max = 255, min = 1)
     @NotNull
     protected String code;
+
+    /**
+     * Used to track if "Code" field value has changed. Value is populated on postLoad, postPersist and postUpdate JPA events
+     */
+    @Transient
+    protected String previousCode;
 
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
@@ -113,10 +119,7 @@ public class BusinessEntity extends EnableEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime * 1; // super.hashCode();
-        result = prime * result + ((code == null) ? 0 : (this.getClass().getName() + code).hashCode());
-        return result;
+        return 961 + (this.getClass().getName() + code).hashCode();
     }
 
     @Override
@@ -147,11 +150,19 @@ public class BusinessEntity extends EnableEntity {
 
     @Override
     public String toString() {
-        return String.format("%s[%s, code=%s]", this.getClass().getName(), super.toString(), code);
+        return String.format("%s[%s, code=%s]", this.getClass().getSimpleName(), super.toString(), code);
     }
 
     public void setDescriptionOrCode(String val) {
         setDescription(val);
     }
 
+    /**
+     * Check if current and previous "Code" field values match. Note: previous value is set to current value at postLoad, postPersist, postUpdate JPA events
+     * 
+     * @return True if current and previous "Code" field values DO NOT match
+     */
+    public boolean isCodeChanged() {
+        return !StringUtils.equals(code, previousCode);
+    }
 }

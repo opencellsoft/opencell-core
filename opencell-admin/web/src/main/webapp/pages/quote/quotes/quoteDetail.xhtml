@@ -210,7 +210,8 @@
                                                             required="#{itemConfiguration.isMain()}" rendered="#{quoteBean.quoteEditable}" pattern="#{paramBean.dateFormat}">
                                                             <p:ajax event="dateSelect" listener="#{quoteBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                                process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName}" />
                                                         </p:calendar>
@@ -372,7 +373,8 @@
                                                             pattern="#{paramBean.dateFormat}" rendered="#{quoteBean.quoteEditable}">
                                                             <p:ajax event="dateSelect" listener="#{quoteBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                                process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName}" />
                                                         </p:calendar>
@@ -442,7 +444,8 @@
 
                             <h:panelGroup layout="block" styleClass="form-panel-actions">
                                 <p:commandButton value="#{messages['quote.saveQuoteItem']}" action="#{quoteBean.saveQuoteItem()}"
-                                    update="quoteItemMessages :quoteForm:tabView:quoteItems :quoteForm:tabView:quoteItemDetails" rendered="#{quoteBean.quoteEditable}" process="quoteItemDetails" />
+                                    update="quoteItemMessages :quoteForm:tabView:quoteItems :quoteForm:tabView:quoteItemDetails" rendered="#{quoteBean.quoteEditable}" process="@this quoteItemDetails"
+                                    partialSubmit="true" partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                 <p:commandButton value="#{messages['action.cancel']}" action="#{quoteBean.cancelQuoteItemEdit}"
                                     update="quoteItemMessages :quoteForm:tabView:quoteItems :quoteForm:tabView:quoteItemDetails" rendered="#{quoteBean.quoteEditable}" process="@this" />
                             </h:panelGroup>

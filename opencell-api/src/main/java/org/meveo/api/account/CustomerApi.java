@@ -21,6 +21,7 @@ import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
@@ -33,6 +34,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -42,6 +44,8 @@ import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -138,7 +142,7 @@ public class CustomerApi extends AccountEntityApi {
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, true, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -248,7 +252,7 @@ public class CustomerApi extends AccountEntityApi {
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, false, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -263,6 +267,11 @@ public class CustomerApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
+        return find(customerCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
+    public CustomerDto find(String customerCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
         }
@@ -273,7 +282,7 @@ public class CustomerApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(Customer.class, customerCode);
         }
 
-        return accountHierarchyApi.customerToDto(customer);
+        return accountHierarchyApi.customerToDto(customer, inheritCF);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
@@ -300,6 +309,12 @@ public class CustomerApi extends AccountEntityApi {
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
+    public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
@@ -326,7 +341,7 @@ public class CustomerApi extends AccountEntityApi {
         if (totalCount > 0) {
             List<Customer> customers = customerService.list(paginationConfig);
             for (Customer c : customers) {
-                customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c));
+                customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c, inheritCF));
             }
         }
 
@@ -365,10 +380,19 @@ public class CustomerApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCode());
         }
 
-        customerBrand.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        customerBrand.setDescription(postData.getDescription());
+        boolean toUpdate = false;
+        if (!StringUtils.isBlank(postData.getUpdatedCode()) && !postData.getUpdatedCode().equals(customerBrand.getCode())) {
+            customerBrand.setCode(postData.getUpdatedCode());
+            toUpdate = true;
+        }
+        if (postData.getDescription() != null && StringUtils.compare(postData.getDescription(), customerBrand.getDescription()) != 0) {
+            customerBrand.setDescription(postData.getDescription());
+            toUpdate = true;
+        }
 
-        customerBrandService.update(customerBrand);
+        if (toUpdate) {
+            customerBrandService.update(customerBrand);
+        }
     }
 
     public void createCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
@@ -384,7 +408,9 @@ public class CustomerApi extends AccountEntityApi {
         CustomerCategory customerCategory = new CustomerCategory();
         customerCategory.setCode(postData.getCode());
         customerCategory.setDescription(postData.getDescription());
-        customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+        if (postData.isExoneratedFromTaxes() != null) {
+            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+        }
         customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
         customerCategory.setExonerationReason(postData.getExonerationReason());
 
@@ -402,14 +428,60 @@ public class CustomerApi extends AccountEntityApi {
         if (customerCategory == null) {
             throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCode());
         }
-        customerCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        customerCategory.setDescription(postData.getDescription());
-        customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
-        customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
-        customerCategory.setExonerationReason(postData.getExonerationReason());
 
-        customerCategoryService.update(customerCategory);
+        boolean toUpdate = false;
+        if (!StringUtils.isBlank(postData.getUpdatedCode()) && !postData.getUpdatedCode().equals(customerCategory.getCode())) {
+            customerCategory.setCode(postData.getUpdatedCode());
+            toUpdate = true;
+        }
+        if (postData.getDescription() != null && StringUtils.compare(postData.getDescription(), customerCategory.getDescription()) != 0) {
+            customerCategory.setDescription(postData.getDescription());
+            toUpdate = true;
+        }
+
+        if (postData.isExoneratedFromTaxes() != null && customerCategory.getExoneratedFromTaxes() != postData.isExoneratedFromTaxes().booleanValue()) {
+            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+            toUpdate = true;
+        }
+        if (postData.getExonerationTaxEl() != null && StringUtils.compare(postData.getExonerationTaxEl(), customerCategory.getExonerationTaxEl()) != 0) {
+            customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
+            toUpdate = true;
+        }
+        if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
+            customerCategory.setExonerationReason(postData.getExonerationReason());
+            toUpdate = true;
+        }
+
+        if (toUpdate) {
+            customerCategoryService.update(customerCategory);
+        }
     }
+    
+    /**
+     * Find customer category by customer category code
+     * 
+     * @param customerCategoryCode customer category code
+     * @return customer category dto
+     * @throws MeveoApiException Meveo Api Exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    public CustomerCategoryDto findCategory(String customerCategoryCode) throws MeveoApiException {
+
+        if (StringUtils.isBlank(customerCategoryCode)) {
+            missingParameters.add("customerCategoryCode");
+            handleMissingParameters();
+        }
+
+        CustomerCategory customerCategory = customerCategoryService.findByCode(customerCategoryCode);
+        if (customerCategory == null) {
+            throw new EntityDoesNotExistsException(CustomerCategory.class, customerCategoryCode);
+        }
+
+        return new CustomerCategoryDto(customerCategory);
+    }
+
 
     public void createOrUpdateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -507,7 +579,7 @@ public class CustomerApi extends AccountEntityApi {
         } catch (Exception e) {
             existedCustomerDto = null;
         }
-        log.debug("createOrUpdate customer {}", customerDto);
+        log.debug("createOrUpdatePartial customer {}", customerDto);
         if (existedCustomerDto == null) {
             create(customerDto);
         } else {
@@ -516,7 +588,6 @@ public class CustomerApi extends AccountEntityApi {
             if (!StringUtils.isBlank(customerDto.getCustomerBrand())) {
                 CustomerBrandDto customerBrand = new CustomerBrandDto();
                 customerBrand.setCode(customerBrandCode);
-                customerBrand.setDescription(customerBrandCode);
                 createOrUpdateBrand(customerBrand);
                 existedCustomerDto.setCustomerBrand(customerBrandCode);
             }
@@ -524,7 +595,6 @@ public class CustomerApi extends AccountEntityApi {
             if (!StringUtils.isBlank(customerDto.getCustomerCategory())) {
                 CustomerCategoryDto customerCategory = new CustomerCategoryDto();
                 customerCategory.setCode(customerCategoryCode);
-                customerCategory.setDescription(customerCategoryCode);
                 createOrUpdateCategory(customerCategory);
                 existedCustomerDto.setCustomerCategory(customerCategoryCode);
             }

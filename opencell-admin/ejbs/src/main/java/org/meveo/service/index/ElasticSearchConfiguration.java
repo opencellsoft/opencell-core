@@ -13,19 +13,29 @@ import java.util.Set;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.util.ApplicationProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Loads Elastic Search configuration
+ *
+ * @author Andrius Karpavicius
+ * @lastModifiedVersion 5.0
+ */
 @Singleton
 @Lock(LockType.READ)
 public class ElasticSearchConfiguration implements Serializable {
@@ -71,6 +81,10 @@ public class ElasticSearchConfiguration implements Serializable {
 
     // @Inject
     // private Logger log;
+
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
 
     /**
      * Load configuration from elasticSearchConfiguration.json file.
@@ -153,27 +167,29 @@ public class ElasticSearchConfiguration implements Serializable {
 
     /**
      * Determine index value for Elastic Search for a given entity. Index name is prefixed by provider code (removed spaces and lowercase).
-     * 
+     *
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return Index property name
      */
-    public String getIndex(BusinessEntity entity) {
+    public String getIndex(ISearchable entity) {
         return getIndex(entity.getClass());
     }
 
     /**
      * Determine index value for Elastic Search for a given entity class and provider. Index name is prefixed by provider code (removed spaces and lowercase).
-     * 
-     * @param clazzToConvert Entity class
+     *
+     * @param clazzToConvert Entity class that extends ISearchable interface
      * @return Index property name
      */
     @SuppressWarnings("rawtypes")
-    public String getIndex(Class<? extends BusinessEntity> clazzToConvert) {
+    public String getIndex(Class<? extends ISearchable> clazzToConvert) {
+
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
 
         Class clazz = clazzToConvert;
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (clazz != null && !ISearchable.class.equals(clazz)) {
             if (indexMap.containsKey(clazz.getSimpleName())) {
-                return indexMap.get(clazz.getSimpleName());
+                return indexPrefix + "_" + indexMap.get(clazz.getSimpleName());
             }
             clazz = clazz.getSuperclass();
         }
@@ -182,7 +198,7 @@ public class ElasticSearchConfiguration implements Serializable {
     }
 
     /**
-     * Get a unique list of indexes for given entity classes
+     * Get a unique list of indexes for given entity classes. Index names are prefixed by provider code (removed spaces and lowercase).
      * 
      * @param classesInfo A list of entity class information
      * @return A set of index property names
@@ -199,14 +215,19 @@ public class ElasticSearchConfiguration implements Serializable {
     }
 
     /**
-     * Get a unique list of indexes
+     * Get a unique list of indexes. Index names are prefixed by provider code (removed spaces and lowercase).
      * 
      * @return A set of index property names
      */
     public Set<String> getIndexes() {
 
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+
         Set<String> indexNames = new HashSet<>();
-        indexNames.addAll(indexMap.values());
+
+        for (String indexName : indexMap.values()) {
+            indexNames.add(indexPrefix + "_" + indexName);
+        }
 
         return indexNames;
     }
@@ -214,10 +235,10 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Determine Type value for Elastic Search for a given entity. If nothing found in configuration, a default value - classname will be used
      * 
-     * @param entity Business entity to be stored/indexed in Elastic Search
+     * @param entity ISearchable entity to be stored/indexed in Elastic Search
      * @return Type property name
      */
-    public String getType(BusinessEntity entity) {
+    public String getType(ISearchable entity) {
         String cetCode = null;
         if (entity instanceof CustomEntityInstance) {
             cetCode = ((CustomEntityInstance) entity).getCetCode();
@@ -228,15 +249,15 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Determine Type value for Elastic Search for a given class. If nothing found in configuration, a default value - classname will be used
      * 
-     * @param clazzToConvert Entity class
+     * @param clazzToConvert Entity class that extends ISearchable interface
      * @param cetCode cet code
      * @return Type property name
      */
     @SuppressWarnings("rawtypes")
-    public String getType(Class<? extends BusinessEntity> clazzToConvert, String cetCode) {
+    public String getType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
 
         Class clazz = clazzToConvert;
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (!ISearchable.class.equals(clazz)) {
             if (typeMap.containsKey(clazz.getSimpleName())) {
                 String type = typeMap.get(clazz.getSimpleName());
 
@@ -274,15 +295,15 @@ public class ElasticSearchConfiguration implements Serializable {
      * Determine if upsert (update if exist or create is not exist) should be done instead of just update in Elastic Search for a given entity. Assume False if nothing found in
      * configuration.
      * 
-     * @param entity Business entity to be stored/indexed in Elastic Search
+     * @param entity ISearchable entity to be stored/indexed in Elastic Search
      * @return True if upsert should be used
      */
     @SuppressWarnings("rawtypes")
-    public boolean isDoUpsert(BusinessEntity entity) {
+    public boolean isDoUpsert(ISearchable entity) {
 
         Class clazz = entity.getClass();
 
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (clazz != null && !ISearchable.class.equals(clazz)) {
             if (upsertMap.contains(clazz.getSimpleName())) {
                 return true;
             }
@@ -295,12 +316,12 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Get a list of fields to be stored in Elastic search for a given entity
      * 
-     * @param entity Business entity to be stored/indexed in Elastic Search
+     * @param entity ISearchable entity to be stored/indexed in Elastic Search
      * @return A map of fields with key being fieldname in Json and value being a fieldname in entity. Fieldnames can be simple e.g. "company" or nested e.g.
      *         "company.address.street"
      */
     @SuppressWarnings("rawtypes")
-    public Map<String, String> getFields(BusinessEntity entity) {
+    public Map<String, String> getFields(ISearchable entity) {
 
         Class clazz = entity.getClass();
 
@@ -310,7 +331,7 @@ public class ElasticSearchConfiguration implements Serializable {
             fields.putAll(fieldMap.get(DEFAULT));
         }
 
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (!BaseEntity.class.equals(clazz)) {
             if (fieldMap.containsKey(clazz.getSimpleName())) {
                 fields.putAll(fieldMap.get(clazz.getSimpleName()));
             }

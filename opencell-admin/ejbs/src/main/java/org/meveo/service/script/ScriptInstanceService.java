@@ -19,15 +19,14 @@
 package org.meveo.service.script;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
@@ -43,7 +42,6 @@ import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 
 @Singleton
-@Startup
 @Lock(LockType.READ)
 public class ScriptInstanceService extends CustomScriptService<ScriptInstance, ScriptInterface> {
 
@@ -69,8 +67,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     /**
      * Compile all scriptInstances.
      */
-    @PostConstruct
-    void compileAll() {
+    public void compileAll() {
 
         List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
         compile(scriptInstances);
@@ -88,7 +85,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      */
     @Override
     public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
-            throws ElementNotFoundException, InvalidScriptException, InvalidPermissionException, BusinessException {
+            throws BusinessException {
 
         ScriptInstance scriptInstance = findByCode(scriptCode);
         // Check access to the script
@@ -192,5 +189,26 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
                 throw new BusinessException(e);
             }
         }
+    }
+
+    /**
+     * Get all script interfaces with compiling those that are not compiled yet
+     * 
+     * @return the allScriptInterfaces
+     */
+    public List<Class<ScriptInterface>> getAllScriptInterfacesWCompile() {
+
+        List<Class<ScriptInterface>> scriptInterfaces = new ArrayList<>();
+
+        List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
+        for (ScriptInstance scriptInstance : scriptInstances) {
+            try {
+                scriptInterfaces.add(getScriptInterfaceWCompile(scriptInstance.getCode()));
+            } catch (ElementNotFoundException | InvalidScriptException e) {
+                // Ignore errors here as they were logged in a call before
+            }
+        }
+
+        return scriptInterfaces;
     }
 }

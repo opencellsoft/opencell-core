@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.meveo.model.billing;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,8 +54,6 @@ public class Country extends AuditableEntity {
     @Size(max = 100)
     private String description;
 
-   
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
     private Currency currency;
@@ -62,7 +61,7 @@ public class Country extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
-    
+
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
@@ -120,10 +119,14 @@ public class Country extends AuditableEntity {
             return false;
         }
 
-        Country o = (Country) obj;
-        return (o.countryCode != null) && o.countryCode.equals(this.countryCode);
+        Country other = (Country) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        return (other.countryCode != null) && other.countryCode.equals(this.countryCode);
     }
-    
+
     public Map<String, String> getDescriptionI18n() {
         return descriptionI18n;
     }
@@ -144,5 +147,9 @@ public class Country extends AuditableEntity {
         }
         return descriptionI18n;
     }
-    
+
+    public int hashCode() {
+        int result = 961 + ((countryCode == null) ? 0 : ("Country" + countryCode).hashCode());
+        return result;
+    }
 }

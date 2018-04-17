@@ -15,9 +15,13 @@ import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
+import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 
 /**
+ * Wallet operation and balance related Webservices API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @WebService
 public interface WalletWs extends IBaseWs {
@@ -37,14 +41,32 @@ public interface WalletWs extends IBaseWs {
     @WebMethod
     ActionStatus removeWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
 
+    /**
+     * Gets the current (open or reserved) wallet balance amount at a given level and date period. In wallet operation, status='OPEN OR RESERVED'.
+     * 
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Request processing status and balance amounts
+     */
     @WebMethod
-    ActionStatus currentBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
+    WalletBalanceResponseDto currentBalance(@WebParam(name = "walletBalance") WalletBalanceDto calculateParameters);
 
+    /**
+     * Gets the reserved wallet balance amount at a given level and date period. In wallet operation, status='RESERVED'.
+     * 
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Request processing status and balance amounts
+     */
     @WebMethod
-    ActionStatus reservedBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
+    WalletBalanceResponseDto reservedBalance(@WebParam(name = "walletBalance") WalletBalanceDto calculateParameters);
 
+    /**
+     * Gets the open wallet balance amount at a given level and date period. In wallet operation, status='OPEN'.
+     * 
+     * @param calculateParameters Wallet balance calculation parameters
+     * @return Request processing status and balance amounts status
+     */
     @WebMethod
-    ActionStatus openBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
+    WalletBalanceResponseDto openBalance(@WebParam(name = "walletBalance") WalletBalanceDto calculateParameters);
 
     @WebMethod
     ActionStatus createReservation(@WebParam(name = "walletReservation") WalletReservationDto postData);

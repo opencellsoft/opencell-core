@@ -20,17 +20,27 @@ package org.meveo.service.crm.impl;
 
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Customer;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.AccountService;
 /**
  * Customer service implementation.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class CustomerService extends AccountService<Customer> {
+    
+    @Inject
+    private SellerService sellerService;
     /**
      * find customer by code.
      * @param code code of customer
@@ -82,5 +92,36 @@ public class CustomerService extends AccountService<Customer> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+    
+    /**
+     * If Seller country is different from IBAN customer country (two first letter), then the BIC is mandatory.
+     * If no country on seller, check this on "Application configuration" Bank information Iban two first letters.
+     * If no seller nor system country information, BIC stay mandatory.
+     *
+     * @param customer The customer
+     * @param iban The customer account iban to check
+     * @return True if the BIC are required, False if not
+     */
+    public boolean isBicRequired(Customer customer, String iban) {
+        log.trace("Check isBicRequired for iban:{} customer:{} ",iban,customer);
+        if(customer == null || iban == null ) {
+            return true;
+        }        
+        String countryCodeFromSellerOrProvider = null;
+        TradingCountry sellerTradingCountry = sellerService.refreshOrRetrieve(customer.getSeller()).getTradingCountry();
+        if (sellerTradingCountry != null) {
+            countryCodeFromSellerOrProvider = sellerTradingCountry.getCountryCode();
+        } else {
+            if (appProvider.getBankCoordinates() != null && !StringUtils.isBlank(appProvider.getBankCoordinates().getIban())
+                    && appProvider.getBankCoordinates().getIban().length() > 1) {
+                countryCodeFromSellerOrProvider = appProvider.getBankCoordinates().getIban().substring(0, 2);
+            }
+        }
+        log.trace("countryCodeFromSellerOrProvider:"+countryCodeFromSellerOrProvider);
+        if (countryCodeFromSellerOrProvider != null && iban.startsWith(countryCodeFromSellerOrProvider)) {
+            return false;
+        }
+        return true;
     }
 }

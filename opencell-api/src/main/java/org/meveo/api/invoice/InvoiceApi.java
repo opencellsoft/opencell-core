@@ -72,6 +72,12 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
 import org.primefaces.model.SortOrder;
 
+/**
+ * CRUD API for managing {@link Invoice}.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class InvoiceApi extends BaseApi {
 
@@ -146,7 +152,7 @@ public class InvoiceApi extends BaseApi {
 
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
-            invoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
+            invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
 
         invoice.setInvoiceType(invoiceType);
@@ -209,8 +215,7 @@ public class InvoiceApi extends BaseApi {
                                 taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, invoice));
                             }
                         }
-                        if (currentTax == null) {
-                            currentTax = invoicesubcatCountry.getTax();
+                        if (currentTax == null) {                           
                             if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
                                 currentTax = invoicesubcatCountry.getTax();
                             } else {
@@ -342,7 +347,7 @@ public class InvoiceApi extends BaseApi {
         try {
             populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -442,7 +447,7 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : 
+     * Launch all the invoicing process for a given billingAccount, that's mean :
      * <ul>
      * <li>Create an exeptionnal billingRun with given dates
      * <li>Validate the preinvoicing resport
@@ -824,7 +829,7 @@ public class InvoiceApi extends BaseApi {
         invoiceDto.setAmountTax(invoice.getAmountTax());
         invoiceDto.setAmountWithTax(invoice.getAmountWithTax());
         invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-        invoiceDto.setPaymentMethod(invoice.getPaymentMethod());
+        invoiceDto.setPaymentMethod(invoice.getPaymentMethodType());
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -838,7 +843,9 @@ public class InvoiceApi extends BaseApi {
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
                 subCategoryInvoiceAgregateDto.setType("R");
                 subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                if(invoiceAgregate.getAccountingCode() != null) {
+                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+                }
                 subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                 subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
                 subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
@@ -856,7 +863,9 @@ public class InvoiceApi extends BaseApi {
                     subCategoryInvoiceAgregateDto.setType("F");
                     subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(subCategoryAggregate.getInvoiceSubCategory().getCode());
                     subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                    if(invoiceAgregate.getAccountingCode() != null) {
+                        subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+                    }
                     subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                     subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
                     subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());

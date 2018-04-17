@@ -6,25 +6,39 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CatMessagesDto;
 
+/**
+ * The Class GetDescriptionsResponse.
+ */
 @XmlRootElement(name = "GetDescriptionsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetDescriptionsResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
-	
-	private CatMessagesDto catMessagesDto;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public CatMessagesDto getCatMessagesDto() {
-		return catMessagesDto;
-	}
+    /** The cat messages dto. */
+    private CatMessagesDto catMessagesDto;
 
-	public void setCatMessagesDto(CatMessagesDto catMessagesDto) {
-		this.catMessagesDto = catMessagesDto;
-	}
+    /**
+     * Gets the cat messages dto.
+     *
+     * @return the cat messages dto
+     */
+    public CatMessagesDto getCatMessagesDto() {
+        return catMessagesDto;
+    }
 
-	@Override
-	public String toString() {
-		return "GetDescriptionsResponse [catMessagesDto=" + catMessagesDto
-				+ "]";
-	}
+    /**
+     * Sets the cat messages dto.
+     *
+     * @param catMessagesDto the new cat messages dto
+     */
+    public void setCatMessagesDto(CatMessagesDto catMessagesDto) {
+        this.catMessagesDto = catMessagesDto;
+    }
+
+    @Override
+    public String toString() {
+        return "GetDescriptionsResponse [catMessagesDto=" + catMessagesDto + "]";
+    }
 }

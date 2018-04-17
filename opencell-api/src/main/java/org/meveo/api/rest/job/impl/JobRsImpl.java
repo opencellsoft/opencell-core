@@ -22,6 +22,7 @@ import org.meveo.api.rest.job.JobRs;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

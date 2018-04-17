@@ -21,8 +21,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
@@ -32,12 +30,6 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
  */
 @Stateless
 public class RecurringChargeTemplateService extends ChargeTemplateService<RecurringChargeTemplate> {
-
-	public void removeByCode(EntityManager em, String code) {
-		Query query = em.createQuery("DELETE RecurringChargeTemplate t WHERE t.code=:code ");
-		query.setParameter("code", code);
-		query.executeUpdate();
-	}
 
 	public int getNbrRecurringChrgWithNotPricePlan() {
 		return ((Long) getEntityManager()

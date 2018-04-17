@@ -26,9 +26,7 @@
 			<hftl:searchField label="#{messages['tax.code']}" field="code" />
 			<hftl:searchField label="#{messages['tax.description']}"
 				id="description" field="description" />
-			<hftl:searchField
-				label="#{messages['invoiceSubCategory.accountingCode']}"
-				field="accountingCode" />
+			<hftl:searchField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" valueLabelField="code" listBean="#{accountingCodeListBean}" />
 			<!-- 	<hftl:searchField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
 		</hftl:searchPanel>
 
@@ -39,7 +37,7 @@
 				field="description" />
 			<hftl:column label="#{messages['tax.percent']}" field="percent" converterParam="4digits" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
-				field="accountingCode" />
+				field="accountingCode.code" />
 
 			<hftl:actionsColumn
 				permission="#{currentUser.hasRole('administrationManagement')}" />

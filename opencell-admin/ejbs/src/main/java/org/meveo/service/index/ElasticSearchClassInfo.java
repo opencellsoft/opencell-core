@@ -1,20 +1,31 @@
 package org.meveo.service.index;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ISearchable;
 
+/**
+ * Contains info for search scope (index and type) calculation - either by a class name or CET code
+ * 
+ * @author Andrius Karpavicius
+ */
 public class ElasticSearchClassInfo {
 
-    private Class<? extends BusinessEntity> clazz;
+    /**
+     * Entity class
+     */
+    private Class<? extends ISearchable> clazz;
 
+    /**
+     * CET template code
+     */
     private String cetCode;
 
-    public ElasticSearchClassInfo(Class<? extends BusinessEntity> clazz, String cetCode) {
+    public ElasticSearchClassInfo(Class<? extends ISearchable> clazz, String cetCode) {
         super();
         this.clazz = clazz;
         this.cetCode = cetCode;
     }
 
-    public Class<? extends BusinessEntity> getClazz() {
+    public Class<? extends ISearchable> getClazz() {
         return clazz;
     }
 

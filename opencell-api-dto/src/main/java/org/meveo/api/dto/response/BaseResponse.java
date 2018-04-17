@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public abstract class BaseResponse implements Serializable {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4985814323159091933L;
 
     /**
@@ -24,21 +25,42 @@ public abstract class BaseResponse implements Serializable {
      */
     private ActionStatus actionStatus = new ActionStatus();
 
+    /**
+     * Instantiates a new base response.
+     */
     public BaseResponse() {
         actionStatus = new ActionStatus();
     }
 
+    /**
+     * Instantiates a new base response.
+     *
+     * @param status the status
+     * @param errorCode the error code
+     * @param message the message
+     */
     public BaseResponse(ActionStatusEnum status, MeveoApiErrorCodeEnum errorCode, String message) {
         actionStatus = new ActionStatus(status, errorCode, message);
     }
 
+    /**
+     * Gets the action status.
+     *
+     * @return the action status
+     */
     public ActionStatus getActionStatus() {
         return actionStatus;
     }
 
+    /**
+     * Sets the action status.
+     *
+     * @param actionStatus the new action status
+     */
     public void setActionStatus(ActionStatus actionStatus) {
         this.actionStatus = actionStatus;
     }
+
 
     @Override
     public String toString() {

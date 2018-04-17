@@ -20,10 +20,12 @@ package org.meveo.model.communication;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -39,6 +41,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "code"})
 @Table(name = "com_meveo_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_meveo_instance_seq"), })
@@ -46,11 +49,11 @@ public class MeveoInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1733186433208397850L;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 

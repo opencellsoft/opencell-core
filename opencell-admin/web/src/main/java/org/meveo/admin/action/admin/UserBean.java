@@ -52,7 +52,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -109,14 +109,16 @@ public class UserBean extends CustomFieldBean<User> {
     @Named
     private SellerBean sellerBean;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private DualListModel<Role> rolesDM;
 
     private TreeNode userGroupRootNode;
 
     private TreeNode userGroupSelectedNode;
-
-    private ParamBean param = ParamBean.getInstance();
-    private String providerFilePath = param.getProperty("providers.rootDir", "./opencelldata/");
+    private String providerFilePath;
     private String selectedFolder;
     private boolean currentDirEmpty;
     private String selectedFileName;
@@ -134,6 +136,8 @@ public class UserBean extends CustomFieldBean<User> {
 
     private boolean autoUnzipped;
 
+    final private String ZIP_FILE_EXTENSION = ".zip";
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -143,6 +147,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     @PostConstruct
     public void init() {
+        this.providerFilePath = paramBeanFactory.getInstance().getChrootDir(currentUser.getProviderCode());
         if (conversation.isTransient()) {
             conversation.begin();
             createMissingDirectories();
@@ -153,6 +158,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     @Override
     public User initEntity() {
+        log.info("initEntity()");
         super.initEntity();
 
         if (entity.getName() == null) {
@@ -163,6 +169,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public TreeNode getUserGroupRootNode() {
+        log.info("getUserGroupRootNode()");
         if (userGroupRootNode == null) {
             userGroupRootNode = new DefaultTreeNode("Root", null);
             List<UserHierarchyLevel> roots;
@@ -272,7 +279,8 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public String getFilePath() {
-        return providerFilePath + File.separator + appProvider.getCode();
+        return providerFilePath;
+
     }
 
     private String getFilePath(String name) {
@@ -284,6 +292,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public void createMissingDirectories() {
+        log.info("createMissingDirectories() * ");
         // log.info("Creating required dirs in "+getFilePath());
         String importDir = getFilePath() + File.separator + "imports" + File.separator + "customers" + File.separator;
         String customerDirIN = importDir + "input";
@@ -444,24 +453,26 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public void handleFileUpload(FileUploadEvent event) {
-        log.debug("upload file={},autoUnziped {}", event.getFile().getFileName(), autoUnzipped);
+        UploadedFile file = event.getFile();
+        String filename = file.getFileName();
+        log.debug("upload file={},autoUnziped {}", filename, autoUnzipped);
         // FIXME: use resource bundle
         try {
-            String filename = event.getFile().getFileName();
+            InputStream fileInputStream = file.getInputstream();
             if (this.isAutoUnzipped()) {
-                if (!filename.endsWith(".zip")) {
+                if (!filename.endsWith(ZIP_FILE_EXTENSION)) {
                     messages.info(filename + " isn't a valid zip file!");
+                    copyFile(filename, fileInputStream);
                 } else {
-                    copyUnZippedFile(event.getFile().getInputstream());
+                    copyUnZippedFile(fileInputStream);
                 }
             } else {
-                copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+                copyFile(filename, fileInputStream);
             }
-
-            messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
+            messages.info(filename + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
         } catch (IOException e) {
-            log.error("Failed to upload a file {}", event.getFile().getFileName(), e);
-            messages.error("Error while uploading " + event.getFile().getFileName());
+            log.error("Failed to upload a file {}", filename, e);
+            messages.error("Error while uploading " + filename);
         }
     }
 

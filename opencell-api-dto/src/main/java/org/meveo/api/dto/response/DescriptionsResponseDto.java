@@ -4,24 +4,41 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The Class DescriptionsResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "DescriptionsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DescriptionsResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
-	
-	private CatMessagesListDto catMessages = new CatMessagesListDto();
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public CatMessagesListDto getCatMessages() {
-		return catMessages;
-	}
+    /** The cat messages. */
+    private CatMessagesListDto catMessages = new CatMessagesListDto();
 
-	public void setCatMessages(CatMessagesListDto catMessages) {
-		this.catMessages = catMessages;
-	}
+    /**
+     * Gets the cat messages.
+     *
+     * @return the cat messages
+     */
+    public CatMessagesListDto getCatMessages() {
+        return catMessages;
+    }
 
-	@Override
-	public String toString() {
-		return "CatMessagesListResponseDto [catMessages=" + catMessages + "]";
-	}
+    /**
+     * Sets the cat messages.
+     *
+     * @param catMessages the new cat messages
+     */
+    public void setCatMessages(CatMessagesListDto catMessages) {
+        this.catMessages = catMessages;
+    }
+
+    @Override
+    public String toString() {
+        return "CatMessagesListResponseDto [catMessages=" + catMessages + "]";
+    }
 }

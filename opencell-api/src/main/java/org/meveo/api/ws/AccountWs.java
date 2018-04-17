@@ -104,8 +104,10 @@ public interface AccountWs extends IBaseWs {
      * Retrieves a list of Customers filtered by code, customerCategory, seller, or customerBrand.
      * 
      * @param postData Contains filter parameters code, customerCategory, seller or customerBrand. Deprecated in v.4.7.2 Use "pagingAndFiltering" instead
+     * @param firstRow firstRow
+     * @param numberOfRows number of rows
      * @param pagingAndFiltering Pagination criteria
-     * @return
+     * @return CustomersResponseDto CustomersResponseDto
      */
     @WebMethod
     CustomersResponseDto listCustomerWithFilter(@Deprecated @WebParam(name = "customer") CustomerDto postData, @Deprecated @WebParam(name = "firstRow") Integer firstRow,
@@ -231,7 +233,7 @@ public interface AccountWs extends IBaseWs {
      * List CustomerAccount filtered by customerCode.
      * 
      * @param customerCode The customer account's code
-     * @return
+     * @return CustomerAccountsResponseDto
      */
     @WebMethod
     CustomerAccountsResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);

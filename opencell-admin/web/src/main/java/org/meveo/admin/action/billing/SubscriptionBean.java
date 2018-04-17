@@ -39,7 +39,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -82,6 +82,10 @@ import org.primefaces.component.datatable.DataTable;
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped
@@ -136,6 +140,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private ServiceInstance selectedServiceInstance;
 
@@ -217,6 +224,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         // Clear existing list value
         serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
+        boolean allowServiceMultiInstantiation = ParamBeanFactory.getAppScopeInstance().isServiceMultiInstantiation();
 
         if (entity.getOffer() == null) {
             return;
@@ -233,7 +241,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             for (ServiceInstance serviceInstance : serviceInstances) {
                 if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
-                        || (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
+                        || (!allowServiceMultiInstantiation && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
                     alreadyInstanciated = true;
                     break;
                 }
@@ -258,7 +266,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
-            String datePattern = paramBean.getDateFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateFormat();
             messages.error(new BundleKey("messages", "subscription.error.offerTemplateInvalidVersion"), entity.getOffer().getValidity().toString(datePattern),
                 DateUtils.formatDateWithPattern(entity.getSubscriptionDate(), datePattern));
             FacesContext.getCurrentInstance().validationFailed();
@@ -269,7 +277,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
             return null;
         }
-
+        
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -307,7 +315,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             entity = subscriptionService.refreshOrRetrieve(entity);
-            String description = oneShotChargeInstance.getDescription();           
+            String description = oneShotChargeInstance.getDescription();
             OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
             oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplate);
             oneShotChargeInstance.setDescription(description);
@@ -401,17 +409,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public OneShotChargeInstance getOneShotChargeInstance() {
         if (oneShotChargeInstance != null && oneShotChargeInstance.getChargeTemplate() != null) {
-            if(oneShotChargeInstance.getDescription() != null && oneShotChargeInstance.getDescription().equals(oneShotChargeInstance.getChargeTemplate().getDescription())) {
-            if (oneShotChargeInstance.getChargeTemplate().getDescriptionI18n() != null) {
-                String languageCode = tradingLanguageService.refreshOrRetrieve(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage().getLanguageCode();
-                if (!StringUtils.isBlank(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode))) {
-                    oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode));
+            if (oneShotChargeInstance.getDescription() != null && oneShotChargeInstance.getDescription().equals(oneShotChargeInstance.getChargeTemplate().getDescription())) {
+                if (oneShotChargeInstance.getChargeTemplate().getDescriptionI18n() != null) {
+                    String languageCode = tradingLanguageService.retrieveIfNotManaged(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage()
+                        .getLanguageCode();
+                    if (!StringUtils.isBlank(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode))) {
+                        oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode));
+                    }
+                }
+                if (StringUtils.isBlank(oneShotChargeInstance.getDescription())) {
+                    oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescription());
                 }
             }
-            if (StringUtils.isBlank(oneShotChargeInstance.getDescription())) {
-                oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescription());
-            }
-        }
         }
         return oneShotChargeInstance;
     }
@@ -579,7 +588,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             if (productInstance.getProductTemplate().getValidity() != null
                     && !productInstance.getProductTemplate().getValidity().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
 
-                String datePattern = paramBean.getDateFormat();
+                String datePattern = paramBeanFactory.getInstance().getDateFormat();
                 messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
                     productInstance.getProductTemplate().getValidity().toString(datePattern), DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
                 FacesContext.getCurrentInstance().validationFailed();
@@ -592,10 +601,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 productInstance.setApplicationDate(new Date());
             }
 
-            entity = getPersistenceService().refreshOrRetrieve(entity);
+            entity = getPersistenceService().retrieveIfNotManaged(entity);
             productInstance.setSubscription(entity);
             productInstance.setUserAccount(entity.getUserAccount());
-            productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+            productInstance.setProductTemplate(productTemplateService.retrieveIfNotManaged(productInstance.getProductTemplate()));
 
             try {
                 // productInstanceService.create(productInstance);
@@ -972,7 +981,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         List<ProductTemplate> result = new ArrayList<>();
 
         if (entity != null && entity.getOffer() != null) {
-            for (OfferProductTemplate offerProductTemplate : offerTemplateService.refreshOrRetrieve(entity.getOffer()).getOfferProductTemplates()) {
+            for (OfferProductTemplate offerProductTemplate : offerTemplateService.retrieveIfNotManaged(entity.getOffer()).getOfferProductTemplates()) {
                 if (offerProductTemplate.getProductTemplate().getValidity() == null || offerProductTemplate.getProductTemplate().getValidity().isCorrespondsToPeriod(date)) {
                     result.add(offerProductTemplate.getProductTemplate());
                 }

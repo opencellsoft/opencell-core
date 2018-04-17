@@ -8,24 +8,38 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class LanguagesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "Languages")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguagesDto extends BaseDto {
 
-	private static final long serialVersionUID = 4455041168159380792L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4455041168159380792L;
 
-	private List<LanguageDto> language;
+    /** The language. */
+    private List<LanguageDto> language;
 
-	public List<LanguageDto> getLanguage() {
-		if (language == null)
-			language = new ArrayList<LanguageDto>();
-		return language;
-	}
+    /**
+     * Gets the language.
+     *
+     * @return the language
+     */
+    public List<LanguageDto> getLanguage() {
+        if (language == null)
+            language = new ArrayList<LanguageDto>();
+        return language;
+    }
 
-	public void setLanguage(List<LanguageDto> language) {
-		this.language = language;
-	}
+    /**
+     * Sets the language.
+     *
+     * @param language the new language
+     */
+    public void setLanguage(List<LanguageDto> language) {
+        this.language = language;
+    }
 
 }

@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.shared.DateUtils;
@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  * 
  */
 public class MeveoFunctionMapper extends FunctionMapper {
@@ -53,12 +55,14 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCFValueByClosestMatch", MeveoFunctionMapper.class.getMethod("getCFValueByClosestMatch", ICustomFieldEntity.class, String.class, String.class));
             addFunction("mv", "getCFValueByClosestMatchForDate",
                 MeveoFunctionMapper.class.getMethod("getCFValueByClosestMatch", ICustomFieldEntity.class, String.class, Date.class, String.class));
-            addFunction("mv", "getCFValueByRangeOfNumbers", MeveoFunctionMapper.class.getMethod("getCFValueByRangeOfNumbers", ICustomFieldEntity.class, String.class, Object.class));
+            addFunction("mv", "getCFValueByRangeOfNumbers",
+                MeveoFunctionMapper.class.getMethod("getCFValueByRangeOfNumbers", ICustomFieldEntity.class, String.class, Object.class));
             addFunction("mv", "getCFValueByRangeOfNumbersForDate",
                 MeveoFunctionMapper.class.getMethod("getCFValueByRangeOfNumbers", ICustomFieldEntity.class, String.class, Date.class, Object.class));
 
             addFunction("mv", "getCFValueByMatrix", MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Object.class));
-            addFunction("mv", "getCFValueByMatrix2Keys", MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Object.class, Object.class));
+            addFunction("mv", "getCFValueByMatrix2Keys",
+                MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrix3Keys",
                 MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrix4Keys",
@@ -66,7 +70,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCFValueByMatrix5Keys", MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Object.class, Object.class,
                 Object.class, Object.class, Object.class));
 
-            addFunction("mv", "getCFValueByMatrixForDate", MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Date.class, Object.class));
+            addFunction("mv", "getCFValueByMatrixForDate",
+                MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Date.class, Object.class));
             addFunction("mv", "getCFValueByMatrixForDate2Keys",
                 MeveoFunctionMapper.class.getMethod("getCFValueByKey", ICustomFieldEntity.class, String.class, Date.class, Object.class, Object.class));
             addFunction("mv", "getCFValueByMatrixForDate3Keys",
@@ -154,8 +159,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 MeveoFunctionMapper.class.getMethod("getInheritedCFValueByKey", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class));
             addFunction("mv", "getInheritedCFValueByKey4Keys",
                 MeveoFunctionMapper.class.getMethod("getInheritedCFValueByKey", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class, Object.class));
-            addFunction("mv", "getInheritedCFValueByKey5Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByKey", ICustomFieldEntity.class, String.class,
-                Object.class, Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "getInheritedCFValueByKey5Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByKey", ICustomFieldEntity.class, String.class, Object.class,
+                Object.class, Object.class, Object.class, Object.class));
 
             addFunction("mv", "getInheritedCFValueByKeyForDate",
                 MeveoFunctionMapper.class.getMethod("getInheritedCFValueByKey", ICustomFieldEntity.class, String.class, Date.class, Object.class));
@@ -175,8 +180,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 MeveoFunctionMapper.class.getMethod("isInheritedCFValueHasKey", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class));
             addFunction("mv", "isInheritedCFValueHasKey4Keys",
                 MeveoFunctionMapper.class.getMethod("isInheritedCFValueHasKey", ICustomFieldEntity.class, String.class, Object.class, Object.class, Object.class, Object.class));
-            addFunction("mv", "isInheritedCFValueHasKey5Keys", MeveoFunctionMapper.class.getMethod("isInheritedCFValueHasKey", ICustomFieldEntity.class, String.class,
-                Object.class, Object.class, Object.class, Object.class, Object.class));
+            addFunction("mv", "isInheritedCFValueHasKey5Keys", MeveoFunctionMapper.class.getMethod("isInheritedCFValueHasKey", ICustomFieldEntity.class, String.class, Object.class,
+                Object.class, Object.class, Object.class, Object.class));
 
             addFunction("mv", "isInheritedCFValueHasKeyForDate",
                 MeveoFunctionMapper.class.getMethod("isInheritedCFValueHasKey", ICustomFieldEntity.class, String.class, Date.class, Object.class));
@@ -200,13 +205,13 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getDate", MeveoFunctionMapper.class.getMethod("getDate", Long.class));
 
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
-           
+
             addFunction("mv", "addToDate", MeveoFunctionMapper.class.getMethod("addToDate", Date.class, Long.class, Long.class));
-            
+
             addFunction("mv", "getEndOfMonth", MeveoFunctionMapper.class.getMethod("getEndOfMonth", Date.class));
-            
+
             addFunction("mv", "getStartOfNextMonth", MeveoFunctionMapper.class.getMethod("getStartOfNextMonth", Date.class));
-            
+
             // addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -282,6 +287,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getCFValue() function as EL function. See CustomFieldInstanceService.getCFValue() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @return cf value.
@@ -297,6 +303,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getCFValue() function as EL function. See CustomFieldInstanceService.getCFValue() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param date date to check
@@ -313,6 +320,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getCFValueByClosestMatch() function as EL function. See CustomFieldInstanceService.getCFValueByClosestMatch() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param keyToMatch jey to match.
@@ -329,6 +337,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getCFValueByClosestMatch() function as EL function. See CustomFieldInstanceService.getCFValueByClosestMatch() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param date date to check.
@@ -347,6 +356,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
     /**
      * Exposes CustomFieldInstanceService.getCFValueByRangeOfNumbers() function as EL function. See CustomFieldInstanceService.getCFValueByRangeOfNumbers() function for
      * documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param numberToMatch jey to match.
@@ -627,8 +637,9 @@ public class MeveoFunctionMapper extends FunctionMapper {
      */
     public static Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
 
-        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        // log.debug("AKK start getInheritedCFvalue for entity {}", entity.getClass());
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code);
         log.trace("Obtained inherited CF value {} for {}/{}", cfValue, entity, code);
 
         return cfValue;
@@ -778,6 +789,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getInheritedCFValueByKey() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param keyOne key one
@@ -907,6 +919,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getInheritedCFValueByKey() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param date date to check.
@@ -927,6 +940,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getInheritedCFValueByKey() function as EL function. See CustomFieldInstanceService.getInheritedCFValueByKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param date date to check
@@ -989,6 +1003,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Format date.
+     * 
      * @param date date to be formatted.
      * @param dateFormatPattern standard java date and time patterns
      * @return A formated date
@@ -1008,11 +1023,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @return A parsed date
      */
     public static Date parseDate(String dateString, String dateFormatPattern) {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         if (dateString == null) {
             return new Date();
         }
         if (dateFormatPattern == null) {
-            dateFormatPattern = ParamBean.getInstance().getDateFormat();
+            dateFormatPattern = paramBeanFactory.getInstance().getDateFormat();
         }
         return DateUtils.parseDateWithPattern(dateString, dateFormatPattern);
     }
@@ -1072,6 +1088,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.isCFValueHasKey() function as EL function. See CustomFieldInstanceService.isCFValueHasKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param keyOne key one
@@ -1089,6 +1106,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.isCFValueHasKey() function as EL function. See CustomFieldInstanceService.isCFValueHasKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param keyOne key one
@@ -1108,6 +1126,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.isCFValueHasKey() function as EL function. See CustomFieldInstanceService.isCFValueHasKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param keyOne key one
@@ -1127,6 +1146,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.isCFValueHasKey() function as EL function. See CustomFieldInstanceService.isCFValueHasKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param keyOne key one
@@ -1197,6 +1217,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.isCFValueHasKey() function as EL function. See CustomFieldInstanceService.isCFValueHasKey() function for documentation
+     * 
      * @param entity entity to get infos
      * @param code code of entity
      * @param date date to check
@@ -1481,13 +1502,13 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
         return hasKey;
     }
-    
+
     /**
      * Adds or subtracts duration to the given date.
      * 
      * @param date date to be added.
-     * @param durationType The same value as java.util.Calendar constants :  5 for day, 2 for month,...
-     * @param durationValue  duration to add
+     * @param durationType The same value as java.util.Calendar constants : 5 for day, 2 for month,...
+     * @param durationValue duration to add
      * @return date
      */
     public static Date addToDate(Date date, Long durationType, Long durationValue) {
@@ -1500,23 +1521,22 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
         return result;
     }
-    
-	public static Date getEndOfMonth(Date date) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-		return c.getTime();
-	}
+    public static Date getEndOfMonth(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-	public static Date getStartOfNextMonth(Date date) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		c.add(Calendar.MONTH, 1);
+        return c.getTime();
+    }
 
-		return c.getTime();
-	}
-    
-    
+    public static Date getStartOfNextMonth(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.add(Calendar.MONTH, 1);
+
+        return c.getTime();
+    }
+
 }

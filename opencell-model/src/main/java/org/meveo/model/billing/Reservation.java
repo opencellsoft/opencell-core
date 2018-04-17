@@ -48,15 +48,15 @@ public class Reservation extends EnableEntity {
 	@Column(name = "status")
 	private ReservationStatus status;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "user_account_id")
 	private UserAccount userAccount;
 
-	@OneToOne
+	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "subscription_id")
 	private Subscription subscription;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "wallet_id")
 	private WalletInstance wallet;
 	

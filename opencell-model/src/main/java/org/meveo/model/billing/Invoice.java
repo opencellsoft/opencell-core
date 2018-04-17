@@ -55,25 +55,30 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.quote.Quote;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
 @Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
-@NamedQueries({ @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+@NamedQueries({
+        @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
-        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId")
-})
+        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -130,7 +135,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
+    private PaymentMethodEnum paymentMethodType;
 
     @Column(name = "iban", length = 255)
     @Size(max = 255)
@@ -163,11 +168,11 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "detailed_invoice")
     private boolean isDetailedInvoice = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice adjustedInvoice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
@@ -189,7 +194,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<Order>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
 
@@ -206,6 +211,10 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "pdf_filename", length = 255)
     @Size(max = 255)
     private String pdfFilename;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -293,12 +302,12 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
+    public PaymentMethodEnum getPaymentMethodType() {
+        return paymentMethodType;
     }
 
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setPaymentMethodType(PaymentMethodEnum paymentMethod) {
+        this.paymentMethodType = paymentMethod;
     }
 
     public String getIban() {
@@ -476,17 +485,16 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         }
 
         Invoice other = (Invoice) obj;
-        if (other.getId() == null) {
-            return false;
-        } else if (!other.getId().equals(this.getId())) {
-            return false;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.intValue();
+        return 961 + ("Invoice" + id).hashCode();
     }
 
     /**
@@ -621,7 +629,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         return pdfFilename;
     }
 
-    public void setPdfFilename(String pdfFilename) {	
+    public void setPdfFilename(String pdfFilename) {
         this.pdfFilename = pdfFilename;
     }
 
@@ -666,5 +674,27 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
             }
         }
         return xmlFilename;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void assignTemporaryInvoiceNumber() {
+
+        StringBuffer num1 = new StringBuffer("000000000");
+        num1.append(id + "");
+        String invoiceNumber = num1.substring(num1.length() - 9);
+        int key = 0;
+
+        for (int i = 0; i < invoiceNumber.length(); i++) {
+            key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
+        }
+
+        setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
     }
 }

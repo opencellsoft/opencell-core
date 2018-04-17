@@ -48,7 +48,7 @@
                     <c:if test="#{cfFieldOrFg.type == 'field'}">
                         <c:set var="cft" value="#{cfFieldOrFg.data}" />
                         <c:if
-                            test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
+                            test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
                             <hf:customFieldCHE entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
                                 dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
                         </c:if>
@@ -58,7 +58,7 @@
                             <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                                 <c:set var="cft" value="#{cfField.data}" />
                                 <c:if
-                                    test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
+                                    test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
                                     <hf:customFieldCHE entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
                                         dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
                                 </c:if>

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ import org.meveo.model.IEntity;
  * @author Edward P. Legaspi
  */
 @Entity
+@Cacheable
 @ExportIdentifier({ "bundleTemplate.code", "bundleTemplate.validity.from", "bundleTemplate.validity.to", "productTemplate.code", "productTemplate.validity.from",
         "productTemplate.validity.to" })
 @Table(name = "cat_bundle_product_template", uniqueConstraints = @UniqueConstraint(columnNames = { "product_template_id", "bundle_template_id" }))
@@ -91,13 +93,12 @@ public class BundleProductTemplate implements IEntity {
 
     @Override
     public int hashCode() {
-        if (id != null)
+        if (id != null) {
             return id.intValue();
+        }
 
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((bundleTemplate == null) ? 0 : bundleTemplate.getId().hashCode());
-        result = prime * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
+        int result = 961 + ((bundleTemplate == null) ? 0 : bundleTemplate.hashCode());
+        result = 31 * result + ((productTemplate == null) ? 0 : productTemplate.hashCode());
 
         return result;
     }
@@ -113,16 +114,20 @@ public class BundleProductTemplate implements IEntity {
             return false;
         }
 
-        BundleProductTemplate that = (BundleProductTemplate) obj;
+        BundleProductTemplate other = (BundleProductTemplate) obj;
 
-        ProductTemplate thatProductTemplate = that.getProductTemplate();
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        ProductTemplate thatProductTemplate = other.getProductTemplate();
         if (productTemplate == null && thatProductTemplate != null) {
             return false;
         } else if (!productTemplate.equals(thatProductTemplate)) {
             return false;
         }
 
-        BundleTemplate thatBundleTemplate = that.getBundleTemplate();
+        BundleTemplate thatBundleTemplate = other.getBundleTemplate();
         if (bundleTemplate == null && thatBundleTemplate != null) {
             return false;
         } else if (!bundleTemplate.equals(thatBundleTemplate)) {

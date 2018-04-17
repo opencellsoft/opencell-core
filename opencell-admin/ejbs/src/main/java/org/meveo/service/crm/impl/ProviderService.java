@@ -19,26 +19,53 @@
 package org.meveo.service.crm.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.keycloak.KeycloakSecurityContext;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
-import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.api.dto.RoleDto;
+import org.meveo.api.dto.UserDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * Provider service implementation.
+ * 
+ * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0.1
+ * 
  */
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
 
-    @Inject
-    private ClusterEventPublisher clusterEventPublisher;
+    /**
+     * The tenant registry to add or remove a new tenant.
+     */
+    @EJB
+    private TenantRegistry providerRegistry;
 
+    /**
+     * The request information, it will be used to get current user credentials to be able to add new tenant user on keycloak.
+     */
+    @Inject
+    private HttpServletRequest request;
+
+    /**
+     * @return provider
+     */
     public Provider getProvider() {
 
         Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).getResultList().get(0);
@@ -60,17 +87,41 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     @Override
+    public void create(Provider provider) throws BusinessException {
+        super.create(provider);
+        providerRegistry.addTenant(provider);
+        createProviderUser(provider);
+    }
+
+    @Override
+    public void remove(Provider provider) throws BusinessException {
+        super.remove(provider);
+        providerRegistry.removeTenant(provider);
+    }
+
+    @Override
     public Provider update(Provider provider) throws BusinessException {
         provider = super.update(provider);
-
         // Refresh appProvider application scope variable
         refreshAppProvider(provider);
-        clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
+        // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
         return provider;
     }
 
     /**
-     * Refresh appProvider application scope variable
+     * Update appProvider's code.
+     * 
+     * @param newCode New code to update to
+     * @throws BusinessException Business exception
+     */
+    public void updateProviderCode(String newCode) throws BusinessException {
+        Provider provider = getProvider();
+        provider.setCode(newCode);
+        update(provider);
+    }
+
+    /**
+     * Refresh appProvider request scope variable, just in case it is used in some EL expressions within the same request.
      * 
      * @param provider New provider data to refresh with
      */
@@ -87,13 +138,64 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
-
+        appProvider.setCfValues(provider.getCfValues());
     }
 
     /**
-     * Refresh appProvider application scope variable with provider data from DB
+     * Find Provider by code - strict match.
+     * 
+     * @param code Code to match
+     * @return A single entity matching code
      */
-    public void refreshAppProvider() {
-        refreshAppProvider(getProvider());
+    public Provider findByCode(String code) {
+
+        if (code == null) {
+            return null;
+        }
+
+        TypedQuery<Provider> query = getEntityManager().createQuery("select be from Provider be where upper(code)=:code", entityClass).setParameter("code", code.toUpperCase())
+            .setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No Provider of code {} found", code);
+            return null;
+        }
+    }
+
+    /**
+     * Create the superadmin user of a new provider.
+     * 
+     * @param provider the tenant information
+     */
+    private void createProviderUser(Provider provider) {
+        KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
+        log.info("> addTenant > getTokenString : " + session.getTokenString());
+
+        // Create user
+        UserDto userDto = new UserDto();
+        String name = (provider.getCode() + "." + "superadmin").toLowerCase();
+        log.info("> addTenant > name " + name);
+        userDto.setUsername(name);
+        userDto.setPassword(name);
+        if (!StringUtils.isBlank(provider.getEmail())) {
+            userDto.setEmail(provider.getEmail());
+        } else {
+            userDto.setEmail(name + "@" + provider.getCode().toLowerCase() + ".com");
+        }
+        userDto.setRoles(Arrays.asList("CUSTOMER_CARE_USER", "superAdministrateur"));
+        userDto.setExternalRoles(Arrays.asList(new RoleDto("CC_ADMIN"), new RoleDto("SUPER_ADMIN")));
+
+        // Get services
+        KeycloakAdminClientService kc = (KeycloakAdminClientService) EjbUtils.getServiceInterface(KeycloakAdminClientService.class.getSimpleName());
+        try {
+            kc.createUser(request, userDto, provider.getCode());
+        } catch (EntityDoesNotExistsException e) {
+            e.printStackTrace();
+        } catch (BusinessException e) {
+            e.printStackTrace();
+
+        }
     }
 }

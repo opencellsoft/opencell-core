@@ -7,28 +7,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.response.SearchResponse;
 
+/**
+ * The Class SubscriptionsListResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "SubscriptionsListResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class SubscriptionsListResponseDto extends SearchResponse {
 
-	private static final long serialVersionUID = 5980154480190489704L;
-	
-	public SubscriptionsListDto subscriptions;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5980154480190489704L;
 
-	public SubscriptionsListDto getSubscriptions() {
-		if (subscriptions == null) {
-			subscriptions = new SubscriptionsListDto();
-		}
-		return subscriptions;
-	}
+    /** The subscriptions. */
+    public SubscriptionsListDto subscriptions;
 
-	public void setSubscriptions(SubscriptionsListDto   subscriptions) {
-		this.subscriptions = subscriptions;
-	}
+    /**
+     * Gets the subscriptions.
+     *
+     * @return the subscriptions
+     */
+    public SubscriptionsListDto getSubscriptions() {
+        if (subscriptions == null) {
+            subscriptions = new SubscriptionsListDto();
+        }
+        return subscriptions;
+    }
 
-	@Override
-	public String toString() {
-		return "ListSubscriptionResponseDto [subscriptions=" + subscriptions + ", toString()=" + super.toString() + "]";
-	}
+    /**
+     * Sets the subscriptions.
+     *
+     * @param subscriptions the new subscriptions
+     */
+    public void setSubscriptions(SubscriptionsListDto subscriptions) {
+        this.subscriptions = subscriptions;
+    }
 
+    @Override
+    public String toString() {
+        return "ListSubscriptionResponseDto [subscriptions=" + subscriptions + ", toString()=" + super.toString() + "]";
+    }
 }

@@ -7,33 +7,47 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author R.AITYAAZZA
+ * The Class PdfInvoiceResponse.
  *
+ * @author R.AITYAAZZA
  */
 @XmlRootElement(name = "PdfInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PdfInvoiceResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 3909724929599303450L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3909724929599303450L;
 
-	private byte[] pdfInvoice;
+    /** The pdf invoice. */
+    private byte[] pdfInvoice;
 
-	public PdfInvoiceResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new pdf invoice response.
+     */
+    public PdfInvoiceResponse() {
+        super();
+    }
 
-	public byte[] getPdfInvoice() {
-		return pdfInvoice;
-	}
+    /**
+     * Gets the pdf invoice.
+     *
+     * @return the pdf invoice
+     */
+    public byte[] getPdfInvoice() {
+        return pdfInvoice;
+    }
 
-	public void setPdfInvoice(byte[] pdfInvoice) {
-		this.pdfInvoice = pdfInvoice;
-	}
+    /**
+     * Sets the pdf invoice.
+     *
+     * @param pdfInvoice the new pdf invoice
+     */
+    public void setPdfInvoice(byte[] pdfInvoice) {
+        this.pdfInvoice = pdfInvoice;
+    }
 
-	@Override
-	public String toString() {
-		return "PdfInvoiceResponse [pdfInvoice=" + Arrays.toString(pdfInvoice) + ", toString()=" + super.toString()
-				+ "]";
-	}
-
+    @Override
+    public String toString() {
+        return "PdfInvoiceResponse [pdfInvoice=" + Arrays.toString(pdfInvoice) + ", toString()=" + super.toString() + "]";
+    }
 }

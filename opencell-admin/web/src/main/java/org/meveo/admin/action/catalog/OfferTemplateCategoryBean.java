@@ -186,7 +186,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
                 if (isImageUpload()) {
                     try {
-                        ImageUploadEventHandler<OfferTemplateCategory> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                        ImageUploadEventHandler<OfferTemplateCategory> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
                         imageUploadEventHandler.deleteImage(offerTemplateCategory);
                     } catch (IOException e) {
                         log.error("Failed moving image file");

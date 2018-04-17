@@ -2,6 +2,7 @@ package org.meveo.api.rest.catalog;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -15,6 +16,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.ServiceTemplate}.
@@ -55,7 +57,8 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @Path("/")
     @GET
-    GetServiceTemplateResponseDto find(@QueryParam("serviceTemplateCode") String serviceTemplateCode);
+    GetServiceTemplateResponseDto find(@QueryParam("serviceTemplateCode") String serviceTemplateCode,
+        @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove service template with a given code.

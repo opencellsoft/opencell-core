@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -66,7 +67,8 @@ import org.meveo.model.shared.DateUtils;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
 @NamedQueries({ @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date"),
-        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate") })
+        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate"),
+        @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
 public class Subscription extends BusinessCFEntity {
 
@@ -155,6 +157,14 @@ public class Subscription extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
+    
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+    
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -332,6 +342,22 @@ public class Subscription extends BusinessCFEntity {
         this.notifyOfRenewalDate = notifyOfRenewalDate;
     }
 
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
     /**
      * Check if renewal notice should be fired for a current date
      * 
@@ -388,12 +414,11 @@ public class Subscription extends BusinessCFEntity {
         }
     }
 
-    public void updateRenewalRule(SubscriptionRenewal newRenewalRule){
-        if (getSubscribedTillDate() != null && isRenewed()){
-            
+    public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
+        if (getSubscribedTillDate() != null && isRenewed()) {
+
         }
-        
-        
+
     }
-    
+
 }

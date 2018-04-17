@@ -13,10 +13,11 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
@@ -27,9 +28,12 @@ import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Interface PaymentWs.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @WebService
 public interface PaymentWs extends IBaseWs {
@@ -55,8 +59,8 @@ public interface PaymentWs extends IBaseWs {
     /**
      * create a ddrequestLotOp by dto
      * 
-     * @param ddrequestLotOp
-     * @return
+     * @param ddrequestLotOp ddrequestLotOp
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus createDDRequestLotOp(@WebParam(name = "ddrequestLotOp") DDRequestLotOpDto ddrequestLotOp);
@@ -64,10 +68,10 @@ public interface PaymentWs extends IBaseWs {
     /**
      * list ddrequestLotOps by fromDueDate,toDueDate,status
      * 
-     * @param fromDueDate
-     * @param toDueDate
-     * @param status
-     * @return
+     * @param fromDueDate fromDueDate
+     * @param toDueDate toDueDate
+     * @param status status
+     * @return DDRequestLotOpsResponseDto
      */
     @WebMethod
     DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name = "fromDueDate") Date fromDueDate, @WebParam(name = "toDueDate") Date toDueDate,
@@ -80,7 +84,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Payment by card information
      */
     @WebMethod
-    public PayByCardResponseDto payByCard(@WebParam(name = "payByCard") PayByCardDto payByCardDto);
+    public PaymentResponseDto payByCard(@WebParam(name = "payByCard") PayByCardDto payByCardDto);
 
     /************************************************************************************************/
     /**** Card Payment Method ****/
@@ -170,7 +174,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * List payment methods on searching by any payment method field in addition to paging and sorting.
      * 
-     * @param pagingAndFiltering
+     * @param pagingAndFiltering Paging and filtering criteria.
      * @return List payment methods matching
      */
     @WebMethod
@@ -187,6 +191,9 @@ public interface PaymentWs extends IBaseWs {
 
     /**
      * Credit Category
+     * 
+     * @param postData credit category Dto
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus createCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
@@ -265,6 +272,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * List payment gateways on searching by any payment gateway fields in addition to paging and sorting.
      * 
+     * @param  pagingAndFiltering Paging and filtering criteria.
      * @return A list of payment gateways
      */
     @WebMethod
@@ -287,5 +295,15 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentGatewayResponseDto createOrUpdatePaymentGateway(@WebParam(name = "paymentGateway") PaymentGatewayDto paymentGateway);
+    
+
+    /**
+     * List payment history matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An payment history list
+     */
+    @WebMethod
+    public PaymentHistoriesDto listHistory(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
 }

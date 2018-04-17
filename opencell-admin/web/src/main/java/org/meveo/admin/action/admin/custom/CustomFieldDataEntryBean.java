@@ -27,6 +27,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
@@ -62,6 +63,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides support for custom field value data entry
  * 
+ * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  */
 @Named
 @ViewScoped
@@ -105,6 +109,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @Inject
     protected Messages messages;
@@ -357,6 +365,54 @@ public class CustomFieldDataEntryBean implements Serializable {
     // }
 
     /**
+     * Increase priority of a custom field value period
+     * 
+     * @param entityValueHolder custom field value holder
+     * @param cft Custom field definition
+     * @param valuePeriodToChange Custom field value period to change
+     */
+    public void increasePriority(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToChange) {
+
+        boolean changed = entityValueHolder.changePriority(cft, valuePeriodToChange, true);
+
+        if (changed) {
+            messages.info(new BundleKey("messages", "customFieldTemplate.periodValue.priorityIncreased"));
+        }
+    }
+
+    /**
+     * Decrease priority of a custom field value period
+     * 
+     * @param entityValueHolder custom field value holder
+     * @param cft Custom field definition
+     * @param valuePeriodToChange Custom field value period to change
+     */
+    public void decreasePriority(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToChange) {
+
+        boolean changed = entityValueHolder.changePriority(cft, valuePeriodToChange, false);
+
+        if (changed) {
+            messages.info(new BundleKey("messages", "customFieldTemplate.periodValue.priorityDecreased"));
+        }
+    }
+
+    /**
+     * Remove a customField period
+     * 
+     * @param entityValueHolder Entity custom field value holder
+     * @param cft Custom field definition
+     * @param valuePeriodToRemove Custom field value period to remove
+     */
+    public void removePeriod(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToRemove) {
+
+        boolean removed = entityValueHolder.removeValuePeriod(cft, valuePeriodToRemove);
+
+        if (removed) {
+            messages.info(new BundleKey("messages", "customFieldTemplate.periodValue.removedPeriod"));
+        }
+    }
+
+    /**
      * Add a new customField period with a previous validation that matching period does not exists
      * 
      * @param entityValueHolder Entity custom field value holder
@@ -405,7 +461,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (cfValue != null) {
                 entityValueHolder.setValuePeriodMatched(true);
-                ParamBean paramBean = ParamBean.getInstance();
+                ParamBean paramBean = paramBeanFactory.getInstance();
                 String datePattern = paramBean.getDateFormat();
 
                 // For a strict match need to edit an existing period
@@ -605,7 +661,6 @@ public class CustomFieldDataEntryBean implements Serializable {
         return customFieldInstanceService.getInheritedOnlyCFValue(entity, cfCode);
     }
 
-
     /**
      * Get a a list of custom field CFvalues for a given entity's parent's hierarchy up. (DOES NOT include a given entity)
      * 
@@ -614,12 +669,15 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return A list of Custom field CFvalues. From all the entities CF entity hierarchy up.
      */
     public List<CustomFieldValue> getInheritedVersionableCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
-        List<CustomFieldValue> values =customFieldInstanceService.getInheritedOnlyAllCFValues(entity, cft.getCode());
-        
-        for (CustomFieldValue cfv : values) {
-            deserializeForGUI(cfv, cft);
+        List<CustomFieldValue> values = new ArrayList<>();
+        if (cft != null) {
+            values.addAll(customFieldInstanceService.getInheritedOnlyAllCFValues(entity, cft.getCode()));
+
+            for (CustomFieldValue cfv : values) {
+                deserializeForGUI(cfv, cft);
+            }
         }
-        
+
         return values;
     }
 
@@ -648,11 +706,14 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Add row to a matrix.
-     * 
+     * Add row to a matrix. v5.0: Fix for save values on a multi values CF type problem
+     *
      * @param entityValueHolder Entity custom field value holder
      * @param cfValue Map value holder
      * @param cft Custom field definition
+     *
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void addMatrixRow(CustomFieldValueHolder entityValueHolder, CustomFieldValue cfValue, CustomFieldTemplate cft) {
 
@@ -880,7 +941,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param entity Entity, the fields relate to
      * @param isNewEntity Is it a new entity
-     * @return
+     * @return CustomFieldValue Map
      * @throws BusinessException
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
@@ -901,7 +962,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
      *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
      *        instead we duplicate again.
-     * @return
+     * @return CustomFieldValue Map
      * @throws BusinessException
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity,
@@ -949,7 +1010,8 @@ public class CustomFieldDataEntryBean implements Serializable {
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
                     if ((cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity)))) {
+                            || ((isNewEntity && cft.isHideOnNew())
+                                    || (entity != null && !ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)))) {
                         log.trace("Will ommit from saving cfi {}", cfValue);
 
                         // Existing value update
@@ -984,7 +1046,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param childEntityTypeFieldDefinition Child entity type field definition
      * @param childFieldCode Child entity field code
-     * @return
+     * @return customFieldTemplate
      */
     public CustomFieldTemplate getChildEntityField(CustomFieldTemplate childEntityTypeFieldDefinition, String childFieldCode) {
 

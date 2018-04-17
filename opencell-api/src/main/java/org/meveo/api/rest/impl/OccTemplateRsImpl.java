@@ -10,9 +10,15 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.OccTemplateRs;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
@@ -84,11 +90,25 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
     }
 
     @Override
-    public GetOccTemplatesResponseDto list() {
+    public GetOccTemplatesResponseDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+        GetOccTemplatesResponseDto result = new GetOccTemplatesResponseDto();
+        
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(query, null, offset, limit, sortBy, sortOrder);
+
+        try {
+            result = occTemplateApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
+    @Override
+    public GetOccTemplatesResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
         GetOccTemplatesResponseDto result = new GetOccTemplatesResponseDto();
 
         try {
-            result.setOccTemplates(occTemplateApi.list());
+            result = occTemplateApi.list(pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

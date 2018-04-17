@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -68,19 +67,19 @@ public class WorkflowService extends BusinessService<Workflow> {
 
     @Inject
     private BusinessEntityService businessEntityService;
-    
+
     @Inject
     private WorkflowHistoryService workflowHistoryService;
 
-    static Set<Class<?>>  meveo_classes;
+    static Set<Class<?>> meveo_classes;
     static {
-    	meveo_classes = ReflectionUtils.getClassesAnnotatedWith(WorkflowTypeClass.class, "org.meveo");
+        meveo_classes = ReflectionUtils.getClassesAnnotatedWith(WorkflowTypeClass.class, "org.meveo");
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Workflow> getWorkflows() {
-        return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where disabled=:disabled ")
-            .setParameter("disabled", false).getResultList();
+        return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where disabled=:disabled ").setParameter("disabled", false)
+            .getResultList();
     }
 
     @SuppressWarnings("unchecked")
@@ -90,9 +89,8 @@ public class WorkflowService extends BusinessService<Workflow> {
     }
 
     @SuppressWarnings("unchecked")
-	public List<Workflow> findByWFTypeWithoutStatus(String wfType) {
-        return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where wfType=:wfType ")
-            .setParameter("wfType", wfType).getResultList();
+    public List<Workflow> findByWFTypeWithoutStatus(String wfType) {
+        return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where wfType=:wfType ").setParameter("wfType", wfType).getResultList();
     }
 
     /**
@@ -109,12 +107,12 @@ public class WorkflowService extends BusinessService<Workflow> {
                 }
             }
         }
-        Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces();
+        List<Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfacesWCompile();
 
         if (mmap != null) {
-            for (Entry<String, Class<ScriptInterface>> entry : mmap.entrySet()) {
-                if (entry.getValue().isAnnotationPresent(WorkflowTypeClass.class)) {
-                    result.add(entry.getValue());
+            for (Class<ScriptInterface> si : mmap) {
+                if (si.isAnnotationPresent(WorkflowTypeClass.class)) {
+                    result.add(si);
                 }
             }
         }
@@ -173,7 +171,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      */
     public boolean isWorkflowSetup(Class<? extends BusinessEntity> entityClass) {
         List<Workflow> workflows = findByEntity(entityClass);
-		return !workflows.isEmpty();
+        return !workflows.isEmpty();
     }
 
     /**
@@ -181,7 +179,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * 
      * @param entity Entity to execute worklows on
      * @param workflowCode A concrete worklfow to execute
-
+     * 
      * @return Updated entity
      * @throws BusinessException business exception
      */
@@ -199,11 +197,11 @@ public class WorkflowService extends BusinessService<Workflow> {
      * Execute all matching workflows on the given entity
      * 
      * @param entity Entity to execute worklows on
-
+     * 
      * @return Updated entity
      * @throws BusinessException business exception
      */
-    public BusinessEntity  executeMatchingWorkflows(BusinessEntity entity) throws BusinessException {
+    public BusinessEntity executeMatchingWorkflows(BusinessEntity entity) throws BusinessException {
 
         List<Workflow> wfs = findByEntity(entity.getClass());
         if (wfs == null || wfs.isEmpty()) {
@@ -240,15 +238,15 @@ public class WorkflowService extends BusinessService<Workflow> {
 
                 if (matchExpression(wfTransition.getCombinedEl(), entity)) {
 
-                    log.debug("Processing transition: {} on entity {}", wfTransition, entity);    
+                    log.debug("Processing transition: {} on entity {}", wfTransition, entity);
                     WorkflowHistory wfHistory = new WorkflowHistory();
-                    if(workflow.isEnableHistory()){	                    
-	                    wfHistory.setActionDate(new Date());
-	                    wfHistory.setEntityInstanceCode(entity.getCode());
-	                    wfHistory.setFromStatus(wfTransition.getFromStatus());
-	                    wfHistory.setToStatus(wfTransition.getToStatus());
-	                    wfHistory.setTransitionName(wfTransition.getDescription());
-	                    wfHistory.setWorkflow(workflow);
+                    if (workflow.isEnableHistory()) {
+                        wfHistory.setActionDate(new Date());
+                        wfHistory.setEntityInstanceCode(entity.getCode());
+                        wfHistory.setFromStatus(wfTransition.getFromStatus());
+                        wfHistory.setToStatus(wfTransition.getToStatus());
+                        wfHistory.setTransitionName(wfTransition.getDescription());
+                        wfHistory.setWorkflow(workflow);
                     }
 
                     List<WFAction> listWFAction = wfActionService.listByTransition(wfTransition);
@@ -257,7 +255,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                             log.debug("Processing action: {} on entity {}", wfAction);
                             Object actionResult = executeExpression(wfAction.getActionEl(), entity);
                             log.trace("Workflow action executed. Action {}, entity {}", wfAction, entity);
-                            if (entity.equals(actionResult)){
+                            if (entity.equals(actionResult)) {
                                 entity = (BusinessEntity) actionResult;
                             }
                             if (workflow.isEnableHistory()) {
@@ -269,10 +267,10 @@ public class WorkflowService extends BusinessService<Workflow> {
                             }
                         }
                     }
-					if(workflow.isEnableHistory()){
-						workflowHistoryService.create(wfHistory);
-					}
-                    
+                    if (workflow.isEnableHistory()) {
+                        workflowHistoryService.create(wfHistory);
+                    }
+
                     wfType.setEntity((BusinessEntity) entity);
                     wfType.changeStatus(wfTransition.getToStatus());
 
@@ -294,7 +292,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * Return the workflowType class by name.
      * 
      * @param wfTypeClassName workflow type class name
-     * @return workflow 
+     * @return workflow
      * @throws ClassNotFoundException class not found exception
      * @throws InvalidScriptException invalid script exception
      */
@@ -305,7 +303,7 @@ public class WorkflowService extends BusinessService<Workflow> {
 
         } catch (ClassNotFoundException ex) {
             try {
-                Class<?> clazz = scriptInstanceService.getScriptInterface( wfTypeClassName);
+                Class<?> clazz = scriptInstanceService.getScriptInterface(wfTypeClassName);
                 return clazz;
 
             } catch (ElementNotFoundException e) {
@@ -324,7 +322,7 @@ public class WorkflowService extends BusinessService<Workflow> {
             userMap.put("entity", object);
         }
 
-        return ValueExpressionWrapper.evaluateToBoolean(expression, "entity", object);
+        return ValueExpressionWrapper.evaluateToBooleanOneVariable(expression, "entity", object);
 
     }
 
@@ -336,31 +334,31 @@ public class WorkflowService extends BusinessService<Workflow> {
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, Object.class);
     }
 
-	public synchronized void duplicate(Workflow entity) throws BusinessException {
-		entity = refreshOrRetrieve(entity);
-		
-		entity.getTransitions().size();
-		
-		String code = findDuplicateCode(entity);
+    public synchronized void duplicate(Workflow entity) throws BusinessException {
+        entity = refreshOrRetrieve(entity);
 
-		// Detach and clear ids of entity and related entities
-		detach(entity);
-		entity.setId(null);
-		
-		List<WFTransition> wfTransitions = entity.getTransitions();
-		entity.setTransitions(new ArrayList<WFTransition>());
-		
-		entity.setCode(code);
-		create(entity);
-		
-		if (wfTransitions != null) {
-			for (WFTransition wfTransition : wfTransitions) {
-				wfTransition = wfTransitionService.duplicate(wfTransition, entity);
-				
-				entity.getTransitions().add(wfTransition);
-			}
-		}
-		
-		update(entity);
-	}
+        entity.getTransitions().size();
+
+        String code = findDuplicateCode(entity);
+
+        // Detach and clear ids of entity and related entities
+        detach(entity);
+        entity.setId(null);
+
+        List<WFTransition> wfTransitions = entity.getTransitions();
+        entity.setTransitions(new ArrayList<WFTransition>());
+
+        entity.setCode(code);
+        create(entity);
+
+        if (wfTransitions != null) {
+            for (WFTransition wfTransition : wfTransitions) {
+                wfTransition = wfTransitionService.duplicate(wfTransition, entity);
+
+                entity.getTransitions().add(wfTransition);
+            }
+        }
+
+        update(entity);
+    }
 }
