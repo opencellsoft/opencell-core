@@ -21,6 +21,7 @@ package org.meveo.model.communication;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -45,16 +46,16 @@ import org.meveo.model.crm.Email;
 import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
-@ExportIdentifier({ "code" })
+@ExportIdentifier({ "campaign" })
 @Table(name = "com_campaign", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "com_campaign_seq"), })
+		@Parameter(name = "sequence_name", value = "com_campaign_seq")})
 public class Campaign extends BusinessEntity {
 
 	private static final long serialVersionUID = -5865150907978275819L;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "bi_campaign_group", joinColumns = @JoinColumn(name = "com_campaign_id"), inverseJoinColumns = @JoinColumn(name = "crm_group_id"))
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JoinTable(name = "com_campaign_crm_group", joinColumns = @JoinColumn(name = "com_campaign_id"), inverseJoinColumns = @JoinColumn(name = "crm_group_id"))
     private List<ContactGroup> contactGroups;
 	
 	@Temporal(TemporalType.TIMESTAMP)

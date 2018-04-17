@@ -26,6 +26,10 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -33,11 +37,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.intcrm.AdressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
@@ -73,16 +80,20 @@ public class Contact extends BaseEntity {
 	@Size(max = 2000)
 	private String socialIdentifier;
 
+	@Type(type = "numeric_boolean")
 	@Column(name = "is_vip", columnDefinition = "tinyint default false")
 	private boolean isVip;
-
+	
+	@Type(type = "numeric_boolean")
 	@Column(name = "is_suspect", columnDefinition = "tinyint default yes")
 	private boolean isSuspect;
-
+	
+	@Type(type = "numeric_boolean")
 	@Column(name = "agreed_ua", columnDefinition = "tinyint default false")
 	private boolean agreedToUA;
 
-	@OneToMany(mappedBy = "com_contact", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "com_contact_id"), inverseJoinColumns = @JoinColumn(name = "crm_contact_group_id"))
 	private List<ContactGroup> contactGroups = new ArrayList<>();
 
 	// It is provider resposibility to create contacts with unique codes
@@ -95,6 +106,10 @@ public class Contact extends BaseEntity {
 
 	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
 	private List<Message> messages;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adress_book_id")
+    private AdressBook adressBook;
 	
 	public boolean isAgreedToUA() {
 		return agreedToUA;
@@ -200,7 +215,21 @@ public class Contact extends BaseEntity {
 		this.messages = messages;
 	}
 
-	@Override
+	/**
+     * @return the adressBook
+     */
+    public AdressBook getAdressBook() {
+        return adressBook;
+    }
+
+    /**
+     * @param adressBook the adressBook to set
+     */
+    public void setAdressBook(AdressBook adressBook) {
+        this.adressBook = adressBook;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 
 		if (this == obj) {

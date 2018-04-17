@@ -1,5 +1,6 @@
 package org.meveo.model.intcrm;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -24,21 +27,21 @@ import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
 
 @Entity
-@CustomFieldEntity(cftCodePrefix = "ADDBOOK")
-@ExportIdentifier({ "code" })
-//@DiscriminatorValue(value = "")
+@ExportIdentifier({ "addressbook" })
 @Table(name = "crm_adressbook")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "crm_adressbook_seq"), })
 public class AdressBook extends BaseEntity {
 	
 	@Column(name = "name", length = 5)
 	@Size(max = 50)
 	private String name;
 	
-    @OneToMany(mappedBy = "crm_adressbook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Set<Contact> contacts = new HashSet<Contact>();
+    @OneToMany(mappedBy = "adressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Contact> contacts = new ArrayList<Contact>();
 
-    @OneToMany(mappedBy = "crm_adressbook")
-	private List<ContactGroup> groups;
+    @OneToMany(mappedBy = "adressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<ContactGroup> groups = new ArrayList<ContactGroup>();
 
 	public String getName() {
 		return name;
@@ -48,15 +51,23 @@ public class AdressBook extends BaseEntity {
 		this.name = name;
 	}
 
-	public Set<Contact> getContacts() {
-		return contacts;
-	}
+	
 
-	public void setContacts(Set<Contact> contacts) {
-		this.contacts = contacts;
-	}
+	/**
+     * @return the contacts
+     */
+    public List<Contact> getContacts() {
+        return contacts;
+    }
 
-	public List<ContactGroup> getGroups() {
+    /**
+     * @param contacts the contacts to set
+     */
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public List<ContactGroup> getGroups() {
 		return groups;
 	}
 

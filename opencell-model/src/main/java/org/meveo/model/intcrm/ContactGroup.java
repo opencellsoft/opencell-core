@@ -3,22 +3,18 @@ package org.meveo.model.intcrm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.Campaign;
@@ -28,6 +24,8 @@ import org.meveo.model.communication.contact.Contact;
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "crm_contact_group")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "crm_contact_group_seq") })
 public class ContactGroup extends BaseEntity{
 
 	
@@ -43,12 +41,15 @@ public class ContactGroup extends BaseEntity{
 	@Size(max = 50)
 	private String type;
     
-    @OneToMany(mappedBy = "crm_contact_group", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "contactGroups", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Contact> contacts = new ArrayList<>();
     
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "bi_campaign_group", joinColumns = @JoinColumn(name = "crm_group_id"), inverseJoinColumns = @JoinColumn(name = "com_campaign_id"))
+    @ManyToMany(mappedBy = "contactGroups", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Campaign> campaigns;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adress_book_id")
+    private AdressBook adressBook;
 
 	public String getName() {
 		return name;
@@ -89,4 +90,18 @@ public class ContactGroup extends BaseEntity{
 	public void setCampaigns(List<Campaign> campaigns) {
 		this.campaigns = campaigns;
 	}
+
+    /**
+     * @return the adressBook
+     */
+    public AdressBook getAdressBook() {
+        return adressBook;
+    }
+
+    /**
+     * @param adressBook the adressBook to set
+     */
+    public void setAdressBook(AdressBook adressBook) {
+        this.adressBook = adressBook;
+    }
 }

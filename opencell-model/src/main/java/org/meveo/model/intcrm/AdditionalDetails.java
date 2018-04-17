@@ -1,25 +1,20 @@
 package org.meveo.model.intcrm;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@CustomFieldEntity(cftCodePrefix = "ADDDETAILS")
-@ExportIdentifier({ "code" })
-//@DiscriminatorValue(value = "")
+@ExportIdentifier({ "additionalDetails" })
 @Table(name = "crm_additional_details")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "crm_additional_details_seq") })
 public class AdditionalDetails extends BaseEntity{
 	@Column(name = "company_name", length = 50)
 	@Size(max = 50)

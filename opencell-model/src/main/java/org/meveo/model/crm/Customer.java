@@ -31,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.AccountEntity;
@@ -40,6 +41,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.intcrm.AdditionalDetails;
+import org.meveo.model.intcrm.AdressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
@@ -78,7 +80,8 @@ public class Customer extends AccountEntity {
     @Column(name = "registration_no", length = 100)
     private String registrationNo;
     
-    //OneToOne
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "crm_additional_details_id")
     private AdditionalDetails additionalDetails;
     
     public AdditionalDetails getAdditionalDetails() {

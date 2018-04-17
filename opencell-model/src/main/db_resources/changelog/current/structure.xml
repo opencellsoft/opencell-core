@@ -647,6 +647,7 @@
             <column name="website_url" type="varchar(255)"/>
             <column name="instant_messengers" type="varchar(2000)"/>
         </createTable>
+        <createSequence sequenceName="crm_additional_details_seq" />
         
         <addColumn tableName="com_contact">
             <column name="description" type="varchar(255)"/>
@@ -656,8 +657,9 @@
             <column name="imported_by" type="varchar(50)"/>
             <column name="social_identifier" type="varchar(2000)"/>
             <column name="is_vip" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="is_Suspect" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="is_suspect" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="adress_book_id" type="bigint"/>
         </addColumn>
 
         <createTable tableName="crm_adressbook">
@@ -667,12 +669,8 @@
             <column name="version" type="int4" />
             <column name="name" type="varchar(50)"/>
         </createTable>
-
-        <createTable tableName="com_contact_crm_adressbook">
-            <column name="crm_adressbook_id" type="bigint"/>
-            <column name="com_contact_id" type="bigint"/>
-        </createTable>
-        <addPrimaryKey columnNames="crm_adressbook_id, com_contact_id" constraintName="com_contact_crm_adressbook_pkey" tableName="com_contact_crm_adressbook" />
+        
+        <createSequence sequenceName="crm_adressbook_seq" />
 
         <createTable tableName="crm_contact_group">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -682,8 +680,11 @@
             <column name="name" type="varchar(50)"/>
             <column name="description" type="varchar(255)"/>
             <column name="type" type="varchar(50)"/>
+            <column name="adress_book_id" type="bigint"/>
         </createTable>
-
+        
+        <createSequence sequenceName="crm_contact_group_seq" />
+        
         <createTable tableName="crm_contact_group_com_contact">
             <column name="crm_contact_group_id" type="bigint"/>
             <column name="com_contact_id" type="bigint"/>
@@ -699,6 +700,8 @@
             <column name="description" type="varchar(255)"/>
             <column name="type" type="varchar(50)"/>
         </createTable>
+        
+        <createSequence sequenceName="com_communication_entity_seq" />
 
         <addColumn tableName="crm_customer">
             <column name="crm_additional_details_id" type="bigint"/>
