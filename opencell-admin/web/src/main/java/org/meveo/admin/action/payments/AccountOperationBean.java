@@ -158,7 +158,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
      * Consult Matching code page
      * 
      * @return the URL of the matching code page containing the selected operation
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
 
     private void dunningInclusionExclusionPartial(AccountOperation accountOperation, Boolean exclude) throws BusinessException {

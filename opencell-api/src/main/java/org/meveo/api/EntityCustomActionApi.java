@@ -218,7 +218,7 @@ public class EntityCustomActionApi extends BaseApi {
      * @param action EntityCustomAction to update with values from dto
      * @return A new or updated EntityCustomAction object
      * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private void entityCustomActionFromDTO(EntityCustomActionDto dto, EntityCustomAction action) throws MeveoApiException, BusinessException {
 

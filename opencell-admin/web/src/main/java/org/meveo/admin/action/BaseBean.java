@@ -400,7 +400,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Save or update entity depending on if entity is transient.
      * 
      * @param entity Entity to save.
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     protected T saveOrUpdate(T entity) throws BusinessException {
         if (entity.isTransient()) {
@@ -604,7 +604,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Delete current entity from detail page and redirect to a previous page. Used mostly for deletion in detail pages.
      * 
      * @return back() page if deleted success, if not, return a callback result to UI for validate
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     public String deleteWithBack() throws BusinessException {

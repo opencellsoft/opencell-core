@@ -937,7 +937,7 @@ public class OrderApi extends BaseApi {
      * 
      * @param orderItem Order item to convert to dto
      * @return Order item Dto
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private ProductOrderItem orderItemToDto(org.meveo.model.order.OrderItem orderItem) throws BusinessException {
 

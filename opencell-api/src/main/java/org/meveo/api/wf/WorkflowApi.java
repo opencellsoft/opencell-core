@@ -48,10 +48,10 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
      * 
      * @param workflowDto
      * 
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
+     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
+     * @throws BusinessException General business exception
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
      */
     public Workflow create(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
 
@@ -81,11 +81,11 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
      * 
      * @param workflowDto
      * 
-     * @throws EntityDoesNotExistsException
-     * @throws MeveoApiException
-     * @throws BusinessException
-     * @throws MissingParameterException
-     * @throws EntityAlreadyExistsException
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws MeveoApiException General API exception
+     * @throws BusinessException General business exception
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
      */
     public Workflow update(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
 
@@ -161,9 +161,9 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
      * 
      * @param workflowCode
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws BusinessException
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws BusinessException General business exception
      */
     public void remove(String workflowCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
@@ -200,10 +200,10 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
      * 
      * @param workflowDto
      * 
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws EntityDoesNotExistsException
-     * @throws MissingParameterException
+     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
+     * @throws BusinessException General business exception
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws MissingParameterException Missing one or more parameters
      */
     @Override
     public Workflow createOrUpdate(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
@@ -233,7 +233,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     /**
      * 
      * @param workflowDto
-     * @throws MissingParameterException
+     * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(WorkflowDto workflowDto, boolean isUpdate) throws MissingParameterException {
         if (StringUtils.isBlank(workflowDto.getCode())) {
@@ -279,7 +279,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
      * @param baseEntityInstanceId
      * @param workflowCode
      * 
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      * @throws MeveoApiException
      */
     @SuppressWarnings("unchecked")

@@ -2041,7 +2041,7 @@ public class EntityExportImportService implements Serializable {
      * @param stringToAnalyze String to analyze for EL expressions
      * @param elContext EL variables
      * @return String with EL replaced by values
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private String resolveElExpressionsInString(String stringToAnalyze, Map<Object, Object> elContext) throws BusinessException {
 

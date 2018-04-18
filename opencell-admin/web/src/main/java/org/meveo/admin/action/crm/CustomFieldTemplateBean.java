@@ -276,7 +276,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     /**
      * Copy and associate custom field template with another entity class
      * 
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     public void copyCFT() throws BusinessException {

@@ -206,7 +206,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      * Compute balance due
      * 
      * @return due balance
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
@@ -219,7 +219,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      * Compute balance exigible without litigation
      * 
      * @return exigible balance without litigation
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
         if (entity.getId() == null) {

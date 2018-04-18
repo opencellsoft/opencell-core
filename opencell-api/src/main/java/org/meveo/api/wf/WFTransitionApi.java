@@ -177,7 +177,7 @@ public class WFTransitionApi extends BaseApi {
     /**
      * 
      * @param wfTransitionDto
-     * @throws MissingParameterException
+     * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(WFTransitionDto wfTransitionDto, boolean isUpdate) throws MissingParameterException {
         if (wfTransitionDto == null) {

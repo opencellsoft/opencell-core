@@ -378,7 +378,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     /**
      * clean uploaded picture
      * 
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     @Override

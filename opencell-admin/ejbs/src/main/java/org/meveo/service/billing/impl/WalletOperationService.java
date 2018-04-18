@@ -366,7 +366,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     // * @param criteria3 Criteria 3
     //
     // * @return Wallet operation
-    // * @throws BusinessException
+    // * @throws BusinessException General business exception
     // */
     // public WalletOperation rateProductApplicationVirtual(ProductChargeTemplate chargeTemplate, UserAccount userAccount, String offerCode, BigDecimal inputQuantity,
     // BigDecimal quantity, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria1, String criteria2, String criteria3)

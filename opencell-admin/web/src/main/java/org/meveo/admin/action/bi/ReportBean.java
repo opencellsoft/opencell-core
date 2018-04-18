@@ -86,7 +86,7 @@ public class ReportBean extends BaseBean<Report> {
 	/**
 	 * Creates report.
 	 * 
-	 * @throws BusinessException
+	 * @throws BusinessException General business exception
 	 */
 	public String executeReport() throws BusinessException {
 		log.info("executeReport()");

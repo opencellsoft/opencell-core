@@ -560,7 +560,7 @@ public class BillingAccountApi extends AccountEntityApi {
      * @param postData Billing account DTO
      * @param billingAccount Billing account to update if necessary
      * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private void createOrUpdatePaymentMethodInCA(BillingAccountDto postData, BillingAccount billingAccount) throws MeveoApiException, BusinessException {
 

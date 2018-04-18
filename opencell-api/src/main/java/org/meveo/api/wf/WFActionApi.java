@@ -25,10 +25,10 @@ public class WFActionApi extends BaseApi {
      * 
      * @param wfActionDto
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
+     * @throws BusinessException General business exception
      */
     public void create(WFTransition wfTransition, WFActionDto wfActionDto)
             throws MissingParameterException, BusinessException {
@@ -42,10 +42,10 @@ public class WFActionApi extends BaseApi {
      * 
      * @param wfActionDto
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws BusinessException General business exception
+     * @throws BusinessApiException General business exception
      */
     public void update(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException {
         validateDto(wfActionDto, true);
@@ -68,11 +68,11 @@ public class WFActionApi extends BaseApi {
      * 
      * @param wfActionDto
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
+     * @throws BusinessException General business exception
+     * @throws BusinessApiException General business exception
      */
     public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto)
             throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException {
@@ -87,7 +87,7 @@ public class WFActionApi extends BaseApi {
     /**
      * 
      * @param wfActionDto
-     * @throws MissingParameterException
+     * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(WFActionDto wfActionDto, boolean isUpdate) throws MissingParameterException {
         if (isUpdate && StringUtils.isBlank(wfActionDto.getUuid())) {

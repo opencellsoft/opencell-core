@@ -810,7 +810,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * 
      * @param cfEntity Custom field entity values will be applied to
      * @return
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private List<ProductCharacteristic> customFieldsAsCharacteristics(BusinessCFEntity cfEntity) throws BusinessException {
 

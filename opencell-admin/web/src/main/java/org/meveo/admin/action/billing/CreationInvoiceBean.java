@@ -627,7 +627,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * delete a cat invoice agregate
 	 * 
-	 * @throws BusinessException
+	 * @throws BusinessException General business exception
 	 */
 	public void deleteLinkedInvoiceCategory() throws BusinessException {
 		for (SubCategoryInvoiceAgregate subCat : selectedCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates()) {
@@ -640,7 +640,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * delete a sub cat invoice agregate
 	 * 
-	 * @throws BusinessException
+	 * @throws BusinessException General business exception
 	 */
 	public void deleteLinkedInvoiceSubCategory() throws BusinessException {
 		agregateHandler.removeInvoiceSubCategory(selectedSubCategoryInvoiceAgregate.getInvoiceSubCategory(), getFreshBA(), getFreshUA(),
@@ -724,7 +724,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * 
 	 * @return InvoicesByTypeAndBA
-	 * @throws BusinessException
+	 * @throws BusinessException General business exception
 	 */
 	public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
 		if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
