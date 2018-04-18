@@ -637,7 +637,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     /**
      * New product offering is selected - need to reset quoteItem values and the offer tree
      * 
-     * @param event
+     * @param event faces select event
      */
     public void onMainProductOfferingSet(SelectEvent event) {
 
@@ -784,7 +784,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * 
      * @param characteristics Product characteristics
      * @param cfEntity Custom field entity values will be applied to
-     * @return
      */
     private void extractAndMakeAvailableInGUICustomFields(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity) {
 

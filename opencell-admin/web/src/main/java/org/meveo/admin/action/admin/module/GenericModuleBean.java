@@ -394,7 +394,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     /**
      * clean uploaded pictures for multi delete
      * 
-     * @throws Exception
+     * @throws Exception Exception class
      */
     @ActionMethod
     @Override

@@ -154,7 +154,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
      * Autocomplete method for selecting a class that implement ICustomFieldEntity. Return a human readable class name. Used in conjunction with CustomFieldAppliesToConverter
      * 
      * @param query Partial class name to match
-     * @return
+     * @return list of class name suggestions
      */
     public List<String> autocompleteClassNamesHuman(String query) {
         List<String> clazzNames = new ArrayList<String>();

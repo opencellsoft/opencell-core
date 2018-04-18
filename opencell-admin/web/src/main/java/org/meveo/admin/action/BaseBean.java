@@ -873,7 +873,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * true in edit mode
      * 
-     * @return
+     * @return the state of edit mode
      */
     public boolean isEdit() {
         if (edit == null || org.meveo.commons.utils.StringUtils.isBlank(edit)) {

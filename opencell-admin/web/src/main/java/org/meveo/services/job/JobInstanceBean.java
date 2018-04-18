@@ -127,8 +127,8 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     /**
      * Get JobInstance name from a jobId
      * 
-     * @param jobId
-     * @return timename
+     * @param jobId job identifier
+     * @return timer name
      */
     public String translateToTimerName(Long jobId) {
         if (jobId != null) {

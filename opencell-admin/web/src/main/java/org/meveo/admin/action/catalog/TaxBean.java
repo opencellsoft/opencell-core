@@ -82,6 +82,7 @@ public class TaxBean extends CustomFieldBean<Tax> {
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     * @return tax service
      */
     @Override
     protected IPersistenceService<Tax> getPersistenceService() {

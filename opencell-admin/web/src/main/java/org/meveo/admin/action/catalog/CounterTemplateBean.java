@@ -66,7 +66,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
     /**
      * DataModel for primefaces lazy loading datatable component.
-     * 
+     * @param counterType counter type enumeration
      * @return LazyDataModel implementation.
      */
     public LazyDataModel<CounterTemplate> getLazyDataModel(CounterTypeEnum counterType) {
