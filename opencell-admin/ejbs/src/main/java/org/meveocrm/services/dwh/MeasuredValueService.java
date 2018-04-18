@@ -1,18 +1,19 @@
 package org.meveocrm.services.dwh;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.BeanUtils;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.service.base.PersistenceService;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Wassim Drira
@@ -210,5 +211,51 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
         }
 
         return myQuery.getResultList();
+    }
+
+    /**
+     * Save updated values
+     *
+     * @param entity that contains the updated values
+     * @return true to indicate that an update was done
+     * @throws BusinessException if the code was changed.
+     */
+    public boolean updateCellEdit(MeasuredValue entity) throws BusinessException {
+        boolean result = false;
+        MeasuredValue measuredValue = findById(entity.getId());
+        if (measuredValue != null) {
+            if (!BeanUtils.equals(entity.getCode(), measuredValue.getCode())) {
+                // if code has changed, throw an error
+                throw new BusinessException("Code " + entity.getCode() + " can not be replaced!");
+            }
+            if (!BeanUtils.equals(entity.getValue(), measuredValue.getValue())) {
+                measuredValue.setValue(entity.getValue());
+                result = true;
+            }
+            if (!BeanUtils.equals(entity.getDate(), measuredValue.getDate())) {
+                measuredValue.setDate(entity.getDate());
+                result = true;
+            }
+            if (!(BeanUtils.equals(entity.getDimension1(), measuredValue.getDimension1()))) {
+                measuredValue.setDimension1(entity.getDimension1());
+                result = true;
+            }
+            if (!BeanUtils.equals(entity.getDimension2(), measuredValue.getDimension2())) {
+                measuredValue.setDimension2(entity.getDimension2());
+                result = true;
+            }
+            if (!BeanUtils.equals(entity.getDimension3(), measuredValue.getDimension3())) {
+                measuredValue.setDimension3(entity.getDimension3());
+                result = true;
+            }
+            if (!BeanUtils.equals(entity.getDimension4(), measuredValue.getDimension4())) {
+                measuredValue.setDimension4(entity.getDimension4());
+                result = true;
+            }
+            if (result) {
+                update(measuredValue);
+            }
+        }
+        return result;
     }
 }
