@@ -157,9 +157,6 @@ public class SubscriptionApi extends BaseApi {
      * @param postData The subscription dto
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
-     * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -243,9 +240,6 @@ public class SubscriptionApi extends BaseApi {
      * @param postData subscription Dto
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
-     * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -333,8 +327,6 @@ public class SubscriptionApi extends BaseApi {
      * @param activateServicesDto activateServicesDto
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException Business exception
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void activateServices(ActivateServicesRequestDto activateServicesDto) throws MeveoApiException, BusinessException {
 
@@ -532,8 +524,6 @@ public class SubscriptionApi extends BaseApi {
      * @param instantiateServicesDto instantiateServices Dto
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException Business exception
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void instantiateServices(InstantiateServicesRequestDto instantiateServicesDto) throws MeveoApiException, BusinessException {
 

@@ -44,13 +44,13 @@ public class WFTransitionApi extends BaseApi {
 
     /**
      *
-     * @param workflow
-     * @param wfTransitionDto
+     * @param workflow the parent workflow
+     * @param wfTransitionDto the transition that will be created and added to the given workflow
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
+     * @throws MissingParameterException missing parameter
+     * @throws EntityDoesNotExistsException lookup entity does not exist
+     * @throws EntityAlreadyExistsException entity being created already exists
+     * @throws BusinessException generic business exception
      */
     public void create(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
@@ -83,14 +83,14 @@ public class WFTransitionApi extends BaseApi {
     }
 
     /**
+     * @param workflow workflow of the transition that will be updated
+     * @param wfTransitionDto details of the transition that will be updated
      * 
-     * @param wfTransitionDto
-     * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @throws MissingParameterException missing parameter
+     * @throws EntityDoesNotExistsException lookup entity does not exist
+     * @throws EntityAlreadyExistsException entity being created already exists
+     * @throws BusinessException generic business exception
+     * @throws BusinessApiException equivalent of business exception in api context
      */
     public void update(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {
@@ -152,15 +152,14 @@ public class WFTransitionApi extends BaseApi {
     }
 
     /**
-     *
-     * @param workflow
-     * @param wfTransitionDto
+     * @param workflow workflow of the transition that will be updated
+     * @param wfTransitionDto details of the transition that will be updated
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @throws MissingParameterException missing parameter
+     * @throws EntityDoesNotExistsException lookup entity does not exist
+     * @throws EntityAlreadyExistsException entity being created already exists
+     * @throws BusinessException generic business exception
+     * @throws BusinessApiException equivalent of business exception in api context
      */
     public void createOrUpdate(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {

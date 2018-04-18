@@ -58,12 +58,10 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
      * v5.0: Add script disable and check for ScriptInstanceCode
      * 
      * @param postData The notification dto
-     * @return The notification entity
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException Business exception
      * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * @return The notification entity
      */
     public Notification create(NotificationDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
@@ -155,12 +153,10 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
      * v5.0: Add script disable and check for ScriptInstanceCode
      * 
      * @param postData The notification dto
-     * @return The notification entity
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException Business exception
      *  
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * @return The notification entity
      */
     public Notification update(NotificationDto postData) throws MeveoApiException, BusinessException {
 

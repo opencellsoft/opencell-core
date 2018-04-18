@@ -31,7 +31,7 @@ public class WFActionApi extends BaseApi {
      * @throws BusinessException
      */
     public void create(WFTransition wfTransition, WFActionDto wfActionDto)
-            throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
+            throws MissingParameterException, BusinessException {
         validateDto(wfActionDto, false);
         WFAction wfAction = fromDTO(wfActionDto, null);
         wfAction.setWfTransition(wfTransition);
@@ -75,7 +75,7 @@ public class WFActionApi extends BaseApi {
      * @throws BusinessApiException
      */
     public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto)
-            throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException {
         WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid());
         if (wfAction == null) {
             create(wfTransition, wfActionDto);
