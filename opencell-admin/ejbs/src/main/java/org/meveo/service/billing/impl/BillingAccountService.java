@@ -346,10 +346,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     /**
      * Compute the invoice amount by charge.
      * 
-     * @param chargeInstance chargeInstance
-     * @param firstTransactionDate first transaction date.
-     * @param lastTransactionDate last transaction date
-     * @return computed invoice amount by charge.
+     * @param chargeInstance Charge instance
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @param billingAccount Billing account
+     * @return Computed invoice amount by charge.
      */
     public List<Object[]> computeChargeInvoiceAmount(ChargeInstance chargeInstance, Date firstTransactionDate, Date lastTransactionDate, BillingAccount billingAccount) {
         Query q = getEntityManager().createNamedQuery("RatedTransaction.sumByCharge").setParameter("chargeInstance", chargeInstance)
@@ -595,9 +596,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     /**
      * Create min amounts rated transactions
      * 
-     * @param billingAccount the billing account
-     * @param lastTransactionDate last transaction date
-     * @return invoice amount
+     * @param billingAccount The billing account
+     * @param lastTransactionDate Last transaction date
+     * @throws BusinessException General business exception
+     * @return Invoice amount
      */
     public BigDecimal createMinAmountsRT(BillingAccount billingAccount, Date lastTransactionDate) throws BusinessException {
 
