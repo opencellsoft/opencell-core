@@ -776,7 +776,7 @@ public class UsageRatingService implements Serializable {
                 }
             } catch (Exception e) {
                 edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE+ " : " +e.getMessage());
+                edr.setRejectReason(EDRRejectReasonEnum.GENERAL_ERROR+ " : " +e.getMessage());
                 throw new BusinessException(e.getMessage());
             }
         }
