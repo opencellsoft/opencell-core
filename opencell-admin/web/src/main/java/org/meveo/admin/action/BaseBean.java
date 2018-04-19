@@ -433,7 +433,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Save method when used in popup (ajax). Same as {@link #BaseBean.saveOrUpdate(boolean)}, but does not redirect to the next view. Sets validation to failed if saveOrUpdate
+     * Save method when used in popup (ajax). Same as {@link #saveOrUpdate(boolean)}, but does not redirect to the next view. Sets validation to failed if saveOrUpdate
      * method called does not return a value or fails.
      * 
      * @throws BusinessException business exception
@@ -525,7 +525,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Get a navigation view name that will display an entity creation page. By default is same as {@link #BaseBean.getEditViewName()}. Override this method if its view name does
+     * Get a navigation view name that will display an entity creation page. By default is same as {@link #getEditViewName()}. Override this method if its view name does
      * not fit.
      * 
      * @return Navigation view name
