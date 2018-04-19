@@ -48,6 +48,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -564,13 +565,13 @@ public class UsageRatingService implements Serializable {
 
         if (edr.getQuantity() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason("NULL_QUANTITY");
+            edr.setRejectReason(EDRRejectReasonEnum.NULL_QUANTITY.getCode());
             return null;
         }
 
         if (edr.getSubscription() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason("NULL_SUBSCRIPTION");
+            edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL.getCode());
             return null;
         }
 
@@ -589,7 +590,7 @@ public class UsageRatingService implements Serializable {
                 usageChargeInstances = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     edr.setStatus(EDRStatusEnum.REJECTED);
-                    edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
+                    edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE.getCode());
                     return null;
                 }
 
@@ -628,7 +629,7 @@ public class UsageRatingService implements Serializable {
 
             if (!edrIsRated) {
                 edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason(!foundPricePlan ? "NO_PRICEPLAN" : "NO_MATCHING_CHARGE");
+                edr.setRejectReason(!foundPricePlan ? EDRRejectReasonEnum.NO_PRICEPLAN.getCode() : EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
                 return null;
             }
 
@@ -639,7 +640,7 @@ public class UsageRatingService implements Serializable {
                 log.error("failed to rate usage Within Transaction", e);
             }
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason((e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+            edr.setRejectReason((e.getMessage() == null ? EDRRejectReasonEnum.GENERAL_ERROR.getCode() + " : " + e.getClass().getSimpleName() : EDRRejectReasonEnum.GENERAL_ERROR.getCode() + " : " + e.getMessage()));
             throw e;
 
         } finally {
@@ -728,7 +729,7 @@ public class UsageRatingService implements Serializable {
 
         if (edr.getSubscription() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason("SUBSCRIPTION_IS_NULL");
+            edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL.getCode());
         } else {
             boolean edrIsRated = false;
 
@@ -767,15 +768,15 @@ public class UsageRatingService implements Serializable {
 
                     if (!edrIsRated) {
                         edr.setStatus(EDRStatusEnum.REJECTED);
-                        edr.setRejectReason("NO_MATCHING_CHARGE");
+                        edr.setRejectReason(EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
                     }
                 } else {
                     edr.setStatus(EDRStatusEnum.REJECTED);
-                    edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
+                    edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE.getCode());
                 }
             } catch (Exception e) {
                 edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason(e.getMessage());
+                edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE+ " : " +e.getMessage());
                 throw new BusinessException(e.getMessage());
             }
         }

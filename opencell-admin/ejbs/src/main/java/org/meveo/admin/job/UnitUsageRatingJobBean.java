@@ -14,6 +14,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
@@ -74,7 +75,7 @@ public class UnitUsageRatingJobBean {
     public void registerFailedEdr(JobExecutionResultImpl result, Long edrId, Exception e) throws BusinessException {
         EDR edr = edrService.findById(edrId);
         edr.setStatus(EDRStatusEnum.REJECTED);
-        edr.setRejectReason(StringUtils.truncate(e.getMessage(), 255, true));
+        edr.setRejectReason(EDRRejectReasonEnum.GENERAL_ERROR.getCode() + " : " + StringUtils.truncate(e.getMessage(), 255, true));
         rejectededEdrProducer.fire(edr);
         result.registerError();
         String aLine = "EdrId : " + edr.getId() + " RejectReason : " + (e != null ? e.getMessage() : edr.getRejectReason()) + "\n";
