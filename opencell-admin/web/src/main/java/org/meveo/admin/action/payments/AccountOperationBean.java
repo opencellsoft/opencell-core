@@ -84,7 +84,8 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * @return account operation 
+     * 
+     * @return account operation
      */
     @Produces
     @Named("accountOperation")
@@ -92,17 +93,11 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
         return initEntity();
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
     @Override
     protected IPersistenceService<AccountOperation> getPersistenceService() {
         return accountOperationService;
     }
 
-    /**
-     * TODO
-     */
     public String displayOperation(AccountOperation accountOperation) {
         String page = "/pages/payments/accountOperations/showOcc.xhtml";
 

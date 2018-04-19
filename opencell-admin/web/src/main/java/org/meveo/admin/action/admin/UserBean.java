@@ -197,11 +197,6 @@ public class UserBean extends CustomFieldBean<User> {
         this.userGroupSelectedNode = selectedNode;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {

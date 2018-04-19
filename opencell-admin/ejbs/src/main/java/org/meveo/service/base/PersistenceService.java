@@ -437,9 +437,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
     }
 
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#list()
-     */
     @Override
     public List<E> list() {
         return list((Boolean) null);

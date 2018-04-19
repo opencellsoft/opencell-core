@@ -102,11 +102,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         super(CustomerAccount.class);
     }
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @return customer account
-     */
     @Override
     public CustomerAccount initEntity() {
         super.initEntity();
@@ -139,12 +134,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         return entity;
     }
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous window (e.g if he came from customer window). Otherwise if user came from edit/new link, customer
-     * account saving does redirect him to same page in view mode.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -194,9 +183,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         return "customerAccountDetailOperationsTab";
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
     @Override
     protected IPersistenceService<CustomerAccount> getPersistenceService() {
         return customerAccountService;

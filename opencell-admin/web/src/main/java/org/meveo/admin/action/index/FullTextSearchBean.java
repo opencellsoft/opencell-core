@@ -132,16 +132,16 @@ public class FullTextSearchBean implements Serializable {
     /**
      * Get navigation link and identifier
      * 
-     * @param esType
-     * @param code
-     * @return
+     * @param classnameOrCetCode Classname (full or simple name ) or CET code
+     * @param code Entity code
+     * @return Navigation link to entity's view screen
      */
     @SuppressWarnings("unchecked")
-    public String[] getViewAndId(String esType, String code) {
+    public String[] getViewAndId(String classnameOrCetCode, String code) {
 
         String[] viewInfo = new String[2];
 
-        ElasticSearchClassInfo scopeInfo = elasticClient.getSearchScopeInfo(esType);
+        ElasticSearchClassInfo scopeInfo = elasticClient.getSearchScopeInfo(classnameOrCetCode);
 
         QueryBuilder qb = new QueryBuilder(scopeInfo.getClazz(), "be", null);
         qb.addCriterion("be.code", "=", code, true);
@@ -157,7 +157,7 @@ public class FullTextSearchBean implements Serializable {
             }
 
         } else {
-            log.warn("Could not resolve view and ID for {} {}", esType, code);
+            log.warn("Could not resolve view and ID for {} {}", classnameOrCetCode, code);
             viewInfo[0] = "fullTextSearch";
             viewInfo[1] = code;
         }

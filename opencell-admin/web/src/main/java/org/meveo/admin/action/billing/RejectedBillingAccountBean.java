@@ -31,58 +31,51 @@ import org.meveo.service.billing.impl.RejectedBillingAccountService;
 import org.primefaces.model.LazyDataModel;
 
 /**
- * Standard backing bean for {@link RejectedBillingAccount} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link RejectedBillingAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class RejectedBillingAccountBean extends BaseBean<RejectedBillingAccount> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link RejectedBillingAccount} service. Extends {@link PersistenceService}
-	 * .
-	 */
-	@Inject
-	private RejectedBillingAccountService rejectedBillingAccountService;
-	
+    /**
+     * Injected @{link RejectedBillingAccount} service. Extends {@link PersistenceService}
+     */
+    @Inject
+    private RejectedBillingAccountService rejectedBillingAccountService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public RejectedBillingAccountBean() {
-		super(RejectedBillingAccount.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public RejectedBillingAccountBean() {
+        super(RejectedBillingAccount.class);
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<RejectedBillingAccount> getPersistenceService() {
-		return rejectedBillingAccountService;
-	}
+    @Override
+    protected IPersistenceService<RejectedBillingAccount> getPersistenceService() {
+        return rejectedBillingAccountService;
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "billingAccount.code";
-	}
-	
-	 /**
-	     * Method, that is invoked in billing run screen. This method returns billingAccountRejected associated with current Billing Run.
-	     * 
-	     */
-	    public LazyDataModel<RejectedBillingAccount> getBArejected(BillingRun br) {
-	        if (br == null) {
-	            log.warn("billingRun is null");
-	        } else {
-	            filters.put("billingRun", br);           
-	            return getLazyDataModel();
-	        }
+    @Override
+    protected String getDefaultSort() {
+        return "billingAccount.code";
+    }
 
-	        return null;
-	    }
+    /**
+     * Method, that is invoked in billing run screen. This method returns billingAccountRejected associated with current Billing Run.
+     * 
+     * @return Data model for Primefaces data list component
+     */
+    public LazyDataModel<RejectedBillingAccount> getBArejected(BillingRun br) {
+        if (br == null) {
+            log.warn("billingRun is null");
+        } else {
+            filters.put("billingRun", br);
+            return getLazyDataModel();
+        }
+
+        return null;
+    }
 }
