@@ -34,6 +34,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.exception.WalletNotFoundException;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -1372,7 +1373,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
         } else {
             log.error("chargeWalletOperation wallet not found for chargeInstance {} ", chargeInstanceId);
-            throw new BusinessException("WALLET_NOT_FOUND");
+            throw new WalletNotFoundException("WALLET_NOT_FOUND");
         }
         return result;
     }

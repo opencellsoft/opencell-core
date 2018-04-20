@@ -19,6 +19,9 @@ import javax.ws.rs.core.Response;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.admin.exception.PriceELErrorException;
+import org.meveo.admin.exception.RatingScriptExecutionErrorException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.dto.ActionStatus;
@@ -441,14 +444,14 @@ public class RatingService extends BusinessService<WalletOperation> {
             List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
             log.debug("RS line 437 retrieval PPs in: {}", (System.currentTimeMillis() - startDate));
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
-                throw new BusinessException("No price plan for charge code " + bareWalletOperation.getCode());
+                throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
             }
 
             pricePlan = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency,
                 bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
             if (pricePlan == null || (pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise())
                     || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
-                throw new BusinessException("No price plan matched (" + (pricePlan == null) + ") or does not contain amounts for charge code " + bareWalletOperation.getCode());
+                throw new NoPricePlanException("No price plan matched (" + (pricePlan == null) + ") or does not contain amounts for charge code " + bareWalletOperation.getCode());
             }
             log.debug("Found ratePrice {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
             if (appProvider.isEntreprise()) {
@@ -457,7 +460,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     unitPriceWithoutTax = getExpressionValue(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
                         bareWalletOperation.getChargeInstance().getUserAccount(), unitPriceWithoutTax);
                     if (unitPriceWithoutTax == null) {
-                        throw new BusinessException("Cant get price from EL:" + pricePlan.getAmountWithoutTaxEL());
+                        throw new PriceELErrorException("Cant get price from EL:" + pricePlan.getAmountWithoutTaxEL());
                     }
                 }
 
@@ -467,7 +470,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     unitPriceWithTax = getExpressionValue(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
                         unitPriceWithoutTax);
                     if (unitPriceWithTax == null) {
-                        throw new BusinessException("Cant get price from EL:" + pricePlan.getAmountWithTaxEL());
+                        throw new PriceELErrorException("Cant get price from EL:" + pricePlan.getAmountWithTaxEL());
                     }
                 }
             }
@@ -1118,7 +1121,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             script.execute(context);
         } catch (Exception e) {
             log.error("Error when run script {}", scriptInstanceCode, e);
-            throw new BusinessException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
+            throw new RatingScriptExecutionErrorException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
         }
     }
 }
