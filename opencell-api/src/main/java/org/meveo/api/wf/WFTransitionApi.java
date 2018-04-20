@@ -52,6 +52,7 @@ public class WFTransitionApi extends BaseApi {
      * @throws EntityDoesNotExistsException lookup entity does not exist
      * @throws EntityAlreadyExistsException entity being created already exists
      * @throws BusinessException generic business exception
+     * @return WFTransition Workflow transition
      */
     public WFTransition create(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
@@ -94,6 +95,7 @@ public class WFTransitionApi extends BaseApi {
      * @throws EntityAlreadyExistsException entity being created already exists
      * @throws BusinessException generic business exception
      * @throws BusinessApiException equivalent of business exception in api context
+     * @return WFTransition Workflow transition
      */
     public WFTransition update(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {
@@ -166,6 +168,7 @@ public class WFTransitionApi extends BaseApi {
      * @throws EntityAlreadyExistsException entity being created already exists
      * @throws BusinessException generic business exception
      * @throws BusinessApiException equivalent of business exception in api context
+     * @return WFTransition Workflow transition
      */
     public WFTransition createOrUpdate(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {

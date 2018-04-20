@@ -245,7 +245,7 @@ public class AccessApi extends BaseApi {
     /**
      * Enable or disable access point
      * 
-     * @param code Access code
+     * @param accessCode Access code
      * @param subscriptionCode subscription code
      * @param enable Should Access be enabled
      * @throws EntityDoesNotExistsException Entity does not exist

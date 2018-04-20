@@ -455,7 +455,7 @@ public interface SettingsWs extends IBaseWs {
     ActionStatus removeCustomFieldTemplate(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
 
     /**
-     * Find custom field. Deprecated in 5.1. Use {@link EntityCustomizationWs#findField(CustomFieldTemplateDto)}
+     * Find custom field. Deprecated in 5.1. Use {@link EntityCustomizationWs#findField(String,String)}
      * 
      * @param customFieldTemplateCode Custom field template code
      * @param appliesTo Entity it applies to

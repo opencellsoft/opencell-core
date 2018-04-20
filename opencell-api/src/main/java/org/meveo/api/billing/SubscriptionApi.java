@@ -939,6 +939,7 @@ public class SubscriptionApi extends BaseApi {
      * Find subscription 
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
+     * @param inheritCF Custom field inheritance type
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */

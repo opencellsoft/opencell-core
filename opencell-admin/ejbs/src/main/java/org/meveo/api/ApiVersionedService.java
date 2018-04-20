@@ -54,8 +54,8 @@ public interface ApiVersionedService<E extends BusinessEntity, T extends Busines
      * 
      * @param dtoData DTO data
      * @return Created entity.
-     * @throws MeveoApiException <eveo api exception
-     * @throws BusinessException business exception
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException Business exception
      */
     public E createOrUpdate(T dtoData) throws MeveoApiException, BusinessException;
 
