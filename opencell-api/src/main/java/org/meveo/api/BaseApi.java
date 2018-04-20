@@ -947,7 +947,7 @@ public abstract class BaseApi {
      * @param entityClass JPA Entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Persistence service
-     * @throws BusinessException General business exception
+     * @throws BusinessException A general business exception
      */
     @SuppressWarnings("rawtypes")
     protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws BusinessException {
