@@ -637,7 +637,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     /**
      * New product offering is selected - need to reset quoteItem values and the offer tree
      * 
-     * @param event faces select event
+     * @param event Faces select event
      */
     public void onMainProductOfferingSet(SelectEvent event) {
 
@@ -650,9 +650,9 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     }
 
     /**
-     * Propagate main offer item properties to services and products where it was not set yet
+     * Propagate main offer item properties to services and products where it was not set yet.
      * 
-     * @param event
+     * @param event Faces select event
      */
     public void onMainCharacteristicsSet(SelectEvent event) {
         if (!(boolean) event.getComponent().getAttributes().get("isMain")) {

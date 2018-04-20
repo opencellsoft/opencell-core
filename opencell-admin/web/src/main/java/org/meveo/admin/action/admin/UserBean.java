@@ -249,6 +249,8 @@ public class UserBean extends CustomFieldBean<User> {
 
     /**
      * Standard method for custom component with listType="pickList".
+     * 
+     * @return DualListModel of Role
      */
     public DualListModel<Role> getDualListModel() {
         if (rolesDM == null) {
@@ -682,7 +684,7 @@ public class UserBean extends CustomFieldBean<User> {
     /**
      * This will add the selected business entity to the user's securedEntities list.
      * 
-     * @param event
+     * @param event Faces select event
      * @throws BusinessException General business exception
      */
     @ActionMethod

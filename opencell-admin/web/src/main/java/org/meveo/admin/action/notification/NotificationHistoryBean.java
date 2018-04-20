@@ -73,6 +73,7 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 	/**
 	 * DataModel for primefaces lazy loading datatable component.
 	 * 
+	 * @param notificationId Notification identifier
 	 * @return LazyDataModel implementation.
 	 */
 	public LazyDataModel<NotificationHistory> getLazyDataModel(Long notificationId) {
