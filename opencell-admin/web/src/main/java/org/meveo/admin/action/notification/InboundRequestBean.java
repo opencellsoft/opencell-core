@@ -138,7 +138,7 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
             csv.appendValue(inboundRequest.getProtocol());
             csv.appendValue(inboundRequest.getPathInfo());
             csv.appendValue(inboundRequest.getCode());
-            csv.appendValue(inboundRequest.isDisabled() + "");
+            csv.appendValue("true");
             csv.appendValue(inboundRequest.getScheme());
             csv.appendValue(inboundRequest.getContentType());
             csv.appendValue(inboundRequest.getContentLength() + "");
@@ -249,7 +249,6 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
                 inboundRequest.setProtocol(values[PORTOCOL]);
                 inboundRequest.setPathInfo(values[PATH_INFO]);
                 inboundRequest.setCode(values[CODE]);
-                inboundRequest.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 inboundRequest.setScheme(values[SCHEME]);
                 inboundRequest.setContentType(values[CONTENT_TYPE]);
                 inboundRequest.setContentLength(Integer.parseInt(values[CONTENT_LENGHT]));
@@ -334,7 +333,6 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
             existingEntity.setRemotePort(!StringUtils.isBlank(values[PORT]) ? Integer.parseInt(values[PORT]) : null);
             existingEntity.setProtocol(values[PORTOCOL]);
             existingEntity.setPathInfo(values[PATH_INFO]);
-            existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
             existingEntity.setScheme(values[SCHEME]);
             existingEntity.setContentType(values[CONTENT_TYPE]);
             existingEntity.setContentLength(Integer.parseInt(values[CONTENT_LENGHT]));

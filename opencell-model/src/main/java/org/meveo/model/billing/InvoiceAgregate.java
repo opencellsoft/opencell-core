@@ -35,7 +35,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 /**
  * @author Edward P. Legaspi
@@ -47,7 +47,7 @@ import org.meveo.model.EnableEntity;
 @DiscriminatorColumn(name = "type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
-public abstract class InvoiceAgregate extends EnableEntity {
+public abstract class InvoiceAgregate extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 

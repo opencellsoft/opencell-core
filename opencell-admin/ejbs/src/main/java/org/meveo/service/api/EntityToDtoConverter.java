@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -260,7 +261,7 @@ public class EntityToDtoConverter {
                         continue;
                     }
 
-                    dto.setValue(CustomEntityInstanceDto.toDTO(cei, getCustomFieldsDTO(cei)));
+                    dto.setValue(new CustomEntityInstanceDto(cei, getCustomFieldsDTO(cei)));
 
                 } else {
                     dto.setValue(new EntityReferenceDto((EntityReferenceWrapper) listItem));

@@ -17,33 +17,33 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 public interface ModuleWs extends IBaseWs {
 
     @WebMethod
-    public ActionStatus create(@WebParam(name = "module") MeveoModuleDto moduleDto);
+    ActionStatus create(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
-    public ActionStatus update(@WebParam(name = "module") MeveoModuleDto moduleDto);
+    ActionStatus update(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
-    public ActionStatus delete(@WebParam(name = "code") String code);
+    ActionStatus delete(@WebParam(name = "code") String code);
 
     @WebMethod
-    public MeveoModuleDtosResponse list();
+    MeveoModuleDtosResponse list();
 
     @WebMethod
-    public MeveoModuleDtoResponse get(@WebParam(name = "code") String code);
+    MeveoModuleDtoResponse get(@WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus createOrUpdate(@WebParam(name = "module") MeveoModuleDto moduleDto);
+    ActionStatus createOrUpdate(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
-    public ActionStatus installModule(@WebParam(name = "module") MeveoModuleDto moduleDto);
+    ActionStatus installModule(@WebParam(name = "module") MeveoModuleDto moduleDto);
 
     @WebMethod
-    public ActionStatus uninstallModule(@WebParam(name = "code") String code);
+    ActionStatus uninstallModule(@WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus enableModule(@WebParam(name = "code") String code);
+    ActionStatus enableModule(@WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus disableModule(@WebParam(name = "code") String code);
+    ActionStatus disableModule(@WebParam(name = "code") String code);
 
 }

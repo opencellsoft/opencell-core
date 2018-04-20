@@ -58,7 +58,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.updateEntityTemplate(dto);
+            customEntityTemplateApi.update(dto);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -71,7 +71,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.removeEntityTemplate(customEntityTemplateCode);
+            customEntityTemplateApi.remove(customEntityTemplateCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -315,26 +315,104 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         return result;
     }
 
+    @Override
+    public ActionStatus execute(String actionCode, String appliesTo, String entityCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	@Override
-	public ActionStatus execute(String actionCode, String appliesTo, String entityCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            result.setMessage(entityCustomActionApi.execute(actionCode, appliesTo, entityCode));
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		try {
-			result.setMessage(entityCustomActionApi.execute(actionCode, appliesTo, entityCode));
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        return result;
+    }
 
-		return result;
-	}
+    /**
+     * Used for create or update template.
+     * 
+     * @see org.meveo.api.rest.custom.EntityCustomizationRs#createOrUpdateCustumizedEntityTemplate(org.meveo.api.dto.CustomEntityTemplateDto)
+     */
+    @Override
+    public ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto) {
+        return this.createOrUpdateEntityTemplate(dto);
+    }
 
-	/**
-	 * Used for create or update template.
-	 * @see org.meveo.api.rest.custom.EntityCustomizationRs#createOrUpdateCustumizedEntityTemplate(org.meveo.api.dto.CustomEntityTemplateDto)
-	 */
-	@Override
-	public ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto) {
-		return this.createOrUpdateEntityTemplate(dto);
-	}
+    @Override
+    public ActionStatus enableEntityTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableEntityTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableField(String customFieldTemplateCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customFieldTemplateApi.enableOrDisable(customFieldTemplateCode, appliesTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableField(String customFieldTemplateCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customFieldTemplateApi.enableOrDisable(customFieldTemplateCode, appliesTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableAction(String actionCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            entityCustomActionApi.enableOrDisable(actionCode, appliesTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableAction(String actionCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            entityCustomActionApi.enableOrDisable(actionCode, appliesTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

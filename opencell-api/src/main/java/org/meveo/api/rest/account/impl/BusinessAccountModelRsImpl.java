@@ -78,7 +78,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(bamCode);
+            moduleApi.remove(bamCode);
         } catch (Exception e) {
             processException(e, result);
         }

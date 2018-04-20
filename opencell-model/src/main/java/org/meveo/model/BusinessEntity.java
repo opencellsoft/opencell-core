@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 @MappedSuperclass
-public class BusinessEntity extends EnableEntity implements ISearchable {
+public abstract class BusinessEntity extends AuditableEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
 

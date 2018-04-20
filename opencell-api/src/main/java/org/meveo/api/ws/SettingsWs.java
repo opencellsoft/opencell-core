@@ -36,8 +36,6 @@ import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
-import org.meveo.api.dto.response.GetCountryResponse;
-import org.meveo.api.dto.response.GetCurrencyResponse;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
@@ -48,7 +46,6 @@ import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceTypeResponse;
 import org.meveo.api.dto.response.GetInvoiceTypesResponse;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
@@ -58,6 +55,9 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
+import org.meveo.api.dto.response.GetTradingCountryResponse;
+import org.meveo.api.dto.response.GetTradingCurrencyResponse;
+import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -77,7 +77,6 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
-@SuppressWarnings("deprecation")
 @WebService
 public interface SettingsWs extends IBaseWs {
 
@@ -154,6 +153,7 @@ public interface SettingsWs extends IBaseWs {
     
     /**
      * Deletes a user in keycloak and core given a username.
+     * 
      * @param username the username of the user to be deleted.
      * @return ActionStatus
      */
@@ -167,7 +167,7 @@ public interface SettingsWs extends IBaseWs {
      * @return A list of users
      */
     @WebMethod
-    public UsersDto listUsers(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    UsersDto listUsers(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     // seller
 
@@ -194,67 +194,106 @@ public interface SettingsWs extends IBaseWs {
 
     // tradingLanguage
 
-    @Deprecated
     @WebMethod
     ActionStatus createLanguage(@WebParam(name = "language") LanguageDto postData);
 
-    @Deprecated
     @WebMethod
-    GetLanguageResponse findLanguage(@WebParam(name = "languageCode") String languageCode);
+    GetTradingLanguageResponse findLanguage(@WebParam(name = "languageCode") String languageCode);
 
-    @Deprecated
     @WebMethod
     ActionStatus removeLanguage(@WebParam(name = "languageCode") String languageCode);
 
-    @Deprecated
     @WebMethod
     ActionStatus updateLanguage(@WebParam(name = "language") LanguageDto postData);
 
-    @Deprecated
     @WebMethod
     ActionStatus createOrUpdateLanguage(@WebParam(name = "language") LanguageDto postData);
 
+    /**
+     * Enable a Trading language by its language code
+     * 
+     * @param code Language code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus enableLanguage(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Trading language by its language code
+     * 
+     * @param code Language code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableLanguage(@WebParam(name = "code") String code);
+
     // tradingCountry
-    @Deprecated
     @WebMethod
     ActionStatus createCountry(@WebParam(name = "country") CountryDto countryDto);
 
-    @Deprecated
     @WebMethod
-    GetCountryResponse findCountry(@WebParam(name = "countryCode") String countryCode);
+    GetTradingCountryResponse findCountry(@WebParam(name = "countryCode") String countryCode);
 
-    @Deprecated
     @WebMethod
     ActionStatus removeCountry(@WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode);
 
-    @Deprecated
     @WebMethod
     ActionStatus updateCountry(@WebParam(name = "country") CountryDto countryDto);
 
-    @Deprecated
     @WebMethod
     ActionStatus createOrUpdateCountry(@WebParam(name = "country") CountryDto countryDto);
 
+    /**
+     * Enable a Trading country by its country code
+     * 
+     * @param code Language code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus enableCountry(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Trading country by its country code
+     * 
+     * @param code Language code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableCountry(@WebParam(name = "code") String code);
+
     // traingCurrency
-    @Deprecated
     @WebMethod
     ActionStatus createCurrency(@WebParam(name = "currency") CurrencyDto postData);
 
-    @Deprecated
     @WebMethod
-    GetCurrencyResponse findCurrency(@WebParam(name = "currencyCode") String currencyCode);
+    GetTradingCurrencyResponse findCurrency(@WebParam(name = "currencyCode") String currencyCode);
 
-    @Deprecated
     @WebMethod
     ActionStatus removeCurrency(@WebParam(name = "currencyCode") String currencyCode);
 
-    @Deprecated
     @WebMethod
     ActionStatus updateCurrency(@WebParam(name = "currency") CurrencyDto postData);
 
-    @Deprecated
     @WebMethod
     ActionStatus createOrUpdateCurrency(@WebParam(name = "currency") CurrencyDto postData);
+
+    /**
+     * Enable a Trading currency by its currency code
+     * 
+     * @param code Currency code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus enableCurrency(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Trading currency by its currency code
+     * 
+     * @param code Currency code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableCurrency(@WebParam(name = "code") String code);
 
     // tax
 
@@ -384,19 +423,56 @@ public interface SettingsWs extends IBaseWs {
 
     // custom field
 
+    /**
+     * Create custom field. Deprecated in 5.1. Use {@link EntityCustomizationWs#createField(CustomFieldTemplateDto)}
+     * 
+     * @param postData Custom field information
+     * @return Request processing status
+     */
+    @Deprecated
     @WebMethod
     ActionStatus createCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 
+    /**
+     * Update custom field definition. Deprecated in 5.1. Use {@link EntityCustomizationWs#updateField(CustomFieldTemplateDto)}
+     * 
+     * @param postData Custom field information
+     * @return Request processing status
+     */
+    @Deprecated
     @WebMethod
     ActionStatus updateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 
+    /**
+     * Remove custom field. Deprecated in 5.1. Use {@link EntityCustomizationWs#removeField(String, String)}
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @Deprecated
     @WebMethod
     ActionStatus removeCustomFieldTemplate(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
 
+    /**
+     * Find custom field. Deprecated in 5.1. Use {@link EntityCustomizationWs#findField(CustomFieldTemplateDto)}
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @Deprecated
     @WebMethod
     GetCustomFieldTemplateReponseDto findCustomFieldTemplate(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode,
             @WebParam(name = "appliesTo") String appliesTo);
 
+    /**
+     * Create custom field. Deprecated in 5.1. Use {@link EntityCustomizationWs#createOrUpdateField(CustomFieldTemplateDto)}
+     * 
+     * @param postData Custom field information
+     * @return Request processing status
+     */
+    @Deprecated
     @WebMethod
     ActionStatus createOrUpdateCustomFieldTemplate(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 
@@ -429,14 +505,15 @@ public interface SettingsWs extends IBaseWs {
      * @return A list of roles
      */
     @WebMethod
-    public RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
     
     /**
      * List external source such as from keycloak.
+     * 
      * @return list of external roles
      */
     @WebMethod
-    public RolesDto listExternalRoles();
+    RolesDto listExternalRoles();
 
     // Multi Language field value translations
 
@@ -449,7 +526,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     @Deprecated
-    public ActionStatus createDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+    ActionStatus createDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
     /**
      * Provide translation of multi language field value. Deprecated in v.4.7. Use updateTranslations instead
@@ -459,7 +536,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     @Deprecated
-    public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+    ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
     /**
      * Provide translation of multi language field values.
@@ -468,7 +545,7 @@ public interface SettingsWs extends IBaseWs {
      * @return action status.
      */
     @WebMethod
-    public ActionStatus updateTranslations(@WebParam(name = "translations") List<CatMessagesDto> translations);
+    ActionStatus updateTranslations(@WebParam(name = "translations") List<CatMessagesDto> translations);
 
     /**
      * Find entity field translations for a particular entity, field (optional) and a language (optional). Deprecated in v.4.7. Use findTranslations instead
@@ -495,9 +572,8 @@ public interface SettingsWs extends IBaseWs {
      * @return A list of field value translations
      */
     @WebMethod
-    public DescriptionsResponseDto findTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
-            @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldName") String fieldname,
-            @WebParam(name = "languageCode") String languageCode);
+    DescriptionsResponseDto findTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom,
+            @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldName") String fieldname, @WebParam(name = "languageCode") String languageCode);
 
     /**
      * Remove field value translation for a given entity and language (optional). Deprecated in v.4.7. Use removeTranslations instead.
@@ -509,8 +585,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     @Deprecated
-    public ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
-            @WebParam(name = "languageCode") String languageCode);
+    ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "languageCode") String languageCode);
 
     /**
      * Remove field value translation for a given entity, field (optional) and language (optional)
@@ -524,7 +599,7 @@ public interface SettingsWs extends IBaseWs {
      * @return action status.
      */
     @WebMethod
-    public ActionStatus removeTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom,
+    ActionStatus removeTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom,
             @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldName") String fieldname, @WebParam(name = "languageCode") String languageCode);
 
     /**
@@ -535,7 +610,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     @Deprecated
-    public ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+    ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
     /**
      * List entity field value translations. Deprecated in v.4.7. Use listTranslations instead.
@@ -544,7 +619,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     @Deprecated
-    public DescriptionsResponseDto listDescriptions();
+    DescriptionsResponseDto listDescriptions();
 
     /**
      * List entity field value translations for a given entity type (optional), field (optional) and language (optional). Note: will provide ONLY those entities that have at least
@@ -556,7 +631,7 @@ public interface SettingsWs extends IBaseWs {
      * @return A list of entity field value translations
      */
     @WebMethod
-    public DescriptionsResponseDto listTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "fieldName") String fieldname,
+    DescriptionsResponseDto listTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "fieldName") String fieldname,
             @WebParam(name = "languageCode") String languageCode);
 
     /* termination reasons */
@@ -809,7 +884,7 @@ public interface SettingsWs extends IBaseWs {
      * @return A list of user hierarchy levels
      */
     @WebMethod
-    public UserHierarchyLevelsDto listUserHierarchyLevels(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    UserHierarchyLevelsDto listUserHierarchyLevels(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     /**
      * Set configuration (stored in meveo-admin.properties file) property
@@ -819,7 +894,7 @@ public interface SettingsWs extends IBaseWs {
      * @return action status.
      */
     @WebMethod
-    public ActionStatus setConfigurationProperty(@WebParam(name = "property") String property, @WebParam(name = "value") String value);
+    ActionStatus setConfigurationProperty(@WebParam(name = "property") String property, @WebParam(name = "value") String value);
 
     /**
      * Returns a list of OCCTemplate.
@@ -833,6 +908,7 @@ public interface SettingsWs extends IBaseWs {
      * @return GetOccTemplatesResponseDto
      */
     @WebMethod
-    GetOccTemplatesResponseDto listOccTemplate(@WebParam(name = "query") String query, @WebParam(name = "fields") String fields, @WebParam(name = "offset") Integer offset, @WebParam(name = "limit")  Integer limit, @WebParam(name = "sortBy")  String sortBy, @WebParam(name = "sortOrder")  SortOrder sortOrder);
+    GetOccTemplatesResponseDto listOccTemplate(@WebParam(name = "query") String query, @WebParam(name = "fields") String fields, @WebParam(name = "offset") Integer offset,
+            @WebParam(name = "limit") Integer limit, @WebParam(name = "sortBy") String sortBy, @WebParam(name = "sortOrder") SortOrder sortOrder);
 
 }

@@ -10,12 +10,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.IVersionedBusinessEntityService;
 
 /**
  * @author Andrius Karpavicius
  */
 @Stateless
-public class GenericProductOfferingService<T extends ProductOffering> extends BusinessService<T> {
+public class GenericProductOfferingService<T extends ProductOffering> extends BusinessService<T> implements IVersionedBusinessEntityService<T> {
 
     private static String FIND_CODE_BY_DATE_CLAUSE = "((be.validity.from IS NULL and be.validity.to IS NULL) or (be.validity.from<=:date and :date<be.validity.to) or (be.validity.from<=:date and be.validity.to IS NULL) or (be.validity.from IS NULL and :date<be.validity.to))";
 
@@ -235,6 +236,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
      * @param to Validity date range end date
      * @return Product offering
      */
+    @Override
     public T findByCode(String code, Date from, Date to) {
         // Append search by a from and to dates
 
@@ -251,38 +253,6 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
         } else {
             return super.findByCode(code, null, "be.validity.from is null and be.validity.to=:to", "to", to);
         }
-    }
-
-    /**
-     * Find a particular product offering version, attempting to match validity start and end dates. First both dates will be tried to match, then only start date as a single date
-     * and then current date as a single date<br>
-     * 
-     * if you don't provide any date, it will consider today. <br>
-     * If you provide both dates - it will do a strict match. <br>
-     * If you provide only To date - it will do a strict match with starting date as null.<br>
-     * If you provide only From date - it will do:<br>
-     * - a strict match with end date as null<br>
-     * - and then a single date match for that date.<br>
-     * - and then a single date match for today<br>
-     * 
-     * @param code Product offering code
-     * @param from Validity date range start date
-     * @param to Validity date range end date
-     * @return Product offering
-     */
-    public T findByCodeBestValidityMatch(String code, Date from, Date to) {
-
-        // Strict match by noth dates
-        T offering = findByCode(code, from, to);
-
-        // If only TO date is provided, only a strict check should be done. This is to solve a problem - if FROM date is NULL, it will lookup by todays date
-        if (offering == null && (from != null || to == null)) {
-            offering = findByCode(code, from);
-            if (offering == null) {
-                offering = findByCode(code);
-            }
-        }
-        return offering;
     }
 
     /**
@@ -341,7 +311,6 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
     @SuppressWarnings("unchecked")
     public List<T> listActiveByDate(Date date) {
 
-        return (List<T>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", getEntityClass()).setParameter("date", date)
-            .getResultList();
+        return (List<T>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", getEntityClass()).setParameter("date", date).getResultList();
     }
 }

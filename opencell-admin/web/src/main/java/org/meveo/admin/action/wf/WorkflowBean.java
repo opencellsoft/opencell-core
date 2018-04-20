@@ -461,7 +461,6 @@ public class WorkflowBean extends BaseBean<Workflow> {
                 newWFDecisionRule.setConditionEl(wfDecisionRule.getConditionEl());
                 newWFDecisionRule.setName(wfDecisionRule.getName());
                 newWFDecisionRule.setType(wfDecisionRule.getType());
-                newWFDecisionRule.setDisabled(Boolean.FALSE);
 
                 if (wfDecisionRule.getType().toString().startsWith("RANGE")) {
                     StringBuffer value = new StringBuffer();

@@ -28,70 +28,63 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 /**
  * RejectedBillingAccount.
  */
 @Entity
 @Table(name = "billing_rejected_billing_accounts")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_rejected_ba_seq"), })
-public class RejectedBillingAccount extends EnableEntity {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_rejected_ba_seq"), })
+public class RejectedBillingAccount extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account")
+    private BillingAccount billingAccount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_account")
-	private BillingAccount billingAccount;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_run")
-	private BillingRun billingRun;
-	
-	@Column(name = "reject_cause", length=3000)
-	@Size(max = 3000)
-	private String rejectCause;
-	
-	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run")
+    private BillingRun billingRun;
 
-	public RejectedBillingAccount(BillingAccount billingAccount,
-			BillingRun billingRun, String rejectCause) {
-		super();
-		this.billingAccount = billingAccount;
-		this.billingRun = billingRun;
-		this.rejectCause = rejectCause;
-	}
+    @Column(name = "reject_cause", length = 3000)
+    @Size(max = 3000)
+    private String rejectCause;
 
-	public RejectedBillingAccount() { 
-	}
+    public RejectedBillingAccount(BillingAccount billingAccount, BillingRun billingRun, String rejectCause) {
+        super();
+        this.billingAccount = billingAccount;
+        this.billingRun = billingRun;
+        this.rejectCause = rejectCause;
+    }
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    public RejectedBillingAccount() {
+    }
 
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	public BillingRun getBillingRun() {
-		return billingRun;
-	}
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public void setBillingRun(BillingRun billingRun) {
-		this.billingRun = billingRun;
-	}
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
 
-	public String getRejectCause() {
-		return rejectCause;
-	}
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
+    }
 
-	public void setRejectCause(String rejectCause) {
-		this.rejectCause = rejectCause;
-	}
-	
-	
+    public String getRejectCause() {
+        return rejectCause;
+    }
 
-	
+    public void setRejectCause(String rejectCause) {
+        this.rejectCause = rejectCause;
+    }
+
 }

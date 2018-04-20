@@ -95,6 +95,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -120,8 +121,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
         }
 
-        OfferTemplate offerTemplate = new OfferTemplate();
-        populateFromDto(offerTemplate, postData);
+        OfferTemplate offerTemplate = populateFromDto(postData, null);
 
         // populate customFields
         try {
@@ -139,6 +139,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return offerTemplate;
     }
 
+    @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate update(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -165,8 +166,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                         + ", already exists. Please change the validity dates of an existing offer first.");
         }
 
-        populateFromDto(offerTemplate, postData);
-        offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        offerTemplate = populateFromDto(postData, offerTemplate);
 
         // populate customFields
         try {
@@ -184,7 +184,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return offerTemplate;
     }
 
-    private void populateFromDto(OfferTemplate offerTemplate, OfferTemplateDto postData) throws MeveoApiException, BusinessException {
+    private OfferTemplate populateFromDto(OfferTemplateDto postData, OfferTemplate offerTemplateToUpdate) throws MeveoApiException, BusinessException {
+
+        OfferTemplate offerTemplate = offerTemplateToUpdate;
+        if (offerTemplate == null) {
+            offerTemplate = new OfferTemplate();
+            if (postData.isDisabled() != null) {
+                offerTemplate.setDisabled(postData.isDisabled());
+            }
+        }
 
         BusinessOfferModel businessOffer = null;
         if (!StringUtils.isBlank(postData.getBomCode())) {
@@ -244,11 +252,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setBusinessOfferModel(businessOffer);
-        offerTemplate.setCode(postData.getCode());
+        offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
-        offerTemplate.setDisabled(postData.isDisabled());
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
@@ -277,6 +284,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         // check offer product templates
         processOfferProductTemplates(postData, offerTemplate);
+
+        return offerTemplate;
     }
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
@@ -443,41 +452,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return offerTemplateDto;
     }
 
-    public void remove(String code, Date validFrom, Date validTo) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("offerTemplateCode");
-            handleMissingParameters();
-        }
-
-        OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
-        if (offerTemplate == null) {
-            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
-            throw new EntityDoesNotExistsException(OfferTemplate.class,
-                code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
-        }
-
-        // deleteImage(offerTemplate);
-        offerTemplateService.remove(offerTemplate);
-    }
-
-    /**
-     * Create or updates the OfferTemplate based on code.
-     *
-     * @param postData posted data to API
-     * 
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException business exception
-     */
+    @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate createOrUpdate(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
-
-        if (offerTemplate == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
+        return super.createOrUpdate(postData);
     }
 
     public OfferTemplateDto convertOfferTemplateToDto(OfferTemplate offerTemplate) {
@@ -533,7 +511,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "offerTemplates", itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public GetListOfferTemplateResponseDto list(@Deprecated String code, @Deprecated Date validFrom, @Deprecated Date validTo, PagingAndFiltering pagingAndFiltering)
-            throws InvalidParameterException{
+            throws InvalidParameterException {
         return list(code, validFrom, validTo, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
 

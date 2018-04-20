@@ -72,7 +72,7 @@ public class BusinessProductModelRsImpl extends BaseRs implements BusinessProduc
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessProductModelCode);
+            moduleApi.remove(businessProductModelCode);
         } catch (Exception e) {
             processException(e, result);
         }

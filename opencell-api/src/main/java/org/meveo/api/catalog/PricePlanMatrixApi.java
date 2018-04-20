@@ -66,6 +66,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Override
     public PricePlanMatrix create(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getEventCode())) {
@@ -95,6 +96,9 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
         pricePlanMatrix.setCode(postData.getCode());
         pricePlanMatrix.setEventCode(postData.getEventCode());
+        if (postData.isDisabled() != null) {
+            pricePlanMatrix.setDisabled(postData.isDisabled());
+        }
 
         if (!StringUtils.isBlank(postData.getSeller())) {
             Seller seller = sellerService.findByCode(postData.getSeller());
@@ -194,6 +198,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanMatrix;
     }
 
+    @Override
     public PricePlanMatrix update(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getEventCode())) {
@@ -346,21 +351,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, true));
     }
 
-    public void remove(String pricePlanCode) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(pricePlanCode)) {
-            missingParameters.add("pricePlanCode");
-            handleMissingParameters();
-        }
-
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanCode);
-        if (pricePlanMatrix == null) {
-            throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
-        }
-
-        pricePlanMatrixService.remove(pricePlanMatrix);
-    }
-
     public List<PricePlanMatrixDto> list(String eventCode) throws MeveoApiException {
         if (StringUtils.isBlank(eventCode)) {
             missingParameters.add("eventCode");
@@ -378,13 +368,5 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return pricePlanDtos;
-    }
-
-    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
-        if (pricePlanMatrixService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

@@ -46,7 +46,7 @@ public interface WebHookNotificationRs extends IBaseRs {
     ActionStatus update(WebHookDto postData);
 
     /**
-     * Find a web hook notification with a given code 
+     * Find a web hook notification with a given code
      * 
      * @param notificationCode The web hook notification's code
      * @return
@@ -56,7 +56,7 @@ public interface WebHookNotificationRs extends IBaseRs {
     GetWebHookNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
     /**
-     * Remove an existing web hook notification with a given code 
+     * Remove an existing web hook notification with a given code
      * 
      * @param notificationCode The web hook notification's code
      * @return Request processing status
@@ -74,4 +74,25 @@ public interface WebHookNotificationRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(WebHookDto postData);
+
+    /**
+     * Enable a Webhook notification with a given code
+     * 
+     * @param code Webhook notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Webhook notification with a given code
+     * 
+     * @param code Webhook notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
 }

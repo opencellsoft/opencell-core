@@ -72,7 +72,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     @Override
     public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query,
             String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
-        
+
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
         try {
@@ -83,10 +83,10 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
-    
+
     @Override
     public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
-        
+
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
         try {
@@ -124,4 +124,29 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         return result;
     }
 
+    @Override
+    public ActionStatus enable(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateApi.enableOrDisable(code, validFrom, validTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateApi.enableOrDisable(code, validFrom, validTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

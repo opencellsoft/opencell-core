@@ -39,16 +39,19 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     @Inject
     private RoleService roleService;
 
-    public List<ScriptInstanceErrorDto> create(ScriptInstanceDto scriptInstanceDto)
-            throws MissingParameterException, EntityAlreadyExistsException, MeveoApiException, BusinessException {
+    /**
+     * Create ScriptInstance entity. Same as {@link #create(ScriptInstanceDto)}, only returns a list of compilation errors as DTOs
+     * 
+     * @param scriptInstanceDto Script information
+     * @return A list of compilation errors
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException A general business exception
+     */
+    public List<ScriptInstanceErrorDto> createWithCompile(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
+
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
-        checkDtoAndUpdateCode(scriptInstanceDto);
 
-        if (scriptInstanceService.findByCode(scriptInstanceDto.getCode()) != null) {
-            throw new EntityAlreadyExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
-        }
-
-        ScriptInstance scriptInstance = scriptInstanceFromDTO(scriptInstanceDto, null);
+        ScriptInstance scriptInstance = create(scriptInstanceDto);
 
         scriptInstanceService.create(scriptInstance);
 
@@ -61,8 +64,47 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         return result;
     }
 
-    public List<ScriptInstanceErrorDto> update(ScriptInstanceDto scriptInstanceDto)
-            throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
+    @Override
+    public ScriptInstance create(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
+        List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
+        checkDtoAndUpdateCode(scriptInstanceDto);
+
+        if (scriptInstanceService.findByCode(scriptInstanceDto.getCode()) != null) {
+            throw new EntityAlreadyExistsException(ScriptInstance.class, scriptInstanceDto.getCode());
+        }
+
+        ScriptInstance scriptInstance = scriptInstanceFromDTO(scriptInstanceDto, null);
+
+        scriptInstanceService.create(scriptInstance);
+
+        return scriptInstance;
+    }
+
+    /**
+     * Update ScriptInstance entity. Same as {@link #update(ScriptInstanceDto)}, only returns a list of compilation errors as DTOs
+     * 
+     * @param scriptInstanceDto Script information
+     * @return A list of compilation errors
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException A general business exception
+     */
+    public List<ScriptInstanceErrorDto> updateWithCompile(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
+
+        List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
+
+        ScriptInstance scriptInstance = update(scriptInstanceDto);
+
+        if (scriptInstance.isError().booleanValue()) {
+            for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
+                ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
+                result.add(errorDto);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public ScriptInstance update(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(scriptInstanceDto);
@@ -79,20 +121,9 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         scriptInstance = scriptInstanceService.update(scriptInstance);
 
-        if (scriptInstance.isError().booleanValue()) {
-            for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
-                ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
-                result.add(errorDto);
-            }
-        }
-        return result;
+        return scriptInstance;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public ScriptInstanceDto find(String scriptInstanceCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         ScriptInstanceDto scriptInstanceDtoResult = null;
@@ -111,37 +142,33 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         return scriptInstanceDtoResult;
     }
 
-    public void removeScriptInstance(String scriptInstanceCode) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
-        if (StringUtils.isBlank(scriptInstanceCode)) {
-            missingParameters.add("scriptInstanceCode");
-            handleMissingParameters();
-        }
-        ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceCode);
-        if (scriptInstance == null) {
-            throw new EntityDoesNotExistsException(ScriptInstance.class, scriptInstanceCode);
-        }
-        scriptInstanceService.remove(scriptInstance);
-    }
-
     @Override
-    public ScriptInstance createOrUpdate(ScriptInstanceDto postData) throws MeveoApiException, BusinessException {
-        createOrUpdateWithCompile(postData);
+    public ScriptInstance createOrUpdate(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
 
-        ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode());
-        return scriptInstance;
+        checkDtoAndUpdateCode(scriptInstanceDto);
+
+        return super.createOrUpdate(scriptInstanceDto);
     }
 
-    public List<ScriptInstanceErrorDto> createOrUpdateWithCompile(ScriptInstanceDto postData) throws MeveoApiException, BusinessException {
+    /**
+     * Create or update existing ScriptInstance entity. Same as {@link #createOrUpdate(ScriptInstanceDto)}, only returns a list of compilation errors as DTOs
+     * 
+     * @param scriptInstanceDto Script information
+     * @return A list of compilation errors
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException A general business exception
+     */
+    public List<ScriptInstanceErrorDto> createOrUpdateWithCompile(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
-        checkDtoAndUpdateCode(postData);
 
-        ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode());
+        ScriptInstance scriptInstance = createOrUpdate(scriptInstanceDto);
 
-        if (scriptInstance == null) {
-            result = create(postData);
-        } else {
-            result = update(postData);
+        if (scriptInstance.isError().booleanValue()) {
+            for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
+                ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
+                result.add(errorDto);
+            }
         }
         return result;
     }
@@ -177,9 +204,12 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
      */
     public ScriptInstance scriptInstanceFromDTO(ScriptInstanceDto dto, ScriptInstance scriptInstanceToUpdate) throws EntityDoesNotExistsException {
 
-        ScriptInstance scriptInstance = new ScriptInstance();
-        if (scriptInstanceToUpdate != null) {
-            scriptInstance = scriptInstanceToUpdate;
+        ScriptInstance scriptInstance = scriptInstanceToUpdate;
+        if (scriptInstanceToUpdate == null) {
+            scriptInstance = new ScriptInstance();
+            if (dto.isDisabled() != null) {
+                scriptInstance.setDisabled(dto.isDisabled());
+            }
         }
         scriptInstance.setCode(dto.getCode());
         scriptInstance.setDescription(dto.getDescription());

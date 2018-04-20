@@ -48,7 +48,7 @@ public interface NotificationRs extends IBaseRs {
     ActionStatus update(NotificationDto postData);
 
     /**
-     * Find a notification with a given code 
+     * Find a notification with a given code
      * 
      * @param notificationCode The notification's code
      * @return
@@ -58,7 +58,7 @@ public interface NotificationRs extends IBaseRs {
     GetNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
     /**
-     * Remove an existing notification with a given code 
+     * Remove an existing notification with a given code
      * 
      * @param notificationCode The notification's code
      * @return Request processing status
@@ -66,7 +66,27 @@ public interface NotificationRs extends IBaseRs {
     @DELETE
     @Path("/{notificationCode}")
     ActionStatus remove(@PathParam("notificationCode") String notificationCode);
-    
+
+    /**
+     * Enable a Script type notification with a given code
+     * 
+     * @param code Script type notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Script type notification with a given code
+     * 
+     * @param code Script type notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
     /**
      * List the notification history
      * 

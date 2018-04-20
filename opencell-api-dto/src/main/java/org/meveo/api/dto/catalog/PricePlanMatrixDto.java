@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
@@ -22,7 +22,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
  */
 @XmlRootElement(name = "PricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PricePlanMatrixDto extends BusinessDto {
+public class PricePlanMatrixDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -9089693491690592072L;
@@ -131,10 +131,10 @@ public class PricePlanMatrixDto extends BusinessDto {
     }
 
     /**
-     * Instantiates a new price plan matrix dto.
-     *
-     * @param pricePlan the price plan
-     * @param customFieldInstances the custom field instances
+     * Convert PricePlanMatrix entity to DTO including its custom field values
+     * 
+     * @param pricePlan Price plan entity
+     * @param customFieldInstances Custom field values
      */
     public PricePlanMatrixDto(PricePlanMatrix pricePlan, CustomFieldsDto customFieldInstances) {
         super(pricePlan);

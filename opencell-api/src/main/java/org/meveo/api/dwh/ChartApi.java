@@ -50,6 +50,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
     @Inject
     private ChartService<Chart> chartService;
 
+    @Override
     public Chart create(ChartDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -86,6 +87,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
     }
 
+    @Override
     public Chart update(ChartDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -122,9 +124,6 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public ChartDto find(String chartCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
@@ -150,32 +149,6 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
 
         return result;
-    }
-    
-    public void remove(String chartCode) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(chartCode)) {
-            missingParameters.add("chartCode");
-            handleMissingParameters();
-        }
-
-        Chart chart = chartService.findByCode(chartCode);
-        if (chart == null) {
-            throw new EntityDoesNotExistsException(Chart.class, chartCode);
-        }
-
-        chartService.remove(chart);
-    }
-
-    public Chart createOrUpdate(ChartDto postData) throws MeveoApiException, BusinessException {
-        Chart chart = chartService.findByCode(postData.getCode());
-        if (chart == null) {
-            // create
-            return create(postData);
-        } else {
-            // update
-            return update(postData);
-        }
     }
 
     public List<ChartDto> list(String chartCode) {
@@ -208,7 +181,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, chart);
+        populateChartFromDto(dto, chart, chartToUpdate != null);
 
         chart.setFilled(dto.isFilled());
         chart.setLegendPosition(dto.getLegendPosition());
@@ -229,7 +202,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, chart);
+        populateChartFromDto(dto, chart, chartToUpdate != null);
 
         chart.setFilled(dto.isFilled());
         chart.setLegendPosition(dto.getLegendPosition());
@@ -261,7 +234,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, chart);
+        populateChartFromDto(dto, chart, chartToUpdate != null);
 
         chart.setLegendPosition(dto.getLegendPosition());
         chart.setBarPadding(dto.getBarPadding());
@@ -285,10 +258,14 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return chart;
     }
 
-    private void populateChartFromDto(ChartDto dto, Chart chartToUpdate) throws MeveoApiException, BusinessException {
+    private void populateChartFromDto(ChartDto dto, Chart chartToUpdate, boolean isUpdate) throws MeveoApiException, BusinessException {
 
         chartToUpdate.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
         chartToUpdate.setDescription(dto.getDescription());
+        if (!isUpdate && dto.isDisabled() != null) {
+            chartToUpdate.setDisabled(dto.isDisabled());
+        }
+
         // Should create it or update measurableQuantity only it has full information only
         if (!dto.getMeasurableQuantity().isCodeOnly()) {
             measurableQuantityApi.createOrUpdate(dto.getMeasurableQuantity());

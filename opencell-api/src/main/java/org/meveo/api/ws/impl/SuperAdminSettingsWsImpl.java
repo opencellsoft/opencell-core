@@ -67,7 +67,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
     }
 
     @Override
-    public GetProviderResponse findProvider(String providerCode) {
+    public GetProviderResponse findProvider() {
         GetProviderResponse result = new GetProviderResponse();
 
         try {

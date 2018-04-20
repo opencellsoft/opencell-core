@@ -12,21 +12,29 @@ import org.meveo.model.billing.TradingLanguage;
  * The Class LanguageDto.
  *
  * @author Edward P. Legaspi
- * @deprecated will be renammed to TradingLanguageDto
  */
 @XmlRootElement(name = "Language")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageDto extends BaseDto {
+public class LanguageDto extends BaseDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 725968016559888810L;
 
-    /** The code. */
+    /**
+     * Language code
+     */
     @XmlAttribute(required = true)
     private String code;
-    
-    /** The description. */
+
+    /**
+     * Description
+     */
     private String description;
+
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
     /**
      * Instantiates a new language dto.
@@ -43,6 +51,7 @@ public class LanguageDto extends BaseDto {
     public LanguageDto(TradingLanguage tradingLanguage) {
         code = tradingLanguage.getLanguageCode();
         description = tradingLanguage.getPrDescription();
+        disabled = tradingLanguage.isDisabled();
     }
 
     /**
@@ -91,12 +100,18 @@ public class LanguageDto extends BaseDto {
         this.description = description;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "LanguageDto [code=" + code + ", description=" + description + "]";
+        return "LanguageDto [code=" + code + ", description=" + description + ", disabled=" + disabled + "]";
     }
 
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
+    }
 }

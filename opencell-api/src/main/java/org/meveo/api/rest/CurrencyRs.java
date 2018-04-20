@@ -13,13 +13,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.response.GetCurrencyResponse;
+import org.meveo.api.dto.response.GetTradingCurrencyResponse;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
  * 
  * @author Edward P. Legaspi
- *  @deprecated will be renammed to  TradingCurrencyRs
  **/
 @Path("/currency")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -45,7 +44,7 @@ public interface CurrencyRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetCurrencyResponse find(@QueryParam("currencyCode") String currencyCode);
+    GetTradingCurrencyResponse find(@QueryParam("currencyCode") String currencyCode);
 
     /**
      * Remove currency with a given currency code.
@@ -76,4 +75,23 @@ public interface CurrencyRs extends IBaseRs {
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CurrencyDto postData);
 
+    /**
+     * Enable a Trading currency with a given currency code
+     * 
+     * @param code Currency code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Trading currency with a given currency code
+     * 
+     * @param code Currency code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

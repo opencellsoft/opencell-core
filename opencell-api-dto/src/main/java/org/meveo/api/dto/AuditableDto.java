@@ -3,16 +3,14 @@ package org.meveo.api.dto;
 import java.util.Date;
 
 /**
- * Contain the entity creation and modification dates.
- * 
+ * Equivalent of AuditableEntity in DTO. Contain the entity creation and modification dates.
  * 
  * @author Edward P. Legaspi
- * 
  */
-public class AuditableDto extends BaseDto {
+public abstract class AuditableDto extends BaseDto {
 
     /**
-     * serial versuion uid.
+     * serial version uid.
      */
     private static final long serialVersionUID = 1040133977061424749L;
 

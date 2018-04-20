@@ -34,13 +34,13 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.wf.WFAction;
 
 @Entity
 @Table(name = "ar_action_dunning")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_action_dunning_seq"), })
-public class ActionDunning extends EnableEntity {
+public class ActionDunning extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 

@@ -722,4 +722,85 @@
         </addColumn>
 	</changeSet>
 	
+
+    <changeSet id="#3353_2018_0410" author="AndriusKarpavicius">
+        <dropColumn tableName="billing_invoice_agregate" columnName="disabled" />
+        <dropColumn tableName="billing_invoice" columnName="disabled" />
+        <dropColumn tableName="billing_billing_run_list" columnName="disabled" />
+        <dropColumn tableName="billing_billing_run" columnName="disabled" />
+        <dropColumn tableName="ar_account_operation" columnName="disabled" />
+        <dropColumn tableName="account_entity" columnName="disabled" />
+        <dropColumn tableName="billing_cycle" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_cat" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_sub_cat" columnName="disabled" />
+        <dropColumn tableName="ord_order" columnName="disabled" />
+        <dropColumn tableName="billing_product_instance" columnName="disabled" />
+        <dropColumn tableName="ord_quote" columnName="disabled" />
+        <dropColumn tableName="crm_seller" columnName="disabled" />
+        <dropColumn tableName="billing_service_instance" columnName="disabled" />
+        <dropColumn tableName="billing_subscription" columnName="disabled" />
+        <dropColumn tableName="billing_tax" columnName="disabled" />
+        <dropColumn tableName="cat_calendar" columnName="disabled" />
+        <dropColumn tableName="com_campaign" columnName="disabled" />
+        <dropColumn tableName="billing_charge_instance" columnName="disabled" />
+        <dropColumn tableName="com_contact_coords" columnName="disabled" />
+        <dropColumn tableName="billing_counter" columnName="disabled" />
+        <dropColumn tableName="billing_counter_period" columnName="disabled" />
+        <dropColumn tableName="ar_credit_category" columnName="disabled" />
+        <dropColumn tableName="crm_customer_brand" columnName="disabled" />
+        <dropColumn tableName="crm_customer_category" columnName="disabled" />
+        <dropColumn tableName="ftp_imported_file" columnName="disabled" />
+        <dropColumn tableName="hierarchy_entity" columnName="disabled" />
+        <dropColumn tableName="adm_inbound_request" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_type" columnName="disabled" />
+        <dropColumn tableName="com_sender_config" columnName="disabled" />
+        <dropColumn tableName="com_message_template" columnName="disabled" />
+        <dropColumn tableName="com_msg_tmpl_variable" columnName="disabled" />
+        <dropColumn tableName="com_msg_var_value" columnName="disabled" />
+        <dropColumn tableName="com_meveo_instance" columnName="disabled" />
+        <dropColumn tableName="ar_occ_template" columnName="disabled" />
+        <dropColumn tableName="crm_provider_contact" columnName="disabled" />
+        <dropColumn tableName="rm_service_param_template" columnName="disabled" />
+        <dropColumn tableName="billing_subscrip_termin_reason" columnName="disabled" />
+        <dropColumn tableName="adm_title" columnName="disabled" />
+        <dropColumn tableName="cat_triggered_edr" columnName="disabled" />
+        <dropColumn tableName="billing_wallet" columnName="disabled" />
+        <dropColumn tableName="billing_wallet_operation" columnName="disabled" />
+        <dropColumn tableName="cat_wallet_template" columnName="disabled" />
+        <dropColumn tableName="adm_user" columnName="disabled" />
+        <dropColumn tableName="ar_matching_amount" columnName="disabled" />
+        <dropColumn tableName="ar_matching_code" columnName="disabled" />
+        <dropColumn tableName="billing_reservation" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_cat_lang" columnName="disabled" />
+        <dropColumn tableName="billing_inv_sub_cat_country" columnName="disabled" />
+        <dropColumn tableName="billing_tax_language" columnName="disabled" />
+        <dropColumn tableName="billing_rejected_billing_accounts" columnName="disabled" />
+        <dropColumn tableName="wf_decision_rule" columnName="disabled" />
+        <dropColumn tableName="wf_action" columnName="disabled" />
+        <dropColumn tableName="wf_transition" columnName="disabled" />
+        <dropColumn tableName="wf_history" columnName="disabled" />
+        <dropColumn tableName="ar_payment_history" columnName="disabled" />
+        <dropColumn tableName="adm_notif_history" columnName="disabled" />
+        <dropColumn tableName="ar_due_date" columnName="disabled" />
+        <dropColumn tableName="ar_ddrequest_item" columnName="disabled" />
+        <dropColumn tableName="ar_ddrequest_lot" columnName="disabled" />
+        <dropColumn tableName="ar_ddrequest_lot_op" columnName="disabled" />
+        <dropColumn tableName="ar_dunning_lot" columnName="disabled" />
+        <dropColumn tableName="ar_action_dunning" columnName="disabled" />
+
+        <dropColumn tableName="wf_decision_rule" columnName="created" />
+        <dropColumn tableName="wf_decision_rule" columnName="updated" />
+        <dropColumn tableName="wf_decision_rule" columnName="creator" />
+        <dropColumn tableName="wf_decision_rule" columnName="updater" />
+        <dropColumn tableName="wf_action" columnName="created" />
+        <dropColumn tableName="wf_action" columnName="updated" />
+        <dropColumn tableName="wf_action" columnName="creator" />
+        <dropColumn tableName="wf_action" columnName="updater" />
+        <dropColumn tableName="wf_transition" columnName="created" />
+        <dropColumn tableName="wf_transition" columnName="updated" />
+        <dropColumn tableName="wf_transition" columnName="creator" />
+        <dropColumn tableName="wf_transition" columnName="updater" />
+
+    </changeSet>
+    
 </databaseChangeLog> 

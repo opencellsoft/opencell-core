@@ -46,7 +46,7 @@ public interface EmailNotificationRs extends IBaseRs {
     ActionStatus update(EmailNotificationDto postData);
 
     /**
-     * Find a email notification with a given code 
+     * Find a email notification with a given code
      * 
      * @param notificationCode The email notification's code
      * @return
@@ -56,7 +56,7 @@ public interface EmailNotificationRs extends IBaseRs {
     GetEmailNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
     /**
-     * Remove an existing email notification with a given code 
+     * Remove an existing email notification with a given code
      * 
      * @param notificationCode The email notification's code
      * @return Request processing status
@@ -74,5 +74,25 @@ public interface EmailNotificationRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(EmailNotificationDto postData);
+
+    /**
+     * Enable a Email notification with a given code
+     * 
+     * @param code Email notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Email notification with a given code
+     * 
+     * @param code Email notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 
 }

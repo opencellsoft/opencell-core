@@ -466,6 +466,34 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
+    public ActionStatus enableAccess(String accessCode, String subscriptionCode) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accessApi.enableOrDisable(accessCode, subscriptionCode, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableAccess(String accessCode, String subscriptionCode) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accessApi.enableOrDisable(accessCode, subscriptionCode, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public CustomerListResponse findAccountHierarchy(AccountHierarchyDto postData) {
         CustomerListResponse result = new CustomerListResponse();
 
@@ -531,7 +559,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows, PagingAndFiltering pagingAndFiltering) {
+    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows,
+            PagingAndFiltering pagingAndFiltering) {
 
         try {
             return customerApi.list(postData, pagingAndFiltering == null ? new PagingAndFiltering(null, null, firstRow, numberOfRows, null, null) : pagingAndFiltering);
@@ -985,7 +1014,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(bamCode);
+            moduleApi.remove(bamCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1128,4 +1157,29 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
+    @Override
+    public ActionStatus enableBusinessAccountModel(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableBusinessAccountModel(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

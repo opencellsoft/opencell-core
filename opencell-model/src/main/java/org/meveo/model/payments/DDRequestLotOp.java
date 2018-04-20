@@ -34,139 +34,134 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "ar_ddrequest_lot_op")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_ddrequest_lot_op_seq"), })
-public class DDRequestLotOp extends EnableEntity {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_ddrequest_lot_op_seq"), })
+public class DDRequestLotOp extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "from_due_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date fromDueDate;
+    @Column(name = "from_due_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fromDueDate;
 
-	@Column(name = "to_due_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date toDueDate;
+    @Column(name = "to_due_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date toDueDate;
 
-	@Column(name = "ddrequest_op")
-	@Enumerated(EnumType.STRING)
-	private DDRequestOpEnum ddrequestOp;
+    @Column(name = "ddrequest_op")
+    @Enumerated(EnumType.STRING)
+    private DDRequestOpEnum ddrequestOp;
 
-	@Column(name = "ddrequest_op_status")
-	@Enumerated(EnumType.STRING)
-	private DDRequestOpStatusEnum status;
+    @Column(name = "ddrequest_op_status")
+    @Enumerated(EnumType.STRING)
+    private DDRequestOpStatusEnum status;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ddrequest_lot_id")
-	private DDRequestLOT ddrequestLOT;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ddrequest_lot_id")
+    private DDRequestLOT ddrequestLOT;
 
-	@Column(name = "error_cause", length = 255)
+    @Column(name = "error_cause", length = 255)
     @Size(max = 255)
-	private String errorCause;
-	
-	@Column(name = "file_format")
-	@Enumerated(EnumType.STRING)
-	private DDRequestFileFormatEnum fileFormat;
+    private String errorCause;
 
-	/**
-	 * @return the fromDueDate
-	 */
-	public Date getFromDueDate() {
-		return fromDueDate;
-	}
+    @Column(name = "file_format")
+    @Enumerated(EnumType.STRING)
+    private DDRequestFileFormatEnum fileFormat;
 
-	/**
-	 * @param fromDueDate
-	 *            the fromDueDate to set
-	 */
-	public void setFromDueDate(Date fromDueDate) {
-		this.fromDueDate = fromDueDate;
-	}
+    /**
+     * @return the fromDueDate
+     */
+    public Date getFromDueDate() {
+        return fromDueDate;
+    }
 
-	/**
-	 * @return the toDueDate
-	 */
-	public Date getToDueDate() {
-		return toDueDate;
-	}
+    /**
+     * @param fromDueDate the fromDueDate to set
+     */
+    public void setFromDueDate(Date fromDueDate) {
+        this.fromDueDate = fromDueDate;
+    }
 
-	/**
-	 * @param toDueDate
-	 *            the toDueDate to set
-	 */
-	public void setToDueDate(Date toDueDate) {
-		this.toDueDate = toDueDate;
-	}
+    /**
+     * @return the toDueDate
+     */
+    public Date getToDueDate() {
+        return toDueDate;
+    }
 
-	/**
-	 * @return the ddrequestOp
-	 */
-	public DDRequestOpEnum getDdrequestOp() {
-		return ddrequestOp;
-	}
+    /**
+     * @param toDueDate the toDueDate to set
+     */
+    public void setToDueDate(Date toDueDate) {
+        this.toDueDate = toDueDate;
+    }
 
-	/**
-	 * @param ddrequestOp
-	 *            the ddrequestOp to set
-	 */
-	public void setDdrequestOp(DDRequestOpEnum ddrequestOp) {
-		this.ddrequestOp = ddrequestOp;
-	}
+    /**
+     * @return the ddrequestOp
+     */
+    public DDRequestOpEnum getDdrequestOp() {
+        return ddrequestOp;
+    }
 
-	/**
-	 * @return the status
-	 */
-	public DDRequestOpStatusEnum getStatus() {
-		return status;
-	}
+    /**
+     * @param ddrequestOp the ddrequestOp to set
+     */
+    public void setDdrequestOp(DDRequestOpEnum ddrequestOp) {
+        this.ddrequestOp = ddrequestOp;
+    }
 
-	/**
-	 * @param status
-	 *            the status to set
-	 */
-	public void setStatus(DDRequestOpStatusEnum status) {
-		this.status = status;
-	}
+    /**
+     * @return the status
+     */
+    public DDRequestOpStatusEnum getStatus() {
+        return status;
+    }
 
-	/**
-	 * @return the ddrequestLOT
-	 */
-	public DDRequestLOT getDdrequestLOT() {
-		return ddrequestLOT;
-	}
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(DDRequestOpStatusEnum status) {
+        this.status = status;
+    }
 
-	/**
-	 * @param ddrequestLOT
-	 *            the ddrequestLOT to set
-	 */
-	public void setDdrequestLOT(DDRequestLOT ddrequestLOT) {
-		this.ddrequestLOT = ddrequestLOT;
-	}
+    /**
+     * @return the ddrequestLOT
+     */
+    public DDRequestLOT getDdrequestLOT() {
+        return ddrequestLOT;
+    }
 
-	public void setErrorCause(String errorCause) {
-		this.errorCause = errorCause;
-	}
+    /**
+     * @param ddrequestLOT the ddrequestLOT to set
+     */
+    public void setDdrequestLOT(DDRequestLOT ddrequestLOT) {
+        this.ddrequestLOT = ddrequestLOT;
+    }
 
-	public String getErrorCause() {
-		return errorCause;
-	}
+    public void setErrorCause(String errorCause) {
+        this.errorCause = errorCause;
+    }
 
-	/**
-	 * @return the fileFormat
-	 */
-	public DDRequestFileFormatEnum getFileFormat() {
-		return fileFormat;
-	}
+    public String getErrorCause() {
+        return errorCause;
+    }
 
-	/**
-	 * @param fileFormat the fileFormat to set
-	 */
-	public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
-		this.fileFormat = fileFormat;
-	}
+    /**
+     * @return the fileFormat
+     */
+    public DDRequestFileFormatEnum getFileFormat() {
+        return fileFormat;
+    }
 
-	
+    /**
+     * @param fileFormat the fileFormat to set
+     */
+    public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
+        this.fileFormat = fileFormat;
+    }
+
 }

@@ -23,12 +23,11 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 
@@ -39,18 +38,10 @@ import org.meveo.model.wf.Workflow;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WorkflowDto extends BaseDto {
+public class WorkflowDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8309866046667741458L;
-
-    /** The code. */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /** The description. */
-    @XmlAttribute
-    private String description;
 
     /** The wf type. */
     @XmlElement(required = true)
@@ -62,7 +53,7 @@ public class WorkflowDto extends BaseDto {
     /** The list WF transition dto. */
     @XmlElementWrapper(name = "transitions")
     @XmlElement(name = "transition")
-    private List<WFTransitionDto> listWFTransitionDto = new ArrayList<WFTransitionDto>();
+    private List<WFTransitionDto> listWFTransitionDto;
 
     /**
      * Instantiates a new workflow dto.
@@ -76,50 +67,15 @@ public class WorkflowDto extends BaseDto {
      * @param workflow the workflow entity
      */
     public WorkflowDto(Workflow workflow) {
-        this.code = workflow.getCode();
-        this.description = workflow.getDescription();
+        super(workflow);
+
         this.wfType = workflow.getWfType();
         this.enableHistory = workflow.isEnableHistory();
+        this.listWFTransitionDto = new ArrayList<>(); 
         for (WFTransition wfTransition : workflow.getTransitions()) {
             WFTransitionDto wftdto = new WFTransitionDto(wfTransition);
             listWFTransitionDto.add(wftdto);
         }
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the code to set
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**

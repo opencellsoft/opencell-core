@@ -25,7 +25,7 @@ public class ScriptInstanceDto extends CustomScriptDto {
 
     /** The execution roles. */
     private List<RoleDto> executionRoles = new ArrayList<RoleDto>();
-    
+
     /** The sourcing roles. */
     private List<RoleDto> sourcingRoles = new ArrayList<RoleDto>();
 
@@ -37,12 +37,12 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
-     * Instantiates a new script instance dto.
+     * Convert script instance entity to DTO
      *
-     * @param scriptInstance the ScriptInstance entity
+     * @param scriptInstance Entity to convert
      */
     public ScriptInstanceDto(ScriptInstance scriptInstance) {
-        super(scriptInstance.getCode(), scriptInstance.getDescription(), scriptInstance.getSourceTypeEnum(), scriptInstance.getScript());
+        super(scriptInstance);
 
         if (scriptInstance.getExecutionRoles() != null) {
             for (Role role : scriptInstance.getExecutionRoles()) {
@@ -55,7 +55,6 @@ public class ScriptInstanceDto extends CustomScriptDto {
             }
         }
     }
-
 
     @Override
     public String toString() {
@@ -99,7 +98,9 @@ public class ScriptInstanceDto extends CustomScriptDto {
         this.sourcingRoles = sourcingRoles;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

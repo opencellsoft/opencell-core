@@ -133,7 +133,7 @@ import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
- * @author Wassim Drira
+ * @author Andrius Karpavicius
  * @lastModifiedVersion 5.0
  *
  */

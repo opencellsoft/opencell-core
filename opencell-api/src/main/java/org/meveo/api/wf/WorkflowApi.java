@@ -44,15 +44,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     @Inject
     private WFTransitionService wfTransitionService;
 
-    /**
-     * 
-     * @param workflowDto
-     * 
-     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
-     * @throws BusinessException General business exception
-     * @throws MissingParameterException Missing one or more parameters
-     * @throws EntityDoesNotExistsException Reference to an entity was not found
-     */
+    @Override
     public Workflow create(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
 
         validateDto(workflowDto, false);
@@ -77,16 +69,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         return workflow;
     }
 
-    /**
-     * 
-     * @param workflowDto
-     * 
-     * @throws EntityDoesNotExistsException Reference to an entity was not found
-     * @throws MeveoApiException General API exception
-     * @throws BusinessException General business exception
-     * @throws MissingParameterException Missing one or more parameters
-     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
-     */
+    @Override
     public Workflow update(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
 
         validateDto(workflowDto, true);
@@ -116,14 +99,19 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         }
 
         List<WFTransition> currentWfTransitions = workflow.getTransitions();
+        List<WFTransition> wfTransitionsToRemove = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
             currentWfTransitions.removeAll(listUpdate);
             if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
                 for (WFTransition wfTransition : currentWfTransitions) {
+                    wfTransitionsToRemove.add(wfTransition);
                     wfTransitionService.remove(wfTransition);
                 }
             }
         }
+
+        workflow.getTransitions().removeAll(wfTransitionsToRemove);
+
         if (workflowDto.getListWFTransitionDto() != null && !workflowDto.getListWFTransitionDto().isEmpty()) {
             int priority = 1;
             for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
@@ -159,28 +147,6 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
     /**
      * 
-     * @param workflowCode
-     * 
-     * @throws MissingParameterException Missing one or more parameters
-     * @throws EntityDoesNotExistsException Reference to an entity was not found
-     * @throws BusinessException General business exception
-     */
-    public void remove(String workflowCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-
-        if (StringUtils.isBlank(workflowCode)) {
-            missingParameters.add("workflowCode");
-            handleMissingParameters();
-        }
-        Workflow workflow = workflowService.findByCode(workflowCode);
-        if (workflow == null) {
-            throw new EntityDoesNotExistsException(Workflow.class, workflowCode);
-        }
-
-        workflowService.remove(workflow);
-    }
-
-    /**
-     * 
      * 
      * @return
      *
@@ -196,31 +162,14 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         return result;
     }
 
-    /**
-     * 
-     * @param workflowDto
-     * 
-     * @throws EntityAlreadyExistsException Entity can not be created as it already exists
-     * @throws BusinessException General business exception
-     * @throws EntityDoesNotExistsException Reference to an entity was not found
-     * @throws MissingParameterException Missing one or more parameters
-     */
-    @Override
-    public Workflow createOrUpdate(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
-        Workflow workflow = workflowService.findByCode(workflowDto.getCode());
-        if (workflow == null) {
-            return create(workflowDto);
-        } else {
-            return update(workflowDto);
-        }
-    }
-
     protected Workflow fromDTO(WorkflowDto dto, Workflow workflowToUpdate) {
-        Workflow workflow = new Workflow();
-        if (workflowToUpdate != null) {
-            workflow = workflowToUpdate;
-        } else {
+        Workflow workflow = workflowToUpdate;
+        if (workflowToUpdate == null) {
+            workflow = new Workflow();
             workflow.setWfType(dto.getWfType());
+            if (dto.isDisabled() != null) {
+                workflow.setDisabled(dto.isDisabled());
+            }
         }
 
         workflow.setCode(dto.getCode());

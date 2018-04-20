@@ -8,14 +8,13 @@ import org.meveo.api.LanguageApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.LanguageDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
+import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.LanguageRs;
 
 /**
  * @author Edward P. Legaspi
  * 
- * @deprecated will be renammed to TradingLanguageRsImpl
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -38,8 +37,8 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
     }
 
     @Override
-    public GetLanguageResponse find(String languageCode) {
-        GetLanguageResponse result = new GetLanguageResponse();
+    public GetTradingLanguageResponse find(String languageCode) {
+        GetTradingLanguageResponse result = new GetTradingLanguageResponse();
 
         try {
             result.setLanguage(languageApi.find(languageCode));
@@ -82,6 +81,32 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 
         try {
             languageApi.createOrUpdate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            languageApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            languageApi.enableOrDisable(code, false);
         } catch (Exception e) {
             processException(e, result);
         }

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,18 +26,10 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
  */
 @XmlRootElement(name = "CustomFieldTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomFieldTemplateDto extends BaseDto {
+public class CustomFieldTemplateDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-
-    /** Field code. */
-    @XmlAttribute(required = true)
-    protected String code;
-
-    /** Field label. */
-    @XmlAttribute(required = true)
-    protected String description;
 
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
@@ -194,8 +185,8 @@ public class CustomFieldTemplateDto extends BaseDto {
      * @param cf the cf
      */
     public CustomFieldTemplateDto(CustomFieldTemplate cf) {
-        code = cf.getCode();
-        description = cf.getDescription();
+        super(cf);
+
         languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cf.getDescriptionI18n());
         fieldType = cf.getFieldType();
         accountLevel = cf.getAppliesTo();
@@ -215,8 +206,6 @@ public class CustomFieldTemplateDto extends BaseDto {
         minValue = cf.getMinValue();
         maxValue = cf.getMaxValue();
         regExp = cf.getRegExp();
-        // cacheValue = cf.isCacheValue();
-        // cacheValueTimeperiod = cf.getCacheValueTimeperiod();
         guiPosition = cf.getGuiPosition();
         if (cf.getFieldType() == CustomFieldTypeEnum.LIST) {
             listValues = cf.getListValuesSorted();
@@ -237,42 +226,6 @@ public class CustomFieldTemplateDto extends BaseDto {
             childEntityFieldsForSummary = Arrays.asList(cf.getChildEntityFieldsAsList());
         }
 
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
