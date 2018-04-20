@@ -20,7 +20,7 @@ package org.meveo.admin.exception;
 
 /**
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @lastModifiedVersion 5.1
  */
 public class NoTaxException extends BusinessException {
     private static final long serialVersionUID = 1L;
