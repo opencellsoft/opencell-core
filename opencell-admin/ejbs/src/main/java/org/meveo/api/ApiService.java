@@ -1,7 +1,7 @@
 package org.meveo.api;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -18,7 +18,7 @@ import org.meveo.model.jobs.TimerEntity;
  * @param <E> Entity class
  * @param <T> Dto class
  */
-public interface ApiService<E extends BusinessEntity, T extends BusinessDto> {
+public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDto> {
 
     /**
      * Find entity identified by code.

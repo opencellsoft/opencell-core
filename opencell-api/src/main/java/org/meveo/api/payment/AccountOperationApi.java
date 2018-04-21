@@ -484,6 +484,7 @@ public class AccountOperationApi extends BaseApi {
             return null;
         }
         AccountOperationDto accountOperationDto = new AccountOperationDto();
+        accountOperationDto.setAuditable(accountOp);
         accountOperationDto.setId(accountOp.getId());
         accountOperationDto.setDueDate(accountOp.getDueDate());
         accountOperationDto.setType(accountOp.getType());
@@ -518,6 +519,7 @@ public class AccountOperationApi extends BaseApi {
             matchingAmountsDto.setMatchingAmount(new ArrayList<>());
             for (MatchingAmount matchingAmount : matchingAmounts) {
                 matchingAmountDto = new MatchingAmountDto();
+                matchingAmountDto.setAuditable(matchingAmount);
                 if (matchingAmount.getMatchingCode() != null) {
                     matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
                 }

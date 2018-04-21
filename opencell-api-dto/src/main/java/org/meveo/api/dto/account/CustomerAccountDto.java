@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -112,6 +113,15 @@ public class CustomerAccountDto extends AccountDto {
      */
     public CustomerAccountDto() {
         super();
+    }
+    
+    /**
+     * Instantiates a new customer account dto.
+     * 
+     * @param e CustomerAccount entity
+     */
+    public CustomerAccountDto(CustomerAccount e) {
+        super(e, null);
     }
 
     /**

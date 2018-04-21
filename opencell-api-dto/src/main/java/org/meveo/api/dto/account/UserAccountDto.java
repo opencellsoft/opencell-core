@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.UserAccount;
 
 /**
  * The Class UserAccountDto.
@@ -66,6 +67,15 @@ public class UserAccountDto extends AccountDto {
      */
     public UserAccountDto() {
         super();
+    }
+    
+    /**
+     * Instantiates a new user account dto.
+     * 
+     * @param e UserAccount entity
+     */
+    public UserAccountDto(UserAccount e) {
+        super(e, null);
     }
 
     /**

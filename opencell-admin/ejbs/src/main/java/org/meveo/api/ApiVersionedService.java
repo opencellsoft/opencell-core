@@ -3,7 +3,7 @@ package org.meveo.api;
 import java.util.Date;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -18,7 +18,7 @@ import org.meveo.model.BusinessEntity;
  * @param <E> Entity class
  * @param <T> Dto class
  */
-public interface ApiVersionedService<E extends BusinessEntity, T extends BusinessDto> {
+public interface ApiVersionedService<E extends BusinessEntity, T extends BusinessEntityDto> {
 
     /**
      * Find entity identified by code.

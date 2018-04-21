@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.shared.Title;
 
@@ -17,7 +17,7 @@ import org.meveo.model.shared.Title;
  */
 @XmlRootElement(name = "Title")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TitleDto extends BusinessDto {
+public class TitleDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1332916104721562522L;

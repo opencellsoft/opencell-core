@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.SellersDto;
 
 /**
@@ -15,7 +15,7 @@ import org.meveo.api.dto.SellersDto;
  */
 @XmlRootElement(name = "CustomerHierarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerHierarchyDto extends BaseDto {
+public class CustomerHierarchyDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7727040970378439778L;

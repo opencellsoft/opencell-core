@@ -5,7 +5,7 @@ import java.lang.reflect.TypeVariable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -21,7 +21,7 @@ import org.meveo.service.base.BusinessService;
  * @param <E> Entity class
  * @param <T> Dto class
  */
-public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessDto> extends BaseApi implements ApiService<E, T> {
+public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEntityDto> extends BaseApi implements ApiService<E, T> {
 
     /**
      * Persistence service corresponding to a entity that API implementation corresponds to

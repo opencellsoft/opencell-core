@@ -15,7 +15,7 @@ import org.meveo.model.billing.TradingLanguage;
  */
 @XmlRootElement(name = "Language")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageDto extends BaseDto implements IEnableDto {
+public class LanguageDto extends AuditableEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 725968016559888810L;
@@ -49,6 +49,7 @@ public class LanguageDto extends BaseDto implements IEnableDto {
      * @param tradingLanguage the trading language
      */
     public LanguageDto(TradingLanguage tradingLanguage) {
+        super(tradingLanguage);
         code = tradingLanguage.getLanguageCode();
         description = tradingLanguage.getPrDescription();
         disabled = tradingLanguage.isDisabled();
@@ -60,6 +61,7 @@ public class LanguageDto extends BaseDto implements IEnableDto {
      * @param language the language
      */
     public LanguageDto(Language language) {
+        super(language);
         code = language.getLanguageCode();
         description = language.getDescriptionEn();
     }

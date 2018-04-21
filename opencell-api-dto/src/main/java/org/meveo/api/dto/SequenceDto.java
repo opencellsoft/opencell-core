@@ -32,7 +32,7 @@ import org.meveo.model.billing.Sequence;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SequenceDto extends BaseDto {
+public class SequenceDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4763606402719751014L;

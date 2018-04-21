@@ -820,6 +820,7 @@ public class InvoiceApi extends BaseApi {
 
         InvoiceDto invoiceDto = new InvoiceDto();
 
+        invoiceDto.setAuditable(invoice);
         invoiceDto.setInvoiceId(invoice.getId());
         invoiceDto.setBillingAccountCode(invoice.getBillingAccount().getCode());
         invoiceDto.setInvoiceDate(invoice.getInvoiceDate());

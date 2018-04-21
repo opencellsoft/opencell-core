@@ -28,8 +28,8 @@ import org.meveo.api.ScriptInstanceApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.catalog.ServiceTemplateApi;
-import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
@@ -529,7 +529,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
             meveoModule.getModuleItems().clear();
 
-            for (BaseDto dto : moduleDto.getModuleItems()) {
+            for (BaseEntityDto dto : moduleDto.getModuleItems()) {
 
                 try {
 
@@ -571,12 +571,12 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
                         if (entityClass.isAnnotationPresent(VersionedEntity.class)) {
                             ApiVersionedService apiService = getApiVersionedService(entityClass, true);
-                            apiService.createOrUpdate((BusinessDto) dto);
+                            apiService.createOrUpdate((BusinessEntityDto) dto);
                             apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), (Date) FieldUtils.readField(dto, "validFrom", true),
                                 (Date) FieldUtils.readField(dto, "validTo", true), true);
                         } else {
                             ApiService apiService = getApiService(entityClass, true);
-                            apiService.createOrUpdate((BusinessDto) dto);
+                            apiService.createOrUpdate((BusinessEntityDto) dto);
                             apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), true);
                         }
 
@@ -732,7 +732,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             for (MeveoModuleItem item : moduleItems) {
 
                 try {
-                    BaseDto itemDto = null;
+                    BaseEntityDto itemDto = null;
 
                     if (item.getItemClass().equals(CustomFieldTemplate.class.getName())) {
                         itemDto = customFieldTemplateApi.findIgnoreNotFound(item.getItemCode(), item.getAppliesTo());

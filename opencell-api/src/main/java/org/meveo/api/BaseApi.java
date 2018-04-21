@@ -29,8 +29,8 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
@@ -138,7 +138,7 @@ public abstract class BaseApi {
      * @param dto base data transfer object.
      * @throws MeveoApiException meveo api exception.
      */
-    protected void handleMissingParametersAndValidate(BaseDto dto) throws MeveoApiException {
+    protected void handleMissingParametersAndValidate(BaseEntityDto dto) throws MeveoApiException {
         validate(dto);
 
         if (!missingParameters.isEmpty()) {
@@ -148,7 +148,7 @@ public abstract class BaseApi {
         }
     }
 
-    protected void handleMissingParameters(BaseDto dto, String... fields) throws MeveoApiException {
+    protected void handleMissingParameters(BaseEntityDto dto, String... fields) throws MeveoApiException {
 
         for (String fieldName : fields) {
 
@@ -705,7 +705,7 @@ public abstract class BaseApi {
 
                     // Process DTOs that have exposed their own API (extends
                     // BaseDto class)
-                    if (dtoValue instanceof BaseDto) {
+                    if (dtoValue instanceof BaseEntityDto) {
 
                         // For BusinessEntity DTO, a full DTO entity or only a
                         // reference (e.g. Code) is passed
@@ -728,8 +728,8 @@ public abstract class BaseApi {
                                 // Create or update a full entity DTO passed
                             } else {
 
-                                ApiService apiService = getApiService((BusinessDto) dtoValue, true);
-                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessDto) dtoValue);
+                                ApiService apiService = getApiService((BusinessEntityDto) dtoValue, true);
+                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessEntityDto) dtoValue);
                             }
 
                             // Update field with a new entity
@@ -739,8 +739,8 @@ public abstract class BaseApi {
                             // full entity DTO passed
                         } else {
 
-                            ApiService apiService = getApiService((BusinessDto) dtoValue, true);
-                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessDto) dtoValue);
+                            ApiService apiService = getApiService((BusinessEntityDto) dtoValue, true);
+                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessEntityDto) dtoValue);
 
                             // Update field with a new entity
                             FieldUtils.writeField(entityToPopulate, dtoField.getName(), valueAsEntity, true);
@@ -836,7 +836,7 @@ public abstract class BaseApi {
      * @throws ClassNotFoundException class not found exception.
      */
     @SuppressWarnings("rawtypes")
-    protected ApiService getApiService(BaseDto dto, boolean throwException) throws MeveoApiException, ClassNotFoundException {
+    protected ApiService getApiService(BaseEntityDto dto, boolean throwException) throws MeveoApiException, ClassNotFoundException {
         String entityClassName = dto.getClass().getSimpleName().substring(0, dto.getClass().getSimpleName().lastIndexOf("Dto"));
 
         return getApiService(entityClassName, throwException);
@@ -926,7 +926,7 @@ public abstract class BaseApi {
      * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings("rawtypes")
-    protected PersistenceService getPersistenceService(BaseDto dto, boolean throwException) throws MeveoApiException {
+    protected PersistenceService getPersistenceService(BaseEntityDto dto, boolean throwException) throws MeveoApiException {
         String entityClassName = dto.getClass().getSimpleName().substring(0, dto.getClass().getSimpleName().lastIndexOf("Dto"));
 
         PersistenceService persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClassName + "Service");
