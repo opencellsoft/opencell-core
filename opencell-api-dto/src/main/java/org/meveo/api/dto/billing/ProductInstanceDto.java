@@ -55,10 +55,8 @@ public class ProductInstanceDto extends BusinessEntityDto {
      * @param customFieldInstances the custom field instances
      */
     public ProductInstanceDto(ProductInstance productInstance, CustomFieldsDto customFieldInstances) {
-
+        super(productInstance);
         id = productInstance.getId();
-        code = productInstance.getCode();
-        description = productInstance.getDescription();
         applicationDate = productInstance.getApplicationDate();
         quantity = productInstance.getQuantity();
         orderNumber = productInstance.getOrderNumber();

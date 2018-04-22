@@ -237,6 +237,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Item selector getter. Item selector keeps a state of multiselect checkboxes.
+     * 
+     * @return ListItemsSelector of BillingAccount
      */
     // TODO: @BypassInterceptors
     public ListItemsSelector<BillingAccount> getItemSelector() {
@@ -248,6 +250,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Check/uncheck all select boxes.
+     * 
+     * @param event notification that the local value of the source component has been changed
      */
     public void checkUncheckAll(ValueChangeEvent event) {
         itemSelector.switchMode();

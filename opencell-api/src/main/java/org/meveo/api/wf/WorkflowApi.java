@@ -146,10 +146,9 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     }
 
     /**
+     * Return list of workflow dto
      * 
-     * 
-     * @return
-     *
+     * @return list of workflow dto
      */
     public List<WorkflowDto> list() {
         List<WorkflowDto> result = new ArrayList<>();
@@ -180,8 +179,10 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     }
 
     /**
+     * Validate Workflow Dto
      * 
-     * @param workflowDto
+     * @param workflowDto Workflow Dto
+     * @param isUpdate Indicates that Dto is for update
      * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(WorkflowDto workflowDto, boolean isUpdate) throws MissingParameterException {
@@ -197,10 +198,9 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     /**
      * Find a Workflow by an Entity
      * 
-     * @param baseEntityName
-     * 
-     * @return
-     * @throws MeveoApiException
+     * @param baseEntityName Base entity name
+     * @return list of Workflow Dto
+     * @throws MeveoApiException Meveo api exception
      */
     @SuppressWarnings("unchecked")
     public List<WorkflowDto> findByEntity(String baseEntityName) throws MeveoApiException {
@@ -224,12 +224,11 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
     /**
      * 
-     * @param baseEntityName
-     * @param baseEntityInstanceId
-     * @param workflowCode
-     * 
+     * @param baseEntityName Base entity name
+     * @param baseEntityInstanceId Base entity instance Id
+     * @param workflowCode Workflow code
      * @throws BusinessException General business exception
-     * @throws MeveoApiException
+     * @throws MeveoApiException Meveo api exception
      */
     @SuppressWarnings("unchecked")
     public void execute(String baseEntityName, String baseEntityInstanceId, String workflowCode) throws BusinessException, MeveoApiException {

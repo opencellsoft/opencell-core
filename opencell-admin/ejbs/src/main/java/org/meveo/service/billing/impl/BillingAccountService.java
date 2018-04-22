@@ -781,7 +781,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                                 invoiceSubCategory, "", "", "", "", null, "", "", null, "NO_OFFER", null,
                                                 RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel);
                                             ratedTransactionService.create(ratedTransaction);
-                                            ratedTransactionService.commit();
 
                                             serviceAmountWithoutTax = serviceAmountWithoutTax.add(amountWithoutTax);
                                             serviceAmountWithTax = serviceAmountWithTax.add(amountWithTax);
@@ -867,7 +866,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                         "", "", "", null, "", "", null, "NO_OFFER", null,
                                         RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), subscriptionMinLabel);
                                     ratedTransactionService.create(ratedTransaction);
-                                    ratedTransactionService.commit();
 
                                     subscriptionAmountWithoutTax = subscriptionAmountWithoutTax.add(amountWithoutTax);
                                     subscriptionAmountWithTax = subscriptionAmountWithTax.add(amountWithTax);
@@ -951,7 +949,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                         amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null, "", "", null,
                         "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), billingAccountMinLabel);
                     ratedTransactionService.create(ratedTransaction);
-                    ratedTransactionService.commit();
 
                     billingAccountAmountWithoutTax = billingAccountAmountWithoutTax.add(amountWithoutTax);
                     billingAccountAmountWithTax = billingAccountAmountWithTax.add(amountWithTax);

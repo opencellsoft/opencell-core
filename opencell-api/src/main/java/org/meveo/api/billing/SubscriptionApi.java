@@ -939,6 +939,7 @@ public class SubscriptionApi extends BaseApi {
      * Find subscription 
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
+     * @param inheritCF Custom field inheritance type
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
@@ -993,9 +994,7 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionDto
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
-        SubscriptionDto dto = new SubscriptionDto();
-        dto.setCode(subscription.getCode());
-        dto.setDescription(subscription.getDescription());
+        SubscriptionDto dto = new SubscriptionDto(subscription);
         dto.setStatus(subscription.getStatus());
         dto.setStatusDate(subscription.getStatusDate());
         dto.setOrderNumber(subscription.getOrderNumber());

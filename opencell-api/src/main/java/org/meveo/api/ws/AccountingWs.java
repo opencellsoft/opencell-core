@@ -77,7 +77,7 @@ public interface AccountingWs extends IBaseWs {
     /**
      * Enable an AccountingCode by its code
      * 
-     * @param accountingCode Accounting code code
+     * @param code Accounting code code
      * @return Request processing status
      */
     @WebMethod
@@ -86,7 +86,7 @@ public interface AccountingWs extends IBaseWs {
     /**
      * Disable an AccountingCode by its code
      * 
-     * @param accountingCode Accounting code code
+     * @param code Accounting code code
      * @return Request processing status
      */
     @WebMethod

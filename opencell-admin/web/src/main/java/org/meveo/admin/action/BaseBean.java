@@ -457,6 +457,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Save or update entity depending on if entity is transient.
      * 
      * @param entity Entity to save.
+     * @return Updated entity
      * @throws BusinessException General business exception
      */
     protected T saveOrUpdate(T entity) throws BusinessException {
@@ -562,6 +563,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /**
      * Get a navigation view name that will display an entity list page. Default view name is a list view in a format: entity's name + s;
+     * @return List view name
      */
     protected String getListViewName() {
         String className = clazz.getSimpleName();

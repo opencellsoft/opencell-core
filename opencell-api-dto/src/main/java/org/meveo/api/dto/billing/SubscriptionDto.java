@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 
 /**
@@ -108,7 +109,16 @@ public class SubscriptionDto extends BusinessEntityDto {
      * Instantiates a new subscription dto.
      */
     public SubscriptionDto() {
-
+        super();
+    }
+    
+    /**
+     * Instantiates a new subscription dto.
+     * 
+     * @param e Subscription entity
+     */
+    public SubscriptionDto(Subscription e) {
+        super(e);
     }
 
     /**

@@ -114,9 +114,10 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     }
 
     /**
-     * match selected operations
+     * Match selected operations.
      * 
-     * @return
+     * @param customerAccountId Customer account identifier
+     * @return Redirect page
      */
     public String matching(Long customerAccountId) {
         List<Long> operationIds = new ArrayList<Long>();

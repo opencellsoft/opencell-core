@@ -93,10 +93,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      * @param customFieldInstances the custom field instances
      */
     public ServiceInstanceDto(ServiceInstance serviceInstance, CustomFieldsDto customFieldInstances) {
-
+        super(serviceInstance);
         id = serviceInstance.getId();
-        code = serviceInstance.getCode();
-        description = serviceInstance.getDescription();
         status = serviceInstance.getStatus();
         statusDate = serviceInstance.getStatusDate();
         subscriptionDate = serviceInstance.getSubscriptionDate();

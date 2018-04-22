@@ -47,7 +47,7 @@ public interface RevenueRecognitionRulesRs extends IBaseRs {
      * Find a revenue recognition rule with a given code
      * 
      * @param revenueRecognitionRuleCode The revenue recognition rule's code
-     * @return
+     * @return Revenue recognition rules results
      */
     @GET
     @Path("/")

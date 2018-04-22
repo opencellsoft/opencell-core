@@ -54,6 +54,15 @@ public abstract class AccountDto extends BusinessEntityDto {
     public AccountDto() {
         super();
     }
+    
+    /**
+     * Instantiates a new account dto. Used on account hierarchy
+     *
+     * @param accountEntity the accountEntity entity
+     */
+    public AccountDto(AccountEntity accountEntity) {
+        super(accountEntity);
+    }
 
     /**
      * Instantiates a new account dto.

@@ -1750,7 +1750,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF) {
 
-        BillingAccountDto dto = new BillingAccountDto();
+        BillingAccountDto dto = new BillingAccountDto(ba);
         accountEntityToDto(dto, ba, inheritCF);
 
         if (ba.getCustomerAccount() != null) {
@@ -1814,7 +1814,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     public UserAccountDto userAccountToDto(UserAccount ua, CustomFieldInheritanceEnum inheritCF) {
 
-        UserAccountDto dto = new UserAccountDto();
+        UserAccountDto dto = new UserAccountDto(ua);
         accountEntityToDto(dto, ua, inheritCF);
 
         if (ua.getBillingAccount() != null) {

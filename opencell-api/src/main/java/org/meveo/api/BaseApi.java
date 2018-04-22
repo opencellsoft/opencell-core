@@ -704,7 +704,7 @@ public abstract class BaseApi {
                     Class entityClass = entityField.getType();
 
                     // Process DTOs that have exposed their own API (extends
-                    // BaseDto class)
+                    // BaseEntityDto class)
                     if (dtoValue instanceof BaseEntityDto) {
 
                         // For BusinessEntity DTO, a full DTO entity or only a
@@ -947,7 +947,7 @@ public abstract class BaseApi {
      * @param entityClass JPA Entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Persistence service
-     * @throws MeveoApiException meveo api exception.
+     * @throws BusinessException A general business exception
      */
     @SuppressWarnings("rawtypes")
     protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws BusinessException {
@@ -1332,4 +1332,5 @@ public abstract class BaseApi {
         }
         return null;
     }
+
 }

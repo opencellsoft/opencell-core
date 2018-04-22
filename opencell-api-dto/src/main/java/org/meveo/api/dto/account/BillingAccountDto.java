@@ -123,7 +123,7 @@ public class BillingAccountDto extends AccountDto {
      * @param e BillingAccount entity
      */
     public BillingAccountDto(BillingAccount e) {
-        super(e, null);
+        super(e);
     }
 
     /**

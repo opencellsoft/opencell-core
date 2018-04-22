@@ -596,9 +596,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Validate complex custom fields
+     * Validate complex custom fields.
      * 
      * @param entity Entity, to which custom fields are related to
+     * @return Are custom fields valid or not
      */
     public boolean validateCustomFields(ICustomFieldEntity entity) {
         boolean valid = true;
@@ -955,9 +956,11 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Save custom fields for a given entity
+     * Save custom fields for a given entity.
      * 
      * @param entity Entity, the fields relate to
+     * @param uuid Unique uid of field value holder
+     * @param duplicateCFI duplicateCFI
      * @param isNewEntity Is it a new entity
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
      *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
@@ -1443,9 +1446,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Save custom fields for a given entity
+     * Save custom fields for a given entity.
      * 
      * @param entity Entity, the fields relate to
+     * @return CustomFieldTemplate and Value Map
      * @throws BusinessException General business exception
      */
     public Map<CustomFieldTemplate, Object> loadCustomFieldsFromGUI(ICustomFieldEntity entity) throws BusinessException {
@@ -1469,9 +1473,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Get custom field values for a given entity - in case of versioned custom fields, retrieve the latest value
+     * Get custom field values for a given entity - in case of versioned custom fields, retrieve the latest value.
      * 
      * @param entity Entity, the fields relate to
+     * @return CustomFieldTemplate and Value Map
      * @throws BusinessException General business exception
      */
     public Map<CustomFieldTemplate, Object> getFieldValuesLatestValue(ICustomFieldEntity entity) throws BusinessException {

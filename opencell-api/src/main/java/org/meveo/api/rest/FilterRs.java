@@ -37,7 +37,7 @@ public interface FilterRs extends IBaseRs {
      * Find a filter with a given code
      *
      * @param filterCode The job instance's code
-     * @return
+     * @return Dto for FilteredList API
      */
     @Path("/")
     @GET

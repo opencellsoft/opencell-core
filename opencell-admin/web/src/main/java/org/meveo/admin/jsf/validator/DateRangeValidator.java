@@ -16,12 +16,12 @@ public class DateRangeValidator implements Serializable {
     private static final long serialVersionUID = -3269306744443460502L;
 
     /**
-     * Validate that if two dates are provided, the From value is before the To value
+     * Validate that if two dates are provided, the From value is before the To value.
      * 
-     * @param context
+     * @param context Faces context
      * @param components Components being validated
      * @param values Values to validate
-     * @return
+     * @return Is valid or not
      */
     public boolean validateDateRange(FacesContext context, List<UIInput> components, List<Object> values) {
 

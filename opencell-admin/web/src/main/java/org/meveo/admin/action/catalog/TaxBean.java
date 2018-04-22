@@ -95,6 +95,8 @@ public class TaxBean extends CustomFieldBean<Tax> {
 
     /**
      * Constructs cost accounting code
+     * 
+     * @return Cost accounting code
      */
     public String generateAccountingCode() {
         return accountingCodeFields[0] + separator + accountingCodeFields[1] + separator + accountingCodeFields[2] + separator + accountingCodeFields[3] + separator

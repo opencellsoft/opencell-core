@@ -75,7 +75,7 @@ public class UserAccountDto extends AccountDto {
      * @param e UserAccount entity
      */
     public UserAccountDto(UserAccount e) {
-        super(e, null);
+        super(e);
     }
 
     /**

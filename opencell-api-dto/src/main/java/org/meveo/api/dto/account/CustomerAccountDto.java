@@ -121,7 +121,7 @@ public class CustomerAccountDto extends AccountDto {
      * @param e CustomerAccount entity
      */
     public CustomerAccountDto(CustomerAccount e) {
-        super(e, null);
+        super(e);
     }
 
     /**

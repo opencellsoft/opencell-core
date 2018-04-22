@@ -59,6 +59,7 @@ public interface CustomerRs extends IBaseRs {
      * Search for a customer with a given code
      *
      * @param customerCode The customer's code
+     * @param inheritCF Custom field inheritance type
      * @return The customer's data
      */
     @GET
