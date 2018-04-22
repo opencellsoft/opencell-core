@@ -21098,7 +21098,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>c0f519d0-1c3b-4c75-91f3-6d56b9050862</con:value>
+              <con:value>d4e2c83b-0b3f-4cd0-a55e-059d459b7527</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -21200,9 +21200,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
-               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21359,6 +21357,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="07d4e7ab-1f4e-4cb0-bc1d-06c3a81ab0c2" name="Contains 2">
+              <con:configuration>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -21399,10 +21405,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER3</offerTemplate>
-               <subscriptionDate>2015-10-25T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21432,6 +21435,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="0b40efee-35f4-4537-8f74-3f8ae059efcd" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER3</offerTemplate>
+               <subscriptionDate>2015-10-25T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -21563,9 +21575,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
-               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21803,6 +21813,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="7728dc33-bd0b-4258-8f4a-efa17e86a771" name="Contains 2">
+              <con:configuration>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -21917,9 +21935,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
-               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -22175,6 +22191,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="7167e14e-3963-483c-b9ff-da6ee63f639c" name="Contains 2">
+              <con:configuration>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -22323,9 +22347,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
-               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -22588,6 +22610,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="a248ad0b-4b37-4e1f-871c-a674ec2e83bb" name="Contains 2">
+              <con:configuration>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -23182,10 +23212,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -23265,6 +23292,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="a532fde1-8b1f-4e20-94a1-21549185f6e4" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
+               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23305,10 +23341,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V3_SUB2">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-10-25T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V3_SUB2"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -23347,6 +23380,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="eac17cb3-ba35-4c0f-b65e-5e67b89eb8d9" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
+               <subscriptionDate>2017-10-25T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -23478,10 +23520,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -23639,6 +23678,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="80a49326-cad4-4a79-8b00-7ef4612887fc" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
+               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23753,10 +23801,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -23935,6 +23980,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="2238d535-0d06-4118-981e-6f3faa45a519" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
+               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -24083,12 +24137,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>
-               <terminationDate>2017-12-02T00:00:00${#Project#timezone}</terminationDate>
-               <status>RESILIATED</status>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -24265,6 +24314,17 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="0547dbb5-4181-42b3-8eaf-42a2d3f6d71f" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
+               <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>
+               <terminationDate>2017-12-02T00:00:00${#Project#timezone}</terminationDate>
+               <status>RESILIATED</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -25081,7 +25141,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="9c6fa325-5243-42c5-b2a3-77f941ddc06b" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="3885d1b4-98c6-4e92-ba36-ac885b291600" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -25115,9 +25175,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
-               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -25265,6 +25323,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="a01625e1-60f7-40a7-9e08-68ffb4abc9a1" name="Contains 2">
+              <con:configuration>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -25305,9 +25371,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
-               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER3&lt;/offerTemplate></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -25337,6 +25401,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="fae57435-44a9-42c8-ba12-165c36104a42" name="Contains 2">
+              <con:configuration>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER3&lt;/offerTemplate></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -26212,7 +26284,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="f0d43ee6-ee87-4c77-bea8-30d0a419a6af" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="450d313e-f430-496f-9af1-471c9eaf0735" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -26246,10 +26318,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V1_SUB2">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-02-05T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V1_SUB2"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -26329,6 +26398,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="5922541e-be36-4435-9efd-fffb797e97ae" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
+               <subscriptionDate>2017-02-05T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -26369,10 +26447,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V3_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-09-27T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V3_SUB1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -26411,6 +26486,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="887efdce-ce0a-4dad-8dae-867140fcc538" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
+               <subscriptionDate>2017-09-27T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -27251,7 +27335,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="797c96c0-2154-41eb-950e-0bb2804e6c5f" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="c59fd84b-ee94-4794-9f50-98a519ee80dd" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -27285,11 +27369,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27405,6 +27485,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="decaf5da-6db4-4e10-a620-99736e853055" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -27436,7 +27526,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>serviceId1</con:name>
-              <con:value>15</con:value>
+              <con:value>66</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -27576,11 +27666,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27696,6 +27782,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="d687bbce-3ac9-4077-893b-fbf619ec00a6" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -27774,11 +27870,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <endAgreementDate>2016-06-25T00:00:00${#Project#timezone2}</endAgreementDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27906,6 +27998,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="b52c88ed-5a5d-4066-a3c2-040118e987f0" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <endAgreementDate>2016-06-25T00:00:00${#Project#timezone2}</endAgreementDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -27984,10 +28086,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -28110,6 +28209,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="350586f2-2ece-4955-890f-3f89478f61d3" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -28271,10 +28379,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -28397,6 +28502,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4ea0de57-b448-421d-a852-87df75b3fde4" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -28551,10 +28665,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -28688,6 +28799,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="1ece39c1-6809-44fc-bb6b-8baa45cd0ca7" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:preemptive>true</con:preemptive>
@@ -28767,13 +28887,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <terminationDate>2016-10-25T00:00:00${#Project#timezone2}</terminationDate>
-               <endAgreementDate>2018-05-25T00:00:00${#Project#timezone2}</endAgreementDate>
-               <status>SUSPENDED</status>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -28896,6 +29010,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="00569812-7019-43b5-aaec-d518ac0a693b" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <terminationDate>2016-10-25T00:00:00${#Project#timezone2}</terminationDate>
+               <endAgreementDate>2018-05-25T00:00:00${#Project#timezone2}</endAgreementDate>
+               <status>SUSPENDED</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -29664,7 +29790,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>29</con:value>
+        <con:value>32</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -29985,7 +30111,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>a0156e43-7b06-4987-8352-016b2f5a7e8e</orderNumber>
+            <orderNumber>f7e39238-caa6-4763-8450-693e78ac4cf7</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30053,8 +30179,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000010</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000011</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -30162,7 +30288,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>a0156e43-7b06-4987-8352-016b2f5a7e8e</orderNumber>
+            <orderNumber>f7e39238-caa6-4763-8450-693e78ac4cf7</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30353,7 +30479,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>a0156e43-7b06-4987-8352-016b2f5a7e8e</orderNumber>
+            <orderNumber>f7e39238-caa6-4763-8450-693e78ac4cf7</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30421,8 +30547,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000011</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000012</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -30594,7 +30720,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>12cf3e79-c552-457e-8074-bfcbadd4eaca</orderNumber>
+            <orderNumber>b11e4610-ed4c-486f-a6af-f58e736e622a</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30662,8 +30788,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000012</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000013</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -30809,7 +30935,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>97c8ffb9-6f40-423b-a9c6-a8e0f4e6cf86</orderNumber>
+            <orderNumber>8d4320b7-3397-494f-8869-a85ebc9789fe</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30877,8 +31003,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000013</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000014</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -31013,7 +31139,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>09decae5-2741-40e0-a4fb-1da714037a63</orderNumber>
+            <orderNumber>041ba77e-6f91-4828-a791-59c069f50939</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31081,8 +31207,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000014</invoiceNumber>
-         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
+         	<invoiceNumber>000000015</invoiceNumber>
+         	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -31124,7 +31250,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>36</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -31858,7 +31984,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>c4bad244-08ea-4620-9e1a-05a42ba244a6</con:value>
+              <con:value>bd69022c-4980-4210-8aa8-ca3da42ab700</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -32161,15 +32287,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>c9904ca9-f416-41f9-b768-c38c66ee96a3</con:value>
+        <con:value>3d6dbafd-f52d-4448-9e03-99b94543b8f3</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>6f095c4e-4009-4b76-8038-291049524073</con:value>
+        <con:value>6c68d385-bd9b-447a-9c0a-70aea264e021</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>12</con:value>
+        <con:value>15</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -32336,11 +32462,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
