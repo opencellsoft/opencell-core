@@ -259,6 +259,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Listener of select changed event.
+     * @param event Value change event
      */
     public void selectChanged(ValueChangeEvent event) {
         BillingAccount entity = getLazyDataModel().getRowData();
