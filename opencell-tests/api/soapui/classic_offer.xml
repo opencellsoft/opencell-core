@@ -51937,7 +51937,6 @@ from
 	billing_wallet_operation wo 
 where 
 	provider_id = #{provider} 
-and wo.disabled=0 
 and wo.end_date is not null 
 and date_trunc('month', wo.operation_date) = date_trunc('month', to_date('#{date}','YYYY-MM-DD'))
 group by 
@@ -52113,8 +52112,7 @@ mrr as
    from
        billing_wallet_operation wo
    where
-       wo.disabled = 0
-   and wo.end_date is not null
+       wo.end_date is not null
    and date_trunc('month', wo.operation_date) = date_trunc('month', to_date('#{date}','YYYY-MM-DD'))
    group by
        wo.offer_code, date_trunc('month', wo.operation_date)
@@ -52184,8 +52182,7 @@ with a as
        inner join billing_user_account ua
         on ua.id = s.user_account_id
    where
-       wo.disabled = 0
-   and wo.end_date is not null
+       wo.end_date is not null
    and date_trunc('month', wo.operation_date) = date_trunc('month', to_date('#{date}','YYYY-MM-DD'))
    group by
        ua_creation_month,
