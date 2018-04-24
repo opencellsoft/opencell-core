@@ -9,46 +9,83 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.DueDateDelayEnum;
 
 /**
+ * The Class DueDateDelayDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "DueDateDelay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DueDateDelayDto implements Serializable {
 
-	private static final long serialVersionUID = -8887054188898878461L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8887054188898878461L;
 
-	private DueDateDelayEnum delayOrigin;
-	private int computedDelay;
-	private String delayEL;
+    /** The delay origin. */
+    private DueDateDelayEnum delayOrigin;
 
-	public DueDateDelayEnum getDelayOrigin() {
-		return delayOrigin;
-	}
+    /** The computed delay. */
+    private int computedDelay;
 
-	public void setDelayOrigin(DueDateDelayEnum delayOrigin) {
-		this.delayOrigin = delayOrigin;
-	}
+    /** The delay EL. */
+    private String delayEL;
 
-	public int getComputedDelay() {
-		return computedDelay;
-	}
+    /**
+     * Gets the delay origin.
+     *
+     * @return the delay origin
+     */
+    public DueDateDelayEnum getDelayOrigin() {
+        return delayOrigin;
+    }
 
-	public void setComputedDelay(int computedDelay) {
-		this.computedDelay = computedDelay;
-	}
+    /**
+     * Sets the delay origin.
+     *
+     * @param delayOrigin the new delay origin
+     */
+    public void setDelayOrigin(DueDateDelayEnum delayOrigin) {
+        this.delayOrigin = delayOrigin;
+    }
 
-	public String getDelayEL() {
-		return delayEL;
-	}
+    /**
+     * Gets the computed delay.
+     *
+     * @return the computed delay
+     */
+    public int getComputedDelay() {
+        return computedDelay;
+    }
 
-	public void setDelayEL(String delayEL) {
-		this.delayEL = delayEL;
-	}
+    /**
+     * Sets the computed delay.
+     *
+     * @param computedDelay the new computed delay
+     */
+    public void setComputedDelay(int computedDelay) {
+        this.computedDelay = computedDelay;
+    }
 
-	@Override
-	public String toString() {
-		return "DueDateDelayDto [delayOrigin=" + delayOrigin + ", computedDelay=" + computedDelay + ", delayEL="
-				+ delayEL + "]";
-	}
+    /**
+     * Gets the delay EL.
+     *
+     * @return the delay EL
+     */
+    public String getDelayEL() {
+        return delayEL;
+    }
+
+    /**
+     * Sets the delay EL.
+     *
+     * @param delayEL the new delay EL
+     */
+    public void setDelayEL(String delayEL) {
+        this.delayEL = delayEL;
+    }
+
+    @Override
+    public String toString() {
+        return "DueDateDelayDto [delayOrigin=" + delayOrigin + ", computedDelay=" + computedDelay + ", delayEL=" + delayEL + "]";
+    }
 
 }

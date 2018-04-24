@@ -7,31 +7,47 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.UserDto;
 
 /**
+ * The Class GetUserResponse.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetUserResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetUserResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 6212357569361512794L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 6212357569361512794L;
 
-	public UserDto user;
+    /** The user. */
+    public UserDto user;
 
-	public GetUserResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new gets the user response.
+     */
+    public GetUserResponse() {
+        super();
+    }
 
-	public UserDto getUser() {
-		return user;
-	}
+    /**
+     * Gets the user.
+     *
+     * @return the user
+     */
+    public UserDto getUser() {
+        return user;
+    }
 
-	public void setUser(UserDto user) {
-		this.user = user;
-	}
+    /**
+     * Sets the user.
+     *
+     * @param user the new user
+     */
+    public void setUser(UserDto user) {
+        this.user = user;
+    }
 
-	@Override
-	public String toString() {
-		return "GetUser4_3Response [user=" + user + ", toString()=" + super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetUser4_3Response [user=" + user + ", toString()=" + super.toString() + "]";
+    }
 }

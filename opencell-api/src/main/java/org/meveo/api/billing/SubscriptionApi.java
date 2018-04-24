@@ -96,7 +96,7 @@ import org.meveo.service.order.OrderService;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.1
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -154,9 +154,9 @@ public class SubscriptionApi extends BaseApi {
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
-     * @param postData post Data Dto
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * @param postData The subscription dto
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -237,9 +237,9 @@ public class SubscriptionApi extends BaseApi {
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
-     * @param postData postData Dto
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * @param postData subscription Dto
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -292,7 +292,9 @@ public class SubscriptionApi extends BaseApi {
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
         subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed()));
-
+        subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
+        subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);
@@ -323,8 +325,8 @@ public class SubscriptionApi extends BaseApi {
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
      * @param activateServicesDto activateServicesDto
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException Business exception
      */
     public void activateServices(ActivateServicesRequestDto activateServicesDto) throws MeveoApiException, BusinessException {
 
@@ -520,8 +522,8 @@ public class SubscriptionApi extends BaseApi {
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
      * @param instantiateServicesDto instantiateServices Dto
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException Business exception
      */
     public void instantiateServices(InstantiateServicesRequestDto instantiateServicesDto) throws MeveoApiException, BusinessException {
 
@@ -623,6 +625,12 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
+    /**
+     * Apply an one shot charge on a subscription
+     * 
+     * @param postData The apply  one shot charge instance request dto
+     * @throws MeveoApiException Meveo api exception
+     */
     public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getOneShotCharge())) {
@@ -674,6 +682,13 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
+    /**
+     * Apply a product charge on a subscription
+     * @param postData Apply product request dto
+     * @return List wallet operation generated
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
+     */
     public List<WalletOperationDto> applyProduct(ApplyProductRequestDto postData) throws MeveoApiException, BusinessException {
         List<WalletOperationDto> result = new ArrayList<>();
         if (StringUtils.isBlank(postData.getProduct())) {
@@ -730,6 +745,12 @@ public class SubscriptionApi extends BaseApi {
         return result;
     }
 
+    /**
+     * Terminate subscription
+     * @param postData Terminate subscription request dto
+     * @param orderNumber order number
+     * @throws MeveoApiException Meveo api exception
+     */
     public void terminateSubscription(TerminateSubscriptionRequestDto postData, String orderNumber) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getSubscriptionCode())) {
@@ -767,6 +788,11 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
+    /**
+     * Terminate services
+     * @param terminateSubscriptionDto Terminate subscription services request dto
+     * @throws MeveoApiException Meveo api exception
+     */
     public void terminateServices(TerminateSubscriptionServicesRequestDto terminateSubscriptionDto) throws MeveoApiException {
 
         if (StringUtils.isBlank(terminateSubscriptionDto.getSubscriptionCode())) {
@@ -829,6 +855,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * List subscription by user account
      * @param userAccountCode user account code
      * @param mergedCF true/false (true if we want the merged CF in return)
      * @param sortBy name of column to be sorted
@@ -862,6 +889,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * List subbscriptions
      * @param mergedCF truf if merging inherited CF
      * @param pagingAndFiltering paging and filtering.
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
@@ -898,6 +926,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * Find subscription by code
      * @param subscriptionCode code of subscription to find
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
@@ -907,8 +936,10 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * Find subscription 
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
+     * @param inheritCF Custom field inheritance type
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
@@ -948,6 +979,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * Convert subscription entity to dto
      * @param subscription instance of Subscription to be mapped
      * @return instance of SubscriptionDto.
      */
@@ -956,6 +988,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * Convert subscription dto to entity
      * @param subscription instance of Subscription to be mapped
      * @param inheritCF choose whether CF values are inherited and/or merged
      * @return instance of SubscriptionDto
@@ -1221,7 +1254,17 @@ public class SubscriptionApi extends BaseApi {
             }
         }
     }
-
+    
+    /**
+     * Suspend subscription
+     * @param subscriptionCode subscription code
+     * @param suspensionDate suspension date
+     * @throws MissingParameterException Missing parameter exception
+     * @throws EntityDoesNotExistsException Entity does not exists exception
+     * @throws IncorrectSusbcriptionException Incorrect susbcription exception
+     * @throws IncorrectServiceInstanceException Incorrect service instance exception
+     * @throws BusinessException Business exception
+     */
     public void suspendSubscription(String subscriptionCode, Date suspensionDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
@@ -1236,7 +1279,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     *
+     * Resume subscription
      * @param subscriptionCode subscription code
      * @param suspensionDate suspension data
      * @throws MissingParameterException missiong parameter exeption
@@ -1259,6 +1302,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * Suspend services
      * @param provisionningServicesRequestDto provisioning service request.
      *
      * @throws IncorrectSusbcriptionException incorrect subscription exception
@@ -1272,6 +1316,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * Resume services
      * @param provisionningServicesRequestDto provisioning service request.
      *
      * @throws IncorrectSusbcriptionException incorrect subscription exception
@@ -1285,6 +1330,8 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * Suspend or resume services
+     * 
      * @param postData operation serivices request
      * @param isToSuspend true if it is to be suspended.
      * @throws IncorrectSusbcriptionException incorrect subscription exception

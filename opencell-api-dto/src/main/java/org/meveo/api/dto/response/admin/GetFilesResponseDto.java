@@ -12,24 +12,37 @@ import org.meveo.api.dto.admin.FileDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetFilesResponseDto.
+ *
  * @author Edward P. Legaspi
  */
 @XmlRootElement(name = "GetFilesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetFilesResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -1183748524655055441L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1183748524655055441L;
 
-	@XmlElementWrapper(name = "files")
-	@XmlElement(name = "file")
-	private List<FileDto> files;
+    /** The files. */
+    @XmlElementWrapper(name = "files")
+    @XmlElement(name = "file")
+    private List<FileDto> files;
 
-	public List<FileDto> getFiles() {
-		return files;
-	}
+    /**
+     * Gets the files.
+     *
+     * @return the files
+     */
+    public List<FileDto> getFiles() {
+        return files;
+    }
 
-	public void setFiles(List<FileDto> files) {
-		this.files = files;
-	}
-
+    /**
+     * Sets the files.
+     *
+     * @param files the new files
+     */
+    public void setFiles(List<FileDto> files) {
+        this.files = files;
+    }
 }

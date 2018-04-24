@@ -7,26 +7,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class GetProductChargeTemplateResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetProductChargeTemplateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetProductChargeTemplateResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 6452175086333220603L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 6452175086333220603L;
 
-	private ProductChargeTemplateDto productChargeTemplate;
+    /** The product charge template. */
+    private ProductChargeTemplateDto productChargeTemplate;
 
-	public ProductChargeTemplateDto getProductChargeTemplate() {
-		return productChargeTemplate;
-	}
-	
-	public void setProductChargeTemplate(ProductChargeTemplateDto productChargeTemplate) {
-		this.productChargeTemplate = productChargeTemplate;
-	}
+    /**
+     * Gets the product charge template.
+     *
+     * @return the product charge template
+     */
+    public ProductChargeTemplateDto getProductChargeTemplate() {
+        return productChargeTemplate;
+    }
 
-	@Override
-	public String toString() {
-		return "GetProductChargeTemplateResponseDto [getProductChargeTemplate=" + productChargeTemplate + ", toString()="
-				+ super.toString() + "]";
-	}
+    /**
+     * Sets the product charge template.
+     *
+     * @param productChargeTemplate the new product charge template
+     */
+    public void setProductChargeTemplate(ProductChargeTemplateDto productChargeTemplate) {
+        this.productChargeTemplate = productChargeTemplate;
+    }
 
+    @Override
+    public String toString() {
+        return "GetProductChargeTemplateResponseDto [getProductChargeTemplate=" + productChargeTemplate + ", toString()=" + super.toString() + "]";
+    }
 }

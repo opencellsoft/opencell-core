@@ -197,11 +197,6 @@ public class UserBean extends CustomFieldBean<User> {
         this.userGroupSelectedNode = selectedNode;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -254,6 +249,8 @@ public class UserBean extends CustomFieldBean<User> {
 
     /**
      * Standard method for custom component with listType="pickList".
+     * 
+     * @return DualListModel of Role
      */
     public DualListModel<Role> getDualListModel() {
         if (rolesDM == null) {
@@ -662,7 +659,7 @@ public class UserBean extends CustomFieldBean<User> {
      * This will allow the chosen secured entity to be removed from the user's securedEntities list.
      * 
      * @param selectedSecuredEntity The chosen securedEntity
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
@@ -687,8 +684,8 @@ public class UserBean extends CustomFieldBean<User> {
     /**
      * This will add the selected business entity to the user's securedEntities list.
      * 
-     * @param event
-     * @throws BusinessException
+     * @param event Faces select event
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     public void saveSecuredEntity(SelectEvent event) throws BusinessException {

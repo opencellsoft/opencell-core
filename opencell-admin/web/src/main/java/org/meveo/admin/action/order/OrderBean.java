@@ -653,7 +653,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     /**
      * Subscription selected. Update offer information if necessary.
      * 
-     * @param event
+     * @param event faces select event
      */
     public void onSubscriptionSet(SelectEvent event) {
 
@@ -719,7 +719,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     /**
      * New product offering is selected - need to reset orderItem values and the offer tree
      * 
-     * @param event
+     * @param event faces select event
      */
     public void onMainProductOfferingSet(SelectEvent event) {
 
@@ -757,7 +757,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     /**
      * Propagate main offer item properties to services and products where it was not set yet
      * 
-     * @param event
+     * @param event faces select event
      */
     public void onMainCharacteristicsSet(SelectEvent event) {
         if (!(boolean) event.getComponent().getAttributes().get("isMain")) {
@@ -893,7 +893,6 @@ public class OrderBean extends CustomFieldBean<Order> {
      * 
      * @param characteristics Product characteristics
      * @param cfEntity Custom field entity values will be applied to
-     * @return
      */
     private void extractAndMakeAvailableInGUICustomFields(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity) {
 
@@ -919,7 +918,7 @@ public class OrderBean extends CustomFieldBean<Order> {
      * 
      * @param cfEntity Custom field entity values will be applied to
      * @return
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private List<ProductCharacteristic> customFieldsAsCharacteristics(BusinessCFEntity cfEntity) throws BusinessException {
 

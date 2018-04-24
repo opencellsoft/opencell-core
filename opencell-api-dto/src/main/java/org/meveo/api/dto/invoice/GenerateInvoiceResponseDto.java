@@ -8,46 +8,56 @@ import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GenerateInvoiceResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GenerateInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GenerateInvoiceResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 5811304676103235597L;
-	
-	private GenerateInvoiceResultDto generateInvoiceResultDto;
-	
-	public GenerateInvoiceResponseDto(){
-		
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5811304676103235597L;
 
-	/**
-	 * @return the generateInvoiceResultDto
-	 */
-	public GenerateInvoiceResultDto getGenerateInvoiceResultDto() {
-		return generateInvoiceResultDto;
-	}
+    /** The generate invoice result dto. */
+    private GenerateInvoiceResultDto generateInvoiceResultDto;
 
-	/**
-	 * @param generateInvoiceResultDto the generateInvoiceResultDto to set
-	 */
-	public void setGenerateInvoiceResultDto(GenerateInvoiceResultDto generateInvoiceResultDto) {
-		this.generateInvoiceResultDto = generateInvoiceResultDto;
-	}
+    /**
+     * Instantiates a new generate invoice response dto.
+     */
+    public GenerateInvoiceResponseDto() {
 
-	/**
-	 * @return the serialversionuid
-	 */
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "GenerateInvoiceResponseDto [generateInvoiceResultDto=" + generateInvoiceResultDto + "]";
-	}
+    /**
+     * Gets the generate invoice result dto.
+     *
+     * @return the generateInvoiceResultDto
+     */
+    public GenerateInvoiceResultDto getGenerateInvoiceResultDto() {
+        return generateInvoiceResultDto;
+    }
+
+    /**
+     * Sets the generate invoice result dto.
+     *
+     * @param generateInvoiceResultDto the generateInvoiceResultDto to set
+     */
+    public void setGenerateInvoiceResultDto(GenerateInvoiceResultDto generateInvoiceResultDto) {
+        this.generateInvoiceResultDto = generateInvoiceResultDto;
+    }
+
+    /**
+     * Gets the serialversionuid.
+     *
+     * @return the serialversionuid
+     */
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    @Override
+    public String toString() {
+        return "GenerateInvoiceResponseDto [generateInvoiceResultDto=" + generateInvoiceResultDto + "]";
+    }
 }

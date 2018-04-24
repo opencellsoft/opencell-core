@@ -43,8 +43,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
@@ -65,7 +65,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrix.getActivePricePlansByChargeCode", query = "SELECT ppm from PricePlanMatrix ppm where ppm.disabled is false and ppm.eventCode=:chargeCode order by ppm.priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {
+public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "event_code", length = 255, nullable = false)

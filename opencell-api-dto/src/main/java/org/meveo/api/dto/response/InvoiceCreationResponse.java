@@ -5,33 +5,47 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author R.AITYAAZZA
+ * The Class InvoiceCreationResponse.
  *
+ * @author R.AITYAAZZA
  */
 @XmlRootElement(name = "PdfInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceCreationResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
-	
-	private String invoiceNumber;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public InvoiceCreationResponse() {
-		super();
-	}
+    /** The invoice number. */
+    private String invoiceNumber;
 
-	public String getInvoiceNumber() {
-		return invoiceNumber;
-	}
+    /**
+     * Instantiates a new invoice creation response.
+     */
+    public InvoiceCreationResponse() {
+        super();
+    }
 
-	public void setInvoiceNumber(String invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
+    /**
+     * Gets the invoice number.
+     *
+     * @return the invoice number
+     */
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
 
-	@Override
-	public String toString() {
-		return "InvoiceCreationResponse [invoiceNumber=" + invoiceNumber + ", toString()=" + super.toString() + "]";
-	}
+    /**
+     * Sets the invoice number.
+     *
+     * @param invoiceNumber the new invoice number
+     */
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
 
-
+    @Override
+    public String toString() {
+        return "InvoiceCreationResponse [invoiceNumber=" + invoiceNumber + ", toString()=" + super.toString() + "]";
+    }
 }

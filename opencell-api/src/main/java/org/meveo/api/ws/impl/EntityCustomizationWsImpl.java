@@ -130,7 +130,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.removeEntityTemplate(code);
+            customEntityTemplateApi.remove(code);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -159,7 +159,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.updateEntityTemplate(postData);
+            customEntityTemplateApi.update(postData);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -258,8 +258,8 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     /**
      * Define a new entity action
      * 
-     * @param dto
-     * @return
+     * @param dto The entity custom action dto
+     * @return The action status dto
      */
     @Override
     public ActionStatus createAction(EntityCustomActionDto dto) {
@@ -278,8 +278,8 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     /**
      * Update existing entity action definition
      * 
-     * @param dto
-     * @return
+     * @param dto The entity custom action dto
+     * @return The action status dto
      */
     @Override
     public ActionStatus updateAction(EntityCustomActionDto dto) {
@@ -300,7 +300,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      * 
      * @param actionCode Entity action code
      * @param appliesTo Entity that action applies to
-     * @return
+     * @return The action status dto
      */
     @Override
     public ActionStatus removeAction(String actionCode, String appliesTo) {
@@ -322,7 +322,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      * 
      * @param actionCode Entity action code
      * @param appliesTo Entity that action applies to
-     * @return
+     * @return The entity action definition dto
      */
     @Override
     public EntityCustomActionResponseDto findAction(String actionCode, String appliesTo) {
@@ -342,8 +342,8 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     /**
      * Define new or update existing entity action definition
      * 
-     * @param dto
-     * @return
+     * @param dto The entity custom action dto
+     * @return The action status dto
      */
     @Override
     public ActionStatus createOrUpdateAction(EntityCustomActionDto dto) {
@@ -379,6 +379,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      * Get customizations made on a standard Meveo entity given its class
      * 
      * @param customizedEntityClass Standard Meveo entity class name
+     * @return The entity customization response dto
      */
     @Override
     public EntityCustomizationResponseDto findEntityCustomizations(String customizedEntityClass) {
@@ -437,16 +438,120 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         return result;
     }
 
-	@Override
-	public ActionStatus executeAction(String actionCode, String appliesTo, String entityCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus executeAction(String actionCode, String appliesTo, String entityCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			result.setMessage(entityCustomActionApi.execute(actionCode, appliesTo, entityCode));
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            result.setMessage(entityCustomActionApi.execute(actionCode, appliesTo, entityCode));
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableEntityTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableEntityTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableCustomEntityInstance(String cetCode, String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityInstanceApi.enableOrDisable(cetCode, code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableCustomEntityInstance(String cetCode, String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityInstanceApi.enableOrDisable(cetCode, code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableField(String customFieldTemplateCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customFieldTemplateApi.enableOrDisable(customFieldTemplateCode, appliesTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableField(String customFieldTemplateCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customFieldTemplateApi.enableOrDisable(customFieldTemplateCode, appliesTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableAction(String actionCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            entityCustomActionApi.enableOrDisable(actionCode, appliesTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableAction(String actionCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            entityCustomActionApi.enableOrDisable(actionCode, appliesTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

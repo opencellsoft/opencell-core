@@ -89,7 +89,7 @@ public interface WalletWs extends IBaseWs {
      * 
      * @param postData Search criteria. Deprecated in v.4.7.2. Use pagingAndFiltering instead
      * @param pagingAndFiltering Pagination and filtering criteria
-     * @return
+     * @return Results of Wallet operations search
      */
     @WebMethod
     FindWalletOperationsResponseDto findOperations(@Deprecated @WebParam(name = "findWalletOperations") FindWalletOperationsDto postData,

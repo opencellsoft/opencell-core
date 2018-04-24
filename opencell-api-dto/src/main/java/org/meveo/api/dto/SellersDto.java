@@ -8,30 +8,49 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class SellersDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SellersDto implements Serializable {
 
-	private static final long serialVersionUID = -2924035308389476982L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -2924035308389476982L;
 
-	private List<SellerDto> seller;
+    /** The seller. */
+    private List<SellerDto> seller;
 
-	public List<SellerDto> getSeller() {
-		if (seller == null) {
-			seller = new ArrayList<SellerDto>();
-		}
+    /**
+     * Gets the seller.
+     *
+     * @return the seller
+     */
+    public List<SellerDto> getSeller() {
+        if (seller == null) {
+            seller = new ArrayList<SellerDto>();
+        }
 
-		return seller;
-	}
+        return seller;
+    }
 
-	public void setSeller(List<SellerDto> seller) {
-		this.seller = seller;
-	}
+    /**
+     * Sets the seller.
+     *
+     * @param seller the new seller
+     */
+    public void setSeller(List<SellerDto> seller) {
+        this.seller = seller;
+    }
 
-	@Override
-	public String toString() {
-		return "SellersDto [seller=" + seller + "]";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "SellersDto [seller=" + seller + "]";
+    }
 
 }

@@ -6,27 +6,39 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.OccTemplateDto;
 
-
+/**
+ * The Class GetOccTemplateResponseDto.
+ */
 @XmlRootElement(name = "GetOccTemplateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetOccTemplateResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 4612709775410582280L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4612709775410582280L;
 
-	private OccTemplateDto occTemplate;
+    /** The occ template. */
+    private OccTemplateDto occTemplate;
 
-	public OccTemplateDto getOccTemplate() {
-		return occTemplate;
-	}
+    /**
+     * Gets the occ template.
+     *
+     * @return the occ template
+     */
+    public OccTemplateDto getOccTemplate() {
+        return occTemplate;
+    }
 
-	public void setOccTemplate(OccTemplateDto occTemplate) {
-		this.occTemplate = occTemplate;
-	}
+    /**
+     * Sets the occ template.
+     *
+     * @param occTemplate the new occ template
+     */
+    public void setOccTemplate(OccTemplateDto occTemplate) {
+        this.occTemplate = occTemplate;
+    }
 
-	@Override
-	public String toString() {
-		return "GetOccTemplateResponse [occTemplate=" + occTemplate + ", toString()=" + super.toString()
-				+ "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetOccTemplateResponse [occTemplate=" + occTemplate + ", toString()=" + super.toString() + "]";
+    }
 }

@@ -8,35 +8,40 @@ import org.meveo.api.dto.payment.WFTransitionDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * 
- * @author TyshanaShi(tyshan@manaty.net)
+ * The Class WFTransitionResponseDto.
  *
+ * @author TyshanaShi(tyshan@manaty.net)
  */
-@XmlRootElement(name="WFTransitionResponse")
+@XmlRootElement(name = "WFTransitionResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WFTransitionResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -9076373795496333905L;
-	private WFTransitionDto wfTransitionDto;
-	/**
-	 * @return the wfTransitionDto
-	 */
-	public WFTransitionDto getWfTransitionDto() {
-		return wfTransitionDto;
-	}
-	/**
-	 * @param wfTransitionDto the wfTransitionDto to set
-	 */
-	public void setWfTransitionDto(WFTransitionDto wfTransitionDto) {
-		this.wfTransitionDto = wfTransitionDto;
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -9076373795496333905L;
+    
+    /** The wf transition dto. */
+    private WFTransitionDto wfTransitionDto;
 
+    /**
+     * Gets the wf transition dto.
+     *
+     * @return the wfTransitionDto
+     */
+    public WFTransitionDto getWfTransitionDto() {
+        return wfTransitionDto;
+    }
 
-	@Override
-	public String toString() {
-		return "WFTransitionResponseDto [wfTransitionDto=" + wfTransitionDto + "]";
-	}
+    /**
+     * Sets the wf transition dto.
+     *
+     * @param wfTransitionDto the wfTransitionDto to set
+     */
+    public void setWfTransitionDto(WFTransitionDto wfTransitionDto) {
+        this.wfTransitionDto = wfTransitionDto;
+    }
 
-
+    @Override
+    public String toString() {
+        return "WFTransitionResponseDto [wfTransitionDto=" + wfTransitionDto + "]";
+    }
 }
-

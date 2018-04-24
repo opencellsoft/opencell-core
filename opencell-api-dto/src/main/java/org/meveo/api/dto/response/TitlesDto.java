@@ -9,29 +9,42 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class TitlesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "Titles")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TitlesDto implements Serializable {
 
-	private static final long serialVersionUID = -8214042837650403747L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8214042837650403747L;
 
-	private List<TitleDto> title;
+    /** The title. */
+    private List<TitleDto> title;
 
-	public List<TitleDto> getTitle() {
-		if (title == null)
-			title = new ArrayList<TitleDto>();
-		return title;
-	}
+    /**
+     * Gets the title.
+     *
+     * @return the title
+     */
+    public List<TitleDto> getTitle() {
+        if (title == null)
+            title = new ArrayList<TitleDto>();
+        return title;
+    }
 
-	public void setTitle(List<TitleDto> title) {
-		this.title = title;
-	}
+    /**
+     * Sets the title.
+     *
+     * @param title the new title
+     */
+    public void setTitle(List<TitleDto> title) {
+        this.title = title;
+    }
 
-	@Override
-	public String toString() {
-		return "TitlesDto [title=" + title + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "TitlesDto [title=" + title + "]";
+    }
 }

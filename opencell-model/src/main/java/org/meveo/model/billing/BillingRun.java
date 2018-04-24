@@ -42,14 +42,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-	@Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
-public class BillingRun extends EnableEntity {
+        @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
+public class BillingRun extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -160,258 +160,258 @@ public class BillingRun extends EnableEntity {
     private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
 
     public Date getProcessDate() {
-	return processDate;
+        return processDate;
     }
 
     public void setProcessDate(Date processDate) {
-	this.processDate = processDate;
+        this.processDate = processDate;
     }
 
     public BillingRunStatusEnum getStatus() {
-	return status;
+        return status;
     }
 
     public void setStatus(BillingRunStatusEnum status) {
-	this.status = status;
+        this.status = status;
     }
 
     public Date getStatusDate() {
-	return statusDate;
+        return statusDate;
     }
 
     public void setStatusDate(Date statusDate) {
-	this.statusDate = statusDate;
+        this.statusDate = statusDate;
     }
 
     public BillingCycle getBillingCycle() {
-	return billingCycle;
+        return billingCycle;
     }
 
     public void setBillingCycle(BillingCycle billingCycle) {
-	this.billingCycle = billingCycle;
+        this.billingCycle = billingCycle;
     }
 
     public Integer getBillingAccountNumber() {
-	return billingAccountNumber;
+        return billingAccountNumber;
     }
 
     public void setBillingAccountNumber(Integer billingAccountNumber) {
-	this.billingAccountNumber = billingAccountNumber;
+        this.billingAccountNumber = billingAccountNumber;
     }
 
     public Integer getBillableBillingAcountNumber() {
-	return billableBillingAcountNumber;
+        return billableBillingAcountNumber;
     }
 
     public void setBillableBillingAcountNumber(Integer billableBillingAcountNumber) {
-	this.billableBillingAcountNumber = billableBillingAcountNumber;
+        this.billableBillingAcountNumber = billableBillingAcountNumber;
     }
 
     public Integer getProducibleInvoiceNumber() {
-	return producibleInvoiceNumber;
+        return producibleInvoiceNumber;
     }
 
     public void setProducibleInvoiceNumber(Integer producibleInvoiceNumber) {
-	this.producibleInvoiceNumber = producibleInvoiceNumber;
+        this.producibleInvoiceNumber = producibleInvoiceNumber;
     }
 
     public BigDecimal getProducibleAmountWithoutTax() {
-	return producibleAmountWithoutTax;
+        return producibleAmountWithoutTax;
     }
 
     public void setProducibleAmountWithoutTax(BigDecimal producibleAmountWithoutTax) {
-	this.producibleAmountWithoutTax = producibleAmountWithoutTax;
+        this.producibleAmountWithoutTax = producibleAmountWithoutTax;
     }
 
     public BigDecimal getProducibleAmountTax() {
-	return producibleAmountTax;
+        return producibleAmountTax;
     }
 
     public void setProducibleAmountTax(BigDecimal producibleAmountTax) {
-	this.producibleAmountTax = producibleAmountTax;
+        this.producibleAmountTax = producibleAmountTax;
     }
 
     public Integer getInvoiceNumber() {
-	return InvoiceNumber;
+        return InvoiceNumber;
     }
 
     public void setInvoiceNumber(Integer invoiceNumber) {
-	InvoiceNumber = invoiceNumber;
+        InvoiceNumber = invoiceNumber;
     }
 
     public BigDecimal getProducibleAmountWithTax() {
-	return producibleAmountWithTax;
+        return producibleAmountWithTax;
     }
 
     public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
-	this.producibleAmountWithTax = producibleAmountWithTax;
+        this.producibleAmountWithTax = producibleAmountWithTax;
     }
 
     public void setPrAmountTax(BigDecimal prAmountTax) {
-	this.prAmountTax = prAmountTax;
+        this.prAmountTax = prAmountTax;
     }
 
     public List<Invoice> getInvoices() {
-	return invoices;
+        return invoices;
     }
 
     public void setInvoices(List<Invoice> invoices) {
-	this.invoices = invoices;
+        this.invoices = invoices;
     }
 
     public Set<BillingRunList> getBillingRunLists() {
-	return billingRunLists;
+        return billingRunLists;
     }
 
     public void setBillingRunLists(Set<BillingRunList> billingRunLists) {
-	this.billingRunLists = billingRunLists;
+        this.billingRunLists = billingRunLists;
     }
 
     public BillingProcessTypesEnum getProcessType() {
-	return processType;
+        return processType;
     }
 
     public void setProcessType(BillingProcessTypesEnum processType) {
-	this.processType = processType;
+        this.processType = processType;
     }
 
     public Date getStartDate() {
-	return startDate;
+        return startDate;
     }
 
     public void setStartDate(Date startDate) {
-	this.startDate = startDate;
+        this.startDate = startDate;
     }
 
     public Date getEndDate() {
-	return endDate;
+        return endDate;
     }
 
     public void setEndDate(Date endDate) {
-	this.endDate = endDate;
+        this.endDate = endDate;
     }
 
     public Date getInvoiceDate() {
-	return invoiceDate;
+        return invoiceDate;
     }
 
     public void setInvoiceDate(Date invoiceDate) {
-	this.invoiceDate = invoiceDate;
+        this.invoiceDate = invoiceDate;
     }
 
     public Date getLastTransactionDate() {
-	return lastTransactionDate;
+        return lastTransactionDate;
     }
 
     public void setLastTransactionDate(Date lastTransactionDate) {
-	this.lastTransactionDate = lastTransactionDate;
+        this.lastTransactionDate = lastTransactionDate;
     }
 
     public PreInvoicingReportsDTO getPreInvoicingReports() {
-	return preInvoicingReports;
+        return preInvoicingReports;
     }
 
     public void setPreInvoicingReports(PreInvoicingReportsDTO preInvoicingReports) {
-	this.preInvoicingReports = preInvoicingReports;
+        this.preInvoicingReports = preInvoicingReports;
     }
 
     public PostInvoicingReportsDTO getPostInvoicingReports() {
-	return postInvoicingReports;
+        return postInvoicingReports;
     }
 
     public void setPostInvoicingReports(PostInvoicingReportsDTO postInvoicingReports) {
-	this.postInvoicingReports = postInvoicingReports;
+        this.postInvoicingReports = postInvoicingReports;
     }
 
     public List<BillingAccount> getBillableBillingAccounts() {
-	return billableBillingAccounts;
+        return billableBillingAccounts;
     }
 
     public void setBillableBillingAccounts(List<BillingAccount> selectedBillingAccounts) {
-	this.billableBillingAccounts = selectedBillingAccounts;
+        this.billableBillingAccounts = selectedBillingAccounts;
     }
 
     public Set<RatedTransaction> getRatedTransactions() {
-	return ratedTransactions;
+        return ratedTransactions;
     }
 
     public void setRatedTransactions(Set<RatedTransaction> ratedTransactions) {
-	this.ratedTransactions = ratedTransactions;
+        this.ratedTransactions = ratedTransactions;
     }
 
     public String getRejectionReason() {
-	return rejectionReason;
+        return rejectionReason;
     }
 
     public void setRejectionReason(String rejectionReason) {
-	this.rejectionReason = rejectionReason;
+        this.rejectionReason = rejectionReason;
     }
 
     public BigDecimal getPrAmountWithoutTax() {
-	return prAmountWithoutTax;
+        return prAmountWithoutTax;
     }
 
     public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
-	this.prAmountWithoutTax = prAmountWithoutTax;
+        this.prAmountWithoutTax = prAmountWithoutTax;
     }
 
     public BigDecimal getPrAmountWithTax() {
-	return prAmountWithTax;
+        return prAmountWithTax;
     }
 
     public void setPrAmountWithTax(BigDecimal prAmountWithTax) {
-	this.prAmountWithTax = prAmountWithTax;
+        this.prAmountWithTax = prAmountWithTax;
     }
 
     public BigDecimal getPrAmountTax() {
-	return prAmountTax;
+        return prAmountTax;
     }
 
     public Currency getCurrency() {
-	return currency;
+        return currency;
     }
 
     public void setCurrency(Currency currency) {
-	this.currency = currency;
+        this.currency = currency;
     }
 
     public Country getCountry() {
-	return country;
+        return country;
     }
 
     public void setCountry(Country country) {
-	this.country = country;
+        this.country = country;
     }
 
     public Language getLanguage() {
-	return language;
+        return language;
     }
 
     public void setLanguage(Language language) {
-	this.language = language;
+        this.language = language;
     }
 
     public String getSelectedBillingAccounts() {
-	return selectedBillingAccounts;
+        return selectedBillingAccounts;
     }
 
     public void setSelectedBillingAccounts(String selectedBillingAccounts) {
-	this.selectedBillingAccounts = selectedBillingAccounts;
+        this.selectedBillingAccounts = selectedBillingAccounts;
     }
 
     public List<RejectedBillingAccount> getRejectedBillingAccounts() {
-	return rejectedBillingAccounts;
+        return rejectedBillingAccounts;
     }
 
     public void setRejectedBillingAccounts(List<RejectedBillingAccount> rejectedBillingAccounts) {
-	this.rejectedBillingAccounts = rejectedBillingAccounts;
+        this.rejectedBillingAccounts = rejectedBillingAccounts;
     }
 
     public void addRejectedBillingAccounts(RejectedBillingAccount rejectedBillingAccount) {
-	if (rejectedBillingAccounts == null) {
-	    rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
-	}
-	rejectedBillingAccounts.add(rejectedBillingAccount);
+        if (rejectedBillingAccounts == null) {
+            rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
+        }
+        rejectedBillingAccounts.add(rejectedBillingAccount);
     }
 
 }

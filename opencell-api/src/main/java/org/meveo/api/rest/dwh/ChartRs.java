@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -104,9 +105,8 @@ public interface ChartRs extends IBaseRs {
     @Path("/")
     ActionStatus update(ChartDto postData);
 
-
     /**
-     * Remove an existing chart with a given code 
+     * Remove an existing chart with a given code
      * 
      * @param chartCode The chart's code
      * @return Request processing status
@@ -116,7 +116,7 @@ public interface ChartRs extends IBaseRs {
     ActionStatus remove(@QueryParam("chartCode") String chartCode);
 
     /**
-     * Find a chart with a given code 
+     * Find a chart with a given code
      * 
      * @param chartCode The chart's code
      * @return
@@ -125,15 +125,33 @@ public interface ChartRs extends IBaseRs {
     @Path("/")
     GetChartResponse find(@QueryParam("chartCode") String chartCode);
 
-    @POST
-    @Path("/createOrUpdate")
-    ActionStatus createOrUpdate(ChartDto postData);
-
-}
-
     /**
      * Create new or update an existing chart with a given code
      * 
      * @param postData The chart's data
      * @return Request processing status
      */
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(ChartDto postData);
+
+    /**
+     * Enable a Chart with a given code
+     * 
+     * @param code Chart code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Chart with a given code
+     * 
+     * @param code Chart code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+}

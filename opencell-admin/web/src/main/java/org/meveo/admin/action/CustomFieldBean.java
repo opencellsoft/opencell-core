@@ -12,7 +12,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 /**
  * Backing bean for support custom field instances value data entry
  * 
- * @param <T>
+ * @param <T> the type of the value
  */
 public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
 

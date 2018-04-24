@@ -54,14 +54,12 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
     }
 
     @Override
-    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(String languageCode, String countryCode,
-            String currencyCode, String sellerCode, Date date) {
+    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date) {
 
         OneShotChargeTemplateWithPriceListDto result = new OneShotChargeTemplateWithPriceListDto();
 
         try {
-            result.setOneShotChargeTemplateDtos(
-                oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, date));
+            result.setOneShotChargeTemplateDtos(oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, date));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -108,4 +106,29 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         return result;
     }
 
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            oneShotChargeTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            oneShotChargeTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

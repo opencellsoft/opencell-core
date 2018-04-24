@@ -8,58 +8,120 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class ServiceToAddDto.
+ *
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
- **/
+ */
 @XmlRootElement(name = "ServiceToAdd")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceToAddDto implements Serializable {
 
-	private static final long serialVersionUID = 3267838736094614395L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3267838736094614395L;
 
-	private String serviceId;
-	private Date subscriptionDate;
-	private String param1;
-	private String param2;
-	private String param3;
+    /** The service id. */
+    private String serviceId;
+    
+    /** The subscription date. */
+    private Date subscriptionDate;
+    
+    /** The param 1. */
+    private String param1;
+    
+    /** The param 2. */
+    private String param2;
+    
+    /** The param 3. */
+    private String param3;
 
-	public String getServiceId() {
-		return serviceId;
-	}
+    /**
+     * Gets the service id.
+     *
+     * @return the service id
+     */
+    public String getServiceId() {
+        return serviceId;
+    }
 
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
-	}
+    /**
+     * Sets the service id.
+     *
+     * @param serviceId the new service id
+     */
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    /**
+     * Gets the subscription date.
+     *
+     * @return the subscription date
+     */
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    /**
+     * Sets the subscription date.
+     *
+     * @param subscriptionDate the new subscription date
+     */
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public String getParam1() {
-		return param1;
-	}
+    /**
+     * Gets the param 1.
+     *
+     * @return the param 1
+     */
+    public String getParam1() {
+        return param1;
+    }
 
-	public void setParam1(String param1) {
-		this.param1 = param1;
-	}
+    /**
+     * Sets the param 1.
+     *
+     * @param param1 the new param 1
+     */
+    public void setParam1(String param1) {
+        this.param1 = param1;
+    }
 
-	public String getParam2() {
-		return param2;
-	}
+    /**
+     * Gets the param 2.
+     *
+     * @return the param 2
+     */
+    public String getParam2() {
+        return param2;
+    }
 
-	public void setParam2(String param2) {
-		this.param2 = param2;
-	}
+    /**
+     * Sets the param 2.
+     *
+     * @param param2 the new param 2
+     */
+    public void setParam2(String param2) {
+        this.param2 = param2;
+    }
 
-	public String getParam3() {
-		return param3;
-	}
+    /**
+     * Gets the param 3.
+     *
+     * @return the param 3
+     */
+    public String getParam3() {
+        return param3;
+    }
 
-	public void setParam3(String param3) {
-		this.param3 = param3;
-	}
+    /**
+     * Sets the param 3.
+     *
+     * @param param3 the new param 3
+     */
+    public void setParam3(String param3) {
+        this.param3 = param3;
+    }
 }

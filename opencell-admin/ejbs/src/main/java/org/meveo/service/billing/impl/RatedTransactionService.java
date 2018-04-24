@@ -295,6 +295,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
 
+        Query qSumMinBilling = getEntityManager().createNamedQuery("RatedTransaction.sumMinBilling")
+                .setParameter("lastTransactionDate", lastTransactionDate).setParameter("billingAccount", billingAccount);
+        if (isInvoiceAdjustment) {
+            qSumMinBilling = qSumMinBilling.setParameter("status", RatedTransactionStatusEnum.BILLED);
+        } else {
+            qSumMinBilling = qSumMinBilling.setParameter("status", RatedTransactionStatusEnum.OPEN);
+        }
+
+        List<Object[]> minAmounts = qSumMinBilling.getResultList();
+        
+        for (Object[] object : minAmounts) {
+            log.info("invoice subcategory {}, amountWithoutTax {}, amountWithTax {}, amountTax {}", object[0], object[1], object[2], object[3]);
+            invoice.addAmountWithoutTax(((BigDecimal) object[1]).setScale(rounding, RoundingMode.HALF_UP));
+            invoice.addAmountWithTax(((BigDecimal) object[2]).setScale(rounding, RoundingMode.HALF_UP));
+            invoice.addAmountTax(((BigDecimal) object[3]).setScale(rounding, RoundingMode.HALF_UP));
+        }
+
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
         log.debug("After userAccounts:" + (System.currentTimeMillis() - startDate));
 
@@ -415,6 +432,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 if (!entreprise) {
                     nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add((BigDecimal) invoiceSubCatInfo[2]);
+                    for (Object[] minAmount : minAmounts) {
+                        nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(((BigDecimal) minAmount[2]).setScale(rounding, RoundingMode.HALF_UP));
+                    }
                 }
 
                 // start aggregate T
@@ -1154,6 +1174,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
         }
+        billingAccountService.createMinAmountsRT(billingAccount, invoicingDate);
     }
 
     /**

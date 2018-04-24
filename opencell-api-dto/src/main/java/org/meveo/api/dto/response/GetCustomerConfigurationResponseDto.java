@@ -5,46 +5,83 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class GetCustomerConfigurationResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetCustomerConfigurationResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetCustomerConfigurationResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 6164457513010272879L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 6164457513010272879L;
 
-	private CustomerBrandsDto customerBrands = new CustomerBrandsDto();
-	private CustomerCategoriesDto customerCategories = new CustomerCategoriesDto();
-	private TitlesDto titles = new TitlesDto();
+    /** The customer brands. */
+    private CustomerBrandsDto customerBrands = new CustomerBrandsDto();
+    
+    /** The customer categories. */
+    private CustomerCategoriesDto customerCategories = new CustomerCategoriesDto();
+    
+    /** The titles. */
+    private TitlesDto titles = new TitlesDto();
 
-	public CustomerBrandsDto getCustomerBrands() {
-		return customerBrands;
-	}
+    /**
+     * Gets the customer brands.
+     *
+     * @return the customer brands
+     */
+    public CustomerBrandsDto getCustomerBrands() {
+        return customerBrands;
+    }
 
-	public void setCustomerBrands(CustomerBrandsDto customerBrands) {
-		this.customerBrands = customerBrands;
-	}
+    /**
+     * Sets the customer brands.
+     *
+     * @param customerBrands the new customer brands
+     */
+    public void setCustomerBrands(CustomerBrandsDto customerBrands) {
+        this.customerBrands = customerBrands;
+    }
 
-	public CustomerCategoriesDto getCustomerCategories() {
-		return customerCategories;
-	}
+    /**
+     * Gets the customer categories.
+     *
+     * @return the customer categories
+     */
+    public CustomerCategoriesDto getCustomerCategories() {
+        return customerCategories;
+    }
 
-	public void setCustomerCategories(CustomerCategoriesDto customerCategories) {
-		this.customerCategories = customerCategories;
-	}
+    /**
+     * Sets the customer categories.
+     *
+     * @param customerCategories the new customer categories
+     */
+    public void setCustomerCategories(CustomerCategoriesDto customerCategories) {
+        this.customerCategories = customerCategories;
+    }
 
-	public TitlesDto getTitles() {
-		return titles;
-	}
+    /**
+     * Gets the titles.
+     *
+     * @return the titles
+     */
+    public TitlesDto getTitles() {
+        return titles;
+    }
 
-	public void setTitles(TitlesDto titles) {
-		this.titles = titles;
-	}
+    /**
+     * Sets the titles.
+     *
+     * @param titles the new titles
+     */
+    public void setTitles(TitlesDto titles) {
+        this.titles = titles;
+    }
 
-	@Override
-	public String toString() {
-		return "GetCustomerConfigurationResponseDto [customerBrands=" + customerBrands + ", customerCategories="
-				+ customerCategories + ", titles=" + titles + ", toString()=" + super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetCustomerConfigurationResponseDto [customerBrands=" + customerBrands + ", customerCategories=" + customerCategories + ", titles=" + titles + ", toString()="
+                + super.toString() + "]";
+    }
 }

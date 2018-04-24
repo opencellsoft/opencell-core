@@ -127,8 +127,8 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     /**
      * Get JobInstance name from a jobId
      * 
-     * @param jobId
-     * @return timename
+     * @param jobId job identifier
+     * @return timer name
      */
     public String translateToTimerName(Long jobId) {
         if (jobId != null) {
@@ -204,7 +204,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     /**
      * Explicitly refresh custom fields and action definitions. Should be used when job template change, as on it depends what fields and actions apply
      * 
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     public void refreshCustomFieldsAndActions() throws BusinessException {
 

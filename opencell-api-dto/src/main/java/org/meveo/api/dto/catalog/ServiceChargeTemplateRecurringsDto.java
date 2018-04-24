@@ -8,29 +8,42 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class ServiceChargeTemplateRecurringsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceChargeTemplateRecurringsDto implements Serializable {
 
-	private static final long serialVersionUID = -4649058196780119541L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -4649058196780119541L;
 
-	private List<ServiceChargeTemplateRecurringDto> serviceChargeTemplateRecurring;
+    /** The service charge template recurring. */
+    private List<ServiceChargeTemplateRecurringDto> serviceChargeTemplateRecurring;
 
-	public List<ServiceChargeTemplateRecurringDto> getServiceChargeTemplateRecurring() {
-		if (serviceChargeTemplateRecurring == null)
-			serviceChargeTemplateRecurring = new ArrayList<ServiceChargeTemplateRecurringDto>();
-		return serviceChargeTemplateRecurring;
-	}
+    /**
+     * Gets the service charge template recurring.
+     *
+     * @return the service charge template recurring
+     */
+    public List<ServiceChargeTemplateRecurringDto> getServiceChargeTemplateRecurring() {
+        if (serviceChargeTemplateRecurring == null)
+            serviceChargeTemplateRecurring = new ArrayList<ServiceChargeTemplateRecurringDto>();
+        return serviceChargeTemplateRecurring;
+    }
 
-	public void setServiceChargeTemplateRecurring(List<ServiceChargeTemplateRecurringDto> serviceChargeTemplateRecurring) {
-		this.serviceChargeTemplateRecurring = serviceChargeTemplateRecurring;
-	}
+    /**
+     * Sets the service charge template recurring.
+     *
+     * @param serviceChargeTemplateRecurring the new service charge template recurring
+     */
+    public void setServiceChargeTemplateRecurring(List<ServiceChargeTemplateRecurringDto> serviceChargeTemplateRecurring) {
+        this.serviceChargeTemplateRecurring = serviceChargeTemplateRecurring;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceChargeTemplateRecurringsDto [serviceChargeTemplateRecurring=" + serviceChargeTemplateRecurring
-				+ "]";
-	}
+    @Override
+    public String toString() {
+        return "ServiceChargeTemplateRecurringsDto [serviceChargeTemplateRecurring=" + serviceChargeTemplateRecurring + "]";
+    }
 
 }

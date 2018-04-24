@@ -51,7 +51,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.IImageUpload;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
@@ -81,11 +80,12 @@ import org.slf4j.LoggerFactory;
 import com.lapis.jsfexporter.csv.CSVExportOptions;
 
 /**
- * Base bean class. Other backing beans extends this class if they need functionality it provides.
+ * Base GUI bean class. Used as a backing bean foundation for both detail and searchable list pages. Provides a brigde between xhtml pages and service level classes.
  * 
- * @author Wassim Drira
+ * There is at least one backing bean per entity class. Majority of pages distinguish between detail and list views and have two backing beans, with view and conversation scopes.
+ * 
+ * @author Andrius Karpavicius
  * @lastModifiedVersion 5.0
- * 
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
@@ -133,13 +133,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Class<T> clazz;
 
     /**
-     * Request parameter. Should form be displayed in create/edit or view mode
+     * Request parameter. Should view be displayed in create/edit or view mode
      */
     @Inject
     @Param
     private String edit;
-
-    // private boolean editSaved;
 
     protected int dataTableFirstAttribute;
 
@@ -171,22 +169,30 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private List<T> selectedEntities;
 
+    /**
+     * Filter to apply in search
+     */
     private Filter listFilter;
 
     protected boolean listFiltered = false;
 
     /**
-     * Tracks active tabs in GUI
+     * Tracks active tabs in GUI - a main tab
+     */
+    private int activeMainTab = 0;
+
+    /**
+     * Tracks active tabs in GUI - a secondary tab
      */
     private int activeTab;
 
-    private int activeMainTab = 0;
-
+    /**
+     * Cached access to entity (read/modification) rules
+     */
     private Map<String, Boolean> writeAccessMap;
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
-    // protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
 
     private UploadedFile uploadedFile;
 
@@ -198,9 +204,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Constructor.
+     * Constructor
      * 
-     * @param clazz Class.
+     * @param clazz Entity class
      */
     public BaseBean(Class<T> clazz) {
         super();
@@ -210,39 +216,53 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Returns entity class
      * 
-     * @return Class
+     * @return Entity class
      */
     public Class<T> getClazz() {
         return clazz;
     }
 
+    /**
+     * Set entity class
+     * 
+     * @param clazz Entity class
+     */
     public void setClazz(Class<T> clazz) {
         this.clazz = clazz;
     }
 
+    /**
+     * Begin conversation
+     */
     protected void beginConversation() {
         if (conversation.isTransient()) {
             conversation.begin();
         }
     }
 
+    /**
+     * End conversation
+     */
     protected void endConversation() {
         if (!conversation.isTransient()) {
             conversation.end();
         }
     }
 
+    /**
+     * A generic pre-render view action will initiate a conversation. Should be initiated from xhtml list style pages
+     */
     public void preRenderView() {
         beginConversation();
     }
 
     /**
-     * Initiates entity from request parameter id.
+     * Initiates entity from request parameter ID. If ID is provider, an entity will be retrieved from DB. If not provided, a new entity will be instantiated.
      * 
-     * @return Entity from database.
+     * @return Entity from database or a new entity if no ID was provided in request or set manually by other means.
      */
     public T initEntity() {
-        log.debug("instantiating {} with id {}", this.getClass(), getObjectId());
+        log.debug("Instantiating {} with id {}", this.getClass(), getObjectId());
         if (getObjectId() != null) {
 
             List<String> formFieldsToFetch = getFormFieldsToFetch();
@@ -255,7 +275,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
             loadPartOfModules();
 
-            // getPersistenceService().detach(entity);
         } else {
             try {
                 entity = getInstance();
@@ -274,6 +293,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return entity;
     }
 
+    /**
+     * Force to initialize entity with a given ID.
+     * 
+     * @param id Entity ID, or null for a new entity
+     * @return Entity from database or a new entity if no ID was provided
+     */
     public T initEntity(Long id) {
         entity = null;
         setObjectId(id);
@@ -292,10 +317,20 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return initEntity();
     }
 
+    /**
+     * Can entity be used as module item
+     * 
+     * @return True if entity is annotated with @ModuleItem
+     */
     private boolean isPartOfModules() {
         return clazz.isAnnotationPresent(ModuleItem.class);
     }
 
+    /**
+     * Does entity support image upload
+     * 
+     * @return True if entity is a subclass of IImageUpload class
+     */
     protected boolean isImageUpload() {
         return IImageUpload.class.isAssignableFrom(clazz);
     }
@@ -317,30 +352,32 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * When opened to view or edit entity - this getter method returns it. In case entity is not loaded it will initialize it.
+     * The first time is called will either load an entity from DB or will instantiate a new entity
      * 
-     * @return Entity in current view state.
+     * @return Entity in current view state
      */
     public T getEntity() {
         return entity != null ? entity : initEntity();
     }
 
+    /**
+     * Setter
+     * 
+     * @param entity Entity in current view state
+     */
     public void setEntity(T entity) {
         this.entity = entity;
     }
 
-    // /**
-    // * Refresh entities data model and removes search filters.
-    // */
-    // public void clean() {
-    // if (entities == null) {
-    // entities = new PaginationDataModel<T>(getPersistenceService());
-    // }
-    // filters.clear();
-    // entities.addFilters(filters);
-    // entities.addFetchFields(getListFieldsToFetch());
-    // entities.forceRefresh();
-    // }
+    /**
+     * Save entity to DB and redirect to a next view. A message will be displayed in GUI upon saving.
+     * 
+     * @param killConversation True if conversation be terminated
+     * @param objectName Custom ID parameter name. NOTE: Not used at the moment. Could be used to redirect to a diferent view with a diferent ID parameter and value
+     * @param objectId ID value. NOTE: Not used at the moment. Could be used to redirect to a diferent view with a diferent ID parameter and value
+     * @return Next navigation view name as result of action execution
+     * @throws BusinessException General business exception
+     */
     @ActionMethod
     public String saveOrUpdate(boolean killConversation, String objectName, Long objectId) throws BusinessException {
         String outcome = saveOrUpdate(killConversation);
@@ -349,11 +386,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             endConversation();
         }
 
-        // return objectId == null ? outcome : (outcome + "&" + objectName + "="
-        // + objectId + "&cid=" + conversation.getId());
+        // return objectId == null ? outcome : (outcome + "&" + objectName + "=" + objectId + "&cid=" + conversation.getId());
         return outcome;
     }
 
+    /**
+     * Save entity to DB and redirect to a next view. A message will be displayed in GUI upon saving.
+     * 
+     * @param killConversation True if conversation be terminated
+     * @return Next navigation view name as result of action execution
+     * @throws BusinessException General business exception
+     */
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
@@ -369,8 +412,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return back();
     }
 
+    /**
+     * Save entity to DB and redirect to a next view. A message will be displayed in GUI upon saving. In case or error, a callback parameter "result=false" is added to response.
+     * 
+     * @param killConversation True if conversation be terminated
+     * @return Next navigation view name as result of action execution
+     * @throws BusinessException General business exception
+     */
     @ActionMethod
-    public String saveOrUpdateWithMessage(boolean killConversation) throws BusinessException {
+    public String saveOrUpdateWithCallbackResult(boolean killConversation) throws BusinessException {
         boolean result = true;
         try {
             return this.saveOrUpdate(killConversation);
@@ -383,16 +433,23 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Save method when used in popup - no return value. Sets validation to failed if saveOrUpdate method called does not return a value.
+     * Save method when used in popup (ajax). Same as {@link #saveOrUpdate(boolean)}, but does not redirect to the next view. Sets validation to failed if saveOrUpdate
+     * method called does not return a value or fails.
      * 
      * @throws BusinessException business exception
      */
     @ActionMethod
     public void saveOrUpdateForPopup() throws BusinessException {
-        String result = saveOrUpdate(false);
-        if (result == null) {
+        try {
+            String result = saveOrUpdate(false);
+            if (result == null) {
+                FacesContext.getCurrentInstance().validationFailed();
+            }
+        } catch (BusinessException e) {
             FacesContext.getCurrentInstance().validationFailed();
+            throw e;
         }
+
         return;
     }
 
@@ -400,7 +457,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Save or update entity depending on if entity is transient.
      * 
      * @param entity Entity to save.
-     * @throws BusinessException
+     * @return Updated entity
+     * @throws BusinessException General business exception
      */
     protected T saveOrUpdate(T entity) throws BusinessException {
         if (entity.isTransient()) {
@@ -417,6 +475,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /**
      * Lists all entities, sorted by description if bean is related to BusinessEntity type
+     * 
+     * @return A list of entities
      */
     public List<T> listAll() {
         if (clazz != null && BusinessEntity.class.isAssignableFrom(clazz)) {
@@ -427,17 +487,20 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Returns view after save() operation. By default it goes back to list view. Override if need different logic (for example return to one view for save and another for update
-     * operations)
+     * Returns navigation view name to go to after save() operation. By default it goes back to list view. Override if need different logic (for example return to one view for save
+     * and another for update operations)
+     * 
+     * @return Next navigation view name as result of action execution
      */
+
     public String getViewAfterSave() {
         return getListViewName();
     }
 
     /**
-     * Method to get Back link. If default view name is different than override the method. Default name: entity's name + s;
+     * Method to get Back link. Default view name is a list view in a format: entity's name + s;
      * 
-     * @return string for navigation
+     * @return Navigation view name
      */
     public String back() {
         if (backViewSave == null && backView != null) {
@@ -454,9 +517,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * conversation will have to be created (temp or long running) so that view will have all most up to date info because it will load everything from db when starting new
      * conversation.
      * 
-     * @return string for navigation
+     * @return Next navigation view name as result of action execution
      */
-    // TODO: @End(beforeRedirect = true, root = false)
     public String backAndEndConversation() {
         String outcome = back();
         endConversation();
@@ -464,14 +526,19 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Generating action name to get to entity creation page. Override this method if its view name does not fit.
+     * Get a navigation view name that will display an entity creation page. By default is same as {@link #getEditViewName()}. Override this method if its view name does
+     * not fit.
+     * 
+     * @return Navigation view name
      */
     public String getNewViewName() {
         return getEditViewName();
     }
 
     /**
-     * Get navigation view link name for a current entity class
+     * Get a navigation view name that will display an entity edit page. By default is in a format: entity's name + Detail;
+     * 
+     * @return Navigation view name
      */
     public String getEditViewName() {
         return BaseBean.getEditViewName(clazz);
@@ -495,7 +562,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Generating back link.
+     * Get a navigation view name that will display an entity list page. Default view name is a list view in a format: entity's name + s;
+     * @return List view name
      */
     protected String getListViewName() {
         String className = clazz.getSimpleName();
@@ -507,6 +575,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return sb.toString();
     }
 
+    /**
+     * Get a custom ID parameter name that would match entity's name
+     * 
+     * @return Custom ID parameter name
+     */
     public String getIdParameterName() {
         String className = clazz.getSimpleName();
         StringBuilder sb = new StringBuilder(className);
@@ -518,7 +591,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete Entity using it's ID. Add error message to status message if unsuccessful.
+     * Delete Entity using it's ID. A message will be displayed in GUI if successful or was not able to delete because of constraints. In the later case request will be marked with
+     * validation failed.
      * 
      * @param id Entity id to delete
      * @throws BusinessException business exception
@@ -530,11 +604,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete Entity using it's ID. Add error message to status messages if unsuccessful.
+     * Delete Entity using it's ID. A message will be displayed in GUI if successful or was not able to delete because of constraints. In the later case request will be marked with
+     * validation failed. Message display can be suppressed.
      * 
      * @param id Entity id to delete
      * @param code Entity's code - just for display in error messages
      * @param setOkMessages Shall success messages be set for display
+     * @return True if entity was deleted. False if deletion failed because of constraint violation. In other exceptions, error is propagated up.
      * @throws BusinessException business exception
      */
     private boolean deleteInternal(Long id, String code, boolean setOkMessages) throws BusinessException {
@@ -572,18 +648,25 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
     }
 
+    /**
+     * Delete a current entity. A message will be displayed in GUI if successful or was not able to delete because of constraints. In the later case request will be marked with
+     * validation failed.
+     * 
+     * @throws BusinessException A general business exception
+     */
     @ActionMethod
     public void delete() throws BusinessException {
         delete((Long) getEntity().getId());
     }
 
     /**
-     * Delete checked entities. Add error message to status messages if unsuccessful.
+     * Delete checked entities in a list. A message will be displayed in GUI if successful or was not able to delete because of constraints. In the later case request will be
+     * marked with validation failed.
      * 
-     * @throws Exception general exception
+     * @throws BusinessException A general business exception
      */
     @ActionMethod
-    public void deleteMany() throws Exception {
+    public void deleteMany() throws BusinessException {
 
         if (selectedEntities == null || selectedEntities.isEmpty()) {
             messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
@@ -603,8 +686,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Delete current entity from detail page and redirect to a previous page. Used mostly for deletion in detail pages.
      * 
-     * @return back() page if deleted success, if not, return a callback result to UI for validate
-     * @throws BusinessException
+     * @return Next navigation view name as calculated in {@link #back()} if deleted success, if not, return a NULL to remain in the same view page
+     * @throws BusinessException A general business exception
      */
     @ActionMethod
     public String deleteWithBack() throws BusinessException {
@@ -616,9 +699,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Gets search filters map.
+     * Gets search field map for searching in a list view
      * 
-     * @return Filters map.
+     * @return Filters map
      */
     public Map<String, Object> getFilters() {
         if (filters == null) {
@@ -628,7 +711,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Clean search fields in datatable.
+     * Clean search fields and reset datatable model
      */
     public void clean() {
         dataModel = null;
@@ -637,7 +720,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Reset values to the last state.
+     * Reset entity edit values to the last state.
      */
     public void resetFormEntity() {
         entity = null;
@@ -645,51 +728,46 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Get new instance for backing bean class.
+     * Get new instance of entity class.
      * 
-     * @return New instance.
+     * @return New entity instance
      * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @throws IllegalAccessException Class instantiation exception
+     * @throws InstantiationException Class instantiation exception
      */
     public T getInstance() throws InstantiationException, IllegalAccessException {
 
-        T newInstance = clazz.newInstance();
-
-        return newInstance;
+        return clazz.newInstance();
     }
 
     /**
-     * Method that returns concrete PersistenceService. That service is then used for operations on concrete entities (eg. save, delete etc).
+     * Method that returns concrete PersistenceService for an entity class backing bean is bound to. That service is then used for operations on concrete entities (eg. save, delete
+     * etc).
      * 
      * @return Persistence service
      */
     protected abstract IPersistenceService<T> getPersistenceService();
 
     /**
-     * Override this method if you need to fetch any fields when selecting list of entities in data table. Return list of field names that has to be fetched.
+     * Override this method if you need to fetch any additional fields when retrieving a list of entities for a data table.
+     * 
+     * @return A list of field names that has to be fetched as part of list retrieval query
      */
     protected List<String> getListFieldsToFetch() {
         return null;
     }
 
     /**
-     * Override this method if you need to fetch any fields when selecting one entity to show it a form. Return list of field names that has to be fetched.
+     * Override this method if you need to fetch any additional fields when retrieving an entity to show it a edit form.
+     * 
+     * @return Return list of field names that has to be fetched as part of entity retrieval query
      */
     protected List<String> getFormFieldsToFetch() {
         return null;
     }
 
     /**
-     * Override this method when pop up with additional entity information is needed.
-     */
-    protected String getPopupInfo() {
-        return "No popup information. Override BaseBean.getPopupInfo() method.";
-    }
-
-    /**
-     * Disable current entity. Add error message to status messages if unsuccessful.
-     * 
+     * Disable current entity. A message will be displayed in GUI with action execution success.
      */
     @ActionMethod
     public void disable() {
@@ -705,7 +783,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Disable Entity using it's ID. Add error message to status messages if unsuccessful.
+     * Disable Entity using it's ID. A message will be displayed in GUI with action execution success.
      * 
      * @param id Entity id to disable
      */
@@ -723,8 +801,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Enable current entity. Add error message to status messages if unsuccessful.
-     * 
+     * Enable current entity. A message will be displayed in GUI with action execution success.
      */
     @ActionMethod
     public void enable() {
@@ -740,7 +817,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Enable Entity using it's ID. Add error message to status messages if unsuccessful.
+     * Enable Entity using it's ID. A message will be displayed in GUI with action execution success.
      * 
      * @param id Entity id to enable
      */
@@ -758,14 +835,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * DataModel for primefaces lazy loading datatable component.
+     * Get DataModel for primefaces lazy loading datatable component.
      * 
-     * @return LazyDataModel implementation.
+     * @return LazyDataModel implementation for Primefaces data list component
      */
     public LazyDataModel<T> getLazyDataModel() {
         return getLazyDataModel(filters, listFiltered);
     }
 
+    /**
+     * Get DataModel for primefaces lazy loading datatable component.
+     * 
+     * @param inputFilters Data search fields/values
+     * @param forceReload True to disregard previous data and retrieve data again
+     * @return LazyDataModel implementation for Primefaces data list component
+     */
     public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
         if (dataModel == null || forceReload) {
 
@@ -850,30 +934,53 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return searchCriteria;
     }
 
+    /**
+     * Perform search when in list view
+     */
     public void search() {
         filterCustomFieldSearchBean.buildFilterParameters(filters);
     }
 
+    /**
+     * Get a list of selected entities from a datatable when in list view
+     * 
+     * @return A list of selected entities
+     */
     public List<T> getSelectedEntities() {
         return selectedEntities;
     }
 
+    /**
+     * A setter
+     * 
+     * @param selectedEntities A list of selected entities
+     */
     public void setSelectedEntities(List<T> selectedEntities) {
         this.selectedEntities = selectedEntities;
     }
 
+    /**
+     * Get entity id as it was set from xhtml page as f:viewParam or manually from code
+     * 
+     * @return Entity id
+     */
     public Long getObjectId() {
         return objectId;
     }
 
+    /**
+     * Set entity identifier. Set via f:viewParam from xhtml page or manually from code
+     * 
+     * @param objectId Entity Id
+     */
     public void setObjectId(Long objectId) {
         this.objectId = objectId;
     }
 
     /**
-     * true in edit mode
+     * Is view in edit mode
      * 
-     * @return
+     * @return True if view in in edit mode
      */
     public boolean isEdit() {
         if (edit == null || org.meveo.commons.utils.StringUtils.isBlank(edit)) {
@@ -883,14 +990,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return Boolean.valueOf(edit);
     }
 
+    /**
+     * Set object id to NULL
+     */
     protected void clearObjectId() {
         objectId = null;
     }
 
+    /**
+     * Get a list of enabled languages
+     * 
+     * @return A list of enabled languages (trading languages)
+     */
     public List<String> getProviderLanguages() {
         return tradingLanguageService.listLanguageCodes();
     }
 
+    /**
+     * Get a default provider's language code
+     * 
+     * @return Language code
+     */
     public String getProviderLanguageCode() {
         if (appProvider.getLanguage() != null) {
             return appProvider.getLanguage().getLanguageCode();
@@ -898,6 +1018,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return "";
     }
 
+    /**
+     * Get a default sort value for a list. Default value is ID field. If Filter is selected for data retrieval, sort will come from a filter definition
+     * 
+     * @return A sorting parameter for a list query
+     */
     protected String getDefaultSort() {
         if (listFilter != null && listFilter.getOrderCondition() != null) {
             StringBuffer sb = new StringBuffer();
@@ -916,6 +1041,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return "id";
     }
 
+    /**
+     * Get a default sort order for a list. Default value is ASCENDING. If Filter is selected for data retrieval, sort order will come from a filter definition
+     * 
+     * @return Sort order
+     */
     protected SortOrder getDefaultSortOrder() {
         if (listFilter != null && listFilter.getOrderCondition() != null) {
             if (listFilter.getOrderCondition().isAscending()) {
@@ -926,26 +1056,57 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return SortOrder.DESCENDING;
     }
 
+    /**
+     * Get back navigation view name as it was received as HTTP request parameter
+     * 
+     * @return Navigation view name
+     */
     public String getBackView() {
         return backView;
     }
 
+    /**
+     * Get back navigation view name as it was overridden manually or copied from an original HTTP request parameter, to be preserved later for duration over ajax calls, and failed
+     * form submissions,
+     * 
+     * @return Navigation view name
+     */
     public String getBackViewSave() {
         return backViewSave;
     }
 
+    /**
+     * Override back navigation view name
+     * 
+     * @param backViewSave Navigation view name
+     */
     public void setBackViewSave(String backViewSave) {
         this.backViewSave = backViewSave;
     }
 
+    /**
+     * Get index of the first data to display - see Primefaces data list component for more details
+     * 
+     * @return Index of the first data to display
+     */
     public int getDataTableFirstAttribute() {
         return dataTableFirstAttribute;
     }
 
+    /**
+     * Set index of the first data to display - see Primefaces data list component for more details
+     * 
+     * @param dataTableFirstAttribute Index of the first data to display
+     */
     public void setDataTableFirstAttribute(int dataTableFirstAttribute) {
         this.dataTableFirstAttribute = dataTableFirstAttribute;
     }
 
+    /**
+     * Handle data list page change event
+     * 
+     * @param event Page change event
+     */
     public void onPageChange(PageEvent event) {
         this.setDataTableFirstAttribute(((DataTable) event.getSource()).getFirst());
     }
@@ -959,6 +1120,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return FacesContext.getCurrentInstance().getViewRoot().getLocale();
     }
 
+    /**
+     * Get CSV export options. See CSVExportOptions
+     * 
+     * @return CSV export options
+     */
     public CSVExportOptions csvOptions() {
         ParamBean param = paramBeanFactory.getInstance();
         String characterEncoding = param.getProperty("csv.characterEncoding", "iso-8859-1");
@@ -968,19 +1134,39 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return csvOption;
     }
 
-    // dummy codes for avoiding to get custom field templates
-    public List<CustomFieldTemplate> getCustomFieldTemplates() {
-        return null;
-    }
+    // Commented as no use was found neither in java nor xhtml
+    // /**
+    // * Dummy codes for avoiding to get custom field templates
+    // *
+    // * @return A list of custom field templates
+    // */
+    // public List<CustomFieldTemplate> getCustomFieldTemplates() {
+    // return null;
+    // }
 
+    /**
+     * Get Filter to apply in search
+     * 
+     * @return Filter to apply in search
+     */
     public Filter getListFilter() {
         return listFilter;
     }
 
+    /**
+     * Set Filter to apply in search
+     * 
+     * @param listFilter Filter to apply in search
+     */
     public void setListFilter(Filter listFilter) {
         this.listFilter = listFilter;
     }
 
+    /**
+     * Get a list of applicable Filters for a current entity type
+     * 
+     * @return A list of Filters
+     */
     public List<Filter> getListFilters() {
         if (clazz != null) {
             return filterService.findByPrimaryTargetClass(clazz.getName());
@@ -989,6 +1175,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
     }
 
+    /**
+     * Apply selected Filter to retrieve data for datalist component
+     */
     public void runListFilter() {
         if (listFilter != null) {
             dataModel = null;
@@ -1000,27 +1189,46 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
     }
 
+    /**
+     * Is Filter currently applied?
+     * 
+     * @return True if search was done by Filter
+     */
     public boolean isListFiltered() {
         return listFiltered;
     }
 
+    /**
+     * Get active secondary tab
+     * 
+     * @return Secondary tab position
+     */
     public int getActiveTab() {
         return activeTab;
     }
 
+    /**
+     * Activate a given secondary tab
+     * 
+     * @param activeTab Secondary tab's position to activate
+     */
     public void setActiveTab(int activeTab) {
         this.activeTab = activeTab;
     }
 
     /**
-     * @param activeMainTab Main tab to select
+     * Activate a given main tab
+     * 
+     * @param activeMainTab Main tab's position to activate
      */
     public void setActiveMainTab(int activeMainTab) {
         this.activeMainTab = activeMainTab;
     }
 
     /**
-     * @return the activeMainTab
+     * Get active main tab
+     * 
+     * @return Main tab position
      */
     public int getActiveMainTab() {
         return activeMainTab;
@@ -1036,7 +1244,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete item from a collection of values
+     * A helper method to delete item from a collection of values. Used in conjunction with value list in formListField component.
      * 
      * @param values Collection of values
      * @param itemIndex An index of an item to remove
@@ -1057,7 +1265,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Change value in a collection. Collection to update an item index are passed as attributes
+     * A helper method to change value in a collection. Collection to update an item index are passed as attributes. Used in conjunction with value list in formListField component.
      * 
      * @param event Value change event
      */
@@ -1083,9 +1291,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Add a new blank item to collection. Instantiate a new item based on parametized collection type.
+     * A helper method to add a new blank item to collection. Instantiate a new item based on parameterized collection type. Used in conjunction with value list in formListField
+     * component.
      * 
      * @param values A collection of values
+     * @param itemClass Class of a new item
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addItemToCollection(Collection values, Class itemClass) {
@@ -1097,6 +1307,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
     }
 
+    /**
+     * Get a list of only active entities (if applies)
+     * 
+     * @return A list of entities
+     */
     public List<T> listActive() {
         Map<String, Object> filters = getFilters();
         filters.put("disabled", false);
@@ -1106,9 +1321,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * crm/customers
+     * Determine if current user an modify a current entity
      * 
-     * 
+     * @return True if user has suficient permissions to modify a current entity
      */
     public boolean canUserUpdateEntity() {
         if (this.writeAccessMap == null) {
@@ -1131,14 +1346,29 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return writeAccessMap.get(requestURI);
     }
 
+    /**
+     * Is entity included in any of the modules
+     * 
+     * @return True if entity is included as part of any module
+     */
     public String getPartOfModules() {
         return partOfModules;
     }
 
+    /**
+     * Set if entity included in any of the modules
+     * 
+     * @param partOfModules True if entity is included as part of any module
+     */
     public void setPartOfModules(String partOfModules) {
         this.partOfModules = partOfModules;
     }
 
+    /**
+     * Get description or code if description is missing of a currently selected entity. Applies for BusinessEntity type entities only. In other cases NULL is returned.
+     * 
+     * @return Description or code value
+     */
     public String getDescriptionOrCode() {
         if (entity instanceof BusinessEntity) {
             BusinessEntity be = (BusinessEntity) entity;
@@ -1152,6 +1382,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return null;
     }
 
+    /**
+     * Handle image upload event. A GUI message will be displayed informing about upload success.
+     * 
+     * @param event Image upload event
+     * @throws BusinessException General business exception
+     */
     public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
         uploadedFile = event.getFile();
 
@@ -1167,20 +1403,30 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
     }
 
+    /**
+     * Get uploaded file
+     * 
+     * @return Uploaded file
+     */
     public UploadedFile getUploadedFile() {
         return uploadedFile;
     }
 
+    /**
+     * Set uploaded file
+     * 
+     * @param uploadedFile Uploaded file
+     */
     public void setUploadedFile(UploadedFile uploadedFile) {
         this.uploadedFile = uploadedFile;
     }
 
     /**
-     * Find entities that reference a given class and ID
+     * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
      * 
      * @param Entity class to reference
-     * @param id Record identifier
-     * @return A concatinated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
+     * @param id Entity ID
+     * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
      *         customer
      */
     @SuppressWarnings("rawtypes")

@@ -38,7 +38,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
@@ -57,7 +57,7 @@ import org.meveo.model.ObservableEntity;
 @NamedQuery(name = "counterTemplate.getCounterWithNotService", 
 	           query = "from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) ")         	                  	         
 })
-public class CounterTemplate extends BusinessEntity {
+public class CounterTemplate extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -1246995971618884001L;
 

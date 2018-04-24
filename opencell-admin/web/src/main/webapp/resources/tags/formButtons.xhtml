@@ -148,12 +148,12 @@
 
 		<!-- Update with message -->
 		<p:remoteCommand id="remoteUpdateWithMessageButton" rendered="#{cc.attrs.submitPartialProcess==null}"
-			action="#{cc.attrs.backingBean.saveOrUpdateWithMessage(cc.attrs.killConversationOnSave)}"
+			action="#{cc.attrs.backingBean.saveOrUpdateWithCallbackResult(cc.attrs.killConversationOnSave)}"
 			name="#{cc.attrs.formId}updateWithMessage" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />
             
         <!-- Update with message with partial submit -->
         <p:remoteCommand id="remoteUpdateWithMessageButtonPartialSubmit" rendered="#{cc.attrs.submitPartialProcess!=null}"
-            action="#{cc.attrs.backingBean.saveOrUpdateWithMessage(cc.attrs.killConversationOnSave)}"
+            action="#{cc.attrs.backingBean.saveOrUpdateWithCallbackResult(cc.attrs.killConversationOnSave)}"
             process="@this #{cc.attrs.submitPartialProcess}" partialSubmit="true" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" 
             update="#{cc.attrs.submitUpdate}" name="#{cc.attrs.formId}updateWithMessagePartialSubmit" oncomplete="handleUpdateWithMessageComplete(xhr,status,args)" />            
             

@@ -8,48 +8,83 @@ import org.meveo.api.dto.CountriesDto;
 import org.meveo.api.dto.CurrenciesDto;
 import org.meveo.api.dto.LanguagesDto;
 
-
 /**
+ * The Class GetTradingConfigurationResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetTradingConfigurationResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetTradingConfigurationResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -598052725975586031L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -598052725975586031L;
 
-	private CountriesDto countries = new CountriesDto();
-	private CurrenciesDto currencies = new CurrenciesDto();
-	private LanguagesDto languages = new LanguagesDto();;
+    /** The countries. */
+    private CountriesDto countries = new CountriesDto();
+    
+    /** The currencies. */
+    private CurrenciesDto currencies = new CurrenciesDto();
+    
+    /** The languages. */
+    private LanguagesDto languages = new LanguagesDto();;
 
-	public CountriesDto getCountries() {
-		return countries;
-	}
+    /**
+     * Gets the countries.
+     *
+     * @return the countries
+     */
+    public CountriesDto getCountries() {
+        return countries;
+    }
 
-	public void setCountries(CountriesDto countries) {
-		this.countries = countries;
-	}
+    /**
+     * Sets the countries.
+     *
+     * @param countries the new countries
+     */
+    public void setCountries(CountriesDto countries) {
+        this.countries = countries;
+    }
 
-	public CurrenciesDto getCurrencies() {
-		return currencies;
-	}
+    /**
+     * Gets the currencies.
+     *
+     * @return the currencies
+     */
+    public CurrenciesDto getCurrencies() {
+        return currencies;
+    }
 
-	public void setCurrencies(CurrenciesDto currencies) {
-		this.currencies = currencies;
-	}
+    /**
+     * Sets the currencies.
+     *
+     * @param currencies the new currencies
+     */
+    public void setCurrencies(CurrenciesDto currencies) {
+        this.currencies = currencies;
+    }
 
-	public LanguagesDto getLanguages() {
-		return languages;
-	}
+    /**
+     * Gets the languages.
+     *
+     * @return the languages
+     */
+    public LanguagesDto getLanguages() {
+        return languages;
+    }
 
-	public void setLanguages(LanguagesDto languages) {
-		this.languages = languages;
-	}
+    /**
+     * Sets the languages.
+     *
+     * @param languages the new languages
+     */
+    public void setLanguages(LanguagesDto languages) {
+        this.languages = languages;
+    }
 
-	@Override
-	public String toString() {
-		return "GetTradingConfigurationResponseDto [countries=" + countries + ", currencies=" + currencies
-				+ ", languages=" + languages + ", toString()=" + super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetTradingConfigurationResponseDto [countries=" + countries + ", currencies=" + currencies + ", languages=" + languages + ", toString()=" + super.toString() + "]";
+    }
 }

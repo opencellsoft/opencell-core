@@ -11,29 +11,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.account.CustomerBrandDto;
 
 /**
+ * The Class CustomerBrandsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CustomerBrands")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerBrandsDto implements Serializable {
 
-	private static final long serialVersionUID = -3495786003526429089L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -3495786003526429089L;
 
-	private List<CustomerBrandDto> customerBrand;
+    /** The customer brand. */
+    private List<CustomerBrandDto> customerBrand;
 
-	public List<CustomerBrandDto> getCustomerBrand() {
-		if (customerBrand == null)
-			customerBrand = new ArrayList<CustomerBrandDto>();
-		return customerBrand;
-	}
+    /**
+     * Gets the customer brand.
+     *
+     * @return the customer brand
+     */
+    public List<CustomerBrandDto> getCustomerBrand() {
+        if (customerBrand == null)
+            customerBrand = new ArrayList<CustomerBrandDto>();
+        return customerBrand;
+    }
 
-	public void setCustomerBrand(List<CustomerBrandDto> customerBrand) {
-		this.customerBrand = customerBrand;
-	}
+    /**
+     * Sets the customer brand.
+     *
+     * @param customerBrand the new customer brand
+     */
+    public void setCustomerBrand(List<CustomerBrandDto> customerBrand) {
+        this.customerBrand = customerBrand;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerBrandsDto [customerBrand=" + customerBrand + "]";
-	}
+    @Override
+    public String toString() {
+        return "CustomerBrandsDto [customerBrand=" + customerBrand + "]";
+    }
 
 }

@@ -7,25 +7,42 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class OtherCreditAndChargeDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherCreditAndChargeDto extends AccountOperationDto implements Serializable {
 
-	private static final long serialVersionUID = 5458679584153463383L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5458679584153463383L;
 
-	public OtherCreditAndChargeDto() {
-		super.setType("OCC");
-	}
+    /**
+     * Instantiates a new other credit and charge dto.
+     */
+    public OtherCreditAndChargeDto() {
+        super.setType("OCC");
+    }
 
-	private Date operationDate;
+    /** The operation date. */
+    private Date operationDate;
 
-	public Date getOperationDate() {
-		return operationDate;
-	}
+    /**
+     * Gets the operation date.
+     *
+     * @return the operation date
+     */
+    public Date getOperationDate() {
+        return operationDate;
+    }
 
-	public void setOperationDate(Date operationDate) {
-		this.operationDate = operationDate;
-	}
+    /**
+     * Sets the operation date.
+     *
+     * @param operationDate the new operation date
+     */
+    public void setOperationDate(Date operationDate) {
+        this.operationDate = operationDate;
+    }
 
 }

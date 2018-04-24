@@ -57,7 +57,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(code);
+            moduleApi.remove(code);
         } catch (Exception e) {
             processException(e, result);
         }

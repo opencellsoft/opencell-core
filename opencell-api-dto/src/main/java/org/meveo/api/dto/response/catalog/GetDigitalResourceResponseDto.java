@@ -4,27 +4,44 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.catalog.DigitalResourcesDto;
+import org.meveo.api.dto.catalog.DigitalResourceDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class GetDigitalResourceResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetDigitalResourceResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetDigitalResourceResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -7994925961817572482L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7994925961817572482L;
 
-	private DigitalResourcesDto digitalResourcesDto;
+    /** The digital resources dto. */
+    private DigitalResourceDto digitalResourcesDto;
 
-	public DigitalResourcesDto getDigitalResourcesDto() {
-		return digitalResourcesDto;
-	}
-	
-	public void setDigitalResourcesDto(DigitalResourcesDto digitalResourcesDto) {
-		this.digitalResourcesDto = digitalResourcesDto;
-	}
+    /**
+     * Gets the digital resources dto.
+     *
+     * @return the digital resources dto
+     */
+    public DigitalResourceDto getDigitalResourcesDto() {
+        return digitalResourcesDto;
+    }
 
-	@Override
-	public String toString() {
-		return "GetDigitalResourceResponseDto [digitalResource=" + digitalResourcesDto + "]";
-	}
+    /**
+     * Sets the digital resources dto.
+     *
+     * @param digitalResourcesDto the new digital resources dto
+     */
+    public void setDigitalResourcesDto(DigitalResourceDto digitalResourcesDto) {
+        this.digitalResourcesDto = digitalResourcesDto;
+    }
+
+    @Override
+    public String toString() {
+        return "GetDigitalResourceResponseDto [digitalResource=" + digitalResourcesDto + "]";
+    }
 }

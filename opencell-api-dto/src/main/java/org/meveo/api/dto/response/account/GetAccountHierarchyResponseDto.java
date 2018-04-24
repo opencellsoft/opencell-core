@@ -8,25 +8,38 @@ import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetAccountHierarchyResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "FindAccountHierarchyResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetAccountHierarchyResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 8676287369018121754L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 8676287369018121754L;
 
-	private CustomersDto customers;
+    /** The customers. */
+    private CustomersDto customers;
 
-	public CustomersDto getCustomers() {
-		if (customers == null) {
-			customers = new CustomersDto();
-		}
-		return customers;
-	}
+    /**
+     * Gets the customers.
+     *
+     * @return the customers
+     */
+    public CustomersDto getCustomers() {
+        if (customers == null) {
+            customers = new CustomersDto();
+        }
+        return customers;
+    }
 
-	public void setCustomers(CustomersDto customers) {
-		this.customers = customers;
-	}
-
+    /**
+     * Sets the customers.
+     *
+     * @param customers the new customers
+     */
+    public void setCustomers(CustomersDto customers) {
+        this.customers = customers;
+    }
 }

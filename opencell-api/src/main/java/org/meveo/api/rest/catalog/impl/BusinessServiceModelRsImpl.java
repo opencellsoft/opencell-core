@@ -72,7 +72,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessServiceModelCode);
+            moduleApi.remove(businessServiceModelCode);
         } catch (Exception e) {
             processException(e, result);
         }

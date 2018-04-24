@@ -4,25 +4,38 @@ import org.meveo.api.dto.billing.DueDateDelayDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetDueDateDelayResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 public class GetDueDateDelayResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -7106268154657860158L;
-	
-	private DueDateDelayDto dueDateDelay;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7106268154657860158L;
 
-	public DueDateDelayDto getDueDateDelay() {
-		return dueDateDelay;
-	}
+    /** The due date delay. */
+    private DueDateDelayDto dueDateDelay;
 
-	public void setDueDateDelay(DueDateDelayDto dueDateDelay) {
-		this.dueDateDelay = dueDateDelay;
-	}
+    /**
+     * Gets the due date delay.
+     *
+     * @return the due date delay
+     */
+    public DueDateDelayDto getDueDateDelay() {
+        return dueDateDelay;
+    }
 
-	@Override
-	public String toString() {
-		return "GetDueDateDelayResponseDto [dueDateDelay=" + dueDateDelay + "]";
-	}
+    /**
+     * Sets the due date delay.
+     *
+     * @param dueDateDelay the new due date delay
+     */
+    public void setDueDateDelay(DueDateDelayDto dueDateDelay) {
+        this.dueDateDelay = dueDateDelay;
+    }
 
+    @Override
+    public String toString() {
+        return "GetDueDateDelayResponseDto [dueDateDelay=" + dueDateDelay + "]";
+    }
 }

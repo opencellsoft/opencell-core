@@ -4,20 +4,34 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class AccountOperationResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 public class AccountOperationResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -9033500265480026870L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -9033500265480026870L;
 
-	private AccountOperationDto accountOperation;
+    /** The account operation. */
+    private AccountOperationDto accountOperation;
 
-	public AccountOperationDto getAccountOperation() {
-		return accountOperation;
-	}
+    /**
+     * Gets the account operation.
+     *
+     * @return the account operation
+     */
+    public AccountOperationDto getAccountOperation() {
+        return accountOperation;
+    }
 
-	public void setAccountOperation(AccountOperationDto accountOperation) {
-		this.accountOperation = accountOperation;
-	}
+    /**
+     * Sets the account operation.
+     *
+     * @param accountOperation the new account operation
+     */
+    public void setAccountOperation(AccountOperationDto accountOperation) {
+        this.accountOperation = accountOperation;
+    }
 
 }

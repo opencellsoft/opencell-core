@@ -4,35 +4,64 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The Class CdrReservationResponse.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "CdrReservationResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CdrReservationResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -223187140111247346L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -223187140111247346L;
 
-	private double availableQuantity;
-	private long reservationId;
+    /** The available quantity. */
+    private double availableQuantity;
+    
+    /** The reservation id. */
+    private long reservationId;
 
-	public double getAvailableQuantity() {
-		return availableQuantity;
-	}
+    /**
+     * Gets the available quantity.
+     *
+     * @return the available quantity
+     */
+    public double getAvailableQuantity() {
+        return availableQuantity;
+    }
 
-	public void setAvailableQuantity(double availableQuantity) {
-		this.availableQuantity = availableQuantity;
-	}
+    /**
+     * Sets the available quantity.
+     *
+     * @param availableQuantity the new available quantity
+     */
+    public void setAvailableQuantity(double availableQuantity) {
+        this.availableQuantity = availableQuantity;
+    }
 
-	public long getReservationId() {
-		return reservationId;
-	}
+    /**
+     * Gets the reservation id.
+     *
+     * @return the reservation id
+     */
+    public long getReservationId() {
+        return reservationId;
+    }
 
-	public void setReservationId(long reservationId) {
-		this.reservationId = reservationId;
-	}
+    /**
+     * Sets the reservation id.
+     *
+     * @param reservationId the new reservation id
+     */
+    public void setReservationId(long reservationId) {
+        this.reservationId = reservationId;
+    }
 
-	@Override
-	public String toString() {
-		return "CdrReservationResponse [availableQuantity=" + availableQuantity + ", reservationId=" + reservationId
-				+ ", toString()=" + super.toString() + "]";
-	}
+
+    @Override
+    public String toString() {
+        return "CdrReservationResponse [availableQuantity=" + availableQuantity + ", reservationId=" + reservationId + ", toString()=" + super.toString() + "]";
+    }
 
 }

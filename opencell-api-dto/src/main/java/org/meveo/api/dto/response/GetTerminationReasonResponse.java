@@ -9,26 +9,39 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.TerminationReasonDto;
 
+/**
+ * The Class GetTerminationReasonResponse.
+ */
 @XmlRootElement(name = "TerminationReasonResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetTerminationReasonResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
-	
-	private List<TerminationReasonDto> terminationReason = new ArrayList<TerminationReasonDto>();
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public List<TerminationReasonDto> getTerminationReason() {
-		return terminationReason;
-	}
+    /** The termination reason. */
+    private List<TerminationReasonDto> terminationReason = new ArrayList<TerminationReasonDto>();
 
-	public void setTerminationReason(List<TerminationReasonDto> terminationReason) {
-		this.terminationReason = terminationReason;
-	}
+    /**
+     * Gets the termination reason.
+     *
+     * @return the termination reason
+     */
+    public List<TerminationReasonDto> getTerminationReason() {
+        return terminationReason;
+    }
 
-	@Override
-	public String toString() {
-		return "GetTerminationReasonResponse [terminationReason="
-				+ terminationReason + "]";
-	}
+    /**
+     * Sets the termination reason.
+     *
+     * @param terminationReason the new termination reason
+     */
+    public void setTerminationReason(List<TerminationReasonDto> terminationReason) {
+        this.terminationReason = terminationReason;
+    }
 
+    @Override
+    public String toString() {
+        return "GetTerminationReasonResponse [terminationReason=" + terminationReason + "]";
+    }
 }

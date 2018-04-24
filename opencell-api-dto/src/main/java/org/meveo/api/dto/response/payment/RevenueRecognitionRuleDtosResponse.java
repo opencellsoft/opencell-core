@@ -11,27 +11,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class RevenueRecognitionRuleDtosResponse.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "AccountOperationsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RevenueRecognitionRuleDtosResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 4142972198689221570L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4142972198689221570L;
 
-	@XmlElementWrapper(name = "revenueRecognitionRules")
+    /** The revenue recognition rules. */
+    @XmlElementWrapper(name = "revenueRecognitionRules")
     @XmlElement(name = "revenueRecognitionRule")
     private List<RevenueRecognitionRuleDto> revenueRecognitionRules;
-	
-    
-	public List<RevenueRecognitionRuleDto> getRevenueRecognitionRules() {
-		return revenueRecognitionRules;
-	}
 
-	public void setRevenueRecognitionRules(List<RevenueRecognitionRuleDto> revenueRecognitionRules) {
-		this.revenueRecognitionRules = revenueRecognitionRules;
-	}
+    /**
+     * Gets the revenue recognition rules.
+     *
+     * @return the revenue recognition rules
+     */
+    public List<RevenueRecognitionRuleDto> getRevenueRecognitionRules() {
+        return revenueRecognitionRules;
+    }
 
-	@Override
-	public String toString() {
-		return "RevenueRecognitionRuleDtosResponse [revenueRecognitionRules=" + revenueRecognitionRules + "]";
-	}
+    /**
+     * Sets the revenue recognition rules.
+     *
+     * @param revenueRecognitionRules the new revenue recognition rules
+     */
+    public void setRevenueRecognitionRules(List<RevenueRecognitionRuleDto> revenueRecognitionRules) {
+        this.revenueRecognitionRules = revenueRecognitionRules;
+    }
+
+    @Override
+    public String toString() {
+        return "RevenueRecognitionRuleDtosResponse [revenueRecognitionRules=" + revenueRecognitionRules + "]";
+    }
 }

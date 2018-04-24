@@ -10,6 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
+import org.meveo.api.dto.dwh.GetMeasurableQuantityResponse;
 import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
 import org.meveo.api.dto.dwh.PieChartDto;
@@ -68,6 +69,18 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
             measurableQuantityApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetMeasurableQuantityResponse findMeasurableQuantity(String code) {
+        GetMeasurableQuantityResponse result = new GetMeasurableQuantityResponse();
+        try {
+            result.setMeasurableQuantityDto(measurableQuantityApi.find(code));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -268,4 +281,55 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         return result;
     }
 
+    @Override
+    public ActionStatus enableMeasurableQuantity(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            measurableQuantityApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableMeasurableQuantity(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            measurableQuantityApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableChart(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            chartApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableChart(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            chartApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

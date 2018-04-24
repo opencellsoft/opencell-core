@@ -9,77 +9,162 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class UsageChargeDto.
+ *
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
- **/
+ */
 @XmlRootElement(name = "UsageCharge")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UsageChargeDto implements Serializable {
 
-	private static final long serialVersionUID = -2546246507412182368L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -2546246507412182368L;
 
-	private Integer min;
-	private Integer max;
-	private String currencyCode;
-	private Date startDate;
-	private Date endDate;
-	private BigDecimal price;
-	private BigDecimal recommendedPrice;
+    /** The min. */
+    private Integer min;
+    
+    /** The max. */
+    private Integer max;
+    
+    /** The currency code. */
+    private String currencyCode;
+    
+    /** The start date. */
+    private Date startDate;
+    
+    /** The end date. */
+    private Date endDate;
+    
+    /** The price. */
+    private BigDecimal price;
+    
+    /** The recommended price. */
+    private BigDecimal recommendedPrice;
 
-	public Integer getMin() {
-		return min;
-	}
+    /**
+     * Gets the min.
+     *
+     * @return the min
+     */
+    public Integer getMin() {
+        return min;
+    }
 
-	public void setMin(Integer min) {
-		this.min = min;
-	}
+    /**
+     * Sets the min.
+     *
+     * @param min the new min
+     */
+    public void setMin(Integer min) {
+        this.min = min;
+    }
 
-	public Integer getMax() {
-		return max;
-	}
+    /**
+     * Gets the max.
+     *
+     * @return the max
+     */
+    public Integer getMax() {
+        return max;
+    }
 
-	public void setMax(Integer max) {
-		this.max = max;
-	}
+    /**
+     * Sets the max.
+     *
+     * @param max the new max
+     */
+    public void setMax(Integer max) {
+        this.max = max;
+    }
 
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+    /**
+     * Gets the currency code.
+     *
+     * @return the currency code
+     */
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    /**
+     * Sets the currency code.
+     *
+     * @param currencyCode the new currency code
+     */
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    /**
+     * Gets the start date.
+     *
+     * @return the start date
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the new start date
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    /**
+     * Gets the end date.
+     *
+     * @return the end date
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    /**
+     * Sets the end date.
+     *
+     * @param endDate the new end date
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public BigDecimal getPrice() {
-		return price;
-	}
+    /**
+     * Gets the price.
+     *
+     * @return the price
+     */
+    public BigDecimal getPrice() {
+        return price;
+    }
 
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
+    /**
+     * Sets the price.
+     *
+     * @param price the new price
+     */
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
-	public BigDecimal getRecommendedPrice() {
-		return recommendedPrice;
-	}
+    /**
+     * Gets the recommended price.
+     *
+     * @return the recommended price
+     */
+    public BigDecimal getRecommendedPrice() {
+        return recommendedPrice;
+    }
 
-	public void setRecommendedPrice(BigDecimal recommendedPrice) {
-		this.recommendedPrice = recommendedPrice;
-	}
-
+    /**
+     * Sets the recommended price.
+     *
+     * @param recommendedPrice the new recommended price
+     */
+    public void setRecommendedPrice(BigDecimal recommendedPrice) {
+        this.recommendedPrice = recommendedPrice;
+    }
 }

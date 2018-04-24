@@ -23,7 +23,7 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     JobExecutionResultResponseDto execute(@WebParam(name = "jobInstanceInfo") JobInstanceInfoDto postData);
-    
+
     @WebMethod
     ActionStatus stop(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
@@ -42,6 +42,24 @@ public interface JobWs extends IBaseWs {
     @WebMethod
     ActionStatus removeJobInstance(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
+    /**
+     * Enable a Job instance by its code
+     * 
+     * @param code Job instance code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableJobInstance(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Job instance by its code
+     * 
+     * @param code Job instance code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableJobInstance(@WebParam(name = "code") String code);
+
     // timer
 
     @WebMethod
@@ -58,8 +76,26 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     ActionStatus removeTimer(@WebParam(name = "timerCode") String timerCode);
-    
+
+    /**
+     * Enable a Timer scheduler by its code
+     * 
+     * @param code Timer scheduler code
+     * @return Request processing status
+     */
     @WebMethod
-    JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name="code") String code, @WebParam(name="jobExecutionResultId") Long jobExecutionResultId);
-    
+    ActionStatus enableTimer(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Timer scheduler by its code
+     * 
+     * @param code Timer scheduler code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableTimer(@WebParam(name = "code") String code);
+
+    @WebMethod
+    JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name = "code") String code, @WebParam(name = "jobExecutionResultId") Long jobExecutionResultId);
+
 }

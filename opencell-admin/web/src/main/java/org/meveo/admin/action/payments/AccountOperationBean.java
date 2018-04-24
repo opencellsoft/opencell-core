@@ -84,7 +84,8 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * @return account operation 
+     * 
+     * @return account operation
      */
     @Produces
     @Named("accountOperation")
@@ -92,17 +93,11 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
         return initEntity();
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
     @Override
     protected IPersistenceService<AccountOperation> getPersistenceService() {
         return accountOperationService;
     }
 
-    /**
-     * TODO
-     */
     public String displayOperation(AccountOperation accountOperation) {
         String page = "/pages/payments/accountOperations/showOcc.xhtml";
 
@@ -119,9 +114,10 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     }
 
     /**
-     * match selected operations
+     * Match selected operations.
      * 
-     * @return
+     * @param customerAccountId Customer account identifier
+     * @return Redirect page
      */
     public String matching(Long customerAccountId) {
         List<Long> operationIds = new ArrayList<Long>();
@@ -158,7 +154,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
      * Consult Matching code page
      * 
      * @return the URL of the matching code page containing the selected operation
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
 
     private void dunningInclusionExclusionPartial(AccountOperation accountOperation, Boolean exclude) throws BusinessException {

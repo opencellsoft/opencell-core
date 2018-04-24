@@ -58,9 +58,9 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEnable;
 import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
@@ -255,9 +255,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Override
     public E disable(E entity) throws BusinessException {
-        if (entity instanceof EnableEntity && ((EnableEntity) entity).isActive()) {
+        if (entity instanceof IEnable && ((IEnable) entity).isActive()) {
             log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-            ((EnableEntity) entity).setDisabled(true);
+            ((IEnable) entity).setDisabled(true);
             if (entity instanceof IAuditable) {
                 ((IAuditable) entity).updateAudit(currentUser);
             }
@@ -284,9 +284,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Override
     public E enable(E entity) throws BusinessException {
-        if (entity instanceof EnableEntity && ((EnableEntity) entity).isDisabled()) {
+        if (entity instanceof IEnable && ((IEnable) entity).isDisabled()) {
             log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-            ((EnableEntity) entity).setDisabled(false);
+            ((IEnable) entity).setDisabled(false);
             if (entity instanceof IAuditable) {
                 ((IAuditable) entity).updateAudit(currentUser);
             }
@@ -395,9 +395,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(ISearchable entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-            throw new BusinessException("Invalid characters found in entity code.");
-        }
+       // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+         //   throw new BusinessException("Invalid characters found in entity code.");
+       // }
 
         return true;
     }
@@ -437,9 +437,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
     }
 
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#list()
-     */
     @Override
     public List<E> list() {
         return list((Boolean) null);
@@ -454,7 +451,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public List<E> list(Boolean active) {
         final Class<? extends E> entityClass = getEntityClass();
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (active != null && EnableEntity.class.isAssignableFrom(entityClass)) {
+        if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
         }
         Query query = queryBuilder.getQuery(getEntityManager());
@@ -471,7 +468,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public List<E> findByCodeLike(String wildcode) {
         final Class<? extends E> entityClass = getEntityClass();
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (EnableEntity.class.isAssignableFrom(entityClass)) {
+        if (IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", false);
         }
         queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
@@ -1075,7 +1072,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return emfForJobs;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
         Session session = getEntityManager().unwrap(Session.class);

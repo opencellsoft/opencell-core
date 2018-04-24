@@ -15,75 +15,40 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 
+
 /**
+ * The Class CustomEntityTemplateDto.
+ *
  * @author Andrius Karpavicius
- **/
+ */
 
 @XmlRootElement(name = "CustomEntityTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomEntityTemplateDto extends BaseDto {
+public class CustomEntityTemplateDto extends EnableBusinessDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6633504145323452803L;
 
+    /** The code. */
     @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute(required = true)
+    /** The name. */
     private String name;
 
-    @XmlAttribute()
-    private String description;
-
+    /** The fields. */
     @XmlElementWrapper(name = "fields")
     @XmlElement(name = "field")
     private List<CustomFieldTemplateDto> fields;
 
+    /** The actions. */
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
     private List<EntityCustomActionDto> actions;
 
+    /**
+     * Instantiates a new custom entity template dto.
+     */
     public CustomEntityTemplateDto() {
 
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<CustomFieldTemplateDto> getFields() {
-        return fields;
-    }
-
-    public void setFields(List<CustomFieldTemplateDto> fields) {
-        this.fields = fields;
-    }
-
-    public List<EntityCustomActionDto> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<EntityCustomActionDto> actions) {
-        this.actions = actions;
     }
 
     /**
@@ -92,55 +57,88 @@ public class CustomEntityTemplateDto extends BaseDto {
      * @param cet CustomEntityTemplate object to convert
      * @param cetFields Fields (CustomFieldTemplate) that are part of CustomEntityTemplate
      * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
-     * @return A CustomEntityTemplateDto object with fields set
      */
-    public static CustomEntityTemplateDto toDTO(CustomEntityTemplate cet, Collection<CustomFieldTemplate> cetFields, Collection<EntityCustomAction> cetActions) {
-        CustomEntityTemplateDto dto = new CustomEntityTemplateDto();
-        dto.setCode(cet.getCode());
-        dto.setName(cet.getName());
-        dto.setDescription(cet.getDescription());
+    public CustomEntityTemplateDto(CustomEntityTemplate cet, Collection<CustomFieldTemplate> cetFields, Collection<EntityCustomAction> cetActions) {
+        super(cet);
+
+        setName(cet.getName());
 
         if (cetFields != null) {
             List<CustomFieldTemplateDto> fields = new ArrayList<CustomFieldTemplateDto>();
             for (CustomFieldTemplate cft : cetFields) {
                 fields.add(new CustomFieldTemplateDto(cft));
-            }
-            dto.setFields(fields);
+    }
+            setFields(fields);
         }
 
         if (cetActions != null) {
             List<EntityCustomActionDto> actions = new ArrayList<EntityCustomActionDto>();
             for (EntityCustomAction action : cetActions) {
                 actions.add(new EntityCustomActionDto(action));
-            }
-            dto.setActions(actions);
+    }
+            setActions(actions);
         }
-
-        return dto;
     }
 
     /**
-     * Convert CustomEntityTemplateDto to a CustomEntityTemplate instance. Note: does not convert custom fields that are part of DTO
-     * 
-     * @param dto CustomEntityTemplateDto object to convert
-     * @param cetToUpdate CustomEntityTemplate to update with values from dto, or if null create a new one
-     * @return A new or updated CustomEntityTemplate instance
+     * Gets the name.
+     *
+     * @return the name
      */
-    public static CustomEntityTemplate fromDTO(CustomEntityTemplateDto dto, CustomEntityTemplate cetToUpdate) {
-        CustomEntityTemplate cet = new CustomEntityTemplate();
-        if (cetToUpdate != null) {
-            cet = cetToUpdate;
-        }
-        cet.setCode(dto.getCode());
-        cet.setName(dto.getName());
-        cet.setDescription(dto.getDescription());
-
-        return cet;
+    public String getName() {
+        return name;
     }
 
+    /**
+     * Sets the name.
+     *
+     * @param name the new name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Gets the fields.
+     *
+     * @return the fields
+     */
+    public List<CustomFieldTemplateDto> getFields() {
+        return fields;
+    }
+
+    /**
+     * Sets the fields.
+     *
+     * @param fields the new fields
+     */
+    public void setFields(List<CustomFieldTemplateDto> fields) {
+        this.fields = fields;
+    }
+
+    /**
+     * Gets the actions.
+     *
+     * @return the actions
+     */
+    public List<EntityCustomActionDto> getActions() {
+        return actions;
+    }
+
+    /**
+     * Sets the actions.
+     *
+     * @param actions the new actions
+     */
+    public void setActions(List<EntityCustomActionDto> actions) {
+        this.actions = actions;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "CustomEntityTemplateDto [code=" + code + ", name=" + name + ", description=" + description + ", fields=" + fields + "]";
     }
-
 }

@@ -8,30 +8,42 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class ServiceChargeTemplateTerminationsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceChargeTemplateTerminationsDto implements Serializable {
 
-	private static final long serialVersionUID = -7148418773670960365L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7148418773670960365L;
 
-	private List<ServiceChargeTemplateTerminationDto> serviceChargeTemplateTermination;
+    /** The service charge template termination. */
+    private List<ServiceChargeTemplateTerminationDto> serviceChargeTemplateTermination;
 
-	public List<ServiceChargeTemplateTerminationDto> getServiceChargeTemplateTermination() {
-		if (serviceChargeTemplateTermination == null)
-			serviceChargeTemplateTermination = new ArrayList<ServiceChargeTemplateTerminationDto>();
-		return serviceChargeTemplateTermination;
-	}
+    /**
+     * Gets the service charge template termination.
+     *
+     * @return the service charge template termination
+     */
+    public List<ServiceChargeTemplateTerminationDto> getServiceChargeTemplateTermination() {
+        if (serviceChargeTemplateTermination == null)
+            serviceChargeTemplateTermination = new ArrayList<ServiceChargeTemplateTerminationDto>();
+        return serviceChargeTemplateTermination;
+    }
 
-	public void setServiceChargeTemplateTermination(
-			List<ServiceChargeTemplateTerminationDto> serviceChargeTemplateTermination) {
-		this.serviceChargeTemplateTermination = serviceChargeTemplateTermination;
-	}
+    /**
+     * Sets the service charge template termination.
+     *
+     * @param serviceChargeTemplateTermination the new service charge template termination
+     */
+    public void setServiceChargeTemplateTermination(List<ServiceChargeTemplateTerminationDto> serviceChargeTemplateTermination) {
+        this.serviceChargeTemplateTermination = serviceChargeTemplateTermination;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceChargeTemplateTerminationsDto [serviceChargeTemplateTermination="
-				+ serviceChargeTemplateTermination + "]";
-	}
+    @Override
+    public String toString() {
+        return "ServiceChargeTemplateTerminationsDto [serviceChargeTemplateTermination=" + serviceChargeTemplateTermination + "]";
+    }
 
 }

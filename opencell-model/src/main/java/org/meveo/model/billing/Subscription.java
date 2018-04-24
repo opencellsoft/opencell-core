@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -156,6 +157,14 @@ public class Subscription extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
+    
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+    
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -333,6 +342,22 @@ public class Subscription extends BusinessCFEntity {
         this.notifyOfRenewalDate = notifyOfRenewalDate;
     }
 
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
     /**
      * Check if renewal notice should be fired for a current date
      * 
@@ -387,7 +412,7 @@ public class Subscription extends BusinessCFEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
-    }
+    }   
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
@@ -396,4 +421,12 @@ public class Subscription extends BusinessCFEntity {
 
     }
 
+    /**
+     * Is subscription active
+     * 
+     * @return True if Status is ACTIVE
+     */
+    public boolean isActive() {
+        return SubscriptionStatusEnum.ACTIVE == status;
+    }
 }

@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.crm.CustomFieldTemplate.GroupedCustomFieldTreeItemType;
@@ -30,7 +30,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @Table(name = "crm_custom_action", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_custom_action_seq"), })
-public class EntityCustomAction extends BusinessEntity {
+public class EntityCustomAction extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -1640429569087958881L;
 

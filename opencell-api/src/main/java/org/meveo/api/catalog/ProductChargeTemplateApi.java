@@ -43,6 +43,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
+    @Override
     public ProductChargeTemplate create(ProductChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -67,7 +68,9 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         ProductChargeTemplate chargeTemplate = new ProductChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            chargeTemplate.setDisabled(postData.isDisabled());
+        }
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
@@ -122,6 +125,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         return chargeTemplate;
     }
 
+    @Override
     public ProductChargeTemplate update(ProductChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -146,7 +150,6 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 
         chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
@@ -225,30 +228,6 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         ProductChargeTemplateDto result = new ProductChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
 
         return result;
-    }
-
-    public void remove(String code) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("productChargeTemplateCode");
-            handleMissingParameters();
-        }
-
-        // check if code already exists
-        ProductChargeTemplate chargeTemplate = productChargeTemplateService.findByCode(code, Arrays.asList("invoiceSubCategory"));
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(ProductChargeTemplate.class, code);
-        }
-
-        productChargeTemplateService.remove(chargeTemplate);
-    }
-
-    public ProductChargeTemplate createOrUpdate(ProductChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-        if (productChargeTemplateService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 
     public List<ProductChargeTemplateDto> list() {

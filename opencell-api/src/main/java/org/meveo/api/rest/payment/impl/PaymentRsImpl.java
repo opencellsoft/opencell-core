@@ -326,7 +326,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentHistoriesDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public PaymentHistoriesDto listPaymentHistoryGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
 
         PaymentHistoriesDto result = new PaymentHistoriesDto();
 
@@ -340,7 +340,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentHistoriesDto listPost(PagingAndFiltering pagingAndFiltering) {
+    public PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering) {
         PaymentHistoriesDto result = new PaymentHistoriesDto();
 
         try {
@@ -350,5 +350,60 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         }
 
         return result;
-    }   
+    }
+
+    @Override
+    public ActionStatus enablePaymentMethod(Long id) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentMethodApi.enableOrDisable(id, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disablePaymentMethod(Long id) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentMethodApi.enableOrDisable(id, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enablePaymentGateway(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disablePaymentGateway(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

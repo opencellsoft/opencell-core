@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.finance.ReportExtractDto;
 import org.meveo.api.dto.response.finance.RunReportExtractDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -23,12 +23,11 @@ import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
- * @version %I%, %G%
  * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @Stateless
-public class ReportExtractApi extends BaseApi {
+public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDto> {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
@@ -36,7 +35,8 @@ public class ReportExtractApi extends BaseApi {
     @Inject
     private ReportExtractService reportExtractService;
 
-    public void create(ReportExtractDto postData) throws MeveoApiException, BusinessException {
+    @Override
+    public ReportExtract create(ReportExtractDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -52,11 +52,13 @@ public class ReportExtractApi extends BaseApi {
             throw new EntityAlreadyExistsException(ReportExtract.class, postData.getCode());
         }
 
-        ReportExtract reportExtract = toReportExtract(postData, null);
+        ReportExtract reportExtract = convertReportExtractFromDto(postData, null);
         reportExtractService.create(reportExtract);
+        return reportExtract;
     }
 
-    public void update(ReportExtractDto postData) throws MeveoApiException, BusinessException {
+    @Override
+    public ReportExtract update(ReportExtractDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -73,89 +75,57 @@ public class ReportExtractApi extends BaseApi {
             throw new EntityDoesNotExistsException(ReportExtract.class, postData.getCode());
         }
 
-        reportExtract = toReportExtract(postData, reportExtract);
-        reportExtractService.update(reportExtract);
-    }
-
-    public void createOrUpdate(ReportExtractDto postData) throws MeveoApiException, BusinessException {
-        if (reportExtractService.findByCode(postData.getCode()) == null) {
-            create(postData);
-        } else {
-            update(postData);
-        }
+        reportExtract = convertReportExtractFromDto(postData, reportExtract);
+        reportExtract = reportExtractService.update(reportExtract);
+        return reportExtract;
     }
 
     public List<ReportExtractDto> list() {
         List<ReportExtract> reportExtracts = reportExtractService.list();
-        return (reportExtracts == null || reportExtracts.isEmpty()) ? new ArrayList<>() : reportExtracts.stream().map(p -> fromReportExtract(p)).collect(Collectors.toList());
+        return (reportExtracts == null || reportExtracts.isEmpty()) ? new ArrayList<>() : reportExtracts.stream().map(p -> new ReportExtractDto(p)).collect(Collectors.toList());
     }
 
+    @Override
     public ReportExtractDto find(String code) throws EntityDoesNotExistsException {
         ReportExtract reportExtract = reportExtractService.findByCode(code);
         if (reportExtract == null) {
             throw new EntityDoesNotExistsException(ReportExtract.class, code);
         }
 
-        return fromReportExtract(reportExtract);
+        return new ReportExtractDto(reportExtract);
     }
 
-    public void remove(String code) throws MeveoApiException, BusinessException {
-        ReportExtract reportExtract = reportExtractService.findByCode(code);
+    private ReportExtract convertReportExtractFromDto(ReportExtractDto dto, ReportExtract reportExtractToUpdate) throws EntityDoesNotExistsException {
+
+        ReportExtract reportExtract = reportExtractToUpdate;
         if (reportExtract == null) {
-            throw new EntityDoesNotExistsException(ReportExtract.class, code);
-        }
-
-        reportExtractService.remove(reportExtract);
-    }
-
-    public ReportExtractDto fromReportExtract(ReportExtract source) {
-        ReportExtractDto target = new ReportExtractDto();
-
-        target.setCategory(source.getCategory());
-        target.setCode(source.getCode());
-        target.setDescription(source.getDescription());
-        target.setEndDate(source.getEndDate());
-        target.setFilenameFormat(source.getFilenameFormat());
-        target.setParams(source.getParams());
-        target.setStartDate(source.getStartDate());
-        target.setScriptType(source.getScriptType());
-        if (source.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
-            if (source.getScriptInstance() != null) {
-                target.setScriptInstanceCode(source.getScriptInstance().getCode());
+            reportExtract = new ReportExtract();
+            if (dto.isDisabled() != null) {
+                reportExtract.setDisabled(dto.isDisabled());
             }
-        } else {
-            target.setSqlQuery(source.getSqlQuery());
         }
 
-        return target;
-    }
-
-    public ReportExtract toReportExtract(ReportExtractDto source, ReportExtract target) throws EntityDoesNotExistsException {
-        if (target == null) {
-            target = new ReportExtract();
-        }
-
-        target.setCategory(source.getCategory());
-        target.setCode(source.getCode());
-        target.setDescription(source.getDescription());
-        target.setEndDate(source.getEndDate());
-        target.setFilenameFormat(source.getFilenameFormat());
-        target.setParams(source.getParams());
-        target.setStartDate(source.getStartDate());
-        target.setScriptType(source.getScriptType());
-        if (source.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
-            ScriptInstance scriptInstance = scriptInstanceService.findByCode(source.getScriptInstanceCode());
+        reportExtract.setCategory(dto.getCategory());
+        reportExtract.setCode(dto.getCode());
+        reportExtract.setDescription(dto.getDescription());
+        reportExtract.setEndDate(dto.getEndDate());
+        reportExtract.setFilenameFormat(dto.getFilenameFormat());
+        reportExtract.setParams(dto.getParams());
+        reportExtract.setStartDate(dto.getStartDate());
+        reportExtract.setScriptType(dto.getScriptType());
+        if (dto.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(dto.getScriptInstanceCode());
             if (scriptInstance == null) {
-                throw new EntityDoesNotExistsException(ScriptInstance.class, source.getScriptInstanceCode());
+                throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getScriptInstanceCode());
             }
-            target.setScriptInstance(scriptInstance);
-            target.setSqlQuery(null);
+            reportExtract.setScriptInstance(scriptInstance);
+            reportExtract.setSqlQuery(null);
         } else {
-            target.setSqlQuery(source.getSqlQuery());
-            target.setScriptInstance(null);
+            reportExtract.setSqlQuery(dto.getSqlQuery());
+            reportExtract.setScriptInstance(null);
         }
 
-        return target;
+        return reportExtract;
     }
 
     public void runReportExtract(RunReportExtractDto postData) throws BusinessException {
