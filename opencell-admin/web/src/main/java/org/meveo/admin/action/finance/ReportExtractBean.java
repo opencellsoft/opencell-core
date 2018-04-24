@@ -7,6 +7,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
@@ -78,7 +79,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
             result = saveOrUpdate(true);
             reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
-        } catch (BusinessException e) {
+        } catch (BusinessException | ReportExtractExecutionException e) {
             log.error("Failed running report: {}", e.getMessage());
             messages.error(e.getMessage());
         }
@@ -94,7 +95,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
             result = saveOrUpdate(false);
             reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
-        } catch (BusinessException e) {
+        } catch (BusinessException | ReportExtractExecutionException e) {
             log.error("Failed running report: {}", e.getMessage());
             messages.error(e.getMessage());
         }

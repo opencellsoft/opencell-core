@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.finance.ReportExtractDto;
 import org.meveo.api.dto.response.finance.RunReportExtractDto;
@@ -16,6 +17,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.finance.ReportExtractService;
@@ -128,8 +130,8 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         return reportExtract;
     }
 
-    public void runReportExtract(RunReportExtractDto postData) throws BusinessException {
+    public void runReportExtract(RunReportExtractDto postData) throws BusinessException, ReportExtractExecutionException {
         ReportExtract reportExtract = reportExtractService.findByCode(postData.getCode());
-        reportExtractService.runReport(reportExtract, postData.getParams());
+        reportExtractService.runReport(reportExtract, postData.getParams(), ReportExtractExecutionOrigin.API);
     }
 }

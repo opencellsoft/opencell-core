@@ -59,6 +59,36 @@
             	<p:commandButton id="runReport" icon="fa fa-fw fa-play" value="#{messages['action.execute']}" action="#{reportExtractBean.runReport}"></p:commandButton>
             </ui:define>
 		</hftl:formPanel>
+		
+		<!-- ===================================== EXECUTION RESULTS ===================================== -->
+
+        <p:panel rendered="#{!reportExtractBean.entity.transient}">
+			<p:dataTable var="entity" sortBy="#{entity.startDate}" sortOrder="descending" paginator="true" value="#{reportExtractBean.entity.executionResults}" rows="10"
+				rowKey="#{entity.id}" resizableColumns="true">
+				<p:column sortBy="#{entity.startDate}">
+					<f:facet name="header">
+						<h:outputText value="#{messages['jobExecution.startDate']}" />
+					</f:facet>
+					<h:outputText value="#{entity.startDate}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+					</h:outputText>
+				</p:column>
+			
+				<p:column sortBy="#{entity.endDate}">
+					<f:facet name="header">
+						<h:outputText value="#{messages['jobExecution.endDate']}" />
+					</f:facet>
+					<h:outputText value="#{entity.endDate}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+					</h:outputText>
+				</p:column>
+				
+				<hftl:column label="#{messages['reportExtract.filePath']}" field="filePath" />
+				<hftl:column label="#{messages['reportExtract.lineCount']}" field="lineCount" />
+				<hftl:column label="#{messages['reportExtract.origin']}" field="origin" />
+				<hftl:column label="#{messages['reportExtract.errorMessage']}" field="errorMessage" />
+			</p:dataTable>
+        </p:panel>
 	</ui:define>
 
 </ui:composition>

@@ -3,6 +3,7 @@ package org.meveo.service.finance;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,9 +13,12 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
+import org.meveo.model.finance.ReportExtractExecutionResult;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
@@ -36,12 +40,19 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void runReport(ReportExtract entity) throws BusinessException {
-        runReport(entity, null);
+    @Inject
+    private ReportExtractExecutionResultService reportExtractExecutionResultService;
+
+    public void runReport(ReportExtract entity) throws ReportExtractExecutionException, BusinessException {
+        runReport(entity, null, ReportExtractExecutionOrigin.GUI);
+    }
+
+    public void runReport(ReportExtract entity, Map<String, String> mapParams) throws ReportExtractExecutionException, BusinessException {
+        runReport(entity, mapParams, ReportExtractExecutionOrigin.GUI);
     }
 
     @SuppressWarnings("rawtypes")
-    public void runReport(ReportExtract entity, Map<String, String> mapParams) throws BusinessException {
+    public void runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
         Map<String, Object> context = new HashMap<>();
 
         // use params parameter if set, otherwise use the set from entity
@@ -80,13 +91,37 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         String filename = DateUtils.evaluteDateFormat(entity.getFilenameFormat());
         filename = evaluateStringExpression(filename, entity);
 
+        ReportExtractExecutionResult reportExtractExecutionResult = new ReportExtractExecutionResult();
+        reportExtractExecutionResult.updateAudit(currentUser);
+        reportExtractExecutionResult.setReportExtract(entity);
+        reportExtractExecutionResult.setStartDate(new Date());
+        reportExtractExecutionResult.setFilePath(sbDir.toString() + File.separator + filename);
+        reportExtractExecutionResult.setLineCount(0);
+        reportExtractExecutionResult.setOrigin(origin);
+        reportExtractExecutionResult.setStatus(true);
+
+        ReportExtractExecutionException be = null;
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
-            List<Map<String, Object>> resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
+            List<Map<String, Object>> resultList = null;
+
+            try {
+                resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
+            } catch (Exception e) {
+                if (e.getCause() != null && e.getCause().getCause() != null) {
+                    reportExtractExecutionResult.setErrorMessage(e.getCause().getCause().getMessage());
+                } else {
+                    reportExtractExecutionResult.setErrorMessage(e.getMessage());
+                }
+                log.error("Invalid SQL query: {}", e.getMessage());
+                be = new ReportExtractExecutionException("Invalid SQL query.");
+            }
 
             FileWriter fileWriter = null;
             StringBuilder line = new StringBuilder("");
             if (resultList != null && !resultList.isEmpty()) {
                 log.debug("{} record/s found", resultList.size());
+
+                reportExtractExecutionResult.setLineCount(resultList.size());
 
                 try {
                     File dir = new File(sbDir.toString());
@@ -125,6 +160,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                         }
                     }
                 } catch (Exception e) {
+                    reportExtractExecutionResult.setErrorMessage(e.getMessage());
                     if (fileWriter != null) {
                         try {
                             fileWriter.close();
@@ -132,7 +168,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                         }
                     }
                     log.error("Cannot write report to file: {}", e.getMessage());
-                    throw new BusinessException("Cannot write report to file.");
+                    be = new ReportExtractExecutionException("Cannot write report to file.");
                 }
             }
 
@@ -142,7 +178,16 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 context.put(ReportExtractScript.FILENAME, filename);
             }
 
-            scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
+            Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
+            reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
+            reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
+        }
+
+        reportExtractExecutionResult.setEndDate(new Date());
+        reportExtractExecutionResultService.createInNewTransaction(reportExtractExecutionResult);
+
+        if (be != null) {
+            throw be;
         }
     }
 

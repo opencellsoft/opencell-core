@@ -16,5 +16,7 @@ public class ReportExtractScript extends Script {
     public static final String DIR = "DIR";
     public static final String FILENAME = "FILENAME";
     public static final String REPORTS_DIR = "reports";
+    public static final String ERROR_MESSAGE = "ERROR_MESSAGE";
+    public static final String LINE_COUNT = "LINE_COUNT";
 
 }
