@@ -78,7 +78,7 @@ import org.meveo.service.script.ScriptInterface;
  * {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion willBeSetLater
+ * @lastModifiedVersion 5.0.1
  */
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {

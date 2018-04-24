@@ -13,36 +13,60 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
- * 
- * @author Tyshan Shi(tyshan@manaty.net)
- * @since Aug 1, 2016 9:34:34 PM
- * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * The Class DiscountPlanItemDto.
  *
+ * @author Tyshan Shi(tyshan@manaty.net)
+ * @author Edward P. Legaspi
+ * @since Aug 1, 2016 9:34:34 PM
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "DiscountPlanItem")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DiscountPlanItemDto extends BaseDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4512584223794507921L;
 
+    /** The code. */
     @NotNull
     @XmlAttribute(required = true)
     private String code;
+
+    /** The discount plan code. */
     @NotNull
     @XmlElement(required = true)
     private String discountPlanCode;
+
+    /** The invoice category code. */
     private String invoiceCategoryCode;
+
+    /** The invoice sub category code. */
     private String invoiceSubCategoryCode;
+
+    /** The percent. */
     private BigDecimal percent;
+
+    /** The accounting code. */
     @Deprecated // until further analysis
     private String accountingCode;
+
+    /** The expression el. */
     private String expressionEl;
+
+    /** The discount percent el. */
     private String discountPercentEl;
 
+    /**
+     * Instantiates a new discount plan item dto.
+     */
     public DiscountPlanItemDto() {
     }
 
+    /**
+     * Instantiates a new discount plan item dto.
+     *
+     * @param discountPlanItem the discount plan item
+     */
     public DiscountPlanItemDto(DiscountPlanItem discountPlanItem) {
         this.code = discountPlanItem.getCode();
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
@@ -54,60 +78,149 @@ public class DiscountPlanItemDto extends BaseDto {
         this.discountPercentEl = discountPlanItem.getDiscountPercentEl();
     }
 
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
     public void setCode(String code) {
         this.code = code;
     }
 
+    /**
+     * Gets the discount plan code.
+     *
+     * @return the discount plan code
+     */
     public String getDiscountPlanCode() {
         return discountPlanCode;
     }
 
+    /**
+     * Sets the discount plan code.
+     *
+     * @param discountPlanCode the new discount plan code
+     */
     public void setDiscountPlanCode(String discountPlanCode) {
         this.discountPlanCode = discountPlanCode;
     }
 
+    /**
+     * Gets the invoice category code.
+     *
+     * @return the invoice category code
+     */
     public String getInvoiceCategoryCode() {
         return invoiceCategoryCode;
     }
 
+    /**
+     * Sets the invoice category code.
+     *
+     * @param invoiceCategoryCode the new invoice category code
+     */
     public void setInvoiceCategoryCode(String invoiceCategoryCode) {
         this.invoiceCategoryCode = invoiceCategoryCode;
     }
 
+    /**
+     * Gets the invoice sub category code.
+     *
+     * @return the invoice sub category code
+     */
     public String getInvoiceSubCategoryCode() {
         return invoiceSubCategoryCode;
     }
 
+    /**
+     * Sets the invoice sub category code.
+     *
+     * @param invoiceSubCategoryCode the new invoice sub category code
+     */
     public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
         this.invoiceSubCategoryCode = invoiceSubCategoryCode;
     }
 
+    /**
+     * Gets the percent.
+     *
+     * @return the percent
+     */
     public BigDecimal getPercent() {
         return percent;
     }
 
+    /**
+     * Sets the percent.
+     *
+     * @param percent the new percent
+     */
     public void setPercent(BigDecimal percent) {
         this.percent = percent;
     }
 
+    /**
+     * Gets the accounting code.
+     *
+     * @return the accounting code
+     */
     public String getAccountingCode() {
         return accountingCode;
     }
 
+    /**
+     * Sets the accounting code.
+     *
+     * @param accountingCode the new accounting code
+     */
     public void setAccountingCode(String accountingCode) {
         this.accountingCode = accountingCode;
     }
 
+    /**
+     * Gets the expression el.
+     *
+     * @return the expression el
+     */
     public String getExpressionEl() {
         return expressionEl;
     }
 
+    /**
+     * Sets the expression el.
+     *
+     * @param expressionEl the new expression el
+     */
     public void setExpressionEl(String expressionEl) {
         this.expressionEl = expressionEl;
+    }
+
+
+    /**
+     * Gets the discount percent el.
+     *
+     * @return the discount percent el
+     */
+    public String getDiscountPercentEl() {
+        return discountPercentEl;
+    }
+
+    /**
+     * Sets the discount percent el.
+     *
+     * @param discountPercentEl the new discount percent el
+     */
+    public void setDiscountPercentEl(String discountPercentEl) {
+        this.discountPercentEl = discountPercentEl;
     }
 
     @Override
@@ -115,13 +228,4 @@ public class DiscountPlanItemDto extends BaseDto {
         return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
                 + invoiceSubCategoryCode + ", percent=" + percent + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + "]";
     }
-
-    public String getDiscountPercentEl() {
-        return discountPercentEl;
-    }
-
-    public void setDiscountPercentEl(String discountPercentEl) {
-        this.discountPercentEl = discountPercentEl;
-    }
-
 }

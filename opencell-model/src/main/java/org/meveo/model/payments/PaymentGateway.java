@@ -33,7 +33,7 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  * @author anasseh
  * @since Opencell 4.8
- * @lastModifiedVersion willBeSetLater
+ * @lastModifiedVersion 5.0.1
  */
 
 @Entity

@@ -27,6 +27,7 @@ public class PaymentGatewayResponseDto extends SearchResponse {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3151651854190686940L;
 
+    /** The payment gateways. */
     @XmlElementWrapper(name = "paymentGateways")
     @XmlElement(name = "paymentGateway")
     private List<PaymentGatewayDto> paymentGateways = new ArrayList<PaymentGatewayDto>();
@@ -39,6 +40,8 @@ public class PaymentGatewayResponseDto extends SearchResponse {
     }
 
     /**
+     * Gets the payment gateways.
+     *
      * @return the paymentGateways
      */
     public List<PaymentGatewayDto> getPaymentGateways() {
@@ -46,6 +49,8 @@ public class PaymentGatewayResponseDto extends SearchResponse {
     }
 
     /**
+     * Sets the payment gateways.
+     *
      * @param paymentGateways the paymentGateways to set
      */
     public void setPaymentGateways(List<PaymentGatewayDto> paymentGateways) {

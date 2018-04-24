@@ -6,30 +6,58 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The Class BundleProductTemplateDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "BundleProductTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BundleProductTemplateDto implements Serializable {
 
-	private static final long serialVersionUID = 4914322874611290121L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4914322874611290121L;
 
-	private ProductTemplateDto productTemplate;
+    /** The product template. */
+    private ProductTemplateDto productTemplate;
 
-	private int quantity;
+    /** The quantity. */
+    private int quantity;
 
-	public ProductTemplateDto getProductTemplate() {
-		return productTemplate;
-	}
+    /**
+     * Gets the product template.
+     *
+     * @return the product template
+     */
+    public ProductTemplateDto getProductTemplate() {
+        return productTemplate;
+    }
 
-	public void setProductTemplate(ProductTemplateDto productTemplate) {
-		this.productTemplate = productTemplate;
-	}
+    /**
+     * Sets the product template.
+     *
+     * @param productTemplate the new product template
+     */
+    public void setProductTemplate(ProductTemplateDto productTemplate) {
+        this.productTemplate = productTemplate;
+    }
 
-	public int getQuantity() {
-		return quantity;
-	}
+    /**
+     * Gets the quantity.
+     *
+     * @return the quantity
+     */
+    public int getQuantity() {
+        return quantity;
+    }
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+    /**
+     * Sets the quantity.
+     *
+     * @param quantity the new quantity
+     */
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
 }

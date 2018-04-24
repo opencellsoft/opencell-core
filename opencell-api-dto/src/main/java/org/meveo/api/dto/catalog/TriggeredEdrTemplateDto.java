@@ -9,113 +9,214 @@ import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 
 /**
+ * The Class TriggeredEdrTemplateDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "TriggeredEdrTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TriggeredEdrTemplateDto extends BusinessDto {
 
-	private static final long serialVersionUID = 5790679004639676207L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5790679004639676207L;
 
-	private String subscriptionEl;
-	
-	private String meveoInstanceCode;
-	
-	private String conditionEl;
+    /** The subscription el. */
+    private String subscriptionEl;
 
-	@XmlElement(required = true)
-	private String quantityEl;
+    /** The meveo instance code. */
+    private String meveoInstanceCode;
 
-	private String param1El;
-	private String param2El;
-	private String param3El;
-	private String param4El;
+    /** The condition el. */
+    private String conditionEl;
 
-	public TriggeredEdrTemplateDto() {
+    /** The quantity el. */
+    @XmlElement(required = true)
+    private String quantityEl;
 
-	}
+    /** The param 1 el. */
+    private String param1El;
 
-	public TriggeredEdrTemplateDto(TriggeredEDRTemplate e) {
-		super(e);
-		
-		subscriptionEl = e.getSubscriptionEl();
-		meveoInstanceCode = e.getMeveoInstance()==null?null:e.getMeveoInstance().getCode();
-		conditionEl = e.getConditionEl();
-		quantityEl = e.getQuantityEl();
-		param1El = e.getParam1El();
-		param2El = e.getParam2El();
-		param3El = e.getParam3El();
-		param4El = e.getParam4El();
-	}
+    /** The param 2 el. */
+    private String param2El;
 
-	public String getSubscriptionEl() {
-		return subscriptionEl;
-	}
+    /** The param 3 el. */
+    private String param3El;
 
-	public void setSubscriptionEl(String subscriptionEl) {
-		this.subscriptionEl = subscriptionEl;
-	}
+    /** The param 4 el. */
+    private String param4El;
 
-	public String getMeveoInstanceCode() {
-		return meveoInstanceCode;
-	}
+    /**
+     * Instantiates a new triggered edr template dto.
+     */
+    public TriggeredEdrTemplateDto() {
 
-	public void setMeveoInstanceCode(String meveoInstanceCode) {
-		this.meveoInstanceCode = meveoInstanceCode;
-	}
+    }
 
-	public String getConditionEl() {
-		return conditionEl;
-	}
+    /**
+     * Instantiates a new triggered edr template dto.
+     *
+     * @param triggeredEDRTemplate the TriggeredEDRTemplate entity
+     */
+    public TriggeredEdrTemplateDto(TriggeredEDRTemplate triggeredEDRTemplate) {
+        super(triggeredEDRTemplate);
 
-	public void setConditionEl(String conditionEl) {
-		this.conditionEl = conditionEl;
-	}
+        subscriptionEl = triggeredEDRTemplate.getSubscriptionEl();
+        meveoInstanceCode = triggeredEDRTemplate.getMeveoInstance() == null ? null : triggeredEDRTemplate.getMeveoInstance().getCode();
+        conditionEl = triggeredEDRTemplate.getConditionEl();
+        quantityEl = triggeredEDRTemplate.getQuantityEl();
+        param1El = triggeredEDRTemplate.getParam1El();
+        param2El = triggeredEDRTemplate.getParam2El();
+        param3El = triggeredEDRTemplate.getParam3El();
+        param4El = triggeredEDRTemplate.getParam4El();
+    }
 
-	public String getQuantityEl() {
-		return quantityEl;
-	}
+    /**
+     * Gets the subscription el.
+     *
+     * @return the subscription el
+     */
+    public String getSubscriptionEl() {
+        return subscriptionEl;
+    }
 
-	public void setQuantityEl(String quantityEl) {
-		this.quantityEl = quantityEl;
-	}
+    /**
+     * Sets the subscription el.
+     *
+     * @param subscriptionEl the new subscription el
+     */
+    public void setSubscriptionEl(String subscriptionEl) {
+        this.subscriptionEl = subscriptionEl;
+    }
 
-	public String getParam1El() {
-		return param1El;
-	}
+    /**
+     * Gets the meveo instance code.
+     *
+     * @return the meveo instance code
+     */
+    public String getMeveoInstanceCode() {
+        return meveoInstanceCode;
+    }
 
-	public void setParam1El(String param1El) {
-		this.param1El = param1El;
-	}
+    /**
+     * Sets the meveo instance code.
+     *
+     * @param meveoInstanceCode the new meveo instance code
+     */
+    public void setMeveoInstanceCode(String meveoInstanceCode) {
+        this.meveoInstanceCode = meveoInstanceCode;
+    }
 
-	public String getParam2El() {
-		return param2El;
-	}
+    /**
+     * Gets the condition el.
+     *
+     * @return the condition el
+     */
+    public String getConditionEl() {
+        return conditionEl;
+    }
 
-	public void setParam2El(String param2El) {
-		this.param2El = param2El;
-	}
+    /**
+     * Sets the condition el.
+     *
+     * @param conditionEl the new condition el
+     */
+    public void setConditionEl(String conditionEl) {
+        this.conditionEl = conditionEl;
+    }
 
-	public String getParam3El() {
-		return param3El;
-	}
+    /**
+     * Gets the quantity el.
+     *
+     * @return the quantity el
+     */
+    public String getQuantityEl() {
+        return quantityEl;
+    }
 
-	public void setParam3El(String param3El) {
-		this.param3El = param3El;
-	}
+    /**
+     * Sets the quantity el.
+     *
+     * @param quantityEl the new quantity el
+     */
+    public void setQuantityEl(String quantityEl) {
+        this.quantityEl = quantityEl;
+    }
 
-	public String getParam4El() {
-		return param4El;
-	}
+    /**
+     * Gets the param 1 el.
+     *
+     * @return the param 1 el
+     */
+    public String getParam1El() {
+        return param1El;
+    }
 
-	public void setParam4El(String param4El) {
-		this.param4El = param4El;
-	}
+    /**
+     * Sets the param 1 el.
+     *
+     * @param param1El the new param 1 el
+     */
+    public void setParam1El(String param1El) {
+        this.param1El = param1El;
+    }
 
-	@Override
-	public String toString() {
-		return "TriggeredEdrTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", subscriptionEl=" + subscriptionEl + ", conditionEl=" + conditionEl + ", quantityEl="
-				+ quantityEl + ", param1El=" + param1El + ", param2El=" + param2El + ", param3El=" + param3El + ", param4El=" + param4El + "]";
-	}
+    /**
+     * Gets the param 2 el.
+     *
+     * @return the param 2 el
+     */
+    public String getParam2El() {
+        return param2El;
+    }
 
+    /**
+     * Sets the param 2 el.
+     *
+     * @param param2El the new param 2 el
+     */
+    public void setParam2El(String param2El) {
+        this.param2El = param2El;
+    }
+
+    /**
+     * Gets the param 3 el.
+     *
+     * @return the param 3 el
+     */
+    public String getParam3El() {
+        return param3El;
+    }
+
+    /**
+     * Sets the param 3 el.
+     *
+     * @param param3El the new param 3 el
+     */
+    public void setParam3El(String param3El) {
+        this.param3El = param3El;
+    }
+
+    /**
+     * Gets the param 4 el.
+     *
+     * @return the param 4 el
+     */
+    public String getParam4El() {
+        return param4El;
+    }
+
+    /**
+     * Sets the param 4 el.
+     *
+     * @param param4El the new param 4 el
+     */
+    public void setParam4El(String param4El) {
+        this.param4El = param4El;
+    }
+
+    @Override
+    public String toString() {
+        return "TriggeredEdrTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", subscriptionEl=" + subscriptionEl + ", conditionEl=" + conditionEl
+                + ", quantityEl=" + quantityEl + ", param1El=" + param1El + ", param2El=" + param2El + ", param3El=" + param3El + ", param4El=" + param4El + "]";
+    }
 }

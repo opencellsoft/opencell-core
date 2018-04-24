@@ -16,28 +16,47 @@ import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class MeveoModuleDtosResponse.
+ *
  * @author Tyshan Shi(tyshan@manaty.net)
- * 
- **/
+ */
 @XmlRootElement(name = "MeveoModuleDtosResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeveoModuleDtosResponse extends BaseResponse {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The modules. */
     @XmlElementWrapper(name = "modules")
-    @XmlElements({ @XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class), @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class),
-            @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class), @XmlElement(name = "module", type = MeveoModuleDto.class) })
+    @XmlElements({ 
+                  @XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class), 
+                  @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class),
+                  @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class), 
+                  @XmlElement(name = "module", type = MeveoModuleDto.class) })
     private List<MeveoModuleDto> modules;
 
+    /**
+     * Instantiates a new meveo module dtos response.
+     */
     public MeveoModuleDtosResponse() {
         super();
     }
 
+    /**
+     * Gets the modules.
+     *
+     * @return the modules
+     */
     public List<MeveoModuleDto> getModules() {
         return modules;
     }
 
+    /**
+     * Sets the modules.
+     *
+     * @param modules the new modules
+     */
     public void setModules(List<MeveoModuleDto> modules) {
         this.modules = modules;
     }

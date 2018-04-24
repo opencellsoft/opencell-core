@@ -429,6 +429,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
+        
+        Query queryMinTrans = getEntityManager().createQuery("delete from " + RatedTransaction.class.getName() + " where billingRun=:billingRun AND wallet IS null");
+        queryMinTrans.setParameter("billingRun", billingRun);
+        queryMinTrans.executeUpdate();
 
         Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryAgregate.setParameter("billingRun", billingRun);

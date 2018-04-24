@@ -81,8 +81,8 @@ public class FullTextSearchApi extends BaseApi {
      * @param sortField string field used to sort the results
      * @param sortOrder ASC or DESC to indicate the order in which results will be returned
      * @return JSON in string form returned by Elasticsearch
-     * @throws MissingParameterException
-     * @throws BusinessException
+     * @throws MissingParameterException Missing Parameter Exception
+     * @throws BusinessException Business Exception
      */
     public String fullSearch(String query, String category, Integer from, Integer size, String sortField, SortOrder sortOrder) throws MissingParameterException, BusinessException {
 

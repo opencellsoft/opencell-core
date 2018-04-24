@@ -9,59 +9,120 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class SubscriptionFeeDto.
+ *
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
- **/
+ */
 @XmlRootElement(name = "SubscriptionFee")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubscriptionFeeDto implements Serializable {
 
-	private static final long serialVersionUID = -5070345728832781509L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -5070345728832781509L;
 
-	private String currencyCode;
-	private Date startDate;
-	private Date endDate;
-	private BigDecimal price;
-	private BigDecimal recommendedPrice;
+    /** The currency code. */
+    private String currencyCode;
 
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+    /** The start date. */
+    private Date startDate;
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    /** The end date. */
+    private Date endDate;
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    /** The price. */
+    private BigDecimal price;
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    /** The recommended price. */
+    private BigDecimal recommendedPrice;
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    /**
+     * Gets the currency code.
+     *
+     * @return the currency code
+     */
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    /**
+     * Sets the currency code.
+     *
+     * @param currencyCode the new currency code
+     */
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-	public BigDecimal getPrice() {
-		return price;
-	}
+    /**
+     * Gets the start date.
+     *
+     * @return the start date
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the new start date
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public BigDecimal getRecommendedPrice() {
-		return recommendedPrice;
-	}
+    /**
+     * Gets the end date.
+     *
+     * @return the end date
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public void setRecommendedPrice(BigDecimal recommendedPrice) {
-		this.recommendedPrice = recommendedPrice;
-	}
+    /**
+     * Sets the end date.
+     *
+     * @param endDate the new end date
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
+    /**
+     * Gets the price.
+     *
+     * @return the price
+     */
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    /**
+     * Sets the price.
+     *
+     * @param price the new price
+     */
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    /**
+     * Gets the recommended price.
+     *
+     * @return the recommended price
+     */
+    public BigDecimal getRecommendedPrice() {
+        return recommendedPrice;
+    }
+
+    /**
+     * Sets the recommended price.
+     *
+     * @param recommendedPrice the new recommended price
+     */
+    public void setRecommendedPrice(BigDecimal recommendedPrice) {
+        this.recommendedPrice = recommendedPrice;
+    }
 }

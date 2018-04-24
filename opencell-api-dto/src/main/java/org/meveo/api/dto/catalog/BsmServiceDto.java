@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 
-
 /**
  * The Class BsmServiceDto.
  */
@@ -26,25 +25,25 @@ public class BsmServiceDto extends BaseDto {
 
     /** The bsm code. */
     @NotNull
-	@XmlAttribute(required = true)
-	private String bsmCode;
-	
-	/** The prefix. */
-	@NotNull
     @XmlAttribute(required = true)
-	private String prefix;
-	
-	/** The custom fields. */
-	@XmlElementWrapper(name = "parameters")
-	@XmlElement(name = "parameter")
-	private List<CustomFieldDto> customFields;
-	
-	/**
-	 * Instantiates a new bsm service dto.
-	 */
-	public BsmServiceDto() {
-	    
-	}
+    private String bsmCode;
+
+    /** The prefix. */
+    @NotNull
+    @XmlAttribute(required = true)
+    private String prefix;
+
+    /** The custom fields. */
+    @XmlElementWrapper(name = "parameters")
+    @XmlElement(name = "parameter")
+    private List<CustomFieldDto> customFields;
+
+    /**
+     * Instantiates a new bsm service dto.
+     */
+    public BsmServiceDto() {
+
+    }
 
     /**
      * Gets the bsm code.

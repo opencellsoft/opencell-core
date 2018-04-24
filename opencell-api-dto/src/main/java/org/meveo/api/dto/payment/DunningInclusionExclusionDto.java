@@ -8,28 +8,58 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 
+/**
+ * The Class DunningInclusionExclusionDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "dunningInclusionExclusion")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DunningInclusionExclusionDto extends BaseDto {
 
-	private static final long serialVersionUID = 4329241417200680028L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4329241417200680028L;
 
-	private List<String> invoiceReferences;
-	private Boolean exclude;
-	
-	public List<String> getInvoiceReferences() {
-		return invoiceReferences;
-	}
-	public void setInvoiceReferences(List<String> invoiceReferences) {
-		this.invoiceReferences = invoiceReferences;
-	}
-	public Boolean getExclude() {
-		return exclude;
-	}
-	public void setExclude(Boolean exclude) {
-		this.exclude = exclude;
-	}
-	
-	
+    /** The invoice references. */
+    private List<String> invoiceReferences;
+    
+    /** The exclude. */
+    private Boolean exclude;
+
+    /**
+     * Gets the invoice references.
+     *
+     * @return the invoice references
+     */
+    public List<String> getInvoiceReferences() {
+        return invoiceReferences;
+    }
+
+    /**
+     * Sets the invoice references.
+     *
+     * @param invoiceReferences the new invoice references
+     */
+    public void setInvoiceReferences(List<String> invoiceReferences) {
+        this.invoiceReferences = invoiceReferences;
+    }
+
+    /**
+     * Gets the exclude.
+     *
+     * @return the exclude
+     */
+    public Boolean getExclude() {
+        return exclude;
+    }
+
+    /**
+     * Sets the exclude.
+     *
+     * @param exclude the new exclude
+     */
+    public void setExclude(Boolean exclude) {
+        this.exclude = exclude;
+    }
 
 }

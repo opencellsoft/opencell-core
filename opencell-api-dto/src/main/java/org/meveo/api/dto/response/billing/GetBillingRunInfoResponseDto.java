@@ -7,41 +7,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.billing.BillingRunDto;
 import org.meveo.api.dto.response.BaseResponse;
 
-
+/**
+ * The Class GetBillingRunInfoResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetBillingRunInfoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetBillingRunInfoResponseDto extends BaseResponse{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private BillingRunDto billingRunDto;
-	
-	public GetBillingRunInfoResponseDto(){
-		
-	}
+public class GetBillingRunInfoResponseDto extends BaseResponse {
 
-	/**
-	 * @return the billingRunDto
-	 */
-	public BillingRunDto getBillingRunDto() {
-		return billingRunDto;
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+    
+    /** The billing run dto. */
+    private BillingRunDto billingRunDto;
 
-	/**
-	 * @param billingRunDto the billingRunDto to set
-	 */
-	public void setBillingRunDto(BillingRunDto billingRunDto) {
-		this.billingRunDto = billingRunDto;
-	}
+    /**
+     * Instantiates a new gets the billing run info response dto.
+     */
+    public GetBillingRunInfoResponseDto() {
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "GetBillingRunInfoResponse [billingRunDto=" + billingRunDto + "]";
-	}
+    }
 
+    /**
+     * Gets the billing run dto.
+     *
+     * @return the billingRunDto
+     */
+    public BillingRunDto getBillingRunDto() {
+        return billingRunDto;
+    }
+
+    /**
+     * Sets the billing run dto.
+     *
+     * @param billingRunDto the billingRunDto to set
+     */
+    public void setBillingRunDto(BillingRunDto billingRunDto) {
+        this.billingRunDto = billingRunDto;
+    }
+
+    @Override
+    public String toString() {
+        return "GetBillingRunInfoResponse [billingRunDto=" + billingRunDto + "]";
+    }
 }

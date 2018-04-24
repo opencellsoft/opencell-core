@@ -12,35 +12,50 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 
 /**
+ * The Class ScriptInstanceDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "ScriptInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScriptInstanceDto extends CustomScriptDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4555037251902559699L;
 
+    /** The execution roles. */
     private List<RoleDto> executionRoles = new ArrayList<RoleDto>();
+    
+    /** The sourcing roles. */
     private List<RoleDto> sourcingRoles = new ArrayList<RoleDto>();
 
+    /**
+     * Instantiates a new script instance dto.
+     */
     public ScriptInstanceDto() {
         super();
     }
 
-    public ScriptInstanceDto(ScriptInstance e) {
-        super(e.getCode(), e.getDescription(), e.getSourceTypeEnum(), e.getScript());
+    /**
+     * Instantiates a new script instance dto.
+     *
+     * @param scriptInstance the ScriptInstance entity
+     */
+    public ScriptInstanceDto(ScriptInstance scriptInstance) {
+        super(scriptInstance.getCode(), scriptInstance.getDescription(), scriptInstance.getSourceTypeEnum(), scriptInstance.getScript());
 
-        if (e.getExecutionRoles() != null) {
-            for (Role role : e.getExecutionRoles()) {
+        if (scriptInstance.getExecutionRoles() != null) {
+            for (Role role : scriptInstance.getExecutionRoles()) {
                 executionRoles.add(new RoleDto(role, true, true));
             }
         }
-        if (e.getSourcingRoles() != null) {
-            for (Role role : e.getSourcingRoles()) {
+        if (scriptInstance.getSourcingRoles() != null) {
+            for (Role role : scriptInstance.getSourcingRoles()) {
                 sourcingRoles.add(new RoleDto(role, true, true));
             }
         }
     }
+
 
     @Override
     public String toString() {
@@ -49,6 +64,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Gets the execution roles.
+     *
      * @return the executionRoles
      */
     public List<RoleDto> getExecutionRoles() {
@@ -56,6 +73,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Sets the execution roles.
+     *
      * @param executionRoles the executionRoles to set
      */
     public void setExecutionRoles(List<RoleDto> executionRoles) {
@@ -63,6 +82,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Gets the sourcing roles.
+     *
      * @return the sourcingRoles
      */
     public List<RoleDto> getSourcingRoles() {
@@ -70,12 +91,17 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Sets the sourcing roles.
+     *
      * @param sourcingRoles the sourcingRoles to set
      */
     public void setSourcingRoles(List<RoleDto> sourcingRoles) {
         this.sourcingRoles = sourcingRoles;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
 

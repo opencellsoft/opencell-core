@@ -8,28 +8,40 @@ import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class BillingAccountsResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "BillingAccountsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BillingAccountsResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 583740580596077812L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 583740580596077812L;
 
-	private BillingAccountsDto billingAccounts = new BillingAccountsDto();
+    /** The billing accounts. */
+    private BillingAccountsDto billingAccounts = new BillingAccountsDto();
 
-	public BillingAccountsDto getBillingAccounts() {
-		return billingAccounts;
-	}
+    /**
+     * Gets the billing accounts.
+     *
+     * @return the billing accounts
+     */
+    public BillingAccountsDto getBillingAccounts() {
+        return billingAccounts;
+    }
 
-	public void setBillingAccounts(BillingAccountsDto billingAccounts) {
-		this.billingAccounts = billingAccounts;
-	}
+    /**
+     * Sets the billing accounts.
+     *
+     * @param billingAccounts the new billing accounts
+     */
+    public void setBillingAccounts(BillingAccountsDto billingAccounts) {
+        this.billingAccounts = billingAccounts;
+    }
 
-	@Override
-	public String toString() {
-		return "ListBillingAccountResponseDto [billingAccounts=" + billingAccounts + ", toString()=" + super.toString()
-				+ "]";
-	}
-
+    @Override
+    public String toString() {
+        return "ListBillingAccountResponseDto [billingAccounts=" + billingAccounts + ", toString()=" + super.toString() + "]";
+    }
 }

@@ -688,4 +688,38 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
     </changeSet>
+    
+    <changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="postgresql">
+		<sql>DROP INDEX IF EXISTS ar_account_operation_index</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+	</changeSet>
+	
+	<changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="mysql">
+		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+	</changeSet>   
+	
+	<changeSet id="#3019_20180312" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_billing_account">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+	</changeSet>
+	
 </databaseChangeLog> 

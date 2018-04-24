@@ -12,8 +12,8 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 
 /**
- * Contains information about job execution status and history once job is completed
- * 
+ * Contains information about job execution status and history once job is completed.
+ *
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
@@ -22,17 +22,14 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JobExecutionResultDto extends BaseDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5117909144385779437L;
 
-    /**
-     * Job execution result identifier
-     */
+    /** Job execution result identifier. */
     @XmlAttribute(required = true)
     private Long id;
 
-    /**
-     * Job instance identifier
-     */
+    /** Job instance identifier. */
     private Long jobInstanceId;
 
     /**
@@ -40,58 +37,50 @@ public class JobExecutionResultDto extends BaseDto {
      */
     private String runningOnNodes;
 
-    /**
-     * Job start date
-     */
+    /** Job start date. */
     private Date startDate;
 
-    /**
-     * Job end date
-     */
+    /** Job end date. */
     private Date endDate;
 
-    /**
-     * Number of items to process
-     */
+    /** Number of items to process. */
     private long nbItemsToProcess;
 
-    /**
-     * Number of items that were processed correctly
-     */
+    /** Number of items that were processed correctly. */
     @XmlElement(required = true)
     private long nbItemsCorrectlyProcessed;
 
-    /**
-     * Number of items that were processed with warning
-     */
+    /** Number of items that were processed with warning. */
     @XmlElement(required = true)
     private long nbItemsProcessedWithWarning;
 
-    /**
-     * Number of items that were not processed due to some error
-     */
+    /** Number of items that were not processed due to some error. */
     @XmlElement(required = true)
     private long nbItemsProcessedWithError;
 
-    /**
-     * Is job execution done - if False, job should be repeated again to finish processing
-     */
+    /** Is job execution done - if False, job should be repeated again to finish processing. */
     @XmlElement(required = true)
     private boolean done = true;
 
-    /**
-     * Jon execution report/summary
-     */
+    /** Jon execution report/summary. */
     private String report;
-    
+
     /**
      * JobInstance code.
      */
     private String jobInstanceCode;
 
+    /**
+     * Instantiates a new job execution result dto.
+     */
     public JobExecutionResultDto() {
     }
 
+    /**
+     * Instantiates a new job execution result dto.
+     *
+     * @param jobExecutionResult the job execution result
+     */
     public JobExecutionResultDto(JobExecutionResultImpl jobExecutionResult) {
         this.id = jobExecutionResult.getId();
         this.jobInstanceId = jobExecutionResult.getJobInstance().getId();
@@ -106,106 +95,226 @@ public class JobExecutionResultDto extends BaseDto {
         jobInstanceCode = jobExecutionResult.getJobInstance().getCode();
     }
 
+    /**
+     * Gets the start date.
+     *
+     * @return the start date
+     */
     public Date getStartDate() {
         return startDate;
     }
 
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the new start date
+     */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
+    /**
+     * Gets the end date.
+     *
+     * @return the end date
+     */
     public Date getEndDate() {
         return endDate;
     }
 
+    /**
+     * Sets the end date.
+     *
+     * @param endDate the new end date
+     */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
+    /**
+     * Gets the nb items to process.
+     *
+     * @return the nb items to process
+     */
     public long getNbItemsToProcess() {
         return nbItemsToProcess;
     }
 
+    /**
+     * Sets the nb items to process.
+     *
+     * @param nbItemsToProcess the new nb items to process
+     */
     public void setNbItemsToProcess(long nbItemsToProcess) {
         this.nbItemsToProcess = nbItemsToProcess;
     }
 
+    /**
+     * Gets the nb items correctly processed.
+     *
+     * @return the nb items correctly processed
+     */
     public long getNbItemsCorrectlyProcessed() {
         return nbItemsCorrectlyProcessed;
     }
 
+    /**
+     * Sets the nb items correctly processed.
+     *
+     * @param nbItemsCorrectlyProcessed the new nb items correctly processed
+     */
     public void setNbItemsCorrectlyProcessed(long nbItemsCorrectlyProcessed) {
         this.nbItemsCorrectlyProcessed = nbItemsCorrectlyProcessed;
     }
 
+    /**
+     * Gets the nb items processed with warning.
+     *
+     * @return the nb items processed with warning
+     */
     public long getNbItemsProcessedWithWarning() {
         return nbItemsProcessedWithWarning;
     }
 
+    /**
+     * Sets the nb items processed with warning.
+     *
+     * @param nbItemsProcessedWithWarning the new nb items processed with warning
+     */
     public void setNbItemsProcessedWithWarning(long nbItemsProcessedWithWarning) {
         this.nbItemsProcessedWithWarning = nbItemsProcessedWithWarning;
     }
 
+    /**
+     * Gets the nb items processed with error.
+     *
+     * @return the nb items processed with error
+     */
     public long getNbItemsProcessedWithError() {
         return nbItemsProcessedWithError;
     }
 
+    /**
+     * Sets the nb items processed with error.
+     *
+     * @param nbItemsProcessedWithError the new nb items processed with error
+     */
     public void setNbItemsProcessedWithError(long nbItemsProcessedWithError) {
         this.nbItemsProcessedWithError = nbItemsProcessedWithError;
     }
 
+    /**
+     * Checks if is done.
+     *
+     * @return true, if is done
+     */
     public boolean isDone() {
         return done;
     }
 
+    /**
+     * Sets the done.
+     *
+     * @param done the new done
+     */
     public void setDone(boolean done) {
         this.done = done;
     }
 
+    /**
+     * Gets the report.
+     *
+     * @return the report
+     */
     public String getReport() {
         return report;
     }
 
+    /**
+     * Sets the report.
+     *
+     * @param report the new report
+     */
     public void setReport(String report) {
         this.report = report;
     }
 
+    /**
+     * Gets the job instance id.
+     *
+     * @return the job instance id
+     */
     public Long getJobInstanceId() {
         return jobInstanceId;
     }
 
+    /**
+     * Sets the job instance id.
+     *
+     * @param jobInstanceId the new job instance id
+     */
     public void setJobInstanceId(Long jobInstanceId) {
         this.jobInstanceId = jobInstanceId;
     }
 
+    /**
+     * Gets the running on nodes.
+     *
+     * @return the running on nodes
+     */
     public String getRunningOnNodes() {
         return runningOnNodes;
     }
 
+    /**
+     * Sets the running on nodes.
+     *
+     * @param runningOnNodes the new running on nodes
+     */
     public void setRunningOnNodes(String runningOnNodes) {
         this.runningOnNodes = runningOnNodes;
     }
 
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the id.
+     *
+     * @param id the new id
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Gets the job instance code.
+     *
+     * @return the job instance code
+     */
+    public String getJobInstanceCode() {
+        return jobInstanceCode;
+    }
+
+    /**
+     * Sets the job instance code.
+     *
+     * @param jobInstanceCode the new job instance code
+     */
+    public void setJobInstanceCode(String jobInstanceCode) {
+        this.jobInstanceCode = jobInstanceCode;
+    }
+    
     @Override
     public String toString() {
         return "JobExecutionResultDto [id=" + id + ", jobInstanceId=" + jobInstanceId + ", runningOnNodes=" + runningOnNodes + ", startDate=" + startDate + ", endDate=" + endDate
                 + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning="
                 + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", report=" + report + "]";
-    }
-
-    public String getJobInstanceCode() {
-        return jobInstanceCode;
-    }
-
-    public void setJobInstanceCode(String jobInstanceCode) {
-        this.jobInstanceCode = jobInstanceCode;
     }
 }

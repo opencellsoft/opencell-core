@@ -5,57 +5,105 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class TerminateCustomerSubscriptionResponse.
+ *
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
- **/
+ */
 @XmlRootElement(name = "TerminateCustomerSubscriptionResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TerminateCustomerSubscriptionResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 2890315995921193030L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 2890315995921193030L;
 
-	private String requestId;
-	private Boolean accepted;
-	private String subscriptionId;
-	private String status;
+    /** The request id. */
+    private String requestId;
+    
+    /** The accepted. */
+    private Boolean accepted;
+    
+    /** The subscription id. */
+    private String subscriptionId;
+    
+    /** The status. */
+    private String status;
 
-	public String getRequestId() {
-		return requestId;
-	}
+    /**
+     * Gets the request id.
+     *
+     * @return the request id
+     */
+    public String getRequestId() {
+        return requestId;
+    }
 
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
+    /**
+     * Sets the request id.
+     *
+     * @param requestId the new request id
+     */
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
-	public Boolean getAccepted() {
-		return accepted;
-	}
+    /**
+     * Gets the accepted.
+     *
+     * @return the accepted
+     */
+    public Boolean getAccepted() {
+        return accepted;
+    }
 
-	public void setAccepted(Boolean accepted) {
-		this.accepted = accepted;
-	}
+    /**
+     * Sets the accepted.
+     *
+     * @param accepted the new accepted
+     */
+    public void setAccepted(Boolean accepted) {
+        this.accepted = accepted;
+    }
 
-	public String getSubscriptionId() {
-		return subscriptionId;
-	}
+    /**
+     * Gets the subscription id.
+     *
+     * @return the subscription id
+     */
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
 
-	public void setSubscriptionId(String subscriptionId) {
-		this.subscriptionId = subscriptionId;
-	}
+    /**
+     * Sets the subscription id.
+     *
+     * @param subscriptionId the new subscription id
+     */
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    /**
+     * Gets the status.
+     *
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    /**
+     * Sets the status.
+     *
+     * @param status the new status
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	@Override
-	public String toString() {
-		return "TerminateCustomerSubscriptionResponse [requestId=" + requestId + ", accepted=" + accepted
-				+ ", subscriptionId=" + subscriptionId + ", status=" + status + ", toString()=" + super.toString()
-				+ "]";
-	}
-
+    @Override
+    public String toString() {
+        return "TerminateCustomerSubscriptionResponse [requestId=" + requestId + ", accepted=" + accepted + ", subscriptionId=" + subscriptionId + ", status=" + status
+                + ", toString()=" + super.toString() + "]";
+    }
 }

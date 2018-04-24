@@ -63,7 +63,8 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  *
  **/
 @Stateless
@@ -249,6 +250,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setLongDescription(postData.getLongDescription());
         offerTemplate.setDisabled(postData.isDisabled());
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
+        offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         if (postData.getLifeCycleStatus() != null) {
             offerTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
         }
@@ -484,7 +487,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     public OfferTemplateDto convertOfferTemplateToDto(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF) {
 
         OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false);
-
+        dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
+        dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
             List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<OfferServiceTemplateDto>();
             for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {

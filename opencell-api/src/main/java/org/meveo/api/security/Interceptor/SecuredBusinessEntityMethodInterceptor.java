@@ -61,9 +61,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      * {@link SecuredBusinessEntityMethod} annotation placed on the method and then validate the parameters described in the {@link SecureMethodParameter} validation attributes and
      * then filters the result using the {@link SecureMethodResultFilter} filter attribute.
      * 
-     * @param context
-     * @return
-     * @throws Exception
+     * @param context  The invocation context
+     * @return  The filtered result object
+     * @throws Exception exception
      */
     @AroundInvoke
     public Object checkForSecuredEntities(InvocationContext context) throws Exception {

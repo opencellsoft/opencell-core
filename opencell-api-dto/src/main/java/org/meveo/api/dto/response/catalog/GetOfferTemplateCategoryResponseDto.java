@@ -7,25 +7,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class GetOfferTemplateCategoryResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetOfferTemplateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetOfferTemplateCategoryResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	private OfferTemplateCategoryDto offerTemplateCategory;
+    /** The offer template category. */
+    private OfferTemplateCategoryDto offerTemplateCategory;
 
-	public OfferTemplateCategoryDto getOfferTemplateCategory() {
-		return offerTemplateCategory;
-	}
+    /**
+     * Gets the offer template category.
+     *
+     * @return the offer template category
+     */
+    public OfferTemplateCategoryDto getOfferTemplateCategory() {
+        return offerTemplateCategory;
+    }
 
-	public void setOfferTemplateCategory(OfferTemplateCategoryDto offerTemplateCategory) {
-		this.offerTemplateCategory = offerTemplateCategory;
-	}
+    /**
+     * Sets the offer template category.
+     *
+     * @param offerTemplateCategory the new offer template category
+     */
+    public void setOfferTemplateCategory(OfferTemplateCategoryDto offerTemplateCategory) {
+        this.offerTemplateCategory = offerTemplateCategory;
+    }
 
-	@Override
-	public String toString() {
-		return "GetOfferTemplateCategoryResponseDto [offerTemplateCategory=" + offerTemplateCategory + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetOfferTemplateCategoryResponseDto [offerTemplateCategory=" + offerTemplateCategory + "]";
+    }
 }

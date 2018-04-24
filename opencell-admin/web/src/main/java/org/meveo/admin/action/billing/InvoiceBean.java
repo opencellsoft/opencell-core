@@ -236,9 +236,35 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
         }
+      
+        // build sub categories for min amounts
+        InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
+        headerCat.setDescription("-");
+        headerCat.setCode("min_amount");
+
+        LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
+        for (RatedTransaction ratedTransaction : entity.getRatedTransactions()) {
+            if (ratedTransaction.getWallet() == null) {
+                InvoiceSubCategoryDTO headerSubCat = null;
+                if(headerSubCategories.containsKey(ratedTransaction.getCode())) {
+                    headerSubCat = headerSubCategories.get(ratedTransaction.getCode());
+                } else {
+                    headerSubCat = new InvoiceSubCategoryDTO();
+                    headerSubCat.setDescription(ratedTransaction.getDescription());
+                    headerSubCat.setCode(ratedTransaction.getCode());
+                }
+                headerSubCat.getRatedTransactions().add(ratedTransaction);
+                headerSubCat.setAmountWithoutTax(headerSubCat.getAmountWithoutTax().add(ratedTransaction.getAmountWithoutTax()));
+                headerSubCat.setAmountWithTax(headerSubCat.getAmountWithTax().add(ratedTransaction.getAmountWithTax()));
+                headerSubCategories.put(ratedTransaction.getCode(), headerSubCat);               
+            }
+        }
+        headerCat.setInvoiceSubCategoryDTOMap(headerSubCategories);
+        headerCategories.put("min_amount", headerCat);
+
         return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
     }
-
+    
     public void deletePdfInvoice() {
         try {
             entity = invoiceService.refreshOrRetrieve(entity);

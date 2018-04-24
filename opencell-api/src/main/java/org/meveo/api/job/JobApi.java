@@ -68,7 +68,7 @@ public class JobApi extends BaseApi {
      * Stop running job
      * 
      * @param jobInstanceCode job instance code to stop
-     * @throws MeveoApiException
+     * @throws MeveoApiException Meveo api exception
      */
     public void stopJob(String jobInstanceCode) throws MeveoApiException {
         if (StringUtils.isBlank(jobInstanceCode)) {
@@ -90,8 +90,7 @@ public class JobApi extends BaseApi {
     /**
      * Retrieve job execution result.
      * 
-     * @param code
-     * 
+     * @param code The job instance code
      * @param id Job execution result identifier
      * @return Job execution result DTO
      * @throws MeveoApiException meveo api exception

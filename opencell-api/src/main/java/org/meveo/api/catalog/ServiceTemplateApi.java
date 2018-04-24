@@ -49,6 +49,8 @@ import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  **/
 @Stateless
 public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemplateDto> {
@@ -259,6 +261,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
+        serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
+        serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         try {
 			saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64());
 		} catch (IOException e1) {
@@ -310,6 +314,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
+        serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
+        serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
 
         Calendar invoicingCalendar = null;
         if (postData.getInvoicingCalendar() != null) {

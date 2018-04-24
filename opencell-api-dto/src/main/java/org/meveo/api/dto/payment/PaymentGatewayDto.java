@@ -42,7 +42,7 @@ public class PaymentGatewayDto extends BusinessDto {
     /** The application EL. */
     private String applicationEL;
 
-    /** The  country code. */
+    /** The country code. */
     private String countryCode;
 
     /** The trading currency code. */
@@ -51,6 +51,7 @@ public class PaymentGatewayDto extends BusinessDto {
     /** The card type. */
     private CreditCardTypeEnum cardType;
 
+    /** The custom fields. */
     private CustomFieldsDto customFields;
 
     /**
@@ -62,7 +63,8 @@ public class PaymentGatewayDto extends BusinessDto {
 
     /**
      * Instantiates a new payment gateway dto from the entity.
-     * @param paymentGateway payment gateway instance.
+     * 
+     * @param paymentGateway paymentGateway entity.
      */
     public PaymentGatewayDto(PaymentGateway paymentGateway) {
         this.id = paymentGateway.getId();
@@ -97,6 +99,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Gets the payment method type.
+     *
      * @return the paymentMethodType
      */
     public PaymentMethodEnum getPaymentMethodType() {
@@ -104,6 +108,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Sets the payment method type.
+     *
      * @param paymentMethodType the paymentMethodType to set
      */
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
@@ -183,6 +189,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Gets the country code.
+     *
      * @return the countryCode
      */
     public String getCountryCode() {
@@ -190,6 +198,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Sets the country code.
+     *
      * @param countryCode the countryCode to set
      */
     public void setCountryCode(String countryCode) {
@@ -197,6 +207,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Gets the trading currency code.
+     *
      * @return the tradingCurrencyCode
      */
     public String getTradingCurrencyCode() {
@@ -204,6 +216,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Sets the trading currency code.
+     *
      * @param tradingCurrencyCode the tradingCurrencyCode to set
      */
     public void setTradingCurrencyCode(String tradingCurrencyCode) {
@@ -211,6 +225,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Gets the custom fields.
+     *
      * @return the customFields
      */
     public CustomFieldsDto getCustomFields() {
@@ -218,6 +234,8 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
+     * Sets the custom fields.
+     *
      * @param customFields the customFields to set
      */
     public void setCustomFields(CustomFieldsDto customFields) {
