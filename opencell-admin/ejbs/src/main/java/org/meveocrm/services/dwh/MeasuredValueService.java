@@ -153,10 +153,10 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
         }
         if (toDate != null) {
             if (!whereExists) {
-                sqlQuery += "m.date >= :toDate ";
+                sqlQuery += "m.date < :toDate ";
                 whereExists = true;
             } else {
-                sqlQuery += "and m.date >= :toDate ";
+                sqlQuery += "and m.date < :toDate ";
             }
         }
 
