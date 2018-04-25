@@ -429,6 +429,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         getEntityManager().persist(entity);
 
+        getEntityManager().flush();
+
+        getEntityManager().refresh(entity);
+
         // Add entity to Elastic Search
         if (ISearchable.class.isAssignableFrom(entity.getClass())) {
             elasticClient.createOrFullUpdate((ISearchable) entity);
