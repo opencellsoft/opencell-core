@@ -55,6 +55,12 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         Iterator it = params.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
+
+            // if type is sql check if parameter exists
+            if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL) && !entity.getSqlQuery().contains(":" + pair.getKey().toString())) {
+                continue;
+            }
+
             if (!StringUtils.isBlank(pair.getValue())) {
                 if (pair.getKey().toString().endsWith("_DATE")) {
                     context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
@@ -64,8 +70,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
         }
 
-        StringBuilder sbDir = new StringBuilder(ParamBean.getInstance().getProperty("providers.rootDir", "/opt/opencelldata"));
-        sbDir.append(File.separator + appProvider.getCode() + File.separator + ReportExtractScript.REPORTS_DIR);
+        StringBuilder sbDir = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
+        sbDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
 
         if (!StringUtils.isBlank(entity.getCategory())) {
             sbDir.append(File.separator + entity.getCategory());
@@ -112,18 +118,21 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                         fileWriter.write(System.lineSeparator());
                         line = new StringBuilder("");
                     }
-
-                } catch (IOException e) {
-                    log.error("Cannot write report to file");
-                    throw new BusinessException("Cannot write report to file.");
-
-                } finally {
                     if (fileWriter != null) {
                         try {
                             fileWriter.close();
                         } catch (IOException e) {
                         }
                     }
+                } catch (Exception e) {
+                    if (fileWriter != null) {
+                        try {
+                            fileWriter.close();
+                        } catch (IOException e1) {
+                        }
+                    }
+                    log.error("Cannot write report to file: {}", e.getMessage());
+                    throw new BusinessException("Cannot write report to file.");
                 }
             }
 

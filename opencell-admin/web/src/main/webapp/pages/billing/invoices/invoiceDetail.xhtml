@@ -156,9 +156,21 @@
                                                     <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}">
                                                         <h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter" />
                                                     </p:column>
-                                                    <p:column headerText="#{messages['serviceInstance.quantity']}">
+                                                    <p:column headerText="#{messages['serviceInstance.quantity']}" width="50">
                                                         <h:outputText value="#{rated.quantity}" converter="bigDecimal4DigitsConverter" />
                                                     </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.param1']}">
+                                                        <h:outputText value="#{rated.parameter1}" />
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.param2']}">
+                                                        <h:outputText value="#{rated.parameter2}" />
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.param3']}">
+                                                        <h:outputText value="#{rated.parameter3}" />
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['order.number']}">
+														<h:outputText value="#{rated.orderNumber}" />
+													</p:column>
                                                     <p:column headerText="#{messages['ratedTransaction.status']}">
                                                         <h:outputText value="#{rated.status}" />
                                                     </p:column>

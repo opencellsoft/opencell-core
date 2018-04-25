@@ -4,21 +4,34 @@ import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class CreditCategoryResponseDto.
+ *
  * @author Edward P. Legaspi
- * 
  */
 public class CreditCategoryResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 9018184504399717410L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 9018184504399717410L;
 
-	private CreditCategoryDto creditCategory;
+    /** The credit category. */
+    private CreditCategoryDto creditCategory;
 
-	public CreditCategoryDto getCreditCategory() {
-		return creditCategory;
-	}
+    /**
+     * Gets the credit category.
+     *
+     * @return the credit category
+     */
+    public CreditCategoryDto getCreditCategory() {
+        return creditCategory;
+    }
 
-	public void setCreditCategory(CreditCategoryDto creditCategory) {
-		this.creditCategory = creditCategory;
-	}
+    /**
+     * Sets the credit category.
+     *
+     * @param creditCategory the new credit category
+     */
+    public void setCreditCategory(CreditCategoryDto creditCategory) {
+        this.creditCategory = creditCategory;
+    }
 
 }

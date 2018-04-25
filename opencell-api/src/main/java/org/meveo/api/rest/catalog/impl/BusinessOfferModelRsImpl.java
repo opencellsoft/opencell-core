@@ -72,7 +72,7 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessOfferModelCode);
+            moduleApi.remove(businessOfferModelCode);
         } catch (Exception e) {
             processException(e, result);
         }

@@ -7,37 +7,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 
+/**
+ * The Class GetPreInvoicingReportsResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetPreInvoicingReportsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetPreInvoicingReportsResponseDto  extends BaseResponse{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private PreInvoicingReportsDTO preInvoicingReportsDTO;
-	
-	public GetPreInvoicingReportsResponseDto(){
-		
-	}
+public class GetPreInvoicingReportsResponseDto extends BaseResponse {
 
-	/**
-	 * @return the preInvoicingReportsDTO
-	 */
-	public PreInvoicingReportsDTO getPreInvoicingReportsDTO() {
-		return preInvoicingReportsDTO;
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+    
+    /** The pre invoicing reports DTO. */
+    private PreInvoicingReportsDTO preInvoicingReportsDTO;
 
-	/**
-	 * @param preInvoicingReportsDTO the preInvoicingReportsDTO to set
-	 */
-	public void setPreInvoicingReportsDTO(PreInvoicingReportsDTO preInvoicingReportsDTO) {
-		this.preInvoicingReportsDTO = preInvoicingReportsDTO;
-	}
+    /**
+     * Instantiates a new gets the pre invoicing reports response dto.
+     */
+    public GetPreInvoicingReportsResponseDto() {
 
+    }
 
-	@Override
-	public String toString() {
-		return "GetPreInvoicingReportsResponseDto [preInvoicingReportsDTO=" + preInvoicingReportsDTO + "]";
-	}
+    /**
+     * Gets the pre invoicing reports DTO.
+     *
+     * @return the preInvoicingReportsDTO
+     */
+    public PreInvoicingReportsDTO getPreInvoicingReportsDTO() {
+        return preInvoicingReportsDTO;
+    }
+
+    /**
+     * Sets the pre invoicing reports DTO.
+     *
+     * @param preInvoicingReportsDTO the preInvoicingReportsDTO to set
+     */
+    public void setPreInvoicingReportsDTO(PreInvoicingReportsDTO preInvoicingReportsDTO) {
+        this.preInvoicingReportsDTO = preInvoicingReportsDTO;
+    }
+
+    @Override
+    public String toString() {
+        return "GetPreInvoicingReportsResponseDto [preInvoicingReportsDTO=" + preInvoicingReportsDTO + "]";
+    }
 }

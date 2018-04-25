@@ -254,9 +254,9 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
     protected abstract IPersistenceService<T> getPersistenceServiceImpl();
 
     /**
-     * Get default sort
+     * Get default sort.
      * 
-     * @return
+     * @return default sort implementation
      */
     protected String getDefaultSortImpl() {
         return "";
@@ -268,23 +268,27 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
 
     /**
      * Override this method if you need to fetch any fields when selecting list of entities in data table. Return list of field names that has to be fetched.
+     * 
+     * @return List of fields to fetch
      */
     protected List<String> getListFieldsToFetchImpl() {
         return null;
     }
 
     /**
-     * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions
+     * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions.
+     * 
+     * @return Size of rows
      */
     public Integer size() {
         return rowCount;
     }
 
     /**
-     * Get a value for full text search
+     * Get a value for full text search.
      * 
      * @param loadingFilters Datatable filters
-     * @return
+     * @return fullText search value
      */
     protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
         if (loadingFilters != null) {

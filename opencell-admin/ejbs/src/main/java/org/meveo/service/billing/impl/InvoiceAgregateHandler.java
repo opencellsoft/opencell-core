@@ -334,11 +334,13 @@ public class InvoiceAgregateHandler {
                             || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode()))
                     && matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, null)) {
 
-                if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
-                    currentTax = invoicesubcatCountry.getTax();
-                } else {
+                
+                if (!StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
                     currentTax = invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, null);
-                }
+                 }else {
+                     currentTax = invoicesubcatCountry.getTax();
+                 }                
+               
                 if (currentTax != null) {
                     return currentTax;
                 }

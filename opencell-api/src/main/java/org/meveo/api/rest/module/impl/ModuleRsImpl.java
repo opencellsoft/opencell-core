@@ -56,7 +56,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     public ActionStatus delete(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            moduleApi.delete(code);
+            moduleApi.remove(code);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -134,7 +134,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     }
 
     @Override
-    public ActionStatus enable(String code) {
+    public ActionStatus enableGet(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -148,12 +148,38 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     }
 
     @Override
-    public ActionStatus disable(String code) {
+    public ActionStatus disableGet(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             moduleApi.disable(code, MeveoModule.class);
 
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, false);
         } catch (Exception e) {
             processException(e, result);
         }

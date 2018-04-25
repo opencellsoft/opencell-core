@@ -97,6 +97,8 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 	
     /**
      * Standard method for custom component with listType="pickList".
+     * 
+     * @return dualListModel of InvoiceType
      */
     public DualListModel<InvoiceType> getDualListModel() {
         if (invoiceTypesDM == null) {

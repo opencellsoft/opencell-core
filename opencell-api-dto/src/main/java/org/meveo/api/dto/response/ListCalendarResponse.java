@@ -7,26 +7,40 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CalendarsDto;
 
 /**
+ * The Class ListCalendarResponse.
+ *
  * @author Antonio A. Alejandro
- **/
+ */
 @XmlRootElement(name = "ListCalendarResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ListCalendarResponse extends BaseResponse{
+public class ListCalendarResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -8366882097461743155L;
-	private CalendarsDto calendars = new CalendarsDto();
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8366882097461743155L;
+    
+    /** The calendars. */
+    private CalendarsDto calendars = new CalendarsDto();
 
-	public void setCalendars(CalendarsDto calendars) {
-		this.calendars = calendars;
-	}
-	
-	public CalendarsDto getCalendars() {
-		return calendars;
-	}
+    /**
+     * Sets the calendars.
+     *
+     * @param calendars the new calendars
+     */
+    public void setCalendars(CalendarsDto calendars) {
+        this.calendars = calendars;
+    }
 
-	@Override
-	public String toString() {
-		return "ListCalendarsResponse [calendars=" + calendars + ", toString()=" + super.toString() + "]";
-	} 
+    /**
+     * Gets the calendars.
+     *
+     * @return the calendars
+     */
+    public CalendarsDto getCalendars() {
+        return calendars;
+    }
 
+    @Override
+    public String toString() {
+        return "ListCalendarsResponse [calendars=" + calendars + ", toString()=" + super.toString() + "]";
+    }
 }

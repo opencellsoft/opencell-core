@@ -85,6 +85,7 @@ public class DocumentBean implements Serializable {
      * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
      * it.
      * 
+     * @return List of documents
      */
     @Produces
     @Named("documents")

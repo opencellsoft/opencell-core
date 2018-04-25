@@ -30,6 +30,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
  * @author anasseh
+ * @author Phung tien lan
  * @lastModifiedVersion 5.0
  * 
  */
@@ -103,19 +104,14 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @return A custom field code
      */
     public String getCustomFieldCode(InvoiceType invoiceType) {
-
-        // LAMPIRIS CUSTOM
-        String invoiceTypeCode = invoiceType.getCode().toUpperCase();
-        if (invoiceTypeCode.equals("INSTALMENT_INVOICE") || invoiceTypeCode.equals("REGULARIZATION_INVOICE")) {
-            invoiceTypeCode = "ENA";
-        }
-        String cfName = "INVOICE_SEQUENCE_" + invoiceTypeCode;
-        if (getAdjustementCode().equals(invoiceTypeCode)) {
+        String cfName = "INVOICE_SEQUENCE_" + invoiceType.getCode().toUpperCase();
+        if (getAdjustementCode().equals(invoiceType.getCode())) {
             cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
         }
-        if (getCommercialCode().equals(invoiceTypeCode)) {
+        if (getCommercialCode().equals(invoiceType.getCode())) {
             cfName = "INVOICE_SEQUENCE";
         }
+        
         return cfName;
     }
 }

@@ -32,30 +32,30 @@ import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 public interface ProviderRs extends IBaseRs {
 
     /**
-     * Create provider.
+     * Create provider. Deprecated in v. 4.5. Use updateProvider() instead.
      * 
      * @param postData Provider data to be created
      * @return action status
      */
+    @Deprecated
     @POST
     @Path("/")
     ActionStatus create(ProviderDto postData);
 
     /**
-     * Search for provider with a given code.
+     * Retrieve provider information.
      * 
-     * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
-     * @return providers
+     * @return Provider information
      */
     @GET
     @Path("/")
-    GetProviderResponse find(@QueryParam("providerCode") String providerCode);
+    GetProviderResponse find();
 
     /**
      * Update provider.
      * 
      * @param postData Provider data
-     * @return action status
+     * @return Request processing status
      */
     @PUT
     @Path("/")
@@ -102,11 +102,12 @@ public interface ProviderRs extends IBaseRs {
     GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
-     * Create or update a provider if it doesn't exists.
+     * Create or update a provider if it doesn't exists. Deprecated in v. 4.5. Use updateProvider() instead.
      * 
      * @param postData Provider data
      * @return action status
      */
+    @Deprecated
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ProviderDto postData);

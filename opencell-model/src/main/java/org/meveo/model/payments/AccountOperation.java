@@ -48,8 +48,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
@@ -83,7 +83,7 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
         @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
                 + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
                 + " and pm.preferred is true and ao.unMatchingAmount <> 0") })
-public class AccountOperation extends EnableEntity implements ICustomFieldEntity, ISearchable {
+public class AccountOperation extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 

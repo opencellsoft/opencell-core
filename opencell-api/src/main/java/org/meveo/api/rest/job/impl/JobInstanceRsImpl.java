@@ -85,4 +85,30 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
 
         return result;
     }
+
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            jobInstanceApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            jobInstanceApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

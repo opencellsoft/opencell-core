@@ -11,24 +11,39 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class DiscountPlanItemsResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "DiscountPlanItemsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DiscountPlanItemsResponseDto extends BaseResponse {
-	
-	private static final long serialVersionUID = -4771102434084711881L;
-	
-	@XmlElementWrapper(name="discountPlanItems")
-	@XmlElement(name="discountPlanItem")
-	private List<DiscountPlanItemDto> discountPlanItems;
 
-	public List<DiscountPlanItemDto> getDiscountPlanItems() {
-		return discountPlanItems;
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -4771102434084711881L;
 
-	public void setDiscountPlanItems(List<DiscountPlanItemDto> discountPlanItems) {
-		this.discountPlanItems = discountPlanItems;
-	}
-	
-	
+    /** The discount plan items. */
+    @XmlElementWrapper(name = "discountPlanItems")
+    @XmlElement(name = "discountPlanItem")
+    private List<DiscountPlanItemDto> discountPlanItems;
+
+    /**
+     * Gets the discount plan items.
+     *
+     * @return the discount plan items
+     */
+    public List<DiscountPlanItemDto> getDiscountPlanItems() {
+        return discountPlanItems;
+    }
+
+    /**
+     * Sets the discount plan items.
+     *
+     * @param discountPlanItems the new discount plan items
+     */
+    public void setDiscountPlanItems(List<DiscountPlanItemDto> discountPlanItems) {
+        this.discountPlanItems = discountPlanItems;
+    }
 
 }

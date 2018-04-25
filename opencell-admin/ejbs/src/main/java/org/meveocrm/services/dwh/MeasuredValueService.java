@@ -9,148 +9,69 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.service.base.PersistenceService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0.1
+ */
 @Stateless
 public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 
-    @SuppressWarnings("unchecked")
-    public List<MeasuredValue> getMeasuredValueByDateRange(Date startDate, Date endDate) {
-
-        if (startDate != null && endDate != null) {
-            QueryBuilder qb = new QueryBuilder(MeasuredValue.class, "m");
-            // qb.startInnerAndClause();
-            qb.addCriterionDateRangeFromTruncatedToDay("m.date", startDate);
-            qb.addCriterionDateRangeToTruncatedToDay("m.date", endDate);
-            // qb.endInnerAndClause();
-
-            Query query = qb.getQuery(getEntityManager());
-
-            List<MeasuredValue> mvList = (List<MeasuredValue>) query.getResultList();
-            if (mvList.size() > 0) {
-                return mvList;
-            }
-        }
-        return null;
-
-    }
-
+    /**
+     * @param date date
+     * @param period MeasurementPeriodEnum
+     * @param mq MeasurableQuantity
+     * @return MeasuredValue
+     */
     public MeasuredValue getByDate(Date date, MeasurementPeriodEnum period, MeasurableQuantity mq) {
         return getByDate(getEntityManager(), date, period, mq);
     }
 
+    /**
+     * @param em EntityManager
+     * @param date date
+     * @param period MeasurementPeriodEnum
+     * @param mq MeasurableQuantity
+     * @return MeasuredValue
+     */
     public MeasuredValue getByDate(EntityManager em, Date date, MeasurementPeriodEnum period, MeasurableQuantity mq) {
         MeasuredValue result = null;
-        QueryBuilder queryBuilder = new QueryBuilder(MeasuredValue.class, " m ");
-        queryBuilder.addCriterionDate("m.date", date);
-        queryBuilder.addCriterionEnum("m.measurementPeriod", period);
-        queryBuilder.addCriterionEntity("m.measurableQuantity", mq);
-        Query query = queryBuilder.getQuery(em);
+        // QueryBuilder queryBuilder = new QueryBuilder(MeasuredValue.class, " m ");
+        // queryBuilder.addCriterionDate("m.date", date);
+        // queryBuilder.addCriterionEnum("m.measurementPeriod", period);
+        // queryBuilder.addCriterionEntity("m.measurableQuantity", mq);
+        // Query query = queryBuilder.getQuery(em);
+        //
+        // log.info("> MeasuredValueService > getByDate > query 1 > {}", query.toString());
+
+        if (date == null || period == null || mq == null) {
+            return null;
+        }
+
+        Query myQuery = getEntityManager()
+            .createQuery("from " + MeasuredValue.class.getName() + " m where m.date=:date and m.measurementPeriod=:period and m.measurableQuantity= :measurableQuantity");
+        myQuery.setParameter("date", date).setParameter("period", period).setParameter("measurableQuantity", mq);
+
         @SuppressWarnings("unchecked")
-        List<MeasuredValue> res = query.getResultList();
+        List<MeasuredValue> res = myQuery.getResultList();
         if (res.size() > 0) {
             result = res.get(0);
         }
         return result;
     }
 
-    public Long getMeasuredValueSumByDate(Date fromDate, Date toDate, String code, MeasurementPeriodEnum period, String followUpTheme, Boolean includeLastdDay) {
-        Calendar cal = Calendar.getInstance();
-        String sqlQuery = null;
-        if (fromDate == null && toDate != null) {
-            if (!includeLastdDay) {
-                cal.setTime(toDate);
-                sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date > '" + cal.getTime().toString() + "')";
-            } else {
-                cal.setTime(toDate);
-                sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + cal.getTime().toString() + "')";
-            }
-
-        } else if (fromDate != null && toDate == null) {
-            cal.setTime(fromDate);
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-
-            sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
-                    + cal.getTime().toString() + "')";
-
-        } else if (fromDate != null && toDate != null) {
-            cal.setTime(toDate);
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-            sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
-                    + cal.getTime().toString() + "') ";
-
-        }
-
-        if (period != null) {
-            sqlQuery += " AND mv.measurementPeriod = '" + period.name() + "' ";
-        }
-        if (code != null) {
-            sqlQuery += " AND mv.measurableQuantity.code ='" + code.toUpperCase() + "'";
-        }
-        long time = System.currentTimeMillis();
-        Query query = getEntityManager().createQuery(sqlQuery);
-
-        Long result = 0L;
-        if ((Long) query.getSingleResult() != null) {
-            result = (Long) query.getSingleResult();
-        }
-        time = System.currentTimeMillis() - time;
-        return result;
-
-    }
-
-    public Long getMeasuredValueSumByDate(EntityManager em, Date fromDate, Date toDate, String code, MeasurementPeriodEnum period, String followUpTheme, Boolean includeLastdDay) {
-        Calendar cal = Calendar.getInstance();
-        String sqlQuery = null;
-        if (fromDate == null && toDate != null) {
-            if (!includeLastdDay) {
-                cal.setTime(toDate);
-                sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date < '" + cal.getTime().toString() + "')";
-            } else {
-                cal.setTime(toDate);
-                sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date <= '" + cal.getTime().toString() + "')";
-            }
-
-        } else if (fromDate != null && toDate == null) {
-            cal.setTime(fromDate);
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-
-            sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
-                    + cal.getTime().toString() + "')";
-
-        } else if (fromDate != null && toDate != null) {
-            cal.setTime(toDate);
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-            sqlQuery = "SELECT SUM(mv.value) FROM " + MeasuredValue.class.getName() + " mv WHERE (mv.date >= '" + fromDate.toString() + "' AND mv.date < '"
-                    + cal.getTime().toString() + "') ";
-
-        }
-
-        if (period != null) {
-            sqlQuery += " AND mv.measurementPeriod = '" + period.name() + "' ";
-        }
-        if (code != null) {
-            sqlQuery += " AND mv.measurableQuantity.code ='" + code.toUpperCase() + "'";
-
-        }
-
-        long time = System.currentTimeMillis();
-        Query query = em.createQuery(sqlQuery);
-
-        Long result = 0L;
-        if ((Long) query.getSingleResult() != null) {
-            result = (Long) query.getSingleResult();
-        }
-        time = System.currentTimeMillis() - time;
-        log.debug("Time : " + time + " SQL : " + sqlQuery);
-        return result;
-
-    }
-
+    /**
+     * 
+     * @param dimensionIndex dimension index
+     * @param fromDate starting date
+     * @param toDate end date
+     * @param mq MeasurableQuantity
+     * @return list
+     */
     @SuppressWarnings("rawtypes")
     public List<String> getDimensionList(int dimensionIndex, Date fromDate, Date toDate, MeasurableQuantity mq) {
         List<String> result = new ArrayList<String>();
@@ -189,38 +110,105 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
         return result;
     }
 
+    /**
+     * List of measured values.
+     * 
+     * @param code MeasuredValue code
+     * @param fromDate starting date
+     * @param toDate ending date
+     * @param period DAILY, WEEKLY, MONTHLY orYEARLY
+     * @param mq MeasurableQuantity
+     * @return list of measured values
+     */
     public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, MeasurableQuantity mq) {
         return getByDateAndPeriod(code, fromDate, toDate, period, mq, false);
     }
 
+    /**
+     * @param code MeasuredValue code
+     * @param fromDate starting date
+     * @param toDate ending date
+     * @param period DAILY, WEEKLY, MONTHLY orYEARLY
+     * @param mq MeasurableQuantity
+     * @param sortByDate do we need to sort by date
+     * @return list of measured values
+     */
     @SuppressWarnings("unchecked")
     public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, MeasurableQuantity mq, Boolean sortByDate) {
+        String sqlQuery = "";
 
-        QueryBuilder queryBuilder = new QueryBuilder(MeasuredValue.class, " m ");
-
+        boolean whereExists = false;
         if (code != null) {
-            queryBuilder.addSql(" m.code = '" + code.toUpperCase() + "' ");
+            sqlQuery += "m.code = :code ";
+            whereExists = true;
         }
 
         if (fromDate != null) {
-            queryBuilder.addCriterion("m.date", ">=", fromDate, false);
+            if (!whereExists) {
+                sqlQuery += "m.date >= :fromDate ";
+                whereExists = true;
+            } else {
+                sqlQuery += "and m.date >= :fromDate ";
+            }
         }
         if (toDate != null) {
-            queryBuilder.addCriterion("m.date", "<", toDate, false);
+            if (!whereExists) {
+                sqlQuery += "m.date < :toDate ";
+                whereExists = true;
+            } else {
+                sqlQuery += "and m.date < :toDate ";
+            }
         }
 
         if (period != null) {
-            queryBuilder.addCriterion("m.measurementPeriod", "=", period, false);
+            if (!whereExists) {
+                sqlQuery += "m.measurementPeriod = :period ";
+                whereExists = true;
+            } else {
+                sqlQuery += "and m.measurementPeriod = :period ";
+            }
         }
         if (mq != null) {
-            queryBuilder.addCriterion("m.measurableQuantity.id", "=", mq.getId(), false);
+            if (!whereExists) {
+                sqlQuery += "m.measurableQuantity.id = :id ";
+                whereExists = true;
+            } else {
+                sqlQuery += "and m.measurableQuantity.id = :id ";
+            }
         }
 
         if (sortByDate) {
-            queryBuilder.addOrderCriterionAsIs("m.date", true);
+            sqlQuery += "ORDER BY m.date ASC";
         }
 
-        Query query = queryBuilder.getQuery(getEntityManager());
-        return query.getResultList();
+        Query myQuery;
+        if (whereExists) {
+            sqlQuery = "FROM " + MeasuredValue.class.getName() + " m WHERE " + sqlQuery;
+            myQuery = getEntityManager().createQuery(sqlQuery);
+            if (code != null) {
+                myQuery.setParameter("code", code.toUpperCase());
+            }
+            if (fromDate != null) {
+                myQuery.setParameter("fromDate", fromDate);
+            }
+            if (toDate != null) {
+                myQuery.setParameter("toDate", toDate);
+
+            }
+            if (period != null) {
+                myQuery.setParameter("period", period);
+            }
+            if (mq != null) {
+                myQuery.setParameter("id", mq.getId());
+            }
+            if (sortByDate) {
+                sqlQuery += "ORDER BY m.date ASC";
+            }
+        } else {
+            sqlQuery = "FROM " + MeasuredValue.class.getName() + " m " + sqlQuery;
+            myQuery = getEntityManager().createQuery(sqlQuery);
+        }
+
+        return myQuery.getResultList();
     }
 }

@@ -13,14 +13,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
+import org.meveo.api.dto.response.GetTradingLanguageResponse;
 
 /**
  * * Web service for managing {@link org.meveo.model.billing.Language} and {@link org.meveo.model.billing.TradingLanguage}.
  * 
  * @author Edward P. Legaspi
  * 
- * @deprecated will be rennamed to  TradingLanguageRs
  **/
 @Path("/language")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -46,7 +45,7 @@ public interface LanguageRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetLanguageResponse find(@QueryParam("languageCode") String languageCode);
+    GetTradingLanguageResponse find(@QueryParam("languageCode") String languageCode);
 
     /**
      * Does not delete a language but the tradingLanguage associated to it.
@@ -77,4 +76,24 @@ public interface LanguageRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(LanguageDto postData);
+
+    /**
+     * Enable a Trading language with a given language code
+     * 
+     * @param code Language code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Trading language with a given language code
+     * 
+     * @param code Language code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

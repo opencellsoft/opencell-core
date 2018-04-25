@@ -7,111 +7,222 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.shared.DateUtils;
 
 /**
+ * The Class MeasuredValueDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 public class MeasuredValueDto {
 
-	private String measurableQuantityCode;
-	protected String code;
-	private MeasurementPeriodEnum measurementPeriod;
-	private String date;
-	private String dimension1;
-	private String dimension2;
-	private String dimension3;
-	private String dimension4;
-	private BigDecimal value;
+    /** The measurable quantity code. */
+    private String measurableQuantityCode;
+    
+    /** The code. */
+    protected String code;
+    
+    /** The measurement period. */
+    private MeasurementPeriodEnum measurementPeriod;
+    
+    /** The date. */
+    private String date;
+    
+    /** The dimension 1. */
+    private String dimension1;
+    
+    /** The dimension 2. */
+    private String dimension2;
+    
+    /** The dimension 3. */
+    private String dimension3;
+    
+    /** The dimension 4. */
+    private String dimension4;
+    
+    /** The value. */
+    private BigDecimal value;
 
-	public MeasuredValueDto() {
+    /**
+     * Instantiates a new measured value dto.
+     */
+    public MeasuredValueDto() {
 
-	}
+    }
 
-	public MeasuredValueDto(MeasuredValue e) {
-		measurableQuantityCode = e.getMeasurableQuantity().getCode();
-		code = e.getCode();
-        measurementPeriod = e.getMeasurementPeriod();
-        date = e.getDate() != null ? DateUtils.formatDateWithPattern(e.getDate(), "yyyy-MM-dd'T'HH:mm:ss") : null;
-        dimension1 = e.getDimension1();
-		dimension2 = e.getDimension2();
-		dimension3 = e.getDimension3();
-		dimension4 = e.getDimension4();
-		value      = e.getValue();
-	}
+    /**
+     * Instantiates a new measured value dto.
+     *
+     * @param measuredValue the MeasuredValue entity
+     */
+    public MeasuredValueDto(MeasuredValue measuredValue) {
+        measurableQuantityCode = measuredValue.getMeasurableQuantity().getCode();
+        code = measuredValue.getCode();
+        measurementPeriod = measuredValue.getMeasurementPeriod();
+        date = measuredValue.getDate() != null ? DateUtils.formatDateWithPattern(measuredValue.getDate(), "yyyy-MM-dd'T'HH:mm:ss") : null;
+        dimension1 = measuredValue.getDimension1();
+        dimension2 = measuredValue.getDimension2();
+        dimension3 = measuredValue.getDimension3();
+        dimension4 = measuredValue.getDimension4();
+        value = measuredValue.getValue();
+    }
 
-	public String getMeasurableQuantityCode() {
-		return measurableQuantityCode;
-	}
+    /**
+     * Gets the measurable quantity code.
+     *
+     * @return the measurable quantity code
+     */
+    public String getMeasurableQuantityCode() {
+        return measurableQuantityCode;
+    }
 
-	public void setMeasurableQuantityCode(String measurableQuantityCode) {
-		this.measurableQuantityCode = measurableQuantityCode;
-	}
+    /**
+     * Sets the measurable quantity code.
+     *
+     * @param measurableQuantityCode the new measurable quantity code
+     */
+    public void setMeasurableQuantityCode(String measurableQuantityCode) {
+        this.measurableQuantityCode = measurableQuantityCode;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public MeasurementPeriodEnum getMeasurementPeriod() {
-		return measurementPeriod;
-	}
+    /**
+     * Gets the measurement period.
+     *
+     * @return the measurement period
+     */
+    public MeasurementPeriodEnum getMeasurementPeriod() {
+        return measurementPeriod;
+    }
 
-	public void setMeasurementPeriod(MeasurementPeriodEnum measurementPeriod) {
-		this.measurementPeriod = measurementPeriod;
-	}
+    /**
+     * Sets the measurement period.
+     *
+     * @param measurementPeriod the new measurement period
+     */
+    public void setMeasurementPeriod(MeasurementPeriodEnum measurementPeriod) {
+        this.measurementPeriod = measurementPeriod;
+    }
 
-	public String getDate() {
-		return date;
-	}
+    /**
+     * Gets the date.
+     *
+     * @return the date
+     */
+    public String getDate() {
+        return date;
+    }
 
-	public void setDate(String date) {
-		this.date = date;
-	}
+    /**
+     * Sets the date.
+     *
+     * @param date the new date
+     */
+    public void setDate(String date) {
+        this.date = date;
+    }
 
-	public String getDimension1() {
-		return dimension1;
-	}
+    /**
+     * Gets the dimension 1.
+     *
+     * @return the dimension 1
+     */
+    public String getDimension1() {
+        return dimension1;
+    }
 
-	public void setDimension1(String dimension1) {
-		this.dimension1 = dimension1;
-	}
+    /**
+     * Sets the dimension 1.
+     *
+     * @param dimension1 the new dimension 1
+     */
+    public void setDimension1(String dimension1) {
+        this.dimension1 = dimension1;
+    }
 
-	public String getDimension2() {
-		return dimension2;
-	}
+    /**
+     * Gets the dimension 2.
+     *
+     * @return the dimension 2
+     */
+    public String getDimension2() {
+        return dimension2;
+    }
 
-	public void setDimension2(String dimension2) {
-		this.dimension2 = dimension2;
-	}
+    /**
+     * Sets the dimension 2.
+     *
+     * @param dimension2 the new dimension 2
+     */
+    public void setDimension2(String dimension2) {
+        this.dimension2 = dimension2;
+    }
 
-	public String getDimension3() {
-		return dimension3;
-	}
+    /**
+     * Gets the dimension 3.
+     *
+     * @return the dimension 3
+     */
+    public String getDimension3() {
+        return dimension3;
+    }
 
-	public void setDimension3(String dimension3) {
-		this.dimension3 = dimension3;
-	}
+    /**
+     * Sets the dimension 3.
+     *
+     * @param dimension3 the new dimension 3
+     */
+    public void setDimension3(String dimension3) {
+        this.dimension3 = dimension3;
+    }
 
-	public String getDimension4() {
-		return dimension4;
-	}
+    /**
+     * Gets the dimension 4.
+     *
+     * @return the dimension 4
+     */
+    public String getDimension4() {
+        return dimension4;
+    }
 
-	public void setDimension4(String dimension4) {
-		this.dimension4 = dimension4;
-	}
+    /**
+     * Sets the dimension 4.
+     *
+     * @param dimension4 the new dimension 4
+     */
+    public void setDimension4(String dimension4) {
+        this.dimension4 = dimension4;
+    }
 
-	/**
-	 * @return the value
-	 */
-	public BigDecimal getValue() {
-		return value;
-	}
+    /**
+     * Gets the value.
+     *
+     * @return the value
+     */
+    public BigDecimal getValue() {
+        return value;
+    }
 
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
+    /**
+     * Sets the value.
+     *
+     * @param value the value to set
+     */
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
 }

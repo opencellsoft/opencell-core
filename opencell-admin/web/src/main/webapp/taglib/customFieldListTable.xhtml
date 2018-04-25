@@ -43,7 +43,8 @@
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
 
-    <hftl:decorateFormField label="#{cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cft.valueRequired and !hasInheritedValue and !inherited?' *':''} #{inherited?messages['customField.inheritedValue']:''}"
+    <hftl:decorateFormField
+        label="#{cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cft.valueRequired and !hasInheritedValue and !inherited?' *':''} #{inherited?messages['customField.inheritedValue']:''}"
         componentWidth="#{componentWidth}" displayOneLine="false">
 
         <p:messages id="#{idPrefix}_cfMessages" globalOnly="false" redisplay="false" />
@@ -125,8 +126,7 @@
                             oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{cfValueHolder.populateNewValueDefaults(null, cft)}">
                         </p:commandButton>
 
-                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}"
-                            onclick="PF('#{popupWidgetVar}').hide();return false;">
+                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}" onclick="PF('#{popupWidgetVar}').hide();return false;">
                         </p:button>
 
                     </f:facet>
@@ -150,7 +150,7 @@
                             <h:inputText value="#{mapValues[column.code]}" size="9" maxlength="15" rendered="#{column.keyType eq CustomFieldMapKeyEnum.LONG}" converter="javax.faces.Long" />
                             <h:inputText value="#{mapValues[column.code]}" size="9" maxlength="15" rendered="#{column.keyType eq CustomFieldMapKeyEnum.DOUBLE}" converter="javax.faces.Double" />
                             <p:inputText value="#{mapValues[column.code]}" size="20" maxlength="30" rendered="#{column.keyType eq CustomFieldMapKeyEnum.RON}">
-                                <!--                                 <p:keyFilter regEx="/[0-9.&lt;]/" /> -->
+                                <p:keyFilter regEx="/[0-9.&lt;]/" />
                                 <o:validator validatorId="javax.faces.RegularExpression" pattern="(([0-9]+)(\.[0-9]+)?)?&lt;(([0-9]+)(\.[0-9]+)?)?"
                                     message="#{messages['customFieldTemplate.ronInvalid']}" />
                             </p:inputText>
@@ -178,34 +178,36 @@
                     <f:facet name="footer" layout="block">
 
                         <p:messages id="cfNewFieldsMessage" globalOnly="false" redisplay="false" rendered="#{edit and !disabled}" />
-                        
-                        <div><span class="text-red">#{messages['message.allFields.areRequired']}</span></div>
+
+                        <div>
+                            <span class="text-red">#{messages['message.allFields.areRequired']}</span>
+                        </div>
 
                         <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
 
                             <c:forEach items="#{cft.matrixColumns}" var="column">
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.STRING}">
-                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" placeholder="#{column.label}" label="#{column.label}" size="30"
+                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" placeholder="#{column.label}" label="#{column.label}" size="30"
                                         maxlength="50" />
                                 </c:if>
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.LONG}">
-                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Long" placeholder="#{column.label}"
+                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Long" placeholder="#{column.label}"
                                         label="#{column.label}" size="9" maxlength="15" />
                                 </c:if>
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.DOUBLE}">
-                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Double" placeholder="#{column.label}"
+                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Double" placeholder="#{column.label}"
                                         label="#{column.label}" size="9" maxlength="15" />
                                 </c:if>
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.RON}">
 
-                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_from')]}" converter="javax.faces.Double"
+                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_from')]}" converter="javax.faces.Double"
                                         placeholder="#{column.label}" label="#{column.label}" size="9" maxlength="15" />
                                     <h:outputText value=" - " />
-                                    <p:inputText required="true" id="newRonKeyTo" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_to')]}" converter="javax.faces.Double"
+                                    <p:inputText id="newRonKeyTo" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_to')]}" converter="javax.faces.Double"
                                         placeholder="#{column.label}" label="#{column.label}" size="9" maxlength="15" />
                                 </c:if>
 
@@ -235,8 +237,7 @@
                             oncomplete="PF('#{popupWidgetVar}').hide(); updateMasterTable()" actionListener="#{cfValueHolder.populateNewValueDefaults(null, cft)}">
                         </p:commandButton>
 
-                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}"
-                            onclick="PF('#{popupWidgetVar}').hide();return false;">
+                        <p:button value="#{messages['commons.close']}" rendered="#{!empty(popupWidgetVar) and (!edit or disabled)}" onclick="PF('#{popupWidgetVar}').hide();return false;">
                         </p:button>
 
                     </f:facet>

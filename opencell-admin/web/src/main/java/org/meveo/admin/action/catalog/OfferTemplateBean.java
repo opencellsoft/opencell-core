@@ -264,6 +264,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     /**
      * delete all entities related to Offer( used only for Marketing Manager)
+     * 
+     * @param entity offer template entity 
      */
     @ActionMethod
     public void deleteCatalogHierarchy(OfferTemplate entity) {

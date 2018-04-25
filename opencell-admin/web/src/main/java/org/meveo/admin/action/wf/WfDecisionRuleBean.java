@@ -26,12 +26,10 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WFDecisionRuleService;
-import org.meveo.service.wf.WFTransitionService;
-import org.meveo.service.wf.WorkflowService;
 
 /**
- * Standard backing bean for {@link org.meveo.model.wf.Workflow} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link org.meveo.model.wf.Workflow} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle entities
+ * filtering/sorting in datatable, their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
@@ -39,22 +37,8 @@ public class WfDecisionRuleBean extends BaseBean<WFDecisionRule> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link Workflow} service. Extends {@link org.meveo.service.base.PersistenceService}.
-     */
-    @Inject
-    private WorkflowService workflowService;
-
-    @Inject
-    private WFTransitionService wFTransitionService;
-
     @Inject
     private WFDecisionRuleService wFDecisionRuleService;
-
-
-    // @Produces
-    // @Named
-    private transient WFDecisionRule wfDecisionRule = new WFDecisionRule();
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link org.meveo.admin.action.BaseBean}.
@@ -66,7 +50,7 @@ public class WfDecisionRuleBean extends BaseBean<WFDecisionRule> {
     @Override
     public WFDecisionRule initEntity() {
         super.initEntity();
-     //   PersistenceUtils.initializeAndUnproxy(entity.getActions());
+        // PersistenceUtils.initializeAndUnproxy(entity.getActions());
         return entity;
     }
 

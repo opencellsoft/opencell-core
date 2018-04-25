@@ -64,7 +64,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * 
      * @param seller Seller
      * @param customer Customer
-     * @param customer Customer account
+     * @param customerAccount Customer account
      * @param billingAccount Billing account
      * @param userAccount User account
      * @param startDate Start date for balance calculation

@@ -25,8 +25,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the {@link Messages} interface.
@@ -40,8 +38,7 @@ public class MessagesImpl implements Messages {
     @Inject
     private MessageFactory factory;
 
-    /** Logger. */
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    // private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void clear() {
         Iterator<FacesMessage> it = FacesContext.getCurrentInstance().getMessages();

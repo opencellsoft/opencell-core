@@ -75,4 +75,23 @@ public interface CounterTemplateRs extends IBaseRs {
     @POST
     ActionStatus createOrUpdate(CounterTemplateDto postData);
 
+    /**
+     * Enable a Counter template with a given code
+     * 
+     * @param code Counter template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Counter template with a given code
+     * 
+     * @param code Counter template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

@@ -76,7 +76,6 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
-import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
@@ -91,6 +90,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 /**
  * Standard backing bean for {@link Order} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -99,7 +99,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 public class OrderBean extends CustomFieldBean<Order> {
 
     private static final long serialVersionUID = 7399464661886086329L;
-    
+
     @Inject
     private SubscriptionService subscriptionService;
 
@@ -108,9 +108,6 @@ public class OrderBean extends CustomFieldBean<Order> {
      */
     @Inject
     private OrderService orderService;
-
-    @Inject
-    private OrderItemService orderItemService;
 
     @Inject
     private OrderApi orderApi;
@@ -150,6 +147,14 @@ public class OrderBean extends CustomFieldBean<Order> {
     @Override
     public Order initEntity() {
         super.initEntity();
+
+        if (entity.getOrderItems() != null) {
+            for (OrderItem orderItem : entity.getOrderItems()) {
+                PersistenceUtils.initializeAndUnproxy(orderItem.getOrderItemProductOfferings());
+                PersistenceUtils.initializeAndUnproxy(orderItem.getProductInstances());
+            }
+        }
+
         if (entity.getPaymentMethod() != null) {
             paymentMethodType = entity.getPaymentMethod().getPaymentType();
             paymentMethod = PersistenceUtils.initializeAndUnproxy(entity.getPaymentMethod());
@@ -202,13 +207,9 @@ public class OrderBean extends CustomFieldBean<Order> {
     public void editOrderItem(OrderItem orderItemToEdit) {
 
         try {
-            if (orderItemToEdit.isTransient()) {
-                this.selectedOrderItem = orderItemToEdit;
+            this.selectedOrderItem = orderItemToEdit;
 
-            } else {
-
-                this.selectedOrderItem = orderItemService.refreshOrRetrieve(orderItemToEdit);
-
+            if (!orderItemToEdit.isTransient()) {
                 try {
                     this.selectedOrderItem.setOrderItemDto(org.tmf.dsmapi.catalog.resource.order.ProductOrderItem.deserializeOrderItem(selectedOrderItem.getSource()));
                 } catch (BusinessException e) {
@@ -429,6 +430,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     /**
      * Initiate processing of order
+     * 
      * @return output view
      * 
      */
@@ -651,7 +653,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     /**
      * Subscription selected. Update offer information if necessary.
      * 
-     * @param event
+     * @param event faces select event
      */
     public void onSubscriptionSet(SelectEvent event) {
 
@@ -717,7 +719,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     /**
      * New product offering is selected - need to reset orderItem values and the offer tree
      * 
-     * @param event
+     * @param event faces select event
      */
     public void onMainProductOfferingSet(SelectEvent event) {
 
@@ -755,7 +757,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     /**
      * Propagate main offer item properties to services and products where it was not set yet
      * 
-     * @param event
+     * @param event faces select event
      */
     public void onMainCharacteristicsSet(SelectEvent event) {
         if (!(boolean) event.getComponent().getAttributes().get("isMain")) {
@@ -891,7 +893,6 @@ public class OrderBean extends CustomFieldBean<Order> {
      * 
      * @param characteristics Product characteristics
      * @param cfEntity Custom field entity values will be applied to
-     * @return
      */
     private void extractAndMakeAvailableInGUICustomFields(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity) {
 
@@ -917,7 +918,7 @@ public class OrderBean extends CustomFieldBean<Order> {
      * 
      * @param cfEntity Custom field entity values will be applied to
      * @return
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private List<ProductCharacteristic> customFieldsAsCharacteristics(BusinessCFEntity cfEntity) throws BusinessException {
 

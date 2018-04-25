@@ -110,7 +110,7 @@ public interface ModuleRs extends IBaseRs {
      */
     @GET
     @Path("/enable")
-    public ActionStatus enable(@QueryParam("code") String code);
+    public ActionStatus enableGet(@QueryParam("code") String code);
 
     /**
      * Disable a Meveo's module with a given code
@@ -120,5 +120,26 @@ public interface ModuleRs extends IBaseRs {
      */
     @GET
     @Path("/disable")
-    public ActionStatus disable(@QueryParam("code") String code);
+    public ActionStatus disableGet(@QueryParam("code") String code);
+
+    /**
+     * Enable a Opencell module with a given code
+     * 
+     * @param code Opencell module code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Opencell module with a given code
+     * 
+     * @param code Opencell module code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
 }

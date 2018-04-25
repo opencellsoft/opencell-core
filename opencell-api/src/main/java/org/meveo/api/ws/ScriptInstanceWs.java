@@ -12,18 +12,37 @@ import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 @WebService
 public interface ScriptInstanceWs extends IBaseWs {
 
-	@WebMethod
-	ScriptInstanceReponseDto create(@WebParam(name = "createScriptInstanceRequest")ScriptInstanceDto scriptInstanceDto);
+    @WebMethod
+    ScriptInstanceReponseDto create(@WebParam(name = "createScriptInstanceRequest") ScriptInstanceDto scriptInstanceDto);
 
-	@WebMethod
-	ScriptInstanceReponseDto update(@WebParam(name = "updateScriptInstanceRequest")ScriptInstanceDto scriptInstanceDto);
+    @WebMethod
+    ScriptInstanceReponseDto update(@WebParam(name = "updateScriptInstanceRequest") ScriptInstanceDto scriptInstanceDto);
 
-	@WebMethod
-	ActionStatus remove(@WebParam(name = "removeScriptInstanceRequest")String scriptInstanceCode);
+    @WebMethod
+    ActionStatus remove(@WebParam(name = "removeScriptInstanceRequest") String scriptInstanceCode);
 
-	@WebMethod
-	GetScriptInstanceResponseDto find(@WebParam(name = "findScriptInstanceRequest")String scriptInstanceCode);
-	
-	@WebMethod
-	ScriptInstanceReponseDto createOrUpdate(@WebParam(name = "createOrUpdateScriptInstanceRequest")ScriptInstanceDto scriptInstanceDto);
+    @WebMethod
+    GetScriptInstanceResponseDto find(@WebParam(name = "findScriptInstanceRequest") String scriptInstanceCode);
+
+    @WebMethod
+    ScriptInstanceReponseDto createOrUpdate(@WebParam(name = "createOrUpdateScriptInstanceRequest") ScriptInstanceDto scriptInstanceDto);
+
+    /**
+     * Enable a Script by its code
+     * 
+     * @param code Script code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enable(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Script by its code
+     * 
+     * @param code Script code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disable(@WebParam(name = "code") String code);
+
 }

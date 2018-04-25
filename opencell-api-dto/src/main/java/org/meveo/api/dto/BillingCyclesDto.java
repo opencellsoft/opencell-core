@@ -8,30 +8,45 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+
 /**
+ * The Class BillingCyclesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "BillingCycles")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BillingCyclesDto implements Serializable {
 
-	private static final long serialVersionUID = -9161253039720538973L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -9161253039720538973L;
 
-	private List<BillingCycleDto> billingCycle;
+    /** The billing cycle. */
+    private List<BillingCycleDto> billingCycle;
 
-	public List<BillingCycleDto> getBillingCycle() {
-		if (billingCycle == null)
-			billingCycle = new ArrayList<BillingCycleDto>();
-		return billingCycle;
-	}
+    /**
+     * Gets the billing cycle.
+     *
+     * @return the billing cycle
+     */
+    public List<BillingCycleDto> getBillingCycle() {
+        if (billingCycle == null)
+            billingCycle = new ArrayList<BillingCycleDto>();
+        return billingCycle;
+    }
 
-	public void setBillingCycle(List<BillingCycleDto> billingCycle) {
-		this.billingCycle = billingCycle;
-	}
+    /**
+     * Sets the billing cycle.
+     *
+     * @param billingCycle the new billing cycle
+     */
+    public void setBillingCycle(List<BillingCycleDto> billingCycle) {
+        this.billingCycle = billingCycle;
+    }
 
-	@Override
-	public String toString() {
-		return "BillingCyclesDto [billingCycle=" + billingCycle + "]";
-	}
+    @Override
+    public String toString() {
+        return "BillingCyclesDto [billingCycle=" + billingCycle + "]";
+    }
 
 }

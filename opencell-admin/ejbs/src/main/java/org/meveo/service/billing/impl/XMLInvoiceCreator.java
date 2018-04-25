@@ -1379,7 +1379,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subCategory.setAttribute("taxPercent", taxesPercent);
 
                     for (RatedTransaction ratedTransaction : ratedTransactions) {
-                        if (!(ratedTransaction.getWallet().getId().longValue() == wallet.getId()
+                        if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
                                 && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
                             continue;
                         }
@@ -1592,6 +1592,68 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     addCustomFields(invoiceSubCat, doc, subCategory);
                 }
             }
+        }
+
+        // generate invoice line for min amount RT
+        boolean hasMinAmountRT = false;
+        Element subCategories = doc.createElement("subCategories");
+        LinkedHashMap<String, Element> subCategoriesMap = new LinkedHashMap<String, Element>();
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+            if (ratedTransaction.getWallet() == null) {
+                hasMinAmountRT = true;
+                Element subCategory = null;
+                if(subCategoriesMap.containsKey(ratedTransaction.getCode())) {
+                    subCategory = subCategoriesMap.get(ratedTransaction.getCode());
+                } else {
+                    subCategory = doc.createElement("subCategory");
+                    subCategory.setAttribute("label", ratedTransaction.getDescription());
+                    subCategory.setAttribute("code", ratedTransaction.getCode());
+                    subCategory.setAttribute("amountWithoutTax", round(ratedTransaction.getAmountWithoutTax(), rounding));
+                }
+                
+                Element line = doc.createElement("line");
+                Element lebel = doc.createElement("label");
+                Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
+                lebel.appendChild(lebelTxt);
+                
+                Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+                Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+                line.appendChild(lineUnitAmountWithoutTax);
+
+                Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+                Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithoutTax(), rounding));
+                lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
+                line.appendChild(lineAmountWithoutTax);
+
+                if (!enterprise) {
+                    Element lineAmountWithTax = doc.createElement("amountWithTax");
+                    Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(), rounding));
+                    lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+                    line.appendChild(lineAmountWithTax);
+                }
+
+                Element quantity = doc.createElement("quantity");
+                Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                quantity.appendChild(quantityTxt);
+                line.appendChild(quantity);
+                line.appendChild(lebel);
+                subCategory.appendChild(line);
+                
+                subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
+            }   
+        }
+
+        for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
+            subCategories.appendChild(entry.getValue());
+        }
+
+        if(hasMinAmountRT) {
+            Element category = doc.createElement("category");
+            category.setAttribute("label", "-");
+            category.setAttribute("code", "min_amount");
+            category.appendChild(subCategories);
+            categories.appendChild(category);
         }
     }
 

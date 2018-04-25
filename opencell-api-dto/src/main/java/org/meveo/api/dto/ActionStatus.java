@@ -4,11 +4,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.MeveoApiErrorCodeEnum;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import org.meveo.api.MeveoApiErrorCodeEnum;
 
 /**
  * Determine the status of the MEVEO API web service response.
@@ -32,7 +31,7 @@ public class ActionStatus {
     private MeveoApiErrorCodeEnum errorCode;
 
     /**
-     * A detailed error message if applicable.
+     * A detailed error message if applicable, can contain the entity id that was created.
      */
     @XmlElement(required = true)
     private String message;
@@ -94,10 +93,10 @@ public class ActionStatus {
         this.errorCode = errorCode;
     }
 
-    public String getjson(){
-        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \"" + message + "\"}";    
+    public String getjson() {
+        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \"" + message + "\"}";
     }
-    
+
     @Override
     public String toString() {
         return "ActionStatus [status=" + status + ", errorCode=" + errorCode + ", message=" + message + "]";

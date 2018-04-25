@@ -7,20 +7,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class DiscountPlanItemResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "DiscountPlanItemResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DiscountPlanItemResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 3515060888372691612L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3515060888372691612L;
 
-	private DiscountPlanItemDto discountPlanItem;
+    /** The discount plan item. */
+    private DiscountPlanItemDto discountPlanItem;
 
-	public DiscountPlanItemDto getDiscountPlanItem() {
-		return discountPlanItem;
-	}
+    /**
+     * Gets the discount plan item.
+     *
+     * @return the discount plan item
+     */
+    public DiscountPlanItemDto getDiscountPlanItem() {
+        return discountPlanItem;
+    }
 
-	public void setDiscountPlanItem(DiscountPlanItemDto discountPlanItem) {
-		this.discountPlanItem = discountPlanItem;
-	}
+    /**
+     * Sets the discount plan item.
+     *
+     * @param discountPlanItem the new discount plan item
+     */
+    public void setDiscountPlanItem(DiscountPlanItemDto discountPlanItem) {
+        this.discountPlanItem = discountPlanItem;
+    }
 
 }

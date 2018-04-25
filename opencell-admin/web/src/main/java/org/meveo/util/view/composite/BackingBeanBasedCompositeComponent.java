@@ -45,6 +45,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
     /**
      * Get backing bean attribute either from parent component (search panel, thats where it usually should be defined) or from searchField component attributes (same with
      * formPanel and formField).
+     * 
+     * @return Backing bean attribute
      */
     @SuppressWarnings("unchecked")
     public BaseBean<? extends IEntity> getBackingBeanFromParentOrCurrent() {
@@ -100,6 +102,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     /**
      * Helper method to get entity instance to query field definitions.
+     * 
+     * @return Entity instance
      */
     @SuppressWarnings("rawtypes")
     public Class getEntityClass() {
@@ -111,6 +115,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     /**
      * Helper method to get entity instance to query field definitions.
+     * 
+     * @return Entity instance
      */
     @SuppressWarnings("rawtypes")
     public Class getEntityClassFromEntity() {
@@ -123,6 +129,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
     /**
      * Return date pattern to use for rendered date/calendar fields. If time attribute was set to true then this methods returns date/time pattern, otherwise only date without time
      * pattern.
+     * 
+     * @return Date pattern
      */
     public String getDatePattern() {
         ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
@@ -594,6 +602,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
      * Add a new blank item to collection. Instantiate a new item based on parametized collection type.
      * 
      * @param values A collection of values
+     * @param itemClass The item to add
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addItemToCollection(Collection values, Class itemClass) {

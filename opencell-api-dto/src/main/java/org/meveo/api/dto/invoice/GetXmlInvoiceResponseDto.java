@@ -6,43 +6,49 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
-
+/**
+ * The Class GetXmlInvoiceResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetXmlInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetXmlInvoiceResponseDto extends BaseResponse{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String xmlContent;
-	
-	public GetXmlInvoiceResponseDto(){
-		
-	}
+public class GetXmlInvoiceResponseDto extends BaseResponse {
+    
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+    
+    /** The xml content. */
+    private String xmlContent;
 
-	/**
-	 * @return the xmlContent
-	 */
-	public String getXmlContent() {
-		return xmlContent;
-	}
+    /**
+     * Instantiates a new gets the xml invoice response dto.
+     */
+    public GetXmlInvoiceResponseDto() {
 
-	/**
-	 * @param xmlContent the xmlContent to set
-	 */
-	public void setXmlContent(String xmlContent) {
-		this.xmlContent = xmlContent;
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "GetXmlInvoiceResponseDto [xmlContent=" + xmlContent + "]";
-	}
+    /**
+     * Gets the xml content.
+     *
+     * @return the xmlContent
+     */
+    public String getXmlContent() {
+        return xmlContent;
+    }
 
-	
-	
-	
+    /**
+     * Sets the xml content.
+     *
+     * @param xmlContent the xmlContent to set
+     */
+    public void setXmlContent(String xmlContent) {
+        this.xmlContent = xmlContent;
+    }
+
+    @Override
+    public String toString() {
+        return "GetXmlInvoiceResponseDto [xmlContent=" + xmlContent + "]";
+    }
+
 }

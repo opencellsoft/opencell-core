@@ -18,12 +18,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -41,7 +40,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_report_extract_seq"), })
 @NamedQueries(@NamedQuery(name = "ReportExtract.listIds", query = "select re.id from ReportExtract re where re.disabled=false"))
-public class ReportExtract extends BusinessEntity {
+public class ReportExtract extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 879663935811446632L;
 
@@ -61,8 +60,7 @@ public class ReportExtract extends BusinessEntity {
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    @Column(name = "sql_query", length = 2000)
-    @Size(max = 2000)
+    @Column(name = "sql_query", columnDefinition = "TEXT")
     private String sqlQuery;
 
     @ElementCollection(fetch = FetchType.EAGER)

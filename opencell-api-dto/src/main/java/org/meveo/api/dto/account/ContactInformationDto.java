@@ -8,65 +8,122 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.model.shared.ContactInformation;
 
 /**
+ * The Class ContactInformationDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContactInformationDto implements Serializable {
 
-	private static final long serialVersionUID = -5401291437074205081L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -5401291437074205081L;
 
-	protected String email;
-	protected String phone;
-	protected String mobile;
-	protected String fax;
+    /** The email. */
+    protected String email;
+    
+    /** The phone. */
+    protected String phone;
+    
+    /** The mobile. */
+    protected String mobile;
+    
+    /** The fax. */
+    protected String fax;
 
-	public ContactInformationDto() {
+    /**
+     * Instantiates a new contact information dto.
+     */
+    public ContactInformationDto() {
 
-	}
+    }
 
-	public ContactInformationDto(ContactInformation e) {
-		email = e.getEmail();
-		phone = e.getPhone();
-		mobile = e.getMobile();
-		fax = e.getFax();
-	}
+    /**
+     * Instantiates a new contact information dto.
+     *
+     * @param contactInformation the contactInformation entity
+     */
+    public ContactInformationDto(ContactInformation contactInformation) {
+        email = contactInformation.getEmail();
+        phone = contactInformation.getPhone();
+        mobile = contactInformation.getMobile();
+        fax = contactInformation.getFax();
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * Gets the email.
+     *
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * Sets the email.
+     *
+     * @param email the new email
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    /**
+     * Gets the phone.
+     *
+     * @return the phone
+     */
+    public String getPhone() {
+        return phone;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    /**
+     * Sets the phone.
+     *
+     * @param phone the new phone
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public String getMobile() {
-		return mobile;
-	}
+    /**
+     * Gets the mobile.
+     *
+     * @return the mobile
+     */
+    public String getMobile() {
+        return mobile;
+    }
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    /**
+     * Sets the mobile.
+     *
+     * @param mobile the new mobile
+     */
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-	public String getFax() {
-		return fax;
-	}
+    /**
+     * Gets the fax.
+     *
+     * @return the fax
+     */
+    public String getFax() {
+        return fax;
+    }
 
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
+    /**
+     * Sets the fax.
+     *
+     * @param fax the new fax
+     */
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
-	@Override
-	public String toString() {
-		return "ContactInformationDto [email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax
-				+ "]";
-	}
+    @Override
+    public String toString() {
+        return "ContactInformationDto [email=" + email + ", phone=" + phone + ", mobile=" + mobile + ", fax=" + fax + "]";
+    }
 
 }

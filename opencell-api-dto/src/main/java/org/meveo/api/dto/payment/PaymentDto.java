@@ -30,211 +30,402 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.PaymentMethodEnum;
 
+/**
+ * The Class PaymentDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "Payment")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentDto extends BaseDto {
 
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	private String type;
-	private String description;
-	private PaymentMethodEnum paymentMethod;
-	private String occTemplateCode;
-	private BigDecimal amount;
-	private String customerAccountCode;
-	private String reference;
-	private String bankLot;
-	private Date depositDate;
-	private Date bankCollectionDate;
-	private Date dueDate;
-	private Date transactionDate;
-	private List<String> listOCCReferenceforMatching;
-	private boolean isToMatching;
+    /** The type. */
+    private String type;
+    
+    /** The description. */
+    private String description;
+    
+    /** The payment method. */
+    private PaymentMethodEnum paymentMethod;
+    
+    /** The occ template code. */
+    private String occTemplateCode;
+    
+    /** The amount. */
+    private BigDecimal amount;
+    
+    /** The customer account code. */
+    private String customerAccountCode;
+    
+    /** The reference. */
+    private String reference;
+    
+    /** The bank lot. */
+    private String bankLot;
+    
+    /** The deposit date. */
+    private Date depositDate;
+    
+    /** The bank collection date. */
+    private Date bankCollectionDate;
+    
+    /** The due date. */
+    private Date dueDate;
+    
+    /** The transaction date. */
+    private Date transactionDate;
+    
+    /** The list OCC referencefor matching. */
+    private List<String> listOCCReferenceforMatching;
+    
+    /** The is to matching. */
+    private boolean isToMatching;
+    
+    /** The payment order. */
     private String paymentOrder;
-    private BigDecimal fees = BigDecimal.ZERO; 
+    
+    /** The fees. */
+    private BigDecimal fees = BigDecimal.ZERO;
+    
+    /** The comment. */
     private String comment;
-	
-	private CustomFieldsDto customFields;
 
-	/**
-	 * @return the customFields
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
 
-	/**
-	 * @param customFields the customFields to set
-	 */
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    /**
+     * Gets the custom fields.
+     *
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public String getType() {
-		return type;
-	}
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    /**
+     * Gets the type.
+     *
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Sets the type.
+     *
+     * @param type the new type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public String getOccTemplateCode() {
-		return occTemplateCode;
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setOccTemplateCode(String occTemplateCode) {
-		this.occTemplateCode = occTemplateCode;
-	}
+    /**
+     * Gets the occ template code.
+     *
+     * @return the occ template code
+     */
+    public String getOccTemplateCode() {
+        return occTemplateCode;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    /**
+     * Sets the occ template code.
+     *
+     * @param occTemplateCode the new occ template code
+     */
+    public void setOccTemplateCode(String occTemplateCode) {
+        this.occTemplateCode = occTemplateCode;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    /**
+     * Gets the amount.
+     *
+     * @return the amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public String getCustomerAccountCode() {
-		return customerAccountCode;
-	}
+    /**
+     * Sets the amount.
+     *
+     * @param amount the new amount
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public void setCustomerAccountCode(String customerAccountCode) {
-		this.customerAccountCode = customerAccountCode;
-	}
+    /**
+     * Gets the customer account code.
+     *
+     * @return the customer account code
+     */
+    public String getCustomerAccountCode() {
+        return customerAccountCode;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    /**
+     * Sets the customer account code.
+     *
+     * @param customerAccountCode the new customer account code
+     */
+    public void setCustomerAccountCode(String customerAccountCode) {
+        this.customerAccountCode = customerAccountCode;
+    }
 
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+    /**
+     * Gets the reference.
+     *
+     * @return the reference
+     */
+    public String getReference() {
+        return reference;
+    }
 
-	public String getBankLot() {
-		return bankLot;
-	}
+    /**
+     * Sets the reference.
+     *
+     * @param reference the new reference
+     */
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
-	public void setBankLot(String bankLot) {
-		this.bankLot = bankLot;
-	}
+    /**
+     * Gets the bank lot.
+     *
+     * @return the bank lot
+     */
+    public String getBankLot() {
+        return bankLot;
+    }
 
-	public Date getDepositDate() {
-		return depositDate;
-	}
+    /**
+     * Sets the bank lot.
+     *
+     * @param bankLot the new bank lot
+     */
+    public void setBankLot(String bankLot) {
+        this.bankLot = bankLot;
+    }
 
-	public void setDepositDate(Date depositDate) {
-		this.depositDate = depositDate;
-	}
+    /**
+     * Gets the deposit date.
+     *
+     * @return the deposit date
+     */
+    public Date getDepositDate() {
+        return depositDate;
+    }
 
-	public Date getBankCollectionDate() {
-		return bankCollectionDate;
-	}
+    /**
+     * Sets the deposit date.
+     *
+     * @param depositDate the new deposit date
+     */
+    public void setDepositDate(Date depositDate) {
+        this.depositDate = depositDate;
+    }
 
-	public void setBankCollectionDate(Date bankCollectionDate) {
-		this.bankCollectionDate = bankCollectionDate;
-	}
+    /**
+     * Gets the bank collection date.
+     *
+     * @return the bank collection date
+     */
+    public Date getBankCollectionDate() {
+        return bankCollectionDate;
+    }
 
-	public Date getDueDate() {
-		return dueDate;
-	}
+    /**
+     * Sets the bank collection date.
+     *
+     * @param bankCollectionDate the new bank collection date
+     */
+    public void setBankCollectionDate(Date bankCollectionDate) {
+        this.bankCollectionDate = bankCollectionDate;
+    }
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    /**
+     * Gets the due date.
+     *
+     * @return the due date
+     */
+    public Date getDueDate() {
+        return dueDate;
+    }
 
-	public Date getTransactionDate() {
-		return transactionDate;
-	}
+    /**
+     * Sets the due date.
+     *
+     * @param dueDate the new due date
+     */
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
 
-	public void setTransactionDate(Date transactionDate) {
-		this.transactionDate = transactionDate;
-	}
+    /**
+     * Gets the transaction date.
+     *
+     * @return the transaction date
+     */
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
 
-	public List<String> getListOCCReferenceforMatching() {
-		return listOCCReferenceforMatching;
-	}
+    /**
+     * Sets the transaction date.
+     *
+     * @param transactionDate the new transaction date
+     */
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
 
-	public void setListOCCReferenceforMatching(List<String> listOCCReferenceforMatching) {
-		this.listOCCReferenceforMatching = listOCCReferenceforMatching;
-	}
+    /**
+     * Gets the list OCC referencefor matching.
+     *
+     * @return the list OCC referencefor matching
+     */
+    public List<String> getListOCCReferenceforMatching() {
+        return listOCCReferenceforMatching;
+    }
 
-	public boolean isToMatching() {
-		return isToMatching;
-	}
+    /**
+     * Sets the list OCC referencefor matching.
+     *
+     * @param listOCCReferenceforMatching the new list OCC referencefor matching
+     */
+    public void setListOCCReferenceforMatching(List<String> listOCCReferenceforMatching) {
+        this.listOCCReferenceforMatching = listOCCReferenceforMatching;
+    }
 
-	public void setToMatching(boolean isToMatching) {
-		this.isToMatching = isToMatching;
-	}
+    /**
+     * Checks if is to matching.
+     *
+     * @return true, if is to matching
+     */
+    public boolean isToMatching() {
+        return isToMatching;
+    }
 
-	public PaymentMethodEnum getPaymentMethod() {
-		return paymentMethod;
-	}
+    /**
+     * Sets the to matching.
+     *
+     * @param isToMatching the new to matching
+     */
+    public void setToMatching(boolean isToMatching) {
+        this.isToMatching = isToMatching;
+    }
 
-	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
-	
-	
+    /**
+     * Gets the payment method.
+     *
+     * @return the payment method
+     */
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
 
-	/**
-	 * @return the paymentOrder
-	 */
-	public String getPaymentOrder() {
-		return paymentOrder;
-	}
+    /**
+     * Sets the payment method.
+     *
+     * @param paymentMethod the new payment method
+     */
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-	/**
-	 * @param paymentOrder the paymentOrder to set
-	 */
-	public void setPaymentOrder(String paymentOrder) {
-		this.paymentOrder = paymentOrder;
-	}
+    /**
+     * Gets the payment order.
+     *
+     * @return the paymentOrder
+     */
+    public String getPaymentOrder() {
+        return paymentOrder;
+    }
 
-	/**
-	 * @return the fees
-	 */
-	public BigDecimal getFees() {
-		return fees;
-	}
+    /**
+     * Sets the payment order.
+     *
+     * @param paymentOrder the paymentOrder to set
+     */
+    public void setPaymentOrder(String paymentOrder) {
+        this.paymentOrder = paymentOrder;
+    }
 
-	/**
-	 * @param fees the fees to set
-	 */
-	public void setFees(BigDecimal fees) {
-		this.fees = fees;
-	}
+    /**
+     * Gets the fees.
+     *
+     * @return the fees
+     */
+    public BigDecimal getFees() {
+        return fees;
+    }
 
-	/**
-	 * @return the comment
-	 */
-	public String getComment() {
-		return comment;
-	}
+    /**
+     * Sets the fees.
+     *
+     * @param fees the fees to set
+     */
+    public void setFees(BigDecimal fees) {
+        this.fees = fees;
+    }
 
-	/**
-	 * @param comment the comment to set
-	 */
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    /**
+     * Gets the comment.
+     *
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "PaymentDto [type=" + type + ", description=" + description + ", paymentMethod=" + paymentMethod + ", occTemplateCode=" + occTemplateCode + ", amount=" + amount + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate=" + depositDate + ", bankCollectionDate=" + bankCollectionDate + ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching="
-				+ listOCCReferenceforMatching + ", isToMatching=" + isToMatching + ", paymentOrder=" + paymentOrder + ", fees=" + fees + ", comment=" + comment + ", customFields=" + customFields + "]";
-	}
+    /**
+     * Sets the comment.
+     *
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	
+    @Override
+    public String toString() {
+        return "PaymentDto [type=" + type + ", description=" + description + ", paymentMethod=" + paymentMethod + ", occTemplateCode=" + occTemplateCode + ", amount=" + amount
+                + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate=" + depositDate + ", bankCollectionDate="
+                + bankCollectionDate + ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching=" + listOCCReferenceforMatching
+                + ", isToMatching=" + isToMatching + ", paymentOrder=" + paymentOrder + ", fees=" + fees + ", comment=" + comment + ", customFields=" + customFields + "]";
+    }
 
 }

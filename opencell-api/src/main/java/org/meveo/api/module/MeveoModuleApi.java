@@ -29,6 +29,7 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
@@ -127,6 +128,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         }
     }
 
+    @Override
     public MeveoModule create(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
@@ -193,6 +195,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         return meveoModule;
     }
 
+    @Override
     public MeveoModule update(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
@@ -257,7 +260,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         return meveoModule;
     }
 
-    public void delete(String code) throws EntityDoesNotExistsException, BusinessException {
+    @Override
+    public void remove(String code) throws EntityDoesNotExistsException, BusinessException {
 
         MeveoModule meveoModule = meveoModuleService.findByCode(code);
         if (meveoModule == null) {
@@ -316,17 +320,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         return moduleDto;
     }
 
-    public MeveoModule createOrUpdate(MeveoModuleDto postData) throws MeveoApiException, BusinessException {
-        MeveoModule meveoModule = meveoModuleService.findByCode(postData.getCode());
-        if (meveoModule == null) {
-            // create
-            return create(postData);
-        } else {
-            // update
-            return update(postData);
-        }
-    }
-
     public MeveoModule install(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
@@ -370,6 +363,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             unpackAndInstallModuleItems(meveoModule, moduleDto);
 
             meveoModule.setInstalled(true);
+            meveoModule.setDisabled(false);
             meveoModule = meveoModuleService.update(meveoModule);
 
             if (moduleScript != null) {
@@ -555,12 +549,15 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                         meveoModule.addModuleItem(new MeveoModuleItem(((MeveoModuleDto) dto).getCode(), moduleClazz.getName(), null, null));
 
                     } else if (dto instanceof CustomFieldTemplateDto) {
+
                         customFieldTemplateApi.createOrUpdate((CustomFieldTemplateDto) dto, null);
+                        customFieldTemplateApi.enableOrDisable(((CustomFieldTemplateDto) dto).getCode(), ((CustomFieldTemplateDto) dto).getAppliesTo(), true);
                         meveoModule.addModuleItem(new MeveoModuleItem(((CustomFieldTemplateDto) dto).getCode(), CustomFieldTemplate.class.getName(),
                             ((CustomFieldTemplateDto) dto).getAppliesTo(), null));
 
                     } else if (dto instanceof EntityCustomActionDto) {
                         entityCustomActionApi.createOrUpdate((EntityCustomActionDto) dto, null);
+                        entityCustomActionApi.enableOrDisable(((EntityCustomActionDto) dto).getCode(), ((EntityCustomActionDto) dto).getAppliesTo(), true);
                         meveoModule.addModuleItem(
                             new MeveoModuleItem(((EntityCustomActionDto) dto).getCode(), EntityCustomAction.class.getName(), ((EntityCustomActionDto) dto).getAppliesTo(), null));
 
@@ -574,10 +571,13 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
                         if (entityClass.isAnnotationPresent(VersionedEntity.class)) {
                             ApiVersionedService apiService = getApiVersionedService(entityClass, true);
-                            apiService.createOrUpdate(dto);
+                            apiService.createOrUpdate((BusinessDto) dto);
+                            apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), (Date) FieldUtils.readField(dto, "validFrom", true),
+                                (Date) FieldUtils.readField(dto, "validTo", true), true);
                         } else {
                             ApiService apiService = getApiService(entityClass, true);
-                            apiService.createOrUpdate(dto);
+                            apiService.createOrUpdate((BusinessDto) dto);
+                            apiService.enableOrDisable((String) FieldUtils.readField(dto, "code", true), true);
                         }
 
                         DatePeriod validity = null;
@@ -796,7 +796,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private void businessProductModelToDto(BusinessProductModel bpm, BusinessProductModelDto dto) {
 
         if (bpm.getProductTemplate() != null) {
-            dto.setProductTemplate(new ProductTemplateDto(bpm.getProductTemplate(), entityToDtoConverter.getCustomFieldsDTO(bpm.getProductTemplate(), true), true));
+            dto.setProductTemplate(new ProductTemplateDto(bpm.getProductTemplate(), entityToDtoConverter.getCustomFieldsDTO(bpm.getProductTemplate(), true), false));
         }
     }
 

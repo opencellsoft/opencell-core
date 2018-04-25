@@ -8,147 +8,302 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.model.notification.InboundRequest;
 
 /**
+ * The Class InboundRequestDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "InboundRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InboundRequestDto extends BaseDto {
 
-	private static final long serialVersionUID = -3195747154300291876L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -3195747154300291876L;
 
-	private int contentLength;
-	private String contentType;
-	private String protocol;
-	private String scheme;
-	private String remoteAddr;
-	private int remotePort;
-	private String method;
-	private String authType;
-	private String pathInfo;
-	private String requestURI;
-	private String responseContentType;
-	private String responseEncoding;
+    /** The content length. */
+    private int contentLength;
+    
+    /** The content type. */
+    private String contentType;
+    
+    /** The protocol. */
+    private String protocol;
+    
+    /** The scheme. */
+    private String scheme;
+    
+    /** The remote addr. */
+    private String remoteAddr;
+    
+    /** The remote port. */
+    private int remotePort;
+    
+    /** The method. */
+    private String method;
+    
+    /** The auth type. */
+    private String authType;
+    
+    /** The path info. */
+    private String pathInfo;
+    
+    /** The request URI. */
+    private String requestURI;
+    
+    /** The response content type. */
+    private String responseContentType;
+    
+    /** The response encoding. */
+    private String responseEncoding;
 
-	public InboundRequestDto() {
+    /**
+     * Instantiates a new inbound request dto.
+     */
+    public InboundRequestDto() {
 
-	}
+    }
 
-	public InboundRequestDto(InboundRequest e) {
-		contentLength = e.getContentLength();
-		contentType = e.getContentType();
-		protocol = e.getProtocol();
-		scheme = e.getScheme();
-		remoteAddr = e.getRemoteAddr();
-		remotePort = e.getRemotePort();
-		method = e.getMethod();
-		authType = e.getAuthType();
-		pathInfo = e.getPathInfo();
-		requestURI = e.getRequestURI();
-		responseContentType = e.getResponseContentType();
-		responseEncoding = e.getResponseEncoding();
-	}
+    /**
+     * Instantiates a new inbound request dto.
+     *
+     * @param inboundRequest the InboundRequest entity
+     */
+    public InboundRequestDto(InboundRequest inboundRequest) {
+        contentLength = inboundRequest.getContentLength();
+        contentType = inboundRequest.getContentType();
+        protocol = inboundRequest.getProtocol();
+        scheme = inboundRequest.getScheme();
+        remoteAddr = inboundRequest.getRemoteAddr();
+        remotePort = inboundRequest.getRemotePort();
+        method = inboundRequest.getMethod();
+        authType = inboundRequest.getAuthType();
+        pathInfo = inboundRequest.getPathInfo();
+        requestURI = inboundRequest.getRequestURI();
+        responseContentType = inboundRequest.getResponseContentType();
+        responseEncoding = inboundRequest.getResponseEncoding();
+    }
 
-	public int getContentLength() {
-		return contentLength;
-	}
+    /**
+     * Gets the content length.
+     *
+     * @return the content length
+     */
+    public int getContentLength() {
+        return contentLength;
+    }
 
-	public void setContentLength(int contentLength) {
-		this.contentLength = contentLength;
-	}
+    /**
+     * Sets the content length.
+     *
+     * @param contentLength the new content length
+     */
+    public void setContentLength(int contentLength) {
+        this.contentLength = contentLength;
+    }
 
-	public String getContentType() {
-		return contentType;
-	}
+    /**
+     * Gets the content type.
+     *
+     * @return the content type
+     */
+    public String getContentType() {
+        return contentType;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    /**
+     * Sets the content type.
+     *
+     * @param contentType the new content type
+     */
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	public String getProtocol() {
-		return protocol;
-	}
+    /**
+     * Gets the protocol.
+     *
+     * @return the protocol
+     */
+    public String getProtocol() {
+        return protocol;
+    }
 
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+    /**
+     * Sets the protocol.
+     *
+     * @param protocol the new protocol
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
-	public String getScheme() {
-		return scheme;
-	}
+    /**
+     * Gets the scheme.
+     *
+     * @return the scheme
+     */
+    public String getScheme() {
+        return scheme;
+    }
 
-	public void setScheme(String scheme) {
-		this.scheme = scheme;
-	}
+    /**
+     * Sets the scheme.
+     *
+     * @param scheme the new scheme
+     */
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
 
-	public String getRemoteAddr() {
-		return remoteAddr;
-	}
+    /**
+     * Gets the remote addr.
+     *
+     * @return the remote addr
+     */
+    public String getRemoteAddr() {
+        return remoteAddr;
+    }
 
-	public void setRemoteAddr(String remoteAddr) {
-		this.remoteAddr = remoteAddr;
-	}
+    /**
+     * Sets the remote addr.
+     *
+     * @param remoteAddr the new remote addr
+     */
+    public void setRemoteAddr(String remoteAddr) {
+        this.remoteAddr = remoteAddr;
+    }
 
-	public int getRemotePort() {
-		return remotePort;
-	}
+    /**
+     * Gets the remote port.
+     *
+     * @return the remote port
+     */
+    public int getRemotePort() {
+        return remotePort;
+    }
 
-	public void setRemotePort(int remotePort) {
-		this.remotePort = remotePort;
-	}
+    /**
+     * Sets the remote port.
+     *
+     * @param remotePort the new remote port
+     */
+    public void setRemotePort(int remotePort) {
+        this.remotePort = remotePort;
+    }
 
-	public String getMethod() {
-		return method;
-	}
+    /**
+     * Gets the method.
+     *
+     * @return the method
+     */
+    public String getMethod() {
+        return method;
+    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    /**
+     * Sets the method.
+     *
+     * @param method the new method
+     */
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-	public String getAuthType() {
-		return authType;
-	}
+    /**
+     * Gets the auth type.
+     *
+     * @return the auth type
+     */
+    public String getAuthType() {
+        return authType;
+    }
 
-	public void setAuthType(String authType) {
-		this.authType = authType;
-	}
+    /**
+     * Sets the auth type.
+     *
+     * @param authType the new auth type
+     */
+    public void setAuthType(String authType) {
+        this.authType = authType;
+    }
 
-	public String getPathInfo() {
-		return pathInfo;
-	}
+    /**
+     * Gets the path info.
+     *
+     * @return the path info
+     */
+    public String getPathInfo() {
+        return pathInfo;
+    }
 
-	public void setPathInfo(String pathInfo) {
-		this.pathInfo = pathInfo;
-	}
+    /**
+     * Sets the path info.
+     *
+     * @param pathInfo the new path info
+     */
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
+    }
 
-	public String getRequestURI() {
-		return requestURI;
-	}
+    /**
+     * Gets the request URI.
+     *
+     * @return the request URI
+     */
+    public String getRequestURI() {
+        return requestURI;
+    }
 
-	public void setRequestURI(String requestURI) {
-		this.requestURI = requestURI;
-	}
+    /**
+     * Sets the request URI.
+     *
+     * @param requestURI the new request URI
+     */
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
+    }
 
-	public String getResponseContentType() {
-		return responseContentType;
-	}
+    /**
+     * Gets the response content type.
+     *
+     * @return the response content type
+     */
+    public String getResponseContentType() {
+        return responseContentType;
+    }
 
-	public void setResponseContentType(String responseContentType) {
-		this.responseContentType = responseContentType;
-	}
+    /**
+     * Sets the response content type.
+     *
+     * @param responseContentType the new response content type
+     */
+    public void setResponseContentType(String responseContentType) {
+        this.responseContentType = responseContentType;
+    }
 
-	public String getResponseEncoding() {
-		return responseEncoding;
-	}
+    /**
+     * Gets the response encoding.
+     *
+     * @return the response encoding
+     */
+    public String getResponseEncoding() {
+        return responseEncoding;
+    }
 
-	public void setResponseEncoding(String responseEncoding) {
-		this.responseEncoding = responseEncoding;
-	}
+    /**
+     * Sets the response encoding.
+     *
+     * @param responseEncoding the new response encoding
+     */
+    public void setResponseEncoding(String responseEncoding) {
+        this.responseEncoding = responseEncoding;
+    }
 
-	@Override
-	public String toString() {
-		return "InboundRequestDto [contentLength=" + contentLength + ", contentType=" + contentType + ", protocol=" + protocol + ", scheme=" + scheme + ", remoteAddr="
-				+ remoteAddr + ", remotePort=" + remotePort + ", method=" + method + ", authType=" + authType + ", pathInfo=" + pathInfo + ", requestURI=" + requestURI
-				+ ", responseContentType=" + responseContentType + ", responseEncoding=" + responseEncoding + "]";
-	}
+
+    @Override
+    public String toString() {
+        return "InboundRequestDto [contentLength=" + contentLength + ", contentType=" + contentType + ", protocol=" + protocol + ", scheme=" + scheme + ", remoteAddr=" + remoteAddr
+                + ", remotePort=" + remotePort + ", method=" + method + ", authType=" + authType + ", pathInfo=" + pathInfo + ", requestURI=" + requestURI
+                + ", responseContentType=" + responseContentType + ", responseEncoding=" + responseEncoding + "]";
+    }
 
 }

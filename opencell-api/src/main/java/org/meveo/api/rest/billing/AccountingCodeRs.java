@@ -43,7 +43,7 @@ public interface AccountingCodeRs extends IBaseRs {
     ActionStatus create(AccountingCodeDto postData);
 
     /**
-     * Updates AccountingCode. An existing AccountingCode is search using the code field. 
+     * Updates AccountingCode. An existing AccountingCode is search using the code field.
      * 
      * @param postData object representation of AccountingCode
      * @return request processing status
@@ -106,4 +106,23 @@ public interface AccountingCodeRs extends IBaseRs {
     @Path("/{accountingCode}")
     ActionStatus remove(@PathParam("accountingCode") String accountingCode);
 
+    /**
+     * Enable a Accounting code with a given code
+     * 
+     * @param code Accounting code code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Accounting code with a given code
+     * 
+     * @param code Accounting code code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

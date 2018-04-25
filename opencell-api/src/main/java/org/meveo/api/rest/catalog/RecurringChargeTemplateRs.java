@@ -76,4 +76,24 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
+
+    /**
+     * Enable a Recurring charge template with a given code
+     * 
+     * @param code Recurring charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Recurring charge template with a given code
+     * 
+     * @param code Recurring charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

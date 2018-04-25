@@ -208,9 +208,9 @@ public class UserAgentInfo {
 	}
 
 	/**
-	 * Is the device is any Mobile Device (in list of course)
+	 * Is the device is any Mobile Device (in list of course).
 	 * 
-	 * @return
+	 * @return Indicate if it is a mobile device
 	 */
 	public boolean isMobileDevice() {
 		if (isIphone || isAndroidPhone || isTierTablet || isTierIphone || isTierRichCss || isTierGenericMobile)

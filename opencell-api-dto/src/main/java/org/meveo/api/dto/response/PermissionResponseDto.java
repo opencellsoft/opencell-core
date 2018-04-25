@@ -6,24 +6,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.PermissionsDto;
 
+/**
+ * The Class PermissionResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "SellerResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PermissionResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	private PermissionsDto permissionsDto = new PermissionsDto();
+    /** The permissions dto. */
+    private PermissionsDto permissionsDto = new PermissionsDto();
 
-	public PermissionsDto getPermissionsDto() {
-		return permissionsDto;
-	}
+    /**
+     * Gets the permissions dto.
+     *
+     * @return the permissions dto
+     */
+    public PermissionsDto getPermissionsDto() {
+        return permissionsDto;
+    }
 
-	public void setPermissionsDto(PermissionsDto permissionsDto) {
-		this.permissionsDto = permissionsDto;
-	}
+    /**
+     * Sets the permissions dto.
+     *
+     * @param permissionsDto the new permissions dto
+     */
+    public void setPermissionsDto(PermissionsDto permissionsDto) {
+        this.permissionsDto = permissionsDto;
+    }
 
-	@Override
-	public String toString() {
-		return "PermissionResponseDto [permissionsDto=" + permissionsDto + "]";
-	}
+    @Override
+    public String toString() {
+        return "PermissionResponseDto [permissionsDto=" + permissionsDto + "]";
+    }
 }

@@ -53,8 +53,8 @@ public interface SubscriptionWs extends IBaseWs {
     /**
      * List subscriptions by a user account. Deprecated in v.4.7.2. Use listAll() instead.
      * 
-     * @param userAccountCode
-     * @return
+     * @param userAccountCode The user account code
+     * @return Subscriptions response dto
      */
     @Deprecated
     @WebMethod
@@ -121,7 +121,7 @@ public interface SubscriptionWs extends IBaseWs {
      * @param invoiceNumber - invoice number, can be null
      * @param invoiceTypeCode - can be null
      * @param orderCode - can be null
-     * @return
+     * @return The due date delay information
      */
     @WebMethod
     GetDueDateDelayResponseDto findDueDateDelay(@WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "invoiceNumber") String invoiceNumber,

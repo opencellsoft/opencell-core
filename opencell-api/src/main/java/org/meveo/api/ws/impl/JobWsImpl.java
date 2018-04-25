@@ -56,13 +56,13 @@ public class JobWsImpl extends BaseWs implements JobWs {
     public ActionStatus stop(String jobInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-             jobApi.stopJob(jobInstanceCode);           
+            jobApi.stopJob(jobInstanceCode);
         } catch (Exception e) {
             processException(e, result);
         }
         return result;
     }
-    
+
     @Override
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -203,5 +203,55 @@ public class JobWsImpl extends BaseWs implements JobWs {
         return result;
     }
 
+    @Override
+    public ActionStatus enableJobInstance(String code) {
+        ActionStatus result = new ActionStatus();
 
+        try {
+            jobInstanceApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableJobInstance(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            jobInstanceApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableTimer(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            timerEntityApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableTimer(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            timerEntityApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

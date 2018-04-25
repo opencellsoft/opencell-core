@@ -512,7 +512,7 @@ public class FilterService extends BusinessService<Filter> {
             throw new BusinessException("Target entity " + clazzName + " is invalid");
         }
         
-        filteredQueryBuilder = new FilteredQueryBuilder(filter);
+        filteredQueryBuilder = new FilteredQueryBuilder(retrieveIfNotManaged(filter));
         
         return filteredQueryBuilder;
     }

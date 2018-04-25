@@ -87,4 +87,30 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
 
         return result;
     }
+
+    @Override
+    public ActionStatus enable(String customFieldTemplateCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customFieldTemplateApi.enableOrDisable(customFieldTemplateCode, appliesTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String customFieldTemplateCode, String appliesTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customFieldTemplateApi.enableOrDisable(customFieldTemplateCode, appliesTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

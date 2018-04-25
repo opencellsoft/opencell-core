@@ -126,4 +126,28 @@ public interface OfferTemplateRs extends IBaseRs {
     @POST
     ActionStatus createOrUpdate(OfferTemplateDto postData);
 
+    /**
+     * Enable a Offer template with a given code
+     * 
+     * @param code Offer template code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+
+    /**
+     * Disable a Offer template with a given code
+     * 
+     * @param code Offer template code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+
 }

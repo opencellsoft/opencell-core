@@ -84,16 +84,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         return productTemplateDto;
     }
 
-    public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto) throws MeveoApiException, BusinessException {
-        ProductTemplate productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), productTemplateDto.getValidFrom(), productTemplateDto.getValidTo());
-
-        if (productTemplate == null) {
-            return create(productTemplateDto);
-        } else {
-            return update(productTemplateDto);
-        }
-    }
-
+    @Override
     public ProductTemplate create(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -134,6 +125,10 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
+        if (postData.isDisabled() != null) {
+            productTemplate.setDisabled(postData.isDisabled());
+        }
 
         try {
             saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
@@ -196,6 +191,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         return productTemplate;
     }
 
+    @Override
     public ProductTemplate update(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -227,6 +223,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
         try {
             saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -287,24 +284,6 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate = productTemplateService.update(productTemplate);
 
         return productTemplate;
-    }
-
-    public void remove(String code, Date validFrom, Date validTo) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("productTemplate code");
-            handleMissingParameters();
-        }
-
-        ProductTemplate productTemplate = productTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
-        if (productTemplate == null) {
-            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
-            throw new EntityDoesNotExistsException(ProductTemplate.class,
-                code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
-        }
-
-        // deleteImage(productTemplate);
-        productTemplateService.remove(productTemplate);
     }
 
     /**

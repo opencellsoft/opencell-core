@@ -8,26 +8,40 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class WalletsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WalletsDto implements Serializable {
 
-	private static final long serialVersionUID = 2202950461799059524L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 2202950461799059524L;
 
-	private List<String> wallet = new ArrayList<String>();
+    /** The wallet. */
+    private List<String> wallet = new ArrayList<String>();
 
-	public List<String> getWallet() {
-		return wallet;
-	}
+    /**
+     * Gets the wallet.
+     *
+     * @return the wallet
+     */
+    public List<String> getWallet() {
+        return wallet;
+    }
 
-	public void setWallet(List<String> wallet) {
-		this.wallet = wallet;
-	}
+    /**
+     * Sets the wallet.
+     *
+     * @param wallet the new wallet
+     */
+    public void setWallet(List<String> wallet) {
+        this.wallet = wallet;
+    }
 
-	@Override
-	public String toString() {
-		return "WalletsDto [wallet=" + wallet + "]";
-	}
 
+    @Override
+    public String toString() {
+        return "WalletsDto [wallet=" + wallet + "]";
+    }
 }

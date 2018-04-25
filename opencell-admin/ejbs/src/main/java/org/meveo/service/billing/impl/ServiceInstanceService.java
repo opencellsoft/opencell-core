@@ -143,7 +143,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
      * @param code the service template code
-     * @param subscription the subscription entity
+     * @param subscriptionCode the subscription entity
      * @param statuses service instance statuses
      * @return the ServiceInstance list found
      */

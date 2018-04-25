@@ -42,7 +42,6 @@ import javax.persistence.Query;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -59,16 +58,18 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEnable;
 import org.meveo.model.IEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
@@ -254,9 +255,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Override
     public E disable(E entity) throws BusinessException {
-        if (entity instanceof EnableEntity && ((EnableEntity) entity).isActive()) {
+        if (entity instanceof IEnable && ((IEnable) entity).isActive()) {
             log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-            ((EnableEntity) entity).setDisabled(true);
+            ((IEnable) entity).setDisabled(true);
             if (entity instanceof IAuditable) {
                 ((IAuditable) entity).updateAudit(currentUser);
             }
@@ -283,9 +284,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Override
     public E enable(E entity) throws BusinessException {
-        if (entity instanceof EnableEntity && ((EnableEntity) entity).isDisabled()) {
+        if (entity instanceof IEnable && ((IEnable) entity).isDisabled()) {
             log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-            ((EnableEntity) entity).setDisabled(false);
+            ((IEnable) entity).setDisabled(false);
             if (entity instanceof IAuditable) {
                 ((IAuditable) entity).updateAudit(currentUser);
             }
@@ -360,6 +361,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E update(E entity) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
+
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
         }
@@ -380,12 +385,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // partially, as entity itself does not have Custom field values
         if (entity instanceof BusinessCFEntity) {
             elasticClient.partialUpdate((BusinessEntity) entity);
-
-        } else if (entity instanceof BusinessEntity) {
-            elasticClient.createOrFullUpdate((BusinessEntity) entity);
-
-            // validate code
-            validateCode((BusinessEntity) entity);
+        } else if (entity instanceof ISearchable) {
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
@@ -393,10 +394,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entity;
     }
 
-    private boolean validateCode(BusinessEntity entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-            throw new BusinessException("Invalid characters found in entity code.");
-        }
+    private boolean validateCode(ISearchable entity) throws BusinessException {
+       // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+         //   throw new BusinessException("Invalid characters found in entity code.");
+       // }
 
         return true;
     }
@@ -406,7 +407,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        // log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+        log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
@@ -425,19 +430,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.createOrFullUpdate((BusinessEntity) entity);
-
-            // validate code
-            validateCode((BusinessEntity) entity);
+        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
     }
 
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#list()
-     */
     @Override
     public List<E> list() {
         return list((Boolean) null);
@@ -452,7 +451,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public List<E> list(Boolean active) {
         final Class<? extends E> entityClass = getEntityClass();
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (active != null && EnableEntity.class.isAssignableFrom(entityClass)) {
+        if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
         }
         Query query = queryBuilder.getQuery(getEntityManager());
@@ -469,7 +468,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public List<E> findByCodeLike(String wildcode) {
         final Class<? extends E> entityClass = getEntityClass();
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (EnableEntity.class.isAssignableFrom(entityClass)) {
+        if (IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", false);
         }
         queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
@@ -1073,13 +1072,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return emfForJobs;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
         Session session = getEntityManager().unwrap(Session.class);
         SQLQuery q = session.createSQLQuery(query);
 
-        q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+        q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {

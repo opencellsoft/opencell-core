@@ -36,101 +36,83 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class WFTransitionService extends PersistenceService<WFTransition> {
-	
-	@Inject
-	private WFActionService wfActionService;
 
-	public List<WFTransition> listByFromStatus(String fromStatus ,Workflow workflow){
-		if("*".equals(fromStatus)){
-			return workflow.getTransitions();
-		}
-		 List<WFTransition> wfTransitions =  (List<WFTransition>) getEntityManager()
- 				.createNamedQuery("WFTransition.listByFromStatus", WFTransition.class)
- 				.setParameter("fromStatusValue", fromStatus)
- 				.setParameter("workflowValue", workflow)
- 				.getResultList();
-		 return wfTransitions;
-	}
+    @Inject
+    private WFActionService wfActionService;
+
+    public List<WFTransition> listByFromStatus(String fromStatus, Workflow workflow) {
+        if ("*".equals(fromStatus)) {
+            return workflow.getTransitions();
+        }
+        List<WFTransition> wfTransitions = (List<WFTransition>) getEntityManager().createNamedQuery("WFTransition.listByFromStatus", WFTransition.class)
+            .setParameter("fromStatusValue", fromStatus).setParameter("workflowValue", workflow).getResultList();
+        return wfTransitions;
+    }
 
     public WFTransition findWFTransitionByUUID(String uuid) {
         WFTransition wfTransition = null;
         try {
-            wfTransition = (WFTransition) getEntityManager()
-                    .createQuery(
-                            "from "
-                                    + WFTransition.class
-                                    .getSimpleName()
-                                    + " where uuid=:uuid ")
-                    .setParameter("uuid", uuid)
-                    
-                    .getSingleResult();
+            wfTransition = (WFTransition) getEntityManager().createQuery("from " + WFTransition.class.getSimpleName() + " where uuid=:uuid ").setParameter("uuid", uuid)
+                .getSingleResult();
         } catch (NoResultException e) {
-            log.error("failed to find WFTransition", e);
+            return null;
         }
         return wfTransition;
     }
 
     @SuppressWarnings("unchecked")
-	public List<WFTransition> listWFTransitionByStatusWorkFlow(String fromStatus, String toStatus, Workflow workflow){
-        List<WFTransition> wfTransitions =  ((List<WFTransition>) getEntityManager()
-                .createQuery(
-                        "from "
-                                + WFTransition.class
-                                .getSimpleName()
-                                + " where fromStatus=:fromStatus and toStatus=:toStatus and workflow=:workflow order by priority ASC")
-                .setParameter("fromStatus", fromStatus)
-                .setParameter("toStatus", toStatus)
-                .setParameter("workflow", workflow)
-                
-                .getResultList());
+    public List<WFTransition> listWFTransitionByStatusWorkFlow(String fromStatus, String toStatus, Workflow workflow) {
+        List<WFTransition> wfTransitions = ((List<WFTransition>) getEntityManager()
+            .createQuery("from " + WFTransition.class.getSimpleName() + " where fromStatus=:fromStatus and toStatus=:toStatus and workflow=:workflow order by priority ASC")
+            .setParameter("fromStatus", fromStatus).setParameter("toStatus", toStatus).setParameter("workflow", workflow).getResultList());
         return wfTransitions;
     }
-    
-	public synchronized WFTransition duplicate(WFTransition entity, Workflow workflow) throws BusinessException {
-		entity = refreshOrRetrieve(entity);
-		
-		if (workflow != null) {
-			entity.setWorkflow(workflow);
-		}
 
-		entity.getWfActions().size();
-		entity.getWfDecisionRules().size();
+    public synchronized WFTransition duplicate(WFTransition entity, Workflow workflow) throws BusinessException {
+        entity = refreshOrRetrieve(entity);
 
-		// Detach and clear ids of entity and related entities
-		detach(entity);
-		entity.setId(null);
-		entity.clearUuid();
+        if (workflow != null) {
+            entity.setWorkflow(workflow);
+        }
 
-		List<WFAction> wfActions = entity.getWfActions();
-		entity.setWfActions(new ArrayList<WFAction>());
+        entity.getWfActions().size();
+        entity.getWfDecisionRules().size();
 
-		Set<WFDecisionRule> wfDecisionRules = entity.getWfDecisionRules();
-		entity.setWfDecisionRules(new HashSet<WFDecisionRule>());
+        // Detach and clear ids of entity and related entities
+        detach(entity);
+        entity.setId(null);
+        entity.clearUuid();
 
-		create(entity);
-		
-		workflow.getTransitions().add(entity);
-		
-		if (wfActions != null) {
-			for (WFAction wfAction : wfActions) {
-				wfActionService.detach(wfAction);
-				wfAction.setId(null);
-				wfAction.clearUuid();
-				wfActionService.create(wfAction);
+        List<WFAction> wfActions = entity.getWfActions();
+        entity.setWfActions(new ArrayList<WFAction>());
 
-				entity.getWfActions().add(wfAction);
-			}
-		}
+        Set<WFDecisionRule> wfDecisionRules = entity.getWfDecisionRules();
+        entity.setWfDecisionRules(new HashSet<WFDecisionRule>());
 
-		if (wfDecisionRules != null) {
-			for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
-				entity.getWfDecisionRules().add(wfDecisionRule);
-			}
-		}
+        create(entity);
 
-		update(entity);
+        workflow.getTransitions().add(entity);
 
-		return entity;
-	}
+        if (wfActions != null) {
+            for (WFAction wfAction : wfActions) {
+                wfActionService.detach(wfAction);
+                wfAction.setId(null);
+                wfAction.clearUuid();
+                wfActionService.create(wfAction);
+
+                entity.getWfActions().add(wfAction);
+            }
+        }
+
+        if (wfDecisionRules != null) {
+            for (WFDecisionRule wfDecisionRule : wfDecisionRules) {
+                entity.getWfDecisionRules().add(wfDecisionRule);
+            }
+        }
+
+        entity = update(entity);
+
+        return entity;
+    }
 
 }

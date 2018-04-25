@@ -16,7 +16,7 @@ import org.meveo.api.dto.catalog.BusinessProductModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
-import org.meveo.api.dto.catalog.DigitalResourcesDto;
+import org.meveo.api.dto.catalog.DigitalResourceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -82,6 +82,24 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     ActionStatus createOrUpdateCounterTemplate(@WebParam(name = "counterTemplate") CounterTemplateDto postData);
 
+    /**
+     * Enable a Counter template by its code
+     * 
+     * @param code Counter template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableCounterTemplate(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Counter template by its code
+     * 
+     * @param code Counter template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableCounterTemplate(@WebParam(name = "code") String code);
+
     // charges
 
     @WebMethod
@@ -102,6 +120,24 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     public ActionStatus createOrUpdateRecurringChargeTemplate(@WebParam(name = "recurringChargeTemplate") RecurringChargeTemplateDto postData);
 
+    /**
+     * Enable a Recurring charge template by its code
+     * 
+     * @param code Recurring charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableRecurringChargeTemplate(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Recurring charge template by its code
+     * 
+     * @param code Recurring charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableRecurringChargeTemplate(@WebParam(name = "code") String code);
+
     @WebMethod
     public ActionStatus createOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
@@ -121,6 +157,24 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     public ActionStatus removeOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
+    /**
+     * Enable a One shot charge template by its code
+     * 
+     * @param code One shot charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableOneShotChargeTemplate(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a One shot charge template by its code
+     * 
+     * @param code One shot charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableOneShotChargeTemplate(@WebParam(name = "code") String code);
+
     @WebMethod
     public ActionStatus createUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
 
@@ -135,6 +189,24 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     public ActionStatus createOrUpdateUsageChargeTemplate(@WebParam(name = "usageChargeTemplate") UsageChargeTemplateDto postData);
+
+    /**
+     * Enable a Usage charge template by its code
+     * 
+     * @param code Usage charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableUsageChargeTemplate(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Usage charge template by its code
+     * 
+     * @param code Usage charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableUsageChargeTemplate(@WebParam(name = "code") String code);
 
     // service
 
@@ -152,6 +224,24 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateServiceTemplate(@WebParam(name = "serviceTemplate") ServiceTemplateDto postData);
+
+    /**
+     * Enable a Service template by its code
+     * 
+     * @param code Service template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableServiceTemplate(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Service template by its code
+     * 
+     * @param code Service template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableServiceTemplate(@WebParam(name = "code") String code);
 
     // offer
 
@@ -186,6 +276,28 @@ public interface CatalogWs extends IBaseWs {
     GetListOfferTemplateResponseDto listOfferTemplate(@Deprecated @WebParam(name = "offerTemplateCode") String code, @Deprecated @WebParam(name = "validFrom") Date validFrom,
             @Deprecated @WebParam(name = "validTo") Date validTo, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
+    /**
+     * Enable a Offer template by its code and validity dates
+     * 
+     * @param code Offer template code
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableOfferTemplate(@WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+
+    /**
+     * Disable a Offer template by its code and validity dates
+     * 
+     * @param code Offer template code
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableOfferTemplate(@WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+
     // price plan
 
     @WebMethod
@@ -205,6 +317,24 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdatePricePlan(@WebParam(name = "pricePlan") PricePlanMatrixDto postData);
+
+    /**
+     * Enable a Price plan by its code
+     * 
+     * @param code Price plan code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enablePricePlan(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Price plan by its code
+     * 
+     * @param code Price plan code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disablePricePlan(@WebParam(name = "code") String code);
 
     // triggered Edr
 
@@ -246,6 +376,24 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     MeveoModuleDtosResponse listBusinessOfferModel();
 
+    /**
+     * Enable a Business offer model by its code
+     * 
+     * @param code Business offer model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableBusinessOfferModel(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Business offer model by its code
+     * 
+     * @param code Business offer model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableBusinessOfferModel(@WebParam(name = "code") String code);
+
     // som
     @WebMethod
     ActionStatus createBusinessServiceModel(@WebParam(name = "businessServiceModel") BusinessServiceModelDto postData);
@@ -267,7 +415,25 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     MeveoModuleDtosResponse listBusinessServiceModel();
-    
+
+    /**
+     * Enable a Business service model by its code
+     * 
+     * @param code Business service model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableBusinessServiceModel(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Business service model by its code
+     * 
+     * @param code Business service model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableBusinessServiceModel(@WebParam(name = "code") String code);
+
     // bpm
     @WebMethod
     ActionStatus createBusinessProductModel(@WebParam(name = "businessProductModel") BusinessProductModelDto postData);
@@ -290,20 +456,39 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     MeveoModuleDtosResponse listBusinessProductModel();
 
+    /**
+     * Enable a Business product model by its code
+     * 
+     * @param code Business product model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableBusinessProductModel(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Business product model by its code
+     * 
+     * @param code Business product model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableBusinessProductModel(@WebParam(name = "code") String code);
+
     // bom offer
 
     @WebMethod
     ActionStatus createOfferFromBOM(@WebParam(name = "bomOffer") BomOfferDto postData);
-    
-    //bsm service
-    
+
+    // bsm service
+
     @WebMethod
     ActionStatus createServiceFromBSM(@WebParam(name = "bsmService") BsmServiceDto postData);
-    
+
     // bpm
-    
+
     /**
      * Instantiates a product from a given BPM.
+     * 
      * @param postData post Data DTO
      * @return ActionStatus
      */
@@ -329,6 +514,24 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     GetDiscountPlansResponseDto listDiscountPlan();
 
+    /**
+     * Enable a Discount plan by its code
+     * 
+     * @param code Discount plan code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableDiscountPlan(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Discount plan by its code
+     * 
+     * @param code Discount plan code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableDiscountPlan(@WebParam(name = "code") String code);
+
     @WebMethod
     ActionStatus createOfferTemplateCategory(@WebParam(name = "offerTemplateCategory") OfferTemplateCategoryDto postData);
 
@@ -343,6 +546,24 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetOfferTemplateCategoryResponseDto findOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
+
+    /**
+     * Enable a Offer template category by its code
+     * 
+     * @param code Offer template category code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableOfferTemplateCategory(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Offer template category by its code
+     * 
+     * @param code Offer template category code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableOfferTemplateCategory(@WebParam(name = "code") String code);
 
     // discount Plan item
     @WebMethod
@@ -363,6 +584,24 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     DiscountPlanItemsResponseDto listDiscountPlanItem();
 
+    /**
+     * Enable a Discount plan item by its code
+     * 
+     * @param code Discount plan item code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableDiscountPlanItem(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Discount plan item by its code
+     * 
+     * @param code Discount plan item code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableDiscountPlanItem(@WebParam(name = "code") String code);
+
     @WebMethod
     ActionStatus createProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
 
@@ -374,6 +613,28 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+
+    /**
+     * Enable a Product template by its code and validity dates
+     * 
+     * @param code Product template code
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableProductTemplate(@WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+
+    /**
+     * Disable a Product template by its code and validity dates
+     * 
+     * @param code Product template code
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableProductTemplate(@WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
     /**
      * List product templates matching filtering and query criteria or code and validity dates.
@@ -396,19 +657,37 @@ public interface CatalogWs extends IBaseWs {
             @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
-    ActionStatus createDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+    ActionStatus createDigitalResource(@WebParam(name = "digitalResource") DigitalResourceDto postData);
 
     @WebMethod
-    ActionStatus updateDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+    ActionStatus updateDigitalResource(@WebParam(name = "digitalResource") DigitalResourceDto postData);
 
     @WebMethod
-    ActionStatus createOrUpdateDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
+    ActionStatus createOrUpdateDigitalResource(@WebParam(name = "digitalResource") DigitalResourceDto postData);
 
     @WebMethod
     ActionStatus removeDigitalResource(@WebParam(name = "digitalResourceCode") String code);
 
     @WebMethod
     GetDigitalResourceResponseDto findDigitalResource(@WebParam(name = "digitalResourceCode") String code);
+
+    /**
+     * Enable a Digital resource by its code
+     * 
+     * @param code Digital resource code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableDigitalResource(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Digital resource by its code
+     * 
+     * @param code Digital resource code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableDigitalResource(@WebParam(name = "code") String code);
 
     @WebMethod
     public ActionStatus createOrUpdateProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
@@ -424,6 +703,24 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     public ActionStatus removeProductChargeTemplate(@WebParam(name = "productChargeTemplateCode") String productChargeTemplateCode);
+
+    /**
+     * Enable a Product charge template by its code
+     * 
+     * @param code Product charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableProductChargeTemplate(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Product charge template by its code
+     * 
+     * @param code Product charge template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableProductChargeTemplate(@WebParam(name = "code") String code);
 
     @WebMethod
     ActionStatus createBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
@@ -457,6 +754,28 @@ public interface CatalogWs extends IBaseWs {
     GetListBundleTemplateResponseDto listBundleTemplate(@Deprecated @WebParam(name = "bundleTemplateCode") String code, @Deprecated @WebParam(name = "validFrom") Date validFrom,
             @Deprecated @WebParam(name = "validTo") Date validTo, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
+    /**
+     * Enable a Product bundle template by its code and validity dates
+     * 
+     * @param code Product bundle template code
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableBundleTemplate(@WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+
+    /**
+     * Disable a Product bundle template by its code and validity dates
+     * 
+     * @param code Product bundle template code
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableBundleTemplate(@WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+
     @WebMethod
     ActionStatus createChannel(@WebParam(name = "channel") ChannelDto postData);
 
@@ -472,4 +791,21 @@ public interface CatalogWs extends IBaseWs {
     @WebMethod
     GetChannelResponseDto findChannel(@WebParam(name = "channel") String code);
 
+    /**
+     * Enable a Channel by its code
+     * 
+     * @param code Channel code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableChannel(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Channel by its code
+     * 
+     * @param code Channel code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableChannel(@WebParam(name = "code") String code);
 }

@@ -24,30 +24,35 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 
+/**
+ * Tracks if entity is active or inactive
+ */
 @MappedSuperclass
 public class EnableEntity extends AuditableEntity implements IEnable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Type(type="numeric_boolean")
-	@Column(name = "disabled", nullable = false)	
-	@NotNull
-	private boolean disabled;
+    /**
+     * Is entity disabled
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "disabled", nullable = false)
+    @NotNull
+    private boolean disabled;
 
-	public boolean isDisabled() {
-		return disabled;
-	}
+    public boolean isDisabled() {
+        return disabled;
+    }
 
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
-	public boolean isActive() {
-		return !disabled;
-	}
+    public boolean isActive() {
+        return !disabled;
+    }
 
-	public void setActive(boolean active) {
-		setDisabled(!active);
-	}
-
+    public void setActive(boolean active) {
+        setDisabled(!active);
+    }
 }

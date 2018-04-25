@@ -401,20 +401,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = billingRun.getLastTransactionDate();
             invoiceDate = billingRun.getInvoiceDate();
         }
+        
+        lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
-                : billingAccount.getInvoicingThreshold();
-        if (invoicingThreshold != null) {
-            BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
-            if (invoiceAmount == null) {
-                throw new BusinessException("Cant compute invoice amount");
-            }
-            if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
-                throw new BusinessException("Invoice amount below the threshold");
-            }
-        }
-
         Invoice invoice = null;
         EntityManager em = getEntityManager();
         try {
@@ -1531,6 +1521,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return invoice;
     }
+    
+    /**
+     * @param invoice invoice to delete
+     * @throws BusinessException business exception 
+     */
+    public void deleteMinRT(Invoice invoice) throws BusinessException {
+        getEntityManager().createNamedQuery("RatedTransaction.deleteMinRT").setParameter("invoice", invoice).executeUpdate();
+    }
 
     /**
      * @param invoice invoice to cancel
@@ -1544,6 +1542,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
 
+        deleteMinRT(invoice);
         deleteInvoice(invoice);
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }

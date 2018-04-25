@@ -57,6 +57,7 @@
             <c:if test="#{!spinner and listValues == null}">
                 <p:inputText id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" size="#{size}" maxlength="#{maxlength}">
                     <f:converter converterId="#{converter}" />
+                    <p:keyFilter mask="num"/>
                     <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
                         <p:ajax update="#{listenerUpdate}" event="change" />
                     </c:if>

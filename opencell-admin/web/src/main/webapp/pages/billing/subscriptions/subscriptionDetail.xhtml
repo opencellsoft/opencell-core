@@ -5,7 +5,7 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -94,7 +94,7 @@
 			column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to"
 			selection="#{subscriptionBean.entity.offer}" width="1000"
 			lazy="false" dataModel="#{offerTemplateBean.listActiveByDate(subscriptionBean.entity.subscriptionDate)}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates"
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl"
             selectionListenerBean="#{subscriptionBean}"  selectionListenerMethod="copySubscriptionRenewalInfo">
 		</hftl:entityPopup>
 
@@ -375,9 +375,24 @@
 											required="true" popup="true" popupId="offerPopup"/>
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>
+										
+										<hftl:formField label="#{messages['offerTemplate.minimumLabel']} EL" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"  />  
+					                    <c:choose> 
+						                    <c:when test="${appProvider.entreprise}">
+										        <c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithoutTax']} EL" />
+										    </c:when>
+										    <c:otherwise>
+										    	<c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithTax']} EL" />
+										    </c:otherwise>
+										</c:choose>
+										<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" /> 		
+										
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" size="80" />
+										
+										
+										
                                         <h:panelGroup id="subscriptionAndRenewalDates">
                                             <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" />
                                             <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="subscriptionRenewal" childField="initialyActiveFor" size="2" minValue="1" componentWidth="15" disabled="#{subscriptionBean.entity.renewed}" listenerUpdate="subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate"/>
@@ -395,9 +410,10 @@
                                                 
                                             </h:panelGroup>
                                             <hftl:formField label="#{messages['subscription.endAgreementDate']}" field="endAgreementDate" />
-
+                                            
                                             <hftl:formField label="#{messages['serviceInstance.status']}" field="status" edit="false" newLine="true" doNotShowOnNew="true"/>
                                             <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" edit="false" doNotShowOnNew="true"/>
+                                            
                                             <hftl:formField label="#{messages['subscription.renewed']}" field="renewed" edit="false" rendered="#{subscriptionBean.entity.renewed}"/>
                                             <hftl:formField label="#{messages['subscription.renewalNotifiedDate']}" field="renewalNotifiedDate" edit="false" rendered="#{subscriptionBean.entity.renewalNotifiedDate != null}"/>
                                             <hftl:formField label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"

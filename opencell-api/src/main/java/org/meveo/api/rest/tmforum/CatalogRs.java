@@ -21,6 +21,7 @@ import org.meveo.api.dto.catalog.BpmProductDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 
 /**
@@ -32,7 +33,7 @@ import org.meveo.api.serialize.RestDateParam;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
-public interface CatalogRs {
+public interface CatalogRs extends IBaseRs {
 
     /**
      * Get a list of categories
@@ -63,14 +64,14 @@ public interface CatalogRs {
      */
     @GET
     @Path("/productOffering")
-	public Response findProductOfferings(@QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo, @Context UriInfo info);
+    public Response findProductOfferings(@QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo, @Context UriInfo info);
 
     /**
-     * Get details of a single Offer template and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.
+     * Get details of a single Product template and validity dates. If no validity dates are provided, an Product template valid on a current date will be returned.
      * 
      * @param id Product offering code
-     * @param validFrom Offer template validity range - from date
-     * @param validTo Offer template validity range - to date
+     * @param validFrom Product template validity range - from date
+     * @param validTo Product template validity range - to date
      * @param info Http request context
      * @return Single product offering
      */
@@ -112,21 +113,21 @@ public interface CatalogRs {
     @POST
     @Path("/createOfferFromBOM")
     public Response createOfferFromBOM(BomOfferDto postData);
-    
+
     /**
      * Create service from BSM definition
      * 
      * @param postData BSM service information
      * @return
-    */
-    
+     */
+
     @POST
     @Path("/createServiceFromBSM")
-    public Response createServiceFromBSM(BsmServiceDto postData); 
-    
+    public Response createServiceFromBSM(BsmServiceDto postData);
+
     @POST
     @Path("/createProductFromBPM")
-    public Response createProductFromBPM(BpmProductDto postData); 
+    public Response createProductFromBPM(BpmProductDto postData);
 
     /**
      * Get a single productTemplate by its code and validity dates. If no validity dates are provided, a product template valid on a current date will be deleted.
@@ -180,7 +181,8 @@ public interface CatalogRs {
      */
     @DELETE
     @Path("/productTemplate/{code}")
-    public Response removeProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+    public Response removeProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom,
+            @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
      * List all product templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered. If only validFrom is
@@ -195,6 +197,30 @@ public interface CatalogRs {
     @Path("/productTemplate/list")
     public Response listProductTemplate(@QueryParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
+
+    /**
+     * Enable a Product template with a given code
+     * 
+     * @param code Product template code
+     * @param validFrom Product template validity range - from date
+     * @param validTo Product template validity range - to date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/productTemplate/{code}/enable")
+    Response enableProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+
+    /**
+     * Disable a Product template with a given code
+     * 
+     * @param code Product template code
+     * @param validFrom Product template validity range - from date
+     * @param validTo Product template validity range - to date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/productTemplate/{code}/disable")
+    Response disableProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
      * Get a single productChargeTemplate by its code
@@ -255,4 +281,23 @@ public interface CatalogRs {
     @Path("/productChargeTemplate/list")
     public Response listProductChargeTemplate();
 
+    /**
+     * Enable a Product charge template with a given code
+     * 
+     * @param code Product charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/productChargeTemplate/{code}/enable")
+    Response enableProductChargeTemplate(@PathParam("code") String code);
+
+    /**
+     * Disable a Product charge template with a given code
+     * 
+     * @param code Product charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/productChargeTemplate/{code}/disable")
+    Response disableProductChargeTemplate(@PathParam("code") String code);
 }

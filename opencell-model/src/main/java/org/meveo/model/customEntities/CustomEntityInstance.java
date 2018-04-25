@@ -10,8 +10,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
@@ -19,10 +19,11 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
-@ExportIdentifier({ "code", "cetCode"})
-@Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cust_cei_seq"), })
-public class CustomEntityInstance extends BusinessCFEntity {
+@ExportIdentifier({ "code", "cetCode" })
+@Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cust_cei_seq"), })
+public class CustomEntityInstance extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
 
@@ -53,7 +54,7 @@ public class CustomEntityInstance extends BusinessCFEntity {
 
     @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {

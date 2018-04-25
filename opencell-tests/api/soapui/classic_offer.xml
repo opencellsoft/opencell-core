@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -19630,7 +19630,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>http://localhost:8080/opencell/AccountingWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -19676,7 +19676,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>http://localhost:8080/opencell/AccountingWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -37780,6 +37780,7 @@ AAAASUVORK5CYII=
          <offerTemplate code="OF_${#Project#templateCode}_TEMPLATE" description="${#Project#templateLabel} with multiple basic services">
          	  <name>${#Project#templateLabel} offer</name>
             <disabled>false</disabled>
+            <lifeCycleStatus>ACTIVE</lifeCycleStatus>
 		  <offerTemplateCategories>
 		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
@@ -38250,6 +38251,7 @@ MFBG0AAAAABJRU5ErkJggg==
          <offerTemplate code="OF_${#Project#templateCode}_COMMISSION" description="Commissioning for ${#Project#templateLabel}">
          	  <name>Commissioning</name>
             <disabled>false</disabled>
+            <lifeCycleStatus>ACTIVE</lifeCycleStatus>
 		  <offerTemplateCategories>
 		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
@@ -39789,11 +39791,11 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
 				<appliesTo>CUST</appliesTo>
 				<storageType>SINGLE</storageType>
 			</customFieldTemplate>
-			<emailNotif code="SelfcareAccountCreationNotif">
+			<emailNotif code="AccountCreationNotif">
 				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
 				<eventTypeFilter>CREATED</eventTypeFilter>
 				<emailFrom>bot@opencellsoft.com</emailFrom> 
-				<subject>Create Selfcare account</subject>
+				<subject>Account creation confirmation</subject>
 				<emailToEl>#{event.email}</emailToEl>
 				<body>Hello,
                 Your login has been created:
@@ -51935,7 +51937,6 @@ from
 	billing_wallet_operation wo 
 where 
 	provider_id = #{provider} 
-and wo.disabled=0 
 and wo.end_date is not null 
 and date_trunc('month', wo.operation_date) = date_trunc('month', to_date('#{date}','YYYY-MM-DD'))
 group by 
@@ -52045,10 +52046,10 @@ from subscriptions s, terminations t
             <additive>false</additive>
             <sqlQuery>
 with
-       value as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('IN_CREATION')),
-       pending as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('ACKNOWLEDGED','IN_PROGRESS','PENDING','PARTIAL','HELD')),
-       validated as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('COMPLETED')),
-       cancelled as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('REJECTED','FAILED','CANCELLED'))
+       value as (select count(o.id) from ord_order o where status in ('IN_CREATION')),
+       pending as (select count(o.id) from ord_order o where status in ('ACKNOWLEDGED','IN_PROGRESS','PENDING','PARTIAL','HELD')),
+       validated as (select count(o.id) from ord_order o where status in ('COMPLETED')),
+       cancelled as (select count(o.id) from ord_order o where status in ('REJECTED','FAILED','CANCELLED'))
 select
         value.count as value,
         pending.count as pending,
@@ -52111,8 +52112,7 @@ mrr as
    from
        billing_wallet_operation wo
    where
-       wo.disabled = 0
-   and wo.end_date is not null
+       wo.end_date is not null
    and date_trunc('month', wo.operation_date) = date_trunc('month', to_date('#{date}','YYYY-MM-DD'))
    group by
        wo.offer_code, date_trunc('month', wo.operation_date)
@@ -52182,8 +52182,7 @@ with a as
        inner join billing_user_account ua
         on ua.id = s.user_account_id
    where
-       wo.disabled = 0
-   and wo.end_date is not null
+       wo.end_date is not null
    and date_trunc('month', wo.operation_date) = date_trunc('month', to_date('#{date}','YYYY-MM-DD'))
    group by
        ua_creation_month,
