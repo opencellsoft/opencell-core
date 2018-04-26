@@ -370,6 +370,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         if (invoiceConfiguration != null && invoiceConfiguration.getDisplayProvider() != null && invoiceConfiguration.getDisplayProvider()) {
             Element providerTag = doc.createElement("provider");
             providerTag.setAttribute("code", appProvider.getCode() + "");
+            providerTag.setAttribute("description", appProvider.getDescription() + "");
             BankCoordinates appBankCoordinates = appProvider.getBankCoordinates();
             if (appBankCoordinates != null) {
                 Element bankCoordinates = doc.createElement("bankCoordinates");
