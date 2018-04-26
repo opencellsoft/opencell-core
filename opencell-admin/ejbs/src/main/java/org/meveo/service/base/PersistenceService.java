@@ -395,9 +395,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(ISearchable entity) throws BusinessException {
-       // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-         //   throw new BusinessException("Invalid characters found in entity code.");
-       // }
+        // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+        // throw new BusinessException("Invalid characters found in entity code.");
+        // }
 
         return true;
     }
@@ -419,9 +419,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         getEntityManager().persist(entity);
 
-        getEntityManager().flush();
-
-        getEntityManager().refresh(entity);
+        // Add entity to Elastic Search
+        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
+            // flush first to allow child entities to be lazy loaded
+            getEntityManager().flush();
+            getEntityManager().refresh(entity);
+            elasticClient.createOrFullUpdate((ISearchable) entity);
+        }
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire((BaseEntity) entity);
@@ -431,11 +435,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
-        }
-
-        // Add entity to Elastic Search
-        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
