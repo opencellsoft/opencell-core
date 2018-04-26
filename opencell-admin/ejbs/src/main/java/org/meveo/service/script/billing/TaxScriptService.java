@@ -35,7 +35,7 @@ public class TaxScriptService implements Serializable {
 			InvoiceSubCategory invoiceSubCategory) throws BusinessException {
 		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
-		Map<String, Object> scriptContext = new HashMap<String, Object>();
+		Map<String, Object> scriptContext = new HashMap<>();
 		scriptContext.put(TaxScript.TAX_USER_ACCOUNT, userAccount);
 		scriptContext.put(TaxScript.TAX_INVOICE, invoice);
 		scriptContext.put(TaxScript.TAX_INVOICE_SUB_CAT, invoiceSubCategory);
@@ -47,7 +47,7 @@ public class TaxScriptService implements Serializable {
 			InvoiceSubCategory invoiceSubCategory) throws BusinessException {
 		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
-		Map<String, Object> scriptContext = new HashMap<String, Object>();
+		Map<String, Object> scriptContext = new HashMap<>();
 		scriptContext.put(TaxScript.TAX_USER_ACCOUNT, userAccount);
 		scriptContext.put(TaxScript.TAX_INVOICE, invoice);
 		scriptContext.put(TaxScript.TAX_INVOICE_SUB_CAT, invoiceSubCategory);
@@ -59,7 +59,7 @@ public class TaxScriptService implements Serializable {
 			Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap) throws BusinessException {
 		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 
-		Map<String, Object> scriptContext = new HashMap<String, Object>();
+		Map<String, Object> scriptContext = new HashMap<>();
 		scriptContext.put(TaxScript.TAX_INVOICE, invoice);
 		scriptContext.put(TaxScript.TAX_CAT_INV_AGGREGATE_MAP, catInvoiceAgregateMap);
 

@@ -307,7 +307,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // Create a new boolean calculateTax=!isExonerated and invoice.invoiceType.taxScript is null.
         // DONE
         String calculateExternalTax = (String) customFieldInstanceService.getCFValue(appProvider, "OPENCELL_ENABLE_TAX_CALCULATION");
-        boolean calculateTax = calculateExternalTax.equals("YES") && !isExonerated && invoice.getInvoiceType().getTaxScript() == null;
+        if(StringUtils.isBlank(calculateExternalTax)) {
+            calculateExternalTax = "NO";
+        }
+        boolean calculateTax = !isExonerated && invoice.getInvoiceType().getTaxScript() == null;
         
         if (ratedTransactionFilter != null) {
             ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
@@ -412,7 +415,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     // parameters: userAccount, invoice, invoiceSubCategory
                     // result: List<Tax>
                     // DONE
-                    if (invoiceSubCategory.getTaxScript() != null) {
+                    if (invoiceSubCategory.getTaxScript() != null && calculateExternalTax.equals("YES")) {
                         if (taxScriptService.isApplicable(invoiceSubCategory.getTaxScript().getCode(), userAccount, invoice, invoiceSubCategory)) {
                             taxes = taxScriptService.computeTaxes(invoiceSubCategory.getTaxScript().getCode(), userAccount, invoice, invoiceSubCategory);
                             taxExternal = true;
@@ -471,8 +474,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
 
                 // start aggregate T
-                
+                //if (!isExonerated) {
                 if (calculateTax) {
+                    
+                    log.debug("taxes found={}", taxes);
 
                     for (Tax tax : taxes) {
                         TaxInvoiceAgregate invoiceAgregateTax = null;
