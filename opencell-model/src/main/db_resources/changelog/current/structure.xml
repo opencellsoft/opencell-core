@@ -803,4 +803,10 @@
 
     </changeSet>
     
+    <changeSet id="#3271_20180423" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_cycle">
+            <column name="invoice_type_el" type="varchar(2000)"  />           
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 
