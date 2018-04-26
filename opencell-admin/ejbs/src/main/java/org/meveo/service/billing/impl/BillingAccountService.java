@@ -787,7 +787,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     }
 
                                     if(subscriptionAmountMap.get(invoiceSubCategory) != null) {
-                                        Map<String, BigDecimal> subscriptionAmount = billingAccountAmountMap.get(invoiceSubCategory);
+                                        Map<String, BigDecimal> subscriptionAmount = subscriptionAmountMap.get(invoiceSubCategory);
                                         subscriptionAmount.put("subscriptionAmountWithoutTax", subscriptionAmount.get("subscriptionAmountWithoutTax").add(serviceAmountWithoutTax));
                                         subscriptionAmount.put("subscriptionAmountWithTax", subscriptionAmount.get("subscriptionAmountWithTax").add(serviceAmountWithTax));
                                         subscriptionAmountMap.put(invoiceSubCategory, subscriptionAmount);
