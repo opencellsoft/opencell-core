@@ -417,6 +417,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             ((IAuditable) entity).updateAudit(currentUser);
         }
 
+        getEntityManager().persist(entity);
+
+        getEntityManager().flush();
+
+        getEntityManager().refresh(entity);
+
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
@@ -426,12 +432,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
         }
-
-        getEntityManager().persist(entity);
-
-        getEntityManager().flush();
-
-        getEntityManager().refresh(entity);
 
         // Add entity to Elastic Search
         if (ISearchable.class.isAssignableFrom(entity.getClass())) {
