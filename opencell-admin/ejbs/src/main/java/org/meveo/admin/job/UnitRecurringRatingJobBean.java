@@ -12,6 +12,8 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.RatingStatus;
+import org.meveo.model.billing.RatingStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.slf4j.Logger;
@@ -41,13 +43,15 @@ public class UnitRecurringRatingJobBean implements Serializable {
         long startDate = System.currentTimeMillis();
         log.debug("Running with activeRecurringChargeInstanceID={}", ID_activeRecurringChargeInstance);
         try {
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(ID_activeRecurringChargeInstance, maxDate);
-            if (nbRating == 1) {
+            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(ID_activeRecurringChargeInstance, maxDate);
+            if (ratingStatus.getNbRating() == 1) {
                 result.registerSucces();
-            } else if (nbRating > 1) {
-                result.registerWarning(ID_activeRecurringChargeInstance + " rated " + nbRating + " times");
+            } else if (ratingStatus.getNbRating() > 1) {
+                result.registerWarning(ID_activeRecurringChargeInstance + " rated " + ratingStatus.getNbRating() + " times");
             } else {
-                result.registerWarning(ID_activeRecurringChargeInstance + " not rated");
+                if(ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
+                    result.registerWarning(ID_activeRecurringChargeInstance + " not rated");
+                }
             }
             log.debug("After registerWarning:" + (System.currentTimeMillis() - startDate));
         } catch (BusinessException e) {

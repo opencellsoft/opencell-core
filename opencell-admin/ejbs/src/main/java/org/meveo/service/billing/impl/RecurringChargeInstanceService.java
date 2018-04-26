@@ -34,6 +34,8 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.RatingStatus;
+import org.meveo.model.billing.RatingStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -218,11 +220,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     }
 
-    public int applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isStrictlyBeforeMaxDate) throws BusinessException {
+    public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isStrictlyBeforeMaxDate) throws BusinessException {
 
         long startDate = System.currentTimeMillis();
         int MaxRecurringRatingHistory = Integer.parseInt(paramBeanFactory.getInstance().getProperty("rating.recurringMaxRetry", "100"));
-        int nbRating = 0;
+        RatingStatus ratingStatus = new RatingStatus();
 
         try {
             RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId);
@@ -230,7 +232,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
                 log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
                 walletOperationService.updateChargeDate(activeRecurringChargeInstance);
-                return nbRating;
+                ratingStatus.setStatus(RatingStatusEnum.NOT_RATED_FALSE_FILTER);
+                return ratingStatus;
             }
 
             RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance.getRecurringChargeTemplate();
@@ -264,10 +267,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             log.info("Will apply recurring charge {} for missing periods {} - {} {}", activeRecurringChargeInstance.getId(), applyChargeFromDate, maxDate,
                 isStrictlyBeforeMaxDate ? "exclusive" : "inclusive");
 
-            while (applyChargeFromDate != null && nbRating < MaxRecurringRatingHistory && ((applyChargeFromDate.getTime() <= maxDate.getTime() && !isStrictlyBeforeMaxDate)
+            while (applyChargeFromDate != null && ratingStatus.getNbRating() < MaxRecurringRatingHistory && ((applyChargeFromDate.getTime() <= maxDate.getTime() && !isStrictlyBeforeMaxDate)
                     || (applyChargeFromDate.getTime() < maxDate.getTime() && isStrictlyBeforeMaxDate))) {
 
-                nbRating++;
+                ratingStatus.setNbRating(ratingStatus.getNbRating()+1);
                 log.info("Applying recurring charge {} for {}", activeRecurringChargeInstance.getId(), applyChargeFromDate);
 
                 List<WalletOperation> wos = null;
@@ -288,7 +291,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 // activeRecurringChargeInstance.getChargeDate();
                 // }
             }
-            if (nbRating > 0) {
+            if (ratingStatus.getNbRating() > 0) {
                 updateNoCheck(activeRecurringChargeInstance);
             }
             // If we recognize revenue we create SCHEDULED wallet op until the
@@ -325,10 +328,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             rejectededChargeProducer.fire("RecurringCharge " + chargeInstanceId);
             throw new BusinessException(e);
         }
-        return nbRating;
+        return ratingStatus;
     }
 
-    public int applyRecurringCharge(Long chargeInstanceId, Date maxDate) throws BusinessException {
+    public RatingStatus applyRecurringCharge(Long chargeInstanceId, Date maxDate) throws BusinessException {
         return applyRecurringCharge(chargeInstanceId, maxDate, false);
     }
 
