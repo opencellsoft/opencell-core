@@ -803,4 +803,10 @@
 
     </changeSet>
     
+    <changeSet id="#3378_26042018" author="SaidRamli">
+        <addColumn tableName="cat_service_template">
+            <column name="long_description_i18n" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 

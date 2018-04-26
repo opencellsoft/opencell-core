@@ -373,6 +373,10 @@
 								</p:inplace>
 								<h:outputText value=" #{ost.serviceTemplate.description}"
 									rendered="#{!offerTemplateBean.edit}"></h:outputText>
+									
+								<hftl:formLanguageFields entity="${ost.serviceTemplate}"  field="longDescription"
+									label="#{messages['offerTemplate.longDescription']}"
+									componentWidth="100" />
 							</p:panel>
 
 							<p:panel id="serviceCf_panel_#{loopStatus.index}">

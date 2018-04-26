@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -40,6 +41,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
@@ -98,6 +100,10 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
+    
+    @Type(type = "json")
+    @Column(name = "long_description_i18n", columnDefinition = "text")
+    private Map<String, String> longDescriptionI18n;
 
     @ImageType
     @Column(name = "image_path", length = 100)
@@ -295,6 +301,24 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * Gets the long description I 18 n.
+     *
+     * @return the long description I 18 n
+     */
+    public Map<String, String> getLongDescriptionI18n() {
+        return longDescriptionI18n;
+    }
+
+    /**
+     * Sets the long description I 18 n.
+     *
+     * @param longDescriptionI18n the long description I 18 n
+     */
+    public void setLongDescriptionI18n(Map<String, String> longDescriptionI18n) {
+        this.longDescriptionI18n = longDescriptionI18n;
     }
 
 }
