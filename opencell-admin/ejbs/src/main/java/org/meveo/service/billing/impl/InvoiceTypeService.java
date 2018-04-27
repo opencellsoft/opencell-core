@@ -29,20 +29,30 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
+ * The Class InvoiceTypeService.
+ *
  * @author anasseh
  * @author Phung tien lan
- * @lastModifiedVersion 5.0
- * 
+ * @lastModifiedVersion 5.0.2
  */
 @Stateless
 public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
+    /** The service singleton. */
     @EJB
     private ServiceSingleton serviceSingleton;
 
+    /** The o CC template service. */
     @Inject
     OCCTemplateService oCCTemplateService;
 
+    /**
+     * Gets the default type.
+     *
+     * @param invoiceTypeCode the invoice type code
+     * @return the default type
+     * @throws BusinessException the business exception
+     */
     public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
 
         InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode);
@@ -64,6 +74,13 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         return defaultInvoiceType;
     }
 
+    /**
+     * Gets the max current invoice number.
+     *
+     * @param invoiceTypeCode the invoice type code
+     * @return the max current invoice number
+     * @throws BusinessException the business exception
+     */
     public Long getMaxCurrentInvoiceNumber(String invoiceTypeCode) throws BusinessException {
         Long max = getEntityManager().createNamedQuery("InvoiceType.currentInvoiceNb", Long.class)
 
@@ -73,33 +90,85 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     }
 
+    /**
+     * Gets the default adjustement.
+     *
+     * @return the default adjustement
+     * @throws BusinessException the business exception
+     */
     public InvoiceType getDefaultAdjustement() throws BusinessException {
         return getDefaultType(getAdjustementCode());
     }
 
+    /**
+     * Gets the default commertial.
+     *
+     * @return the default commertial
+     * @throws BusinessException the business exception
+     */
     public InvoiceType getDefaultCommertial() throws BusinessException {
         return getDefaultType(getCommercialCode());
     }
 
+    /**
+     * Gets the default quote.
+     *
+     * @return the default quote
+     * @throws BusinessException the business exception
+     */
     public InvoiceType getDefaultQuote() throws BusinessException {
         return getDefaultType(getQuoteCode());
     }
+    
+    /**
+     * Gets the default draft.
+     *
+     * @return the default draft
+     * @throws BusinessException the business exception
+     */
+    public InvoiceType getDefaultDraft() throws BusinessException {
+        return getDefaultType(getDraftCode());
+    }
 
+    /**
+     * Gets the commercial code.
+     *
+     * @return the commercial code
+     */
     public String getCommercialCode() {
         return paramBeanFactory.getInstance().getProperty("invoiceType.commercial.code", "COM");
     }
 
+    /**
+     * Gets the adjustement code.
+     *
+     * @return the adjustement code
+     */
     public String getAdjustementCode() {
         return paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ");
     }
 
+    /**
+     * Gets the quote code.
+     *
+     * @return the quote code
+     */
     public String getQuoteCode() {
         return paramBeanFactory.getInstance().getProperty("invoiceType.quote.code", "QUOTE");
     }
+    
+    /**
+     * Gets the draft code.
+     *
+     * @return the draft code
+     */
+    public String getDraftCode() {
+        return paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT");
+    }
 
     /**
-     * Get a custom field code to track invoice numbering sequence for a given invoice type
-     * 
+     * Get a custom field code to track invoice numbering sequence for a given invoice type.
+     *
      * @param invoiceType Invoice type
      * @return A custom field code
      */
