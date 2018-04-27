@@ -19,6 +19,8 @@
 
     <ui:define name="body">
         <o:importConstants type="org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum"/>
+        <o:importConstants type="org.meveo.model.catalog.LifeCycleStatusEnum"/>
+        
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -367,13 +369,21 @@
 			                        </h:outputText>
 					        </p:column>
 					        
-                          
-                            <p:column>
-                                <f:facet name="header">#{messages['commons.status']}</f:facet>
-                                <h:outputText
+					         <p:column filterBy="#{entity.lifeCycleStatus}" headerText="#{messages['commons.status']}" >
+					            <f:facet name="filter">
+					                <p:selectOneMenu onchange="PF('cellEntity_results').filter()">
+					                    <f:converter converterId="enumConverter" />
+					                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.catalog.LifeCycleStatusEnum" />
+					                    <f:selectItem />
+					                    <f:selectItems value="#{LifeCycleStatusEnum}" var="item" itemValue="#{item}" 
+					                                   itemLabel="#{messages[of:concat('enum.LifeCycleStatusEnum.', item)]}"/>
+					                </p:selectOneMenu>
+					            </f:facet>
+					            <h:outputText
                                         value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
                                         styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}"/>
-                            </p:column>
+					        </p:column>
+                            
                             <p:column headerText="#{messages['commons.actions']}">
                                 <p:link outcome="mm_offerTemplateDetail"
                                         styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
