@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -50,12 +51,14 @@ public class InvoiceTypeDto extends BusinessDto {
     private String xmlFilenameEL;
     
     private String billingTemplateNameEL;
+    
+    private CustomFieldsDto customFields;
 
     public InvoiceTypeDto() {
 
     }
 
-    public InvoiceTypeDto(InvoiceType invoiceType) {
+    public InvoiceTypeDto(InvoiceType invoiceType, CustomFieldsDto customFieldInstances) {
         super(invoiceType);
 
         this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode() : null;
@@ -74,6 +77,8 @@ public class InvoiceTypeDto extends BusinessDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
+        
+        customFields = customFieldInstances;
     }
 
     public String getOccTemplateCode() {
@@ -161,5 +166,13 @@ public class InvoiceTypeDto extends BusinessDto {
 
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 }

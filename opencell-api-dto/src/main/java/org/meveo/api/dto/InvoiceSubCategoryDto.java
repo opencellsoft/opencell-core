@@ -28,6 +28,8 @@ public class InvoiceSubCategoryDto extends BusinessDto {
 	private List<LanguageDescriptionDto> languageDescriptions;
 	
 	private CustomFieldsDto customFields;
+	
+	private String taxScriptScode;
 
 	public InvoiceSubCategoryDto() {
 
@@ -38,6 +40,9 @@ public class InvoiceSubCategoryDto extends BusinessDto {
 		invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
         if (invoiceSubCategory.getAccountingCode() != null) {
             accountingCode = invoiceSubCategory.getAccountingCode().getCode();
+        }
+        if(invoiceSubCategory.getTaxScript() != null) {
+            taxScriptScode = invoiceSubCategory.getTaxScript().getCode();
         }
 		customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
@@ -86,5 +91,13 @@ public class InvoiceSubCategoryDto extends BusinessDto {
         return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode
                 + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
 	}
+
+    public String getTaxScriptScode() {
+        return taxScriptScode;
+    }
+
+    public void setTaxScriptScode(String taxScriptScode) {
+        this.taxScriptScode = taxScriptScode;
+    }
 
 }
