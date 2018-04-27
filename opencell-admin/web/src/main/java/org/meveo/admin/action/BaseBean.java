@@ -36,6 +36,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
@@ -861,16 +862,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 @Override
                 protected IPersistenceService<T> getPersistenceServiceImpl() {
-
                     return getPersistenceService();
                 }
-
+                
                 @Override
                 protected Map<String, Object> getSearchCriteria() {
-
-                    // Omit empty or null values
+                    return getSearchCriteria(null);
+                }
+                
+                @Override
+                protected Map<String, Object> getSearchCriteria(Map<String, Object> customFilters) {
+                 // Omit empty or null values
                     Map<String, Object> cleanFilters = new HashMap<String, Object>();
 
+                    cleanupFilters(filters, cleanFilters);
+                    cleanupFilters(MapUtils.emptyIfNull(customFilters), cleanFilters);
+                    
+                    return BaseBean.this.supplementSearchCriteria(cleanFilters);
+                }
+
+                private void cleanupFilters(final Map<String, Object> filters, Map<String, Object> cleanFilters) {
                     for (Map.Entry<String, Object> filterEntry : filters.entrySet()) {
                         if (filterEntry.getValue() == null) {
                             continue;
@@ -882,8 +893,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                         }
                         cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                     }
-
-                    return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
                 @Override

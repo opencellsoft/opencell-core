@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.IEntity;
@@ -61,7 +62,8 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
 
         // Do a regular search
         if (fullTextSearchValue == null) {
-            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(), null, getListFieldsToFetchImpl(), sortField, sortOrder);
+            
+            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(loadingFilters), null, getListFieldsToFetchImpl(), sortField, sortOrder);
 
             setRowCount(countRecords(paginationConfig));
 
@@ -236,6 +238,11 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
         return (int) getPersistenceServiceImpl().count(paginationConfig);
     }
 
+    protected  Map<String, Object> getSearchCriteria(Map<String, Object> filters) {
+        return getSearchCriteria();
+    }
+    
+
     /**
      * Get search criteria for data searching.&lt;br/&gt;
      * Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt;
@@ -245,7 +252,7 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
      * @return Map of search criteria
      */
     protected abstract Map<String, Object> getSearchCriteria();
-
+    
     /**
      * Method that returns concrete PersistenceService. That service is then used for operations on concrete entities (eg. save, delete etc).
      * 

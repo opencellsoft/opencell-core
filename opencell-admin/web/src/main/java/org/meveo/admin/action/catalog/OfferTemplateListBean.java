@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
+import org.apache.commons.collections4.MapUtils;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.communication.MeveoInstance;
@@ -100,6 +101,16 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 		}
 
 		return getLazyDataModel();
+	}
+	
+	@Override
+	protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
+	    // name filtering :
+        if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("name")) {
+            Object nameParam = searchCriteria.remove("name");
+            searchCriteria.put("wildcardOr name", nameParam);
+        }
+	    return super.supplementSearchCriteria(searchCriteria);
 	}
 
 	public List<OfferTemplate> getSelectedOfferTemplates() {

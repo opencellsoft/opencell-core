@@ -330,9 +330,11 @@
                                        exportXlsxButton="false" sortOrder="DESCENDING"
                                        styleClass="DataListCenter">
  							
-  							<hftl:column label="#{messages['commons.nameOrCode']}"
-                                         field="name">
-  							 </hftl:column>
+ 							
+ 							<p:column headerText="#{messages['commons.nameOrCode']}" sortBy="#{entity.name}" filterBy="#{entity.name}">
+					            <h:outputText value="#{entity.name}" />
+					        </p:column>
+					        
                             <hftl:column label="#{messages['commons.category']}"
                                          field="offerTemplateCategories" isList="true"
                                          valueLabelField="description">
