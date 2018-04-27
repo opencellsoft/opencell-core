@@ -589,15 +589,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     subCategoryTaxes = invoiceAgregateSubcat.getSubCategoryTaxesTransient();
                 }
 
-                for (Tax tax : invoiceAgregateSubcat.getSubCategoryTaxes()) {
-                 // TODO[Edward] Replace !isExonerated by calculateTax
+                for (Tax tax : subCategoryTaxes) {
+                    // TODO[Edward] Replace !isExonerated by calculateTax
                     //if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !isExonerated) {
                     if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && calculateTax) {
                         TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
                         taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
                         log.info("  tax " + tax.getPercent() + " ht ->" + taxInvoiceAgregate.getAmountWithoutTax());
                     }
-
                 }
 
                 invoiceAgregateSubcat.getCategoryInvoiceAgregate().addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
