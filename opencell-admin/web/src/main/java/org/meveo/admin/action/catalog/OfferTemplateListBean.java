@@ -105,10 +105,20 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	
 	@Override
 	protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
-	    // name filtering :
+	    // 'name' filtering :
         if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("name")) {
             Object nameParam = searchCriteria.remove("name");
             searchCriteria.put("wildcardOr name", nameParam);
+        }
+        // 'valid from' filtering : 
+        if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("validity.from")) {
+            Object nameParam = searchCriteria.remove("validity.from");
+            searchCriteria.put("fromRange validity.from", nameParam);
+        }
+        // 'valid to' filtering : 
+        if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("validity.to")) {
+            Object nameParam = searchCriteria.remove("validity.to");
+            searchCriteria.put("fromRange validity.to", nameParam);
         }
 	    return super.supplementSearchCriteria(searchCriteria);
 	}

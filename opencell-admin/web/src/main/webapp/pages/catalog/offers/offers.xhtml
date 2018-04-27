@@ -339,12 +339,35 @@
                                          field="offerTemplateCategories" isList="true"
                                          valueLabelField="description">
                             </hftl:column>
-                            <hftl:column label="#{messages['commons.validFrom']}"
-                                         field="validity.from" isDate="true">
-                            </hftl:column>
-                            <hftl:column label="#{messages['commons.validTo']}"
-                                         field="validity.to" isDate="true">
-                            </hftl:column>
+
+						   <p:column headerText="#{messages['commons.validFrom']}" 
+						             sortBy="#{entity.validity.from}" 
+						             filterBy="#{entity.validity.from}">
+						             
+						            <f:facet name="filter">
+										<p:calendar  pattern="dd/MM/yyyy">
+										    <p:ajax event="dateSelect"  oncomplete="PF('cellEntity_results').filter()" />
+										</p:calendar>
+									</f:facet>
+			                        <h:outputText value="#{entity.validity.from}">
+			                            <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+			                        </h:outputText>
+					        </p:column>
+					        <p:column headerText="#{messages['commons.validTo']}" 
+						             sortBy="#{entity.validity.to}" 
+						             filterBy="#{entity.validity.to}">
+						             
+						            <f:facet name="filter">
+										<p:calendar  pattern="dd/MM/yyyy">
+										    <p:ajax event="dateSelect"  oncomplete="PF('cellEntity_results').filter()" />
+										</p:calendar>
+									</f:facet>
+			                        <h:outputText value="#{entity.validity.to}">
+			                            <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+			                        </h:outputText>
+					        </p:column>
+					        
+                          
                             <p:column>
                                 <f:facet name="header">#{messages['commons.status']}</f:facet>
                                 <h:outputText
