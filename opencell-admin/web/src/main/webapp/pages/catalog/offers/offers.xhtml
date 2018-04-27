@@ -369,7 +369,7 @@
 			                        </h:outputText>
 					        </p:column>
 					        
-					         <p:column filterBy="#{entity.lifeCycleStatus}" headerText="#{messages['commons.status']}" >
+					         <p:column  filterBy="#{entity.lifeCycleStatus}"  sortBy="#{entity.lifeCycleStatus}" headerText="#{messages['commons.status']}" >
 					            <f:facet name="filter">
 					                <p:selectOneMenu onchange="PF('cellEntity_results').filter()">
 					                    <f:converter converterId="enumConverter" />
