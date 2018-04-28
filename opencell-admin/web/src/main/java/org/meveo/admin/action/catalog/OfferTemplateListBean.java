@@ -118,7 +118,7 @@ public class OfferTemplateListBean extends OfferTemplateBean {
         // 'valid to' filtering : 
         if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("validity.to")) {
             Object nameParam = searchCriteria.remove("validity.to");
-            searchCriteria.put("fromRange validity.to", nameParam);
+            searchCriteria.put("toRange validity.to", nameParam);
         }
 	    return super.supplementSearchCriteria(searchCriteria);
 	}
