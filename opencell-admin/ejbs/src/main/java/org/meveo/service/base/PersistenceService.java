@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
@@ -40,6 +41,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
@@ -788,7 +790,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
 
-                        // Value is in field value (list)
+                      // Value which is a list should be in field value 
+                    } else if ("listInList".equals(condition)) {
+                        this.addListInListCreterion(queryBuilder, filterValue, fieldName);
+                     // Value is in field value (list)
                     } else if ("list".equals(condition)) {
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
                         queryBuilder.addSqlCriterion(":" + paramName + " in elements(a." + fieldName + ")", paramName, filterValue);
@@ -1023,6 +1028,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
+    }
+
+    /**
+     * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
+     * @param queryBuilder
+     * @param filterValue
+     * @param fieldName
+     */
+    private void addListInListCreterion(QueryBuilder queryBuilder, Object filterValue, String fieldName) {
+        String paramName = queryBuilder.convertFieldToParam(fieldName);
+        if (filterValue.getClass().isArray()) {
+            Object [] values = (Object []) filterValue;
+            IntStream.range(0, values.length).forEach(idx -> queryBuilder.addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
+        }
     }
 
     protected boolean isConversationScoped() {

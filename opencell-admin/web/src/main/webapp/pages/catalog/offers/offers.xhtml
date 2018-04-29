@@ -337,10 +337,19 @@
 					            <h:outputText value="#{entity.name}" />
 					        </p:column>
 					        
-                            <hftl:column label="#{messages['commons.category']}"
-                                         field="offerTemplateCategories" isList="true"
-                                         valueLabelField="description">
-                            </hftl:column>
+					        <p:column headerText="#{messages['commons.categories']}" filterBy="#{entity.offerTemplateCategories}" sortBy="#{entity.offerTemplateCategories}" >
+					             <f:facet name="filter">
+									<p:selectCheckboxMenu onchange="PF('cellEntity_results').filter()" label="#{messages['commons.choose']}">
+									    <f:converter converterId="offerTemplateCategoryConverter" />
+									    <p:ajax event="toggleSelect"  process="@this" partialSubmit="true" oncomplete="PF('cellEntity_results').filter()"/>
+					                    <f:selectItems value="#{offerTemplateListBean.activeOfferTemplateCategories}" var="item" itemValue="#{item}" 
+					                                   itemLabel="#{item.description}"/>
+					                </p:selectCheckboxMenu>
+								</f:facet>
+					            <p:dataList value="#{entity.offerTemplateCategories}" var="category" type="unordered">
+					                <h:outputText value="#{category.description}" />
+					            </p:dataList>
+					        </p:column>
 
 						   <p:column headerText="#{messages['commons.validFrom']}" 
 						             sortBy="#{entity.validity.from}" 

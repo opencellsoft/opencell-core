@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections4.MapUtils;
@@ -32,6 +33,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
@@ -41,9 +43,13 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 
 	private static final long serialVersionUID = -3037867704912788024L;
 
+	@Inject
+    private OfferTemplateCategoryService offerTemplateCategoryService;
+	
 	private List<OfferTemplate> selectedOfferTemplates = new ArrayList<OfferTemplate>();
 	private List<OfferTemplateCategory> selOfferTemplateCategories;
 	private MeveoInstance meveoInstance = new MeveoInstance();
+	private List<OfferTemplateCategory> activeOfferTemplateCategories;
 
     private long activeCount = 0;
 
@@ -107,21 +113,35 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 	    // 'name' filtering :
         if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("name")) {
-            Object nameParam = searchCriteria.remove("name");
-            searchCriteria.put("wildcardOr name", nameParam);
+            Object filterValue = searchCriteria.remove("name");
+            searchCriteria.put("wildcardOr name", filterValue);
         }
         // 'valid from' filtering : 
         if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("validity.from")) {
-            Object nameParam = searchCriteria.remove("validity.from");
-            searchCriteria.put("fromRange validity.from", nameParam);
+            Object filterValue = searchCriteria.remove("validity.from");
+            searchCriteria.put("fromRange validity.from", filterValue);
         }
         // 'valid to' filtering : 
         if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("validity.to")) {
-            Object nameParam = searchCriteria.remove("validity.to");
-            searchCriteria.put("toRange validity.to", nameParam);
+            Object filterValue = searchCriteria.remove("validity.to");
+            searchCriteria.put("toRange validity.to", filterValue);
         }
+        
+        // 'categories' filtering : 
+        if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("offerTemplateCategories")) {
+            Object filterValue = searchCriteria.remove("offerTemplateCategories");
+            searchCriteria.put("listInList offerTemplateCategories", filterValue);
+        }
+        
 	    return super.supplementSearchCriteria(searchCriteria);
 	}
+	
+	public List<OfferTemplateCategory> getActiveOfferTemplateCategories() {
+	    if (this.activeOfferTemplateCategories == null) {
+	        this.activeOfferTemplateCategories = offerTemplateCategoryService.listActive();
+	    }
+        return activeOfferTemplateCategories;
+    }
 
 	public List<OfferTemplate> getSelectedOfferTemplates() {
 		return selectedOfferTemplates;
