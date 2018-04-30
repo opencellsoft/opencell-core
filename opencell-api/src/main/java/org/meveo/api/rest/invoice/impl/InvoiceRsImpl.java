@@ -172,15 +172,20 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
-    public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions) {
+    public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions, Boolean includePdf, Boolean includeXml) {
         GetInvoiceResponseDto result = new GetInvoiceResponseDto();
         try {
-            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions));
+            // #2236 :  includePdf's default value = false.
+            boolean isPdfToInclude = includePdf != null ? includePdf.booleanValue() : false;
+            // #2236 : includeXml's default value = false
+            boolean isXmlToInclude = includeXml != null ? includeXml.booleanValue() : false;
+            
+            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions, isPdfToInclude, isXmlToInclude));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+            
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
-
         return result;
     }
 
