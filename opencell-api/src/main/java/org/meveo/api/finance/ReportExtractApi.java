@@ -128,8 +128,11 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         return reportExtract;
     }
 
-    public void runReportExtract(RunReportExtractDto postData) throws BusinessException {
+    public void runReportExtract(RunReportExtractDto postData) throws BusinessException, EntityDoesNotExistsException {
         ReportExtract reportExtract = reportExtractService.findByCode(postData.getCode());
+        if (reportExtract == null) {
+            throw new EntityDoesNotExistsException(ReportExtract.class, postData.getCode());
+        }
         reportExtractService.runReport(reportExtract, postData.getParams());
     }
 }
