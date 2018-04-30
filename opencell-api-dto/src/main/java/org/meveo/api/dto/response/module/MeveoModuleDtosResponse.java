@@ -36,7 +36,7 @@ public class MeveoModuleDtosResponse extends SearchResponse {
                   @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class),
                   @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class), 
                   @XmlElement(name = "module", type = MeveoModuleDto.class) })
-    private List<MeveoModuleDto> modules;
+    private List<MeveoModuleDto> modules = new ArrayList<>();
 
     /**
      * Instantiates a new meveo module dtos response.
