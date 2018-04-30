@@ -789,7 +789,8 @@ public class InvoiceApi extends BaseApi {
     }
     
     /**
-     *  @param includePdf if true return pdf , else if null or false don't return pdf
+     * @param includePdf if true return pdf , else if null or false don't return pdf
+     * @param includeXml if true return pdf , else if null or false don't return xml
      * @param id Invoice id. Either id or invoice number and type must be provided
      * @param invoiceNumber Invoice number
      * @param invoiceTypeCode Invoice type code
@@ -1002,7 +1003,7 @@ public class InvoiceApi extends BaseApi {
     }
     
     public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf) {
-       return this.invoiceToDto(invoice, includeTransactions, includePdf, true); 
+       return this.invoiceToDto(invoice, includeTransactions, includePdf, false); 
     }
 
     private Invoice find(Long id, String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
