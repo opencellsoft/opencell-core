@@ -77,7 +77,8 @@ import org.primefaces.model.SortOrder;
  * CRUD API for managing {@link Invoice}.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
