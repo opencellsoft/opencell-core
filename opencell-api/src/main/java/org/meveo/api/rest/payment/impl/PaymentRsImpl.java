@@ -32,7 +32,8 @@ import org.meveo.api.rest.payment.PaymentRs;
  * The implementation for PaymentRs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

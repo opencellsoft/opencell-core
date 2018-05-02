@@ -33,7 +33,8 @@ import org.meveo.api.rest.IBaseRs;
  * The Interface PaymentRs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 
 @Path("/payment")
