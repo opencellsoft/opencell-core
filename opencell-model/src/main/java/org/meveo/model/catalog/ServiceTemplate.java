@@ -49,6 +49,11 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
 
+/**
+ * The Class ServiceTemplate.
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @Entity
 @ModuleItem
 @ObservableEntity
