@@ -1123,9 +1123,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         log.debug("Will apply recurring charge {} for supplement charge agreement for {} - {}", chargeInstance.getId(), applyChargeFromDate, endAgreementDate);
 
         Date applyChargeOnDate = applyChargeFromDate;
-        
-        Date nextChargeDate = null;
-        while (applyChargeOnDate.getTime() < endAgreementDate.getTime() && (nextChargeDate = cal.nextCalendarDate(applyChargeOnDate)) != null ) {
+
+        while (applyChargeOnDate.getTime() < endAgreementDate.getTime()) {
+            Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
+            if (nextChargeDate == null) {
+                throw new BusinessException("EndAgreementDate out off calendar");
+            }
             Double prorataRatio = null;
             ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
             BigDecimal inputQuantity = chargeInstance.getQuantity();
