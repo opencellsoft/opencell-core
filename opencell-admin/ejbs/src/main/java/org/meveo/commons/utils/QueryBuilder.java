@@ -44,7 +44,8 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
  * 
  * @author Richard Hallier
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 public class QueryBuilder {
 
