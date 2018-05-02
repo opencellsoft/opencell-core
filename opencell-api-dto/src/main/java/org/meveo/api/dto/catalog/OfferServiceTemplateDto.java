@@ -47,7 +47,7 @@ public class OfferServiceTemplateDto implements Serializable {
     /**
      * Instantiates a new offer service template dto.
      *
-     * @param offerServiceTemplate the OfferServiceTemplate entity
+     * @param e the OfferServiceTemplate entity
      * @param customFields the custom fields
      */
     public OfferServiceTemplateDto(OfferServiceTemplate e, CustomFieldsDto customFields, boolean loadServiceChargeTemplate) {
