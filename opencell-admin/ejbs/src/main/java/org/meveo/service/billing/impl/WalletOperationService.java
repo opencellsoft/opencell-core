@@ -81,7 +81,8 @@ import org.slf4j.Logger;
  * 
  * @author Wassim Drira
  * @author Phung tien lan
- * @lastModifiedVersion 5.0.1
+ * @author anasseh
+ * @lastModifiedVersion 5.0.2
  */
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
@@ -1122,10 +1123,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         log.debug("Will apply recurring charge {} for supplement charge agreement for {} - {}", chargeInstance.getId(), applyChargeFromDate, endAgreementDate);
 
         Date applyChargeOnDate = applyChargeFromDate;
-        while (applyChargeOnDate.getTime() < endAgreementDate.getTime()) {
-
-            Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
-
+        
+        Date nextChargeDate = null;
+        while (applyChargeOnDate.getTime() < endAgreementDate.getTime() && (nextChargeDate = cal.nextCalendarDate(applyChargeOnDate)) != null ) {
             Double prorataRatio = null;
             ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
             BigDecimal inputQuantity = chargeInstance.getQuantity();
