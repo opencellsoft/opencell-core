@@ -557,6 +557,17 @@ public class RatingService extends BusinessService<WalletOperation> {
                 bareWalletOperation.setDescription(woDescription);
             }
         }
+        
+        // get invoiceSubCategory based on EL from Price plan
+        if (pricePlan != null && pricePlan.getInvoiceSubCategoryEL() != null) {
+            String invoiceSubCategoryCode = evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation, bareWalletOperation.getWallet()!=null?bareWalletOperation.getWallet().getUserAccount():null);
+            if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
+                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
+                if(invoiceSubCategory != null) {
+                    bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
+                }
+            }
+        }
 
         if (pricePlan != null && pricePlan.getScriptInstance() != null) {
             log.debug("start to execute script instance for ratePrice {}", pricePlan);
