@@ -803,4 +803,10 @@
 
     </changeSet>
     
+    <changeSet id="#3326_20180502" author="EdwardPLegaspi">
+    	<addColumn tableName="dwh_report_extract">
+    		<column name="result_type" type="varchar(10)"></column>
+    	</addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 

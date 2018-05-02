@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 
 /**
@@ -45,6 +46,11 @@ public class ReportExtractDto extends EnableBusinessDto {
     private Date endDate;
 
     /**
+     * The type of result that will be generated
+     */
+    private ReportExtractResultTypeEnum reportExtractResultType;
+
+    /**
      * Instantiate a new ReportExtract DTO
      */
     public ReportExtractDto() {
@@ -66,6 +72,7 @@ public class ReportExtractDto extends EnableBusinessDto {
         setParams(reportExtract.getParams());
         setStartDate(reportExtract.getStartDate());
         setScriptType(reportExtract.getScriptType());
+        setReportExtractResultType(reportExtract.getReportExtractResultType());
         if (reportExtract.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
             if (reportExtract.getScriptInstance() != null) {
                 setScriptInstanceCode(reportExtract.getScriptInstance().getCode());
@@ -218,5 +225,13 @@ public class ReportExtractDto extends EnableBusinessDto {
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public ReportExtractResultTypeEnum getReportExtractResultType() {
+        return reportExtractResultType;
+    }
+
+    public void setReportExtractResultType(ReportExtractResultTypeEnum reportExtractResultType) {
+        this.reportExtractResultType = reportExtractResultType;
     }
 }

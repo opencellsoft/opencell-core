@@ -572,5 +572,13 @@ ORDER BY
         	<column name="role_id" value="-6"></column>
         </insert>
     </changeSet>
+    
+    <changeSet id="#3326_20180502" author="EdwardPLegaspi">
+    	<sql>update dwh_report_extract set result_type='CSV';</sql>
+    </changeSet>
+    
+    <changeSet id="#3326_20180502 Mysql" author="EdwardPLegaspi" dbms="mysql">
+    	<sql>update ${db.schema.adapted}dwh_report_extract set result_type='CSV';</sql>
+    </changeSet>
         
 </databaseChangeLog>

@@ -11,10 +11,14 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
@@ -83,56 +87,13 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
             List<Map<String, Object>> resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
 
-            FileWriter fileWriter = null;
-            StringBuilder line = new StringBuilder("");
             if (resultList != null && !resultList.isEmpty()) {
                 log.debug("{} record/s found", resultList.size());
+                if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
+                    writeAsFile(filename, sbDir, resultList);
 
-                try {
-                    File dir = new File(sbDir.toString());
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
-                    File file = new File(sbDir.toString() + File.separator + filename);
-                    file.createNewFile();
-                    fileWriter = new FileWriter(file);
-
-                    // get the header
-                    Map<String, Object> firstRow = resultList.get(0);
-                    Iterator ite = firstRow.keySet().iterator();
-                    while (ite.hasNext()) {
-                        line.append(ite.next() + ",");
-                    }
-                    line.deleteCharAt(line.length() - 1);
-                    fileWriter.write(line.toString());
-                    fileWriter.write(System.lineSeparator());
-
-                    line = new StringBuilder("");
-                    for (Map<String, Object> row : resultList) {
-                        ite = firstRow.keySet().iterator();
-                        while (ite.hasNext()) {
-                            line.append(row.get(ite.next()) + ",");
-                        }
-                        line.deleteCharAt(line.length() - 1);
-                        fileWriter.write(line.toString());
-                        fileWriter.write(System.lineSeparator());
-                        line = new StringBuilder("");
-                    }
-                    if (fileWriter != null) {
-                        try {
-                            fileWriter.close();
-                        } catch (IOException e) {
-                        }
-                    }
-                } catch (Exception e) {
-                    if (fileWriter != null) {
-                        try {
-                            fileWriter.close();
-                        } catch (IOException e1) {
-                        }
-                    }
-                    log.error("Cannot write report to file: {}", e.getMessage());
-                    throw new BusinessException("Cannot write report to file.");
+                } else {
+                    writeAsHtml(filename, sbDir, resultList, entity);
                 }
             }
 
@@ -143,6 +104,120 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
 
             scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void writeAsHtml(String filename, StringBuilder sbDir, List<Map<String, Object>> resultList, ReportExtract entity) throws BusinessException {
+        FileWriter fileWriter = null;
+        StringBuilder tableHeader = new StringBuilder();
+        StringBuilder tableBody = new StringBuilder();
+        StringBuilder table = new StringBuilder("<table>");
+
+        if (FilenameUtils.getExtension(filename.toLowerCase()).equals("csv")) {
+            filename = FileUtils.changeExtension(filename, ".html");
+        }
+
+        try {
+            // load the html template
+            String template = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("reportExtract/default_html_report.html"));
+
+            // get the header
+            Map<String, Object> firstRow = resultList.get(0);
+            Iterator ite = firstRow.keySet().iterator();
+            tableHeader.append("<thead><tr>");
+            while (ite.hasNext()) {
+                tableHeader.append("<th>" + ite.next() + "</th>");
+            }
+            tableHeader.append("</tr></thead>");
+            table.append(tableHeader);
+
+            int ctr = 1;
+            tableBody.append("<tbody>");
+            for (Map<String, Object> row : resultList) {
+                ite = firstRow.keySet().iterator();
+                tableBody.append("<tr class='" + (ctr++ % 2 == 0 ? "odd" : "even") + "'>");
+                while (ite.hasNext()) {
+                    tableBody.append("<td>" + row.get(ite.next()) + "</td>");
+                }
+                tableBody.append("</tr>");
+            }
+            tableBody.append("</tbody>");
+            table.append(tableBody);
+
+            table.append("</table>");
+
+            template = template.replace("#{TABLE}", table);
+            template = template.replace("#{REPORT_DESCRIPTION}", entity.getDescriptionOrCode());
+
+            // create the output file, must be html
+            File dir = new File(sbDir.toString());
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File file = new File(sbDir.toString() + File.separator + filename);
+            file.createNewFile();
+            fileWriter = new FileWriter(file);
+            fileWriter.write(template);
+            fileWriter.close();
+        } catch (Exception e) {
+            if (fileWriter != null) {
+                try {
+                    fileWriter.close();
+                } catch (IOException e1) {
+                }
+            }
+            log.error("Cannot write report to file: {}", e.getMessage());
+            throw new BusinessException("Cannot write report to file.");
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void writeAsFile(String filename, StringBuilder sbDir, List<Map<String, Object>> resultList) throws BusinessException {
+        FileWriter fileWriter = null;
+        StringBuilder line = new StringBuilder("");
+
+        try {
+            File dir = new File(sbDir.toString());
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File file = new File(sbDir.toString() + File.separator + filename);
+            file.createNewFile();
+            fileWriter = new FileWriter(file);
+
+            // get the header
+            Map<String, Object> firstRow = resultList.get(0);
+            Iterator ite = firstRow.keySet().iterator();
+            while (ite.hasNext()) {
+                line.append(ite.next() + ",");
+            }
+            line.deleteCharAt(line.length() - 1);
+            fileWriter.write(line.toString());
+            fileWriter.write(System.lineSeparator());
+
+            line = new StringBuilder("");
+            for (Map<String, Object> row : resultList) {
+                ite = firstRow.keySet().iterator();
+                while (ite.hasNext()) {
+                    line.append(row.get(ite.next()) + ",");
+                }
+                line.deleteCharAt(line.length() - 1);
+                fileWriter.write(line.toString());
+                fileWriter.write(System.lineSeparator());
+                line = new StringBuilder("");
+            }
+            fileWriter.close();
+
+        } catch (Exception e) {
+            if (fileWriter != null) {
+                try {
+                    fileWriter.close();
+                } catch (IOException e1) {
+                }
+            }
+            log.error("Cannot write report to file: {}", e.getMessage());
+            throw new BusinessException("Cannot write report to file.");
         }
     }
 

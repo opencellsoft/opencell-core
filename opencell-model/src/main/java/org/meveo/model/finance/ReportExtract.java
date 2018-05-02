@@ -67,6 +67,10 @@ public class ReportExtract extends EnableBusinessEntity {
     @CollectionTable(name = "dwh_report_extract_params")
     private Map<String, String> params = new HashMap<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "result_type", length = 10)
+    private ReportExtractResultTypeEnum reportExtractResultType = ReportExtractResultTypeEnum.CSV;
+
     private transient Date startDate;
     private transient Date endDate;
 
@@ -132,6 +136,14 @@ public class ReportExtract extends EnableBusinessEntity {
 
     public void setParams(Map<String, String> params) {
         this.params = params;
+    }
+
+    public ReportExtractResultTypeEnum getReportExtractResultType() {
+        return reportExtractResultType;
+    }
+
+    public void setReportExtractResultType(ReportExtractResultTypeEnum reportExtractResultType) {
+        this.reportExtractResultType = reportExtractResultType;
     }
 
 }

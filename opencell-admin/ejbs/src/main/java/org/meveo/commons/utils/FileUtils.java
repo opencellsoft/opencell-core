@@ -616,4 +616,15 @@ public final class FileUtils {
         // remember close it
         zos.close();
     }
+
+    /**
+     * 
+     * @param filename Name of the file
+     * @param newExtension New extension
+     * @return Filename with renamed extension
+     */
+    public static String changeExtension(String filename, String newExtension) {
+        String name = filename.substring(0, filename.lastIndexOf('.'));
+        return name + newExtension;
+    }
 }

@@ -53,6 +53,7 @@
 	                <pe:codeMirror required="true" id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
 	            </hftl:decorateFormField>
             </p:outputPanel>
+            <hftl:formField label="#{messages['reportExtract.resultType']}" field="reportExtractResultType" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}" />
             <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
