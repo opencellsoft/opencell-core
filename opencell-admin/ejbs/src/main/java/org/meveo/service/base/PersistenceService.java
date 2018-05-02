@@ -83,7 +83,8 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
  * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  * 
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {

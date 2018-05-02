@@ -37,6 +37,11 @@ import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
+/**
+ * The Class OfferTemplateListBean.
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @Named
 @ConversationScoped
 public class OfferTemplateListBean extends OfferTemplateBean {
