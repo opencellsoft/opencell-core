@@ -32,6 +32,8 @@ import org.meveo.model.billing.RatedTransaction;
  * The Class RatedTransactionDto.
  *
  * @author R.AITYAAZZA
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 
 @XmlRootElement(name = "RatedTransaction")
