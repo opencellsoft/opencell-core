@@ -588,9 +588,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
 
             for (Entry<String, CategoryInvoiceAgregate> entry : agregateHandler.getCatInvAgregateMap().entrySet()) {
-
                 CategoryInvoiceAgregate catInvAgr = entry.getValue();
                 catInvAgr.setInvoice(entity);
+                catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
                 invoiceAgregateService.create(catInvAgr);
             }
 
