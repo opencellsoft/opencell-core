@@ -30,11 +30,13 @@
 			</p:graphicImage>
 			
 			<p:fileUpload id="#{id}" disabled="#{disabled}"
-				required="#{required}"
+				required="#{required}" 
 				fileUploadListener="#{backingBean.hfHandleFileUpload}"
 				mode="advanced" update="#{id}_display :#{p:component('messages')}" auto="true"
 				fileLimit="10" sizeLimit="1000000"
-				allowTypes="/(\.|\/)(jpe?g|png)$/" />
+				allowTypes="/(\.|\/)(jpe?g|png)$/" >
+				<f:attribute name="componentEntity" value="#{entity}"/>
+				</p:fileUpload>
 			<p:message for="#{id}" id="#{id}_message" />
 		</c:if>
 		

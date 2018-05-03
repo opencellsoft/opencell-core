@@ -373,10 +373,12 @@
 								</p:inplace>
 								<h:outputText value=" #{ost.serviceTemplate.description}"
 									rendered="#{!offerTemplateBean.edit}"></h:outputText>
-									
-								<hftl:formLanguageFields entity="${ost.serviceTemplate}"  field="longDescription"
-									label="#{messages['offerTemplate.longDescription']}"
-									componentWidth="100" />
+								
+								<hftl:formLanguageFields entity="${ost.serviceTemplate}"  componentWidth="100"
+								                         field="longDescription" multiLang="false" idSufix="ost#{loopStatus.index}"
+									                     label="#{messages['offerTemplate.longDescription']}" />
+								<hftl:formField label="#{messages['commons.image']}" entity="${ost.serviceTemplate}" 
+								                required="false" field="imagePath" id="ost#{loopStatus.index}_image"  pictureGroupName="service" />
 							</p:panel>
 
 							<p:panel id="serviceCf_panel_#{loopStatus.index}">
