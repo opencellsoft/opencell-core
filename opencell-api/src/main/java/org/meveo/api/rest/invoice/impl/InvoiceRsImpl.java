@@ -58,11 +58,11 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
-    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode ,@QueryParam("includePdf") Boolean includePdf) {
+    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode ,@QueryParam("returnPDF") Boolean returnPDF) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false, (includePdf != null && includePdf.booleanValue())));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false, (returnPDF != null && returnPDF.booleanValue())));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
