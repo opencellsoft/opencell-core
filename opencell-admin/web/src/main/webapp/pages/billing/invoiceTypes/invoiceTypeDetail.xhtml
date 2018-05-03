@@ -43,6 +43,10 @@
                 id="appliesTo" />
             <hftl:formField label="#{messages['invoiceType.pdfFilenameEl']}" field="pdfFilenameEL" textArea="true" rows="1" maxlength="2000" />
             <hftl:formField label="#{messages['invoiceType.xmlFilenameEl']}" field="xmlFilenameEL" textArea="true" rows="1" maxlength="2000" />
+            
+            <hftl:formField label="#{messages['invoiceType.occTemplateEL']}" field="occTemplateCodeEl" textArea="true" rows="1" maxlength="2000" />
+            <hftl:formField label="#{messages['invoiceType.occTemplateNegativeEL']}" field="occTemplateNegativeCodeEl" textArea="true" rows="1" maxlength="2000" />
+            
             <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">
                 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;" value="#{invoiceTypeBean.entity.sellerSequence}"
                     var="sellerSeq" paginator="false" resizableColumns="true">
@@ -61,6 +65,7 @@
                     </p:column>
                 </p:dataTable>
             </h:panelGroup>
+            
         </hftl:formPanel>
     </ui:define>
 </ui:composition>
