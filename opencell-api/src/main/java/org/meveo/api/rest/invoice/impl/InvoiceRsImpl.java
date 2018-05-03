@@ -27,6 +27,11 @@ import org.meveo.api.rest.invoice.InvoiceRs;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
+/**
+ * The Class InvoiceRsImpl.
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
@@ -53,12 +58,11 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
-    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode) {
+    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode ,@QueryParam("includePdf") Boolean includePdf) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false, false));
-
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false, (includePdf != null && includePdf.booleanValue())));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
