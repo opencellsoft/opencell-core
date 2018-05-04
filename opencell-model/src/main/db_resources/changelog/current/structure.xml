@@ -803,4 +803,21 @@
 
     </changeSet>
     
+    <changeSet id="#2206_20180502 Add possibility to override RecurringChargeTemplate parameters" author="anasseh">
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="subscription_prorata_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="termination_prorata_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="apply_in_advance_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="duration_term_in_month_el" type="varchar(2000)" />
+        </addColumn>   
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="calendar_code_el" type="varchar(2000)" />
+        </addColumn>                             
+    </changeSet>
 </databaseChangeLog> 

@@ -31,6 +31,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -45,6 +46,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
 
 /**
@@ -63,6 +65,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     @Inject
     private RevenueRecognitionScriptService revenueRecognitionScriptService;
+    
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
     @Rejected
@@ -271,10 +276,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 log.info("Applying recurring charge {} for {}", activeRecurringChargeInstance.getId(), applyChargeFromDate);
 
                 List<WalletOperation> wos = null;
-                if (!recurringChargeTemplate.getApplyInAdvance()) {
-                    wos = walletOperationService.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate);
+                boolean isApplyInAdvance = (recurringChargeTemplate.getApplyInAdvance() == null) ? false : recurringChargeTemplate.getApplyInAdvance();
+                if(!StringUtils.isBlank(recurringChargeTemplate.getApplyInAdvanceEl())) {
+                    isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getApplyInAdvanceEl(), activeRecurringChargeInstance.getServiceInstance(), recurringChargeTemplate);
+                }
+                if (isApplyInAdvance) {
+                    wos = walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, false);                    
                 } else {
-                    wos = walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, false);
+                    wos = walletOperationService.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate);
                 }
 
                 log.debug("After applyReccuringCharge:" + (System.currentTimeMillis() - startDate));

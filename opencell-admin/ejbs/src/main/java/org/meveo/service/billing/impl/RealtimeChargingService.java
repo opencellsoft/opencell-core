@@ -26,26 +26,57 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.slf4j.Logger;
 
+/**
+ * The Class RealtimeChargingService.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0.2
+ */
 @Stateless
 public class RealtimeChargingService {
 
+    /** The log. */
     @Inject
     protected Logger log;
 
+    /** The invoice sub category country service. */
     @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
+    /** The charge application rating service. */
     @Inject
     private RatingService chargeApplicationRatingService;
 
+    /** The wallet operation service. */
     @Inject
     private WalletOperationService walletOperationService;
 
+    /** The invoice sub category service. */
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
+    /** The recurring charge template service. */
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
+
+    /**
+     * Gets the application price.
+     *
+     * @param ba the ba
+     * @param chargeTemplate the charge template
+     * @param subscriptionDate the subscription date
+     * @param offerCode the offer code
+     * @param quantity the quantity
+     * @param param1 the param 1
+     * @param param2 the param 2
+     * @param param3 the param 3
+     * @param priceWithoutTax the price without tax
+     * @return the application price
+     * @throws BusinessException the business exception
+     */
     public BigDecimal getApplicationPrice(BillingAccount ba, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, String offerCode, BigDecimal quantity, String param1,
             String param2, String param3, boolean priceWithoutTax) throws BusinessException {
 
@@ -64,6 +95,24 @@ public class RealtimeChargingService {
         return getApplicationPrice(seller, ba, currency, tradingCountry, chargeTemplate, subscriptionDate, offerCode, quantity, param1, param2, param3, priceWithoutTax);
     }
 
+    /**
+     * Gets the application price.
+     *
+     * @param seller the seller
+     * @param ba the ba
+     * @param currency the currency
+     * @param tradingCountry the trading country
+     * @param chargeTemplate the charge template
+     * @param subscriptionDate the subscription date
+     * @param offerCode the offer code
+     * @param inputQuantity the input quantity
+     * @param param1 the param 1
+     * @param param2 the param 2
+     * @param param3 the param 3
+     * @param priceWithoutTax the price without tax
+     * @return the application price
+     * @throws BusinessException the business exception
+     */
     public BigDecimal getApplicationPrice(Seller seller, BillingAccount ba, TradingCurrency currency, TradingCountry tradingCountry, OneShotChargeTemplate chargeTemplate,
             Date subscriptionDate, String offerCode, BigDecimal inputQuantity, String param1, String param2, String param3, boolean priceWithoutTax) throws BusinessException {
 
@@ -123,6 +172,20 @@ public class RealtimeChargingService {
         return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
     }
 
+    /**
+     * Gets the first recurring price.
+     *
+     * @param ba the ba
+     * @param chargeTemplate the charge template
+     * @param subscriptionDate the subscription date
+     * @param quantity the quantity
+     * @param param1 the param 1
+     * @param param2 the param 2
+     * @param param3 the param 3
+     * @param priceWithoutTax the price without tax
+     * @return the first recurring price
+     * @throws BusinessException the business exception
+     */
     public BigDecimal getFirstRecurringPrice(BillingAccount ba, RecurringChargeTemplate chargeTemplate, Date subscriptionDate, BigDecimal quantity, String param1, String param2,
             String param3, boolean priceWithoutTax) throws BusinessException {
 
@@ -135,6 +198,21 @@ public class RealtimeChargingService {
         return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
     }
 
+    /**
+     * Gets the activation service price.
+     *
+     * @param ba the ba
+     * @param serviceTemplate the service template
+     * @param subscriptionDate the subscription date
+     * @param offerCode the offer code
+     * @param quantity the quantity
+     * @param param1 the param 1
+     * @param param2 the param 2
+     * @param param3 the param 3
+     * @param priceWithoutTax the price without tax
+     * @return the activation service price
+     * @throws BusinessException the business exception
+     */
     /*
      * Warning : this method does not handle calendars at service level
      */
@@ -151,7 +229,12 @@ public class RealtimeChargingService {
 
         if (serviceTemplate.getServiceRecurringCharges() != null) {
             for (ServiceChargeTemplate<RecurringChargeTemplate> charge : serviceTemplate.getServiceRecurringCharges()) {
-                if (charge.getChargeTemplate().getApplyInAdvance()) {
+                boolean isApplyInAdvance = (charge.getChargeTemplate().getApplyInAdvance() == null) ? false : charge.getChargeTemplate().getApplyInAdvance();
+                if (!StringUtils.isBlank(charge.getChargeTemplate().getApplyInAdvanceEl())) {
+                    isApplyInAdvance = recurringChargeTemplateService.matchExpression(charge.getChargeTemplate().getApplyInAdvanceEl(), null, serviceTemplate,
+                        charge.getChargeTemplate());
+                }
+                if (isApplyInAdvance) {
                     result = result.add(getFirstRecurringPrice(ba, charge.getChargeTemplate(), subscriptionDate, quantity, param1, param2, param3, priceWithoutTax));
                 }
             }
