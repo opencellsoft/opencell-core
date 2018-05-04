@@ -18,6 +18,11 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +37,7 @@ import javax.faces.model.SelectItemGroup;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
