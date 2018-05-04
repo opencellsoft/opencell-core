@@ -21,11 +21,16 @@ package org.meveo.model.communication.contact;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -33,18 +38,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.intcrm.AdressBook;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
@@ -52,7 +58,18 @@ import org.meveo.model.intcrm.ContactGroup;
 @Table(name = "com_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "contact_code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "com_contact_seq"), })
-public class Contact extends BaseEntity {
+public class Contact extends AccountEntity {
+	@Id
+	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
+	@Column(name = "id")
+	@Access(AccessType.PROPERTY) // Access is set to property so a call to
+									// getId() wont trigger hibernate proxy
+									// loading
+	protected Long id;
+
+	@Version
+	@Column(name = "version")
+	private Integer version;
 
 	private static final long serialVersionUID = 3772773449495155646L;
 
@@ -83,11 +100,11 @@ public class Contact extends BaseEntity {
 	@Type(type = "numeric_boolean")
 	@Column(name = "is_vip", columnDefinition = "tinyint default false")
 	private boolean isVip;
-	
+
 	@Type(type = "numeric_boolean")
 	@Column(name = "is_suspect", columnDefinition = "tinyint default yes")
 	private boolean isSuspect;
-	
+
 	@Type(type = "numeric_boolean")
 	@Column(name = "agreed_ua", columnDefinition = "tinyint default false")
 	private boolean agreedToUA;
@@ -106,11 +123,19 @@ public class Contact extends BaseEntity {
 
 	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
 	private List<Message> messages;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adress_book_id")
-    private AdressBook adressBook;
-	
+	@JoinColumn(name = "adress_book_id")
+	private AddressBook adressBook;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public boolean isAgreedToUA() {
 		return agreedToUA;
 	}
@@ -216,20 +241,21 @@ public class Contact extends BaseEntity {
 	}
 
 	/**
-     * @return the adressBook
-     */
-    public AdressBook getAdressBook() {
-        return adressBook;
-    }
+	 * @return the adressBook
+	 */
+	public AddressBook getAdressBook() {
+		return adressBook;
+	}
 
-    /**
-     * @param adressBook the adressBook to set
-     */
-    public void setAdressBook(AdressBook adressBook) {
-        this.adressBook = adressBook;
-    }
+	/**
+	 * @param adressBook
+	 *            the adressBook to set
+	 */
+	public void setAdressBook(AddressBook adressBook) {
+		this.adressBook = adressBook;
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
 
 		if (this == obj) {

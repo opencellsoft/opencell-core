@@ -49,7 +49,7 @@ public class ContactGroup extends BaseEntity{
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adress_book_id")
-    private AdressBook adressBook;
+    private AddressBook adressBook;
 
 	public String getName() {
 		return name;
@@ -94,14 +94,14 @@ public class ContactGroup extends BaseEntity{
     /**
      * @return the adressBook
      */
-    public AdressBook getAdressBook() {
+    public AddressBook getAdressBook() {
         return adressBook;
     }
 
     /**
      * @param adressBook the adressBook to set
      */
-    public void setAdressBook(AdressBook adressBook) {
+    public void setAdressBook(AddressBook adressBook) {
         this.adressBook = adressBook;
     }
 }

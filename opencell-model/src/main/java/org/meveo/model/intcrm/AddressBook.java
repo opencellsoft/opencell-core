@@ -31,7 +31,7 @@ import org.meveo.model.communication.contact.Contact;
 @Table(name = "crm_adressbook")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_adressbook_seq"), })
-public class AdressBook extends BaseEntity {
+public class AddressBook extends BaseEntity {
 	
 	@Column(name = "name", length = 5)
 	@Size(max = 50)

@@ -41,7 +41,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.intcrm.AdditionalDetails;
-import org.meveo.model.intcrm.AdressBook;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 

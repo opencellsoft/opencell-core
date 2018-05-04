@@ -49,7 +49,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.intcrm.AdressBook;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.ContactInformation;
 
 /**
@@ -68,7 +68,7 @@ public class CustomerAccount extends AccountEntity {
 
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "crm_adressbook_id")
-	private AdressBook adressbook;
+	private AddressBook adressbook;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trading_currency_id")
@@ -128,11 +128,11 @@ public class CustomerAccount extends AccountEntity {
 		accountType = ACCOUNT_TYPE;
 	}
 	
-	public AdressBook getAdressbook() {
+	public AddressBook getAdressbook() {
 		return adressbook;
 	}
 
-	public void setAdressbook(AdressBook adressbook) {
+	public void setAdressbook(AddressBook adressbook) {
 		this.adressbook = adressbook;
 	}
 

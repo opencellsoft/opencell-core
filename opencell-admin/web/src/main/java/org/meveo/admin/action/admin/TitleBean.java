@@ -30,6 +30,10 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TitleService;
 
+
+import org.meveo.admin.exception.BusinessException;
+
+import org.meveo.service.intcrm.impl.ImportContactService;
 @Named
 @ViewScoped
 public class TitleBean extends BaseBean<Title> {
@@ -47,7 +51,14 @@ public class TitleBean extends BaseBean<Title> {
      */
     public TitleBean() {
         super(Title.class);
-       
+        
+        System.out.println("Title bean: call importContactService");
+        try{
+	        ImportContactService importContactService = new ImportContactService();
+	        importContactService.main();
+        } catch(BusinessException be){
+        	
+        }
     }
 
     /**
