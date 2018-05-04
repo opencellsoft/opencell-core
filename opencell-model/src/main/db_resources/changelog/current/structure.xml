@@ -803,4 +803,15 @@
 
     </changeSet>
     
+    <changeSet id="#3118_20180502" author="AbdelmounaimAkadid">
+    	<addColumn tableName="cat_price_plan_matrix">
+            <column name="invoice_subcategory_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="invoice_sub_category_id" type="bigint"  />           
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+    
 </databaseChangeLog> 
