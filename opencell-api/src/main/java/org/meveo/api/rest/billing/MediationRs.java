@@ -12,17 +12,22 @@ import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
+/**
+ * Mediation related API REST interface
+ * @lastModifiedVersion willBeSetLater
+ * 
+ * @author Andrius Karpavicius
+ */
 @Path("/billing/mediation")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-
 public interface MediationRs extends IBaseRs {
 
     /**
      * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
      * 
      * @param postData String of CDR
-     * @return Request processing status 
+     * @return Request processing status
      */
     @POST
     @Path("/registerCdrList")
@@ -32,7 +37,7 @@ public interface MediationRs extends IBaseRs {
      * Same as registerCdrList, but at the same process rate the EDR created
      * 
      * @param cdr String of CDR
-     * @return Request processing status 
+     * @return Request processing status
      */
     @POST
     @Path("/chargeCdr")
@@ -53,7 +58,7 @@ public interface MediationRs extends IBaseRs {
      * Confirms the reservation
      * 
      * @param reservationDto Prepaid reservation's data
-     * @return Request processing status 
+     * @return Request processing status
      */
     @POST
     @Path("/confirmReservation")
@@ -63,9 +68,19 @@ public interface MediationRs extends IBaseRs {
      * Cancels the reservation
      * 
      * @param reservationDto Prepaid reservation's data
-     * @return Request processing status 
+     * @return Request processing status
      */
     @POST
     @Path("/cancelReservation")
     ActionStatus cancelReservation(PrepaidReservationDto reservationDto);
+
+    /**
+     * Notify of rejected CDRs
+     * 
+     * @param cdrList A list of rejected CDR lines (can be as json format string instead of csv line)
+     * @return Request processing status
+     */
+    @POST
+    @Path("/notifyOfRejectedCdrs")
+    ActionStatus notifyOfRejectedCdrs(CdrListDto cdrList);
 }
