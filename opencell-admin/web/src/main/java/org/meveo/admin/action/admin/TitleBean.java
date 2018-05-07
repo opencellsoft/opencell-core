@@ -52,11 +52,6 @@ public class TitleBean extends BaseBean<Title> {
     public TitleBean() {
         super(Title.class);
         
-        System.out.println("Title bean: call importContactService");
-        try{
-	        ImportContactService importContactService = new ImportContactService();
-	        importContactService.main();
-        } catch(BusinessException be){
         	
         }
     }

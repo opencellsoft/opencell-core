@@ -73,6 +73,10 @@ public class Contact extends AccountEntity {
 
 	private static final long serialVersionUID = 3772773449495155646L;
 
+	@Column(name = "email", length = 255)
+	@Size(max = 255)
+	private String email;
+	
 	@Column(name = "description", length = 255)
 	@Size(max = 255)
 	private String description;
@@ -142,6 +146,14 @@ public class Contact extends AccountEntity {
 
 	public void setAgreedToUA(boolean agreedToUA) {
 		this.agreedToUA = agreedToUA;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getDescription() {

@@ -72,4 +72,31 @@ public class ImportContactService extends PersistenceService {
 		//addressBookService.create(addressBook);
 		
 	}
+	
+	public Contact parse(String line){
+		Contact c = new Contact();
+		
+
+		String[] split = line.split(",");
+		
+		String firstName = split[0];
+		String lastName = split[1];
+		String address = split[2];
+		String email = split[3];
+		String company = split[4];
+		String connectedOn = split[5];
+		String website = split[6];
+		String instantMessengers = split[7];
+		
+		c.setName(new Name(new Title(), firstName, lastName));
+		c.setEmail(email);
+				
+		return c;
+	}
+	
+	
+	public void saveContact(String line){
+		Contact c = parse(line);
+		
+	}
 }

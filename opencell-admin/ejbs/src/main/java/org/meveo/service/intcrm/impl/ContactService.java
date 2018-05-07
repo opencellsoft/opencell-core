@@ -12,4 +12,8 @@ public class ContactService extends PersistenceService {
     public void create(Contact contact) throws BusinessException {
         super.create(contact);
     }
+    
+    public void save(Contact c){
+    	System.out.println("Saving Contact...");
+    }
 }

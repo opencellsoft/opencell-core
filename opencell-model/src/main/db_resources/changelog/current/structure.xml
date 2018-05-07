@@ -650,6 +650,7 @@
         <createSequence sequenceName="crm_additional_details_seq" />
         
         <addColumn tableName="com_contact">
+            <column name="email" type="varchar(255)"/>
             <column name="description" type="varchar(255)"/>
             <column name="assistant_name" type="varchar(50)"/>
             <column name="assistant_phone" type="varchar(15)"/>
