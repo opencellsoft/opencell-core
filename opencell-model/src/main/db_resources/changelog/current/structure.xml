@@ -803,4 +803,11 @@
 
     </changeSet>
     
+    <changeSet id="#3288_20180503" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_invoice_type">
+            <column name="occ_template_code_el" type="varchar(2000)"  />           
+            <column name="occ_template_negative_code_el" type="varchar(2000)"  />           
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 
