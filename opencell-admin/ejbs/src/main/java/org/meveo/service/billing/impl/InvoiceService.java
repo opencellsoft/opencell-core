@@ -73,6 +73,7 @@ import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -104,6 +105,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -124,6 +126,9 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1 
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -171,6 +176,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -1437,27 +1445,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return null;
     }
-
+    
     /**
-     * Create RatedTransaction and generate invoice for the billingAccount.
-     * 
-     * @param billingAccount billing account
-     * @param invoiceDate date of invoice
-     * @param firstTransactionDate first transaction date.
-     * @param lastTransactionDate date of last transaction
-     * @param ratedTxFilter rated transaction filter
-     * @param orderNumber Order number associated to subscription
-     * @param isDraft Is it a draft
-     * @param produceXml Produce invoice XML file
-     * @param producePdf Produce invoice PDF file
-     * @param generateAO Generate AOs
-     * @return invoice
-     * @throws BusinessException business exception
-     * @throws ImportInvoiceException import invoice exception
-     * @throws InvoiceExistException invoice exists exception
+     * Generate invoice.
+     *
+     * @param billingAccount the billing account
+     * @param generateInvoiceRequestDto the generate invoice request dto
+     * @param ratedTransactionFilter 
+     * @return the invoice
+     * TODO : delete the deprecated method !
+     * @throws BusinessException 
+     * @throws ImportInvoiceException 
+     * @throws InvoiceExistException 
      */
-    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
-            boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
+    public Invoice generateInvoice(BillingAccount billingAccount, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
+            throws BusinessException, InvoiceExistException, ImportInvoiceException {
+
+        Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
+        Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
+        Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        String orderNumber = generateInvoiceRequestDto.getOrderNumber();
 
         if (StringUtils.isBlank(billingAccount)) {
             throw new BusinessException("billingAccount is null");
@@ -1502,23 +1509,75 @@ public class InvoiceService extends PersistenceService<Invoice> {
             assignInvoiceNumber(invoice);
         }
 
+        // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         commit();
+        return invoice;
+    }
 
+    /**
+     * Produce files and AO.
+     *
+     * @param produceXml the produce xml
+     * @param producePdf the produce pdf
+     * @param generateAO the generate AO
+     * @param invoice the invoice
+     * @throws BusinessException the business exception
+     * @throws InvoiceExistException the invoice exist exception
+     * @throws ImportInvoiceException the import invoice exception
+     */
+    public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice)
+            throws BusinessException, InvoiceExistException, ImportInvoiceException {
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
-
         if (producePdf) {
             produceInvoicePdfNoUpdate(invoice);
         }
-
         if (generateAO) {
             recordedInvoiceService.generateRecordedInvoice(invoice);
         }
+        update(invoice);
+    }
 
-        invoice = update(invoice);
+    /**
+     * Create RatedTransaction and generate invoice for the billingAccount.
+     * 
+     * @param billingAccount billing account
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate first transaction date.
+     * @param lastTransactionDate date of last transaction
+     * @param ratedTxFilter rated transaction filter
+     * @param orderNumber Order number associated to subscription
+     * @param isDraft Is it a draft
+     * @param produceXml Produce invoice XML file
+     * @param producePdf Produce invoice PDF file
+     * @param generateAO Generate AOs
+     * @return invoice
+     * @throws BusinessException business exception
+     * @throws ImportInvoiceException import invoice exception
+     * @throws InvoiceExistException invoice exists exception
+     * 
+     * @Deprecated : - It contains a lot of args.
+     *               - It breaks the 'Separation of responsibilities' pattern by creating the Invoice , creating the PDF/XML file & producing the AOs !!
+     *               => use generateInvoice(BillingAccount, GenerateInvoiceRequestDto) + produceFilesAndAO(boolean, boolean, boolean, Invoice) instead.
+     */
+    @Deprecated
+    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
+            boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
+        GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
+        generateInvoiceRequestDto.setGenerateXML(produceXml);
+        generateInvoiceRequestDto.setGeneratePDF(producePdf);
+        generateInvoiceRequestDto.setGenerateAO(generateAO);
+        generateInvoiceRequestDto.setInvoicingDate(invoiceDate);
+        generateInvoiceRequestDto.setFirstTransactionDate(firstTransactionDate);
+        generateInvoiceRequestDto.setLastTransactionDate(lastTransactionDate);
+        generateInvoiceRequestDto.setOrderNumber(orderNumber);
+        
+        Invoice invoice = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
+        this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice);
+        
         return invoice;
     }
     
