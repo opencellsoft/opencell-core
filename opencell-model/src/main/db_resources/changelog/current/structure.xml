@@ -775,4 +775,8 @@
         <sql>DROP INDEX IF EXISTS medina_access_subscription_id ON ${db.schema.adapted}medina_access</sql>
         <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
 	</changeSet>   
+	
+	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
+		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
+	</changeSet>
 </databaseChangeLog> 
