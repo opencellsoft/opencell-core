@@ -541,6 +541,32 @@
 								</p:outputPanel>
 							</p:panel>
 						</p:fieldset>
+						
+						<p:fieldset legend="Generate Invoice"
+							style="float: left; width: 95%; margin-top: 10px;">
+								<p:outputPanel column="2" id="buttonGenerate">
+		                            <p:commandButton value="#{messages['invoice.generateDraft']}" icon="ui-icon-refresh" 
+		                                action="#{creationInvoiceBean.generateDraftInvoice()}" update=":formId:messages :formId:tabView:attachments buttonGenerate" />
+		                        </p:outputPanel>
+		                        
+		                        <h:panelGroup id="attachments">
+		                             <p:fieldset legend="#{messages['invoice.draftInvoice']}" rendered="#{creationInvoiceBean.draftGenerated}">
+		                                 <p:panelGrid columns="1">
+		                                     <p:outputPanel rendered="#{creationInvoiceBean.draftGenerated}">
+		                                         <h:commandLink action="#{creationInvoiceBean.downloadPdfInvoice()}">
+		                                             <h:outputText value="invoice.pdf" />
+		                                         </h:commandLink>
+		                                     </p:outputPanel>
+		                                     <p:outputPanel rendered="#{creationInvoiceBean.draftGenerated}">
+		                                         <h:commandLink action="#{creationInvoiceBean.downloadXmlInvoice()}">
+		                                             <h:outputText value="invoice.xml"/>
+		                                         </h:commandLink>
+		                                     </p:outputPanel>
+		                                 </p:panelGrid>
+		                             </p:fieldset>
+		                         </h:panelGroup>
+		                </p:fieldset>
+                         
 			      </p:tab>  
 				  <hftl:customFields backingBean="#{creationInvoiceBean}"
 							messagesId=":formId:messages" />

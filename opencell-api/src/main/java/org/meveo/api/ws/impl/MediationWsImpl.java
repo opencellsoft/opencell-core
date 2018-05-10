@@ -16,8 +16,12 @@ import org.meveo.api.ws.MediationWs;
 import org.meveo.commons.utils.StringUtils;
 
 /**
- * @author Edward P. Legaspi
- **/
+ * Mediation related API WS implementation
+ * @lastModifiedVersion willBeSetLater
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 @WebService(serviceName = "MediationWs", endpointInterface = "org.meveo.api.ws.MediationWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class MediationWsImpl extends BaseWs implements MediationWs {
@@ -105,4 +109,16 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
         return result;
     }
 
+    @Override
+    public ActionStatus notifyOfRejectedCdrs(CdrListDto cdrList) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            mediationApi.notifyOfRejectedCdrs(cdrList);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

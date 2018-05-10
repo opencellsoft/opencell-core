@@ -778,6 +778,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             for (BusinessServiceModel bsm : selectedBsms) {
                 OfferServiceTemplate ost = new OfferServiceTemplate();
                 ServiceTemplate stSource = bsm.getServiceTemplate();
+                stSource = serviceTemplateService.refreshOrRetrieve(stSource);
 
                 ServiceTemplate stTarget = new ServiceTemplate();
                 stTarget.setCode(stSource.getCode());

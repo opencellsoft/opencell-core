@@ -38,7 +38,7 @@
             <hftl:formField label="#{messages['ratedTransaction.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
-            <hftl:formField label="#{messages['ratedTransaction.status']}" field="status" disabled="true" />
+            <hftl:formField label="#{messages['ratedTransaction.status']}" field="status" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.param1']}" field="parameter1" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.param2']}" field="parameter2" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" disabled="#{ratedTransactionBean.isBilled()}" />

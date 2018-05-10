@@ -17,6 +17,13 @@ import org.meveo.api.rest.billing.MediationRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
 
+/**
+ * Mediation related API REST implementation
+ * @lastModifiedVersion willBeSetLater
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class MediationRsImpl extends BaseRs implements MediationRs {
@@ -105,4 +112,16 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
         return result;
     }
 
+    @Override
+    public ActionStatus notifyOfRejectedCdrs(CdrListDto cdrList) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            mediationApi.notifyOfRejectedCdrs(cdrList);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

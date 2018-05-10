@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+    
     <changeSet author="AbdelmounaimAkadid" id="#3224_16022018">
         <insert tableName="adm_role">
             <column name="id" valueNumeric="-6" />
@@ -560,5 +561,16 @@ ORDER BY
             <column name="permission_id" valueNumeric="-30" />
         </insert>
 	</changeSet>
+	
+	<changeSet author="SaidRamli" id="#3354_23042018">
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-6"></column>
+        </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-3"></column>
+        	<column name="role_id" value="-6"></column>
+        </insert>
+    </changeSet>
         
 </databaseChangeLog>

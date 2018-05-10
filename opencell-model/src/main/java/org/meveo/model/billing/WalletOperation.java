@@ -231,7 +231,8 @@ public class WalletOperation extends BusinessEntity {
     @Transient
     private BillingAccount billingAccount;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
     @Transient

@@ -4,7 +4,15 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Main script interface implementation
+ * @lastModifiedVersion willBeSetLater
+ * 
+ * @author Andrius Karpavicius
+ */
 public abstract class Script implements ScriptInterface {
 
     /**
@@ -42,12 +50,11 @@ public abstract class Script implements ScriptInterface {
      */
     public static String CONTEXT_ACTION = "CONTEXT_ACTION";
 
-
     /**
      * Nb of ok when script is executed by a Job
      */
     public static String JOB_RESULT_NB_OK = "RESULT_NB_OK";
-    
+
     /**
      * Nb of ko when script is executed by a Job
      */
@@ -62,14 +69,17 @@ public abstract class Script implements ScriptInterface {
      * Report when script is executed by a Job
      */
     public static String JOB_RESULT_REPORT = "RESULT_REPORT";
-    
 
     /**
      * Nb of result to process when script is executed by a Job
      */
-	public static String JOB_RESULT_TO_PROCESS="RESULT_TO_PROCESS";
-	
-    
+    public static String JOB_RESULT_TO_PROCESS = "RESULT_TO_PROCESS";
+
+    /**
+     * A logger
+     */
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Override
     public void init(Map<String, Object> methodContext) throws BusinessException {
 

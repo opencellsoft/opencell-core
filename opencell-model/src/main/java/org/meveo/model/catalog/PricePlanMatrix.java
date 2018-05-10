@@ -190,6 +190,10 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "minimum_amount_with_tax_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountWithTaxEl;
+    
+    @Column(name = "invoice_subcategory_el", length = 2000)
+    @Size(max = 2000)
+    private String invoiceSubCategoryEL;
 
     public String getEventCode() {
         return eventCode;
@@ -569,5 +573,14 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
         this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
     }
+
+    public String getInvoiceSubCategoryEL() {
+        return invoiceSubCategoryEL;
+    }
+
+    public void setInvoiceSubCategoryEL(String invoiceSubCategoryEL) {
+        this.invoiceSubCategoryEL = invoiceSubCategoryEL;
+    }
+ 
 
 }
