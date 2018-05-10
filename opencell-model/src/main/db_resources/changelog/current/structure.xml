@@ -819,5 +819,9 @@
         <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
 	</changeSet>
+	
+	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
+		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
+	</changeSet>
     
 </databaseChangeLog> 
