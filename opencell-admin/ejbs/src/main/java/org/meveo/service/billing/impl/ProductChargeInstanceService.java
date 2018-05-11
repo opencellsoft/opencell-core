@@ -30,7 +30,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -63,8 +63,13 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
     public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = null;
-        ChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
-
+        ProductChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
+        
+        if (!walletOperationService.isChargeMatch(productChargeInstance, chargeTemplate.getFilterExpression())) {
+            log.debug("not rating productChargeInstance with code={}, filter expression not evaluated to true", productChargeInstance.getCode());
+            return new ArrayList<WalletOperation>();
+        }
+        
         log.debug("Apply product charge. User account {}, subscription {}, offer {}, charge {}, quantity {}, date {}",
             productChargeInstance.getUserAccount() != null ? productChargeInstance.getUserAccount().getCode() : null,
             productChargeInstance.getSubscription() != null ? productChargeInstance.getSubscription().getCode() : null, chargeTemplate.getCode(),

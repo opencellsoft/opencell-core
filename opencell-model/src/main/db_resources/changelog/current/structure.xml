@@ -823,5 +823,11 @@
 	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
 		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
 	</changeSet>
+	
+	<changeSet id="#3239_20180511" author="AbdelmounaimAkadid">
+    	<addColumn tableName="cat_product_charge_templ">
+            <column name="filter_expression" type="varchar(2000)"  />           
+        </addColumn>
+	</changeSet>
     
 </databaseChangeLog> 
