@@ -31,6 +31,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+/**
+ * Product charge template
+ * v5.1 Candidate add filter expression to product charge template
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.1 Candidate
+ */
 @Entity
 @Table(name = "cat_product_charge_templ")
 @NamedQueries({

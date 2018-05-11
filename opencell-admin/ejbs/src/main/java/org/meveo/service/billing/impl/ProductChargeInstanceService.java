@@ -33,6 +33,12 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
+/**
+ * Product charge instance service
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.1 Candidate
+ */
 @Stateless
 public class ProductChargeInstanceService extends BusinessService<ProductChargeInstance> {
 
@@ -60,6 +66,17 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		return productChargeInstance;
 	}
 
+	/**
+	 * Apply product charge instance
+     * v5.1 Candidate apply rating filter to product charge instance
+     * 
+     * @param productChargeInstance product charge instance
+     * @param isVirtual indicates that it is virtual operation
+     * @return List<WalletOperation> list of wallet operations
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.1 Candidate
+     */
     public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = null;
