@@ -21,7 +21,7 @@ import org.meveo.model.AuditableEntity;
 
 /**
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  */
 
 @Entity
@@ -44,7 +44,11 @@ public class PaymentHistory extends AuditableEntity {
     /** The seller Code. */
     @Column(name = "seller_code")
     private String sellerCode;
-
+    
+    /** The customer Code. */
+    @Column(name = "customer_code")
+    private String customerCode;
+    
     /** The operation date. */
     @Column(name = "operation_date")
     @NotNull
@@ -387,4 +391,17 @@ public class PaymentHistory extends AuditableEntity {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    /**
+     * @return the customerCode
+     */
+    public String getCustomerCode() {
+        return customerCode;
+    }
+
+    /**
+     * @param customerCode the customerCode to set
+     */
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
+    }    
 }
