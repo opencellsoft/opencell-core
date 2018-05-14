@@ -314,4 +314,9 @@
         <constraint type="READ">currentUser.hasRole('quoteVisualization')</constraint>
     </page>    
     
+	<!-- PAGE RULES FOR INTCRM PAGES -->
+	<page view-id=".+\/intcrm\/.*">
+		<constraint>currentUser.hasRole('administrationManagement')</constraint>
+	</page>
+	
 </page-access>

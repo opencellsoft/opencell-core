@@ -132,6 +132,11 @@ public class Contact extends AccountEntity {
 	@JoinColumn(name = "adress_book_id")
 	private AddressBook adressBook;
 
+	
+	public Contact(){
+		
+	}
+	
 	public Long getId() {
 		return id;
 	}

@@ -9,7 +9,10 @@
 
     
 	<ui:define name="body">
-		<h:commandButton  id="test" value="Test Button" action="#{ImportContactBean.show}"/>
+		<div style="margin: 10%">
+			<H1>BUTTON BELLOW</H1>
+			<h:commandButton  id="test" value="Test Button" action="#{importContactBean.show()}"/>
+		</div>
 	</ui:define>
 
 </ui:composition>

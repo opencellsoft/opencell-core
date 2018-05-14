@@ -51,9 +51,6 @@ public class TitleBean extends BaseBean<Title> {
      */
     public TitleBean() {
         super(Title.class);
-        
-        	
-        }
     }
 
     /**

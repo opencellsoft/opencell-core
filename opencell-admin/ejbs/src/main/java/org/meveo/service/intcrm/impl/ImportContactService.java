@@ -19,33 +19,14 @@
 package org.meveo.service.intcrm.impl;
 
 
-import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.job.Job;
-import org.meveo.security.MeveoUser;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.service.intcrm.impl.AddressBookService;
-import org.meveo.service.intcrm.impl.ContactService;;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.model.shared.Title;
-import org.meveo.model.shared.Name;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
+import org.meveo.service.base.PersistenceService;
 
 /**
  * Provider contact service implementation.

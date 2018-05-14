@@ -2208,7 +2208,16 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/billing/accountingCodes/accountingCodeDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
-
+	
+	<!-- IntCRM -->
+	
+	<navigation-case>
+		<from-outcome>importContact</from-outcome>
+		<to-view-id>/pages/intcrm/importContact.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	
+	
 </navigation-rule>
 
 </faces-config>
