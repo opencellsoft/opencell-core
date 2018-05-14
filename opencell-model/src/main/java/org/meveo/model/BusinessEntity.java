@@ -18,6 +18,8 @@
  */
 package org.meveo.model;
 
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -26,6 +28,12 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * The Class BusinessEntity.
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @MappedSuperclass
 public abstract class BusinessEntity extends AuditableEntity implements ISearchable {
 
@@ -49,6 +57,10 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
 
     @Transient
     protected boolean appendGeneratedCode = false;
+    
+    /** The run time CF values. */
+    @Transient
+    private Map<String, Object> runTimeCFValues;
 
     public String getCode() {
         return code;
@@ -165,4 +177,19 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     public boolean isCodeChanged() {
         return !StringUtils.equals(code, previousCode);
     }
+
+    /**
+     * @return the runTimeCFValues
+     */
+    public Map<String, Object> getRunTimeCFValues() {
+        return runTimeCFValues;
+    }
+
+    /**
+     * @param runTimeCFValues the runTimeCFValues to set
+     */
+    public void setRunTimeCFValues(Map<String, Object> runTimeCFValues) {
+        this.runTimeCFValues = runTimeCFValues;
+    }
+
 }
