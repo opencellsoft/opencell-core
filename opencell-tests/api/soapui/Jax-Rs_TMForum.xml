@@ -21098,7 +21098,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>c0f519d0-1c3b-4c75-91f3-6d56b9050862</con:value>
+              <con:value>57876ccf-8ec8-48b7-9b14-c7eedb3b615e</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -21228,7 +21228,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -21258,7 +21259,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -21288,9 +21290,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  &lt;stringValue>Service CF value&lt;/stringValue>
-&lt;/customField></content>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <stringValue>Service CF value</stringValue>
+</customField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -21582,7 +21585,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -21612,7 +21616,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -21642,9 +21647,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  &lt;stringValue>Service CF value&lt;/stringValue>
-&lt;/customField></content>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <stringValue>Service CF value</stringValue>
+</customField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -21689,7 +21695,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -21728,7 +21735,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
               <con:configuration>
                 <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>mm</key>
@@ -21936,7 +21944,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -21966,7 +21975,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -21996,9 +22006,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  &lt;stringValue>Service CF value&lt;/stringValue>
-&lt;/customField></content>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <stringValue>Service CF value</stringValue>
+</customField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -22043,7 +22054,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -22082,7 +22094,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
               <con:configuration>
                 <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>mm</key>
@@ -22342,7 +22355,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -22372,7 +22386,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -22402,9 +22417,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  &lt;stringValue>Service CF value&lt;/stringValue>
-&lt;/customField></content>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <stringValue>Service CF value</stringValue>
+</customField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -22449,7 +22465,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -22488,7 +22505,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
               <con:configuration>
                 <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>mm</key>
@@ -23202,7 +23220,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -23498,7 +23517,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -23555,7 +23575,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -23594,7 +23615,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
               <con:configuration>
                 <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>mm</key>
@@ -23773,7 +23795,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -23830,7 +23853,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -23869,7 +23893,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
               <con:configuration>
                 <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>mm</key>
@@ -24105,7 +24130,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -24171,7 +24197,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 9">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -24201,7 +24228,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="0ea12bc7-33f3-4fb3-a960-861ad5a8360c" name="XPath Match">
               <con:configuration>
                 <path>//subscription/customFields/customField[@code='${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP']</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" xmlns:ns2="http://ws.api.meveo.org/" xmlns:ns3="http://wf.ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP" description="Long map value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>mm</key>
@@ -25081,7 +25109,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="9c6fa325-5243-42c5-b2a3-77f941ddc06b" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="9a01afdd-c73c-415b-be40-574ad4436b19" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -25143,7 +25171,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -25173,7 +25202,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="203ad7bd-1f91-4c11-a35d-8812a702bd87" name="XPath Match 3">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Third|Fourth</key>
@@ -25203,9 +25233,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="03c33c85-73e9-4288-85fb-339bb9a55d76" name="XPath Match 4">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]</path>
-                <content>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  &lt;stringValue>Service CF value&lt;/stringValue>
-&lt;/customField></content>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <stringValue>Service CF value</stringValue>
+</customField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -26212,7 +26243,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="f0d43ee6-ee87-4c77-bea8-30d0a419a6af" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="235fef77-a107-4fe7-bcbc-e9d696af2e66" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -26266,7 +26297,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -27251,7 +27283,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="797c96c0-2154-41eb-950e-0bb2804e6c5f" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="798cc444-6e28-49b3-9bc0-389516676604" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -27290,7 +27322,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
                <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
-                <ignoreCase>false</ignoreCase>
+                <ignoreCase>true</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
@@ -27306,7 +27338,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -27436,7 +27469,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>serviceId1</con:name>
-              <con:value>15</con:value>
+              <con:value>44</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -27597,7 +27630,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -27795,7 +27829,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -28004,7 +28039,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -28291,7 +28327,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -28571,7 +28608,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -28790,7 +28828,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>Fifth|Fourth</key>
@@ -29664,7 +29703,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>29</con:value>
+        <con:value>31</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -29985,7 +30024,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>a0156e43-7b06-4987-8352-016b2f5a7e8e</orderNumber>
+            <orderNumber>887298b6-065a-4009-80c8-d70f101bb463</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30162,7 +30201,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>a0156e43-7b06-4987-8352-016b2f5a7e8e</orderNumber>
+            <orderNumber>887298b6-065a-4009-80c8-d70f101bb463</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30353,7 +30392,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>a0156e43-7b06-4987-8352-016b2f5a7e8e</orderNumber>
+            <orderNumber>887298b6-065a-4009-80c8-d70f101bb463</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30594,7 +30633,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>12cf3e79-c552-457e-8074-bfcbadd4eaca</orderNumber>
+            <orderNumber>88f12d29-b5aa-4993-b3af-bdd67901442d</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30809,7 +30848,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>97c8ffb9-6f40-423b-a9c6-a8e0f4e6cf86</orderNumber>
+            <orderNumber>9158a5e0-ba0c-4add-bda1-db351caed0ce</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31013,7 +31052,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>09decae5-2741-40e0-a4fb-1da714037a63</orderNumber>
+            <orderNumber>7662b842-1206-433b-b32c-ddb25db27284</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31124,7 +31163,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>35</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -31858,7 +31897,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>c4bad244-08ea-4620-9e1a-05a42ba244a6</con:value>
+              <con:value>d303687a-5031-473d-829f-371b0fbe8a75</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -32161,15 +32200,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>c9904ca9-f416-41f9-b768-c38c66ee96a3</con:value>
+        <con:value>27758b7f-0406-4a77-a3c0-e57dca3c64b6</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>6f095c4e-4009-4b76-8038-291049524073</con:value>
+        <con:value>e1af5808-31f0-4ef2-bf78-e75157c0a840</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>12</con:value>
+        <con:value>14</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -32336,11 +32375,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
