@@ -16,7 +16,4 @@ public class ContactService extends PersistenceService<Contact> {
         super.create(contact);
     }
     
-    public void save(Contact c){
-    	System.out.println("Saving Contact...");
-    }
 }

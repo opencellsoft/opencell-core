@@ -39,25 +39,11 @@ public class ImportContactService extends PersistenceService {
 	@Inject
     private AddressBookService addressBookService;
 
-		
-	public void main() throws BusinessException {
-		System.out.println("Main ImportingContactService");
-		
-		Contact contact = new Contact();
-		//AddressBook addressBook = new AddressBook();
-		
-		Name name = new Name(new Title(), "Franck", "Valot");
-		contact.setName(name);
-		
-		contactService.create(contact);
-		//addressBookService.create(addressBook);
-		
-	}
-	
-	public Contact parse(String line){
+
+    public Contact parse(String line){
+    	log.debug("Parsing Contact Line");
 		Contact c = new Contact();
 		
-
 		String[] split = line.split(",");
 		
 		String firstName = split[0];
@@ -71,13 +57,28 @@ public class ImportContactService extends PersistenceService {
 		
 		c.setName(new Name(new Title(), firstName, lastName));
 		c.setEmail(email);
-				
-		return c;
-	}
-	
-	
-	public void saveContact(String line){
-		Contact c = parse(line);
+			
 		
+		return c;		
 	}
+	
+    public void saveContact(String line){
+    	log.debug("Saving Contact Service");
+    	Contact c = parse(line);
+    	try {
+    		log.debug("Creating Contact");
+			contactService.create(c);
+		} catch (BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    /*
+     	saveContact(String line) {
+		//parse your line here
+		Contact c = parse(line);
+		contactService.save(c);
+		}
+     */
 }

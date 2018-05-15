@@ -2212,6 +2212,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	<!-- IntCRM -->
 	
 	<navigation-case>
+		<from-outcome>success</from-outcome>
+		<to-view-id>/pages/intcrm/success.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	
+	<navigation-case>
 		<from-outcome>importContact</from-outcome>
 		<to-view-id>/pages/intcrm/importContact.xhtml</to-view-id>
 		<redirect />

@@ -89,6 +89,10 @@ public class Contact extends AccountEntity {
 	@Size(max = 15)
 	private String assistantPhone;
 
+	@Column(name = "position", length = 50)
+	@Size(max = 50)
+	private String position;
+
 	@Column(name = "imported_from", length = 50)
 	@Size(max = 50)
 	private String importedFrom;

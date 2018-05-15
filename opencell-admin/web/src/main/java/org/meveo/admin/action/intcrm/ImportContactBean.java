@@ -8,29 +8,34 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.intcrm.impl.AddressBookService;
-import org.meveo.service.intcrm.impl.ContactService;
+import org.meveo.service.intcrm.impl.ImportContactService;
+import org.slf4j.Logger;
 
 @Named
 @ViewScoped
 public class ImportContactBean extends CustomFieldBean<Contact> {
 
 	@Inject
-	private ContactService contactService;
+	private ImportContactService importContactService;
 
-	@Inject
-	private AddressBookService addressBookService;
-
+    @Inject
+    private Logger log;
+    
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
 	public ImportContactBean() {
 		super(Contact.class);
+		log.debug("Constructor");
 	}
-
-	public void show() {
-		System.out.println("Testing Bean");
+	
+	
+	public String importContact() {
+		System.out.println("Importing Contact Bean");
+		log.debug("Importing Contact Bean");
+		importContactService.saveContact("Arnaud,UHLRICH,,arnaud.uhlrich@free.Fr,Magellan Partners - ASAPpro,Senior Manager - Director,\"10/20/13, 9:34 AM\",,SKYPE:uhlricha");
+		return "success";
 	}
 
 	/**
@@ -38,7 +43,7 @@ public class ImportContactBean extends CustomFieldBean<Contact> {
 	 */
 	@Override
 	protected IPersistenceService<Contact> getPersistenceService() {
-		return contactService;
+		return importContactService;
 	}
 
 }

@@ -11,7 +11,9 @@
 	<ui:define name="body">
 		<div style="margin: 10%">
 			<H1>BUTTON BELLOW</H1>
-			<h:commandButton  id="test" value="Test Button" action="#{importContactBean.show()}"/>
+			<h:form>
+				<h:commandButton  id="test" value="Test Import Button"  type="submit" action="#{importContactBean.importContact}"/>
+			</h:form>
 		</div>
 	</ui:define>
 
