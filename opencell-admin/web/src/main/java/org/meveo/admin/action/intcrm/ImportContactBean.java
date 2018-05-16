@@ -1,5 +1,6 @@
 package org.meveo.admin.action.intcrm;
 
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,12 +31,15 @@ public class ImportContactBean extends CustomFieldBean<Contact> {
 		log.debug("Constructor");
 	}
 	
-	
-	public String importContact() {
+	public void importContacts() {
 		System.out.println("Importing Contact Bean");
 		log.debug("Importing Contact Bean");
-		importContactService.saveContact("Arnaud,UHLRICH,,arnaud.uhlrich@free.Fr,Magellan Partners - ASAPpro,Senior Manager - Director,\"10/20/13, 9:34 AM\",,SKYPE:uhlricha");
-		return "success";
+		// importContactService.saveContact("Arnaud,UHLRICH,,arnaud.uhlrich@free.Fr,Magellan Partners - ASAPpro,Senior Manager - Director,\"10/20/13, 9:34 AM\",,SKYPE:uhlricha");
+	}
+	
+	@PostConstruct
+	private void init() {
+		log.debug("start");
 	}
 
 	/**
