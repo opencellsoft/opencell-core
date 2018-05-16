@@ -519,6 +519,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String getViewAfterSave() {
         return getListViewName();
     }
+    
+    /**
+     * Returns translation value for i18n map field, else the value itself
+     * 
+     * @author akadid abdelmounaim 
+     * @lastModifiedVersion 5.0
+     */
+    public String getTranslation(Object fieldValue) {
+        if(fieldValue instanceof Map<?, ?>) {
+            String lang = FacesContext.getCurrentInstance().getViewRoot().getLocale().getISO3Language().toUpperCase();
+            Map<String, String> translationMap = (Map<String, String>) fieldValue;
+            return translationMap.get(lang);
+        }
+        return (String) fieldValue;
+    }
 
     /**
      * Method to get Back link. Default view name is a list view in a format: entity's name + s;
