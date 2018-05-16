@@ -124,6 +124,8 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			 
 			List<AccountOperation> accountOperations = accountOperationService.list();
+			initContext.put(ReportExtractScript.LINE_COUNT, accountOperations.size());
+			
 	        String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR));
 	        File dir = new File(exportDir);
 	        if (!dir.exists()) {
@@ -166,6 +168,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 	        
 			LOGGER.debug("#####################Ending of script ExportAccountOperationScript");
 		} catch (Exception e) {
+			initContext.put(ReportExtractScript.ERROR_MESSAGE, e.getMessage());
 			LOGGER.error("Exception:", e);
 			throw new BusinessException(e.getMessage());
 		}

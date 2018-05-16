@@ -1,9 +1,12 @@
 package org.meveo.model.finance;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -15,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -66,6 +70,9 @@ public class ReportExtract extends EnableBusinessEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dwh_report_extract_params")
     private Map<String, String> params = new HashMap<>();
+
+    @OneToMany(mappedBy = "reportExtract", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<ReportExtractExecutionResult> executionResults = new ArrayList<>();
 
     private transient Date startDate;
     private transient Date endDate;
@@ -132,6 +139,14 @@ public class ReportExtract extends EnableBusinessEntity {
 
     public void setParams(Map<String, String> params) {
         this.params = params;
+    }
+
+    public List<ReportExtractExecutionResult> getExecutionResults() {
+        return executionResults;
+    }
+
+    public void setExecutionResults(List<ReportExtractExecutionResult> executionResults) {
+        this.executionResults = executionResults;
     }
 
 }
