@@ -165,6 +165,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date endDate;
     private boolean draftGenerated = false;
     private Invoice invoiceCopy = null;
+    private Date rtStartDate;
+    private Date rtEndDate;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -300,6 +302,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             ratedTransaction.setParameter1(parameter1);
             ratedTransaction.setParameter2(parameter2);
             ratedTransaction.setParameter3(parameter3);
+            ratedTransaction.setStartDate(rtStartDate);
+            ratedTransaction.setEndDate(rtEndDate);
             ratedTransaction.setOrderNumber(orderNumber);
             ratedTransaction.setInvoice(entity);
             ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
@@ -668,6 +672,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         newRT.setParameter1(rt.getParameter1());
                         newRT.setParameter2(rt.getParameter2());
                         newRT.setParameter3(rt.getParameter3());
+                        newRT.setStartDate(rt.getStartDate());
+                        newRT.setEndDate(rt.getEndDate());
                         newRT.setOrderNumber(rt.getOrderNumber());
                         newRT.setInvoice(entity);
                         agregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
@@ -1134,6 +1140,22 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public Date getRtStartDate() {
+        return rtStartDate;
+    }
+
+    public void setRtStartDate(Date rtStartDate) {
+        this.rtStartDate = rtStartDate;
+    }
+
+    public Date getRtEndDate() {
+        return rtEndDate;
+    }
+
+    public void setRtEndDate(Date rtEndDate) {
+        this.rtEndDate = rtEndDate;
     }
 
     public Order getOrder() {

@@ -893,4 +893,11 @@
            <column name="customer_code" type="varchar(256)" />
        </addColumn>
     </changeSet>
+    
+     <changeSet id="#3406_20180516" author="AbdelmounaimAkadid">
+     	<addColumn tableName="billing_rated_transaction">
+           <column name="start_date" type="datetime" />
+           <column name="end_date" type="datetime" />
+       </addColumn>
+    </changeSet>
 </databaseChangeLog> 

@@ -20,7 +20,6 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -84,6 +83,13 @@ public class RatedTransactionDto extends BaseDto {
 
     /** The do not trigger invoicing. */
     private boolean doNotTriggerInvoicing = false;
+    
+    /** The start date. */
+    private Date startDate;
+
+    /** The end date. */
+    private Date endDate;
+
 
     /**
      * Instantiates a new rated transaction dto.
@@ -113,6 +119,8 @@ public class RatedTransactionDto extends BaseDto {
             this.setPriceplanCode(ratedTransaction.getPriceplan().getCode());
         }
         this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
+        this.setStartDate(ratedTransaction.getStartDate());
+        this.setEndDate(ratedTransaction.getEndDate());
     }
 
     /**
@@ -347,6 +355,42 @@ public class RatedTransactionDto extends BaseDto {
      */
     public void setPriceplanCode(String priceplanCode) {
         this.priceplanCode = priceplanCode;
+    }
+
+    /**
+     * Gets the start date.
+     *
+     * @return the start date
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the start date
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Gets the end date.
+     *
+     * @return the end date
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Sets the end date.
+     *
+     * @param endDate the end date
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
 }
