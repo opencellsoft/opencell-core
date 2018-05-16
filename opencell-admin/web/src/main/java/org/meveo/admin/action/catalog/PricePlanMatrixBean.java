@@ -33,14 +33,17 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
@@ -71,16 +74,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
-
-    @Inject
-    private UsageChargeTemplateService usageChargeTemplateService;
-
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-
-    @Inject
-    private ProductChargeTemplateService productChargeTemplateService;
+    ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     @Inject
     @Param
@@ -111,18 +105,21 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
             obj.setMaxSubscriptionAgeInMonth(9999L);
         }
         if (chargeId != null) {
-            RecurringChargeTemplate recurring = recurringChargeTemplateService.findById(chargeId);
-            if (recurring != null) {
-                if (getObjectId() == null) {
-                    obj.setCode(getPricePlanCode(recurring));
-                    obj.setEventCode(recurring.getCode());
-                    obj.setDescription(recurring.getDescription());
-                    obj.setSequence(getNextSequence(recurring));
-                }
-                backPage = "recurringChargeTemplateDetail";
-            } else {
-                OneShotChargeTemplate oneShot = oneShotChargeTemplateService.findById(chargeId);
-                if (oneShot != null) {
+            
+            ChargeTemplate chargeTemplate = chargeTemplateService.findById(chargeId);
+
+            if (chargeTemplate != null) {
+                if (chargeTemplate instanceof RecurringChargeTemplate) {
+                    RecurringChargeTemplate recurring = (RecurringChargeTemplate) chargeTemplate;
+                    if (getObjectId() == null) {
+                        obj.setCode(getPricePlanCode(recurring));
+                        obj.setEventCode(recurring.getCode());
+                        obj.setDescription(recurring.getDescription());
+                        obj.setSequence(getNextSequence(recurring));
+                    }
+                    backPage = "recurringChargeTemplateDetail";
+                } else if (chargeTemplate instanceof OneShotChargeTemplate) {
+                    OneShotChargeTemplate oneShot = (OneShotChargeTemplate) chargeTemplate;
                     if (getObjectId() == null) {
                         obj.setCode(getPricePlanCode(oneShot));
                         obj.setEventCode(oneShot.getCode());
@@ -130,26 +127,25 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
                         obj.setSequence(getNextSequence(oneShot));
                     }
                     backPage = "oneShotChargeTemplateDetail";
-                } else {
-                    UsageChargeTemplate usageCharge = usageChargeTemplateService.findById(chargeId);
-                    if (usageCharge != null) {
-                        if (getObjectId() == null) {
-                            obj.setCode(getPricePlanCode(usageCharge));
-                            obj.setEventCode(usageCharge.getCode());
-                            obj.setDescription(usageCharge.getDescription());
-                            obj.setSequence(getNextSequence(usageCharge));
-                        }
-                        backPage = "usageChargeTemplateDetail";
-                    } else {
-                        ProductChargeTemplate productCharge = productChargeTemplateService.findById(chargeId);
-                        if (getObjectId() == null) {
-                            obj.setCode(getPricePlanCode(productCharge));
-                            obj.setEventCode(productCharge.getCode());
-                            obj.setDescription(productCharge.getDescription());
-                            obj.setSequence(getNextSequence(productCharge));
-                        }
-                        backPage = "productChargeTemplateDetail";
+
+                } else if (chargeTemplate instanceof UsageChargeTemplate) {
+                    UsageChargeTemplate usageCharge = (UsageChargeTemplate) chargeTemplate;
+                    if (getObjectId() == null) {
+                        obj.setCode(getPricePlanCode(usageCharge));
+                        obj.setEventCode(usageCharge.getCode());
+                        obj.setDescription(usageCharge.getDescription());
+                        obj.setSequence(getNextSequence(usageCharge));
                     }
+                    backPage = "usageChargeTemplateDetail";
+                } else if (chargeTemplate instanceof ProductChargeTemplate) {
+                    ProductChargeTemplate productCharge = (ProductChargeTemplate) chargeTemplate;
+                    if (getObjectId() == null) {
+                        obj.setCode(getPricePlanCode(productCharge));
+                        obj.setEventCode(productCharge.getCode());
+                        obj.setDescription(productCharge.getDescription());
+                        obj.setSequence(getNextSequence(productCharge));
+                    }
+                    backPage = "productChargeTemplateDetail";
                 }
             }
             chargeTemplateId = chargeId;

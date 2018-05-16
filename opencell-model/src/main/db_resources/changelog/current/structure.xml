@@ -830,4 +830,67 @@
        </addColumn>
     </changeSet>
 
+	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="postgresql">
+		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_quote_id</sql>
+        <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}account_entity_upper_code</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}rating_edr_status</sql>
+        <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_subscription_upper_code</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_wallet_operation_status</sql>
+        <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_agregate_category_inv_agg</sql>
+        <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_billing_account_id</sql>
+        <sql>CREATE INDEX billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}medina_access_subscription_id</sql>
+        <sql>CREATE INDEX medina_access_subscription_id ON  ${db.schema.adapted}medina_access(subscription_id)</sql>
+	</changeSet>
+	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="mysql">
+		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice</sql>
+        <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS account_entity_upper_code ON ${db.schema.adapted}account_entity</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS rating_edr_status ON ${db.schema.adapted}rating_edr</sql>
+        <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation</sql>
+        <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate</sql>
+        <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice</sql>
+        <sql>CREATE INDEX billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS medina_access_subscription_id ON ${db.schema.adapted}medina_access</sql>
+        <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
+	</changeSet>   
+	
+	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
+		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
+	</changeSet>
+	
+    <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
+       <addColumn tableName="ar_payment_history">
+           <column name="customer_code" type="varchar(256)" />
+       </addColumn>
+    </changeSet>
 </databaseChangeLog> 

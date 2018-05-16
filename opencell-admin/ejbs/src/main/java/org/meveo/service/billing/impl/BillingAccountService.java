@@ -873,10 +873,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 }
                             }
 
-                            if (billingAccountAmountMap.get(invoiceSubCategory) != null) {
+                            if(billingAccountAmountMap.get(invoiceSubCategory) != null) {
                                 Map<String, BigDecimal> billingAccountAmount = billingAccountAmountMap.get(invoiceSubCategory);
-                                billingAccountAmount.put("billingAccountAmountWithoutTax",
-                                    billingAccountAmount.get("billingAccountAmountWithoutTax").add(subscriptionAmountWithoutTax));
+                                billingAccountAmount.put("billingAccountAmountWithoutTax", billingAccountAmount.get("billingAccountAmountWithoutTax").add(subscriptionAmountWithoutTax));
                                 billingAccountAmount.put("billingAccountAmountWithTax", billingAccountAmount.get("billingAccountAmountWithTax").add(subscriptionAmountWithTax));
                                 billingAccountAmountMap.put(invoiceSubCategory, billingAccountAmount);
                             } else {

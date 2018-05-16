@@ -82,7 +82,7 @@ import org.primefaces.model.LazyDataModel;
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
  *
- * @author akadid abdelmounaim
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Named
@@ -354,6 +354,53 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         }
     }
 
+    private void downloadFile(String fileName) {
+        log.info("Requested to download file {}", fileName);
+
+        File file = new File(fileName);
+
+        OutputStream out = null;
+        InputStream fin = null;
+        try {
+            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            res.setContentType("application/force-download");
+            res.setContentLength((int) file.length());
+            res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
+
+            out = res.getOutputStream();
+            fin = new FileInputStream(file);
+
+            byte[] buf = new byte[1024];
+            int sig = 0;
+            while ((sig = fin.read(buf, 0, 1024)) != -1) {
+                out.write(buf, 0, sig);
+            }
+            fin.close();
+            out.flush();
+            out.close();
+            context.responseComplete();
+            log.info("File made available for download");
+        } catch (Exception e) {
+            log.error("Error: {}, when dowload file: {}", e.getMessage(), file.getAbsolutePath());
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log.error("Error", e);
+                }
+            }
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                    log.error("Error", e);
+                }
+            }
+        }
+    }
+
     public void deleteLinkedInvoiceCategoryDetaild() {
         try {
             for (int i = 0; i < selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactions().size(); i++) {
@@ -522,53 +569,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         }
         String fileName = invoiceService.getFullPdfFilePath(invoiceCopy, false);
         downloadFile(fileName);
-    }
-
-    private void downloadFile(String fileName) {
-        log.info("Requested to download file {}", fileName);
-
-        File file = new File(fileName);
-
-        OutputStream out = null;
-        InputStream fin = null;
-        try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
-            res.setContentType("application/force-download");
-            res.setContentLength((int) file.length());
-            res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
-
-            out = res.getOutputStream();
-            fin = new FileInputStream(file);
-
-            byte[] buf = new byte[1024];
-            int sig = 0;
-            while ((sig = fin.read(buf, 0, 1024)) != -1) {
-                out.write(buf, 0, sig);
-            }
-            fin.close();
-            out.flush();
-            out.close();
-            context.responseComplete();
-            log.info("File made available for download");
-        } catch (Exception e) {
-            log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    log.error("Error", e);
-                }
-            }
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch (IOException e) {
-                    log.error("Error", e);
-                }
-            }
-        }
     }
 
     @Override
