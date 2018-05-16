@@ -82,6 +82,7 @@ public class UsageChargeInstance extends ChargeInstance {
 
         this.ratingUnitDescription = usageChargeTemplate.getRatingUnitDescription();
         this.serviceInstance = serviceInstance;
+        this.priority = usageChargeTemplate.getPriority();
     }
 
     public ServiceInstance getServiceInstance() {

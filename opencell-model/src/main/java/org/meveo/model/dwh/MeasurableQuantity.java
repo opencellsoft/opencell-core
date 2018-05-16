@@ -65,8 +65,7 @@ public class MeasurableQuantity extends BusinessEntity {
 	 * expect to return a list of (Date measureDate, Long value) that will be
 	 * used to create measuredValue. 
 	 */
-	@Column(name = "sql_query", length = 2000)
-    @Size(max = 2000)
+	@Column(name = "sql_query", columnDefinition = "text")
 	private String sqlQuery;
 
 	@Enumerated(EnumType.STRING)

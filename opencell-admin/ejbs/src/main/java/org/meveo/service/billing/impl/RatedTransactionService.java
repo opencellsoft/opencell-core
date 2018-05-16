@@ -630,7 +630,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         
         BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
                 : billingAccount.getInvoicingThreshold();
-        if (invoicingThreshold != null) {           
+        if (invoicingThreshold != null && invoice.getAmountWithoutTax() != null) {           
             if (invoicingThreshold.compareTo(invoice.getAmountWithoutTax()) > 0) {
                 throw new BusinessException("Invoice amount below the threshold");
             }
