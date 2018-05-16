@@ -67,6 +67,11 @@ import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
+/**
+ * The Class BillingAccountService.
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
 
@@ -234,7 +239,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
 
             if (endDate != null) {
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
             }
 
             return qb.getIdQuery(getEntityManager()).getResultList();
