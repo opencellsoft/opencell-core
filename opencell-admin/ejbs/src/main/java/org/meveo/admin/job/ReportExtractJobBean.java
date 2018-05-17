@@ -93,6 +93,8 @@ public class ReportExtractJobBean implements Serializable {
                         Thread.sleep(waitingMillis.longValue());
                     } catch (InterruptedException e) {
                         log.error("", e);
+                        Thread.currentThread().interrupt();
+
                     }
                 }
             }
@@ -102,6 +104,7 @@ public class ReportExtractJobBean implements Serializable {
                     future.get();
                 } catch (InterruptedException e) {
                     // It was cancelled from outside - no interest
+                    Thread.currentThread().interrupt();
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();

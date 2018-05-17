@@ -10,6 +10,9 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.finance.ReportExtractDto;
 import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.finance.ReportExtractExecutionResultResponseDto;
+import org.meveo.api.dto.response.finance.ReportExtractExecutionResultsResponseDto;
 import org.meveo.api.dto.response.finance.ReportExtractResponseDto;
 import org.meveo.api.dto.response.finance.ReportExtractsResponseDto;
 import org.meveo.api.dto.response.finance.RunReportExtractDto;
@@ -249,6 +252,45 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
             reportExtractApi.enableOrDisable(code, false);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ReportExtractExecutionResultsResponseDto listReportExtractRunHistory(PagingAndFiltering pagingAndFiltering) {
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        try {
+            result = reportExtractApi.listReportExtractRunHistory(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ReportExtractExecutionResultResponseDto findReportExtractHistoryById(Long id) {
+        ReportExtractExecutionResultResponseDto result = new ReportExtractExecutionResultResponseDto();
+
+        try {
+            result.setReportExtractExecutionResult(reportExtractApi.findReportExtractHistory(id));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ReportExtractExecutionResultsResponseDto findReportExtractHistoryByCode(String code) {
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        try {
+            result = reportExtractApi.listReportExtractRunHistoryByRECode(code);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

@@ -195,6 +195,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected ParamBeanFactory paramBeanFactory;
 
     private UploadedFile uploadedFile;
+    
+    private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
 
     /**
      * Constructor
@@ -389,6 +391,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // return objectId == null ? outcome : (outcome + "&" + objectName + "=" + objectId + "&cid=" + conversation.getId());
         return outcome;
     }
+    
+    /**
+     * Check whether entity code is updated or not.
+     * 
+     * @return boolean that indicate if entity code is updated
+     */
+    private boolean isUpdatedEntityCode() {
+        BusinessEntity persistedBusinessEntity = (BusinessEntity) getPersistenceService().findById(getObjectId());
+        BusinessEntity businessEntity = (BusinessEntity) entity;
+        return !persistedBusinessEntity.getCode().equalsIgnoreCase(businessEntity.getCode());
+    }
 
     /**
      * Save entity to DB and redirect to a next view. A message will be displayed in GUI upon saving.
@@ -401,6 +414,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
+        
+        if(!entity.isTransient()) {
+            boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
+            if ((entity instanceof BusinessEntity)) {
+                if(!currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) && !allowEntityCodeUpdate && isUpdatedEntityCode()) {
+                    messages.error(new BundleKey("messages", "error.superadminpermission.required"));
+                    return null;
+                }
+            }
+        }
 
         entity = saveOrUpdate(entity);
 

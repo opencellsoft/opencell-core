@@ -15269,6 +15269,100 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="e16cadb0-a036-4268-9e30-ac550f878c27" wsaVersion="NONE" name="PaymentWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}PaymentWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://127.0.0.1:8080/opencell/PaymentWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}/PaymentWs</con:endpoint>
+      <con:endpoint>http://localhost:8080/opencell/PaymentWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="78a7ece4-79a6-42f4-8d96-59cf60073883" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a6e9bd71-6cbf-4789-91a6-cc56dd0a1a72" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="89b28aae-be77-4f25-95d4-8596ec766c51" isOneWay="false" action="" name="list" bindingOperationName="list" type="Request-Response" outputName="listResponse" inputName="list" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ffc973c6-acb8-43b8-921f-1114f8a3d6b7" isOneWay="false" action="" name="createDDRequestLotOp" bindingOperationName="createDDRequestLotOp" type="Request-Response" outputName="createDDRequestLotOpResponse" inputName="createDDRequestLotOp" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="eab7f761-afa3-4f0b-b7c6-c330dddd3647" isOneWay="false" action="" name="listDDRequestLotops" bindingOperationName="listDDRequestLotops" type="Request-Response" outputName="listDDRequestLotopsResponse" inputName="listDDRequestLotops" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f8f2de79-9f04-4386-b91e-772b79508959" isOneWay="false" action="" name="removeCardPaymentMethod" bindingOperationName="removeCardPaymentMethod" type="Request-Response" outputName="removeCardPaymentMethodResponse" inputName="removeCardPaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="cfe6e5a2-f5c4-43b7-9733-f0a371843410" isOneWay="false" action="" name="findCardPaymentMethod" bindingOperationName="findCardPaymentMethod" type="Request-Response" outputName="findCardPaymentMethodResponse" inputName="findCardPaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="253b0d78-85ab-4dd9-bb99-a8383658b2a7" isOneWay="false" action="" name="updateCardPaymentMethod" bindingOperationName="updateCardPaymentMethod" type="Request-Response" outputName="updateCardPaymentMethodResponse" inputName="updateCardPaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="4c015de0-e4f3-46a0-8b6a-bb68653e8ab3" isOneWay="false" action="" name="addCardPaymentMethod" bindingOperationName="addCardPaymentMethod" type="Request-Response" outputName="addCardPaymentMethodResponse" inputName="addCardPaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="0db9b355-df17-4e3a-b5fb-1e1f9eff733b" isOneWay="false" action="" name="payByCard" bindingOperationName="payByCard" type="Request-Response" outputName="payByCardResponse" inputName="payByCard" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ff8f3adb-8383-48c3-b79e-6f9c1705d7f9" isOneWay="false" action="" name="listCardPaymentMethods" bindingOperationName="listCardPaymentMethods" type="Request-Response" outputName="listCardPaymentMethodsResponse" inputName="listCardPaymentMethods" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="257f7297-dcfb-4592-8034-80fecccbf629" isOneWay="false" action="" name="listPaymentMethods" bindingOperationName="listPaymentMethods" type="Request-Response" outputName="listPaymentMethodsResponse" inputName="listPaymentMethods" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="c4052c4a-27f7-49f7-8d02-7a6dc6bf5df3" isOneWay="false" action="" name="removePaymentMethod" bindingOperationName="removePaymentMethod" type="Request-Response" outputName="removePaymentMethodResponse" inputName="removePaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3549e90c-d984-4d28-b407-2e36ead62ec1" isOneWay="false" action="" name="addPaymentMethod" bindingOperationName="addPaymentMethod" type="Request-Response" outputName="addPaymentMethodResponse" inputName="addPaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ec184650-3925-47ea-8bb5-55c90a4a09d4" isOneWay="false" action="" name="findPaymentMethod" bindingOperationName="findPaymentMethod" type="Request-Response" outputName="findPaymentMethodResponse" inputName="findPaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="4fb26bd5-2fe5-4abd-9426-2cd340fa141f" isOneWay="false" action="" name="updatePaymentMethod" bindingOperationName="updatePaymentMethod" type="Request-Response" outputName="updatePaymentMethodResponse" inputName="updatePaymentMethod" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="2bfce3ec-cf5c-4093-ae09-e7972c844661" isOneWay="false" action="" name="createOrUpdateCreditCategory" bindingOperationName="createOrUpdateCreditCategory" type="Request-Response" outputName="createOrUpdateCreditCategoryResponse" inputName="createOrUpdateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6903472b-242b-48ff-af60-5cf6ad6b81eb" isOneWay="false" action="" name="listCreditCategory" bindingOperationName="listCreditCategory" type="Request-Response" outputName="listCreditCategoryResponse" inputName="listCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="faa68ace-be28-40d5-aae4-4cc6365ccb53" isOneWay="false" action="" name="findCreditCategory" bindingOperationName="findCreditCategory" type="Request-Response" outputName="findCreditCategoryResponse" inputName="findCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a17082a8-d14c-4669-8f19-362d2c67f506" isOneWay="false" action="" name="createCreditCategory" bindingOperationName="createCreditCategory" type="Request-Response" outputName="createCreditCategoryResponse" inputName="createCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5df1b7f5-d8e6-4c5b-9380-70d3d687a640" isOneWay="false" action="" name="updateCreditCategory" bindingOperationName="updateCreditCategory" type="Request-Response" outputName="updateCreditCategoryResponse" inputName="updateCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="bca4825f-23df-4807-907d-1b1e35884ae9" isOneWay="false" action="" name="removeCreditCategory" bindingOperationName="removeCreditCategory" type="Request-Response" outputName="removeCreditCategoryResponse" inputName="removeCreditCategory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="fdc9cb52-d3c2-4870-8cfd-4a7acc91b737" isOneWay="false" action="" name="findPaymentGateway" bindingOperationName="findPaymentGateway" type="Request-Response" outputName="findPaymentGatewayResponse" inputName="findPaymentGateway" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3ff43935-aa13-41b6-a5a0-8e9c895c5337" isOneWay="false" action="" name="listPaymentGateways" bindingOperationName="listPaymentGateways" type="Request-Response" outputName="listPaymentGatewaysResponse" inputName="listPaymentGateways" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="c3301b40-96c2-4384-bffb-5a61fcaba27c" isOneWay="false" action="" name="updatePaymentGateway" bindingOperationName="updatePaymentGateway" type="Request-Response" outputName="updatePaymentGatewayResponse" inputName="updatePaymentGateway" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f55ed85f-cfc5-415d-8398-bfb293b52cef" isOneWay="false" action="" name="addPaymentGateway" bindingOperationName="addPaymentGateway" type="Request-Response" outputName="addPaymentGatewayResponse" inputName="addPaymentGateway" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ecf66e79-af8a-4c80-83a5-b675dc3f3380" isOneWay="false" action="" name="createOrUpdatePaymentGateway" bindingOperationName="createOrUpdatePaymentGateway" type="Request-Response" outputName="createOrUpdatePaymentGatewayResponse" inputName="createOrUpdatePaymentGateway" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6ce25533-eb3a-427c-ba0e-28e4ee5d0a51" isOneWay="false" action="" name="removePaymentGateway" bindingOperationName="removePaymentGateway" type="Request-Response" outputName="removePaymentGatewayResponse" inputName="removePaymentGateway" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e9ed141d-e71b-45cd-8bfc-95e4a5cc1389" isOneWay="false" action="" name="listHistory" bindingOperationName="listHistory" type="Request-Response" outputName="listHistoryResponse" inputName="listHistory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:testSuite id="57d7b035-5869-4a10-8510-2dcae69521f6" name="Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -15352,7 +15446,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties/>
     <con:setupScript/>
   </con:testSuite>
-  <con:testSuite id="e62a2e6a-74ad-468e-a427-fa377f32c984" name="Create Provider">
+  <con:testSuite id="e62a2e6a-74ad-468e-a427-fa377f32c984" name="Create Provider/Sellers">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="c58f9b4a-2a14-4d4d-9f19-99d469e98b79" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Provider" searchProperties="true">
@@ -15753,12 +15847,92 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Sellers" searchProperties="true" id="bca1777f-8dfb-426d-a209-9e08db369015">
+      <con:settings/>
+      <con:testStep type="request" name="create Reseller1" id="04104574-6513-46d0-9459-bd7920bf396c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="create Reseller1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="1b789dfa-65ce-46af-8cd8-d43eafca0bcc">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSeller>
+         <seller code="${#Project#reseller1}" description="Reseller 1">
+         </seller>
+      </ws:createOrUpdateSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="790d34ef-c35a-4e57-8606-005793856d31" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="create Reseller2" id="9311d0ff-e051-4f15-8a65-7c97bfe86078">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="create Reseller2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="1b789dfa-65ce-46af-8cd8-d43eafca0bcc">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSeller>
+         <seller code="${#Project#reseller2}" description="Reseller 2">
+         </seller>
+      </ws:createOrUpdateSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="790d34ef-c35a-4e57-8606-005793856d31" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties/>
   </con:testSuite>
   <con:testSuite id="7320e016-8154-4d49-bd9f-0c1532c5ac32" name="Create Offer/Seller CFs">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="2f27bdf6-bd93-4c48-806b-2debb1ae6a72" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Configuration" searchProperties="true">
+    <con:testCase id="2f27bdf6-bd93-4c48-806b-2debb1ae6a72" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Configuration" searchProperties="true" disabled="true">
       <con:settings/>
       <con:testStep type="request" name="CF_TEMPLATE_CODE" id="21e4f81f-7024-4895-879d-cdb0cce8f2d7">
         <con:settings/>
@@ -37784,14 +37958,6 @@ AAAASUVORK5CYII=
 		  <offerTemplateCategories>
 		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
-		  <customFields>
-		  	<customField code="CF_TEMPLATE_CODE">
-		  		<stringValue>${#Project#templateCode}</stringValue>
-		  	</customField>
-		  	<customField code="CF_TEMPLATE_LABEL">
-		  		<stringValue>${#Project#templateLabel}</stringValue>
-		  	</customField>
-		  </customFields>
             <offerServiceTemplates>                  
                <offerServiceTemplate>
                	<serviceTemplate code="SE_${#Project#templateCode}_OSS_UNIT" description="One-shot fee"/>
@@ -38255,14 +38421,6 @@ MFBG0AAAAABJRU5ErkJggg==
 		  <offerTemplateCategories>
 		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
-		  <customFields>
-		  	<customField code="CF_TEMPLATE_CODE">
-		  		<stringValue>${#Project#templateCode}</stringValue>
-		  	</customField>
-		  	<customField code="CF_TEMPLATE_LABEL">
-		  		<stringValue>${#Project#templateLabel}</stringValue>
-		  	</customField>
-		  </customFields>
             <offerServiceTemplates>                  
                <offerServiceTemplate>
                	<serviceTemplate code="SE_${#Project#templateCode}_COMMISSION" description="Commission for ${#Project#templateLabel}"/>
@@ -38876,14 +39034,6 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
       <ws:createOfferFromBOM>
          
          <bomOffer bomCode="BOM_${#Project#templateCode}_COMMISSION" description="Super Commission for ${#Project#templateLabel}" name="Super Commission for ${#Project#templateLabel}" code="OF_${#Project#templateCode}_SUPER_COMMISSION">
-            <parameters>
-		  	<parameter code="CF_TEMPLATE_CODE">
-		  		<stringValue>${#Project#templateCode}</stringValue>
-		  	</parameter>
-		  	<parameter code="CF_TEMPLATE_LABEL">
-		  		<stringValue>${#Project#templateLabel}</stringValue>
-		  	</parameter>
-            </parameters>
             <servicesToActivate>
                <serviceToActivate code="SE_${#Project#templateCode}_COMMISSION" description="Commissioning service">
 			      <parameters/>
@@ -39024,14 +39174,6 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
       <ws:createOfferFromBOM>
          
          <bomOffer bomCode="BOM_${#Project#templateCode}_TEMPLATE" description="Super ${#Project#templateLabel} (subscription fee, recurring, usage)" name="Super ${#Project#templateLabel}" code="OF_${#Project#templateCode}_MAIN">
-            <parameters>
-		  	<parameter code="CF_TEMPLATE_CODE">
-		  		<stringValue>${#Project#templateCode}</stringValue>
-		  	</parameter>
-		  	<parameter code="CF_TEMPLATE_LABEL">
-		  		<stringValue>${#Project#templateLabel}</stringValue>
-		  	</parameter>
-            </parameters>
             <servicesToActivate>
                <serviceToActivate code="SE_${#Project#templateCode}_REC_FLAT" description="Recurring fee">
 			      <parameters>
@@ -39164,14 +39306,6 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
    <soapenv:Body>
       <ws:createOfferFromBOM>
          <bomOffer bomCode="BOM_${#Project#templateCode}_TEMPLATE" description="Monthly ${#Project#templateLabel} (recurring fee only)" name="Monthly ${#Project#templateLabel}" code="OF_${#Project#templateCode}_REC">
-            <parameters>
-		  	<parameter code="CF_TEMPLATE_CODE">
-		  		<stringValue>${#Project#templateCode}</stringValue>
-		  	</parameter>
-		  	<parameter code="CF_TEMPLATE_LABEL">
-		  		<stringValue>${#Project#templateLabel}</stringValue>
-		  	</parameter>
-            </parameters>
             <servicesToActivate>
                <serviceToActivate code="SE_${#Project#templateCode}_REC_NO_PRORATA" description="Unique monthly fee, no prorata">
 			      <parameters>
@@ -40389,6 +40523,748 @@ public class ForgotPassword extends ModuleScript{
       <con:setupScript/>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="ff4c7d54-4e1e-4667-8d0c-023430957a61" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Reseller1 Users" searchProperties="true" disabled="true">
+      <con:settings/>
+      <con:testStep type="request" name="ForgotPasswordModule" id="bc71ecf9-0d0a-401d-a51a-1f41a3f323a1" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ModuleWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="ForgotPasswordModule" id="5d0a2b39-396c-4504-9039-0f33da90177c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdate>
+         <module code="ForgotPasswordModule" license="GPL" description="Rest password">
+            <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
+               
+               <type>JAVA</type>
+               <script><![CDATA[
+package org.meveo.service.script.selfcare;
+
+import java.util.Map;
+import java.util.UUID;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ForgotPassword extends ModuleScript{
+	private static final Logger log = LoggerFactory.getLogger(ForgotPassword.class);
+	public void execute(Map<String, Object> initContext) throws BusinessException {
+		log.debug("Execute...");
+		UserService userService = (UserService) getServiceInterface("UserService");
+		String emailRequest = (String) initContext.get("email");
+		String emailValue = null;
+		JSONParser parser = new JSONParser();
+	    try {
+			Object obj = parser.parse(emailRequest);
+			JSONObject jsonObject = (JSONObject)obj;
+			emailValue = (String) jsonObject.get("email");
+
+		} catch (ParseException e) {
+			throw new BusinessException("Cant parse request :"+e.getMessage());
+		}
+		log.debug("emailValue:" + emailValue);
+		User userThatManyForget = userService.findByEmail(emailValue);
+		if(userThatManyForget == null){
+			throw new BusinessException("Cant find user "+emailValue);
+		}
+		String newPasswd = UUID.randomUUID().toString().substring(0, 7);
+		log.debug("newPasswd:" + newPasswd);
+		userThatManyForget.setNewPassword(newPasswd);
+		userService.update(userThatManyForget);
+	}
+}
+               ]]]]>><![CDATA[</script>
+               <!--Zero or more repetitions:-->
+            </script>
+            
+            <moduleItems>
+               <!--You have a CHOICE of the next 19 items at this level-->
+         <notification code="ForgotPasswordInReqNotif">
+            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
+            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
+            <elFilter>#{event.pathInfo.startsWith("/${#Project#provider}/forgotPassword")}</elFilter>
+            <scriptInstanceCode>org.meveo.service.script.selfcare.ForgotPassword</scriptInstanceCode>
+            <scriptParams>
+               <entry>
+                  <key>email</key>
+                  <value>#{event.getBody()}</value>
+               </entry>
+            </scriptParams>
+         </notification>
+			<emailNotif code="ForgotPasswordEmailNotif">
+				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
+				<eventTypeFilter>UPDATED</eventTypeFilter>
+				<emailFrom>bot@opencellsoft.com</emailFrom>
+				<subject>Password reset</subject>
+				<emailToEl>#{event.email}</emailToEl>
+				<elFilter>#{event.newPassword ne null}</elFilter>
+				<body>Bonjour,
+				Text modifiable
+				user name  :  #{event.userName}
+				password   :  #{event.newPassword}
+				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
+				</body>
+				</emailNotif>
+            </moduleItems>
+         </module>
+      </ws:createOrUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="832fb1d0-b553-426c-98d4-7a8ef12582a9"/>
+            <con:assertion type="Simple Contains" id="fc959b9c-19ce-4011-ac97-d9290bd038dd" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Install Module" id="f4ca8d22-3dd8-4900-bfad-34d6a8750f46" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ModuleWsSoapBinding</con:interface>
+          <con:operation>installModule</con:operation>
+          <con:request name="Install Module" id="ae71f5ba-1494-4691-99b6-9c8c742f05b9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:installModule>
+         <module code="ForgotPasswordModule">   
+         </module>
+      </ws:installModule>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a6b29958-f25b-4ddb-8432-0ef3f0f03ea4"/>
+            <con:assertion type="Simple Contains" id="38ade4c0-249c-4969-89dc-f6b4d5e79352" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CC User Role" id="9de4fb49-f27e-47a2-a7b9-2f767fe01cf0" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateRole</con:operation>
+          <con:request name="Create CC User Role" id="bd3a6001-b766-4873-bd66-cfabe4265f66">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateRole>
+         <role name="CUSTOMER_CARE_USER" description="Customer Care User">
+            <roles>
+               <role name="ModifyAllCE" description="Modify all CE"></role>
+            </roles>
+         </role>
+      </ws:createOrUpdateRole>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0582d6f1-bcdf-4793-863e-097319a2fc48"/>
+            <con:assertion type="Simple Contains" id="665d61b2-4263-4c5f-bad6-cba03d34ee4c" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 1" id="9bb0cda1-dcdf-4cef-b8b0-a94ce880aeaa">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUser</con:operation>
+          <con:request name="Create User PC_ADMIN Reseller 1" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createExternalUser>
+         <user>
+            <username>eric.canneva</username>
+            <email>eric.canneva@opencellsoft.com</email>
+            <firstName>Eric</firstName>
+            <lastName>Canneva</lastName>
+            <password>eric.canneva</password>
+            <userRoles>
+               <userRole>CUSTOMER_CARE_USER</userRole>
+            </userRoles>
+             <externalRoles>
+               <externalRole name="PC_ADMIN"/>
+             </externalRoles>
+            <accessibleEntities>
+            	<accessibleEntity code="Reseller1" entityClass="org.meveo.model.admin.Seller"/>
+            </accessibleEntities>
+         </user>
+      </ws:createExternalUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
+            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Rebate Charge" id="7a972724-448c-4edd-931f-cd5c5ec624ed" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
+          <con:request name="Create Rebate Charge" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateOneShotChargeTemplate>
+         <oneShotChargeTemplate code="CC_REBATE" description="Rebate through Customer Care.">
+            <invoiceSubCategory>${#Project#templateCode}_ONESHOT</invoiceSubCategory>
+            <disabled>false</disabled>
+            <amountEditable>true</amountEditable>
+            <inputUnitDescription>1</inputUnitDescription>
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <oneShotChargeTemplateType>OTHER</oneShotChargeTemplateType>
+            <immediateInvoicing>true</immediateInvoicing>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+         </oneShotChargeTemplate>
+      </ws:createOrUpdateOneShotChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
+            <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 1" id="e296deb3-84d8-48ff-83be-e6d6981577bb">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUser</con:operation>
+          <con:request name="Create User PC_LEVEL2 Reseller 1" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createExternalUser>
+         <user>
+            <username>etienne.eric</username>
+            <email>etienne.eric@opencellsoft.com</email>
+            <firstName>Etienne</firstName>
+            <lastName>Eric</lastName>
+            <password>etienne.eric</password>
+            <userRoles>
+               <userRole>CUSTOMER_CARE_USER</userRole>
+            </userRoles>
+             <externalRoles>
+               <externalRole name="PC_LEVEL_2" />
+            </externalRoles>
+            <accessibleEntities>
+            	<accessibleEntity code="Reseller1" entityClass="org.meveo.model.admin.Seller" />
+            </accessibleEntities>
+         </user>
+      </ws:createExternalUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
+            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:setupScript/>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="248d9845-50d9-47eb-aab7-509a267970aa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Reseller2 Users" searchProperties="true" disabled="true">
+      <con:settings/>
+      <con:testStep type="request" name="ForgotPasswordModule" id="8f5e4ee6-8996-4f5a-ac90-79be809d82cf" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ModuleWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="ForgotPasswordModule" id="5d0a2b39-396c-4504-9039-0f33da90177c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdate>
+         <module code="ForgotPasswordModule" license="GPL" description="Rest password">
+            <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
+               
+               <type>JAVA</type>
+               <script><![CDATA[
+package org.meveo.service.script.selfcare;
+
+import java.util.Map;
+import java.util.UUID;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ForgotPassword extends ModuleScript{
+	private static final Logger log = LoggerFactory.getLogger(ForgotPassword.class);
+	public void execute(Map<String, Object> initContext) throws BusinessException {
+		log.debug("Execute...");
+		UserService userService = (UserService) getServiceInterface("UserService");
+		String emailRequest = (String) initContext.get("email");
+		String emailValue = null;
+		JSONParser parser = new JSONParser();
+	    try {
+			Object obj = parser.parse(emailRequest);
+			JSONObject jsonObject = (JSONObject)obj;
+			emailValue = (String) jsonObject.get("email");
+
+		} catch (ParseException e) {
+			throw new BusinessException("Cant parse request :"+e.getMessage());
+		}
+		log.debug("emailValue:" + emailValue);
+		User userThatManyForget = userService.findByEmail(emailValue);
+		if(userThatManyForget == null){
+			throw new BusinessException("Cant find user "+emailValue);
+		}
+		String newPasswd = UUID.randomUUID().toString().substring(0, 7);
+		log.debug("newPasswd:" + newPasswd);
+		userThatManyForget.setNewPassword(newPasswd);
+		userService.update(userThatManyForget);
+	}
+}
+               ]]]]>><![CDATA[</script>
+               <!--Zero or more repetitions:-->
+            </script>
+            
+            <moduleItems>
+               <!--You have a CHOICE of the next 19 items at this level-->
+         <notification code="ForgotPasswordInReqNotif">
+            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
+            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
+            <elFilter>#{event.pathInfo.startsWith("/${#Project#provider}/forgotPassword")}</elFilter>
+            <scriptInstanceCode>org.meveo.service.script.selfcare.ForgotPassword</scriptInstanceCode>
+            <scriptParams>
+               <entry>
+                  <key>email</key>
+                  <value>#{event.getBody()}</value>
+               </entry>
+            </scriptParams>
+         </notification>
+			<emailNotif code="ForgotPasswordEmailNotif">
+				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
+				<eventTypeFilter>UPDATED</eventTypeFilter>
+				<emailFrom>bot@opencellsoft.com</emailFrom>
+				<subject>Password reset</subject>
+				<emailToEl>#{event.email}</emailToEl>
+				<elFilter>#{event.newPassword ne null}</elFilter>
+				<body>Bonjour,
+				Text modifiable
+				user name  :  #{event.userName}
+				password   :  #{event.newPassword}
+				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
+				</body>
+				</emailNotif>
+            </moduleItems>
+         </module>
+      </ws:createOrUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="832fb1d0-b553-426c-98d4-7a8ef12582a9"/>
+            <con:assertion type="Simple Contains" id="fc959b9c-19ce-4011-ac97-d9290bd038dd" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Install Module" id="341240e9-8282-4493-9ace-a3931e43af70" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ModuleWsSoapBinding</con:interface>
+          <con:operation>installModule</con:operation>
+          <con:request name="Install Module" id="ae71f5ba-1494-4691-99b6-9c8c742f05b9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:installModule>
+         <module code="ForgotPasswordModule">   
+         </module>
+      </ws:installModule>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a6b29958-f25b-4ddb-8432-0ef3f0f03ea4"/>
+            <con:assertion type="Simple Contains" id="38ade4c0-249c-4969-89dc-f6b4d5e79352" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CC User Role" id="8a72278c-df98-4aa3-9083-334de4288672" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateRole</con:operation>
+          <con:request name="Create CC User Role" id="bd3a6001-b766-4873-bd66-cfabe4265f66">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateRole>
+         <role name="CUSTOMER_CARE_USER" description="Customer Care User">
+            <roles>
+               <role name="ModifyAllCE" description="Modify all CE"></role>
+            </roles>
+         </role>
+      </ws:createOrUpdateRole>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0582d6f1-bcdf-4793-863e-097319a2fc48"/>
+            <con:assertion type="Simple Contains" id="665d61b2-4263-4c5f-bad6-cba03d34ee4c" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 2" id="283f8109-611c-4466-911a-a102a73fd0a2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUser</con:operation>
+          <con:request name="Create User PC_ADMIN Reseller 2" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createExternalUser>
+         <user>
+            <username>anita.allighari</username>
+            <email>anita.allighari@opencellsoft.com</email>
+            <firstName>Anita</firstName>
+            <lastName>Allighari</lastName>
+            <password>anita.allighari</password>
+            <userRoles>
+               <userRole>CUSTOMER_CARE_USER</userRole>
+            </userRoles>
+             <externalRoles>
+               <externalRole name="PC_ADMIN" />
+            </externalRoles>
+            <accessibleEntities>
+            	<accessibleEntity code="Reseller2" entityClass="org.meveo.model.admin.Seller" />
+            </accessibleEntities>
+         </user>
+      </ws:createExternalUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
+            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Rebate Charge" id="1a0dba89-e27c-46f2-b0fa-e9fdc3bb46ac" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
+          <con:request name="Create Rebate Charge" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateOneShotChargeTemplate>
+         <oneShotChargeTemplate code="CC_REBATE" description="Rebate through Customer Care.">
+            <invoiceSubCategory>${#Project#templateCode}_ONESHOT</invoiceSubCategory>
+            <disabled>false</disabled>
+            <amountEditable>true</amountEditable>
+            <inputUnitDescription>1</inputUnitDescription>
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <oneShotChargeTemplateType>OTHER</oneShotChargeTemplateType>
+            <immediateInvoicing>true</immediateInvoicing>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+         </oneShotChargeTemplate>
+      </ws:createOrUpdateOneShotChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
+            <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 2" id="38f178cc-c83f-476a-8d3a-0a7b4e1eaf8a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUser</con:operation>
+          <con:request name="Create User PC_LEVEL2 Reseller 2" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createExternalUser>
+         <user>
+            <username>simone.lampiri</username>
+            <email>simone.lampiri@opencellsoft.com</email>
+            <firstName>Simone</firstName>
+            <lastName>Lampiri</lastName>
+            <password>simone.lampiri</password>
+            <userRoles>
+               <userRole>CUSTOMER_CARE_USER</userRole>
+            </userRoles>
+             <externalRoles>
+               <externalRole name="PC_LEVEL_2" />
+            </externalRoles>
+            <accessibleEntities>
+            	<accessibleEntity code="Reseller2" entityClass="org.meveo.model.admin.Seller" />
+            </accessibleEntities>
+         </user>
+      </ws:createExternalUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
+            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:setupScript/>
+      <con:properties/>
+    </con:testCase>
     <con:properties/>
   </con:testSuite>
   <con:testSuite id="e253e561-e704-4d69-b655-f4a43fd709a5" name="Commission Partner">
@@ -40794,7 +41670,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="a2a3caf9-1b4e-4302-9c29-f64d5c6d3d1e" name="Customer SUPER">
+  <con:testSuite id="a2a3caf9-1b4e-4302-9c29-f64d5c6d3d1e" name="Customer Elminster Aumar">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="09231696-2a2c-4b0d-856b-682003af0b1a">
@@ -41263,7 +42139,7 @@ public class ForgotPassword extends ModuleScript{
     <con:properties>
       <con:property>
         <con:name>CUST</con:name>
-        <con:value>customer.${#Project#templateCode}</con:value>
+        <con:value>elminster.aumar</con:value>
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
@@ -41962,7 +42838,7 @@ public class ForgotPassword extends ModuleScript{
     <con:properties>
       <con:property>
         <con:name>CUST</con:name>
-        <con:value>john.doe.${#Project#templateCode}</con:value>
+        <con:value>john.doe</con:value>
       </con:property>
       <con:property>
         <con:name>FIRST_MONTH</con:name>
@@ -42051,6 +42927,7 @@ public class ForgotPassword extends ModuleScript{
                   <stringValue>${#TestSuite#CUST}</stringValue>\r
                </customField>\r
             </customFields>\r
+
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -43421,7 +44298,7 @@ public class ForgotPassword extends ModuleScript{
     <con:properties>
       <con:property>
         <con:name>CUST</con:name>
-        <con:value>ben.ohara.${#Project#templateCode}</con:value>
+        <con:value>ben.ohara</con:value>
       </con:property>
       <con:property>
         <con:name>FIRST_MONTH</con:name>
@@ -43469,7 +44346,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>invoice1_amount</con:name>
-        <con:value>89.41</con:value>
+        <con:value>113.29</con:value>
       </con:property>
       <con:property>
         <con:name>invoice2_number</con:name>
@@ -44291,7 +45168,7 @@ public class ForgotPassword extends ModuleScript{
     <con:properties>
       <con:property>
         <con:name>CUST</con:name>
-        <con:value>job.bonvi.${#Project#templateCode}</con:value>
+        <con:value>job.bonvi</con:value>
       </con:property>
       <con:property>
         <con:name>FIRST_MONTH</con:name>
@@ -48987,7 +49864,7 @@ MFBG0AAAAABJRU5ErkJggg==
     <con:properties>
       <con:property>
         <con:name>CUST</con:name>
-        <con:value>bob.churn.${#Project#templateCode}</con:value>
+        <con:value>bob.churn</con:value>
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_YEAR</con:name>
@@ -49027,7 +49904,7 @@ MFBG0AAAAABJRU5ErkJggg==
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="259e9f9d-ddae-4642-9dea-611883092228" name="Customer CLASSIC">
+  <con:testSuite id="259e9f9d-ddae-4642-9dea-611883092228" name="Enduser Gildarts Clive">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="093fda00-b151-425b-b847-350519c1937b">
@@ -52165,38 +53042,79 @@ select
             <editable>false</editable>
             <additive>false</additive>
             <sqlQuery>
+select 
+    currmonth.regular + currmonth.new + currmonth.upsell + currmonth.cancelled as curr_total,
+    currmonth.regular as curr_regular,
+    currmonth.new as curr_new,
+    currmonth.upsell as curr_upsell,
+    currmonth.cancelled as curr_cancelled
+
+from
+(
 with a as
 (
-   select
-       date_trunc('month', coalesce(ua.subscription_date, date '2000-01-01')) as ua_creation_month,
-       date_trunc('month', coalesce(s.subscription_date, date '2000-01-01')) as su_subscription_month,
-       date_trunc('month', coalesce(s.termination_date, date '2000-01-01')) as su_termination_month,
-       date_trunc('month', coalesce(wo.operation_date, date '2000-01-01')) as wo_operation_month,
-       round(sum(wo.amount_without_tax),2) as value
-   from
-       billing_wallet_operation wo
-       inner join billing_charge_instance ci
-        on ci.id = wo.charge_instance_id
-       inner join billing_subscription s
-        on s.id = ci.subscription_id
-       inner join billing_user_account ua
-        on ua.id = s.user_account_id
-   where
-       wo.end_date is not null
-   and date_trunc('month', wo.operation_date) = date_trunc('month', to_date('#{date}','YYYY-MM-DD'))
-   group by
-       ua_creation_month,
-       su_subscription_month,
-       su_termination_month,
-       wo_operation_month
-)
+    SELECT round(sum(wo.amount_without_tax),2) as value ,
+    date_trunc('month', coalesce(ua.subscription_date, date '2000-01-01')) as ua_creation_month,
+		   date_trunc('month', coalesce(s.subscription_date, date '2000-01-01')) as su_subscription_month,
+		   date_trunc('month', coalesce(s.termination_date, date '3000-01-01')) as su_termination_month,
+		   date_trunc('month', coalesce(wo.operation_date, date '2000-01-01')) as wo_operation_month
+    FROM
+        billing_wallet_operation wo
+        inner join billing_charge_instance ci on ci.id = wo.charge_instance_id
+        inner join cat_recurring_charge_templ rc on rc.id = ci.charge_template_id
+        inner join billing_subscription s on s.id = ci.subscription_id
+        inner join billing_user_account ua on ua.id = s.user_account_id
+
+    WHERE 
+    	date_trunc('month', wo.operation_date)=date_trunc('month', to_date('#{date}','YYYY-MM-DD') - interval '1 month')
+		AND wo.end_date is not null
+	and wo.operation_type='W'
+    GROUP BY
+     ua_creation_month,
+	   su_subscription_month,
+	   su_termination_month,
+	   wo_operation_month
+    )
 select
-        coalesce((select sum(a.value) from a),0) as total,
-        coalesce((select sum(a.value) from a where (a.su_subscription_month != a.wo_operation_month) and (a.su_termination_month != a.wo_operation_month)),0) as regular,
-        coalesce((select sum(a.value) from a where (a.su_subscription_month = a.wo_operation_month) and (a.su_termination_month != a.wo_operation_month) and (a.ua_creation_month = a.su_subscription_month)),0) as new,
-        coalesce((select sum(a.value) from a where (a.su_subscription_month = a.wo_operation_month) and (a.su_termination_month != a.wo_operation_month) and (a.ua_creation_month != a.su_subscription_month)),0) as upsell,
-        coalesce((select sum(a.value) from a where (a.su_termination_month = a.wo_operation_month)),0) as cancelled
-		  </sqlQuery>
+    coalesce((select sum(a.value) from a),0) as total,
+    coalesce((select sum(a.value) from a where (a.su_subscription_month != a.wo_operation_month) and (a.su_termination_month >= a.wo_operation_month) ),0) as regular,
+    coalesce((select sum(a.value) from a where (a.su_subscription_month = a.wo_operation_month) and (a.su_termination_month != a.wo_operation_month) and (a.ua_creation_month = a.su_subscription_month)),0) as new,
+    coalesce((select sum(a.value) from a where (a.su_subscription_month = a.wo_operation_month) and (a.su_termination_month != a.wo_operation_month) and (a.ua_creation_month != a.su_subscription_month)),0) as upsell,
+    coalesce((select sum(a.value) from a where (a.su_termination_month = a.wo_operation_month)),0) as cancelled
+) as pastmonth,
+(
+with a as
+(
+    SELECT round(sum(wo.amount_without_tax),2) as value ,
+	date_trunc('month', coalesce(ua.subscription_date, date '2000-01-01')) as ua_creation_month,
+		   date_trunc('month', coalesce(s.subscription_date, date '2000-01-01')) as su_subscription_month,
+		   date_trunc('month', coalesce(s.termination_date, date '3000-01-01')) as su_termination_month,
+		   date_trunc('month', coalesce(wo.operation_date, date '2000-01-01')) as wo_operation_month
+    FROM
+        billing_wallet_operation wo
+        inner join billing_charge_instance ci on ci.id = wo.charge_instance_id
+        inner join cat_recurring_charge_templ rc on rc.id = ci.charge_template_id
+        inner join billing_subscription s on s.id = ci.subscription_id
+        inner join billing_user_account ua on ua.id = s.user_account_id
+
+    WHERE
+    	date_trunc('month', wo.operation_date)=date_trunc('month', to_date('#{date}','YYYY-MM-DD') )
+	AND wo.end_date is not null
+	and wo.operation_type='W'	
+    GROUP BY
+		ua_creation_month,
+	   su_subscription_month,
+	   su_termination_month,
+	   wo_operation_month
+    )
+select
+    coalesce((select sum(a.value) from a),0) as total,
+    coalesce((select sum(a.value) from a where (a.su_subscription_month != a.wo_operation_month) and (a.su_termination_month >= a.wo_operation_month)),0) as regular,
+    coalesce((select sum(a.value) from a where (a.su_subscription_month = a.wo_operation_month) and (a.su_termination_month != a.wo_operation_month) and (a.ua_creation_month = a.su_subscription_month)),0) as new,
+    coalesce((select sum(a.value) from a where (a.su_subscription_month = a.wo_operation_month) and (a.su_termination_month != a.wo_operation_month) and (a.ua_creation_month != a.su_subscription_month)),0) as upsell,
+    coalesce((select sum(a.value) from a where (a.su_termination_month = a.wo_operation_month)),0) as cancelled
+) as currmonth
+</sqlQuery>
             <measurementPeriod>MONTHLY</measurementPeriod>
             <lastMeasureDate>2017-01-01</lastMeasureDate>
          </measurableQuantity>
@@ -54311,7 +55229,7 @@ select
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:testCase id="95851e31-44da-4bdc-9339-cd257e4e1741" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Custom Fields" searchProperties="true">
+    <con:testCase id="95851e31-44da-4bdc-9339-cd257e4e1741" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Custom Fields" searchProperties="true" disabled="true">
       <con:settings/>
       <con:testStep type="request" name="Find CF" id="315f4116-4856-422b-8063-aff7e108985f" disabled="true">
         <con:settings/>
@@ -56209,6 +57127,1496 @@ rkJggg==
       </con:property>
     </con:properties>
   </con:testSuite>
+  <con:testSuite id="95bcff9b-a9ce-455a-823e-fdc89082ceb9" name="Customer Leroy Merlin">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="497782eb-179f-42a1-aac5-022bf6c7f561">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer Hierarchy" id="21ca5a83-1add-4370-a796-8c7a5eda93d9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer Hierarchy" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="Reseller1">
+                  <!--<invoicePrefix>E_</invoicePrefix>-->
+                  <currencyCode>EUR</currencyCode>
+                  <countryCode>FR</countryCode>
+                  <languageCode>FRA</languageCode>
+                  <customers>
+                     <customer code="leroymerlin" description="Leroy Merlin">
+                        <name>
+                           <title>MR</title>
+                           <firstName>Thomas</firstName>
+                           <lastName>Bouret</lastName>
+                        </name>
+                        <address>
+                           <address1>rue De Versailles</address1>
+                           <address2>Zac De Valmy</address2>
+                           <address3>address3</address3>
+                           <zipCode>59650</zipCode>
+                           <city>Villeneuve d'ascq</city>
+                           <country>France</country>
+                        </address>
+            		    <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>${#Project#templateCode}</customerBrand>
+                        <customerAccounts>
+                           <customerAccount code="leroymerlin.lille" description="Leroy Merlin Lille">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>Laurent</firstName>
+                           	   <lastName>Glaser</lastName>
+                              </name>
+                              <address>
+                                 <address1>rue De Versailles</address1>
+                                 <address2>Zac De Valmy</address2>
+                                 <address3>address3</address3>
+                                 <zipCode>59650</zipCode>
+                                 <city>Villeneuve d'ascq</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="leroymerlin.lille" description="Leroy Merlin Lille">
+                                    <name>
+                                       <title>MR</title>
+                                       <firstName>Laurent</firstName>
+                           	         <lastName>Glaser</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>rue De Versailles</address1>
+                                       <address2>Zac De Valmy</address2>
+                                       <address3>address3</address3>
+                           		    <zipCode>59650</zipCode>
+                           		    <city>Villeneuve d'ascq</city>
+                           		    <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>leroymerlin.lille@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="leroymerlin.lille" description="Leroy Merlin Lille">
+                                    	  <name>
+                                             <title>MR</title>
+                                             <firstName>Laurent</firstName>
+                           	         	     <lastName>Glaser</lastName>
+                                    	  </name>
+                                          <address>
+                                             <address1>rue De Versailles</address1>
+                           				<address2>Zac De Valmy</address2>
+                          			     <address3>address3</address3>
+                           				<zipCode>59650</zipCode>
+                           				<city>Villeneuve d'ascq</city>
+                           				<country>France</country>
+                                          </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                           <customerAccount code="leroymerlin.rueil" description="Leroy Merlin Rueil">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>Thierry</firstName>
+                           	   <lastName>Asselin</lastName>
+                              </name>
+                              <address>
+                                 <address1>58 avenue de Fouilleuse</address1>
+                                 <address2>Centre Commercial Les Hauts</address2>
+                                 <address3></address3>
+                                 <zipCode>92500</zipCode>
+                                 <city>Rueil Malmaison</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="leroymerlin.rueil" description="Leroy Merlin Rueil">
+                                    <name>
+                                       <title>MR</title>
+                                       <firstName>Thierry</firstName>
+                           	         <lastName>Asselin</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>58 avenue de Fouilleuse</address1>
+                                       <address2>Centre Commercial Les Hauts</address2>
+                                       <address3></address3>
+                           		    <zipCode>92500</zipCode>
+                           		    <city>Rueil Malmaison</city>
+                           		    <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>leroymerlin.rueil@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="leroymerlin.rueil" description="Leroy Merlin Rueil">
+                                    	  <name>
+                                             <title>MR</title>
+                                             <firstName>Thierry</firstName>
+                           	         	     <lastName>Asselin</lastName>
+                                    	  </name>
+                                          <address>
+                                             <address1>58 avenue de Fouilleuse</address1>
+                           				<address2>Centre Commercial Les Hauts</address2>
+                          			     <address3></address3>
+                           				<zipCode>92500</zipCode>
+                           				<city>Rueil Malmaison</city>
+                           				<country>France</country>
+                                          </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="aae914d0-35ca-48f1-a8e0-b01d4bde20f7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>bob.churn</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_YEAR</con:name>
+        <con:value>2017</con:value>
+      </con:property>
+      <con:property>
+        <con:name>TERMINATION_DAY</con:name>
+        <con:value>20</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Bob</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Churn</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_REC</con:value>
+      </con:property>
+      <con:property>
+        <con:name>serviceCode</con:name>
+        <con:value>${#Project#recOfferId}_SE_${#Project#templateCode}_REC_NO_PRORATA</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="e6fb8f18-4d9f-4de7-ab4a-f19c6045c853" name="Customer STX">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="0c43e276-cb13-440c-902f-1b0ec6aa210b">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer Hierarchy" id="2cb31374-0abd-49d7-92db-53032d57d6c6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer Hierarchy" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="Reseller2">
+                  <!--<invoicePrefix>E_</invoicePrefix>-->
+                  <currencyCode>EUR</currencyCode>
+                  <countryCode>FR</countryCode>
+                  <languageCode>FRA</languageCode>
+                  <customers>
+                     <customer code="STX" description="STX">
+                        <name>
+                           <title>MR</title>
+                           <firstName>Laurent</firstName>
+                           <lastName>Castaing</lastName>
+                        </name>
+                        <address>
+                           <address1>Avenue Antoine Bourdelle</address1>
+                           <address2></address2>
+                           <address3></address3>
+                           <zipCode>44600</zipCode>
+                           <city>Saint Nazaire</city>
+                           <country>France</country>
+                        </address>
+            		    <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>${#Project#templateCode}</customerBrand>
+                        <customerAccounts>
+                           <customerAccount code="STX" description="STX">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>Laurent</firstName>
+                           	   <lastName>Castaing</lastName>
+                              </name>
+                              <address>
+                                 <address1>Avenue Antoine Bourdelle</address1>
+                                 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>44600</zipCode>
+                                 <city>Saint Nazaire</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="STX" description="STX">
+                                    <name>
+                                       <title>MR</title>
+                                       <firstName>Laurent</firstName>
+                           	         <lastName>Castaing</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Avenue Antoine Bourdelle</address1>
+                                       <address2></address2>
+                                       <address3></address3>
+                           		    <zipCode>44600</zipCode>
+                           		    <city>Saint Nazaire</city>
+                           		    <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>STX@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="STX" description="STX">
+                                    	  <name>
+                                             <title>MR</title>
+                                             <firstName>Laurent</firstName>
+                           	         	     <lastName>Castaing</lastName>
+                                    	  </name>
+                                          <address>
+                                             <address1>Avenue Antoine Bourdelle</address1>
+                           				<address2></address2>
+                          			     <address3></address3>
+                           				<zipCode>44600</zipCode>
+                           				<city>Saint Nazaire</city>
+                           				<country>France</country>
+                                          </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                           <customerAccount code="STX.solutions" description="STX Solutions">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>François</firstName>
+                           	   <lastName>Grizaud</lastName>
+                              </name>
+                              <address>
+                                 <address1>Avenue Chatonay</address1>
+                                 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>44613</zipCode>
+                                 <city>Saint Nazaire</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="STX.solutions" description="STX Solutions">
+                                    <name>
+                                       <title>MR</title>
+                                       <firstName>François</firstName>
+                           	         <lastName>Grizaud</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Avenue Chatonay</address1>
+                                       <address2></address2>
+                                       <address3></address3>
+                           		    <zipCode>44613</zipCode>
+                           		    <city>Saint Nazaire</city>
+                           		    <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>STX.solutions@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="STX.solutions" description="STX Solutions">
+                                    	  <name>
+                                             <title>MR</title>
+                                             <firstName>François</firstName>
+                           	         	     <lastName>Grizaud</lastName>
+                                    	  </name>
+                                          <address>
+                                             <address1>Avenue Chatonay</address1>
+                           				<address2></address2>
+                          			     <address3></address3>
+                           				<zipCode>44613</zipCode>
+                           				<city>Saint Nazaire</city>
+                           				<country>France</country>
+                                          </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="aae914d0-35ca-48f1-a8e0-b01d4bde20f7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>bob.churn</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_YEAR</con:name>
+        <con:value>2017</con:value>
+      </con:property>
+      <con:property>
+        <con:name>TERMINATION_DAY</con:name>
+        <con:value>20</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Bob</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Churn</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_REC</con:value>
+      </con:property>
+      <con:property>
+        <con:name>serviceCode</con:name>
+        <con:value>${#Project#recOfferId}_SE_${#Project#templateCode}_REC_NO_PRORATA</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="37919c69-6b4d-4e17-b2a1-47dd155859aa" name="Customer Total">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="421ce5ae-988b-4e4c-beb5-4a0a196b9853">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer Hierarchy" id="0efc105f-6a0f-4eb5-b9d4-a845d020915c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer Hierarchy" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="Reseller1">
+                  <!--<invoicePrefix>E_</invoicePrefix>-->
+                  <currencyCode>EUR</currencyCode>
+                  <countryCode>FR</countryCode>
+                  <languageCode>FRA</languageCode>
+                  <customers>
+                     <customer code="total" description="Total">
+                        <name>
+                           <title>MR</title>
+                           <firstName>Patrick</firstName>
+                           <lastName>Pouyanné</lastName>
+                        </name>
+                        <address>
+                           <address1>2 pl Jean Miller</address1>
+                           <address2></address2>
+                           <address3></address3>
+                           <zipCode>92400</zipCode>
+                           <city>La Défense</city>
+                           <country>France</country>
+                        </address>
+            		    <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>${#Project#templateCode}</customerBrand>
+                        <customerAccounts>
+                           <customerAccount code="total.corporate" description="Total Corporate">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>Patrick</firstName>
+                           	   <lastName>Pouyanné</lastName>
+                              </name>
+                              <address>
+                                 <address1>2 pl Jean Miller</address1>
+                                 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>92400</zipCode>
+                                 <city>La Défense</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="total.corporate" description="Total Corporate">
+                                    <name>
+                                       <title>MR</title>
+                                       <firstName>Patrick</firstName>
+                           	         <lastName>Pouyanné</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>2 pl Jean Miller</address1>
+                                       <address2></address2>
+                                       <address3></address3>
+                           		    <zipCode>92400</zipCode>
+                           		    <city>La Défense</city>
+                           		    <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>total.corporate@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="total.corporate" description="Total Corporate">
+                                    	  <name>
+                                             <title>MR</title>
+                                             <firstName>Patrick</firstName>
+                           	         	     <lastName>Pouyanné</lastName>
+                                    	  </name>
+                                          <address>
+                                             <address1>2 pl Jean Miller</address1>
+                           				<address2></address2>
+                          			     <address3></address3>
+                           				<zipCode>92400</zipCode>
+                           				<city>La Défense</city>
+                           				<country>France</country>
+                                          </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                          <customerAccount code="total.industrie" description="Total Industrie">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>Isabelle</firstName>
+                           	   <lastName>Kocher</lastName>
+                              </name>
+                              <address>
+                                 <address1>2 pl Jean Miller</address1>
+                                 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>92400</zipCode>
+                                 <city>La Défense</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="total.industrie" description="Total Industrie">
+                                    <name>
+                                       <title>MR</title>
+                                       <firstName>Isabelle</firstName>
+                           	         <lastName>Kocher</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>2 pl Jean Miller</address1>
+                                       <address2></address2>
+                                       <address3></address3>
+                           		    <zipCode>92400</zipCode>
+                           		    <city>La Défense</city>
+                           		    <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email> total.industrie@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="total.industrie" description="Total Industrie">
+                                    	  <name>
+                                             <title>MR</title>
+                                             <firstName>Isabelle</firstName>
+                           	         	     <lastName>Kocher</lastName>
+                                    	  </name>
+                                          <address>
+                                             <address1>2 pl Jean Miller</address1>
+                           				<address2></address2>
+                          			     <address3></address3>
+                           				<zipCode>92400</zipCode>
+                           				<city>La Défense</city>
+                           				<country>France</country>
+                                          </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="aae914d0-35ca-48f1-a8e0-b01d4bde20f7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>bob.churn</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_YEAR</con:name>
+        <con:value>2017</con:value>
+      </con:property>
+      <con:property>
+        <con:name>TERMINATION_DAY</con:name>
+        <con:value>20</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Bob</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Churn</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_REC</con:value>
+      </con:property>
+      <con:property>
+        <con:name>serviceCode</con:name>
+        <con:value>${#Project#recOfferId}_SE_${#Project#templateCode}_REC_NO_PRORATA</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="d0aa2746-f23f-45db-891e-5a03c79b629d" name="Customer Vinci">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="74f71927-1f7c-40bb-abd2-aa615d0a228e">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer Hierarchy" id="6dc9c41d-ac96-4310-a1be-c00067dc3d08">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer Hierarchy" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="Reseller2">
+                  <!--<invoicePrefix>E_</invoicePrefix>-->
+                  <currencyCode>EUR</currencyCode>
+                  <countryCode>FR</countryCode>
+                  <languageCode>FRA</languageCode>
+                  <customers>
+                     <customer code="vinci" description="Vinci">
+                        <name>
+                           <title>MR</title>
+                           <firstName>Xavier</firstName>
+                           <lastName>Huillard</lastName>
+                        </name>
+                        <address>
+                           <address1>Immeuble Ile de France Bat A</address1>
+                           <address2>4 place de la Pyramide</address2>
+                           <address3></address3>
+                           <zipCode>92800</zipCode>
+                           <city>Puteaux</city>
+                           <country>France</country>
+                        </address>
+            		    <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>${#Project#templateCode}</customerBrand>
+                        <customerAccounts>
+                           <customerAccount code="vinci.park" description="Vinci Park">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>Xavier</firstName>
+                           	   <lastName>Huillard</lastName>
+                              </name>
+                              <address>
+                                 <address1>Immeuble Ile de France Bat A</address1>
+                           	 <address2>4 place de la Pyramide</address2>
+                                 <address3></address3>
+                                 <zipCode>92800</zipCode>
+                                 <city>Puteaux</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="vinci.park" description="Vinci Park">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName>Xavier</firstName>
+                           	      <lastName>Huillard</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Immeuble Ile de France Bat A</address1>
+                           	       <address2>4 place de la Pyramide</address2>
+                                       <address3></address3>
+                                       <zipCode>92800</zipCode>
+                                       <city>Puteaux</city>
+                                       <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>vinci.park@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="vinci.park" description="Vinci Park">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName> Xavier</firstName>
+                           	  	    <lastName>Huillard</lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>Immeuble Ile de France Bat A</address1>
+                           	 	    <address2>4 place de la Pyramide</address2>
+                                 	    <address3></address3>
+                                 	    <zipCode>92800</zipCode>
+                                 	    <city>Puteaux</city>
+                                 	    <country>France</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                           <customerAccount code="vinci.immobilier" description="Vinci Immobilier">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName>Olivier</firstName>
+                           	   <lastName>Roulleau de la Roussier</lastName>
+                              </name>
+                              <address>
+                                 <address1>Immeuble Ile de France Bat A</address1>
+                           	 <address2>4 place de la Pyramide</address2>
+                                 <address3></address3>
+                                 <zipCode>92800</zipCode>
+                                 <city>Puteaux</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="vinci.immobilier" description="Vinci Immobilier">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName>Olivier</firstName>
+                           	      <lastName>Roulleau de la Roussier</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Immeuble Ile de France Bat A</address1>
+                           	       <address2>4 place de la Pyramide</address2>
+                                       <address3></address3>
+                                       <zipCode>92800</zipCode>
+                                       <city>Puteaux</city>
+                                       <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>vinci.immobilier@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="vinci.immobilier" description="Vinci Immobilier">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName>Olivier</firstName>
+                           	  	    <lastName>Roulleau de la Roussier</lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>Immeuble Ile de France Bat A</address1>
+                           	 	    <address2>4 place de la Pyramide</address2>
+                                 	    <address3></address3>
+                                 	    <zipCode>92800</zipCode>
+                                 	    <city>Puteaux</city>
+                                 	    <country>France</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="aae914d0-35ca-48f1-a8e0-b01d4bde20f7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>bob.churn</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_YEAR</con:name>
+        <con:value>2017</con:value>
+      </con:property>
+      <con:property>
+        <con:name>TERMINATION_DAY</con:name>
+        <con:value>20</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Bob</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Churn</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_REC</con:value>
+      </con:property>
+      <con:property>
+        <con:name>serviceCode</con:name>
+        <con:value>${#Project#recOfferId}_SE_${#Project#templateCode}_REC_NO_PRORATA</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="ddff9ff3-2962-4dae-97f4-e3d96556c89e" name="Customer Groupement du conflans">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="51a024a3-3657-432b-b192-9a6645fa3dab">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer Hierarchy" id="a12655b8-cc60-4196-b09a-e585222623f7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer Hierarchy" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="Reseller1">
+                  <!--<invoicePrefix>E_</invoicePrefix>-->
+                  <currencyCode>EUR</currencyCode>
+                  <countryCode>FR</countryCode>
+                  <languageCode>FRA</languageCode>
+                  <customers>
+                     <customer code="groupement.conflans" description="Groupement du conflans">
+                        <name>
+                           <title>MR</title>
+                           <firstName>Patrice</firstName>
+                           <lastName>Arro</lastName>
+                        </name>
+                        <address>
+                           <address1>36 Carrer d'amont</address1>
+                           <address2></address2>
+                           <address3></address3>
+                           <zipCode>66820</zipCode>
+                           <city>Corneilla-de-Conflent</city>
+                           <country>France</country>
+                        </address>
+            		    <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>${#Project#templateCode}</customerBrand>
+                        <customerAccounts>
+                           <customerAccount code="groupement.conflans" description="Groupement du conflans">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName> Patrice </firstName>
+                           	   <lastName>Arro</lastName>
+                              </name>
+                              <address>
+                                 <address1>36 Carrer d'amont</address1>
+                           	 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>66820</zipCode>
+                                 <city>Corneilla-de-Conflent</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="groupement.conflans" description="Groupement du conflans">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName> Patrice </firstName>
+                           	      <lastName>Arro</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>36 Carrer d'amont</address1>
+                           	       <address2></address2>
+                                       <address3></address3>
+                                       <zipCode>66820</zipCode>
+                                       <city>Corneilla-de-Conflent</city>
+                                       <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>groupement.conflans@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="groupement.conflans" description="Groupement du conflans">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName> Patrice </firstName>
+                           	  	    <lastName>Arro</lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>36 Carrer d'amont</address1>
+                           	 	    <address2></address2>
+                                 	    <address3></address3>
+                                 	    <zipCode>66820</zipCode>
+                                 	    <city>Corneilla-de-Conflent</city>
+                                 	    <country>France</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="aae914d0-35ca-48f1-a8e0-b01d4bde20f7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>bob.churn</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_YEAR</con:name>
+        <con:value>2017</con:value>
+      </con:property>
+      <con:property>
+        <con:name>TERMINATION_DAY</con:name>
+        <con:value>20</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Bob</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Churn</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_REC</con:value>
+      </con:property>
+      <con:property>
+        <con:name>serviceCode</con:name>
+        <con:value>${#Project#recOfferId}_SE_${#Project#templateCode}_REC_NO_PRORATA</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
+  <con:testSuite id="d9175897-1d9d-4dc6-93cb-e9822acdcaca" name="Customer Orange">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="1269000a-11a1-47e6-8a97-9261c5df0ee8">
+      <con:settings/>
+      <con:testStep type="request" name="Create Customer Hierarchy" id="290a918a-32c5-4637-bc74-656b52e4338f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateCRMAccountHierarchy</con:operation>
+          <con:request name="Create Customer Hierarchy" id="8c4e9d0d-5ff4-4cbf-b510-5fa8c4aa37df">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:customerHierarchyUpdate>
+         <customerHierarchy>
+            <sellers>
+               <seller code="Reseller2">
+                  <!--<invoicePrefix>E_</invoicePrefix>-->
+                  <currencyCode>EUR</currencyCode>
+                  <countryCode>FR</countryCode>
+                  <languageCode>FRA</languageCode>
+                  <customers>
+                     <customer code="orange" description="Orange S.A.">
+                        <name>
+                           <title>MR</title>
+                           <firstName>Stéphane</firstName>
+                           <lastName>Richard</lastName>
+                        </name>
+                        <address>
+                           <address1>78 Rue Olivier de Serres</address1>
+                           <address2></address2>
+                           <address3></address3>
+                           <zipCode>75015</zipCode>
+                           <city>Paris</city>
+                           <country>France</country>
+                        </address>
+            		    <customerCategory>CLIENT</customerCategory>
+                        <customerBrand>${#Project#templateCode}</customerBrand>
+                        <customerAccounts>
+                           <customerAccount code="orange.france" description="Orange France">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName> Stéphane </firstName>
+                           	   <lastName>Richard</lastName>
+                              </name>
+                              <address>
+                                 <address1>1 Avenue du Président Nelson Mandela</address1>
+                           	 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>94110</zipCode>
+                                 <city>Arcueil</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="orange.france" description="Orange France">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName> Stéphane </firstName>
+                           	      <lastName>Richard</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>1 Avenue du Président Nelson Mandela</address1>
+                           	       <address2></address2>
+                                       <address3></address3>
+                                       <zipCode>94410</zipCode>
+                                       <city>Arcueil</city>
+                                       <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>orange.france@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="orange.france" description="Orange France">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName> Stéphane </firstName>
+                           	  	    <lastName>Richard</lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>1 Avenue du Président Nelson Mandela</address1>
+                           	 	    <address2></address2>
+                                 	    <address3></address3>
+                                 	    <zipCode>94110</zipCode>
+                                 	    <city>Arcueil</city>
+                                 	    <country>France</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                         <customerAccount code="sofrecom" description="Sofrecom">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName> Guillaume </firstName>
+                           	   <lastName>Boudin</lastName>
+                              </name>
+                              <address>
+                                 <address1>24 avenue du Petit Parc</address1>
+                           	 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>94300</zipCode>
+                                 <city>Vincennes</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="sofrecom" description="Sofrecom">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName> Valérie </firstName>
+                           	      <lastName>Thévenin-Albertin</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>24 avenue du Petit Parc</address1>
+                           	       <address2></address2>
+                                       <address3></address3>
+                                       <zipCode>94300</zipCode>
+                                       <city>Vincennes</city>
+                                       <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>sofrecom@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="sofrecom" description="Sofrecom">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName> Valérie </firstName>
+                           	  	    <lastName>Thévenin-Albertin</lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>24 avenue du Petit Parc</address1>
+                           	 	    <address2></address2>
+                                 	    <address3></address3>
+                                 	    <zipCode>94300</zipCode>
+                                 	    <city>Vincennes</city>
+                                 	    <country>France</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                                 <billingAccount code="sofrecom.asia" description="Sofrecom ASIA">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName> Jérôme </firstName>
+                           	      <lastName>Santrot</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Graha Aktiva, 4th floor</address1>
+                           	       <address2></address2>
+                                       <address3></address3>
+                                       <zipCode>12950</zipCode>
+                                       <city>Jakarta</city>
+                                       <country>Indonesia</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>sofrecom.asia@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="sofrecom.asia" description="Sofrecom ASIA">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName> Jérôme </firstName>
+                           	  	    <lastName> Santrot </lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>Graha Aktiva, 4th floor</address1>
+                           	 	    <address2></address2>
+                                 	    <address3></address3>
+                                 	    <zipCode>12950</zipCode>
+                                 	    <city> Jakarta </city>
+                                 	    <country>Indonesia</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                                 <billingAccount code="sofrecom.argentina" description="Sofrecom ARGENTINA">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName> Adrian </firstName>
+                           	      <lastName>Hettema</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>Reconquqista 609</address1>
+                           	       <address2></address2>
+                                       <address3></address3>
+                                       <zipCode> C1003ABM </zipCode>
+                                       <city>Buenos aires</city>
+                                       <country>Argentina</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>sofrecom.argentina@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="sofrecom.argentina" description="Sofrecom ARGENTINA">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName> Adrian </firstName>
+                           	  	    <lastName> Hettema </lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>Reconquqista 609</address1>
+                           	 	    <address2></address2>
+                                 	    <address3></address3>
+                                 	    <zipCode> C1003ABM </zipCode>
+                                 	    <city> Buenos aires </city>
+                                 	    <country>Argentina</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+						</billingAccounts>
+                           </customerAccount>
+                         <customerAccount code="OCB" description="Orange Business Services">
+                              <name>
+                                 <title>MR</title>
+                           	   <firstName> Thierry </firstName>
+                           	   <lastName>Bonhomme</lastName>
+                              </name>
+                              <address>
+                                 <address1>106 rue du Temple</address1>
+                           	 <address2></address2>
+                                 <address3></address3>
+                                 <zipCode>75003</zipCode>
+                                 <city>Paris</city>
+                                 <country>France</country>
+                              </address>
+                              <currency>EUR</currency>
+                              <language>FRA</language>
+                              <paymentMethods>
+                                 <methodOfPayment paymentMethodType="WIRETRANSFER"/>
+                              </paymentMethods>
+                              <billingAccounts>
+                                 <billingAccount code="OCB" description="Orange Business Services">
+                                    <name>
+                                      <title>MR</title>
+                           	      <firstName> Thierry </firstName>
+                           	      <lastName>Bonhomme</lastName>
+                                    </name>
+                                    <address>
+                                       <address1>106 rue du Temple</address1>
+                           	       <address2></address2>
+                                       <address3></address3>
+                                       <zipCode> 75003 </zipCode>
+                                       <city>Paris</city>
+                                       <country>France</country>
+                                    </address>
+                                    <billingCycle>${#TestSuite#billingCycle}</billingCycle>
+                                    <country>FR</country>
+                                    <language>FRA</language>
+                                    <electronicBilling>true</electronicBilling>
+                                    <email>OCB@opencellsoft.com</email>
+                                    <userAccounts>
+                                       <userAccount code="OCB" description="Orange Business Services">
+                               		 <name>
+                                 	    <title>MR</title>
+                           	   	    <firstName> Thierry </firstName>
+                           	  	    <lastName> Bonhomme </lastName>
+                              	         </name>
+                              	 	 <address>
+                                 	    <address1>106 rue du Temple</address1>
+                           	 	    <address2></address2>
+                                 	    <address3></address3>
+                                 	    <zipCode> 75003 </zipCode>
+                                 	    <city>Paris </city>
+                                 	    <country>France</country>
+					 </address>
+                                       </userAccount>
+                                    </userAccounts>
+                                 </billingAccount>
+                              </billingAccounts>
+                           </customerAccount>
+                        </customerAccounts>
+                     </customer>
+                  </customers>
+               </seller>
+            </sellers>
+         </customerHierarchy>
+      </ws:customerHierarchyUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="aae914d0-35ca-48f1-a8e0-b01d4bde20f7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>bob.churn</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_YEAR</con:name>
+        <con:value>2017</con:value>
+      </con:property>
+      <con:property>
+        <con:name>TERMINATION_DAY</con:name>
+        <con:value>20</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Bob</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Churn</con:value>
+        <con:property>
+          <con:name>offerCode</con:name>
+          <con:value>OF_${#Project#templateCode}_SUPER</con:value>
+        </con:property>
+        <con:property>
+          <con:name>billingCycle</con:name>
+          <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+        </con:property>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_REC</con:value>
+      </con:property>
+      <con:property>
+        <con:name>serviceCode</con:name>
+        <con:value>${#Project#recOfferId}_SE_${#Project#templateCode}_REC_NO_PRORATA</con:value>
+      </con:property>
+    </con:properties>
+  </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint>
   </con:endpointStrategy>
@@ -56239,7 +58647,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>templateLabel</con:name>
-      <con:value>Opencell Classic</con:value>
+      <con:value>Generic</con:value>
     </con:property>
     <con:property>
       <con:name>partnerOfferId</con:name>
@@ -56307,27 +58715,35 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>SCUsername</con:name>
-      <con:value>DEMO.CLASSIC</con:value>
+      <con:value>gildarts.clive</con:value>
     </con:property>
     <con:property>
       <con:name>SCPassword</con:name>
-      <con:value>DEMO.CLASSIC</con:value>
+      <con:value>gildarts.clive</con:value>
     </con:property>
     <con:property>
       <con:name>CCLastname</con:name>
-      <con:value>CC Lastname</con:value>
+      <con:value>Doe</con:value>
     </con:property>
     <con:property>
       <con:name>CCFirstname</con:name>
-      <con:value>CC Firstname</con:value>
+      <con:value>Jeanette</con:value>
     </con:property>
     <con:property>
       <con:name>SCLastname</con:name>
-      <con:value>SC Lastname</con:value>
+      <con:value>Clive</con:value>
     </con:property>
     <con:property>
       <con:name>SCFirstname</con:name>
-      <con:value>SC Firstname</con:value>
+      <con:value>Gildarts</con:value>
+    </con:property>
+    <con:property>
+      <con:name>reseller1</con:name>
+      <con:value>Reseller1</con:value>
+    </con:property>
+    <con:property>
+      <con:name>reseller2</con:name>
+      <con:value>Reseller2</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

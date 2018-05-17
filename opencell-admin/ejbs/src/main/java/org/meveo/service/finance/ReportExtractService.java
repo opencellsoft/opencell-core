@@ -3,6 +3,7 @@ package org.meveo.service.finance;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,10 +16,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractResultTypeEnum;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
+import org.meveo.model.finance.ReportExtractExecutionResult;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
@@ -40,12 +44,19 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void runReport(ReportExtract entity) throws BusinessException {
-        runReport(entity, null);
+    @Inject
+    private ReportExtractExecutionResultService reportExtractExecutionResultService;
+
+    public void runReport(ReportExtract entity) throws ReportExtractExecutionException, BusinessException {
+        runReport(entity, null, ReportExtractExecutionOrigin.GUI);
+    }
+
+    public void runReport(ReportExtract entity, Map<String, String> mapParams) throws ReportExtractExecutionException, BusinessException {
+        runReport(entity, mapParams, ReportExtractExecutionOrigin.GUI);
     }
 
     @SuppressWarnings("rawtypes")
-    public void runReport(ReportExtract entity, Map<String, String> mapParams) throws BusinessException {
+    public void runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
         Map<String, Object> context = new HashMap<>();
 
         // use params parameter if set, otherwise use the set from entity
@@ -74,36 +85,68 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
         }
 
-        StringBuilder sbDir = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
-        sbDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
+        StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
+        reportDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
 
         if (!StringUtils.isBlank(entity.getCategory())) {
-            sbDir.append(File.separator + entity.getCategory());
+            reportDir.append(File.separator + entity.getCategory());
         }
 
         String filename = DateUtils.evaluteDateFormat(entity.getFilenameFormat());
         filename = evaluateStringExpression(filename, entity);
 
+        ReportExtractExecutionResult reportExtractExecutionResult = new ReportExtractExecutionResult();
+        reportExtractExecutionResult.updateAudit(currentUser);
+        reportExtractExecutionResult.setReportExtract(entity);
+        reportExtractExecutionResult.setStartDate(new Date());
+        reportExtractExecutionResult.setFilePath(filename);
+        reportExtractExecutionResult.setLineCount(0);
+        reportExtractExecutionResult.setOrigin(origin);
+        reportExtractExecutionResult.setStatus(true);
+
+        ReportExtractExecutionException be = null;
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
-            List<Map<String, Object>> resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
+            List<Map<String, Object>> resultList = null;
+
+            try {
+                resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
+            } catch (Exception e) {
+                if (e.getCause() != null && e.getCause().getCause() != null) {
+                    reportExtractExecutionResult.setErrorMessage(e.getCause().getCause().getMessage());
+                } else {
+                    reportExtractExecutionResult.setErrorMessage(e.getMessage());
+                }
+                log.error("Invalid SQL query: {}", e.getMessage());
+                be = new ReportExtractExecutionException("Invalid SQL query.");
+            }
 
             if (resultList != null && !resultList.isEmpty()) {
                 log.debug("{} record/s found", resultList.size());
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
-                    writeAsFile(filename, sbDir, resultList);
+                    writeAsFile(filename, reportDir, resultList);
+                    reportExtractExecutionResult.setLineCount(resultList.size());
 
                 } else {
-                    writeAsHtml(filename, sbDir, resultList, entity);
+                    writeAsHtml(filename, reportDir, resultList, entity);
                 }
             }
 
         } else {
-            context.put(ReportExtractScript.DIR, sbDir.toString());
+            context.put(ReportExtractScript.DIR, reportDir.toString());
             if (!StringUtils.isBlank(entity.getFilenameFormat())) {
                 context.put(ReportExtractScript.FILENAME, filename);
             }
 
-            scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
+            Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
+            reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
+            reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
+        }
+
+        reportExtractExecutionResult.setEndDate(new Date());
+        reportExtractExecutionResultService.createInNewTransaction(reportExtractExecutionResult);
+
+        if (be != null) {
+            throw be;
         }
     }
 
@@ -246,6 +289,21 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
         }
         return result;
+    }
+
+    public String getReporFile(ReportExtract entity) throws BusinessException {
+        entity = refreshOrRetrieve(entity);
+        StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
+        reportDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
+
+        if (!StringUtils.isBlank(entity.getCategory())) {
+            reportDir.append(File.separator + entity.getCategory());
+        }
+
+        String filename = DateUtils.evaluteDateFormat(entity.getFilenameFormat());
+        filename = evaluateStringExpression(filename, entity);
+
+        return reportDir + File.separator + filename;
     }
 
 }

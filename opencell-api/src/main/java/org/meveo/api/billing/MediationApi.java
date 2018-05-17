@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
@@ -15,6 +16,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
@@ -32,7 +34,15 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.notification.DefaultObserver;
 
+/**
+ * API for CDR processing and mediation handling in general
+ * @lastModifiedVersion willBeSetLater
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 @Stateless
 public class MediationApi extends BaseApi {
 
@@ -54,8 +64,16 @@ public class MediationApi extends BaseApi {
     @Inject
     private SubscriptionService subscriptionService;
 
+    @Inject
+    private DefaultObserver defaultObserver;
+
     Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
+    /**
+     * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
+     * 
+     * @param postData String of CDRs
+     */
     public void registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
 
         List<String> cdr = postData.getCdr();
@@ -88,6 +106,13 @@ public class MediationApi extends BaseApi {
         }
     }
 
+    /**
+     * Same as registerCdrList, but at the same process rate the EDR created
+     * 
+     * @param ip where request came from
+     * 
+     * @param cdr String of CDR
+     */
     public void chargeCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(cdr)) {
             try {
@@ -140,8 +165,14 @@ public class MediationApi extends BaseApi {
         }
     }
 
-    // if the reservation succeed then returns -1, else returns the available
-    // quantity for this cdr
+    /**
+     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
+     * (PREPAID_RESRV_DELAY_MS)
+     * 
+     * @param cdr String of CDR
+     * @param ip where request came from
+     * @return Available quantity and reservationID is returned. if the reservation succeed then returns -1, else returns the available quantity for this cdr
+     */
     public CdrReservationResponseDto reserveCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
         CdrReservationResponseDto result = new CdrReservationResponseDto();
         // TODO: if insufficient balance retry with lower quantity
@@ -193,6 +224,12 @@ public class MediationApi extends BaseApi {
         return result;
     }
 
+    /**
+     * Confirms the reservation
+     * 
+     * @param reservationDto Prepaid reservation's data
+     * @param ip where request came from
+     */
     public void confirmReservation(PrepaidReservationDto reservationDto, String ip) throws MeveoApiException {
         if (reservationDto.getReservationId() > 0) {
             try {
@@ -247,6 +284,12 @@ public class MediationApi extends BaseApi {
         }
     }
 
+    /**
+     * Cancels the reservation
+     * 
+     * @param reservationDto Prepaid reservation's data
+     * @param ip where request came from
+     */
     public void cancelReservation(PrepaidReservationDto reservationDto, String ip) throws MeveoApiException {
         if (reservationDto.getReservationId() > 0) {
             try {
@@ -268,4 +311,23 @@ public class MediationApi extends BaseApi {
         }
     }
 
+    /**
+     * Notify of rejected CDRs - for each of rejected lines, trigger a notification
+     * 
+     * @param cdrList A list of rejected CDR lines (can be as json format string instead of csv line)
+     */
+    @Asynchronous
+    public void notifyOfRejectedCdrs(CdrListDto cdrList) {
+
+        for (String cdrLine : cdrList.getCdr()) {
+
+            CDR cdr = new CDR();
+            cdr.setLine(cdrLine);
+            try {
+                defaultObserver.cdrRejected(cdr);
+            } catch (Exception e) {
+                log.error("Failed to notify of rejected CDR {}", cdr, e);
+            }
+        }
+    }
 }

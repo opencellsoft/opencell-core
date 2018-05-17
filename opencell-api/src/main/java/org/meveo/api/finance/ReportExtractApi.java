@@ -8,23 +8,33 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ReportExtractExecutionException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.finance.ReportExtractDto;
+import org.meveo.api.dto.finance.ReportExtractExecutionResultDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.finance.ReportExtractExecutionResultsResponseDto;
 import org.meveo.api.dto.response.finance.RunReportExtractDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
+import org.meveo.model.finance.ReportExtractExecutionResult;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.finance.ReportExtractExecutionResultService;
 import org.meveo.service.finance.ReportExtractService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
  * @since 5.0
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDto> {
@@ -34,6 +44,9 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
 
     @Inject
     private ReportExtractService reportExtractService;
+
+    @Inject
+    private ReportExtractExecutionResultService reportExtractExecutionResultService;
 
     @Override
     public ReportExtract create(ReportExtractDto postData) throws MeveoApiException, BusinessException {
@@ -129,11 +142,54 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         return reportExtract;
     }
 
-    public void runReportExtract(RunReportExtractDto postData) throws BusinessException, EntityDoesNotExistsException {
+    public void runReportExtract(RunReportExtractDto postData) throws BusinessException, EntityDoesNotExistsException, ReportExtractExecutionException {
         ReportExtract reportExtract = reportExtractService.findByCode(postData.getCode());
         if (reportExtract == null) {
             throw new EntityDoesNotExistsException(ReportExtract.class, postData.getCode());
         }
-        reportExtractService.runReport(reportExtract, postData.getParams());
+        reportExtractService.runReport(reportExtract, postData.getParams(), ReportExtractExecutionOrigin.API);
+    }
+
+    public ReportExtractExecutionResultsResponseDto listReportExtractRunHistory(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, ReportExtractExecutionResult.class);
+        Long totalCount = reportExtractExecutionResultService.count(paginationConfig);
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<ReportExtractExecutionResult> reportExtractExecutionResults = reportExtractExecutionResultService.list(paginationConfig);
+            for (ReportExtractExecutionResult e : reportExtractExecutionResults) {
+                result.getReportExtractExecutionResults().add(new ReportExtractExecutionResultDto(e));
+            }
+        }
+
+        return result;
+    }
+
+    public ReportExtractExecutionResultDto findReportExtractHistory(Long id) {
+        ReportExtractExecutionResultDto result = new ReportExtractExecutionResultDto();
+        ReportExtractExecutionResult entity = reportExtractExecutionResultService.findById(id);
+        if (entity != null) {
+            result = new ReportExtractExecutionResultDto(entity);
+        }
+
+        return result;
+    }
+
+    public ReportExtractExecutionResultsResponseDto listReportExtractRunHistoryByRECode(String code) {
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        ReportExtract re = reportExtractService.findByCode(code);
+        if (re != null && re.getExecutionResults() != null) {
+            result.setReportExtractExecutionResults(re.getExecutionResults().stream().map(p -> new ReportExtractExecutionResultDto(p)).collect(Collectors.toList()));
+        }
+
+        return result;
     }
 }

@@ -1,17 +1,26 @@
 package org.meveo.admin.action.finance;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.ReportExtractService;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 /**
  * Controller to manage detail view of {@link ReportExtract}.
@@ -78,7 +87,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
             result = saveOrUpdate(true);
             reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
-        } catch (BusinessException e) {
+        } catch (BusinessException | ReportExtractExecutionException e) {
             log.error("Failed running report: {}", e.getMessage());
             messages.error(e.getMessage());
         }
@@ -94,12 +103,33 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
             result = saveOrUpdate(false);
             reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
-        } catch (BusinessException e) {
+        } catch (BusinessException | ReportExtractExecutionException e) {
             log.error("Failed running report: {}", e.getMessage());
             messages.error(e.getMessage());
         }
 
         return result;
+    }
+
+    public StreamedContent getReportFile(ReportExtract entity) {
+        String filePath;
+        InputStream stream = null;
+
+        try {
+            filePath = reportExtractService.getReporFile(entity);
+            stream = new FileInputStream(new File(filePath));
+            String mimeType = "text/csv";
+            if (!FilenameUtils.getExtension(filePath).equals("csv")) {
+                mimeType = "text/html";
+            }
+
+            return new DefaultStreamedContent(stream, mimeType, filePath.substring(filePath.lastIndexOf(File.separator)));
+
+        } catch (BusinessException | FileNotFoundException e) {
+            log.error("Failed loading repor file={}", e.getMessage());
+            return null;
+        }
+
     }
 
 }

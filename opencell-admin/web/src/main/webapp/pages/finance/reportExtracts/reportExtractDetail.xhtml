@@ -60,6 +60,41 @@
             	<p:commandButton id="runReport" icon="fa fa-fw fa-play" value="#{messages['action.execute']}" action="#{reportExtractBean.runReport}"></p:commandButton>
             </ui:define>
 		</hftl:formPanel>
+		
+		<!-- ===================================== EXECUTION RESULTS ===================================== -->
+
+        <p:panel rendered="#{!reportExtractBean.entity.transient}">
+        	<h:form>
+				<p:dataTable var="entity" sortBy="#{entity.endDate}" sortOrder="descending" paginator="true" value="#{reportExtractBean.entity.executionResults}" rows="10"
+					rowKey="#{entity.id}" resizableColumns="true">
+					<hftl:column label="#{messages['jobExecution.startDate']}" field="startDate" time="true" />
+					<hftl:column label="#{messages['jobExecution.endDate']}" field="endDate" time="true"  />
+					<hftl:column label="#{messages['reportExtract.filePath']}" field="filePath" />
+					<hftl:column label="#{messages['reportExtract.lineCount']}" field="lineCount" />
+					<hftl:column label="#{messages['reportExtract.origin']}" field="origin" />
+					<hftl:column label="#{messages['reportExtract.errorMessage']}" field="errorMessage" />
+					<p:column>
+						<p:commandButton rendered="#{entity.lineCount>0}" value="#{messages['commons.download']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+					        <p:fileDownload value="#{reportExtractBean.getReportFile(entity.reportExtract)}" />
+					    </p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+        </p:panel>
 	</ui:define>
+	
+	<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+	    <p:graphicImage name="loading.gif" library="img" />
+	</p:dialog>	
+	
+	<script type="text/javascript">
+		function start() {
+		    PF('statusDialog').show();
+		}
+		
+		function stop() {
+		    PF('statusDialog').hide();
+		}
+	</script>
 
 </ui:composition>

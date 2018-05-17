@@ -12,6 +12,7 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.finance.ReportExtractService;
@@ -50,7 +51,7 @@ public class UnitReportExtractJobBean {
                 entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(endDate, paramBean.getDateFormat()));
             }
             
-            reportExtractService.runReport(entity);
+            reportExtractService.runReport(entity, null, ReportExtractExecutionOrigin.JOB);
 
             result.registerSucces();
 

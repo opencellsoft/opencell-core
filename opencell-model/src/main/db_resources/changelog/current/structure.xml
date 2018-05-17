@@ -809,4 +809,63 @@
     	</addColumn>
     </changeSet>
     
+    <changeSet id="#3271_20180423" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_cycle">
+            <column name="invoice_type_el" type="varchar(2000)"  />           
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#3118_20180502" author="AbdelmounaimAkadid">
+    	<addColumn tableName="cat_price_plan_matrix">
+            <column name="invoice_subcategory_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="invoice_sub_category_id" type="bigint"  />           
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+	
+	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
+		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
+	</changeSet>
+    
+    <changeSet id="#3368_20180424" author="EdwardPLegaspi">
+	    <createTable tableName="dwh_report_extract_execution">
+		    <column name="id" type="bigint" autoIncrement="${id.auto}">
+		        <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_report_extract_execution_pk" />
+		    </column>
+		    <column name="version" type="int4" />
+		    <column name="created" type="datetime">
+		        <constraints nullable="false" />
+		    </column>
+		    <column name="updated" type="datetime" />
+		    <column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="report_extract_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+			<column name="file_path" type="varchar(100)" />
+			<column name="line_count" type="int" />
+			<column name="origin" type="varchar(20)" />
+			<column name="error_message" type="text" />
+			<column name="status" type="boolean" />
+		</createTable>
+		<createSequence sequenceName="dwh_report_extract_execution_seq" />
+		
+		<addForeignKeyConstraint baseColumnNames="report_extract_id" baseTableName="dwh_report_extract_execution" constraintName="dwh_report_extract_execution_re_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dwh_report_extract" />
+	</changeSet>
+	
+	<changeSet id="#3368_20180424 - Mysql" author="EdwardPLegaspi" dbms="mysql">
+		<createTable tableName="dwh_report_extract_execution_seq">
+	        <column name="next_val" type="BIGINT">
+	            <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dwh_report_extract_execution_seq" />
+	        </column>
+	    </createTable>
+        <sql>insert into ${db.schema.adapted}dwh_report_extract_execution_seq values(1)</sql>
+    </changeSet>
+    
 </databaseChangeLog> 

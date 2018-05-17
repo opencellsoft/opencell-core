@@ -336,6 +336,9 @@
     <con:operation isOneWay="false" action="" name="reserveCdr" bindingOperationName="reserveCdr" type="Request-Response" outputName="reserveCdrResponse" inputName="reserveCdr" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="93a482ce-6950-405f-936c-9cb5d8f9e791">
       <con:settings/>
     </con:operation>
+    <con:operation id="c15d07dc-f246-4fad-9ce9-b908377e8d68" isOneWay="false" action="" name="notifyOfRejectedCdrs" bindingOperationName="notifyOfRejectedCdrs" type="Request-Response" outputName="notifyOfRejectedCdrsResponse" inputName="notifyOfRejectedCdrs" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" id="3ae96632-2c43-4f00-af1f-fd5d718000ae" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -1226,11 +1229,11 @@ public class Mediation_${#Project#baseEntityPrefix}_CreateEdr extends org.meveo.
 				edr.setParameter7(cdr.getParam7());
 				edr.setParameter8(cdr.getParam8());
 				edr.setParameter9(cdr.getParam9());
-				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
-				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
-				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
-				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
-				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
+				edr.setDateParam1(cdr.getDateParam1());
+				edr.setDateParam2(cdr.getDateParam2());
+				edr.setDateParam3(cdr.getDateParam3());
+				edr.setDateParam4(cdr.getDateParam4());
+				edr.setDateParam5(cdr.getDateParam5());
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -1825,11 +1828,11 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setParameter7(cdr.getParam7());
 				edr.setParameter8(cdr.getParam8());
 				edr.setParameter9(cdr.getParam9());
-				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
-				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
-				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
-				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
-				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
+				edr.setDateParam1(cdr.getDateParam1());
+				edr.setDateParam2(cdr.getDateParam2());
+				edr.setDateParam3(cdr.getDateParam3());
+				edr.setDateParam4(cdr.getDateParam4());
+				edr.setDateParam5(cdr.getDateParam5());
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -3350,11 +3353,11 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setParameter7(cdr.getParam7());
 				edr.setParameter8(cdr.getParam8());
 				edr.setParameter9(cdr.getParam9());
-				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
-				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
-				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
-				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
-				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
+				edr.setDateParam1(cdr.getDateParam1());
+				edr.setDateParam2(cdr.getDateParam2());
+				edr.setDateParam3(cdr.getDateParam3());
+				edr.setDateParam4(cdr.getDateParam4());
+				edr.setDateParam5(cdr.getDateParam5());
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -4648,11 +4651,11 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setParameter7(cdr.getParam7());
 				edr.setParameter8(cdr.getParam8());
 				edr.setParameter9(cdr.getParam9());
-				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
-				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
-				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
-				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
-				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
+				edr.setDateParam1(cdr.getDateParam1());
+				edr.setDateParam2(cdr.getDateParam2());
+				edr.setDateParam3(cdr.getDateParam3());
+				edr.setDateParam4(cdr.getDateParam4());
+				edr.setDateParam5(cdr.getDateParam5());
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -6108,11 +6111,11 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setParameter7(cdr.getParam7());
 				edr.setParameter8(cdr.getParam8());
 				edr.setParameter9(cdr.getParam9());
-				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
-				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
-				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
-				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
-				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
+				edr.setDateParam1(cdr.getDateParam1());
+				edr.setDateParam2(cdr.getDateParam2());
+				edr.setDateParam3(cdr.getDateParam3());
+				edr.setDateParam4(cdr.getDateParam4());
+				edr.setDateParam5(cdr.getDateParam5());
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -7476,6 +7479,401 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <con:property>
         <con:name>index</con:name>
         <con:value>42</con:value>
+      </con:property>
+    </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
+  </con:testSuite>
+  <con:testSuite id="c001c12a-38e7-4159-9fbf-912a606b54df" name="Rejected CDR">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="6d9b1acf-6cf0-4271-8ed1-7e10d209925d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create customer" id="0aec1fdb-4560-4ba5-a311-ee95eb99a4c7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#Project#baseEntityPrefix}_${#TestSuite#index}_CUST" description="">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <seller>SELLER_FR</seller>\r
+            <customerBrand>BRANDX</customerBrand>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c69a3d67-6225-448d-b49b-6e7a6b05921a"/>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create handle rejected CDR script" id="b3088957-2ec9-4f36-86e5-540132d0dd4a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Create handle rejected CDR script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdate>\r
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_CDR" description="Mediation Reject CDR handler">\r
+            <type>JAVA</type>\r
+            <script><![CDATA[
+            package org.meveo.service.script;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.parse.csv.CDR;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.model.crm.Customer;
+
+import java.util.Map;
+
+public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_CDR extends Script {
+
+	CustomerService customerService = (CustomerService) getServiceInterface("CustomerService");
+	
+	@Override
+	public void execute(Map<String, Object> initContext) throws BusinessException {
+		CDR cdr = (CDR) initContext.get("entityOrEvent");
+		
+		Customer customer = customerService.findByCode("${#Project#baseEntityPrefix}_${#TestSuite#index}_CUST");
+		customer.setDescription(customer.getDescription()+" "+ cdr.getLine());
+		customerService.update(customer);
+	}
+
+}]]]]>><![CDATA[</script>\r
+         </createOrUpdateScriptInstanceRequest>\r
+      </ws:createOrUpdate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create handle rejected CDR notification" id="6f176f52-9bab-48bc-babf-e96874627710">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Create handle rejected CDR notification" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateNotification>
+         <notification code="${#Project#baseEntityPrefix}_${#TestSuite#index}_Mediation_Reject_CDR">
+            <classNameFilter>org.meveo.admin.parse.csv.CDR</classNameFilter>
+            <eventTypeFilter>REJECTED_CDR</eventTypeFilter>
+            <scriptInstanceCode>org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_CDR</scriptInstanceCode>           
+         </notification>
+      </ws:createOrUpdateNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
+            <con:assertion type="Simple Contains" id="1bfefd0b-b71b-4c26-924f-a8c5e1c6c313" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="548e04ca-7398-44ac-9284-8b7ac73c543a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Reject cdrs" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Send rejected CDRs" id="89c3e074-9e5c-4fb5-8067-02966e0577cb">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomer</con:operation>
+          <con:request name="Send rejected CDRs" id="1957439a-4ce5-4ed4-a8df-6ca966fcc088">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/MediationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:notifyOfRejectedCdrs>
+         <cdrList>
+            <cdr>Line1-1;Line1-2;Line1-3</cdr>
+            <cdr>Line2-1;Line2-2;Line2-3</cdr>
+            <cdr>Line3-1;Line3-2;Line3-3</cdr>
+         </cdrList>
+      </ws:notifyOfRejectedCdrs>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2ef48a03-ba20-4912-a714-42a3781b7d32"/>
+            <con:assertion type="Simple Contains" name="Contains" id="87c9a245-a6cc-476c-b3c6-a99a31cc9018">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find customer" id="06dc578a-a9ac-4299-8002-64d921246774">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomer</con:operation>
+          <con:request name="Find customer" id="1957439a-4ce5-4ed4-a8df-6ca966fcc088">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomer>\r
+         <customerCode>${#Project#baseEntityPrefix}_${#TestSuite#index}_CUST</customerCode>\r
+      </ws:findCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2ef48a03-ba20-4912-a714-42a3781b7d32"/>
+            <con:assertion type="Simple Contains" name="Contains" id="87c9a245-a6cc-476c-b3c6-a99a31cc9018">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="41003589-c0a6-45ed-9b9a-da81d8c5c219" name="XPath Match">
+              <con:configuration>
+                <path>//customer/@description</path>
+                <content>Line1-1;Line1-2;Line1-3 Line2-1;Line2-2;Line2-3 Line3-1;Line3-2;Line3-3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="906bec45-89ab-4bb3-8e6e-9c11d1e4bb6a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Delete Customer" id="50d97fa3-d4c6-45ab-93e6-ce60db5181be">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomer</con:operation>
+          <con:request name="Delete Customer" id="fb387227-0662-4bad-a170-6a7f59ccbbc3">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomer>\r
+         <customerCode>${#Project#baseEntityPrefix}_${#TestSuite#index}_CUST</customerCode>\r
+      </ws:removeCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ef79b773-8596-4bd4-95ff-8183275d8480"/>
+            <con:assertion type="Simple Contains" name="Contains" id="896129d6-7d9e-47df-8bd7-87c4e762bc89">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Notifictaion" id="5814ce3b-b313-4236-a8e7-9edcd5ac8cf2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Delete Notifictaion" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeNotification>
+         <notificationCode>${#Project#baseEntityPrefix}_${#TestSuite#index}_Mediation_Reject_CDR</notificationCode>
+      </ws:removeNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
+            <con:assertion type="Simple Contains" id="1bfefd0b-b71b-4c26-924f-a8c5e1c6c313" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove script" id="a177bcb5-5237-49ea-a9eb-0ee636df01b6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_CDR</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>1</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

@@ -412,10 +412,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (billingCycle == null) {
                 throw new BusinessException("Cant find the billing cycle");
             }
-            InvoiceType invoiceType = billingCycle.getInvoiceType();
+            
+            InvoiceType invoiceType = null;
+            if(!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
+                String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun);
+                invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+            }
+            if (invoiceType == null) {
+                invoiceType = billingCycle.getInvoiceType();
+            }
             if (invoiceType == null) {
                 invoiceType = invoiceTypeService.getDefaultCommertial();
             }
+
             invoice = new Invoice();
             invoice.setInvoiceType(invoiceType);
             invoice.setBillingAccount(billingAccount);
@@ -1602,6 +1611,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         billingTemplateName = StringUtils.normalizeFileName(billingTemplateName);
         return billingTemplateName;
+    }
+    
+    public String evaluateInvoiceType(String expression, BillingRun billingRun) {
+        String invoiceTypeCode = null;
+
+        if (!StringUtils.isBlank(expression)) {
+            Map<Object, Object> contextMap = new HashMap<>();
+            contextMap.put("br", billingRun);
+
+            try {
+                Object value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                if (value == null) {
+                } else if (value instanceof String) {
+                    invoiceTypeCode = (String) value;
+                } else {
+                    invoiceTypeCode = value.toString();
+                }
+            } catch (BusinessException e) {
+                // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
+            }
+        }
+
+        return invoiceTypeCode;
     }
 
     /**
