@@ -2218,8 +2218,8 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	</navigation-case>
 	
 	<navigation-case>
-		<from-outcome>importContact</from-outcome>
-		<to-view-id>/pages/intcrm/importContact.xhtml</to-view-id>
+		<from-outcome>contact</from-outcome>
+		<to-view-id>/pages/intcrm/contact.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
 	
