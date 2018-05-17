@@ -144,6 +144,10 @@ public class UserDto extends BaseDto {
             role = roles.get(roles.size() - 1);
         }
 
+        if (this.permissions != null) {
+            Collections.sort(this.permissions);
+        }
+
         if (user.getUserLevel() != null) {
             userLevel = user.getUserLevel().getCode();
         }

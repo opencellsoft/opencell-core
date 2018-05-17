@@ -76,7 +76,8 @@ import org.primefaces.model.SortOrder;
  * CRUD API for managing {@link Invoice}.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -227,19 +228,30 @@ public class InvoiceApi extends BaseApi {
                 if (currentTax == null) {
                     throw new BusinessApiException("Cant find tax for InvoiceSubCategory:" + subCatInvAgrDTO.getInvoiceSubCategoryCode());
                 }
-                for (RatedTransactionDto ratedTransaction : subCatInvAgrDTO.getRatedTransactions()) {
+                
+                boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name());
+                
+                for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
 
-                    BigDecimal amountWithoutTax = ratedTransaction.getUnitAmountWithoutTax().multiply(ratedTransaction.getQuantity());
+                    BigDecimal amountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
                     BigDecimal amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
                     BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
 
-                    RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
-                        ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), amountWithoutTax, amountWithTax, amountTax,
-                        RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null,
-                        ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription());
+                    RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
+                        ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
+                        amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null,
+                        ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
+                        ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate());
 
                     meveoRatedTransaction.setInvoice(invoice);
                     meveoRatedTransaction.setWallet(userAccount.getWallet());
+                    // #3355 : setting params 1,2,3
+                    if (isDetailledInvoiceMode) {
+                        meveoRatedTransaction.setParameter1(ratedTransactionDto.getParameter1());
+                        meveoRatedTransaction.setParameter2(ratedTransactionDto.getParameter2());
+                        meveoRatedTransaction.setParameter3(ratedTransactionDto.getParameter3());
+                    }
+
                     ratedTransactionService.create(meveoRatedTransaction);
 
                     subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
@@ -271,7 +283,8 @@ public class InvoiceApi extends BaseApi {
                 invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
                 invoiceAgregateSubcat.setTaxPercent(currentTax.getPercent());
                 invoiceAgregateSubcat.setSubCategoryTaxes(new HashSet<Tax>(Arrays.asList(currentTax)));
-                if (InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name())) {
+                
+                if (isDetailledInvoiceMode) {
                     invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());
                     invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
                     invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
