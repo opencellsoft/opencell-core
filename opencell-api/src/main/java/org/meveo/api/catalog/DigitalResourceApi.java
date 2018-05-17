@@ -1,5 +1,6 @@
 package org.meveo.api.catalog;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -12,6 +13,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 
+@Stateless
 public class DigitalResourceApi extends BaseCrudApi<DigitalResource, DigitalResourceDto> {
 
     @Inject

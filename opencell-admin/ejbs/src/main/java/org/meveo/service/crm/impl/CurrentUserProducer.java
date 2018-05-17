@@ -13,6 +13,11 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.EntityManagerProvider;
 import org.slf4j.Logger;
 
+/**
+ * Produce a currently authenticated user
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
 public class CurrentUserProducer {
 
@@ -26,9 +31,9 @@ public class CurrentUserProducer {
     Logger log;
 
     /**
-     * produce a current user
+     * Produce a current user
      * 
-     * @return MeveoUser
+     * @return MeveoUser Current user instance
      */
     @Produces
     @RequestScoped
