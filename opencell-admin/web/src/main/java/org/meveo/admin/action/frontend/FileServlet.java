@@ -3,6 +3,7 @@ package org.meveo.admin.action.frontend;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.zip.ZipOutputStream;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.vfs2.FileNotFolderException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.Provider;
@@ -143,12 +145,15 @@ public class FileServlet extends HttpServlet {
             zipout.close();
         } else {
             // file
-            FileInputStream fis = new FileInputStream(fileOrFolder);
-            response.setContentType("application/force-download");
-            response.setContentLength((int) fileOrFolder.length());
-            response.addHeader("Content-disposition", "attachment;filename=\"" + fileName + "\"");
-            IOUtils.copy(fis, response.getOutputStream());
-            response.flushBuffer();
+            try(FileInputStream fis = new FileInputStream(fileOrFolder);) {
+                response.setContentType("application/force-download");
+                response.setContentLength((int) fileOrFolder.length());
+                response.addHeader("Content-disposition", "attachment;filename=\"" + fileName + "\"");
+                IOUtils.copy(fis, response.getOutputStream());
+                response.flushBuffer();
+            } catch (FileNotFoundException ex) {
+                throw  ex;
+            }
         }
 
     }

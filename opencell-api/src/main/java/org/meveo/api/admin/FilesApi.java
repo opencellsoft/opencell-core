@@ -81,19 +81,20 @@ public class FilesApi extends BaseApi {
         }
     }
 
+    /**
+     * @param dir directory to be zipped.
+     * @throws BusinessApiException business exception.
+     */
     public void zipDir(String dir) throws BusinessApiException {
         File file = new File(getProviderRootDir() + File.separator + dir);
         if (!file.exists()) {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
         }
 
-        try {
-            FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
-            ZipOutputStream zos = new ZipOutputStream(fos);
+        try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
+            ZipOutputStream zos = new ZipOutputStream(fos)) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             fos.flush();
-            zos.close();
-            fos.close();
         } catch (IOException e) {
             throw new BusinessApiException("Error zipping directory: " + file.getName() + ". " + e.getMessage());
         }
@@ -155,14 +156,18 @@ public class FilesApi extends BaseApi {
         }
     }
 
+    /**
+     * @param filePath file's path
+     * @param response http servlet response.
+     * @throws BusinessApiException business exception.
+     */
     public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
         File file = new File(getProviderRootDir() + File.separator + filePath);
         if (!file.exists()) {
             throw new BusinessApiException("File does not exists: " + file.getPath());
         }
 
-        try {
-            FileInputStream fis = new FileInputStream(file);
+        try (FileInputStream fis = new FileInputStream(file)){
             response.setContentType(Files.probeContentType(file.toPath()));
             response.setContentLength((int) file.length());
             response.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");

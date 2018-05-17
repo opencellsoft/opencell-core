@@ -63,6 +63,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
@@ -657,7 +658,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String pdfFilename = getOrGeneratePdfFilename(invoice);
         invoice.setPdfFilename(pdfFilename);
         String pdfFullFilename = getFullPdfFilePath(invoice, true);
-
+        InputStream reportTemplate = null;
         try {
             File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
 
@@ -736,7 +737,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             log.info(String.format("Jasper template used: %s", jasperFile.getCanonicalPath()));
 
-            InputStream reportTemplate = new FileInputStream(jasperFile);
+            reportTemplate = new FileInputStream(jasperFile);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document xmlDocument = db.parse(invoiceXmlFile);
@@ -785,6 +786,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         } catch (IOException | JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
+        } finally {
+            IOUtils.closeQuietly(reportTemplate);
         }
     }
 

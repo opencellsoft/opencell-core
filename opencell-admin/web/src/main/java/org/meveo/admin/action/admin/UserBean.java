@@ -557,24 +557,20 @@ public class UserBean extends CustomFieldBean<User> {
         }
     }
 
+    /**
+     * @param fileName file name
+     * @param in input stream
+     */
     public void copyFile(String fileName, InputStream in) {
-        try {
-
-            // write the inputStream to a FileOutputStream
-            String filePath = getFilePath(fileName);
-            OutputStream out = new FileOutputStream(new File(filePath));
-
+        String filePath = getFilePath(fileName);
+        try (OutputStream out = new FileOutputStream(new File(filePath));) {
             int read = 0;
             byte[] bytes = new byte[1024];
 
             while ((read = in.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
             }
-
-            in.close();
             out.flush();
-            out.close();
-
             log.debug("New file created!");
             buildFileList();
         } catch (IOException e) {

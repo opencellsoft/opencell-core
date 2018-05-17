@@ -363,12 +363,11 @@ public final class FileUtils {
      * @param filesToAdd list of files to add
      */
     public static void createZipArchive(String zipFilename, String... filesToAdd) {
-        int BUFFER = 2048;
-        try {
-            BufferedInputStream origin = null;
-            FileOutputStream dest = new FileOutputStream(zipFilename);
-            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-            byte data[] = new byte[BUFFER];
+        final int BUFFER = 2048;
+        BufferedInputStream origin = null;
+        try (FileOutputStream dest = new FileOutputStream(zipFilename);
+             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest))) {
+            byte[] data = new byte[BUFFER];
             for (int i = 0; i < filesToAdd.length; i++) {
                 FileInputStream fi = new FileInputStream(filesToAdd[i]);
                 origin = new BufferedInputStream(fi, BUFFER);
@@ -383,8 +382,6 @@ public final class FileUtils {
             FileUtils.closeStream(out);
         } catch (Exception e) {
             logger.error("Error while creating zip archive", e);
-        } finally {
-
         }
     }
 
@@ -569,6 +566,12 @@ public final class FileUtils {
         }
     }
 
+    /**
+     * @param relativeRoot relative root path
+     * @param dir2zip directory to be zipped
+     * @param zos zip output stream
+     * @throws IOException inpu/ouput exception.
+     */
     public static void addDirToArchive(String relativeRoot, String dir2zip, ZipOutputStream zos) throws IOException {
         File zipDir = new File(dir2zip);
         String[] dirList = zipDir.list();
@@ -582,20 +585,24 @@ public final class FileUtils {
                 addDirToArchive(relativeRoot, filePath, zos);
                 continue;
             }
-
-            FileInputStream fis = new FileInputStream(f);
-            String relativePath = Paths.get(relativeRoot).relativize(f.toPath()).toString();
-            ZipEntry anEntry = new ZipEntry(relativePath);
-            zos.putNextEntry(anEntry);
-
-            while ((bytesIn = fis.read(readBuffer)) != -1) {
-                zos.write(readBuffer, 0, bytesIn);
+            try (FileInputStream fis = new FileInputStream(f)) {
+                String relativePath = Paths.get(relativeRoot).relativize(f.toPath()).toString();
+                ZipEntry anEntry = new ZipEntry(relativePath);
+                zos.putNextEntry(anEntry);
+    
+                while ((bytesIn = fis.read(readBuffer)) != -1) {
+                    zos.write(readBuffer, 0, bytesIn);
+                }
+            } catch (IOException ex) {
+                throw ex;
             }
-
-            fis.close();
         }
     }
 
+    /**
+     * @param file file to be archived
+     * @throws IOException input/ouput exception
+     */
     public static void archiveFile(File file) throws IOException {
         byte[] buffer = new byte[1024];
 
