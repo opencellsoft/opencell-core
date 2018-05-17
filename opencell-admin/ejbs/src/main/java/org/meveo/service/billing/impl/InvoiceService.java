@@ -290,6 +290,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Assign invoice number to an invoice
+     * 
      * @param invoice invoice
      * @throws BusinessException business exception
      */
@@ -298,7 +300,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
 
         InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
-        Seller seller = serviceSingleton.chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType);
+        Seller seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
 
         Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType.getId(), seller, cfName, 1);
 
@@ -401,7 +403,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = billingRun.getLastTransactionDate();
             invoiceDate = billingRun.getInvoiceDate();
         }
-        
+
         lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
@@ -412,9 +414,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (billingCycle == null) {
                 throw new BusinessException("Cant find the billing cycle");
             }
-            
+
             InvoiceType invoiceType = null;
-            if(!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
+            if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
                 String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun);
                 invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
             }
@@ -466,11 +468,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Date dueDate = invoiceDate;
             if (delay != null) {
                 dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
-            }else {
+            } else {
                 throw new BusinessException("Due date delay is null");
             }
             invoice.setDueDate(dueDate);
-            
+
             ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, orderNumber, firstTransactionDate, lastTransactionDate);
             log.debug("appended aggregates");
 
@@ -526,9 +528,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + (endDate - startDate));
 
         } catch (Exception e) {
-            log.error("Error for BA {}", billingAccount.getCode(), e);                       
-            if (billingRun != null) {                
-                rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());                
+            log.error("Error for BA {}", billingAccount.getCode(), e);
+            if (billingRun != null) {
+                rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
             } else {
                 throw new BusinessException(e.getMessage());
             }
@@ -953,9 +955,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
             }
 
-            subCategoryInvoiceAgregate.setAmountWithoutTax(
-                subCategoryInvoiceAgregate.getAmountWithoutTax() != null ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP)
-                        : BigDecimal.ZERO);
+            subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax() != null
+                    ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP) : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -1530,10 +1531,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return invoice;
     }
-    
+
     /**
      * @param invoice invoice to delete
-     * @throws BusinessException business exception 
+     * @throws BusinessException business exception
      */
     public void deleteMinRT(Invoice invoice) throws BusinessException {
         getEntityManager().createNamedQuery("RatedTransaction.deleteMinRT").setParameter("invoice", invoice).executeUpdate();
@@ -1612,7 +1613,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         billingTemplateName = StringUtils.normalizeFileName(billingTemplateName);
         return billingTemplateName;
     }
-    
+
     public String evaluateInvoiceType(String expression, BillingRun billingRun) {
         String invoiceTypeCode = null;
 
