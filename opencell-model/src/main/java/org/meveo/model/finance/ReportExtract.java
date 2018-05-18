@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -44,7 +44,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_report_extract_seq"), })
 @NamedQueries(@NamedQuery(name = "ReportExtract.listIds", query = "select re.id from ReportExtract re where re.disabled=false"))
-public class ReportExtract extends EnableBusinessEntity {
+public class ReportExtract extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = 879663935811446632L;
 

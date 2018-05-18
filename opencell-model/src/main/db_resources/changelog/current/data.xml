@@ -195,9 +195,9 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 		
 		<sql><![CDATA[
 INSERT INTO ${db.schema.adapted}dwh_report_extract 
-	(id, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
+	(uuid, id, result_type, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
 VALUES 
-	(-1, 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].csv', '
+	('SALES_JOURNAL_UUID', -1, 'CSV', 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].csv', '
 SELECT
     TO_CHAR(ao.invoice_date,''MM'') AS "Mois",
     TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS "Date facture",
@@ -253,6 +253,8 @@ ORDER BY
 			<column name="script_type" value="JAVA"></column>
 			<column name="filename_format" value="accounts-ops-[yyyy_MM_dd].csv"></column>
 			<column name="script_instance_id" value="-1"></column>
+			<column name="uuid" value="ACOUNT_OPS_UUID"></column>
+			<column name="result_type" value="CSV"></column>
 		</insert>
 		
 		<insert tableName="dwh_report_extract_params">

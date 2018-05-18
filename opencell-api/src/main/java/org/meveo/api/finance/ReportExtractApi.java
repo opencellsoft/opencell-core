@@ -24,6 +24,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.finance.ReportExtractExecutionResult;
+import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.finance.ReportExtractExecutionResultService;
@@ -64,6 +65,9 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         if (reportExtractService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(ReportExtract.class, postData.getCode());
         }
+        if (StringUtils.isBlank(postData.getReportExtractResultType())) {
+            postData.setReportExtractResultType(ReportExtractResultTypeEnum.CSV);
+        }
 
         ReportExtract reportExtract = convertReportExtractFromDto(postData, null);
         reportExtractService.create(reportExtract);
@@ -87,8 +91,11 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         if (reportExtract == null) {
             throw new EntityDoesNotExistsException(ReportExtract.class, postData.getCode());
         }
+        if (StringUtils.isBlank(postData.getReportExtractResultType())) {
+            postData.setReportExtractResultType(ReportExtractResultTypeEnum.CSV);
+        }
 
-        reportExtract = convertReportExtractFromDto(postData, reportExtract);
+        convertReportExtractFromDto(postData, reportExtract);
         reportExtract = reportExtractService.update(reportExtract);
         return reportExtract;
     }
