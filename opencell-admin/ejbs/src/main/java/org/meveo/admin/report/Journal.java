@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
@@ -61,8 +62,9 @@ public class Journal extends FileProducer implements Reporting {
     private ParamBeanFactory paramBeanFactory;
 
     public void generateJournalFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        File file = null;
+        FileWriter writer = null;
         try {
-            File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {
                 file = File.createTempFile("tempJournal", ".csv");
             } else if (outputFormat == OutputFormatEnum.CSV) {
@@ -70,7 +72,7 @@ public class Journal extends FileProducer implements Reporting {
                 sb.append(".csv");
                 file = new File(sb.toString());
             }
-            FileWriter writer = new FileWriter(file);
+            writer = new FileWriter(file);
             writer.append("Date G.L.;No de Facture;No de client;Ste;CG;CA;DA;CR;IC;GP;Debit;Credit");
             writer.append('\n');
             List<Object> records = journalEntryService.getJournalRecords(startDate, endDate);
@@ -105,7 +107,6 @@ public class Journal extends FileProducer implements Reporting {
             // then write invoices
 
             writer.flush();
-            writer.close();
             if (outputFormat == OutputFormatEnum.PDF) {
                 parameters.put("startDate", startDate);
                 parameters.put("endDate", endDate);
@@ -118,6 +119,8 @@ public class Journal extends FileProducer implements Reporting {
             }
         } catch (IOException e) {
             log.error("failed to generate journal file", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
     }
 

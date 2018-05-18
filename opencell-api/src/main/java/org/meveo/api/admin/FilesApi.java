@@ -100,19 +100,23 @@ public class FilesApi extends BaseApi {
         }
     }
 
+    /**
+     * @param data array of bytes as data uploaded
+     * @param filename file name
+     * @throws BusinessApiException business api exeption.
+     */
     public void uploadFile(byte[] data, String filename) throws BusinessApiException {
         File file = new File(getProviderRootDir() + File.separator + filename);
-
+        FileOutputStream fop = null;
         try {
             if (!file.exists()) {
                 file.createNewFile();
             }
 
-            FileOutputStream fop = new FileOutputStream(file);
+            fop = new FileOutputStream(file);
 
             fop.write(data);
             fop.flush();
-            fop.close();
 
             if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
                 // unzip
@@ -123,6 +127,8 @@ public class FilesApi extends BaseApi {
 
         } catch (Exception e) {
             throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(fop);
         }
     }
 

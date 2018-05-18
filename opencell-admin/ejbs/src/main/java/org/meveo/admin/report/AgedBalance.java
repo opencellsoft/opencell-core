@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
@@ -58,6 +59,7 @@ public class AgedBalance extends FileProducer implements Reporting {
     private ParamBeanFactory paramBeanFactory;
 
     public void generateAgedBalanceFile(Date date, OutputFormatEnum outputFormat) {
+        FileWriter writer = null;
         try {
             date = new Date();
             File file = null;
@@ -68,7 +70,7 @@ public class AgedBalance extends FileProducer implements Reporting {
                 sb.append(".csv");
                 file = new File(sb.toString());
             }
-            FileWriter writer = new FileWriter(file);
+            writer = new FileWriter(file);
             int endMonth = calculateEndMonth(date);
             writer.append("Type;Dont non echue;Moins de 3 mois;De 3 a 6 mois;De 6 mois a 1 an;De 1 an a 2 ans;De 2 ans a 3 ans;Plus de 3 ans;Total");
             writer.append('\n');
@@ -116,7 +118,6 @@ public class AgedBalance extends FileProducer implements Reporting {
             writer.append('\n');
 
             writer.flush();
-            writer.close();
             if (outputFormat == OutputFormatEnum.PDF) {
                 parameters.put("startDate", date);
                 StringBuilder sb = new StringBuilder(getFilename(date));
@@ -127,6 +128,8 @@ public class AgedBalance extends FileProducer implements Reporting {
             }
         } catch (IOException e) {
             log.error("failed to generate aged balance file", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
     }
 
