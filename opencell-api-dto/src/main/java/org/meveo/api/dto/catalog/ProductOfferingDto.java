@@ -17,6 +17,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.IVersionedDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
@@ -97,6 +98,10 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
     @XmlElementWrapper(name = "sellers")
     @XmlElement(name = "seller")
     private List<String> sellers;
+    
+    @XmlElementWrapper(name = "customerCategories")
+    @XmlElement(name = "customerCategory")
+    private List<CustomerCategoryDto> customerCategories = new ArrayList<>();
 
     /**
      * Instantiates a new product offering dto.
@@ -169,6 +174,12 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
         if (productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
             setChannels(productOffering.getChannels().stream().map(p -> {
                 return new ChannelDto(p);
+            }).collect(Collectors.toList()));
+        }
+        
+        if (productOffering.getCustomerCategories() != null && !productOffering.getCustomerCategories().isEmpty()) {
+            setCustomerCategories(productOffering.getCustomerCategories().stream().map(p -> {
+                return new CustomerCategoryDto(p);
             }).collect(Collectors.toList()));
         }
 
@@ -445,5 +456,13 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
      */
     public void setSellers(List<String> sellers) {
         this.sellers = sellers;
+    }
+
+    public List<CustomerCategoryDto> getCustomerCategories() {
+        return customerCategories;
+    }
+
+    public void setCustomerCategories(List<CustomerCategoryDto> customerCategories) {
+        this.customerCategories = customerCategories;
     }
 }
