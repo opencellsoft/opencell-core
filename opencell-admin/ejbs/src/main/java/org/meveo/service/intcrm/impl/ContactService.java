@@ -2,10 +2,12 @@ package org.meveo.service.intcrm.impl;
 
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
@@ -13,6 +15,9 @@ import org.meveo.model.shared.Title;
 @Stateless
 public class ContactService extends PersistenceService<Contact> {
 	
+	
+	@Inject
+	private TitleService titleService;
 	
     public void create(Contact contact) throws BusinessException {
         super.create(contact);
@@ -33,12 +38,13 @@ public class ContactService extends PersistenceService<Contact> {
 		String website = split[6];
 		String instantMessengers = split[7];
 		
-		c.setName(new Name(new Title("M", false), firstName, lastName));
+		Title title = titleService.findByCode("Mr.");
+		c.setName(new Name(title, firstName, lastName));
 		c.setEmail(email);
 		
 		c.setContactCode(split[0]+split[1]);
+		c.setCode(c.getContactCode());
 			
-		
 		return c;		
 	}
 	
@@ -49,7 +55,7 @@ public class ContactService extends PersistenceService<Contact> {
 			this.create(c);
 		} catch (BusinessException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Save Contact Fail : " + e.toString());
 		}
     }
     

@@ -25,6 +25,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,13 +49,13 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
-import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
 @ExportIdentifier({ "contactCode" })
+@DiscriminatorValue(value = "ACCT_CONTACT")
 @Table(name = "com_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "contact_code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "com_contact_seq"), })
