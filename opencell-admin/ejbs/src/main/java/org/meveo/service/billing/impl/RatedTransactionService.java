@@ -1237,5 +1237,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
+    
+    public Long countNotInvoicedRTByBA(BillingAccount billingAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotInvoiced RT by BA", e);
+            return null;
+        }
+    }
+    
+    public Long countNotInvoicedRTByUA(UserAccount userAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByUA").setParameter("userAccount", userAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotInvoiced RT by UA", e);
+            return null;
+        }
+    }
 
 }

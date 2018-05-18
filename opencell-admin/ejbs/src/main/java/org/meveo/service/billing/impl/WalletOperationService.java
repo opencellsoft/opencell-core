@@ -1481,5 +1481,23 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             return null;
         }
     }
+    
+    public Long countNonTreatedWOByBA(BillingAccount billingAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNonTreated WO by BA", e);
+            return null;
+        }
+    }
+    
+    public Long countNonTreatedWOByUA(UserAccount userAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByUA").setParameter("userAccount", userAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNonTreated WO by UA", e);
+            return null;
+        }
+    }
 
 }
