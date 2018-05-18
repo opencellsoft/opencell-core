@@ -132,7 +132,7 @@ public class UserBean extends CustomFieldBean<User> {
     private BusinessEntity selectedEntity;
     private BaseBean<?> selectedAccountBean;
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
     private boolean autoUnzipped;
 

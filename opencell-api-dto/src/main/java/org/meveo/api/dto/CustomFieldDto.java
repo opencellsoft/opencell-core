@@ -389,13 +389,11 @@ public class CustomFieldDto {
             return false;
         } else if (doubleValue != null) {
             return false;
-        } else if (doubleValue != null) {
-            return false;
         } else if (longValue != null) {
             return false;
         } else if (stringValue != null && !stringValue.isEmpty()) {
             return false;
-        } else if (entityReferenceValue == null && !entityReferenceValue.isEmpty()) {
+        } else if (entityReferenceValue == null || !entityReferenceValue.isEmpty()) {
             return false;
         }
 

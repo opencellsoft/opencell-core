@@ -500,11 +500,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
                 ServiceInstance serviceInstance = new ServiceInstance();
                 serviceInstance.setCode(serviceTemplate.getCode());
-                if (!StringUtils.isBlank(descriptionOverride)) {
-                    serviceInstance.setDescription(descriptionOverride);
-                } else {
-                    serviceInstance.setDescription(descriptionOverride);
-                }
+                serviceInstance.setDescription(descriptionOverride);
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription((Subscription) entity);
                 if (entity.getSubscriptionDate() != null) {
@@ -539,12 +535,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
+    /**
+     * actives services.
+     */
     public void activateService() {
         log.debug("activateService...");
         try {
-            log.debug("activateService id={} checked", selectedServiceInstance.getId());
             if (selectedServiceInstance != null) {
-
+                log.debug("activateService id={} checked", selectedServiceInstance.getId());
                 if (selectedServiceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                     messages.info(new BundleKey("messages", "error.activation.terminatedService"));
                     return;

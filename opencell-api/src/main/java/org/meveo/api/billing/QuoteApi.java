@@ -548,9 +548,7 @@ public class QuoteApi extends BaseApi {
         }
         // No toDate for products
         for (ProductInstance productInstance : productInstances) {
-            if (fromDate == null) {
-                fromDate = productInstance.getApplicationDate();
-            } else if (productInstance.getApplicationDate().before(fromDate)) {
+            if (fromDate == null || productInstance.getApplicationDate().before(fromDate)) {
                 fromDate = productInstance.getApplicationDate();
             }
         }

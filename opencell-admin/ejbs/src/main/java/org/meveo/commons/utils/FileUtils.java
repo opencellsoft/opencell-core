@@ -459,20 +459,26 @@ public final class FileUtils {
                 if (!fileout.exists()) {
                     (new File(fileout.getParent())).mkdirs();
                 }
-                fos = new FileOutputStream(fileout);
-                bos = new BufferedOutputStream(fos);
-                int b = -1;
-                while ((b = bis.read()) != -1) {
-                    bos.write(b);
+                try {
+                    fos = new FileOutputStream(fileout);
+                    bos = new BufferedOutputStream(fos);
+                    int b = -1;
+                    while ((b = bis.read()) != -1) {
+                        bos.write(b);
+                    }
+                    bos.flush();
+                    fos.flush();
+                } catch (Exception ex) {
+                    throw ex;
+                } finally {
+                    IOUtils.closeQuietly(bos);
+                    IOUtils.closeQuietly(fos);
                 }
-                bos.flush();
-                fos.flush();
+                
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         } finally {
-            IOUtils.closeQuietly(bos);
-            IOUtils.closeQuietly(fos);
             IOUtils.closeQuietly(bis);
             IOUtils.closeQuietly(zis);
             IOUtils.closeQuietly(cis);

@@ -1345,7 +1345,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("provisionningServicesRequestDto");
         }
 
-        if (StringUtils.isBlank(postData.getSubscriptionCode())) {
+        if (postData != null && StringUtils.isBlank(postData.getSubscriptionCode())) {
             missingParameters.add("subscriptionCode");
         }
 
