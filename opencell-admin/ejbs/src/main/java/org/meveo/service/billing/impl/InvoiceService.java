@@ -748,18 +748,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             StringWriter writer = new StringWriter();
             trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
 
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            XPathExpression expr = xPath.compile("/invoice");
-            Object result = expr.evaluate(xmlDocument, XPathConstants.NODE);
-            Node node = (Node) result;
-
-            JRXmlDataSource dataSource = null;
-
-            if (node != null) {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
-            } else {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
-            }
+            JRXmlDataSource dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
 
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
@@ -784,7 +773,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             log.debug("After setPdfGenerated:" + (System.currentTimeMillis() - startDate));
 
-        } catch (IOException | JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
+        } catch (IOException | JRException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         } finally {
             IOUtils.closeQuietly(reportTemplate);
@@ -1160,7 +1149,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
         }
 
-        if (!xmlFileName.toLowerCase().endsWith(".xml")) {
+        if (xmlFileName != null && !xmlFileName.toLowerCase().endsWith(".xml")) {
             xmlFileName = xmlFileName + ".xml";
         }
         xmlFileName = StringUtils.normalizeFileName(xmlFileName);
@@ -1235,7 +1224,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
         }
 
-        if (!pdfFileName.toLowerCase().endsWith(".pdf")) {
+        if (pdfFileName != null && !pdfFileName.toLowerCase().endsWith(".pdf")) {
             pdfFileName = pdfFileName + ".pdf";
         }
         pdfFileName = StringUtils.normalizeFileName(pdfFileName);

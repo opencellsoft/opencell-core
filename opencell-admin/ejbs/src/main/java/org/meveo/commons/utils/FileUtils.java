@@ -439,8 +439,6 @@ public final class FileUtils {
     public static void unzipFile(String folder, InputStream in) throws Exception {
         ZipInputStream zis = null;
         BufferedInputStream bis = null;
-        OutputStream fos = null;
-        BufferedOutputStream bos = null;
         CheckedInputStream cis = null;
         try {
             cis = new CheckedInputStream(in, new CRC32());
@@ -459,9 +457,8 @@ public final class FileUtils {
                 if (!fileout.exists()) {
                     (new File(fileout.getParent())).mkdirs();
                 }
-                try {
-                    fos = new FileOutputStream(fileout);
-                    bos = new BufferedOutputStream(fos);
+                try (OutputStream fos = new FileOutputStream(fileout);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos)) {
                     int b = -1;
                     while ((b = bis.read()) != -1) {
                         bos.write(b);
@@ -470,11 +467,7 @@ public final class FileUtils {
                     fos.flush();
                 } catch (Exception ex) {
                     throw ex;
-                } finally {
-                    IOUtils.closeQuietly(bos);
-                    IOUtils.closeQuietly(fos);
                 }
-                
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
