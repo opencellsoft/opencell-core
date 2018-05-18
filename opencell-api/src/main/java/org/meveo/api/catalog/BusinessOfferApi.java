@@ -1,5 +1,6 @@
 package org.meveo.api.catalog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -81,7 +83,7 @@ public class BusinessOfferApi extends BaseApi {
         if (!serviceConfigurationDtoFromBSM.isEmpty()) {
             postData.getServicesToActivate().addAll(serviceConfigurationDtoFromBSM);
         }
-
+        
         OfferTemplate newOfferTemplate = null;
         try {
             BOMInstantiationParameters bomParams = new BOMInstantiationParameters();
@@ -114,6 +116,13 @@ public class BusinessOfferApi extends BaseApi {
                 p.setMatch(false);
                 return p;
             }).collect(Collectors.toList());
+        }
+        
+        try {
+            saveImage(newOfferTemplate, postData.getImagePath(), postData.getImageBase64());
+        } catch (IOException e1) {
+            log.error("Invalid image data={}", e1.getMessage());
+            throw new InvalidImageData();
         }
 
         // populate service custom fields
@@ -233,6 +242,14 @@ public class BusinessOfferApi extends BaseApi {
             throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getBsmCode());
         }
         ServiceTemplate newServiceTemplateCreated = businessServiceModelService.instantiateBSM(bsm, postData.getPrefix(), postData.getCustomFields());
+        
+        try {
+            saveImage(newServiceTemplateCreated, postData.getImagePath(), postData.getImageBase64());
+        } catch (IOException e1) {
+            log.error("Invalid image data={}", e1.getMessage());
+            throw new InvalidImageData();
+        }
+        
         try {
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             cfsDto.setCustomField(postData.getCustomFields());

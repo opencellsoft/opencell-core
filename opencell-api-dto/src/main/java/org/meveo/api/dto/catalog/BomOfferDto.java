@@ -77,6 +77,13 @@ public class BomOfferDto extends BaseDto {
     @XmlElementWrapper(name = "offerTemplateCategories")
     @XmlElement(name = "offerTemplateCategory")
     private List<OfferTemplateCategoryDto> offerTemplateCategories;
+    
+    /** The image base64 encoding string. */
+    private String imageBase64;
+    
+    /** The image path. */
+    private String imagePath;
+
 
     /**
      * Gets the bom code.
@@ -274,6 +281,42 @@ public class BomOfferDto extends BaseDto {
      */
     public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
         this.offerTemplateCategories = offerTemplateCategories;
+    }
+
+    /**
+     * Gets the image Base64 encoding string.
+     *
+     * @return the image Base64 encoding string
+     */
+    public String getImageBase64() {
+        return imageBase64;
+    }
+    
+    /**
+     * Sets the image Base64 encoding string.
+     *
+     * @param imageBase64 the image Base64 encoding string
+     */
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+    
+    /**
+     * Gets the image path.
+     *
+     * @return the image path
+     */
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    /**
+     * Sets the image path.
+     *
+     * @param imagePath the new image path
+     */
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     @Override
