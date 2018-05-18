@@ -277,7 +277,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
             return null;
         }
-
+        
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {

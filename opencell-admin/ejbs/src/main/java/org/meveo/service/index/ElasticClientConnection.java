@@ -91,7 +91,7 @@ public class ElasticClientConnection {
             log.error("Error while initializing elastic search. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr, e);
             shutdownES();
             throw new RuntimeException(
-                "Failed to connect to or initialize elastic search client. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in meveo-admin.properties file.");
+                "Failed to connect to or initialize elastic search client. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in opencell-admin.properties file.");
         }
 
         try {
@@ -102,7 +102,7 @@ public class ElasticClientConnection {
             log.error("Error while loading elastic search mapping configuration", e);
             shutdownES();
             throw new RuntimeException(
-                "Error while loading elastic search mapping configuration. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in meveo-admin.properties file.");
+                "Error while loading elastic search mapping configuration. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in opencell-admin.properties file.");
         }
 
         esEnabled = client != null;

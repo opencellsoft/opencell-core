@@ -206,12 +206,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
-            
+
             // check if moduleItem is linked to other module
-            if (isChildOfOtherModule(item.getItemCode())) {
+            if (isChildOfOtherModule(item.getItemClass(), item.getItemCode())) {
                 continue;
             }
-            
+
             loadModuleItem(item);
             BusinessEntity itemEntity = item.getItemEntity();
             if (itemEntity == null) {
@@ -259,9 +259,17 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             return update(module);
         }
     }
-    
-    public boolean isChildOfOtherModule(String moduleItemCode) {
+
+    /**
+     * Determine if entity identified by a class and code is part of more than one module
+     * 
+     * @param moduleItemClass Entity class
+     * @param moduleItemCode Entity code
+     * @return True if entity is part of more than one module
+     */
+    public boolean isChildOfOtherModule(String moduleItemClass, String moduleItemCode) {
         QueryBuilder qb = new QueryBuilder(MeveoModuleItem.class, "i", null);
+        qb.addCriterion("itemClass", "=", moduleItemClass, false);
         qb.addCriterion("itemCode", "=", moduleItemCode, true);
         return qb.count(getEntityManager()) > 1 ? true : false;
     }

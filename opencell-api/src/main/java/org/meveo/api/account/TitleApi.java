@@ -2,6 +2,7 @@ package org.meveo.api.account;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -16,6 +17,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.catalog.impl.TitleService;
 
+@Stateless
 public class TitleApi extends BaseApi {
 
     @Inject

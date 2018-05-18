@@ -32,7 +32,8 @@ import org.meveo.api.rest.payment.PaymentRs;
  * The implementation for PaymentRs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -48,11 +49,31 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     private PaymentGatewayApi paymentGatewayApi;
 
     /**
+     * Deprecated and replaced by createPayment
      * @return payment action status which contains payment id.
      * @see org.meveo.api.rest.payment.PaymentRs#create(org.meveo.api.dto.payment.PaymentDto)
      */
     @Override
+    @Deprecated
     public PaymentActionStatus create(PaymentDto postData) {
+        PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            Long id = paymentApi.createPayment(postData);
+            result.setPaymentId(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    /**
+     * @return payment action status which contains payment id.
+     * @see org.meveo.api.rest.payment.PaymentRs#create(org.meveo.api.dto.payment.PaymentDto)
+     */
+    @Override
+    public PaymentActionStatus createPayment(PaymentDto postData) {
         PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -326,7 +347,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentHistoriesDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public PaymentHistoriesDto listPaymentHistoryGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
 
         PaymentHistoriesDto result = new PaymentHistoriesDto();
 
@@ -340,7 +361,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentHistoriesDto listPost(PagingAndFiltering pagingAndFiltering) {
+    public PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering) {
         PaymentHistoriesDto result = new PaymentHistoriesDto();
 
         try {
@@ -350,5 +371,60 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         }
 
         return result;
-    }   
+    }
+
+    @Override
+    public ActionStatus enablePaymentMethod(Long id) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentMethodApi.enableOrDisable(id, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disablePaymentMethod(Long id) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentMethodApi.enableOrDisable(id, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enablePaymentGateway(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disablePaymentGateway(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

@@ -8,22 +8,36 @@ import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 
 /**
- * Card payment method
+ * Card payment method.
  * 
- * @author Andrius Karpavicius
+ * Deprecated in v.4.8. Use PaymentMethodDto instead
  *
+ * @author Andrius Karpavicius
  */
 @XmlRootElement(name = "CardPaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated // Use PaymentMthodDto
+@Deprecated
 public class CardPaymentMethodDto extends PaymentMethodDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1937059617391182742L;
 
+    /**
+     * Instantiates a new card payment method dto.
+     */
     public CardPaymentMethodDto() {
 
     }
 
+    /**
+     * Instantiates a new card payment method dto.
+     *
+     * @param cardType the card type
+     * @param cardNumber the card number
+     * @param monthExpiration the month expiration
+     * @param yearExpiration the year expiration
+     * @param ownerName the owner name
+     */
     public CardPaymentMethodDto(CreditCardTypeEnum cardType, String cardNumber, Integer monthExpiration, Integer yearExpiration, String ownerName) {
         setAlias("Card_" + cardNumber.substring(12, 16));
         setCardNumber(cardNumber);
@@ -33,22 +47,20 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setOwner(ownerName);
     }
 
+    /**
+     * Convert card payment method entity to DTO
+     *
+     * @param paymentMethod Entity to convert
+     */
     public CardPaymentMethodDto(CardPaymentMethod paymentMethod) {
         super(paymentMethod);
-        setCardNumber(paymentMethod.getHiddenCardNumber());
-        setCardType(paymentMethod.getCardType());
-        setMonthExpiration(paymentMethod.getMonthExpiration());
-        setOwner(paymentMethod.getOwner());
-        setTokenId(paymentMethod.getTokenId());
-        setYearExpiration(paymentMethod.getYearExpiration());
-        setInfo1(paymentMethod.getInfo1());
-        setInfo2(paymentMethod.getInfo2());
-        setInfo3(paymentMethod.getInfo3());
-        setInfo4(paymentMethod.getInfo4());
-        setInfo5(paymentMethod.getInfo5());
-        setUserId(paymentMethod.getUserId());
     }
 
+    /**
+     * Instantiates a new card payment method dto.
+     *
+     * @param paymentMethod the paymentMethod entity
+     */
     public CardPaymentMethodDto(PaymentMethodDto paymentMethod) {
         if (paymentMethod == null) {
             return;
@@ -70,8 +82,14 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setInfo4(paymentMethod.getInfo4());
         setInfo5(paymentMethod.getInfo5());
         setUserId(paymentMethod.getUserId());
+        setDisabled(paymentMethod.isDisabled());
     }
 
+    /**
+     * From dto.
+     *
+     * @return the card payment method
+     */
     public CardPaymentMethod fromDto() {
         CardPaymentMethod paymentMethod = new CardPaymentMethod(getAlias(), isPreferred());
 

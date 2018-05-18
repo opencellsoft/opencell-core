@@ -103,7 +103,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleProductTemplateDto.setQuantity(bundleProductTemplate.getQuantity());
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
-                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
+                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false, true));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }
@@ -113,16 +113,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         return bundleTemplateDto;
     }
 
-    public BundleTemplate createOrUpdate(BundleTemplateDto bundleTemplateDto) throws MeveoApiException, BusinessException {
-        BundleTemplate bundleTemplate = bundleTemplateService.findByCode(bundleTemplateDto.getCode(), bundleTemplateDto.getValidFrom(), bundleTemplateDto.getValidTo());
-
-        if (bundleTemplate == null) {
-            return create(bundleTemplateDto);
-        } else {
-            return update(bundleTemplateDto);
-        }
-    }
-
+    @Override
     public BundleTemplate create(BundleTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -154,6 +145,11 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
+        if (postData.isDisabled() != null) {
+            bundleTemplate.setDisabled(postData.isDisabled());
+        }
+
         try {
             saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -204,6 +200,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
     }
 
+    @Override
     public BundleTemplate update(BundleTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -238,6 +235,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
         try {
             saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -285,25 +283,6 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         bundleTemplate = bundleTemplateService.update(bundleTemplate);
 
         return bundleTemplate;
-    }
-
-    public void remove(String code, Date validFrom, Date validTo) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("bundleTemplate code");
-            handleMissingParameters();
-        }
-
-        BundleTemplate bundleTemplate = bundleTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
-        if (bundleTemplate == null) {
-            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
-            throw new EntityDoesNotExistsException(BundleTemplate.class,
-                code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
-        }
-
-        deleteImage(bundleTemplate);
-
-        bundleTemplateService.remove(bundleTemplate);
     }
 
     private void processBundleProductTemplates(BundleTemplateDto postData, BundleTemplate bundleTemplate) throws MeveoApiException, BusinessException {

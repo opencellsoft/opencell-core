@@ -17,12 +17,14 @@ public @interface FilterResults {
      * value of "dto.customerAccounts.customerAccount" will be parsed and filtered.
      * 
      * If not specified - an object itself will be filtered
+     * 
      * @return name of property to be filtered
      */
     String propertyToFilter() default "";
 
     /**
      * Identifies the filtering rule to apply to items selected for filtering.
+     * 
      * @return array of property to be filtered.
      */
     FilterProperty[] itemPropertiesToFilter();

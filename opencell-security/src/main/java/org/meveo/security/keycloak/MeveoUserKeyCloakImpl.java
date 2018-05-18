@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
  * Current Meveo user implementation when integrated with Keycloak authentication server
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  */
 public class MeveoUserKeyCloakImpl extends MeveoUser {
 
@@ -107,9 +108,11 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             this.roles.addAll(additionalRoles);
         }
 
-        for (String roleName : rolesToResolve) {
-            if (roleToPermissionMapping.containsKey(roleName)) {
-                this.roles.addAll(roleToPermissionMapping.get(roleName));
+        if(roleToPermissionMapping != null) {
+            for (String roleName : rolesToResolve) {
+                if (roleToPermissionMapping.containsKey(roleName)) {
+                    this.roles.addAll(roleToPermissionMapping.get(roleName));
+                }
             }
         }
 

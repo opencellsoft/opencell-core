@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -1192,6 +1192,117 @@
     </con:operation>
     <con:operation id="3b068fef-0723-49f3-a579-dd9054082586" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
+    </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="6606b221-c407-4821-9c32-6a6b4b4769d5" wsaVersion="NONE" name="AccountingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="4db59560-9a43-4034-b85e-0536393d1729" isOneWay="false" action="" name="createAccountingCode" bindingOperationName="createAccountingCode" type="Request-Response" outputName="createAccountingCodeResponse" inputName="createAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="ae28546e-e225-4956-bdd7-790565cdea20" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/createAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="c9e7131e-5e3d-47d6-a2ba-23bcb872a11e" isOneWay="false" action="" name="createOrUpdateAccountingCode" bindingOperationName="createOrUpdateAccountingCode" type="Request-Response" outputName="createOrUpdateAccountingCodeResponse" inputName="createOrUpdateAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="00176965-5b60-4dfd-a140-742df7083a3d" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/createOrUpdateAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="955becf6-dfcb-4c75-ab1c-9479b9771a96" isOneWay="false" action="" name="findAccountingCode" bindingOperationName="findAccountingCode" type="Request-Response" outputName="findAccountingCodeResponse" inputName="findAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="d101ac2a-ec86-4fd7-8153-24357f770cbb" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/findAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="80ec96ab-082b-471c-94bb-64a452218042" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="01cb1a59-f991-4660-83f5-2cf540f7d450" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:index/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/index"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="26fa70d0-39fa-457c-acf8-dd591d47d7f8" isOneWay="false" action="" name="listAccountingCode" bindingOperationName="listAccountingCode" type="Request-Response" outputName="listAccountingCodeResponse" inputName="listAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="a374f318-d3bb-408b-8b35-723ec9069b51" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/listAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="90e59234-9b85-403c-bebc-72ec77b6ce64" isOneWay="false" action="" name="removeAccountingCode" bindingOperationName="removeAccountingCode" type="Request-Response" outputName="removeAccountingCodeResponse" inputName="removeAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="7088a440-18f1-4a27-8a77-95fcb62a0433" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/removeAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="4ba88055-28ad-4064-8a38-442fcbfcb984" isOneWay="false" action="" name="updateAccountingCode" bindingOperationName="updateAccountingCode" type="Request-Response" outputName="updateAccountingCodeResponse" inputName="updateAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="6bbbcb01-5ecf-4e57-8bb9-d1f64c82e6eb" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/updateAccountingCode"/>
+      </con:call>
     </con:operation>
   </con:interface>
   <con:testSuite id="472fe052-2321-48cc-894f-c262e1826cd3" name="Setup Authorization">
@@ -6240,7 +6351,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3fda79ed-932e-4372-ab30-21d08fcab761" name="Contains 101">
               <con:configuration>
-                <token>&lt;childEntityValue code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1" description="child entity 1" cetCode="${#Project#baseEntityPrefix}_CET"></token>
+                <token>&lt;childEntityValue cetCode="${#Project#baseEntityPrefix}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1" description="child entity 1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -7024,7 +7135,7 @@ public class Action1 extends Script {
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_CHILD_ENTITY_LIST_NV">
                      <listValue>
                         <value>
-                           <childEntityValue code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_2" description="child entity 2" cetCode="${#Project#baseEntityPrefix}_CET">
+                           <childEntityValue cetCode="${#Project#baseEntityPrefix}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_2" description="child entity 2">
                               <disabled>false</disabled>
                               <customFields>
                                  <customField code="${#Project#baseEntityPrefix}_CET_CFT1">
@@ -7034,7 +7145,7 @@ public class Action1 extends Script {
                            </childEntityValue>
                         </value>
                         <value>
-                           <childEntityValue code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_3" description="child entity 3" cetCode="${#Project#baseEntityPrefix}_CET">
+                           <childEntityValue cetCode="${#Project#baseEntityPrefix}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_3" description="child entity 3">
                               <disabled>false</disabled>
                               <customFields>
                                  <customField code="${#Project#baseEntityPrefix}_CET_CFT2">
@@ -12983,7 +13094,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET" name="Custom Entity one" description="Custom entity template one"></token>
+                <token>&lt;customEntityTemplate name="Custom Entity one" code="${#Project#entityPrefix}_${#TestSuite#index}_CET" description="Custom entity template one"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -12991,6 +13102,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1">
+                     <disabled>false</disabled>
                      <fieldType>STRING</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13011,6 +13123,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2">
+                     <disabled>false</disabled>
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13029,10 +13142,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="4e54810e-c205-4378-b8bc-57c1f6dbae02" name="Contains 4">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{!entity.active}</applicableOnEl>
                      <label>Action 1</label>
                      <script code="Action1">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
@@ -13044,10 +13159,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="62bbf5c3-270b-46c1-8dca-5723dd3e4193" name="Contains 5">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION2" description="Action 2" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION2" description="Action 2">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active}</applicableOnEl>
                      <label>Action 2</label>
                      <script code="Action2">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -13146,7 +13263,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="021f9c3e-4f5b-4bd0-90d2-facf58ab85a0" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityInstance code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI" cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET"></token>
+                <token>&lt;customEntityInstance cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -13383,7 +13500,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET" name="Custom Entity one again" description="Custom entity template one again"></token>
+                <token>&lt;customEntityTemplate name="Custom Entity one again" code="${#Project#entityPrefix}_${#TestSuite#index}_CET" description="Custom entity template one again"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -13391,6 +13508,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3" description="Custom field 1">
+                     <disabled>false</disabled>
                      <fieldType>STRING</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13411,6 +13529,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                     <disabled>false</disabled>
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13429,10 +13548,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="96f00e2d-f3fa-4a40-b9b8-3737acb19212" name="Contains 4">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active and entity.code!='test'}</applicableOnEl>
                      <label>Action 1</label>
                      <script code="Action1">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
@@ -13444,10 +13565,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="151c124b-d993-4152-a936-036410e0b528" name="Contains 5">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION3" description="Action 3" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION3" description="Action 3">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active}</applicableOnEl>
                      <label>Action 3</label>
                      <script code="Action3">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action3 extends Script {}</script>
@@ -13546,7 +13669,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="26b8b38e-b32e-4b43-aca7-22edecc0c7b2" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityInstance code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI instance" cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET"></token>
+                <token>&lt;customEntityInstance cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI instance"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -30892,6 +31015,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <languageDescriptions>
     <languageCode>FRA</languageCode>
     <description>French potatoes</description>
@@ -30924,6 +31048,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>LONG</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -30946,9 +31071,11 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 1</label>
   <script code="Action1">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
@@ -30963,6 +31090,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 2</label>
   <labelsTranslated>
@@ -30974,6 +31102,7 @@ public class Action1 extends Script {
     <description>English pudding</description>
   </labelsTranslated>
   <script code="Action2">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -30989,6 +31118,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31016,6 +31146,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31044,6 +31175,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31181,6 +31313,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <languageDescriptions>
     <languageCode>FRA</languageCode>
     <description>French potatoes</description>
@@ -31213,6 +31346,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31235,6 +31369,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 2</label>
   <labelsTranslated>
@@ -31246,6 +31381,7 @@ public class Action1 extends Script {
     <description>English pudding</description>
   </labelsTranslated>
   <script code="Action2">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -31261,9 +31397,11 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 3</label>
   <script code="Action3">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action3 extends Script {}</script>
@@ -31397,6 +31535,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <languageDescriptions>
     <languageCode>FRA</languageCode>
     <description>French potatoes</description>
@@ -31429,6 +31568,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31451,6 +31591,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 2</label>
   <labelsTranslated>
@@ -31462,6 +31603,7 @@ public class Action1 extends Script {
     <description>English pudding - updated</description>
   </labelsTranslated>
   <script code="Action2">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -31477,9 +31619,11 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 3 - updated</label>
   <script code="Action34">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action34 extends Script {}</script>
@@ -31620,10 +31764,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="c7befb73-88f4-4c0d-b1aa-57388e608956" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" appliesTo="JOB_PurgeJob">
+                <token><![CDATA[<entityAction appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4">
+               <disabled>false</disabled>
                <applicableOnEl>#{entity.active}</applicableOnEl>
                <label>Action 4</label>
                <script code="Action4">
+                  <disabled>false</disabled>
                   <type>JAVA</type>
                   <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
@@ -31720,10 +31866,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="c7befb73-88f4-4c0d-b1aa-57388e608956" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" appliesTo="JOB_PurgeJob">
+                <token><![CDATA[<entityAction appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41">
+               <disabled>false</disabled>
                <applicableOnEl>#{entity.active}</applicableOnEl>
                <label>Action 41</label>
                <script code="Action4">
+                  <disabled>false</disabled>
                   <type>JAVA</type>
                   <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
@@ -31773,10 +31921,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="7499f920-d4f0-4816-9e3f-ae360bd98872" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" appliesTo="JOB_PurgeJob">
+                <token><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active}</applicableOnEl>
                      <label>Action 41</label>
                      <script code="Action4">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
@@ -31885,6 +32035,51 @@ public class Action1 extends Script {
     </con:testCase>
     <con:testCase id="d305838f-eb11-4971-a13e-69c5aacaccf3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Settings" searchProperties="true">
       <con:settings/>
+      <con:testStep type="request" name="Create accountingCode 1" id="f6d55040-b86c-4816-8018-04969b5f08ec">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 1" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="205.55.77.98.${#TestSuite#index}" description="205.55.77.98">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="create invoice category" id="b744e295-da86-4b48-aefb-772788e051f6">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -31896,89 +32091,84 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createInvoiceCategory>
-         
-         <invoiceCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory" description="${#Project#entityPrefix}_invoiceCategory">
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               
-               <languageCode>FRA</languageCode>
-               
-               <description>FRANCE</description>
-            </languageDescriptions>
-            
-           <customFields>
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>x</key>
-                        <value>
-                           <dateValue>2007-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>y</key>
-                        <value>
-                           <dateValue>2007-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>z</key>
-                        <value>
-                           <dateValue>2006-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>aa</key>
-                        <value>
-                           <dateValue>2006-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField> 
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>bb</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>cc</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>dd</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ee</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>
-         </invoiceCategory>
-      </ws:createInvoiceCategory>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createInvoiceCategory>\r
+         <invoiceCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory" description="${#Project#entityPrefix}_invoiceCategory">\r
+             <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>FRANCE</description>\r
+            </languageDescriptions>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>x</key>\r
+                        <value>\r
+                           <dateValue>2007-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>y</key>\r
+                        <value>\r
+                           <dateValue>2007-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>z</key>\r
+                        <value>\r
+                           <dateValue>2006-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>aa</key>\r
+                        <value>\r
+                           <dateValue>2006-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>bb</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>cc</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>dd</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ee</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </invoiceCategory>\r
+      </ws:createInvoiceCategory>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
@@ -32010,32 +32200,28 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createInvoiceSubCategory>
-         
-         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">
-            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>
-            <accountingCode>205.55.77.98</accountingCode>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               
-               <languageCode>FRA</languageCode>
-               
-               <description>FRANCE</description>
-            </languageDescriptions>
-             <customFields>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-09-10">
-                  <stringValue>BA_STRING_VALUE_1</stringValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-08-10">
-                  <stringValue>BA_STRING_VALUE_2</stringValue>
-               </customField>
-            </customFields>
-         </invoiceSubCategory>
-      </ws:createInvoiceSubCategory>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createInvoiceSubCategory>\r
+         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">\r
+            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>\r
+            <accountingCode>205.55.77.98.${#TestSuite#index}</accountingCode>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>FRANCE</description>\r
+            </languageDescriptions>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-09-10">\r
+                  <stringValue>BA_STRING_VALUE_1</stringValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-08-10">\r
+                  <stringValue>BA_STRING_VALUE_2</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </invoiceSubCategory>\r
+      </ws:createInvoiceSubCategory>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
@@ -32427,32 +32613,28 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateInvoiceSubCategory>
-         
-         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">
-            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>
-            <accountingCode>205.55.77.98</accountingCode>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               
-               <languageCode>FRA</languageCode>
-               
-               <description>FRANCE</description>
-            </languageDescriptions>
-             <customFields>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2011-09-10">
-                  <stringValue>BA_STRING_VALUE_update1</stringValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2016-08-10">
-                  <stringValue>BA_STRING_VALUE_update2</stringValue>
-               </customField>
-            </customFields>
-         </invoiceSubCategory>
-      </ws:updateInvoiceSubCategory>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateInvoiceSubCategory>\r
+         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">\r
+            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>\r
+            <accountingCode>205.55.77.98.${#TestSuite#index}</accountingCode>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>FRANCE</description>\r
+            </languageDescriptions>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2011-09-10">\r
+                  <stringValue>BA_STRING_VALUE_update1</stringValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2016-08-10">\r
+                  <stringValue>BA_STRING_VALUE_update2</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </invoiceSubCategory>\r
+      </ws:updateInvoiceSubCategory>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
@@ -34085,7 +34267,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>16</con:value>
+        <con:value>18</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36716,7 +36898,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>61</con:value>
+        <con:value>63</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -37147,6 +37329,96 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:testCase>
     <con:testCase id="c0e1c42a-3db6-4f97-8af8-494f1028b41e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoice cat type subcat creation" searchProperties="true">
       <con:settings/>
+      <con:testStep type="request" name="Create accountingCode 1" id="15674151-f6e7-4d06-a1c0-cae0539297be">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 1" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="${#Project#entityPrefix}_${#TestSuite#index}_OCC_ACC" description="${#Project#entityPrefix}_${#TestSuite#index}_OCC_ACC">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create accountingCode 2" id="c5905bdc-6415-4b8f-ba17-d316b14cc85b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 2" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="ACC_CODE" description="ACC_CODE">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="createOccTemplate" id="9a6f752f-2910-4334-8b22-d1ce77b3e83f">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -37731,6 +38003,51 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create account operation with CF" searchProperties="true" id="aee0c55c-859c-4bb0-a310-0537d67a71b6">
       <con:settings/>
+      <con:testStep type="request" name="Create accountingCode 1" id="1f200a03-ac8c-4bb1-9478-6a57f59fd271">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 1" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="1234" description="1234">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="create_accountOperation" id="d1560273-7de3-488c-a0fb-78d57b9ee7e1">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -38136,7 +38453,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>21</con:value>
+        <con:value>25</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39359,7 +39676,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>17</con:value>
+        <con:value>19</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39371,11 +39688,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>

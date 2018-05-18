@@ -89,10 +89,10 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 	}
 
 	/**
-	 * This method is called from some businessEntityDetail's page
+	 * This method is called from some businessEntityDetail's page.
 	 * 
-	 * @param entity
-	 * @return
+	 * @param entity Entity object
+	 * @return List of Workflow history
 	 */
 	
 	public List<WorkflowHistory> getWorkflowHistory(BusinessEntity entity){		

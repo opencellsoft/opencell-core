@@ -1,8 +1,5 @@
 package org.meveo.admin.action.finance;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -11,13 +8,10 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.ReportExtractService;
-import org.meveo.service.script.finance.ReportExtractScript;
 
 /**
  * Controller to manage detail view of {@link ReportExtract}.
@@ -44,16 +38,19 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
     public ReportExtract initEntity() {
         entity = super.initEntity();
 
-        if (entity.isTransient()) {
-            Calendar cal = Calendar.getInstance();
-            entity.getParams().put(ReportExtractScript.START_DATE, DateUtils.formatDateWithPattern(cal.getTime(), ParamBean.getInstance().getDateFormat()));
-            cal.add(Calendar.MONTH, 1);
-            entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(cal.getTime(), ParamBean.getInstance().getDateFormat()));
+        if (entity.getParams() != null) {
+            extractMapTypeFieldFromEntity(entity.getParams(), "params");
         }
 
-        extractMapTypeFieldFromEntity(entity.getParams(), "params");
-
         return entity;
+    }
+
+    public void initEntity(ReportExtract e) {
+        entity = e;
+
+        if (entity.getParams() != null) {
+            extractMapTypeFieldFromEntity(entity.getParams(), "params");
+        }
     }
 
     @Override
@@ -91,27 +88,10 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
     @ActionMethod
     public String runReportFromList() {
-        ParamBean paramBean = paramBeanFactory.getInstance();
         String result = null;
-        Date startDate = entity.getStartDate();
-        Date endDate = entity.getEndDate();
-        entity = getPersistenceService().refreshOrRetrieve(entity);
-
-        if (startDate != null) {
-            entity.getParams().put(ReportExtractScript.START_DATE, DateUtils.formatDateWithPattern(startDate, paramBean.getDateFormat()));
-        }
-        if (endDate != null) {
-            entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(endDate, paramBean.getDateFormat()));
-        }
-        
-        if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
-            entity.setScriptInstance(null);
-        } else {
-            entity.setSqlQuery(null);
-        }
 
         try {
-            super.saveOrUpdate(false);
+            result = saveOrUpdate(false);
             reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
         } catch (BusinessException e) {

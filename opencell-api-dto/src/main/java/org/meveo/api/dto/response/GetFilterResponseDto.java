@@ -3,6 +3,7 @@ package org.meveo.api.dto.response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.meveo.api.dto.FilterDto;
 
 /**
@@ -15,14 +16,26 @@ import org.meveo.api.dto.FilterDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetFilterResponseDto extends BaseResponse {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The filter. */
     private FilterDto filter;
 
+    /**
+     * Gets the filter.
+     *
+     * @return the filter
+     */
     public FilterDto getFilter() {
         return filter;
     }
 
+    /**
+     * Sets the filter.
+     *
+     * @param filter the new filter
+     */
     public void setFilter(FilterDto filter) {
         this.filter = filter;
     }

@@ -28,6 +28,11 @@ import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+/**
+ * A GUI backing bean class for CustomEntityTemplate entity for detail view
+ * 
+ * @author Andrius Karpavicius
+ */
 @Named
 @ViewScoped
 public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
@@ -38,12 +43,12 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     private CustomFieldTemplateService customFieldTemplateService;
 
     /**
-     * Request parameter
+     * Name of entity class, for which to manage custom fields. An alternative to appliesTo parameter. Is passed as a request parameter
      */
     private String entityClassName;
 
     /**
-     * Request parameter
+     * Applies to value, for which to manage custom fields. An alternative to entityClassName parameter. Is passed as a request parameter
      */
     private String appliesTo;
 
@@ -90,6 +95,9 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     @Inject
     private CustomizedEntityService customizedEntityService;
 
+    /**
+     * Constructor
+     */
     public CustomEntityTemplateBean() {
         super(CustomEntityTemplate.class);
     }
@@ -142,8 +150,8 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     /**
      * Construct customizedEntity instance which is a representation of customizable class (e.g. Customer)
      * 
-     * @return
-     * @throws ClassNotFoundException
+     * @return CustomizedEntity instance which is a representation of customizable class (e.g. Customer)
+     * @throws ClassNotFoundException Class was not found
      */
     public CustomizedEntity getCustomizedEntity() throws ClassNotFoundException {
 
@@ -264,7 +272,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     /**
      * Remember the tabs and fieldgroups as they are reconstructed from field and action guiPosition fields. And then clear groupedFields value so it would be reconstructed again
-     * uppon the first reqeust.
+     * uppon the first request.
      */
     public void refreshFields() {
         if (groupedFields != null) {
@@ -363,7 +371,6 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     public void saveUpdateFieldGrouping() {
 
         try {
-
             ((SortedTreeNode) selectedFieldGrouping).setData(selectedFieldGroupingLabel);
 
             updateFieldGuiPositionValue((SortedTreeNode) selectedFieldGrouping);

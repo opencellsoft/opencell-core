@@ -10,32 +10,63 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class CreateInvoiceResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CreateInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreateInvoiceResponseDto extends BaseResponse {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5811304676103235597L;
 
+    /** The invoice id. */
     private Long invoiceId;
+    
+    /** The invoice number. */
     private String invoiceNumber;
+    
+    /** The invoice date. */
     private Date invoiceDate;
+    
+    /** The due date. */
     private Date dueDate;
+    
+    /** The amount without tax. */
     private BigDecimal amountWithoutTax;
+    
+    /** The amount tax. */
     private BigDecimal amountTax;
+    
+    /** The amount with tax. */
     private BigDecimal amountWithTax;
+    
+    /** The net to pay. */
     private BigDecimal netToPay;
+    
+    /** The xml filename. */
     private String xmlFilename;
+    
+    /** The xml invoice. */
     private String xmlInvoice;
+    
+    /** The pdf filename. */
     private String pdfFilename;
+    
+    /** The pdf invoice. */
     private byte[] pdfInvoice;
 
+    /**
+     * Instantiates a new creates the invoice response dto.
+     */
     public CreateInvoiceResponseDto() {
 
     }
 
     /**
+     * Gets the invoice id.
+     *
      * @return the invoiceId
      */
     public Long getInvoiceId() {
@@ -43,6 +74,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the invoice id.
+     *
      * @param invoiceId the invoiceId to set
      */
     public void setInvoiceId(Long invoiceId) {
@@ -50,6 +83,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Gets the invoice number.
+     *
      * @return the invoiceNumber
      */
     public String getInvoiceNumber() {
@@ -57,6 +92,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the invoice number.
+     *
      * @param invoiceNumber the invoiceNumber to set
      */
     public void setInvoiceNumber(String invoiceNumber) {
@@ -64,6 +101,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Gets the invoice date.
+     *
      * @return the invoiceDate
      */
     public Date getInvoiceDate() {
@@ -71,6 +110,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the invoice date.
+     *
      * @param invoiceDate the invoiceDate to set
      */
     public void setInvoiceDate(Date invoiceDate) {
@@ -78,6 +119,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Gets the due date.
+     *
      * @return the dueDate
      */
     public Date getDueDate() {
@@ -85,6 +128,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the due date.
+     *
      * @param dueDate the dueDate to set
      */
     public void setDueDate(Date dueDate) {
@@ -92,6 +137,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Gets the amount without tax.
+     *
      * @return the amountWithoutTax
      */
     public BigDecimal getAmountWithoutTax() {
@@ -99,6 +146,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the amount without tax.
+     *
      * @param amountWithoutTax the amountWithoutTax to set
      */
     public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
@@ -106,6 +155,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Gets the amount tax.
+     *
      * @return the amountTax
      */
     public BigDecimal getAmountTax() {
@@ -113,6 +164,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the amount tax.
+     *
      * @param amountTax the amountTax to set
      */
     public void setAmountTax(BigDecimal amountTax) {
@@ -120,6 +173,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Gets the amount with tax.
+     *
      * @return the amountWithTax
      */
     public BigDecimal getAmountWithTax() {
@@ -127,21 +182,35 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the amount with tax.
+     *
      * @param amountWithTax the amountWithTax to set
      */
     public void setAmountWithTax(BigDecimal amountWithTax) {
         this.amountWithTax = amountWithTax;
     }
 
+    /**
+     * Sets the xml filename.
+     *
+     * @param xmlFilename the new xml filename
+     */
     public void setXmlFilename(String xmlFilename) {
         this.xmlFilename = xmlFilename;
     }
 
+    /**
+     * Gets the xml filename.
+     *
+     * @return the xml filename
+     */
     public String getXmlFilename() {
         return xmlFilename;
     }
 
     /**
+     * Gets the xml invoice.
+     *
      * @return the xmlInvoice
      */
     public String getXmlInvoice() {
@@ -149,21 +218,35 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the xml invoice.
+     *
      * @param xmlInvoice the xmlInvoice to set
      */
     public void setXmlInvoice(String xmlInvoice) {
         this.xmlInvoice = xmlInvoice;
     }
 
+    /**
+     * Gets the pdf filename.
+     *
+     * @return the pdf filename
+     */
     public String getPdfFilename() {
         return pdfFilename;
     }
 
+    /**
+     * Sets the pdf filename.
+     *
+     * @param pdfFilename the new pdf filename
+     */
     public void setPdfFilename(String pdfFilename) {
         this.pdfFilename = pdfFilename;
     }
 
     /**
+     * Gets the pdf invoice.
+     *
      * @return the pdfInvoice
      */
     public byte[] getPdfInvoice() {
@@ -171,6 +254,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the pdf invoice.
+     *
      * @param pdfInvoice the pdfInvoice to set
      */
     public void setPdfInvoice(byte[] pdfInvoice) {
@@ -178,6 +263,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Gets the net to pay.
+     *
      * @return the netToPay
      */
     public BigDecimal getNetToPay() {
@@ -185,6 +272,8 @@ public class CreateInvoiceResponseDto extends BaseResponse {
     }
 
     /**
+     * Sets the net to pay.
+     *
      * @param netToPay the netToPay to set
      */
     public void setNetToPay(BigDecimal netToPay) {

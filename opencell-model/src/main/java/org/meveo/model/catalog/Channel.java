@@ -7,7 +7,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
@@ -15,11 +15,12 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "cat_channel", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_channel_seq"), })
-public class Channel extends BusinessEntity {
+@ExportIdentifier({ "code" })
+@Table(name = "cat_channel", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_channel_seq"), })
+public class Channel extends EnableBusinessEntity {
 
-	private static final long serialVersionUID = 6877386866687396135L;
+    private static final long serialVersionUID = 6877386866687396135L;
 
 }

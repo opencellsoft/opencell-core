@@ -19,10 +19,8 @@
 package org.meveo.model.payments;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "ar_manual_payment")
 // @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value =
 // "ar_manual_payment_seq"), })
 public class ManualPayment extends Payment {

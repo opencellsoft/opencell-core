@@ -81,7 +81,8 @@ import org.slf4j.Logger;
  * 
  * @author Wassim Drira
  * @author Phung tien lan
- * @lastModifiedVersion 5.0.1
+ * @author anasseh
+ * @lastModifiedVersion 5.0.2
  */
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
@@ -228,13 +229,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                     + tradingCountry.getCountryCode() + ".");
         }
 
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
+        Tax tax = null;
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
                 chargeInstance.getUserAccount().getBillingAccount(), null);
-            if (tax == null) {
-                throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-            }
+        }
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance, ApplicationTypeEnum.PUNCTUAL, applicationDate,
@@ -328,14 +331,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
                     + tradingCountry.getCountryCode() + ".");
         }
-
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
+        Tax tax = null;
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
                 chargeInstance.getUserAccount().getBillingAccount(), null);
-            if (tax == null) {
-                throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-            }
+        }
+
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeInstance, ApplicationTypeEnum.PUNCTUAL, chargeInstance.getChargeDate(),
@@ -362,7 +367,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     // * @param criteria3 Criteria 3
     //
     // * @return Wallet operation
-    // * @throws BusinessException
+    // * @throws BusinessException General business exception
     // */
     // public WalletOperation rateProductApplicationVirtual(ProductChargeTemplate chargeTemplate, UserAccount userAccount, String offerCode, BigDecimal inputQuantity,
     // BigDecimal quantity, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria1, String criteria2, String criteria3)
@@ -414,6 +419,23 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         Date nextChargeDate = cal.nextCalendarDate(chargeDate);
 
         return nextChargeDate;
+    }
+
+    /**
+     * Sets the charge and next charge date of a RecurringChargeInstance. This method is called when a {@link RecurringChargeTemplate#getFilterExpression()} evaluates to false.
+     * 
+     * @param chargeInstance RecurringChargeInstance
+     * @see RecurringChargeInstance
+     */
+    public void updateChargeDate(RecurringChargeInstance chargeInstance) {
+        Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
+        cal.setInitDate(chargeInstance.getSubscriptionDate());
+
+        Date chargeDate = cal.truncateDateTime(chargeInstance.getNextChargeDate());
+        Date nextChargeDate = cal.nextCalendarDate(chargeInstance.getNextChargeDate());
+
+        chargeInstance.setChargeDate(chargeDate);
+        chargeInstance.setNextChargeDate(nextChargeDate);
     }
 
     /**
@@ -490,13 +512,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                 "no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
         }
 
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
+        Tax tax = null;
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
                 chargeInstance.getUserAccount().getBillingAccount(), null);
-            if (tax == null) {
-                throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-            }
+        }
+
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         Date chargeDateForWO = recurringChargeTemplate.getApplyInAdvance() ? applyChargeOnDate : nextChargeDate;
@@ -641,13 +666,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                     "no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
             }
 
-            Tax tax = invoiceSubcategoryCountry.getTax();
-            if (tax == null) {
+            Tax tax = null;
+            if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+                tax = invoiceSubcategoryCountry.getTax();
+            } else {
                 tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
                     chargeInstance.getUserAccount().getBillingAccount(), null);
-                if (tax == null) {
-                    throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-                }
+            }
+            if (tax == null) {
+                throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
             }
 
             Date chargeDateForWO = recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance() ? applyChargeOnDate : nextChargeDate;
@@ -749,13 +776,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                 "No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
         }
 
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
+        Tax tax = null;
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
                 chargeInstance.getUserAccount().getBillingAccount(), null);
-            if (tax == null) {
-                throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-            }
+        }
+
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         List<WalletOperation> walletOperations = new ArrayList<>();
@@ -813,11 +843,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
-        
+
         if (chargeInstance == null) {
             return walletOperations;
         }
-        
+
         Date applyChargeFromDate = fromDate;
         Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
         cal.setInitDate(chargeInstance.getSubscriptionDate());
@@ -827,7 +857,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                 cal.setInitDate(serviceInstance.getSubscriptionDate());
             }
         }
-        
+
         Date applyChargeToDate = cal.nextCalendarDate(toDate == null ? fromDate : toDate);
 
         InvoiceSubCategory invoiceSubCategory = chargeInstance.getRecurringChargeTemplate().getInvoiceSubCategory();
@@ -938,15 +968,17 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                 "No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
         }
 
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
+        Tax tax = null;
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
                 chargeInstance.getUserAccount().getBillingAccount(), null);
-            if (tax == null) {
-                throw new IncorrectChargeTemplateException("Tax is null for invoiceSubCategoryCountry id=" + invoiceSubcategoryCountry.getId());
-            }
         }
 
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("Tax is null for invoiceSubCategoryCountry id=" + invoiceSubcategoryCountry.getId());
+        }
         List<WalletOperation> walletOperations = new ArrayList<>();
 
         Date applyChargeOnDate = applyChargeFromDate;
@@ -1074,13 +1106,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                 "no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
         }
 
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
+        Tax tax = null;
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
                 chargeInstance.getUserAccount().getBillingAccount(), null);
-            if (tax == null) {
-                throw new IncorrectChargeTemplateException("tax is null for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-            }
+        }
+
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("tax is null for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         Calendar cal = recurringChargeTemplate.getCalendar();
@@ -1088,10 +1123,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         log.debug("Will apply recurring charge {} for supplement charge agreement for {} - {}", chargeInstance.getId(), applyChargeFromDate, endAgreementDate);
 
         Date applyChargeOnDate = applyChargeFromDate;
-        while (applyChargeOnDate.getTime() < endAgreementDate.getTime()) {
-
-            Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
-
+        
+        Date nextChargeDate = null;
+        while (applyChargeOnDate.getTime() < endAgreementDate.getTime() && (nextChargeDate = cal.nextCalendarDate(applyChargeOnDate)) != null ) {
             Double prorataRatio = null;
             ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
             BigDecimal inputQuantity = chargeInstance.getQuantity();

@@ -9,32 +9,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.LanguageIsoDto;
 
 /**
+ * The Class GetLanguagesIsoResponse.
+ *
  * @author Edward P. Legaspi
  * @since Aug 1, 2017
- **/
+ */
 @XmlRootElement(name = "GetLanguagesIsoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetLanguagesIsoResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -1697478352703038101L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1697478352703038101L;
 
-	private List<LanguageIsoDto> languages;
+    /** The languages. */
+    private List<LanguageIsoDto> languages;
 
-	public GetLanguagesIsoResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new gets the languages iso response.
+     */
+    public GetLanguagesIsoResponse() {
+        super();
+    }
 
-	public List<LanguageIsoDto> getLanguages() {
-		return languages;
-	}
+    /**
+     * Gets the languages.
+     *
+     * @return the languages
+     */
+    public List<LanguageIsoDto> getLanguages() {
+        return languages;
+    }
 
-	public void setLanguages(List<LanguageIsoDto> languages) {
-		this.languages = languages;
-	}
+    /**
+     * Sets the languages.
+     *
+     * @param languages the new languages
+     */
+    public void setLanguages(List<LanguageIsoDto> languages) {
+        this.languages = languages;
+    }
 
-	@Override
-	public String toString() {
-		return "GetLanguagesIsoResponse [languages=" + languages + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetLanguagesIsoResponse [languages=" + languages + "]";
+    }
 }

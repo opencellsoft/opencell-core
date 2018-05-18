@@ -9,59 +9,106 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
+ * The Class ChargeInstanceOverrideDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChargeInstanceOverrideDto implements Serializable {
 
-	private static final long serialVersionUID = 5653231200327069483L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5653231200327069483L;
 
-	@XmlAttribute(required = true)
-	private String chargeInstanceCode;
+    /** The charge instance code. */
+    @XmlAttribute(required = true)
+    private String chargeInstanceCode;
 
-	@XmlElement(required = false)
-	private BigDecimal amountWithoutTax;
+    /** The amount without tax. */
+    @XmlElement(required = false)
+    private BigDecimal amountWithoutTax;
 
-	@XmlElement(required = false)
-	private BigDecimal amountWithTax;
-	
-	private String description;
+    /** The amount with tax. */
+    @XmlElement(required = false)
+    private BigDecimal amountWithTax;
 
-	public String getChargeInstanceCode() {
-		return chargeInstanceCode;
-	}
+    /** The description. */
+    private String description;
 
-	public void setChargeInstanceCode(String chargeInstanceCode) {
-		this.chargeInstanceCode = chargeInstanceCode;
-	}
+    /**
+     * Gets the charge instance code.
+     *
+     * @return the charge instance code
+     */
+    public String getChargeInstanceCode() {
+        return chargeInstanceCode;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    /**
+     * Sets the charge instance code.
+     *
+     * @param chargeInstanceCode the new charge instance code
+     */
+    public void setChargeInstanceCode(String chargeInstanceCode) {
+        this.chargeInstanceCode = chargeInstanceCode;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    /**
+     * Gets the amount without tax.
+     *
+     * @return the amount without tax
+     */
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
+    /**
+     * Sets the amount without tax.
+     *
+     * @param amountWithoutTax the new amount without tax
+     */
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    /**
+     * Gets the amount with tax.
+     *
+     * @return the amount with tax
+     */
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    /**
+     * Sets the amount with tax.
+     *
+     * @param amountWithTax the new amount with tax
+     */
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	public String toString() {
-		return "ChargeInstanceOverrideDto [chargeInstanceCode=" + chargeInstanceCode + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", description"+description+"]";
-	}
+    @Override
+    public String toString() {
+        return "ChargeInstanceOverrideDto [chargeInstanceCode=" + chargeInstanceCode + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
+                + ", description" + description + "]";
+    }
 }

@@ -499,17 +499,16 @@ public class ExcelToCsv {
              // Condition the inclusion of new line characters so as to
              // avoid an additional, superfluous, new line at the end of
              // the file.
-             if(i < (this.csvData.size() - 1)) {
+             if (i < (this.csvData.size() - 1)) {
                  bw.newLine();
              }
          }
-     }
-     finally {
-         if(bw != null) {
-             bw.flush();
-             bw.close();
-         }
-     }
+        } finally {
+            if (bw != null) {
+                bw.flush();
+                bw.close();
+            }
+        }
  }
 
  /**

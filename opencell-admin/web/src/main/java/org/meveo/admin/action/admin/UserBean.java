@@ -197,11 +197,6 @@ public class UserBean extends CustomFieldBean<User> {
         this.userGroupSelectedNode = selectedNode;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -254,6 +249,8 @@ public class UserBean extends CustomFieldBean<User> {
 
     /**
      * Standard method for custom component with listType="pickList".
+     * 
+     * @return DualListModel of Role
      */
     public DualListModel<Role> getDualListModel() {
         if (rolesDM == null) {
@@ -560,24 +557,20 @@ public class UserBean extends CustomFieldBean<User> {
         }
     }
 
+    /**
+     * @param fileName file name
+     * @param in input stream
+     */
     public void copyFile(String fileName, InputStream in) {
-        try {
-
-            // write the inputStream to a FileOutputStream
-            String filePath = getFilePath(fileName);
-            OutputStream out = new FileOutputStream(new File(filePath));
-
+        String filePath = getFilePath(fileName);
+        try (OutputStream out = new FileOutputStream(new File(filePath));) {
             int read = 0;
             byte[] bytes = new byte[1024];
 
             while ((read = in.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
             }
-
-            in.close();
             out.flush();
-            out.close();
-
             log.debug("New file created!");
             buildFileList();
         } catch (IOException e) {
@@ -662,7 +655,7 @@ public class UserBean extends CustomFieldBean<User> {
      * This will allow the chosen secured entity to be removed from the user's securedEntities list.
      * 
      * @param selectedSecuredEntity The chosen securedEntity
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
@@ -687,8 +680,8 @@ public class UserBean extends CustomFieldBean<User> {
     /**
      * This will add the selected business entity to the user's securedEntities list.
      * 
-     * @param event
-     * @throws BusinessException
+     * @param event Faces select event
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     public void saveSecuredEntity(SelectEvent event) throws BusinessException {

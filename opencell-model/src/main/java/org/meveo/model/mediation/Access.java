@@ -164,25 +164,14 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
         return false;
     }
 
+    @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
     }
 
+    @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
-    }
-
-    @Override
-    public CustomFieldValues getCfValuesNullSafe() {
-        if (cfValues == null) {
-            cfValues = new CustomFieldValues();
-        }
-        return cfValues;
-    }
-
-    @Override
-    public void clearCfValues() {
-        cfValues = null;
     }
 
     @Override

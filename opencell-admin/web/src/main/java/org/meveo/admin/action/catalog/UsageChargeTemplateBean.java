@@ -93,7 +93,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 	 * Conversation is ended and user is redirected from edit to his previous
 	 * window.
 	 * 
-	 * @throws BusinessException
+	 * @throws BusinessException General business exception
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */

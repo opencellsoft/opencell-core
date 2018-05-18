@@ -100,7 +100,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
      * Save or update provider.
      * 
      * @param entity Provider to save.
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @Override
     protected Provider saveOrUpdate(Provider entity) throws BusinessException {

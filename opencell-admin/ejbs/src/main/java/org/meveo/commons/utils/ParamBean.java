@@ -144,9 +144,9 @@ public class ParamBean {
      */
     public static ParamBean getInstance() {
         try {
-            return getInstance("meveo-admin.properties");
+            return getInstance("opencell-admin.properties");
         } catch (Exception e) {
-            log.error("Failed to initialize meveo-admin.properties file.", e);
+            log.error("Failed to initialize opencell-admin.properties file.", e);
             return null;
         }
     }

@@ -196,7 +196,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
-        log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
+        log.debug("Creating xml for invoice id={} number={}.", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
 
         String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider, "PROV_CUSTOM_INV_XML_SCRIPT_CODE");
 
@@ -314,7 +314,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         boolean hasInvoiceAgregates = !invoiceAgregates.isEmpty();
         BillingRun billingRun = invoice.getBillingRun();
 
-        log.debug("Creating xml for invoice id={} number={}. {}", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
+        log.debug("Creating xml for invoice id={} number={}.", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
@@ -483,6 +483,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         String billingExternalRef2 = billingAccount.getExternalRef2();
         String billingExternalRef1 = billingAccount.getExternalRef1();
+        String jobTitleBA = billingAccount.getJobTitle();
         Element billingAccountTag = doc.createElement("billingAccount");
         if (billingCycle == null) {
             billingCycle = billingAccount.getBillingCycle();
@@ -496,6 +497,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
+        billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
+
 
         if (invoiceConfiguration != null && invoiceConfiguration.getDisplayBillingCycle() != null && invoiceConfiguration.getDisplayBillingCycle()) {
             if (billingCycle == null) {
@@ -681,7 +684,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             String code = userAccount.getCode();
             userAccountTag.setAttribute("code", code != null ? code : "");
-            String jobTitle = userAccount.getCode();
+            String jobTitle = userAccount.getJobTitle();
             userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             String description = userAccount.getDescription();
             userAccountTag.setAttribute("description", description != null ? description : "");
@@ -1379,7 +1382,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subCategory.setAttribute("taxPercent", taxesPercent);
 
                     for (RatedTransaction ratedTransaction : ratedTransactions) {
-                        if (!(ratedTransaction.getWallet().getId().longValue() == wallet.getId()
+                        if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
                                 && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
                             continue;
                         }
@@ -1592,6 +1595,68 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     addCustomFields(invoiceSubCat, doc, subCategory);
                 }
             }
+        }
+
+        // generate invoice line for min amount RT
+        boolean hasMinAmountRT = false;
+        Element subCategories = doc.createElement("subCategories");
+        LinkedHashMap<String, Element> subCategoriesMap = new LinkedHashMap<String, Element>();
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+            if (ratedTransaction.getWallet() == null) {
+                hasMinAmountRT = true;
+                Element subCategory = null;
+                if(subCategoriesMap.containsKey(ratedTransaction.getCode())) {
+                    subCategory = subCategoriesMap.get(ratedTransaction.getCode());
+                } else {
+                    subCategory = doc.createElement("subCategory");
+                    subCategory.setAttribute("label", ratedTransaction.getDescription());
+                    subCategory.setAttribute("code", ratedTransaction.getCode());
+                    subCategory.setAttribute("amountWithoutTax", round(ratedTransaction.getAmountWithoutTax(), rounding));
+                }
+                
+                Element line = doc.createElement("line");
+                Element lebel = doc.createElement("label");
+                Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
+                lebel.appendChild(lebelTxt);
+                
+                Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+                Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+                line.appendChild(lineUnitAmountWithoutTax);
+
+                Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+                Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithoutTax(), rounding));
+                lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
+                line.appendChild(lineAmountWithoutTax);
+
+                if (!enterprise) {
+                    Element lineAmountWithTax = doc.createElement("amountWithTax");
+                    Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(), rounding));
+                    lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+                    line.appendChild(lineAmountWithTax);
+                }
+
+                Element quantity = doc.createElement("quantity");
+                Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                quantity.appendChild(quantityTxt);
+                line.appendChild(quantity);
+                line.appendChild(lebel);
+                subCategory.appendChild(line);
+                
+                subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
+            }   
+        }
+
+        for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
+            subCategories.appendChild(entry.getValue());
+        }
+
+        if(hasMinAmountRT) {
+            Element category = doc.createElement("category");
+            category.setAttribute("label", "-");
+            category.setAttribute("code", "min_amount");
+            category.appendChild(subCategories);
+            categories.appendChild(category);
         }
     }
 

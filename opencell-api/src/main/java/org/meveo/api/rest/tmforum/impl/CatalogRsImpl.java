@@ -102,7 +102,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -145,7 +144,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -168,7 +166,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             // responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -189,7 +186,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -213,7 +209,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             // responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -233,7 +228,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -251,7 +245,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -270,7 +263,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -288,7 +280,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -306,7 +297,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -324,7 +314,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -342,7 +331,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -360,7 +348,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -379,7 +366,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -397,7 +383,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -415,7 +400,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -433,7 +417,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -451,7 +434,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -469,16 +451,16 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
     }
-	
+
     @Override
     public Response createServiceFromBSM(BsmServiceDto postData) {
+        
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         Response.ResponseBuilder responseBuilder = null;
 
@@ -487,7 +469,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -497,6 +478,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Override
     public Response createProductFromBPM(BpmProductDto postData) {
+
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         Response.ResponseBuilder responseBuilder = null;
 
@@ -505,7 +487,6 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
-            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -513,4 +494,71 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
+    @Override
+    public Response enableProductTemplate(String code, Date validFrom, Date validTo) {
+
+        ActionStatus result = new ActionStatus();
+        Response.ResponseBuilder responseBuilder = Response.ok().entity(result);
+
+        try {
+            productTemplateApi.enableOrDisable(code, validFrom, validTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response disableProductTemplate(String code, Date validFrom, Date validTo) {
+
+        ActionStatus result = new ActionStatus();
+        Response.ResponseBuilder responseBuilder = Response.ok().entity(result);
+
+        try {
+            productTemplateApi.enableOrDisable(code, validFrom, validTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response enableProductChargeTemplate(String code) {
+
+        ActionStatus result = new ActionStatus();
+        Response.ResponseBuilder responseBuilder = Response.ok().entity(result);
+
+        try {
+            productChargeTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response disableProductChargeTemplate(String code) {
+
+        ActionStatus result = new ActionStatus();
+        Response.ResponseBuilder responseBuilder = Response.ok().entity(result);
+
+        try {
+            productChargeTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
 }

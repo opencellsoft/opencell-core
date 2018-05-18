@@ -9,134 +9,258 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 
+/**
+ * The Class InvoiceSubCategoryCountryDto.
+ */
 @XmlRootElement(name = "InvoiceSubCategoryCountry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceSubCategoryCountryDto extends BaseDto {
 
-	private static final long serialVersionUID = 7702371660532457108L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 7702371660532457108L;
 
-	@XmlElement(required = true)
-	private String invoiceSubCategory;
+    /** The invoice sub category. */
+    @XmlElement(required = true)
+    private String invoiceSubCategory;
 
-	private String sellingCountry;
-	
-	private String country;
+    /** The selling country. */
+    private String sellingCountry;
 
-	private String tax;
+    /** The country. */
+    private String country;
 
-	private String taxCodeEL;
-	
-	private String discountCode;
-	
-	private String filterEL;
-	
-	private Date startValidityDate;
-	private Date endValidityDate;
-	private int priority;
+    /** The tax. */
+    private String tax;
 
-	public InvoiceSubCategoryCountryDto() {
+    /** The tax code EL. */
+    private String taxCodeEL;
 
-	}
+    /** The discount code. */
+    private String discountCode;
 
-	public InvoiceSubCategoryCountryDto(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-		invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory().getCode();
-		sellingCountry = invoiceSubcategoryCountry.getSellingCountry()==null?null:invoiceSubcategoryCountry.getSellingCountry().getCountryCode();
-		country = invoiceSubcategoryCountry.getTradingCountry()==null?null:invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
-		tax = invoiceSubcategoryCountry.getTax()==null?null:invoiceSubcategoryCountry.getTax().getCode();
-		taxCodeEL = invoiceSubcategoryCountry.getTaxCodeEL();
-		filterEL=invoiceSubcategoryCountry.getFilterEL();
-		startValidityDate = invoiceSubcategoryCountry.getStartValidityDate();
-		endValidityDate = invoiceSubcategoryCountry.getEndValidityDate();
-		priority = invoiceSubcategoryCountry.getPriority();
-	}
+    /** The filter EL. */
+    private String filterEL;
 
-	public String getInvoiceSubCategory() {
-		return invoiceSubCategory;
-	}
+    /** The start validity date. */
+    private Date startValidityDate;
+    
+    /** The end validity date. */
+    private Date endValidityDate;
+    
+    /** The priority. */
+    private int priority;
 
-	public void setInvoiceSubCategory(String invoiceSubCategory) {
-		this.invoiceSubCategory = invoiceSubCategory;
-	}
+    /**
+     * Instantiates a new invoice sub category country dto.
+     */
+    public InvoiceSubCategoryCountryDto() {
 
-	public String getSellingCountry() {
-		return sellingCountry;
-	}
+    }
 
-	public void setSellingCountry(String sellingCountry) {
-		this.sellingCountry = sellingCountry;
-	}
+    /**
+     * Instantiates a new invoice sub category country dto.
+     *
+     * @param invoiceSubcategoryCountry the invoice subcategory country
+     */
+    public InvoiceSubCategoryCountryDto(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+        invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory().getCode();
+        sellingCountry = invoiceSubcategoryCountry.getSellingCountry() == null ? null : invoiceSubcategoryCountry.getSellingCountry().getCountryCode();
+        country = invoiceSubcategoryCountry.getTradingCountry() == null ? null : invoiceSubcategoryCountry.getTradingCountry().getCountryCode();
+        tax = invoiceSubcategoryCountry.getTax() == null ? null : invoiceSubcategoryCountry.getTax().getCode();
+        taxCodeEL = invoiceSubcategoryCountry.getTaxCodeEL();
+        filterEL = invoiceSubcategoryCountry.getFilterEL();
+        startValidityDate = invoiceSubcategoryCountry.getStartValidityDate();
+        endValidityDate = invoiceSubcategoryCountry.getEndValidityDate();
+        priority = invoiceSubcategoryCountry.getPriority();
+    }
 
-	public String getCountry() {
-		return country;
-	}
+    /**
+     * Gets the invoice sub category.
+     *
+     * @return the invoice sub category
+     */
+    public String getInvoiceSubCategory() {
+        return invoiceSubCategory;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    /**
+     * Sets the invoice sub category.
+     *
+     * @param invoiceSubCategory the new invoice sub category
+     */
+    public void setInvoiceSubCategory(String invoiceSubCategory) {
+        this.invoiceSubCategory = invoiceSubCategory;
+    }
 
-	public String getTax() {
-		return tax;
-	}
+    /**
+     * Gets the selling country.
+     *
+     * @return the selling country
+     */
+    public String getSellingCountry() {
+        return sellingCountry;
+    }
 
-	public void setTax(String tax) {
-		this.tax = tax;
-	}
+    /**
+     * Sets the selling country.
+     *
+     * @param sellingCountry the new selling country
+     */
+    public void setSellingCountry(String sellingCountry) {
+        this.sellingCountry = sellingCountry;
+    }
 
-	public String getTaxCodeEL() {
-		return taxCodeEL;
-	}
+    /**
+     * Gets the country.
+     *
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
 
-	public void setTaxCodeEL(String taxCodeEL) {
-		this.taxCodeEL = taxCodeEL;
-	}
+    /**
+     * Sets the country.
+     *
+     * @param country the new country
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public String getDiscountCode() {
-		return discountCode;
-	}
+    /**
+     * Gets the tax.
+     *
+     * @return the tax
+     */
+    public String getTax() {
+        return tax;
+    }
 
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
-	}
-	
-	
+    /**
+     * Sets the tax.
+     *
+     * @param tax the new tax
+     */
+    public void setTax(String tax) {
+        this.tax = tax;
+    }
 
-	public String getFilterEL() {
-		return filterEL;
-	}
+    /**
+     * Gets the tax code EL.
+     *
+     * @return the tax code EL
+     */
+    public String getTaxCodeEL() {
+        return taxCodeEL;
+    }
 
-	public void setFilterEL(String filterEL) {
-		this.filterEL = filterEL;
-	}
+    /**
+     * Sets the tax code EL.
+     *
+     * @param taxCodeEL the new tax code EL
+     */
+    public void setTaxCodeEL(String taxCodeEL) {
+        this.taxCodeEL = taxCodeEL;
+    }
 
-	@Override
-	public String toString() {
-		return "InvoiceSubCategoryCountryDto [invoiceSubCategory=" + invoiceSubCategory 
-				+ ", selling country=" + sellingCountry + ", country=" + country
-				+ ", tax=" + tax + ", taxCodeEL=" + taxCodeEL + ", discountCode=" + discountCode +",filterEL="+filterEL+ "]";
-	}
+    /**
+     * Gets the discount code.
+     *
+     * @return the discount code
+     */
+    public String getDiscountCode() {
+        return discountCode;
+    }
 
-	public Date getStartValidityDate() {
-		return startValidityDate;
-	}
+    /**
+     * Sets the discount code.
+     *
+     * @param discountCode the new discount code
+     */
+    public void setDiscountCode(String discountCode) {
+        this.discountCode = discountCode;
+    }
 
-	public void setStartValidityDate(Date startValidityDate) {
-		this.startValidityDate = startValidityDate;
-	}
+    /**
+     * Gets the filter EL.
+     *
+     * @return the filter EL
+     */
+    public String getFilterEL() {
+        return filterEL;
+    }
 
-	public Date getEndValidityDate() {
-		return endValidityDate;
-	}
+    /**
+     * Sets the filter EL.
+     *
+     * @param filterEL the new filter EL
+     */
+    public void setFilterEL(String filterEL) {
+        this.filterEL = filterEL;
+    }
 
-	public void setEndValidityDate(Date endValidityDate) {
-		this.endValidityDate = endValidityDate;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "InvoiceSubCategoryCountryDto [invoiceSubCategory=" + invoiceSubCategory + ", selling country=" + sellingCountry + ", country=" + country + ", tax=" + tax
+                + ", taxCodeEL=" + taxCodeEL + ", discountCode=" + discountCode + ",filterEL=" + filterEL + "]";
+    }
 
-	public int getPriority() {
-		return priority;
-	}
+    /**
+     * Gets the start validity date.
+     *
+     * @return the start validity date
+     */
+    public Date getStartValidityDate() {
+        return startValidityDate;
+    }
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    /**
+     * Sets the start validity date.
+     *
+     * @param startValidityDate the new start validity date
+     */
+    public void setStartValidityDate(Date startValidityDate) {
+        this.startValidityDate = startValidityDate;
+    }
+
+    /**
+     * Gets the end validity date.
+     *
+     * @return the end validity date
+     */
+    public Date getEndValidityDate() {
+        return endValidityDate;
+    }
+
+    /**
+     * Sets the end validity date.
+     *
+     * @param endValidityDate the new end validity date
+     */
+    public void setEndValidityDate(Date endValidityDate) {
+        this.endValidityDate = endValidityDate;
+    }
+
+    /**
+     * Gets the priority.
+     *
+     * @return the priority
+     */
+    public int getPriority() {
+        return priority;
+    }
+
+    /**
+     * Sets the priority.
+     *
+     * @param priority the new priority
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
 }

@@ -27,15 +27,40 @@ public interface SuperAdminSettingsWs extends IBaseWs {
 
     // provider
 
+    /**
+     * Create a new provider. Deprecated in 4.5. Use updateProvider() instead.
+     * 
+     * @param postData Provider information
+     * @return Request processing status
+     */
+    @Deprecated
     @WebMethod
     public ActionStatus createProvider(@WebParam(name = "provider") ProviderDto postData);
 
+    /**
+     * Retrieve provider information
+     * 
+     * @return Provider information
+     */
     @WebMethod
-    public GetProviderResponse findProvider(@WebParam(name = "providerCode") String providerCode);
+    public GetProviderResponse findProvider();
 
+    /**
+     * Update provider information.
+     * 
+     * @param postData Provider information
+     * @return Request processing status
+     */
     @WebMethod
     public ActionStatus updateProvider(@WebParam(name = "provider") ProviderDto postData);
 
+    /**
+     * Create or update a provider. Deprecated in 4.5. Use updateProvider() instead.
+     * 
+     * @param postData Provider information
+     * @return Request processing status
+     */
+    @Deprecated
     @WebMethod
     public ActionStatus createOrUpdateProvider(@WebParam(name = "provider") ProviderDto postData);
 
@@ -79,6 +104,7 @@ public interface SuperAdminSettingsWs extends IBaseWs {
     @WebMethod
     GetCountriesIsoResponse listIsoCountries();
 
+
     // currency
 
     @WebMethod
@@ -100,6 +126,7 @@ public interface SuperAdminSettingsWs extends IBaseWs {
     GetCurrenciesIsoResponse listIsoCurrencies();
 
     // files
+
     @WebMethod
     GetFilesResponseDto listAllFiles();
 

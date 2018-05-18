@@ -1,12 +1,13 @@
 {
 	"info": {
-		"name": "Opencell API",
-		"_postman_id": "9f75e54a-bc82-7ca7-e05f-f54065a47b38",
+		"_postman_id": "e0cce4df-1c6b-471a-beb2-41301e029ad1",
+		"name": "OpencellAPI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "ticket-2701",
+			"description": null,
 			"item": [
 				{
 					"name": "Subscription / Activate service",
@@ -140,6 +141,7 @@
 		},
 		{
 			"name": "ticket-2683",
+			"description": null,
 			"item": [
 				{
 					"name": "Admin / Files / Get / All",
@@ -195,8 +197,7 @@
 							"query": [
 								{
 									"key": "dir",
-									"value": "media",
-									"equals": true
+									"value": "media"
 								}
 							]
 						}
@@ -404,8 +405,7 @@
 							"query": [
 								{
 									"key": "file",
-									"value": "invoices/pdf/2017.08.23_Fact_40000000041.pdf",
-									"equals": true
+									"value": "invoices/pdf/2017.08.23_Fact_40000000041.pdf"
 								}
 							]
 						}
@@ -416,6 +416,7 @@
 		},
 		{
 			"name": "ticket-2741-Avatax",
+			"description": null,
 			"item": [
 				{
 					"name": "Ping",
@@ -840,6 +841,7 @@
 		},
 		{
 			"name": "ticket-2741-execute-fullcrud-first",
+			"description": null,
 			"item": [
 				{
 					"name": "Seller / Create",
@@ -1116,6 +1118,7 @@
 		},
 		{
 			"name": "ticket-2719",
+			"description": null,
 			"item": [
 				{
 					"name": "Subscription / Create",
@@ -1342,6 +1345,7 @@
 		},
 		{
 			"name": "ticket-2821",
+			"description": null,
 			"item": [
 				{
 					"name": "Subscription / 3 / Create A",
@@ -1606,23 +1610,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "code",
-									"equals": true
+									"value": "code"
 								},
 								{
 									"key": "sortOrder",
-									"value": "ASCENDING",
-									"equals": true
+									"value": "ASCENDING"
 								}
 							]
 						}
@@ -1681,23 +1681,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "code",
-									"equals": true
+									"value": "code"
 								},
 								{
 									"key": "sortOrder",
-									"value": "DESCENDING",
-									"equals": true
+									"value": "DESCENDING"
 								}
 							]
 						}
@@ -1756,28 +1752,23 @@
 							"query": [
 								{
 									"key": "userAccountCode",
-									"value": "WS_BASE_UA_3",
-									"equals": true
+									"value": "WS_BASE_UA_3"
 								},
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "code",
-									"equals": true
+									"value": "code"
 								},
 								{
 									"key": "sortOrder",
-									"value": "ASCENDING",
-									"equals": true
+									"value": "ASCENDING"
 								}
 							]
 						}
@@ -1836,28 +1827,23 @@
 							"query": [
 								{
 									"key": "userAccountCode",
-									"value": "WS_BASE_UA_3",
-									"equals": true
+									"value": "WS_BASE_UA_3"
 								},
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "code",
-									"equals": true
+									"value": "code"
 								},
 								{
 									"key": "sortOrder",
-									"value": "DESCENDING",
-									"equals": true
+									"value": "DESCENDING"
 								}
 							]
 						}
@@ -1916,23 +1902,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "userAccount.name",
-									"equals": true
+									"value": "userAccount.name"
 								},
 								{
 									"key": "sortOrder",
-									"value": "ASCENDING",
-									"equals": true
+									"value": "ASCENDING"
 								}
 							]
 						}
@@ -1991,23 +1973,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "userAccount.name",
-									"equals": true
+									"value": "userAccount.name"
 								},
 								{
 									"key": "sortOrder",
-									"value": "DESCENDING",
-									"equals": true
+									"value": "DESCENDING"
 								}
 							]
 						}
@@ -2066,23 +2044,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "offer.name",
-									"equals": true
+									"value": "offer.name"
 								},
 								{
 									"key": "sortOrder",
-									"value": "ASCENDING",
-									"equals": true
+									"value": "ASCENDING"
 								}
 							]
 						}
@@ -2141,23 +2115,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "offer.name",
-									"equals": true
+									"value": "offer.name"
 								},
 								{
 									"key": "sortOrder",
-									"value": "DESCENDING",
-									"equals": true
+									"value": "DESCENDING"
 								}
 							]
 						}
@@ -2216,23 +2186,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "subscriptionDate",
-									"equals": true
+									"value": "subscriptionDate"
 								},
 								{
 									"key": "sortOrder",
-									"value": "ASCENDING",
-									"equals": true
+									"value": "ASCENDING"
 								}
 							]
 						}
@@ -2291,23 +2257,19 @@
 							"query": [
 								{
 									"key": "numberOfRows",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								},
 								{
 									"key": "from",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "sortBy",
-									"value": "terminationDate",
-									"equals": true
+									"value": "terminationDate"
 								},
 								{
 									"key": "sortOrder",
-									"value": "ASCENDING",
-									"equals": true
+									"value": "ASCENDING"
 								}
 							]
 						}
@@ -2318,6 +2280,7 @@
 		},
 		{
 			"name": "ticket-2832",
+			"description": null,
 			"item": [
 				{
 					"name": "Subscription / Create",
@@ -2481,6 +2444,7 @@
 		},
 		{
 			"name": "ticket-2840",
+			"description": null,
 			"item": [
 				{
 					"name": "Order / Simple due date delay - invoiceDate",
@@ -2882,6 +2846,7 @@
 		},
 		{
 			"name": "ticket-2886",
+			"description": null,
 			"item": [
 				{
 					"name": "Account / CA / Get",
@@ -2909,13 +2874,11 @@
 							"query": [
 								{
 									"key": "customerAccountCode",
-									"value": "ben.ohara.CLASSIC",
-									"equals": true
+									"value": "ben.ohara.CLASSIC"
 								},
 								{
 									"key": "calculateBalances",
-									"value": "true",
-									"equals": true
+									"value": "true"
 								}
 							]
 						}
@@ -2955,13 +2918,11 @@
 							"query": [
 								{
 									"key": "customerAccountCode",
-									"value": "C_UA",
-									"equals": true
+									"value": "C_UA"
 								},
 								{
 									"key": "calculateBalances",
-									"value": "true",
-									"equals": true
+									"value": "true"
 								}
 							]
 						}
@@ -3033,6 +2994,7 @@
 		},
 		{
 			"name": "ticket-2892",
+			"description": null,
 			"item": [
 				{
 					"name": "Catalog / Offer / Create 1",
@@ -3250,8 +3212,7 @@
 							"query": [
 								{
 									"key": "validFrom",
-									"value": "2017-09-02",
-									"equals": true
+									"value": "2017-09-02"
 								}
 							]
 						}
@@ -3288,8 +3249,7 @@
 							"query": [
 								{
 									"key": "validFrom",
-									"value": "2017-09-14",
-									"equals": true
+									"value": "2017-09-14"
 								}
 							]
 						}
@@ -3326,8 +3286,7 @@
 							"query": [
 								{
 									"key": "validTo",
-									"value": "2017-09-15",
-									"equals": true
+									"value": "2017-09-15"
 								}
 							]
 						}
@@ -3364,13 +3323,11 @@
 							"query": [
 								{
 									"key": "validFrom",
-									"value": "2017-09-01",
-									"equals": true
+									"value": "2017-09-01"
 								},
 								{
 									"key": "validTo",
-									"value": "2017-09-14",
-									"equals": true
+									"value": "2017-09-14"
 								}
 							]
 						}
@@ -3381,6 +3338,7 @@
 		},
 		{
 			"name": "ticket-2613",
+			"description": null,
 			"item": [
 				{
 					"name": "Catalog / BSM / Create 1",
@@ -3541,6 +3499,7 @@
 		},
 		{
 			"name": "ticket-2896",
+			"description": null,
 			"item": [
 				{
 					"name": "Catalog / Offer / Create ",
@@ -3658,6 +3617,7 @@
 		},
 		{
 			"name": "ticket-2861",
+			"description": null,
 			"item": [
 				{
 					"name": "Account / AO / Create 4",
@@ -3934,8 +3894,7 @@
 							"query": [
 								{
 									"key": "customerAccountCode",
-									"value": "WS_BASE_CA_3",
-									"equals": true
+									"value": "WS_BASE_CA_3"
 								}
 							]
 						}
@@ -3997,18 +3956,15 @@
 							"query": [
 								{
 									"key": "customerAccountCode",
-									"value": "WS_BASE_CA_3",
-									"equals": true
+									"value": "WS_BASE_CA_3"
 								},
 								{
 									"key": "offset",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "limit",
-									"value": "5",
-									"equals": true
+									"value": "5"
 								}
 							]
 						}
@@ -4070,18 +4026,15 @@
 							"query": [
 								{
 									"key": "customerAccountCode",
-									"value": "WS_BASE_CA",
-									"equals": true
+									"value": "WS_BASE_CA"
 								},
 								{
 									"key": "offset",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "limit",
-									"value": "5",
-									"equals": true
+									"value": "5"
 								}
 							]
 						}
@@ -4092,6 +4045,7 @@
 		},
 		{
 			"name": "ticket-2816",
+			"description": null,
 			"item": [
 				{
 					"name": "Role / External / List",
@@ -4296,13 +4250,11 @@
 							"query": [
 								{
 									"key": "offset",
-									"value": "0",
-									"equals": true
+									"value": "0"
 								},
 								{
 									"key": "limist",
-									"value": "10",
-									"equals": true
+									"value": "10"
 								}
 							]
 						}
@@ -4358,8 +4310,7 @@
 							"query": [
 								{
 									"key": "username",
-									"value": "edward7",
-									"equals": true
+									"value": "edward7"
 								}
 							]
 						}
@@ -4421,6 +4372,1190 @@
 			]
 		},
 		{
+			"name": "test API for CGI",
+			"description": "",
+			"item": [
+				{
+					"name": "Payment",
+					"description": "",
+					"item": [
+						{
+							"name": "cardPaymentMethod |List",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"value": true,
+											"type": "boolean"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{opencell.url}}/payment/cardPaymentMethod/list?customerAccountCode=DEMO.CLASSIC",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"payment",
+										"cardPaymentMethod",
+										"list"
+									],
+									"query": [
+										{
+											"key": "customerAccountCode",
+											"value": "DEMO.CLASSIC"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add card Payment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"if(responseCode.code === 200){",
+											"    var jsonData = JSON.parse(responseBody);",
+											"    postman.setEnvironmentVariable(\"cardID\", jsonData.cardPaymentMethod.id);",
+											"}"
+										]
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"paymentMethodType\": \"CARD\",\r\n    \"id\": \"20\",\r\n    \"customerAccountCode\":\"DEMO.CLASSIC\",\r\n    \"alias\": \"Expired CC\",\r\n    \"preferred\": \"true\",\r\n    \"cardType\": \"AMERICAN_EXPRESS\",\r\n    \"owner\": \"Tony\",\r\n    \"monthExpiration\": \"12\",\r\n    \"yearExpiration\": \"21\",\r\n    \"tokenId\": \"\",\r\n    \"cardNumber\": \"4567456745674567\",\r\n    \"issueNumber\": \"\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/payment/cardPaymentMethod",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"payment",
+										"cardPaymentMethod"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Card Payment update",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": \"{{cardID}}\" ,\r\n    \"customerAccountCode\":\"DEMO.CLASSIC\",\r\n    \r\n    \"paymentMethodType\": \"CARD\",\r\n    \"alias\": \"QNB CC\",\r\n    \"preferred\": \"false\",\r\n    \"cardType\": \"AMERICAN_EXPRESS\",\r\n    \"owner\": \"Wassim\",\r\n    \"monthExpiration\": \"12\",\r\n    \"yearExpiration\": \"22\",\r\n    \"tokenId\": \"\",\r\n    \"cardNumber\": \"4567456745674567\",\r\n    \"issueNumber\": \"2019\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/payment/cardPaymentMethod",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"payment",
+										"cardPaymentMethod"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Card Payment Delete",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{opencell.url}}/payment/cardPaymentMethod?id={{cardID}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"payment",
+										"cardPaymentMethod"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{cardID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Subscription / ListALL / Ascending",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{opencell.url}}/billing/subscription/listAll?offset=0&limit=1&numberOfRows=10&from=0&sortBy=code&sortOrder=ASCENDING",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"subscription",
+								"listAll"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "numberOfRows",
+									"value": "10"
+								},
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "sortBy",
+									"value": "code"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASCENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subscription / List / Ascending copy",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{opencell.url}}/billing/subscription/list?userAccountCode=job.bonvi.CLASSIC&offset=0&limit=1&numberOfRows=10&from=0&sortBy=code&sortOrder=ASCENDING",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"subscription",
+								"list"
+							],
+							"query": [
+								{
+									"key": "userAccountCode",
+									"value": "job.bonvi.CLASSIC"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "numberOfRows",
+									"value": "10"
+								},
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "sortBy",
+									"value": "code"
+								},
+								{
+									"key": "sortOrder",
+									"value": "ASCENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listInvoiceByCustomerAccount",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{opencell.url}}/invoice/listInvoiceByCustomerAccount?customerAccountCode=DEMO.CLASSIC",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"invoice",
+								"listInvoiceByCustomerAccount"
+							],
+							"query": [
+								{
+									"key": "customerAccountCode",
+									"value": "DEMO.CLASSIC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Wallet Operation - Find",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userAccount\":\"DEMO.CLASSIC\"\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/billing/wallet/operation/find",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"wallet",
+								"operation",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer Payment",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{opencell.url}}/payment/customerPayment?customerAccountCode=DEMO.CLASSIC",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"payment",
+								"customerPayment"
+							],
+							"query": [
+								{
+									"key": "customerAccountCode",
+									"value": "DEMO.CLASSIC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "businessOfferModel - list",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/businessOfferModel/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"businessOfferModel",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "businessOfferModel - list copy",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/offerTemplate/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"offerTemplate",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quote Create (copy)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if(responseCode.code === 201){",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"quoteID\", jsonData.id);",
+									"    //console.log(\"quoteIDValue > \" + quoteID);",
+									"}",
+									"",
+									"tests[\"Response time is less than 200ms\"] = responseTime > 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"QU11\",\n  \"description\": \"Quote 11 (API)\",\n  \"quoteDate\": \"2017-10-13T12:21:01Z\",\n  \"quoteItem\": [\n    {\n      \"id\": \"QU11_01\",\n      \"productOffering\": {\n        \"id\": \"OF_CLASSIC_TEMPLATE\"\n      },\n      \"product\": {\n        \"productCharacteristic\": [\n          {\n            \"name\": \"subscriptionDate\",\n            \"value\": \"2017-03-23\"\n          }\n        ],\n        \"productRelationship\": [\n          {\n            \"type\": \"bundled\",\n            \"product\": {\n              \"productCharacteristic\": [\n                {\n                  \"name\": \"serviceCode\",\n                  \"value\": \"SE_CLASSIC_OSS_UNIT\"\n                },\n                {\n                  \"name\": \"quantity\",\n                  \"value\": \"1\"\n                },\n                {\n                  \"name\": \"subscriptionDate\",\n                  \"value\": \"2017-03-23\"\n                },\n                {\n                  \"name\": \"CF_CLASSIC_PRICE_OS\",\n                  \"value\": \"6.0\"\n                }\n              ]\n            }\n          },\n          {\n            \"type\": \"bundled\",\n            \"product\": {\n              \"productCharacteristic\": [\n                {\n                  \"name\": \"serviceCode\",\n                  \"value\": \"SE_CLASSIC_REC_FLAT\"\n                },\n                {\n                  \"name\": \"quantity\",\n                  \"value\": \"1\"\n                },\n                {\n                  \"name\": \"subscriptionDate\",\n                  \"value\": \"2017-03-23\"\n                },\n                {\n                  \"name\": \"CF_CLASSIC_PRICE_REC\",\n                  \"value\": \"9.0\"\n                }\n              ]\n            }\n          }\n        ]\n      },\n      \"billingAccount\": [\n        {\n          \"id\": \"job.bonvi.CLASSIC\"\n        }\n      ]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quoteManagement/productQuote/",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quoteManagement",
+								"productQuote",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quote Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if(responseCode.code === 201){",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"quoteID\", jsonData.id);",
+									"    //console.log(\"quoteIDValue > \" + quoteID);",
+									"}",
+									"",
+									"tests[\"Response time is less than 200ms\"] = responseTime > 200;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"QU11\",\n  \"description\": \"Quote 11 (API)\",\n  \"quoteDate\": \"2017-10-13T12:21:01Z\",\n  \"quoteItem\": [\n    {\n      \"id\": \"QU11_01\",\n      \"productOffering\": {\n        \"id\": \"OF_CLASSIC_TEMPLATE\"\n      },\n      \"product\": {\n        \"productCharacteristic\": [\n          {\n            \"name\": \"subscriptionDate\",\n            \"value\": \"2017-03-23\"\n          }\n        ],\n        \"productRelationship\": [\n          {\n            \"type\": \"bundled\",\n            \"product\": {\n              \"productCharacteristic\": [\n                {\n                  \"name\": \"serviceCode\",\n                  \"value\": \"SE_CLASSIC_OSS_UNIT\"\n                },\n                {\n                  \"name\": \"quantity\",\n                  \"value\": \"1\"\n                },\n                {\n                  \"name\": \"subscriptionDate\",\n                  \"value\": \"2017-03-23\"\n                },\n                {\n                  \"name\": \"CF_CLASSIC_PRICE_OS\",\n                  \"value\": \"6.0\"\n                }\n              ]\n            }\n          },\n          {\n            \"type\": \"bundled\",\n            \"product\": {\n              \"productCharacteristic\": [\n                {\n                  \"name\": \"serviceCode\",\n                  \"value\": \"SE_CLASSIC_REC_FLAT\"\n                },\n                {\n                  \"name\": \"quantity\",\n                  \"value\": \"1\"\n                },\n                {\n                  \"name\": \"subscriptionDate\",\n                  \"value\": \"2017-03-23\"\n                },\n                {\n                  \"name\": \"CF_CLASSIC_PRICE_REC\",\n                  \"value\": \"9.0\"\n                }\n              ]\n            }\n          }\n        ]\n      },\n      \"billingAccount\": [\n        {\n          \"id\": \"job.bonvi.CLASSIC\"\n        }\n      ]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quoteManagement/productQuote/",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quoteManagement",
+								"productQuote",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quote GET",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \"id\": \"QU11\",  \"description\": \"Quote 11 (API)\",  \"quoteDate\": \"2017-03-23T12:21:01Z\",  \"quoteItem\": [    {      \"id\": \"QU11_01\",      \"productOffering\": {        \"id\": \"OF_CLASSIC_TEMPLATE\"      },      \"product\": {        \"productCharacteristic\": [          {            \"name\": \"subscriptionDate\",            \"value\": \"2017-03-23\"          }        ],        \"productRelationship\": [          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_OSS_UNIT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_OS\",                  \"value\": \"6.0\"                }              ]            }          },          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_REC_FLAT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_REC\",                  \"value\": \"9.0\"                }              ]            }          }        ]      },      \"billingAccount\": [        {          \"id\": \"DEMO.CLASSIC\"        }      ]    }  ]}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quoteManagement/productQuote/{{quoteID}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quoteManagement",
+								"productQuote",
+								"{{quoteID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quote Place order",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quoteManagement/productQuote/placeOrder/{{quoteID}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quoteManagement",
+								"productQuote",
+								"placeOrder",
+								"{{quoteID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quote DELETE",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \"id\": \"QU11\",  \"description\": \"Quote 11 (API)\",  \"quoteDate\": \"2017-03-23T12:21:01Z\",  \"quoteItem\": [    {      \"id\": \"QU11_01\",      \"productOffering\": {        \"id\": \"OF_CLASSIC_TEMPLATE\"      },      \"product\": {        \"productCharacteristic\": [          {            \"name\": \"subscriptionDate\",            \"value\": \"2017-03-23\"          }        ],        \"productRelationship\": [          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_OSS_UNIT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_OS\",                  \"value\": \"6.0\"                }              ]            }          },          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_REC_FLAT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_REC\",                  \"value\": \"9.0\"                }              ]            }          }        ]      },      \"billingAccount\": [        {          \"id\": \"DEMO.CLASSIC\"        }      ]    }  ]}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quoteManagement/productQuote/11925cdd-c456-41c6-86db-8f1c681644f2",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quoteManagement",
+								"productQuote",
+								"11925cdd-c456-41c6-86db-8f1c681644f2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "JOB",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "code",
+								"value": "M_Job",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \"id\": \"QU11\",  \"description\": \"Quote 11 (API)\",  \"quoteDate\": \"2017-03-23T12:21:01Z\",  \"quoteItem\": [    {      \"id\": \"QU11_01\",      \"productOffering\": {        \"id\": \"OF_CLASSIC_TEMPLATE\"      },      \"product\": {        \"productCharacteristic\": [          {            \"name\": \"subscriptionDate\",            \"value\": \"2017-03-23\"          }        ],        \"productRelationship\": [          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_OSS_UNIT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_OS\",                  \"value\": \"6.0\"                }              ]            }          },          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_REC_FLAT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_REC\",                  \"value\": \"9.0\"                }              ]            }          }        ]      },      \"billingAccount\": [        {          \"id\": \"DEMO.CLASSIC\"        }      ]    }  ]}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job?jobInstanceCode=RT_Job",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job"
+							],
+							"query": [
+								{
+									"key": "jobInstanceCode",
+									"value": "RT_Job"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "M_JOB",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "code",
+								"value": "M_Job",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \"id\": \"QU11\",  \"description\": \"Quote 11 (API)\",  \"quoteDate\": \"2017-03-23T12:21:01Z\",  \"quoteItem\": [    {      \"id\": \"QU11_01\",      \"productOffering\": {        \"id\": \"OF_CLASSIC_TEMPLATE\"      },      \"product\": {        \"productCharacteristic\": [          {            \"name\": \"subscriptionDate\",            \"value\": \"2017-03-23\"          }        ],        \"productRelationship\": [          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_OSS_UNIT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_OS\",                  \"value\": \"6.0\"                }              ]            }          },          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_REC_FLAT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_REC\",                  \"value\": \"9.0\"                }              ]            }          }        ]      },      \"billingAccount\": [        {          \"id\": \"DEMO.CLASSIC\"        }      ]    }  ]}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job?jobInstanceCode=RT_Job",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job"
+							],
+							"query": [
+								{
+									"key": "jobInstanceCode",
+									"value": "RT_Job"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT - M_JOB",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "code",
+								"value": "M_Job",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \"id\": \"QU11\",  \"description\": \"Quote 11 (API)\",  \"quoteDate\": \"2017-03-23T12:21:01Z\",  \"quoteItem\": [    {      \"id\": \"QU11_01\",      \"productOffering\": {        \"id\": \"OF_CLASSIC_TEMPLATE\"      },      \"product\": {        \"productCharacteristic\": [          {            \"name\": \"subscriptionDate\",            \"value\": \"2017-03-23\"          }        ],        \"productRelationship\": [          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_OSS_UNIT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_OS\",                  \"value\": \"6.0\"                }              ]            }          },          {            \"type\": \"bundled\",            \"product\": {              \"productCharacteristic\": [                {                  \"name\": \"serviceCode\",                  \"value\": \"SE_CLASSIC_REC_FLAT\"                },                {                  \"name\": \"quantity\",                  \"value\": \"1\"                },                {                  \"name\": \"subscriptionDate\",                  \"value\": \"2017-03-23\"                },                {                  \"name\": \"CF_CLASSIC_PRICE_REC\",                  \"value\": \"9.0\"                }              ]            }          }        ]      },      \"billingAccount\": [        {          \"id\": \"DEMO.CLASSIC\"        }      ]    }  ]}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job?jobInstanceCode=RT_Job",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job"
+							],
+							"query": [
+								{
+									"key": "jobInstanceCode",
+									"value": "RT_Job"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Seller / Get",
 			"request": {
 				"method": "GET",
@@ -4445,8 +5580,7 @@
 					"query": [
 						{
 							"key": "sellerCode",
-							"value": "KALIDAD",
-							"equals": true
+							"value": "KALIDAD"
 						}
 					]
 				}
@@ -4478,8 +5612,7 @@
 					"query": [
 						{
 							"key": "countryCode",
-							"value": "US",
-							"equals": true
+							"value": "US"
 						}
 					]
 				}
@@ -4560,13 +5693,11 @@
 					"query": [
 						{
 							"key": "subscriptionCode",
-							"value": "CF_3_INHERITED_SUBSCRIPTION",
-							"equals": true
+							"value": "CF_3_INHERITED_SUBSCRIPTION"
 						},
 						{
 							"key": "mergedCF",
-							"value": "true",
-							"equals": true
+							"value": "true"
 						}
 					]
 				}
@@ -4619,18 +5750,15 @@
 					"query": [
 						{
 							"key": "mergedCF",
-							"value": "true",
-							"equals": true
+							"value": "true"
 						},
 						{
 							"key": "sortBy",
-							"value": "id",
-							"equals": true
+							"value": "id"
 						},
 						{
 							"key": "sortOrder",
-							"value": "DESCENDING",
-							"equals": true
+							"value": "DESCENDING"
 						}
 					]
 				}
@@ -4690,23 +5818,42 @@
 					"query": [
 						{
 							"key": "mergedCF",
-							"value": "true",
-							"equals": true
+							"value": "true"
 						},
 						{
 							"key": "sortBy",
-							"value": "code",
-							"equals": true
+							"value": "code"
 						},
 						{
 							"key": "sortOrder",
-							"value": "DESCENDING",
-							"equals": true
+							"value": "DESCENDING"
 						}
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b0157dd6-885b-4aff-90ac-ecbc01ea7120",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "cedcd094-09c3-4cf6-a9ed-461655755556",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

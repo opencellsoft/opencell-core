@@ -9,32 +9,59 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseDto;
 
-
+/**
+ * The Class CdrListDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "CdrList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CdrListDto extends BaseDto {
 
-	private static final long serialVersionUID = 8776429565161215766L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 8776429565161215766L;
 
-	private List<String> cdr;
+    /** The cdr. */
+    private List<String> cdr;
 
-	@XmlTransient
-	private String ipAddress;
+    /** The ip address. */
+    @XmlTransient
+    private String ipAddress;
 
-	public List<String> getCdr() {
-		return cdr;
-	}
+    /**
+     * Gets the cdr.
+     *
+     * @return the cdr
+     */
+    public List<String> getCdr() {
+        return cdr;
+    }
 
-	public void setCdr(List<String> cdr) {
-		this.cdr = cdr;
-	}
+    /**
+     * Sets the cdr.
+     *
+     * @param cdr the new cdr
+     */
+    public void setCdr(List<String> cdr) {
+        this.cdr = cdr;
+    }
 
-	public String getIpAddress() {
-		return ipAddress;
-	}
+    /**
+     * Gets the ip address.
+     *
+     * @return the ip address
+     */
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
+    /**
+     * Sets the ip address.
+     *
+     * @param ipAddress the new ip address
+     */
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 
 }

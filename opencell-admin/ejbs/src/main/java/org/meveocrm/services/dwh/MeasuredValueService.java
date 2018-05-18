@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.model.dwh.MeasurableQuantity;
@@ -28,17 +27,7 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
      * @return MeasuredValue
      */
     public MeasuredValue getByDate(Date date, MeasurementPeriodEnum period, MeasurableQuantity mq) {
-        return getByDate(getEntityManager(), date, period, mq);
-    }
-
-    /**
-     * @param em EntityManager
-     * @param date date
-     * @param period MeasurementPeriodEnum
-     * @param mq MeasurableQuantity
-     * @return MeasuredValue
-     */
-    public MeasuredValue getByDate(EntityManager em, Date date, MeasurementPeriodEnum period, MeasurableQuantity mq) {
+   
         MeasuredValue result = null;
         // QueryBuilder queryBuilder = new QueryBuilder(MeasuredValue.class, " m ");
         // queryBuilder.addCriterionDate("m.date", date);
@@ -153,10 +142,10 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
         }
         if (toDate != null) {
             if (!whereExists) {
-                sqlQuery += "m.date >= :toDate ";
+                sqlQuery += "m.date < :toDate ";
                 whereExists = true;
             } else {
-                sqlQuery += "and m.date >= :toDate ";
+                sqlQuery += "and m.date < :toDate ";
             }
         }
 

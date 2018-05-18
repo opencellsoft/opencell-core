@@ -148,11 +148,6 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
         return entity;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -163,26 +158,21 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
         return outcome;
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
     @Override
     protected IPersistenceService<OtherCreditAndCharge> getPersistenceService() {
         return otherCreditAndChargeService;
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#back()
-     */
     @Override
     public String back() {
         return "customerAccountDetail";
     }
 
     /**
+     * Load from template payment check
      * 
-     * @param customerAccountId
-     * @return
+     * @param customerAccountId Customer acount id
+     * @return Next view name
      */
     public String loadFromTemplatePaymentCheck(Long customerAccountId) {
         String occTemplatePaymentCode = paramBeanFactory.getInstance().getProperty("occ.templatePaymentCheckCode", "PAY_CHK");
@@ -195,28 +185,31 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
     }
 
     /**
-     * @param customerAccountId
-     * @return
+     * Load from template reject payment
+     * 
+     * @param customerAccountId Customer account id
+     * @return Next view name
      */
     public String loadFromTemplateRejectPayment(Long customerAccountId) {
         return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplateRejectPayment" + "&edit=true&faces-redirect=true&includeViewParams=true";
 
     }
 
-	/**
-	 * @param occ
-	 * @param customerAccountId
-	 */
-	private void copyFromTemplate(OCCTemplate occ) {
-		entity = new OtherCreditAndCharge();
-		entity.setCustomerAccount(customerAccount);
-		if (occ != null) {
-			entity.setOccCode(occ.getCode());
-			entity.setOccDescription(occ.getDescription());
-			entity.setAccountingCode(occ.getAccountingCode());
-			entity.setTransactionCategory(occ.getOccCategory());
-			entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
-		}
+    /**
+     * Copy from template
+     * 
+     * @param occ OCC template
+     */
+    private void copyFromTemplate(OCCTemplate occ) {
+        entity = new OtherCreditAndCharge();
+        entity.setCustomerAccount(customerAccount);
+        if (occ != null) {
+            entity.setOccCode(occ.getCode());
+            entity.setOccDescription(occ.getDescription());
+            entity.setAccountingCode(occ.getAccountingCode());
+            entity.setTransactionCategory(occ.getOccCategory());
+            entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
+        }
 
         entity.setMatchingStatus(MatchingStatusEnum.O);
         entity.setDueDate(new Date());

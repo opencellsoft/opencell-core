@@ -472,7 +472,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      */
     public void cftsByAppliesToClear() {
         String currentProvider = currentUser.getProviderCode();
-        log.info("cftsByAppliesToClear() => " + currentProvider + "." + currentUser.toString());
+        log.info("Clear CFTS cache for {}/{} ", currentProvider, currentUser);
         // cftsByAppliesTo.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
         Iterator<Entry<CacheKeyStr, Map<String, CustomFieldTemplate>>> iter = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
         ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();

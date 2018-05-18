@@ -27,12 +27,12 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.SimpleQueryStringBuilder.Operator;
 import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
@@ -46,10 +46,9 @@ import org.slf4j.Logger;
 
 /**
  * Provides functionality to interact with Elastic Search cluster
- * 
+ *
  * @author Andrius Karpavicius
  * @lastModifiedVersion 5.0
- * 
  */
 @Stateless
 public class ElasticClient {
@@ -88,7 +87,7 @@ public class ElasticClient {
 
     /**
      * Store and index entity in Elastic Search. In case of update, a full update will be performed unless it is configured in elasticSearchConfiguration.json to always do upsert.
-     * 
+     *
      * @param entity Entity to store in Elastic Search
      */
     public void createOrFullUpdate(ISearchable entity) {
@@ -98,7 +97,7 @@ public class ElasticClient {
 
     /**
      * Apply a partial update to the entity in Elastic Search
-     * 
+     *
      * @param entity Entity to store in Elastic Search via partial update
      */
     public void partialUpdate(ISearchable entity) {
@@ -107,9 +106,9 @@ public class ElasticClient {
 
     /**
      * Apply a partial update to the entity in Elastic Search. Used to update CF field values of an entity
-     * 
-     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
-     * @param fieldName Field name
+     *
+     * @param entity     Entity corresponding to a document in Elastic Search. Is used to construct document id only
+     * @param fieldName  Field name
      * @param fieldValue Field value
      */
     public void partialUpdate(ISearchable entity, String fieldName, Object fieldValue) {
@@ -121,8 +120,8 @@ public class ElasticClient {
 
     /**
      * Apply a partial update to the entity in Elastic Search
-     * 
-     * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
+     *
+     * @param entity         Entity corresponding to a document in Elastic Search. Is used to construct document id only
      * @param fieldsToUpdate A map of fieldname and values to update in entity
      */
     public void partialUpdate(ISearchable entity, Map<String, Object> fieldsToUpdate) {
@@ -143,7 +142,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            id = cleanUpCode(buildId(entity));
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, index, type, id, entity.getClass(), fieldsToUpdate);
             queuedChanges.addChange(change);
@@ -157,10 +156,10 @@ public class ElasticClient {
 
     /**
      * Store and index entity in Elastic Search
-     * 
-     * @param entity Entity to store in Elastic Search
+     *
+     * @param entity        Entity to store in Elastic Search
      * @param partialUpdate Should it be treated as partial update instead of replace if document exists. This value can be overridden in elasticSearchConfiguration.json to always
-     *        do upsert.
+     *                      do upsert.
      */
     private void createOrUpdate(ISearchable entity, boolean partialUpdate) {
 
@@ -180,7 +179,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            id = cleanUpCode(buildId(entity));
             boolean upsert = esConfiguration.isDoUpsert(entity);
 
             ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
@@ -199,7 +198,7 @@ public class ElasticClient {
 
     /**
      * Remove entity from Elastic Search
-     * 
+     *
      * @param entity Entity to remove from Elastic Search
      */
     public void remove(ISearchable entity) {
@@ -220,7 +219,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            id = cleanUpCode(buildId(entity));
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, index, type, id, entity.getClass(), null);
             queuedChanges.addChange(change);
@@ -274,10 +273,10 @@ public class ElasticClient {
             for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
                 if (bulkItemResponse.getFailureMessage() != null) {
                     log.error("Failed to process {} in Elastic Search for {}/{}/{} reason: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(),
-                        bulkItemResponse.getType(), bulkItemResponse.getId(), bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
+                            bulkItemResponse.getType(), bulkItemResponse.getId(), bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
                 } else {
                     log.debug("Processed {} in Elastic Search for {}/{}/{} version: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(), bulkItemResponse.getType(),
-                        bulkItemResponse.getId(), bulkItemResponse.getVersion());
+                            bulkItemResponse.getId(), bulkItemResponse.getVersion());
                 }
             }
 
@@ -290,8 +289,8 @@ public class ElasticClient {
 
     /**
      * Execute a search compatible primefaces data table component search
-     * 
-     * @param paginationConfig Query, pagination and sorting configuration
+     *
+     * @param paginationConfig     Query, pagination and sorting configuration
      * @param classnamesOrCetCodes An array of full classnames or CET codes
      * @return Json result
      * @throws BusinessException business exception
@@ -310,7 +309,7 @@ public class ElasticClient {
         // Search either by a field
         if (StringUtils.isBlank(paginationConfig.getFullTextFilter()) && paginationConfig.getFilters() != null && !paginationConfig.getFilters().isEmpty()) {
             return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
-                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+                    returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         } else {
             return search(paginationConfig.getFullTextFilter(), null, paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(),
                     sortOrder, returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
@@ -319,18 +318,18 @@ public class ElasticClient {
 
     /**
      * Execute a search on all fields (_all field)
-     * 
-     * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
-     * @param category - search by category that is directly taken from the name of the entity found in entityMapping.
-     *                 property of elasticSearchConfiguration.json.
-     *                 e.g. Customer, CustomerAccount, AccountOperation, etc.
-     *                 See elasticSearchConfiguration.json entityMapping keys for a list of categories.
-     * @param from Pagination - starting record
-     * @param size Pagination - number of records per page
-     * @param sortField - Field to sort by. If omitted, will sort by score.
-     * @param sortOrder Sorting order
+     *
+     * @param query        Query - words (will be joined by AND) or query expression (+word1 - word2)
+     * @param category     - search by category that is directly taken from the name of the entity found in entityMapping.
+     *                     property of elasticSearchConfiguration.json.
+     *                     e.g. Customer, CustomerAccount, AccountOperation, etc.
+     *                     See elasticSearchConfiguration.json entityMapping keys for a list of categories.
+     * @param from         Pagination - starting record
+     * @param size         Pagination - number of records per page
+     * @param sortField    - Field to sort by. If omitted, will sort by score.
+     * @param sortOrder    Sorting order
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match
+     * @param classInfo    Entity classes to match
      * @return Json result
      * @throws BusinessException business exception
      */
@@ -370,7 +369,7 @@ public class ElasticClient {
 
         SearchRequestBuilder reqBuilder = esConnection.getClient().prepareSearch(indexes.toArray(new String[0]));
 
-        if (!StringUtils.isBlank(category)){
+        if (!StringUtils.isBlank(category)) {
             String[] categories = new String[]{category};
             reqBuilder.setTypes(categories);
         } else if (types != null) {
@@ -407,19 +406,19 @@ public class ElasticClient {
 
     /**
      * Execute a search on given fields for given values
-     * 
-     * @param queryValues Fields and values to match
-     * @param from Pagination - starting record
-     * @param size Pagination - number of records per page
-     * @param sortField - Field to sort by. If omitted, will sort by score.
-     * @param sortOrder Sorting order
+     *
+     * @param queryValues  Fields and values to match
+     * @param from         Pagination - starting record
+     * @param size         Pagination - number of records per page
+     * @param sortField    - Field to sort by. If omitted, will sort by score.
+     * @param sortOrder    Sorting order
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match
+     * @param classInfo    Entity classes to match
      * @return Json result
      * @throws BusinessException business exception
      */
     public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
-            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+                         List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return "{}";
@@ -505,7 +504,7 @@ public class ElasticClient {
 
     /**
      * Get a list of entity classes that is managed by Elastic Search
-     * 
+     *
      * @return A list of entity simple classnames
      */
     public Set<String> getEntityClassesManaged() {
@@ -574,7 +573,7 @@ public class ElasticClient {
 
     /**
      * Recreate index.
-     * 
+     *
      * @throws BusinessException business exception
      */
     public void createIndexes() throws BusinessException {
@@ -588,7 +587,7 @@ public class ElasticClient {
 
     /**
      * Update Elastic Search model with custom entity template definition
-     * 
+     *
      * @param cet Custom entity template
      * @throws BusinessException business exception
      */
@@ -603,7 +602,7 @@ public class ElasticClient {
 
     /**
      * Update Elastic Search model with custom field definition
-     * 
+     *
      * @param cft Custom field template
      * @throws BusinessException business exception
      */
@@ -630,9 +629,9 @@ public class ElasticClient {
 
     /**
      * Convert classnames (full or simple name) or CET codes into ElasticSearchClassInfo object containing info for search scope (index and type) calculation
-     * 
+     *
      * @param classnamesOrCetCodes An array of classnames (full or simple name) or CET codes
-     * @param ignoreUnknownNames Should unknown classnames or CET codes throw an exception?
+     * @param ignoreUnknownNames   Should unknown classnames or CET codes throw an exception?
      * @return list of elastic search class info.
      * @throws BusinessException business exception
      */
@@ -660,11 +659,11 @@ public class ElasticClient {
 
     /**
      * Convert classname (full or simple name) or CET code into a information used to determine index and type in Elastic Search
-     * 
+     *
      * @param classnameOrCetCode Classname (full or simple name ) or CET code
      * @return Information used to determine index and type in Elastic Search
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode) {
         ElasticSearchClassInfo classInfo = null;
         try {
@@ -697,5 +696,13 @@ public class ElasticClient {
             }
         }
         return classInfo;
+    }
+
+    protected static String buildId(ISearchable entity) {
+        if (entity instanceof BusinessEntity) {
+            return entity.getCode();
+        } else {
+            return entity.getCode() + "__" + entity.getId();
+        }
     }
 }

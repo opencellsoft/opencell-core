@@ -36,7 +36,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
@@ -44,7 +44,7 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "ar_matching_code")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_matching_code_seq"), })
-public class MatchingCode extends EnableEntity {
+public class MatchingCode extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 

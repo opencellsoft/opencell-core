@@ -14,76 +14,146 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.model.catalog.BusinessProductModel;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 
+/**
+ * The Class ProductTemplateDto.
+ * 
+ * @author anasseh
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "ProductTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductTemplateDto extends ProductOfferingDto implements Serializable {
 
-	private static final long serialVersionUID = 1866373944715745993L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1866373944715745993L;
 
-	@XmlElementWrapper(name = "productChargeTemplates")
-	@XmlElement(name = "productChargeTemplate", required = true)
-	private List<ProductChargeTemplateDto> productChargeTemplates;
+    /** The product charge templates. */
+    @XmlElementWrapper(name = "productChargeTemplates")
+    @XmlElement(name = "productChargeTemplate", required = true)
+    private List<ProductChargeTemplateDto> productChargeTemplates;
 
-	private BusinessProductModelDto businessProductModel;
+    /** The business product model. */
+    private BusinessProductModelDto businessProductModel;
 
-	@XmlElementWrapper(name = "walletTemplates")
-	@XmlElement(name = "walletTemplate")
-	private List<WalletTemplateDto> walletTemplates;
+    /** The wallet templates. */
+    @XmlElementWrapper(name = "walletTemplates")
+    @XmlElement(name = "walletTemplate")
+    private List<WalletTemplateDto> walletTemplates;
 
-	public ProductTemplateDto() {
-	}
+    /**
+     * Instantiates a new product template dto.
+     */
+    public ProductTemplateDto() {
+    }
 
-	public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+    /**
+     * Instantiates a new product template dto.
+     *
+     * @param productTemplate the product template
+     * @param customFieldsDto the custom fields dto
+     * @param asLink the as link
+     * @param loadProductChargeTemplate whether to load the product charge template or not
+     */
+	public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto, boolean asLink, boolean loadProductChargeTemplate) {
 		super(productTemplate, customFieldsDto, asLink);
-
-		if (asLink){
-		    return;
-		}
 		
-		BusinessProductModel businessProductModel = productTemplate.getBusinessProductModel();
-		BusinessProductModelDto businessProductModelDto = null;
-		if (businessProductModel != null) {
-			businessProductModelDto = new BusinessProductModelDto(businessProductModel);
-		}
-		this.setBusinessProductModel(businessProductModelDto);
-		List<WalletTemplate> walletTemplates = productTemplate.getWalletTemplates();
-		if (walletTemplates != null && !walletTemplates.isEmpty()) {
-			WalletTemplateDto walletDto = null;
-			this.setWalletTemplates(new ArrayList<WalletTemplateDto>());
-			for (WalletTemplate walletTemplate : walletTemplates) {
-				walletDto = new WalletTemplateDto(walletTemplate);
-				this.getWalletTemplates().add(walletDto);
-			}
-		}
-	}
+        // set serviceChargeTemplateRecurrings
+        if (loadProductChargeTemplate && !productTemplate.getProductChargeTemplates().isEmpty()) {
+            productChargeTemplates = new ArrayList<>();
 
-	public List<ProductChargeTemplateDto> getProductChargeTemplates() {
-		return productChargeTemplates;
-	}
-	
-	public void setProductChargeTemplates(List<ProductChargeTemplateDto> productChargeTemplates) {
-		this.productChargeTemplates = productChargeTemplates;
-	}
+            for (ProductChargeTemplate charge : productTemplate.getProductChargeTemplates()) {
+                ProductChargeTemplateDto dto = new ProductChargeTemplateDto();
+                dto.setCode(charge.getCode());
 
-	public BusinessProductModelDto getBusinessProductModel() {
-		return businessProductModel;
-	}
+                productChargeTemplates.add(dto);
+            }
+        }
 
-	public void setBusinessProductModel(BusinessProductModelDto businessProductModel) {
-		this.businessProductModel = businessProductModel;
-	}
+        if (asLink) {
+            return;
+        }
 
-	public List<WalletTemplateDto> getWalletTemplates() {
-		return walletTemplates;
-	}
+        BusinessProductModel businessProductModel = productTemplate.getBusinessProductModel();
+        BusinessProductModelDto businessProductModelDto = null;
+        if (businessProductModel != null) {
+            businessProductModelDto = new BusinessProductModelDto(businessProductModel);
+        }
+        this.setBusinessProductModel(businessProductModelDto);
+        List<WalletTemplate> walletTemplates = productTemplate.getWalletTemplates();
+        if (walletTemplates != null && !walletTemplates.isEmpty()) {
+            WalletTemplateDto walletDto = null;
+            this.setWalletTemplates(new ArrayList<WalletTemplateDto>());
+            for (WalletTemplate walletTemplate : walletTemplates) {
+                walletDto = new WalletTemplateDto(walletTemplate);
+                this.getWalletTemplates().add(walletDto);
+            }
+        }
+    }
 
-	public void setWalletTemplates(List<WalletTemplateDto> walletTemplates) {
-		this.walletTemplates = walletTemplates;
-	}
+    /**
+     * Gets the product charge templates.
+     *
+     * @return the product charge templates
+     */
+    public List<ProductChargeTemplateDto> getProductChargeTemplates() {
+        return productChargeTemplates;
+    }
 
+    /**
+     * Sets the product charge templates.
+     *
+     * @param productChargeTemplates the new product charge templates
+     */
+    public void setProductChargeTemplates(List<ProductChargeTemplateDto> productChargeTemplates) {
+        this.productChargeTemplates = productChargeTemplates;
+    }
+
+    /**
+     * Gets the business product model.
+     *
+     * @return the business product model
+     */
+    public BusinessProductModelDto getBusinessProductModel() {
+        return businessProductModel;
+    }
+
+    /**
+     * Sets the business product model.
+     *
+     * @param businessProductModel the new business product model
+     */
+    public void setBusinessProductModel(BusinessProductModelDto businessProductModel) {
+        this.businessProductModel = businessProductModel;
+    }
+
+    /**
+     * Gets the wallet templates.
+     *
+     * @return the wallet templates
+     */
+    public List<WalletTemplateDto> getWalletTemplates() {
+        return walletTemplates;
+    }
+
+    /**
+     * Sets the wallet templates.
+     *
+     * @param walletTemplates the new wallet templates
+     */
+    public void setWalletTemplates(List<WalletTemplateDto> walletTemplates) {
+        this.walletTemplates = walletTemplates;
+    }
+
+    /**
+     * Checks if is code only.
+     *
+     * @return true, if is code only
+     */
     public boolean isCodeOnly() {
         return StringUtils.isBlank(getDescription()) && (productChargeTemplates == null || productChargeTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
     }

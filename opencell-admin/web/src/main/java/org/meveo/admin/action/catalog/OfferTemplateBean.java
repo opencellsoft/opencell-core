@@ -264,6 +264,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     /**
      * delete all entities related to Offer( used only for Marketing Manager)
+     * 
+     * @param entity offer template entity 
      */
     @ActionMethod
     public void deleteCatalogHierarchy(OfferTemplate entity) {
@@ -776,6 +778,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             for (BusinessServiceModel bsm : selectedBsms) {
                 OfferServiceTemplate ost = new OfferServiceTemplate();
                 ServiceTemplate stSource = bsm.getServiceTemplate();
+                stSource = serviceTemplateService.refreshOrRetrieve(stSource);
 
                 ServiceTemplate stTarget = new ServiceTemplate();
                 stTarget.setCode(stSource.getCode());

@@ -34,7 +34,7 @@ import org.primefaces.model.SortOrder;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.0 
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class PaymentMethodApi extends BaseApi {
@@ -42,11 +42,10 @@ public class PaymentMethodApi extends BaseApi {
     /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
-    
+
     /** The customer service. */
     @Inject
     private CustomerService customerService;
-
 
     /** The payment method service. */
     @Inject
@@ -63,7 +62,8 @@ public class PaymentMethodApi extends BaseApi {
      * @throws BusinessException the business exception
      */
     public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-        validate(paymentMethodDto,true);
+        validate(paymentMethodDto, true);
+
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
@@ -88,6 +88,7 @@ public class PaymentMethodApi extends BaseApi {
             missingParameters.add("Id");
         }
         handleMissingParameters();
+
         PaymentMethod paymentMethod = null;
         paymentMethod = paymentMethodService.findById(paymentMethodDto.getId());
         if (paymentMethod == null) {
@@ -188,13 +189,14 @@ public class PaymentMethodApi extends BaseApi {
         return new PaymentMethodDto(paymentMethod);
 
     }
-    
+
     /**
      * Validate the PaymentMethodDto.
+     * 
      * @param paymentMethodDto paymentMethodDto to check.
      * @param isRoot is the root Dto or sub Dto.
      */
-    public void validate(PaymentMethodDto paymentMethodDto,boolean isRoot) {
+    public void validate(PaymentMethodDto paymentMethodDto, boolean isRoot) {
         PaymentMethodEnum type = paymentMethodDto.getPaymentMethodType();
         if (type == null) {
             throw new InvalidDTOException("Missing payment method type");
@@ -235,7 +237,7 @@ public class PaymentMethodApi extends BaseApi {
 
         if (paymentMethodDto.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
             // Start compatibility with pre-4.6 versions
-            if ( paymentMethodDto.getMandateIdentification() == null && bankCoordinates == null) {
+            if (paymentMethodDto.getMandateIdentification() == null && bankCoordinates == null) {
                 throw new InvalidDTOException("Missing Bank coordinates or MandateIdentification.");
             }
 
@@ -246,14 +248,14 @@ public class PaymentMethodApi extends BaseApi {
 
                 if (StringUtils.isBlank(bankCoordinates.getBankName())) {
                     throw new InvalidDTOException("Missing bank name.");
-                }               
+                }
                 CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
                 org.meveo.model.crm.Customer cust = null;
-                if(customerAccount == null) {                    
+                if (customerAccount == null) {
                     cust = customerService.findByCode(paymentMethodDto.getCustomerCode());
-                }else {
+                } else {
                     cust = customerAccount.getCustomer();
-                }                
+                }
                 if (StringUtils.isBlank(bankCoordinates.getBic()) && customerService.isBicRequired(cust, bankCoordinates.getIban())) {
                     throw new InvalidDTOException("Missing BIC.");
                 }
@@ -272,5 +274,32 @@ public class PaymentMethodApi extends BaseApi {
             // End of compatibility with pre-4.6 versions
         }
 
+    }
+
+    /**
+     * Enable or disable Payment method
+     * 
+     * @param id Payment method identifier
+     * @param enable Should Trading currency be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(Long id, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (id == null) {
+            missingParameters.add("id");
+        }
+        handleMissingParameters();
+
+        PaymentMethod paymentMethod = paymentMethodService.findById(id);
+        if (paymentMethod == null) {
+            throw new EntityDoesNotExistsException(PaymentMethod.class, id);
+        }
+        if (enable) {
+            paymentMethodService.enable(paymentMethod);
+        } else {
+            paymentMethodService.disable(paymentMethod);
+        }
     }
 }

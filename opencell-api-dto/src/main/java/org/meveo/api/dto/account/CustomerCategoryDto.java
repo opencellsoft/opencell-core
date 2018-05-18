@@ -8,66 +8,100 @@ import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.crm.CustomerCategory;
 
 /**
+ * The Class CustomerCategoryDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CustomerCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerCategoryDto extends BusinessDto{
+public class CustomerCategoryDto extends BusinessDto {
 
-	private static final long serialVersionUID = -8778571285967620018L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8778571285967620018L;
 
-	private Boolean exoneratedFromTaxes;
-	private String exonerationTaxEl;
-	private String exonerationReason;
-	
+    /** The exonerated from taxes. */
+    private Boolean exoneratedFromTaxes;
+    
+    /** The exoneration tax el. */
+    private String exonerationTaxEl;
+    
+    /** The exoneration reason. */
+    private String exonerationReason;
 
-	public CustomerCategoryDto() {
+    /**
+     * Instantiates a new customer category dto.
+     */
+    public CustomerCategoryDto() {
 
-	}
+    }
 
-	public CustomerCategoryDto(CustomerCategory e) {
-		super(e);
-		exoneratedFromTaxes = e.getExoneratedFromTaxes();
-	}
+    /**
+     * Instantiates a new customer category dto.
+     *
+     * @param customerCategory the customerCategory entity
+     */
+    public CustomerCategoryDto(CustomerCategory customerCategory) {
+        super(customerCategory);
+        exoneratedFromTaxes = customerCategory.getExoneratedFromTaxes();
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationReason=" + exonerationReason + "]";
-	}
+    /**
+     * Checks if is exonerated from taxes.
+     *
+     * @return the boolean
+     */
+    public Boolean isExoneratedFromTaxes() {
+        return exoneratedFromTaxes;
+    }
 
-	public Boolean isExoneratedFromTaxes() {
-		return exoneratedFromTaxes;
-	}
+    /**
+     * Sets the exonerated from taxes.
+     *
+     * @param exoneratedFromTaxes the new exonerated from taxes
+     */
+    public void setExoneratedFromTaxes(Boolean exoneratedFromTaxes) {
+        this.exoneratedFromTaxes = exoneratedFromTaxes;
+    }
 
-	public void setExoneratedFromTaxes(Boolean exoneratedFromTaxes) {
-		this.exoneratedFromTaxes = exoneratedFromTaxes;
-	}
+    /**
+     * Gets the exoneration tax el.
+     *
+     * @return the exonerationTaxEl
+     */
+    public String getExonerationTaxEl() {
+        return exonerationTaxEl;
+    }
 
-	/**
-	 * @return the exonerationTaxEl
-	 */
-	public String getExonerationTaxEl() {
-		return exonerationTaxEl;
-	}
+    /**
+     * Sets the exoneration tax el.
+     *
+     * @param exonerationTaxEl the exonerationTaxEl to set
+     */
+    public void setExonerationTaxEl(String exonerationTaxEl) {
+        this.exonerationTaxEl = exonerationTaxEl;
+    }
 
-	/**
-	 * @param exonerationTaxEl the exonerationTaxEl to set
-	 */
-	public void setExonerationTaxEl(String exonerationTaxEl) {
-		this.exonerationTaxEl = exonerationTaxEl;
-	}
+    /**
+     * Gets the exoneration reason.
+     *
+     * @return the exonerationReason
+     */
+    public String getExonerationReason() {
+        return exonerationReason;
+    }
 
-	/**
-	 * @return the exonerationReason
-	 */
-	public String getExonerationReason() {
-		return exonerationReason;
-	}
-
-	/**
-	 * @param exonerationReason the exonerationReason to set
-	 */
-	public void setExonerationReason(String exonerationReason) {
-		this.exonerationReason = exonerationReason;
-	}
+    /**
+     * Sets the exoneration reason.
+     *
+     * @param exonerationReason the exonerationReason to set
+     */
+    public void setExonerationReason(String exonerationReason) {
+        this.exonerationReason = exonerationReason;
+    }
+    
+    @Override
+    public String toString() {
+        return "CustomerCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl="
+                + exonerationTaxEl + ", exonerationReason=" + exonerationReason + "]";
+    }    
 }

@@ -231,7 +231,8 @@ public class WalletOperation extends BusinessEntity {
     @Transient
     private BillingAccount billingAccount;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
     @Transient
@@ -484,7 +485,6 @@ public class WalletOperation extends BusinessEntity {
     }
 
     protected WalletOperation fillUnratedClone(WalletOperation result) {
-        result.setActive(true);
         result.setAggregatedServiceInstance(aggregatedServiceInstance);
         result.setAppendGeneratedCode(appendGeneratedCode);
         result.setAuditable(getAuditable());
@@ -494,7 +494,6 @@ public class WalletOperation extends BusinessEntity {
         result.setCounter(counter);
         result.setCurrency(currency);
         result.setDescription(description);
-        result.setDisabled(false);
         result.setEndDate(endDate);
         result.setInvoiceSubCategory(invoiceSubCategory);
         result.setInvoicingDate(invoicingDate);

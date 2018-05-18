@@ -115,7 +115,7 @@ public interface AccountOperationRs extends IBaseRs {
      * Finds an accountOperation given an id.
      * 
      * @param id id of the account operation
-     * @return
+     * @return Account operation response
      */
     @GET
     @Path("/")
@@ -124,9 +124,9 @@ public interface AccountOperationRs extends IBaseRs {
     /**
      * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
      * 
-     * @param customerAccountCode
-     * @param aoId
-     * @param paymentMethod
+     * @param customerAccountCode Customer account code
+     * @param aoId Account operation Id
+     * @param paymentMethod Payment method
      * @return Request processing status
      */
     @PUT

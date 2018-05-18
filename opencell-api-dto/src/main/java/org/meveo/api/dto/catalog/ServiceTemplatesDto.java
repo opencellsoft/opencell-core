@@ -9,29 +9,44 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class ServiceTemplatesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "ServiceTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceTemplatesDto implements Serializable {
 
-	private static final long serialVersionUID = 4923256325444663405L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4923256325444663405L;
 
-	private List<ServiceTemplateDto> serviceTemplate;
+    /** The service template. */
+    private List<ServiceTemplateDto> serviceTemplate;
 
-	public List<ServiceTemplateDto> getServiceTemplate() {
-		if (serviceTemplate == null)
-			serviceTemplate = new ArrayList<ServiceTemplateDto>();
-		return serviceTemplate;
-	}
+    /**
+     * Gets the service template.
+     *
+     * @return the service template
+     */
+    public List<ServiceTemplateDto> getServiceTemplate() {
+        if (serviceTemplate == null)
+            serviceTemplate = new ArrayList<ServiceTemplateDto>();
+        return serviceTemplate;
+    }
 
-	public void setServiceTemplate(List<ServiceTemplateDto> serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
+    /**
+     * Sets the service template.
+     *
+     * @param serviceTemplate the new service template
+     */
+    public void setServiceTemplate(List<ServiceTemplateDto> serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceTemplatesDto [serviceTemplate=" + serviceTemplate + "]";
-	}
+
+    @Override
+    public String toString() {
+        return "ServiceTemplatesDto [serviceTemplate=" + serviceTemplate + "]";
+    }
 
 }

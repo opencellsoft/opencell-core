@@ -57,7 +57,7 @@ public interface JobInstanceRs extends IBaseRs {
     ActionStatus createOrUpdate(JobInstanceDto postData);
 
     /**
-     * Find a job instance with a given code 
+     * Find a job instance with a given code
      * 
      * @param jobInstanceCode The job instance's code
      * @return
@@ -67,7 +67,7 @@ public interface JobInstanceRs extends IBaseRs {
     JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
 
     /**
-     * Remove an existing job instance with a given code 
+     * Remove an existing job instance with a given code
      * 
      * @param jobInstanceCode The job instance's code
      * @return Request processing status
@@ -75,5 +75,25 @@ public interface JobInstanceRs extends IBaseRs {
     @Path("/{jobInstanceCode}")
     @DELETE
     ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
+
+    /**
+     * Enable a Job instance with a given code
+     * 
+     * @param code Job instance code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Job instance with a given code
+     * 
+     * @param code Job instance code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 
 }

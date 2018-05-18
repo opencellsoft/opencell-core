@@ -16,18 +16,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.util;
+package org.meveo.model.billing;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public enum RatedTransactionMinAmountTypeEnum {
+    
+    RT_MIN_AMOUNT_BA ("RT_MIN_AMOUNT_BA"), 
+    RT_MIN_AMOUNT_SU ("RT_MIN_AMOUNT_SU"),
+    RT_MIN_AMOUNT_SE ("RT_MIN_AMOUNT_SE");
+   
+	private String code;
+	
+	private RatedTransactionMinAmountTypeEnum(String code) {
+		this.code = code;
+	}
 
-import javax.inject.Qualifier;
+	public String getCode() {
+		return code;
+	}
 
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE })
-public @interface MeveoJpa {
 
 }

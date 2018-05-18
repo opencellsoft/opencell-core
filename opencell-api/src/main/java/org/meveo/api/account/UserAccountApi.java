@@ -100,6 +100,9 @@ public class UserAccountApi extends AccountEntityApi {
         populate(postData, userAccount);
 
         userAccount.setBillingAccount(billingAccount);
+        if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+            userAccount.setSubscriptionDate(postData.getSubscriptionDate());
+        }
         userAccount.setExternalRef1(postData.getExternalRef1());
         userAccount.setExternalRef2(postData.getExternalRef2());
 
@@ -165,13 +168,15 @@ public class UserAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getExternalRef1())) {
             userAccount.setExternalRef2(postData.getExternalRef2());
         }
-
+        
         updateAccount(userAccount, postData, checkCustomFields);
-
+        
+        if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+            userAccount.setSubscriptionDate(postData.getSubscriptionDate());
+        }
         if (businessAccountModel != null) {
             userAccount.setBusinessAccountModel(businessAccountModel);
         }
-
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), userAccount, false, checkCustomFields);
@@ -188,7 +193,6 @@ public class UserAccountApi extends AccountEntityApi {
         } catch (BusinessException e1) {
             throw new MeveoApiException(e1.getMessage());
         }
-
         return userAccount;
     }
 

@@ -22,156 +22,156 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "billing_reservation")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_reservation_seq"), })
-public class Reservation extends EnableEntity {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_reservation_seq"), })
+public class Reservation extends AuditableEntity {
 
-	private static final long serialVersionUID = 4110616902439820101L;
+    private static final long serialVersionUID = 4110616902439820101L;
 
-	@Column(name = "input_message")
-	@Size(max = 255)
-	private String inputMessage;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "reservation_date")
-	private Date reservationDate;
+    @Column(name = "input_message")
+    @Size(max = 255)
+    private String inputMessage;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "expiry_date")
-	private Date expiryDate;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "reservation_date")
+    private Date reservationDate;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
-	private ReservationStatus status;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "expiry_date")
+    private Date expiryDate;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "user_account_id")
-	private UserAccount userAccount;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private ReservationStatus status;
 
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "subscription_id")
-	private Subscription subscription;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "wallet_id")
-	private WalletInstance wallet;
-	
-	@Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal quantity;
-	
-	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
 
-	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithTax = BigDecimal.ZERO;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id")
+    private WalletInstance wallet;
+
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal quantity;
+
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+
+    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithTax = BigDecimal.ZERO;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "billing_resrv_countid")
-	private Map<Long,BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>(); 
+    private Map<Long, BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_edr_id")
     private EDR originEdr;
-    
-	public String getInputMessage() {
-		return inputMessage;
-	}
 
-	public void setInputMessage(String inputMessage) {
-		this.inputMessage = inputMessage;
-	}
+    public String getInputMessage() {
+        return inputMessage;
+    }
 
-	public Date getExpiryDate() {
-		return expiryDate;
-	}
+    public void setInputMessage(String inputMessage) {
+        this.inputMessage = inputMessage;
+    }
 
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
-	}
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
 
-	public ReservationStatus getStatus() {
-		return status;
-	}
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
 
-	public void setStatus(ReservationStatus status) {
-		this.status = status;
-	}
+    public ReservationStatus getStatus() {
+        return status;
+    }
 
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+    }
 
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
+    public Subscription getSubscription() {
+        return subscription;
+    }
 
-	public WalletInstance getWallet() {
-		return wallet;
-	}
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 
-	public void setWallet(WalletInstance wallet) {
-		this.wallet = wallet;
-	}
+    public WalletInstance getWallet() {
+        return wallet;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    public void setWallet(WalletInstance wallet) {
+        this.wallet = wallet;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public Date getReservationDate() {
-		return reservationDate;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void setReservationDate(Date reservationDate) {
-		this.reservationDate = reservationDate;
-	}
+    public Date getReservationDate() {
+        return reservationDate;
+    }
 
-	public Map<Long, BigDecimal> getCounterPeriodValues() {
-		return counterPeriodValues;
-	}
+    public void setReservationDate(Date reservationDate) {
+        this.reservationDate = reservationDate;
+    }
 
-	public void setCounterPeriodValues(Map<Long, BigDecimal> counterPeriodValues) {
-		this.counterPeriodValues = counterPeriodValues;
-	}
+    public Map<Long, BigDecimal> getCounterPeriodValues() {
+        return counterPeriodValues;
+    }
 
-	public EDR getOriginEdr() {
-		return originEdr;
-	}
+    public void setCounterPeriodValues(Map<Long, BigDecimal> counterPeriodValues) {
+        this.counterPeriodValues = counterPeriodValues;
+    }
 
-	public void setOriginEdr(EDR originEdr) {
-		this.originEdr = originEdr;
-	}
+    public EDR getOriginEdr() {
+        return originEdr;
+    }
 
+    public void setOriginEdr(EDR originEdr) {
+        this.originEdr = originEdr;
+    }
 
 }

@@ -9,52 +9,105 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.model.payments.RejectedType;
 
 /**
+ * The Class RejectedPaymentDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RejectedPaymentDto extends AccountOperationDto implements Serializable {
 
-	private static final long serialVersionUID = 4498720672406401363L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4498720672406401363L;
 
-	private RejectedType rejectedType;
-	private Date rejectedDate;
-	private String rejectedDescription;
-	private String rejectedCode;
+    /** The rejected type. */
+    private RejectedType rejectedType;
+    
+    /** The rejected date. */
+    private Date rejectedDate;
+    
+    /** The rejected description. */
+    private String rejectedDescription;
+    
+    /** The rejected code. */
+    private String rejectedCode;
 
-	public RejectedPaymentDto() {
-		super.setType("R");
-	}
+    /**
+     * Instantiates a new rejected payment dto.
+     */
+    public RejectedPaymentDto() {
+        super.setType("R");
+    }
 
-	public RejectedType getRejectedType() {
-		return rejectedType;
-	}
+    /**
+     * Gets the rejected type.
+     *
+     * @return the rejected type
+     */
+    public RejectedType getRejectedType() {
+        return rejectedType;
+    }
 
-	public void setRejectedType(RejectedType rejectedType) {
-		this.rejectedType = rejectedType;
-	}
+    /**
+     * Sets the rejected type.
+     *
+     * @param rejectedType the new rejected type
+     */
+    public void setRejectedType(RejectedType rejectedType) {
+        this.rejectedType = rejectedType;
+    }
 
-	public Date getRejectedDate() {
-		return rejectedDate;
-	}
+    /**
+     * Gets the rejected date.
+     *
+     * @return the rejected date
+     */
+    public Date getRejectedDate() {
+        return rejectedDate;
+    }
 
-	public void setRejectedDate(Date rejectedDate) {
-		this.rejectedDate = rejectedDate;
-	}
+    /**
+     * Sets the rejected date.
+     *
+     * @param rejectedDate the new rejected date
+     */
+    public void setRejectedDate(Date rejectedDate) {
+        this.rejectedDate = rejectedDate;
+    }
 
-	public String getRejectedDescription() {
-		return rejectedDescription;
-	}
+    /**
+     * Gets the rejected description.
+     *
+     * @return the rejected description
+     */
+    public String getRejectedDescription() {
+        return rejectedDescription;
+    }
 
-	public void setRejectedDescription(String rejectedDescription) {
-		this.rejectedDescription = rejectedDescription;
-	}
+    /**
+     * Sets the rejected description.
+     *
+     * @param rejectedDescription the new rejected description
+     */
+    public void setRejectedDescription(String rejectedDescription) {
+        this.rejectedDescription = rejectedDescription;
+    }
 
-	public String getRejectedCode() {
-		return rejectedCode;
-	}
+    /**
+     * Gets the rejected code.
+     *
+     * @return the rejected code
+     */
+    public String getRejectedCode() {
+        return rejectedCode;
+    }
 
-	public void setRejectedCode(String rejectedCode) {
-		this.rejectedCode = rejectedCode;
-	}
+    /**
+     * Sets the rejected code.
+     *
+     * @param rejectedCode the new rejected code
+     */
+    public void setRejectedCode(String rejectedCode) {
+        this.rejectedCode = rejectedCode;
+    }
 
 }

@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -17,6 +18,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -36,7 +38,6 @@ public class EntityToDtoConverter {
 
     @Inject
     private Logger logger;
-
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -65,10 +66,10 @@ public class EntityToDtoConverter {
     }
 
     /**
-     * @param entity             entity
-     * @param cfValuesByCode     List of custom field values by code
+     * @param entity entity
+     * @param cfValuesByCode List of custom field values by code
      * @param includeInheritedCF If true, also returns the inherited cfs
-     * @param mergeMapValues     If true, merge the map values between instance cf and parent. Use to show a single list of values.
+     * @param mergeMapValues If true, merge the map values between instance cf and parent. Use to show a single list of values.
      * @return custom fields dto
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, boolean includeInheritedCF, boolean mergeMapValues) {
@@ -95,7 +96,7 @@ public class EntityToDtoConverter {
         boolean includeInheritedCF = mergeMapValues || inheritCF == CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
 
-        logger.debug("Processing Custom fields\nEntity: {}\nCustom Field Values: {}", entity.toString(), cfValues == null ? "" : cfValues.toString());
+        logger.trace("Get Custom fields for \nEntity: {}/{}\nCustom Field Values: {}", entity.getClass().getSimpleName(), ((IEntity) entity).getId(), cfValues);
 
         if (!isValueMapEmpty) {
             for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValues.entrySet()) {
@@ -119,7 +120,7 @@ public class EntityToDtoConverter {
                     if (parentEntity instanceof Provider && ((Provider) parentEntity).getCode() == null) {
                         parentEntity = appProvider;
                     }
-                    logger.debug("Parent entity: " + parentEntity.toString());
+                    // logger.trace("Parent entity: {}", parentEntity);
 
                     // inherit the parent entity's custom fields
                     // the current entity's inherited fields are empty so just add all parent CFs directly
@@ -154,14 +155,14 @@ public class EntityToDtoConverter {
 
     private void mergeMapValues(List<CustomFieldDto> source, List<CustomFieldDto> destination) {
         for (CustomFieldDto sourceCF : source) {
-            logger.debug("Source custom field: {}", sourceCF.toString());
+            // logger.trace("Source custom field: {}", sourceCF);
             boolean found = false;
             // look for a matching CF in the destination
             for (CustomFieldDto destinationCF : destination) {
-                logger.debug("Comparing to destination custom field: {}", destinationCF.toString());
+                // logger.trace("Comparing to destination custom field: {}", destinationCF);
                 found = destinationCF.getCode().equalsIgnoreCase(sourceCF.getCode());
                 if (found) {
-                    logger.debug("Custom field matched: \n{}\n{}", sourceCF.toString(), destinationCF.toString());
+                    // logger.trace("Custom field matched: \n{}\n{}", sourceCF, destinationCF);
                     Map<String, CustomFieldValueDto> sourceValues = sourceCF.getMapValue();
                     if (sourceValues != null) {
                         Map<String, CustomFieldValueDto> destinationValues = destinationCF.getMapValue();
@@ -184,7 +185,7 @@ public class EntityToDtoConverter {
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public CustomFieldDto customFieldToDTO(String cfCode, Object value, boolean isChildEntityTypeField) {
 
         CustomFieldDto dto = new CustomFieldDto();
@@ -230,9 +231,10 @@ public class EntityToDtoConverter {
         dto.setListValue(customFieldValueToDTO(cfValue.getListValue(), isChildEntityTypeField));
         dto.setMapValue(customFieldValueToDTO(cfValue.getMapValue()));
 
-        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && dto.getMapValue() != null && !dto.getMapValue().isEmpty() && !dto.getMapValue().containsKey(CustomFieldValue.MAP_KEY)) {
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && dto.getMapValue() != null && !dto.getMapValue().isEmpty()
+                && !dto.getMapValue().containsKey(CustomFieldValue.MAP_KEY)) {
             dto.getMapValue().put(CustomFieldValue.MAP_KEY,
-                    new CustomFieldValueDto(StringUtils.concatenate(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes())));
+                new CustomFieldValueDto(StringUtils.concatenate(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes())));
         }
 
         if (cfValue.getEntityReferenceValue() != null) {
@@ -253,12 +255,13 @@ public class EntityToDtoConverter {
             CustomFieldValueDto dto = new CustomFieldValueDto();
             if (listItem instanceof EntityReferenceWrapper) {
                 if (isChildEntityTypeField) {
-                    CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(((EntityReferenceWrapper) listItem).getClassnameCode(), ((EntityReferenceWrapper) listItem).getCode());
+                    CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(((EntityReferenceWrapper) listItem).getClassnameCode(),
+                        ((EntityReferenceWrapper) listItem).getCode());
                     if (cei == null) {
                         continue;
                     }
-                    logger.debug("Fetch CustomEntityInstance custom fields: {}", cei.toString());
-                    dto.setValue(CustomEntityInstanceDto.toDTO(cei, getCustomFieldsDTO(cei)));
+
+                    dto.setValue(new CustomEntityInstanceDto(cei, getCustomFieldsDTO(cei)));
 
                 } else {
                     dto.setValue(new EntityReferenceDto((EntityReferenceWrapper) listItem));

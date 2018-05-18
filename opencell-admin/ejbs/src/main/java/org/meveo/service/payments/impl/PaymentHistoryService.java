@@ -26,7 +26,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  */
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 
@@ -37,6 +37,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         paymentHistory.setCustomerAccountCode(customerAccount.getCode());
         paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
         paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
+        paymentHistory.setCustomerCode(customerAccount.getCustomer().getCode());
         paymentHistory.setPayment(payment);
         paymentHistory.setRefund(refund);
         paymentHistory.setOperationDate(new Date());

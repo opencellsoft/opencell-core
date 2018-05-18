@@ -26,9 +26,11 @@ import javax.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
@@ -119,8 +121,11 @@ public abstract class BaseApi {
 
     @Inject
     private RoleService roleService;
-
+    
     protected List<String> missingParameters = new ArrayList<>();
+    
+    private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
+    
 
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
@@ -139,6 +144,16 @@ public abstract class BaseApi {
     protected void handleMissingParametersAndValidate(BaseDto dto) throws MeveoApiException {
         validate(dto);
 
+        try {
+            BusinessDto bdto = (BusinessDto) dto;
+            boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
+            if(!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) ) {
+                throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
+            }
+        } catch(ClassCastException e) {
+            log.info("allow entity code update rule not applied : Not business Dto");
+        }
+        
         if (!missingParameters.isEmpty()) {
             MissingParameterException mpe = new MissingParameterException(missingParameters);
             missingParameters.clear();
@@ -726,8 +741,8 @@ public abstract class BaseApi {
                                 // Create or update a full entity DTO passed
                             } else {
 
-                                ApiService apiService = getApiService((BaseDto) dtoValue, true);
-                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue);
+                                ApiService apiService = getApiService((BusinessDto) dtoValue, true);
+                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessDto) dtoValue);
                             }
 
                             // Update field with a new entity
@@ -737,8 +752,8 @@ public abstract class BaseApi {
                             // full entity DTO passed
                         } else {
 
-                            ApiService apiService = getApiService((BaseDto) dtoValue, true);
-                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue);
+                            ApiService apiService = getApiService((BusinessDto) dtoValue, true);
+                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessDto) dtoValue);
 
                             // Update field with a new entity
                             FieldUtils.writeField(entityToPopulate, dtoField.getName(), valueAsEntity, true);
@@ -945,17 +960,17 @@ public abstract class BaseApi {
      * @param entityClass JPA Entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Persistence service
-     * @throws MeveoApiException meveo api exception.
+     * @throws BusinessException A general business exception
      */
     @SuppressWarnings("rawtypes")
-    protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws MeveoApiException {
+    protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws BusinessException {
 
         PersistenceService persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
         if (persistenceService == null) {
             persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSuperclass().getSimpleName() + "Service");
         }
         if (persistenceService == null && throwException) {
-            throw new MeveoApiException("Failed to find implementation of persistence service for class " + entityClass.getName());
+            throw new BusinessException("Failed to find implementation of persistence service for class " + entityClass.getName());
         }
 
         return persistenceService;

@@ -19,12 +19,12 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class NotificationService extends BusinessService<ScriptNotification> {
 
-	@SuppressWarnings("unchecked")
-	public List<Notification> listAll() {
-		QueryBuilder qb = new QueryBuilder(Notification.class, "d");
-		qb.addBooleanCriterion("disabled", false);
-		return qb.getQuery(getEntityManager()).getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<Notification> listAll() {
+        QueryBuilder qb = new QueryBuilder(Notification.class, "d");
+        qb.addBooleanCriterion("disabled", false);
+        return qb.getQuery(getEntityManager()).getResultList();
+    }
 
     /**
      * Get a list of notifications to populate a cache
@@ -34,7 +34,7 @@ public class NotificationService extends BusinessService<ScriptNotification> {
     public List<Notification> getNotificationsForCache() {
         return getEntityManager().createNamedQuery("Notification.getNotificationsForCache", Notification.class).getResultList();
     }
-    
+
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
@@ -45,8 +45,7 @@ public class NotificationService extends BusinessService<ScriptNotification> {
     }
 
     /**
-     * Update scriptNotification
-     * v5.0: adding notification to cache only when notification is active
+     * Update scriptNotification v5.0: adding notification to cache only when notification is active
      * 
      * @param scriptNotification scriptNotification
      * @return scriptNotification scriptNotification
@@ -55,9 +54,9 @@ public class NotificationService extends BusinessService<ScriptNotification> {
      */
     @Override
     public ScriptNotification update(ScriptNotification scriptNotification) throws BusinessException {
-    	scriptNotification = super.update(scriptNotification);
-    	notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
-        if(scriptNotification.isActive()) {
+        scriptNotification = super.update(scriptNotification);
+        notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
+        if (scriptNotification.isActive()) {
             notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
         }
         return scriptNotification;
@@ -71,14 +70,16 @@ public class NotificationService extends BusinessService<ScriptNotification> {
 
     @Override
     public ScriptNotification disable(ScriptNotification scriptNotification) throws BusinessException {
-    	scriptNotification = super.disable(scriptNotification);
+        scriptNotification = super.disable(scriptNotification);
         notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
         return scriptNotification;
     }
 
     @Override
     public ScriptNotification enable(ScriptNotification scriptNotification) throws BusinessException {
-    	scriptNotification = super.enable(scriptNotification);
+        scriptNotification = super.enable(scriptNotification);
+        // case when the entity was created as disabled
+        notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
         notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
         return scriptNotification;
     }

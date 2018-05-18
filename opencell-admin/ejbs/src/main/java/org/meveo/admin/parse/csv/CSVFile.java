@@ -52,11 +52,13 @@ public abstract class CSVFile<T extends CSVLineData> {
 		contexts = new ArrayList<T>();
 	}
 
+	/**
+	 * @throws FileContentException file content exception
+	 */
 	public void parse() throws FileContentException {
-		try {
-			FileInputStream fis = new FileInputStream(file);
+		try (FileInputStream fis = new FileInputStream(file);
 			InputStreamReader read = new InputStreamReader(fis);
-			BufferedReader reader = new BufferedReader(read);
+			BufferedReader reader = new BufferedReader(read);) {
 
 			if (parseHeader) {
 				// 1)----header--
@@ -109,20 +111,24 @@ public abstract class CSVFile<T extends CSVLineData> {
 		contexts.add(t);
 	}
 
-	public void createCsvFile() throws IOException {
-		FileOutputStream fos = new FileOutputStream(file);
-		OutputStreamWriter out = new OutputStreamWriter(fos, "GBK");
-		BufferedWriter writer = new BufferedWriter(out);
-		writer.write(getHeader());
-		for (T t : contexts) {
-			writer.newLine();
-			writer.write(getRowFromT(t));
-		}
-		writer.flush();
-		writer.close();
-		out.close();
-		fos.close();
-	}
+    /**
+     * @throws IOException input/output excception.
+     */
+    public void createCsvFile() throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(file);
+             OutputStreamWriter out = new OutputStreamWriter(fos, "GBK");
+             BufferedWriter writer = new BufferedWriter(out);) {
+            writer.write(getHeader());
+            for (T t : contexts) {
+                writer.newLine();
+                writer.write(getRowFromT(t));
+            }
+            writer.flush();
+        } catch (IOException ex) {
+            throw ex;
+        }
+
+    }
 
 	public File getFile() {
 		return file;

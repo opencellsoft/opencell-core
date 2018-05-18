@@ -9,24 +9,38 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class MatchingCodesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "MatchingCodes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MatchingCodesDto implements Serializable {
 
-	private static final long serialVersionUID = 5230851336194617883L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5230851336194617883L;
 
-	private List<MatchingCodeDto> matchingCode;
+    /** The matching code. */
+    private List<MatchingCodeDto> matchingCode;
 
-	public List<MatchingCodeDto> getMatchingCode() {
-		if (matchingCode == null)
-			matchingCode = new ArrayList<MatchingCodeDto>();
-		return matchingCode;
-	}
+    /**
+     * Gets the matching code.
+     *
+     * @return the matching code
+     */
+    public List<MatchingCodeDto> getMatchingCode() {
+        if (matchingCode == null)
+            matchingCode = new ArrayList<MatchingCodeDto>();
+        return matchingCode;
+    }
 
-	public void setMatchingCode(List<MatchingCodeDto> matchingCode) {
-		this.matchingCode = matchingCode;
-	}
+    /**
+     * Sets the matching code.
+     *
+     * @param matchingCode the new matching code
+     */
+    public void setMatchingCode(List<MatchingCodeDto> matchingCode) {
+        this.matchingCode = matchingCode;
+    }
 
 }

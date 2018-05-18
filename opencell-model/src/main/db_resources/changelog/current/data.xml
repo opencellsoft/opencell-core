@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+    
     <changeSet author="AbdelmounaimAkadid" id="#3224_16022018">
         <insert tableName="adm_role">
             <column name="id" valueNumeric="-6" />
@@ -189,310 +190,6 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 }		
 		');]]></sql>
 		
-		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-2, 0, 0, now(), 'SAGE_EXPORT', 'Export records for sage', 'JAVA', '
-		package org.meveo.service.script.hubicus;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.text.DecimalFormat;
-import java.util.Locale;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.CsvBuilder;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.script.Script;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.meveo.service.script.finance.ReportExtractScript;
-
-public class ExportSageScript extends ReportExtractScript {
-
-    private static final Logger log = LoggerFactory.getLogger(ExportSageScript.class);
-    private CustomFieldInstanceService cfiService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
-    private InvoiceService invoiceService = (InvoiceService) getServiceInterface("InvoiceService");
-    private SellerService sellerService = (SellerService) getServiceInterface("SellerService");
-    private DecimalFormat decimalFormat = (DecimalFormat)DecimalFormat.getInstance(Locale.FRENCH);
-    private String clientAccountingCodeTax = null;
-    private String clientAccountingCodeNoTax = null;
-    private String groupAccountingCodeTax = null;
-    private String groupAccountingCodeNoTax = null;
-
-    @Override
-    public void execute(Map<String, Object> context) throws BusinessException {
-
-        decimalFormat.setDecimalSeparatorAlwaysShown(true);
-        decimalFormat.setMinimumFractionDigits(2);
-        decimalFormat.setGroupingUsed(false);
-
-        log.debug("Execute - Context:{}",context);        
-        Provider appProvider = ((ProviderService) getServiceInterface("ProviderService")).getProvider();
-        Date lastDate = (Date)cfiService.getCFValue(appProvider, "CF_PROVIDER_EXPORT_SAGE_LASTDATE");
-        Date startDate = (Date) context.get(ReportExtractScript.START_DATE);	
-		Date endDate = (Date) context.get(ReportExtractScript.END_DATE);        
-        
- 
-        Seller seller = sellerService.findByCode("HUBICUS");
-        clientAccountingCodeTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_ACCOUNTING_CODE_TAX");
-        clientAccountingCodeNoTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_ACCOUNTING_CODE_NOTAX");
-        groupAccountingCodeTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_GROUP_ACCOUNTING_CODE_TAX");
-        groupAccountingCodeNoTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_GROUP_ACCOUNTING_CODE_NOTAX");
-        log.debug("clientAccountingCodeTax={}", clientAccountingCodeTax);
-        log.debug("clientAccountingCodeNoTax={}", clientAccountingCodeNoTax);
-        log.debug("groupAccountingCodeTax={}", groupAccountingCodeTax);
-        log.debug("groupAccountingCodeNoTax={}", groupAccountingCodeNoTax);
-
-        if(startDate == null){
-            startDate = lastDate;
-        }
-        if(endDate == null){
-            endDate = new Date();
-        }
-        
-        String outputDir = String.valueOf(context.get(ReportExtractScript.DIR));
-		File dir = new File(outputDir);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		String strFilename = String.valueOf(context.get(ReportExtractScript.FILENAME));
-		log.debug("output={}", strFilename);
-		String absolutFileName  = dir + File.separator + strFilename;
-        
-        log.debug("Processing Sage Report for startDate:{}, endDate:{}, fileName:{}, outputDir:{}", startDate, endDate,strFilename, outputDir);
-                
-        Map<String,Object> params = new HashMap<String, Object>();
-        String query = "Select inv From Invoice inv where inv.recordedInvoice is not null ";
-        if(startDate != null){
-            params.put("startDate", startDate);
-            query +="and inv.recordedInvoice.transactionDate >=:startDate ";
-        }
-        if(endDate != null){
-            params.put("endDate", endDate);
-            query +="and  inv.recordedInvoice.transactionDate <:endDate  ";
-        }            
-        
-        CsvBuilder csvBuilder = new CsvBuilder("", false);
-        
-        List<Invoice> invoices = (List<Invoice>) invoiceService.executeSelectQuery(query, params);
-        log.debug("Count invoices :{}", invoices == null ? null : invoices.size());
-        for (Invoice invoice : invoices) {
-            for(String line : getHTlines(invoice)){
-                csvBuilder.appendValue(line);
-                csvBuilder.startNewLine();
-            }
-            for(String line : getTVAlines(invoice)){
-                csvBuilder.appendValue(line);
-                csvBuilder.startNewLine();
-            }
-            if( !BigDecimal.ZERO.equals(invoice.getAmountWithTax()) ){
-                csvBuilder.appendValue(getTTCline(invoice));
-                csvBuilder.startNewLine();
-            }
-        }
-        
-        csvBuilder.toFile(absolutFileName);
-        log.debug("Sage Report created :{}", absolutFileName);
-        cfiService.setCFValue(appProvider, "CF_PROVIDER_EXPORT_SAGE_LASTDATE",endDate);
-        log.debug("CF_PROVIDER_EXPORT_SAGE_LASTDATE updated with:{}", endDate);
-    }
-
-
-    private List<String> getTVAlines(Invoice invoice) {
-        List<String> lines = new ArrayList<String>();
-        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-            if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
-    
-                if( BigDecimal.ZERO.compareTo(taxInvoiceAgregate.getAmountTax()) != 0 ) {
-                	String accountingCode = taxInvoiceAgregate.getTax().getAccountingCode() != null ? taxInvoiceAgregate.getTax().getAccountingCode().getCode() : "";
-                    String line ="";
-                    line += "VE ";
-                    line += "G";
-                    line += "D";
-                    line += StringUtils.getStringAsNChar(accountingCode,8);
-                    line += StringUtils.getStringAsNChar("",16);
-                    line += invoice.getRecordedInvoice().getTransactionCategory().name().equals(OperationCategoryEnum.DEBIT.name()) ? "C":"D";
-                    line += StringUtils.getStringAsNChar(""+round(taxInvoiceAgregate.getAmountTax(),2),15);
-                    line += StringUtils.getStringAsNChar(cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(),"codeClientCompta")+" "+invoice.getInvoiceNumber(),30);
-                    line += DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), "ddMMyy");
-                    line += StringUtils.getStringAsNChar(" "+invoice.getInvoiceNumber(),12);
-                    line += StringUtils.getStringAsNChar("",5);
-                    line += DateUtils.formatDateWithPattern(invoice.getDueDate(), "ddMMyy");
-                    line += StringUtils.getStringAsNChar("",7);
-                    lines.add(line);
-                }
-            }
-        }
-        return lines;
-    }
-
-    private String getTTCline(Invoice invoice) {        
-        BigDecimal amountTTC = invoice.getAmountWithTax();
-        log.debug("TTC line: {}={}", invoice.getInvoiceNumber(), amountTTC);
-
-        if( BigDecimal.ZERO.compareTo(amountTTC) != 0) {
-            String line ="";                
-            line += "VE ";
-            line += "X";    
-            line += "D";
-            line += StringUtils.getStringAsNChar(getAccountingCodeTTC(invoice),8);
-            line += StringUtils.getStringAsNChar((String)cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(), "codeClientCompta"),16);
-            line += invoice.getRecordedInvoice().getTransactionCategory().name().equals(OperationCategoryEnum.DEBIT.name()) ? "D":"C";
-            line += StringUtils.getStringAsNChar(""+round(amountTTC,2),15);
-            line += StringUtils.getStringAsNChar(cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(),"codeClientCompta")+" "+invoice.getInvoiceNumber(),30);
-            line += DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), "ddMMyy");
-            line += StringUtils.getStringAsNChar(" "+invoice.getInvoiceNumber(),12);
-            line += StringUtils.getStringAsNChar("",5);
-            line += DateUtils.formatDateWithPattern(invoice.getDueDate(), "ddMMyy");
-            line += StringUtils.getStringAsNChar("",7);
-            return line;
-        } else {
-            return null;
-        }
-    }
-
-    private List<String> getHTlines(Invoice invoice) {
-        List<String> lines = new ArrayList<String>();
-        for (String param2  : getListParam2(invoice)) {            
-            BigDecimal amountHT = computeAmountHT(getRatedTransactionByParam(invoice, param2));
-            String invoiceNumber = invoice.getInvoiceNumber();
-            String accountingPartyCode = (String)cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(),"codeClientCompta");
-            log.debug("HT line: {}={}", invoice.getInvoiceNumber(), amountHT);
-
-            if( BigDecimal.ZERO.compareTo(amountHT) != 0 ) {
-                String line ="";                
-                line += "VE ";
-                line += "G";
-                line += "D";
-                line += StringUtils.getStringAsNChar(getAccountingCodeHT(invoice, param2),8);
-                line += StringUtils.getStringAsNChar("",16);
-                line += invoice.getRecordedInvoice().getTransactionCategory().name().equals(OperationCategoryEnum.DEBIT.name()) ? "C":"D";
-                line += StringUtils.getStringAsNChar(""+round(amountHT,2),15);
-                line += StringUtils.getStringAsNChar(accountingPartyCode+" "+invoiceNumber,30);
-                line += DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), "ddMMyy");
-                line += StringUtils.getStringAsNChar(" "+invoice.getInvoiceNumber(),12);
-                line += StringUtils.getStringAsNChar(param2.split("-")[1],5);
-                line += DateUtils.formatDateWithPattern(invoice.getDueDate(), "ddMMyy");
-                line += StringUtils.getStringAsNChar(param2.split("-")[0],7);
-                lines.add(line);
-            }
-        }
-        return lines;
-    }
-
-
-    private String getAccountingCodeTTC(Invoice invoice){
-        String accountingCode = "INCONNU";
-        CustomerCategory CustomerCategory = invoice.getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory();
-
-        if("Client".equals(CustomerCategory.getCode()) || "Partenaire".equals(CustomerCategory.getCode())){
-            accountingCode = clientAccountingCodeTax;
-        } else if("Client_EX".equals(CustomerCategory.getCode()) || "Partenaire_EX".equals(CustomerCategory.getCode())){
-            accountingCode = clientAccountingCodeNoTax;
-        } else if("Client_Groupe".equals(CustomerCategory.getCode()) ){
-            accountingCode = groupAccountingCodeTax;
-        } else if("Client_Groupe_EX".equals(CustomerCategory.getCode()) ){
-            accountingCode = groupAccountingCodeNoTax;
-        }
-        return accountingCode;
-
-    }
-
-    private String getAccountingCodeHT(Invoice invoice,String param2){
-        String accountingCodeHTPrefix = null;
-        String accountingCodeSuffix = "00";                
-        BillingAccount ba = invoice.getBillingAccount();
-        CustomerAccount ca = ba.getCustomerAccount();        
-        CustomerCategory CustomerCategory = ca.getCustomer().getCustomerCategory();        
-        InvoiceCategory iCat = getRatedTransactionByParam(invoice, param2).get(0).getInvoiceSubCategory().getInvoiceCategory();
-        accountingCodeHTPrefix =  (String)cfiService.getCFValue(iCat, "CF_ICAT_ACCOUNTING_CODE");
-        if("Client_Groupe".equals(CustomerCategory.getCode()) || "Client_Groupe_EX".equals(CustomerCategory.getCode()) ){
-            accountingCodeSuffix = (String)cfiService.getCFValue(ba, "suffixCompta");
-        }        
-        return accountingCodeHTPrefix+accountingCodeSuffix;        
-    }
-
-    private List<String> getListParam2(Invoice invoice){
-        List<String> listParam = new ArrayList<String>();
-        for (RatedTransaction rt : invoice.getRatedTransactions()) {
-            if (!StringUtils.isBlank(rt.getParameter2()) && !listParam.contains(rt.getParameter2())) {
-                listParam.add(rt.getParameter2());
-            }       
-        }    
-
-        return listParam;
-    }
-
-    private List<RatedTransaction> getRatedTransactionByParam(Invoice invoice, String param)  {
-        List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
-        for (RatedTransaction rt : invoice.getRatedTransactions()) {
-            if(param == null && rt.getParameter2() == null) {
-                rts.add(rt);
-            }
-
-            if(param != null && param.equals(rt.getParameter2())) {
-                rts.add(rt);
-            }
-        }
-        return rts;
-    }
-
-    private Date parseDate(String dateString) throws BusinessException {
-        Date date = null;
-        if (dateString != null) {
-            date = DateUtils.guessDate(dateString, "dd/MM/yyyy", "dd-MM-yyyy");
-            if (date == null || date.getTime() == 1) {
-                throw new BusinessException("Invalid date format, please use dd/MM/yyyy or dd-MM-yyyy");
-            }
-        }
-        return date;
-    }
-
-    private String round(BigDecimal amount, Integer scale) {
-        if (amount == null) {
-            amount = BigDecimal.ZERO;
-        }
-        if (scale == null) {
-            scale = 2;
-        }
-        amount = amount.setScale(scale, RoundingMode.HALF_UP);
-        return decimalFormat.format(amount);
-    }
-
-    private BigDecimal computeAmountHT(List<RatedTransaction> ratedTransactions) {        
-        BigDecimal sumHT = BigDecimal.ZERO;
-
-        for (RatedTransaction rt : ratedTransactions) {
-            sumHT = sumHT.add(rt.getAmountWithoutTax());
-        }
-        return sumHT;
-    }
-
-}
-		');]]></sql>
-		
 		<sql><![CDATA[
 INSERT INTO ${db.schema.adapted}dwh_report_extract 
 	(id, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
@@ -567,30 +264,2474 @@ ORDER BY
 			<column name="params" value="31/12/2018"></column>
 		</insert>
 		
-		<insert tableName="dwh_report_extract">
-			<column name="id" valueNumeric="-3" />
+	</changeSet>
+	
+	 <changeSet id="#3234_05042018_1 - Homogenization of Account Operation types" author="anansseh" dbms="mysql">
+        <sql>INSERT INTO ${db.schema.adapted}billing_accounting_code (version, disabled, created, code,  creator,  chart_of_account_type, chart_of_account_view_type, migrated)   VALUES (0, 0, CURRENT_TIMESTAMP(), '654100000', 'opencell.admin', 'ASSETS', 'REGULAR', 1)</sql>
+	    <sql>insert into ${db.schema.adapted}ar_occ_template (version,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (0,CURRENT_TIMESTAMP(),(select id from ${db.schema.adapted}billing_accounting_code where code='512010000'),'411000000','PAY_CRD','Payment - card','CREDIT','opencell.admin')</sql>
+		<sql>insert into ${db.schema.adapted}ar_occ_template (version,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (0,CURRENT_TIMESTAMP(),(select id from ${db.schema.adapted}billing_accounting_code where code='654100000'),'411000000','EXP_WRT','Expense - bad debt write-off','DEBIT','opencell.admin')</sql>
+        <sql><![CDATA[update ${db.schema.adapted}billing_accounting_code_seq set next_val=(select id+1 from ${db.schema.adapted}billing_accounting_code order by id desc limit 1);]]></sql>
+	</changeSet>
+     
+    <changeSet id="#3234_05042018_2 - Homogenization of Account Operation types" author="anansseh" dbms="postgresql">
+         <sql>INSERT INTO ${db.schema.adapted}billing_accounting_code (id,version, disabled, created, code,  creator,  chart_of_account_type, chart_of_account_view_type, migrated) VALUES (nextval('${db.schema.adapted}billing_accounting_code_seq'),0, 0, current_timestamp, '654100000', 'opencell.admin', 'ASSETS', 'REGULAR', 1)</sql>
+	    <sql>insert into ${db.schema.adapted}ar_occ_template (id,version,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,current_timestamp,(select id from ${db.schema.adapted}billing_accounting_code where code='512010000'),'411000000','PAY_CRD','Payment - card','CREDIT','opencell.admin')</sql>
+		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,current_timestamp,(select id from ${db.schema.adapted}billing_accounting_code where code='654100000'),'411000000','EXP_WRT','Expense - bad debt write-off','DEBIT','opencell.admin')</sql>
+    </changeSet>	
+    
+    <changeSet id="#1705_20180406" author="EdwardPLegaspi">
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-8" />
 			<column name="version" valueNumeric="0" />
 			<column name="disabled" valueNumeric="0" />
 			<column name="created" valueDate="now()" />
-			<column name="code" value="SAGE_EXPORT" />
-			<column name="description" value="Export records for sage" />
-			<column name="category" value="accounting"></column>
-			<column name="script_type" value="JAVA"></column>
-			<column name="filename_format" value="sage-[yyyy_MM_dd].csv"></column>
-			<column name="script_instance_id" value="-2"></column>
-		</insert>
-		
-		<insert tableName="dwh_report_extract_params">
-			<column name="reportextract_id" value="-3"></column>
-			<column name="params_key" value="START_DATE"></column>
-			<column name="params" value="31/01/2017"></column>
-		</insert>
-		
-		<insert tableName="dwh_report_extract_params">
-			<column name="reportextract_id" value="-3"></column>
-			<column name="params_key" value="END_DATE"></column>
-			<column name="params" value="31/12/2018"></column>
-		</insert>
-	</changeSet>
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="400000000"></column>
+    		<column name="description" value="Accounts payable"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-9" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="401000000"></column>
+    		<column name="description" value="General AP"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="408000000"></column>
+    		<column name="description" value="Accrued payables"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-11" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="410000000"></column>
+    		<column name="description" value="Accounts receivable"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-13" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="416000000"></column>
+    		<column name="description" value="Doubtful receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-14" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="418100000"></column>
+    		<column name="description" value="Accrued receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-15" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445510000"></column>
+    		<column name="description" value="VAT due"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-16" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445660000"></column>
+    		<column name="description" value="VAT deductible"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-17" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445670000"></column>
+    		<column name="description" value="VAT credit"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-18" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445710000"></column>
+    		<column name="description" value="VAT collected"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-19" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="487000000"></column>
+    		<column name="description" value="Deferred revenue"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="512000000"></column>
+    		<column name="description" value="Cash"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-22" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="512020000"></column>
+    		<column name="description" value="Cash Payment - BNP #345678"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-23" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="622000000"></column>
+    		<column name="description" value="Reseller commission"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-24" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="651100000"></column>
+    		<column name="description" value="Bad debt"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-27" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701000000"></column>
+    		<column name="description" value="Revenue"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-28" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701010000"></column>
+    		<column name="description" value="Gross Revenue"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-29" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701020000"></column>
+    		<column name="description" value="Discounts"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Gross receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='411000000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Payment profit"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='758100000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Cash Deposit - BNP #123456"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='512010000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Bad debt write-off"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='654100000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Payment loss"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='658100000'</where>
+    	</update>
+    </changeSet>
     
+    <changeSet id="#3260_20180409 - Delete roles, add to permission" author="EdwardPLegaspi">
+    	<delete tableName="adm_user_role">
+    		<where>role_id=-7</where>
+    	</delete>
+    	<delete tableName="adm_user_role">
+    		<where>role_id=-8</where>
+    	</delete>
+    	<delete tableName="adm_role">
+    		<where>id=-7</where>
+    	</delete>
+    	<delete tableName="adm_role">
+    		<where>id=-8</where>
+    	</delete>
+    	<insert tableName="adm_permission">
+            <column name="id" valueNumeric="-29" />
+            <column name="name" value="Finance Management" />
+            <column name="permission" value="financeManagement" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-30" />
+            <column name="name" value="Finance Visualization" />
+            <column name="permission" value="financeVisualization" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-29" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-30" />
+        </insert>
+	</changeSet>
+	
+	<changeSet author="SaidRamli" id="#3354_23042018">
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-6"></column>
+        </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-3"></column>
+        	<column name="role_id" value="-6"></column>
+        </insert>
+    </changeSet>
+    
+	<changeSet author="anasseh" id="#3119_09052018">
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-31" /> 
+		  <column name="name" value="In Customer page, displays payment method(s)." /> 
+		  <column name="permission" value="cc-module-customers-payment-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-32" /> 
+		  <column name="name" value="Table invoices on billing account" /> 
+		  <column name="permission" value="cc-module-customers-ba-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-33" /> 
+		  <column name="name" value="cc-module-customers-edit-ba-ua-suspend" /> 
+		  <column name="permission" value="cc-module-customers-edit-ba-ua-suspend" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-34" /> 
+		  <column name="name" value="When you open a billing account inside Customer Information / Subscriptions - Invoices, displays 'Launch an exceptional invoicing'." /> 
+		  <column name="permission" value="cc-module-customers-ba-inv-exceptional" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-35" /> 
+		  <column name="name" value="Bouton delete customer" /> 
+		  <column name="permission" value="cc-module-customers-edit-c-delete" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-36" /> 
+		  <column name="name" value="In Customer Informations, possibility to modify those ones." /> 
+		  <column name="permission" value="cc-module-customers-edit-c-update" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-37" /> 
+		  <column name="name" value="In Customer Information / Subscriptions - Invoices, opens billing account." /> 
+		  <column name="permission" value="cc-module-customers-edit-inv-pmt-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-38" /> 
+		  <column name="name" value="When you open a billing account inside Customer Information / Subscriptions - Invoices, displays the 'Unbilled' part" /> 
+		  <column name="permission" value="cc-module-customers-ba-inv-unbilled" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-39" /> 
+		  <column name="name" value="cc-module-customers-edit-ba-ua-reactivate" /> 
+		  <column name="permission" value="cc-module-customers-edit-ba-ua-reactivate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-40" /> 
+		  <column name="name" value="Displays “Save” button on new payment method form" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-add" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-41" /> 
+		  <column name="name" value="In Customer Information, displays 'Subscriptions - Invoices'." /> 
+		  <column name="permission" value="cc-module-customers-edit-inv-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-42" /> 
+		  <column name="name" value="cc-module-customers-edit-ba-ua-view" /> 
+		  <column name="permission" value="cc-module-customers-edit-ba-ua-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-43" /> 
+		  <column name="name" value="cc-module-customers-edit-ba-ua-add" /> 
+		  <column name="permission" value="cc-module-customers-edit-ba-ua-add" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-44" /> 
+		  <column name="name" value="Bouton save on Billing account's page" /> 
+		  <column name="permission" value="cc-module-customers-ba-add" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-45" /> 
+		  <column name="name" value="Displays “Update” button on new payment method form" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-update" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-46" /> 
+		  <column name="name" value="In Customer Information / Subscriptions - invoices, displays 'Add new subscription'." /> 
+		  <column name="permission" value="cc-module-customers-edit-inv-sub-new" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-47" /> 
+		  <column name="name" value="Inside new payment form, display the wiretransfer choice in the selector." /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-wiretransfer" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-48" /> 
+		  <column name="name" value="In Customer Account, displays 'Customer Account' details" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-read" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-49" /> 
+		  <column name="name" value="When you open a billing account inside Customer Information / Subscriptions - Invoices, displays 'Generate a pro-forma'." /> 
+		  <column name="permission" value="cc-module-customers-ba-proforma" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-50" /> 
+		  <column name="name" value="In Customer Informations / Last Payments, displays 'Manage account and payments' button." /> 
+		  <column name="permission" value="cc-module-customers-edit-ao-manage" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-51" /> 
+		  <column name="name" value="Inside new payment form, display the check choice in the selector." /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-check" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-52" /> 
+		  <column name="name" value="In Customer Informations, displays the 'Update' button" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-update" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-53" /> 
+		  <column name="name" value="button 'Customers' visibility in the menu" /> 
+		  <column name="permission" value="cc-module-customers-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-54" /> 
+		  <column name="name" value="cc-module-customers-edit-ca-resiliate" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-resiliate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-55" /> 
+		  <column name="name" value="In Customer Information / Subscriptions - invoices, displays the 'Add new billing account' button" /> 
+		  <column name="permission" value="cc-module-customers-edit-inv-ba-new" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-56" /> 
+		  <column name="name" value="In customer list, possibility to open Customer Informations." /> 
+		  <column name="permission" value="cc-module-customers-edit-c-read" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-57" /> 
+		  <column name="name" value="In Customer Informations, displays account operation part ('Last Payments')" /> 
+		  <column name="permission" value="cc-module-customers-edit-ao-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-58" /> 
+		  <column name="name" value="Inside new payment form, display the direct debit choice in the selector." /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-directdebit" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-59" /> 
+		  <column name="name" value="cc-module-customers-edit-ba-ua-update" /> 
+		  <column name="permission" value="cc-module-customers-edit-ba-ua-update" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-60" /> 
+		  <column name="name" value="Inside new payment form, display the tip choice in the selector." /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-tip" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-61" /> 
+		  <column name="name" value="Inside new payment form, display the credit cardchoice in the selector." /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-creditcard" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-62" /> 
+		  <column name="name" value="cc-module-customers-edit-ca-pm-slimpay" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-pm-slimpay" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-63" /> 
+		  <column name="name" value="When you open a billing account inside Customer Information / Subscriptions - Invoices, displays 'Create a new subscription' button." /> 
+		  <column name="permission" value="cc-module-customers-ba-sub-new" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-64" /> 
+		  <column name="name" value="Displays '+' button on 'Payments' detail" /> 
+		  <column name="permission" value="cc-module-customers-edit-payment-add" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-65" /> 
+		  <column name="name" value="cc-module-customers-edit-ca-reactivate" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-reactivate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-66" /> 
+		  <column name="name" value="cc-module-customers-edit-ba-ua-read" /> 
+		  <column name="permission" value="cc-module-customers-edit-ba-ua-read" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-67" /> 
+		  <column name="name" value="Bouton update on Billing account's page" /> 
+		  <column name="permission" value="cc-module-customers-ba-update" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-68" /> 
+		  <column name="name" value="In Customer Informations, displays 'View in Selfcare' button." /> 
+		  <column name="permission" value="cc-module-customers-edit-c-selfcare" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-69" /> 
+		  <column name="name" value="cc-module-customers-edit-ba-ua-resiliate" /> 
+		  <column name="permission" value="cc-module-customers-edit-ba-ua-resiliate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-70" /> 
+		  <column name="name" value="Button 'Customers' visibility in the menu" /> 
+		  <column name="permission" value="pc-module-customers-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-71" /> 
+		  <column name="name" value="'Add new customer'" /> 
+		  <column name="permission" value="cc-module-customers-new" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-72" /> 
+		  <column name="name" value="cc-module-customers-edit-ca-suspend" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-suspend" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-73" /> 
+		  <column name="name" value="When you open a billing account inside Customer Information / Subscriptions - Invoices, displays the 'Invoices' part" /> 
+		  <column name="permission" value="cc-module-customers-ba-inv-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-74" /> 
+		  <column name="name" value="Displays '+' button on 'Customer account' detail" /> 
+		  <column name="permission" value="cc-module-customers-edit-ca-add" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-75" /> 
+		  <column name="name" value="cc-module-settings-files-createdir" /> 
+		  <column name="permission" value="cc-module-settings-files-createdir" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-76" /> 
+		  <column name="name" value="cc-module-settings-users-add" /> 
+		  <column name="permission" value="cc-module-settings-users-add" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-77" /> 
+		  <column name="name" value="cc-module-settings-files-menu" /> 
+		  <column name="permission" value="cc-module-settings-files-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-78" /> 
+		  <column name="name" value="'Settings' button visibility in the menu" /> 
+		  <column name="permission" value="cc-module-settings-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-79" /> 
+		  <column name="name" value="Displays “Update” button on user form" /> 
+		  <column name="permission" value="cc-module-settings-users-update" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-80" /> 
+		  <column name="name" value="cc-module-settings-users-view" /> 
+		  <column name="permission" value="cc-module-settings-users-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-81" /> 
+		  <column name="name" value="cc-module-settings-files-download" /> 
+		  <column name="permission" value="cc-module-settings-files-download" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-82" /> 
+		  <column name="name" value="cc-module-settings-users-submenu" /> 
+		  <column name="permission" value="cc-module-settings-users-submenu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-83" /> 
+		  <column name="name" value="cc-module-settings-files-upload" /> 
+		  <column name="permission" value="cc-module-settings-files-upload" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-84" /> 
+		  <column name="name" value="In Subscriptions, displays 'Pro-forma'." /> 
+		  <column name="permission" value="cc-module-subscriptions-proforma" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-85" /> 
+		  <column name="name" value="'Subscriptions' button in the menu." /> 
+		  <column name="permission" value="cc-module-subscriptions-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-86" /> 
+		  <column name="name" value="In Subscriptions, displays 'Validate'." /> 
+		  <column name="permission" value="cc-module-subscriptions-validate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-87" /> 
+		  <column name="name" value="cc-module-subscriptions-service-resiliate" /> 
+		  <column name="permission" value="cc-module-subscriptions-service-resiliate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-88" /> 
+		  <column name="name" value="cc-module-subscriptions-service-reactivate" /> 
+		  <column name="permission" value="cc-module-subscriptions-service-reactivate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-89" /> 
+		  <column name="name" value="In Subscriptions, opens subscriptions list by Account Name" /> 
+		  <column name="permission" value="cc-module-subscriptions-view" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-90" /> 
+		  <column name="name" value="cc-module-subscriptions-view-suspend" /> 
+		  <column name="permission" value="cc-module-subscriptions-view-suspend" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-91" /> 
+		  <column name="name" value="cc-module-subscriptions-service-suspend" /> 
+		  <column name="permission" value="cc-module-subscriptions-service-suspend" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-92" /> 
+		  <column name="name" value="cc-module-subscriptions-view-reactivate" /> 
+		  <column name="permission" value="cc-module-subscriptions-view-reactivate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-93" /> 
+		  <column name="name" value="cc-module-subscriptions-view-resiliate" /> 
+		  <column name="permission" value="cc-module-subscriptions-view-resiliate" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-94" /> 
+		  <column name="name" value="In Subscriptions / Information, displays 'Add a new subscription'." /> 
+		  <column name="permission" value="cc-module-subscriptions-view-new" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-95" /> 
+		  <column name="name" value="'Add seller account' (seller as a customer)" /> 
+		  <column name="permission" value="pc-module-seller-new" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-96" /> 
+		  <column name="name" value="'Sellers' button visibility in the menu" /> 
+		  <column name="permission" value="pc-module-seller-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-97" /> 
+		  <column name="name" value="The users menu" /> 
+		  <column name="permission" value="cc-module-users-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-98" /> 
+		  <column name="name" value="'My Account' button visibility in the menu" /> 
+		  <column name="permission" value="pc-module-myaccount-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-99" /> 
+		  <column name="name" value="Bouton accounting in menu" /> 
+		  <column name="permission" value="cc-module-accounting-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-100" /> 
+		  <column name="name" value="Bouton payment on menu" /> 
+		  <column name="permission" value="cc-module-payment-menu" /> 
+		</insert>
+		<insert tableName="adm_permission"> 
+		  <column name="id" valueNumeric="-101" /> 
+		  <column name="name" value="give access to the Customer Care" /> 
+		  <column name="permission" value="cc-module-read" /> 
+		</insert>
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-7" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="CC_ADMIN" />
+            <column name="role_name" value="CC_ADMIN" />
+        </insert>	
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="CC_LEVEL_1" />
+            <column name="role_name" value="CC_LEVEL_1" />
+        </insert>   
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-9" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="CC_LEVEL_2" />
+            <column name="role_name" value="CC_LEVEL_2" />
+        </insert>   
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-10" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="PC_ADMIN" />
+            <column name="role_name" value="PC_ADMIN" />
+        </insert>  
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-11" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="PC_LEVEL_1" />
+            <column name="role_name" value="PC_LEVEL_1" />
+        </insert>	
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="PC_LEVEL_2" />
+            <column name="role_name" value="PC_LEVEL_2" />
+        </insert>   
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-13" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="SC_LEVEL_1" />
+            <column name="role_name" value="SC_LEVEL_1" />
+        </insert>   
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-14" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="SUPER_ADMIN" />
+            <column name="role_name" value="SUPER_ADMIN" />
+        </insert>  
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-45" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-101" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-39" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-86" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-50" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-59" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-94" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-99" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-75" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-43" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-100" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-78" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-83" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-82" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-84" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-61" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-91" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-46" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-48" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-97" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-64" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-42" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-56" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-31" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-80" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-55" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-79" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-66" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-72" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-63" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-89" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-76" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-52" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-92" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-41" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-62" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-53" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-74" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-44" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-87" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-73" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-85" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-68" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-93" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-71" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-32" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-33" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-34" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-49" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-54" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-67" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-81" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-38" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-90" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-58" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-69" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-37" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-35" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-25" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-57" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-88" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-36" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-65" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-51" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-77" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-7" />
+		     <column name="permission_id" valueNumeric="-47" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-101" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-91" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-49" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-73" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-88" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-65" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-37" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-84" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-90" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-85" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-68" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-92" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-51" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-64" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-61" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-48" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-46" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-38" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-45" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-66" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-55" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-89" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-35" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-72" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-39" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-58" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-54" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-94" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-53" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-83" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-56" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-69" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-47" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-78" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-41" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-63" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-43" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-81" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-33" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-93" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-71" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-57" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-77" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-59" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-36" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-31" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-42" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-8" />
+		     <column name="permission_id" valueNumeric="-87" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-89" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-91" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-84" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-93" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-94" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-88" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-90" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-92" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-85" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-87" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-86" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-75" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-83" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-77" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-81" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-78" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-101" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-31" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-71" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-53" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-39" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-66" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-36" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-69" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-64" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-33" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-47" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-65" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-41" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-37" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-42" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-54" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-55" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-43" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-57" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-68" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-59" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-35" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-74" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-48" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-51" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-61" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-72" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-58" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-46" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-50" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-45" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-52" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-62" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-56" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-73" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-63" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-32" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-34" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-38" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-9" />
+		     <column name="permission_id" valueNumeric="-49" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-101" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-100" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-99" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-97" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-96" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-95" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-94" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-93" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-92" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-91" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-90" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-89" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-88" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-87" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-86" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-85" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-84" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-83" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-82" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-81" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-80" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-79" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-78" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-77" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-76" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-75" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-74" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-73" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-72" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-71" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-70" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-69" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-68" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-67" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-66" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-65" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-64" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-63" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-62" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-61" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-59" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-58" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-57" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-56" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-55" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-54" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-53" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-52" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-51" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-50" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-49" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-48" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-47" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-46" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-45" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-44" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-43" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-42" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-41" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-39" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-38" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-37" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-36" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-35" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-34" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-33" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-32" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-10" />
+		     <column name="permission_id" valueNumeric="-31" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-51" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-45" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-50" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-33" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-67" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-81" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-32" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-68" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-38" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-55" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-90" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-82" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-85" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-98" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-100" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-73" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-79" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-65" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-42" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-75" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-54" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-64" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-99" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-66" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-46" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-83" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-93" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-43" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-74" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-71" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-101" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-48" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-37" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-61" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-58" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-62" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-96" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-84" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-31" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-87" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-53" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-39" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-47" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-92" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-35" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-56" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-88" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-52" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-59" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-78" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-44" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-94" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-57" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-77" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-91" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-49" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-63" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-34" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-69" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-76" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-89" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-36" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-41" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-11" />
+		     <column name="permission_id" valueNumeric="-72" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-101" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-98" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-94" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-93" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-92" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-91" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-90" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-89" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-88" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-87" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-86" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-85" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-84" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-83" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-81" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-78" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-77" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-75" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-74" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-73" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-72" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-71" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-70" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-69" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-68" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-66" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-65" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-64" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-63" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-61" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-59" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-58" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-57" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-56" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-55" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-54" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-53" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-52" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-51" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-50" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-49" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-48" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-47" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-46" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-45" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-43" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-42" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-41" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-39" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-38" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-37" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-36" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-34" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-33" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-12" />
+		     <column name="permission_id" valueNumeric="-31" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-86" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-42" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-52" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-78" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-41" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-49" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-81" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-97" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-58" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-65" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-62" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-55" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-76" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-50" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-47" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-85" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-32" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-61" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-94" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-63" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-99" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-46" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-91" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-34" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-79" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-96" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-83" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-37" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-64" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-84" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-60" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-69" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-38" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-100" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-57" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-75" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-93" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-56" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-92" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-67" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-77" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-80" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-35" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-48" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-43" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-68" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-31" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-88" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-66" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-39" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-95" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-33" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-45" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-73" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-71" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-40" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-44" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-70" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-87" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-101" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-36" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-59" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-74" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-51" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-82" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-89" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-90" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-53" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-54" />
+		</insert>
+		<insert tableName="adm_role_permission">
+		     <column name="role_id" valueNumeric="-14" />
+		     <column name="permission_id" valueNumeric="-72" />
+		</insert>				                               
+	</changeSet>            
 </databaseChangeLog>
