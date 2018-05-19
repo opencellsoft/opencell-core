@@ -85,7 +85,8 @@ import com.lapis.jsfexporter.csv.CSVExportOptions;
  * There is at least one backing bean per entity class. Majority of pages distinguish between detail and list views and have two backing beans, with view and conversation scopes.
  * 
  * @author Andrius Karpavicius
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
@@ -153,6 +154,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private String backView;
 
     private String backViewSave;
+    
+    /** The back entity id. */
+    @Inject
+    @Param()
+    private String backEntityId;
+
+    /** The back tab. */
+    @Inject
+    @Param()
+    private String backTab;
+    
+    /** The back main tab. */
+    @Inject
+    @Param()
+    private String backMainTab;
 
     /**
      * Object identifier to load
@@ -1513,5 +1529,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
 
         return matchedEntityInfo;
+    }
+
+    /**
+     * @return the backEntityId
+     */
+    public String getBackEntityId() {
+        return backEntityId;
+    }
+
+    /**
+     * @return the backTab
+     */
+    public String getBackTab() {
+        return backTab;
+    }
+
+    /**
+     * @return the backMainTab
+     */
+    public String getBackMainTab() {
+        return backMainTab;
     }
 }

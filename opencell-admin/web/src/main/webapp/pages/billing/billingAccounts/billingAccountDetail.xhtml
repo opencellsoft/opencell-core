@@ -98,7 +98,8 @@
 						treeBean="#{customerTreeBean}"
 						entity="#{billingAccountBean.entity}" />
             </h:panelGroup>
-			<h:panelGroup styleClass="col2">
+			<h:panelGroup styleClass="col2"> 
+			        <p:messages id="global_ba_messages" autoUpdate="true"/>
 					<p:tabView id="parentTab" styleClass="tab-parent" activeIndex="#{billingAccountBean.activeMainTab}">
 						<p:tab title="#{messages['billingAccount.tab.account']}">
                         <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":parentTab:formId:childTab"
@@ -426,14 +427,22 @@
 										value="#{messages[entity.billingRun.status.label]}" />
 								</p:column>
 								<hftl:column label="#{messages['invoice.invoiceType']}"
-									field="invoiceType.code"  />
-                            <hftl:actionsColumn renderViewLink="true" editView="/pages/billing/invoices/invoiceDetail.xhtml" renderEditLink="false" renderDeleteLink="false">
-                                <h:commandLink action="#{invoiceBean.downloadPdfInvoice(entity.id)}" rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
-                                    <h:graphicImage value="/img/pdf.gif" style="border:0; margin-top:2px" />
-                                </h:commandLink>
-                            </hftl:actionsColumn>
+										field="invoiceType.code"  />
 
-                            <p:rowExpansion>
+							<hftl:actionsColumn renderViewLink="true"
+								editView="/pages/billing/invoices/invoiceDetail.xhtml"
+								renderEditLink="false" renderDeleteLink="false"
+								backView="backToBaFromInvoice" backEntityId="#{billingAccountBean.objectId}" 
+								backTab="0" backMainTab="2">
+								<h:commandLink
+									action="#{invoiceBean.downloadPdfInvoice(entity.id)}"
+									rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
+									<h:graphicImage value="/img/pdf.gif"
+										style="border:0; margin-top:2px" />
+								</h:commandLink>
+							</hftl:actionsColumn>
+
+							<p:rowExpansion>
 									<p:dataTable
 										value="#{invoiceBean.getLinkedInvoices(entity)}"
 										var="obj" reflow="false" styleClass="invoice-adjustment-table">

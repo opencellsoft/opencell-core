@@ -596,6 +596,24 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>backToBaFromInvoice</from-outcome>
+		<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>billingAccountId</name>
+				<value>#{invoiceBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>mainTab</name>
+				<value>#{invoiceBean.backMainTab}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{invoiceBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>invoices</from-outcome>
 		<to-view-id>/pages/billing/invoices/invoices.xhtml</to-view-id>
 		<redirect />
