@@ -88,9 +88,6 @@ import org.slf4j.Logger;
 public class WalletOperationService extends BusinessService<WalletOperation> {
 
     @Inject
-    private Logger log;
-
-    @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
     @Inject

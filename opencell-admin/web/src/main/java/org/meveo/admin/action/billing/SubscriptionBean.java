@@ -141,9 +141,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;

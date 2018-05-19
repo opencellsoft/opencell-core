@@ -109,10 +109,6 @@ public class UserBean extends CustomFieldBean<User> {
     @Named
     private SellerBean sellerBean;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private DualListModel<Role> rolesDM;
 
     private TreeNode userGroupRootNode;

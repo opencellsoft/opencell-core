@@ -93,10 +93,6 @@ public class PaymentService extends PersistenceService<Payment> {
     @Inject
     private RefundService refundService;
 
-    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @MeveoAudit
     @Override
     public void create(Payment entity) throws BusinessException {

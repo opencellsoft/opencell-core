@@ -31,9 +31,6 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
     @Inject
     private MediationApi mediationApi;
 
-    @Context
-    private HttpServletRequest httpServletRequest;
-
     @Override
     public ActionStatus registerCdrList(CdrListDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");

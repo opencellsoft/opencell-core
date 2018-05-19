@@ -51,10 +51,6 @@ public class AgedBalance extends FileProducer implements Reporting {
     final static String DEBIT = "0";
     final static String CREDIT = "1";
 
-    public Map<String, Object> parameters = new HashMap<String, Object>();
-
-    protected Logger log;
-
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

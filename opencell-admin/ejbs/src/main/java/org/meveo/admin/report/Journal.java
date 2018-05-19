@@ -23,10 +23,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +35,6 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.impl.JournalEntryService;
-import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -50,12 +47,7 @@ public class Journal extends FileProducer implements Reporting {
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Inject
-    protected Logger log;
-
-    @Inject
     private JournalEntryService journalEntryService;
-
-    public Map<String, Object> parameters = new HashMap<String, Object>();
 
     /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject

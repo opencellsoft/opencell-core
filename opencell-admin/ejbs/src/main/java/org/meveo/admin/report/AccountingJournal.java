@@ -46,16 +46,12 @@ import org.slf4j.Logger;
 @Named
 public class AccountingJournal extends FileProducer implements Reporting {
     @Inject
-    protected Logger log;
-
-    @Inject
     private DWHAccountOperationService accountOperationService;
 
     private String separator;
 
     private String templateFilename;
-    public Map<String, Object> parameters = new HashMap<String, Object>();
-
+    
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Inject

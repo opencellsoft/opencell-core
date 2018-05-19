@@ -43,9 +43,6 @@ import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 @Interceptors({ WsRestApiInterceptor.class })
 public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
-    @Inject
-    private Logger log = LoggerFactory.getLogger(CatalogRsImpl.class);
-
     @Context
     private UriInfo uriInfo;
 

@@ -50,10 +50,6 @@ public class SepaRejectedTransactionsJob extends Job {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    /** The job execution service. */
-    @Inject
-    private JobExecutionService jobExecutionService;
-
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {

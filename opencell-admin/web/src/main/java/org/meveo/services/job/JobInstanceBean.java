@@ -12,7 +12,6 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
@@ -22,11 +21,14 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 
+/**
+ * @author phung
+ *
+ */
 @Named
 @ViewScoped
 public class JobInstanceBean extends CustomFieldBean<JobInstance> {
@@ -38,14 +40,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private JobExecutionService jobExecutionService;
-
-    @Inject
-    private CustomFieldTemplateService customFieldTemplateService;
-
-    @Inject
-    private CustomFieldDataEntryBean customFieldDataEntryBean;
-
-    @Inject
+@Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     public JobInstanceBean() {

@@ -485,7 +485,7 @@ public class ParamBean {
                 outBuffer.append(aChar);
                 break;
             default:
-                if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
+                if (((aChar < 0x0020) || (aChar > 0x007e)) && escapeUnicode) {
                     outBuffer.append('\\');
                     outBuffer.append('u');
                     outBuffer.append(toHex((aChar >> 12) & 0xF));

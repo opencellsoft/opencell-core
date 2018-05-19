@@ -169,11 +169,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private ServiceSingleton serviceSingleton;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
-    /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
 
     /** folder for adjustment pdf. */

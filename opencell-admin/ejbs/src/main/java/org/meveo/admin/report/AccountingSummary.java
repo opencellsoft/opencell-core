@@ -58,17 +58,13 @@ public class AccountingSummary extends FileProducer implements Reporting {
     };
 
     @Inject
-    protected Logger log;
-
-    @Inject
     private DWHAccountOperationService accountOperationTransformationService;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     private String templateFilename;
-    public Map<String, Object> parameters = new HashMap<String, Object>();
-
+    
     public void generateAccountingSummaryFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
         FileWriter writer = null;
         try {

@@ -85,9 +85,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @Inject
     private SubscriptionService subscriptionService;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     /**
      * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
      */

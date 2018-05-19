@@ -79,9 +79,6 @@ import org.tmf.dsmapi.quote.ProductQuoteItem;
 public class QuoteApi extends BaseApi {
 
     @Inject
-    private Logger log;
-
-    @Inject
     private ProductOfferingService productOfferingService;
 
     @Inject

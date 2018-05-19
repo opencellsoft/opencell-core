@@ -56,9 +56,6 @@ import org.slf4j.Logger;
 @Named
 public class AccountingDetail extends FileProducer implements Reporting {
     @Inject
-    protected Logger log;
-
-    @Inject
     private CustomerAccountService customerAccountService;
 
     @Inject
@@ -71,7 +68,6 @@ public class AccountingDetail extends FileProducer implements Reporting {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    public Map<String, Object> parameters = new HashMap<String, Object>();
     public HashMap<CacheKeyStr, BigDecimal> balances = new HashMap<CacheKeyStr, BigDecimal>();
     public HashMap<CacheKeyStr, String> customerNames = new HashMap<CacheKeyStr, String>();
 

@@ -44,14 +44,6 @@ public class MediationJob extends Job {
     @Inject
     private MediationAsync mediationAsync;
 
-    /** The custom field instance service. */
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
