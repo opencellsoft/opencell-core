@@ -17,6 +17,10 @@ public class CommunicationApi extends BaseApi {
 	@Inject
 	MeveoInstanceService meveoInstanceService;
 
+	/**
+	 * @param communicationRequestDto communication request
+	 * @throws MeveoApiException meveo api exception
+	 */
 	public void inboundCommunication(CommunicationRequestDto communicationRequestDto) throws MeveoApiException {
 
 		if (communicationRequestDto == null || StringUtils.isBlank(communicationRequestDto.getMeveoInstanceCode())) {

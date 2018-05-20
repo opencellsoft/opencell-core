@@ -62,20 +62,22 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
         }
-        if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
-            missingParameters.add("code");
-        }
+        if (paymentGatewayDto != null) {
+            if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
+                missingParameters.add("code");
+            }
 
-        if (paymentGatewayDto.getType() == null) {
-            missingParameters.add("type");
-        }
+            if (paymentGatewayDto.getType() == null) {
+                missingParameters.add("type");
+            }
 
-        if (paymentGatewayDto.getPaymentMethodType() == null) {
-            missingParameters.add("paymentMethodType");
-        }
+            if (paymentGatewayDto.getPaymentMethodType() == null) {
+                missingParameters.add("paymentMethodType");
+            }
 
-        if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM && StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
-            missingParameters.add("scriptInstanceCode");
+            if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM && StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
+                missingParameters.add("scriptInstanceCode");
+            }
         }
 
         handleMissingParameters();
@@ -144,7 +146,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
         }
-        if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
+        if (paymentGatewayDto != null && StringUtils.isBlank(paymentGatewayDto.getCode())) {
             missingParameters.add("code");
         }
         handleMissingParameters();

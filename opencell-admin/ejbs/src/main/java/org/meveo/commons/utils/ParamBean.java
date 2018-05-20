@@ -128,9 +128,7 @@ public class ParamBean {
      * @return Application configuration instance
      */
     public static ParamBean getInstance(String propertiesName) {
-        if (reload) {
-            instance = new ParamBean(propertiesName);
-        } else if (instance == null) {
+        if (reload || instance == null) {
             instance = new ParamBean(propertiesName);
         }
 
@@ -196,6 +194,10 @@ public class ParamBean {
      * @return True of multitenancy is enabled
      */
     public static boolean isMultitenancyEnabled() {
+        if (getInstance() == null) {
+            return multiTenancyEnabled;
+        }
+        
         if (multiTenancyEnabled == null) {
             multiTenancyEnabled = Boolean.valueOf(getInstance().getProperty("meveo.multiTenancy", "false"));
         }
@@ -203,12 +205,16 @@ public class ParamBean {
     }
 
     /**
-     * Get a file directory root for a given provider
+     * Get a file directory root for a given provider.
      * 
      * @param provider Provider code
      * @return Full path to provider's data files
      */
     public String getChrootDir(String provider) {
+        if (getInstance() == null) {
+            return null;
+        }
+        
         if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
             return getInstance().getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
         }

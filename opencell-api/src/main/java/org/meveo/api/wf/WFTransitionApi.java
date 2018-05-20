@@ -196,26 +196,28 @@ public class WFTransitionApi extends BaseApi {
             missingParameters.add("WFTransitionDto");
             handleMissingParameters();
         }
-        if (isUpdate && StringUtils.isBlank(wfTransitionDto.getUuid())) {
-            missingParameters.add("uuid");
-        }
-        if (StringUtils.isBlank(wfTransitionDto.getFromStatus())) {
-            missingParameters.add("FromStatus");
-        }
-        if (StringUtils.isBlank(wfTransitionDto.getToStatus())) {
-            missingParameters.add("ToStatus");
-        }
-        if (StringUtils.isBlank(wfTransitionDto.getDescription())) {
-            missingParameters.add("Description");
-        }
+        if (wfTransitionDto != null) {
+            if (isUpdate && StringUtils.isBlank(wfTransitionDto.getUuid())) {
+                missingParameters.add("uuid");
+            }
+            if (StringUtils.isBlank(wfTransitionDto.getFromStatus())) {
+                missingParameters.add("FromStatus");
+            }
+            if (StringUtils.isBlank(wfTransitionDto.getToStatus())) {
+                missingParameters.add("ToStatus");
+            }
+            if (StringUtils.isBlank(wfTransitionDto.getDescription())) {
+                missingParameters.add("Description");
+            }
 
-        if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFDecisionRuleDto())) {
-            for (WFDecisionRuleDto wfDecisionRuleDto : wfTransitionDto.getListWFDecisionRuleDto()) {
-                if (StringUtils.isBlank(wfDecisionRuleDto.getName())) {
-                    missingParameters.add("DecisionRuleName");
-                }
-                if (StringUtils.isBlank(wfDecisionRuleDto.getValue())) {
-                    missingParameters.add("DecisionRuleValue");
+            if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFDecisionRuleDto())) {
+                for (WFDecisionRuleDto wfDecisionRuleDto : wfTransitionDto.getListWFDecisionRuleDto()) {
+                    if (StringUtils.isBlank(wfDecisionRuleDto.getName())) {
+                        missingParameters.add("DecisionRuleName");
+                    }
+                    if (StringUtils.isBlank(wfDecisionRuleDto.getValue())) {
+                        missingParameters.add("DecisionRuleValue");
+                    }
                 }
             }
         }

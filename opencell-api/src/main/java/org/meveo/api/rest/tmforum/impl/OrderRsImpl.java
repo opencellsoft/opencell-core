@@ -42,9 +42,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -66,9 +64,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -94,9 +90,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -117,9 +111,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @SuppressWarnings("hiding")
@@ -140,9 +132,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         }
         
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
 	@Override
@@ -159,9 +149,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 			responseBuilder.entity(result);
 		}
 
-		Response response = responseBuilder.build();
-		log.debug("RESPONSE={}", response.getEntity());
-		return response;
+		return buildResponse(responseBuilder);
 	}
 
 	@Override
@@ -180,8 +168,20 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 			responseBuilder.entity(result);
 		}
 
-		Response response = responseBuilder.build();
+		return buildResponse(responseBuilder);
+	}
+
+    /**
+     * @param responseBuilder Response builder.
+     * @return response.
+     */
+    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
+        Response response = null;
+        if (responseBuilder != null) {
+            response = responseBuilder.build();
+        }
+        
 		log.debug("RESPONSE={}", response.getEntity());
 		return response;
-	}
+    }
 }

@@ -489,16 +489,18 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
         }
-        if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-            missingParameters.add("billingAccountCode");
-        }
+        if (generateInvoiceRequestDto != null) {
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+                missingParameters.add("billingAccountCode");
+            }
 
-        if (generateInvoiceRequestDto.getInvoicingDate() == null) {
-            missingParameters.add("invoicingDate");
-        }
-        if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
-                && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
-            missingParameters.add("lastTransactionDate or filter or orderNumber");
+            if (generateInvoiceRequestDto.getInvoicingDate() == null) {
+                missingParameters.add("invoicingDate");
+            }
+            if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
+                    && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
+                missingParameters.add("lastTransactionDate or filter or orderNumber");
+            }
         }
 
         handleMissingParameters();
