@@ -25,6 +25,8 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
 /**
  * The Class CustomFieldDto.
+ * 
+ * @lastModifiedVersion 5.0.2
  */
 @XmlRootElement(name = "CustomField")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,6 +36,16 @@ public class CustomFieldDto {
     /** The code. */
     @XmlAttribute(required = true)
     protected String code;
+    
+    /** The description. */
+    @XmlAttribute(required = true)
+    protected String description;
+    
+    /** The field type. */
+    protected CustomFieldTypeEnum fieldType;
+    
+    /** The language descriptions. */
+    protected List<LanguageDescriptionDto> languageDescriptions;
 
     /** The value date. */
     @XmlAttribute
@@ -112,6 +124,64 @@ public class CustomFieldDto {
      */
     public void setCode(String code) {
         this.code = code;
+    }
+    
+    
+
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Gets the field type.
+     *
+     * @return the fieldType
+     */
+    public CustomFieldTypeEnum getFieldType() {
+        return fieldType;
+    }
+
+    /**
+     * Sets the field type.
+     *
+     * @param fieldType the fieldType to set
+     */
+    public void setFieldType(CustomFieldTypeEnum fieldType) {
+        this.fieldType = fieldType;
+    }
+    
+    
+
+    /**
+     * Gets the language descriptions.
+     *
+     * @return the languageDescriptions
+     */
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    /**
+     * Sets the language descriptions.
+     *
+     * @param languageDescriptions the languageDescriptions to set
+     */
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 
     /**
@@ -436,10 +506,15 @@ public class CustomFieldDto {
         this.indexType = indexType;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CustomFieldDto{");
         sb.append("code='").append(code).append('\'');
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", fieldType=").append(fieldType);
         sb.append(", valueDate=").append(valueDate);
         sb.append(", valuePeriodStartDate=").append(valuePeriodStartDate);
         sb.append(", valuePeriodEndDate=").append(valuePeriodEndDate);

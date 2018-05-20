@@ -78,7 +78,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 /**
  * @author Andrius Karpavičius
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  *
  */
 @Stateless
@@ -687,7 +687,7 @@ public class OrderApi extends BaseApi {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
                 CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), CustomFieldValue.parseValueFromString(cft, characteristic.getValue()),
-                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY);
+                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, cft);
                 customFieldsDto.getCustomField().add(cftDto);
             }
         }
