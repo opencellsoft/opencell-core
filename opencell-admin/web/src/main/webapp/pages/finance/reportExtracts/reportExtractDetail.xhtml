@@ -39,7 +39,7 @@
 		<hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" showEnableDisableButton="true">
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:formField label="#{messages['reportExtract.scriptType']}" field="scriptType" listenerUpdate="scriptTypeJava scriptTypeSQL" />
+			<hftl:formField label="#{messages['reportExtract.scriptType']}" field="scriptType" listenerUpdate="scriptTypeJava,scriptTypeSQL,resultType" />
 			<p:outputPanel id="scriptTypeJava">
 				<hftl:formField id="scriptInstanceSelectId" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.JAVA}"
 					label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
@@ -48,12 +48,14 @@
 			</p:outputPanel>
 			<hftl:formField label="#{messages['reportExtract.category']}" field="category" />
 			<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
-			<p:outputPanel id="scriptTypeSQL">			
+			<p:outputPanel id="scriptTypeSQL">
 				<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">
 	                <pe:codeMirror required="true" id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
 	            </hftl:decorateFormField>
             </p:outputPanel>
-            <hftl:formField label="#{messages['reportExtract.resultType']}" field="reportExtractResultType" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}" />
+            <p:outputPanel id="resultType">
+            	<hftl:formField label="#{messages['reportExtract.resultType']}" field="reportExtractResultType" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}" />
+            </p:outputPanel>
             <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">

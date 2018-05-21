@@ -16,6 +16,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.ReportExtractService;
@@ -49,6 +50,10 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
         if (entity.getParams() != null) {
             extractMapTypeFieldFromEntity(entity.getParams(), "params");
+        }
+
+        if (entity.getReportExtractResultType() == null) {
+            entity.setReportExtractResultType(ReportExtractResultTypeEnum.CSV);
         }
 
         return entity;
