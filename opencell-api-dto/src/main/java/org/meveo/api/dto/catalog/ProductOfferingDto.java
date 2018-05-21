@@ -98,10 +98,10 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
     @XmlElementWrapper(name = "sellers")
     @XmlElement(name = "seller")
     private List<String> sellers;
-    
+
     @XmlElementWrapper(name = "customerCategories")
     @XmlElement(name = "customerCategory")
-    private List<CustomerCategoryDto> customerCategories = new ArrayList<>();
+    private List<CustomerCategoryDto> customerCategories;
 
     /**
      * Instantiates a new product offering dto.
@@ -176,7 +176,7 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
                 return new ChannelDto(p);
             }).collect(Collectors.toList()));
         }
-        
+
         if (productOffering.getCustomerCategories() != null && !productOffering.getCustomerCategories().isEmpty()) {
             setCustomerCategories(productOffering.getCustomerCategories().stream().map(p -> {
                 return new CustomerCategoryDto(p);
