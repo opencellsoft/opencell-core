@@ -866,9 +866,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         try {
 
+            action = entityActionScriptService.findByCode(action.getCode());
+            
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
-
             Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
