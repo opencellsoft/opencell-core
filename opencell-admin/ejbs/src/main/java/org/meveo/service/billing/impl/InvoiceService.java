@@ -406,7 +406,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice invoice = null;
         EntityManager em = getEntityManager();
         try {
-            BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
+            BillingCycle billingCycle = (billingRun == null || billingRun.getBillingCycle() == null) ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
             if (billingCycle == null) {
                 throw new BusinessException("Cant find the billing cycle");
             }
@@ -942,8 +942,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
             }
 
-            subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax() != null
-                    ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP) : BigDecimal.ZERO);
+            subCategoryInvoiceAgregate.setAmountWithoutTax(
+                subCategoryInvoiceAgregate.getAmountWithoutTax() != null ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP)
+                        : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
