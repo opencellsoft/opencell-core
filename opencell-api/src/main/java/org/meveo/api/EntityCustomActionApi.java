@@ -271,8 +271,9 @@ public class EntityCustomActionApi extends BaseApi {
         Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
         Class entityClass = null;
         for (Class<?> clazz : cfClasses) {
-            if (appliesTo.startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+            if (appliesTo.equals(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
                 entityClass = clazz;
+                break;
             }
         }
 

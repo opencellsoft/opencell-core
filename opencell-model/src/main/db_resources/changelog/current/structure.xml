@@ -775,4 +775,14 @@
         <sql>DROP INDEX IF EXISTS medina_access_subscription_id ON ${db.schema.adapted}medina_access</sql>
         <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
 	</changeSet>   
+	
+	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
+		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
+	</changeSet>
+	
+    <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
+       <addColumn tableName="ar_payment_history">
+           <column name="customer_code" type="varchar(256)" />
+       </addColumn>
+    </changeSet>
 </databaseChangeLog> 
