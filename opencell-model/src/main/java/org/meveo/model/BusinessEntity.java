@@ -58,9 +58,9 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     @Transient
     protected boolean appendGeneratedCode = false;
     
-    /** The run time CF values. */
+    /** The run time values. */
     @Transient
-    private Map<String, Object> runTimeCFValues;
+    private Map<String, Object> runTimeValues;
 
     public String getCode() {
         return code;
@@ -179,17 +179,23 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     }
 
     /**
-     * @return the runTimeCFValues
+     * @param runTimeValues the runTimeValues to set
      */
-    public Map<String, Object> getRunTimeCFValues() {
-        return runTimeCFValues;
+    public void setRunTimeValues(Map<String, Object> runTimeValues) {
+        this.runTimeValues = runTimeValues;
     }
-
+    
     /**
-     * @param runTimeCFValues the runTimeCFValues to set
+     * Gets the runtime value.
+     *
+     * @param key the key
+     * @return the runtime value
      */
-    public void setRunTimeCFValues(Map<String, Object> runTimeCFValues) {
-        this.runTimeCFValues = runTimeCFValues;
+    public Object getRuntimeValue(String key) {
+        if (this.runTimeValues == null ) {
+            return null;
+        }
+        return this.runTimeValues.get(key);
     }
 
 }

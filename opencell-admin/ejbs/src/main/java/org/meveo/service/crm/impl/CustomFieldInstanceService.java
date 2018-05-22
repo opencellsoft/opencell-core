@@ -210,10 +210,7 @@ public class CustomFieldInstanceService extends BaseService {
      */
     private Object getRunTimeCFValue(ICustomFieldEntity entity, String cfCode) {
         if (entity instanceof BusinessEntity) {
-            Map<String, Object> runTimeCFValues = ((BusinessEntity) entity).getRunTimeCFValues();  
-            if (runTimeCFValues != null) {
-                return runTimeCFValues.get(cfCode);
-            }
+            return ((BusinessEntity) entity).getRuntimeValue(cfCode);  
         }
         return null;
     }

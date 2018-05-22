@@ -84,26 +84,27 @@ public class JobApi extends BaseApi {
      */
     private void setRunTimeJobValues(JobInstanceInfoDto jobExecution, JobInstance jobInstance) throws MeveoApiException {
         
+        Map<String , Object> runTimeValues = new HashMap<>();
+        
         final String  runOnNodes = jobExecution.getRunOnNodes();
         if (isNotEmpty(runOnNodes)) {
-            jobInstance.setRunOnNodes(runOnNodes);    
+            runTimeValues.put("runOnNodes", runOnNodes);
         }
-        
-        final String parametres = jobExecution.getParameters();
-        if (isNotEmpty(parametres)) {
-            jobInstance.setParametres(parametres);    
+        final String parameters = jobExecution.getParameters();
+        if (isNotEmpty(parameters)) {
+            runTimeValues.put("parameters", parameters);
         }
         
         CustomFieldsDto customFieldsDto = jobExecution.getCustomFields();
         if (customFieldsDto != null && CollectionUtils.isNotEmpty(customFieldsDto.getCustomField())) {
             List<CustomFieldDto> cfDtos = customFieldsDto.getCustomField();
             this.validateAndConvertCustomFields(cfDtos, jobInstance);
-            Map<String , Object> runTimeCFValues = new HashMap<>();
+            
             for (CustomFieldDto cfDto : cfDtos) {
-                runTimeCFValues.put(cfDto.getCode(), cfDto.getValueConverted());
+                runTimeValues.put(cfDto.getCode(), cfDto.getValueConverted());
             }
-            jobInstance.setRunTimeCFValues(runTimeCFValues);
         }
+        jobInstance.setRunTimeValues(runTimeValues);
     }
 
     /**

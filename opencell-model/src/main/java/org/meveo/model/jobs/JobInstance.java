@@ -118,7 +118,16 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return the parametres
      */
     public String getParametres() {
-        return parametres;
+        Object value = this.getRuntimeValue("parameters");
+        return value != null ? String.valueOf(value) : parametres;
+    }
+    
+    /**
+     * @return the parametres
+     */
+    public String getRunTimeParametres() {
+        Object value = this.getRuntimeValue("parameters");
+        return value != null ? String.valueOf(value) : parametres;
     }
 
     /**
@@ -173,7 +182,8 @@ public class JobInstance extends EnableBusinessCFEntity {
     }
 
     public String getRunOnNodes() {
-        return runOnNodes;
+        Object value = this.getRuntimeValue("runOnNodes");
+        return value != null ? String.valueOf(value) : runOnNodes;
     }
 
     public void setRunOnNodes(String runOnNodes) {
@@ -214,10 +224,13 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return True if either current cluster node is unknown (non-clustered mode), runOnNodes is not specified or current cluster node matches any node in a list of nodes
      */
     public boolean isRunnableOnNode(String currentNode) {
-        if (currentNode == null || runOnNodes == null) {
+        
+        String runOnNodesValue = this.getRunOnNodes();
+        
+        if (currentNode == null || runOnNodesValue == null) {
             return true;
         }
-        String[] nodes = runOnNodes.split(",");
+        String[] nodes = runOnNodesValue.split(",");
         for (String node : nodes) {
             if (node.trim().equals(currentNode)) {
                 return true;
