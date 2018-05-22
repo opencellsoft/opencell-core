@@ -21,66 +21,43 @@ package org.meveo.model.communication.contact;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
-@ExportIdentifier({ "contactCode" })
+@Table(name = "com_contact")
 @DiscriminatorValue(value = "ACCT_CONTACT")
-@Table(name = "com_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "contact_code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "com_contact_seq"), })
 public class Contact extends AccountEntity {
-	@Id
-	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	@Access(AccessType.PROPERTY) // Access is set to property so a call to
-									// getId() wont trigger hibernate proxy
-									// loading
-	protected Long id;
-
-	@Version
-	@Column(name = "version")
-	private Integer version;
 
 	private static final long serialVersionUID = 3772773449495155646L;
+	
+	 public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Contact.class.getAnnotation(DiscriminatorValue.class)).value();
 
 	@Column(name = "email", length = 255)
 	@Size(max = 255)
 	private String email;
-	
-	@Column(name = "description", length = 255)
-	@Size(max = 255)
-	private String description;
 
 	@Column(name = "assistant_name", length = 50)
 	@Size(max = 50)
@@ -122,11 +99,6 @@ public class Contact extends AccountEntity {
 	@JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "com_contact_id"), inverseJoinColumns = @JoinColumn(name = "crm_contact_group_id"))
 	private List<ContactGroup> contactGroups = new ArrayList<>();
 
-	// It is provider resposibility to create contacts with unique codes
-	@Column(name = "contact_code", length = 50)
-	@Size(max = 50)
-	private String contactCode;
-
 	@Embedded
 	private CommunicationPolicy contactPolicy;
 
@@ -137,25 +109,8 @@ public class Contact extends AccountEntity {
 	@JoinColumn(name = "adress_book_id")
 	private AddressBook adressBook;
 
-	
-	public Contact(){
-		
-	}
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public boolean isAgreedToUA() {
-		return agreedToUA;
-	}
-
-	public void setAgreedToUA(boolean agreedToUA) {
-		this.agreedToUA = agreedToUA;
+	public Contact() {
+		accountType = ACCOUNT_TYPE;
 	}
 
 	public String getEmail() {
@@ -164,14 +119,6 @@ public class Contact extends AccountEntity {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getAssistantName() {
@@ -188,6 +135,14 @@ public class Contact extends AccountEntity {
 
 	public void setAssistantPhone(String assistantPhone) {
 		this.assistantPhone = assistantPhone;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
 	}
 
 	public String getImportedFrom() {
@@ -230,20 +185,20 @@ public class Contact extends AccountEntity {
 		this.isSuspect = isSuspect;
 	}
 
+	public boolean isAgreedToUA() {
+		return agreedToUA;
+	}
+
+	public void setAgreedToUA(boolean agreedToUA) {
+		this.agreedToUA = agreedToUA;
+	}
+
 	public List<ContactGroup> getContactGroups() {
 		return contactGroups;
 	}
 
 	public void setContactGroups(List<ContactGroup> contactGroups) {
 		this.contactGroups = contactGroups;
-	}
-
-	public String getContactCode() {
-		return contactCode;
-	}
-
-	public void setContactCode(String contactCode) {
-		this.contactCode = contactCode;
 	}
 
 	public CommunicationPolicy getContactPolicy() {
@@ -262,45 +217,11 @@ public class Contact extends AccountEntity {
 		this.messages = messages;
 	}
 
-	/**
-	 * @return the adressBook
-	 */
 	public AddressBook getAdressBook() {
 		return adressBook;
 	}
 
-	/**
-	 * @param adressBook
-	 *            the adressBook to set
-	 */
 	public void setAdressBook(AddressBook adressBook) {
 		this.adressBook = adressBook;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-
-		if (this == obj) {
-			return true;
-		} else if (obj == null) {
-			return false;
-		} else if (!(obj instanceof Provider)) {
-			return false;
-		}
-
-		Contact other = (Contact) obj;
-
-		if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-			return true;
-		}
-
-		if (contactCode == null) {
-			if (other.getContactCode() != null) {
-				return false;
-			}
-		} else if (!contactCode.equals(other.getContactCode())) {
-			return false;
-		}
-		return true;
 	}
 }
