@@ -89,7 +89,7 @@ public class JobApi extends BaseApi {
             jobInstance.setRunOnNodes(runOnNodes);    
         }
         
-        final String parametres = jobExecution.getParametres();
+        final String parametres = jobExecution.getParameters();
         if (isNotEmpty(parametres)) {
             jobInstance.setParametres(parametres);    
         }

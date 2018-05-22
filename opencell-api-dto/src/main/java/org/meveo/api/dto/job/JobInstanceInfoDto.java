@@ -50,7 +50,7 @@ public class JobInstanceInfoDto implements Serializable {
     private String runOnNodes;
     
     /** The parametres. */
-    private String parametres;
+    private String parameters;
     
     /** The custom fields. */
     private CustomFieldsDto customFields;
@@ -179,20 +179,6 @@ public class JobInstanceInfoDto implements Serializable {
     }
 
     /**
-     * @return the parametres
-     */
-    public String getParametres() {
-        return parametres;
-    }
-
-    /**
-     * @param parametres the parametres to set
-     */
-    public void setParametres(String parametres) {
-        this.parametres = parametres;
-    }
-
-    /**
      * @return the customFields
      */
     public CustomFieldsDto getCustomFields() {
@@ -204,6 +190,20 @@ public class JobInstanceInfoDto implements Serializable {
      */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    /**
+     * @return the parameters
+     */
+    public String getParameters() {
+        return parameters;
+    }
+
+    /**
+     * @param parameters the parameters to set
+     */
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 
     @Override
