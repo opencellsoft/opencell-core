@@ -44,7 +44,8 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
  * 
  * @author Richard Hallier
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 public class QueryBuilder {
 
@@ -539,12 +540,27 @@ public class QueryBuilder {
      * @return instance of QueryBuilder
      */
     public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
+        return addCriterionDateRangeToTruncatedToDay(field, valueTo, true);
+    }
+    
+
+    /**
+     * Adds the criterion date range to truncated to day.
+     *
+     * @param field the field
+     * @param valueTo the value to
+     * @param includeEndDate the include end date : if true then the entities having the valueTo date are included
+     * @return the query builder
+     */
+    public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo, boolean includeEndDate) {
         if (StringUtils.isBlank(valueTo)) {
             return this;
         }
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(valueTo);
-        calTo.add(Calendar.DATE, 1);
+        if (includeEndDate) {
+            calTo.add(Calendar.DATE, 1);    
+        }
         calTo.set(Calendar.HOUR_OF_DAY, 0);
         calTo.set(Calendar.MINUTE, 0);
         calTo.set(Calendar.SECOND, 0);

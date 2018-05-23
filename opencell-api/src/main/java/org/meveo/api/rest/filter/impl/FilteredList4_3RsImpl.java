@@ -27,9 +27,6 @@ import org.slf4j.Logger;
 public class FilteredList4_3RsImpl extends BaseRs implements FilteredList4_3Rs {
 
     @Inject
-    private Logger log;
-
-    @Inject
     private FilteredList4_3Api filteredListApi;
 
     @Override

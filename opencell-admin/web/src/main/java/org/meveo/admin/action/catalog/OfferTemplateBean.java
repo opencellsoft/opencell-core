@@ -85,9 +85,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @Inject
     private SubscriptionService subscriptionService;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     /**
      * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
      */
@@ -483,7 +480,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 
-            offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+            if (offerServiceTemplate != null) {
+                offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+            }
 
             if (offerServiceTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.update.successful"));
@@ -566,7 +565,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 
-            if (offerProductTemplate.getId() != null) {
+            if (offerProductTemplate != null && offerProductTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.productTemplate.update.successful"));
 
             } else {

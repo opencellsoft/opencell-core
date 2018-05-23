@@ -20,6 +20,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
@@ -36,6 +37,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
     @Override
     public JobInstance create(JobInstanceDto postData) throws MeveoApiException, BusinessException {
@@ -200,8 +204,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
-
-        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, true));
+        
+        customFieldInstanceService.instantiateCFWithDefaultValue(jobInstance);
+        
+        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, false));
         return jobInstanceDto;
     }
 }

@@ -72,14 +72,11 @@ import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  *
  */
 @Stateless
 public class QuoteApi extends BaseApi {
-
-    @Inject
-    private Logger log;
 
     @Inject
     private ProductOfferingService productOfferingService;
@@ -548,9 +545,7 @@ public class QuoteApi extends BaseApi {
         }
         // No toDate for products
         for (ProductInstance productInstance : productInstances) {
-            if (fromDate == null) {
-                fromDate = productInstance.getApplicationDate();
-            } else if (productInstance.getApplicationDate().before(fromDate)) {
+            if (fromDate == null || productInstance.getApplicationDate().before(fromDate)) {
                 fromDate = productInstance.getApplicationDate();
             }
         }
@@ -687,7 +682,7 @@ public class QuoteApi extends BaseApi {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
                 CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), CustomFieldValue.parseValueFromString(cft, characteristic.getValue()),
-                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY);
+                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, cft);
                 customFieldsDto.getCustomField().add(cftDto);
             }
         }

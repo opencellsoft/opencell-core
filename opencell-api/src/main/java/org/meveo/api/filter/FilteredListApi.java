@@ -56,7 +56,7 @@ public class FilteredListApi extends BaseApi {
         
         //if there are parameters we recreate a transient filter by replacing the parameter
         //values in the xml
-		if (parameters != null) {
+		if (parameters != null && result != null) {
 			String filterXmlInput = replaceCFParameters(result.getInputXml(), parameters);
 			result = filterService.parse(filterXmlInput);
 		}

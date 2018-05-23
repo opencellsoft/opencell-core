@@ -29,11 +29,6 @@ public class FtpAdapterJob extends Job {
     @Inject
     private FtpAdapterJobBean ftpAdapterJobBean;
 
-    /** The custom field instance service. */
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

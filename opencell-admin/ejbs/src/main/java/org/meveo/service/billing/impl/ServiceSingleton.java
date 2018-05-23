@@ -1,6 +1,5 @@
 package org.meveo.service.billing.impl;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
@@ -26,15 +25,13 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
- * A singleton service to handle synchronized calls. DO not change lock mode to
- * Write
+ * A singleton service to handle synchronized calls. DO not change lock mode to Write
  * 
  * @author Andrius Karpavicius
  */
 @Singleton
 @Lock(LockType.WRITE)
 public class ServiceSingleton {
-
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
@@ -54,7 +51,7 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
-    
+
     /**
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
@@ -114,7 +111,9 @@ public class ServiceSingleton {
         }
         invoiceType = invoiceTypeService.update(invoiceType);
 
+        // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
+
         return sequence;
     }
 
@@ -139,7 +138,7 @@ public class ServiceSingleton {
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
 
         Seller seller = sellerService.findById(sellerId);
-        seller = chooseSeller(seller, cfName, invoiceDate, invoiceType);
+        seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
         Sequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceTypeId, seller, cfName, numberOfInvoices);
 
@@ -149,31 +148,6 @@ public class ServiceSingleton {
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             throw new BusinessException("Failed to close invoice numbering sequence", e);
         }
-    }
-
-    /**
-     * if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null).
-     * 
-     * @param seller seller
-     * @param cfName custom field name
-     * @param date date
-     * @param invoiceType type of invoice
-     * @return choosen seller.
-     */
-    @Lock(LockType.READ)
-    public Seller chooseSeller(Seller seller, String cfName, Date date, InvoiceType invoiceType) {
-        if (seller.getSeller() == null) {
-            return seller;
-        }
-        if (customFieldInstanceService.hasCFValue(seller, cfName)) {
-            return seller;
-        }
-        if (invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)) {
-            return seller;
-        }
-
-        return chooseSeller(seller.getSeller(), cfName, date, invoiceType);
-
     }
 
     /**

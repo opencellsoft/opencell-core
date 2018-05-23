@@ -119,9 +119,6 @@ public class OrderBean extends CustomFieldBean<Order> {
     private ProductOfferingService productOfferingService;
 
     @Inject
-    private CustomFieldDataEntryBean customFieldDataEntryBean;
-
-    @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
     @Inject

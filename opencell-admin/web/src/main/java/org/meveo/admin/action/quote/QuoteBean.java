@@ -108,9 +108,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     private ProductOfferingService productOfferingService;
 
     @Inject
-    private CustomFieldDataEntryBean customFieldDataEntryBean;
-
-    @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
     @Inject

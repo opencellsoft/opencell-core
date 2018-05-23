@@ -22,17 +22,15 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
+/**
+ * @author phung
+ *
+ */
 @Stateless
 public class ImportCustomersJob extends Job {
 
     @Inject
     private ImportCustomersAsync importCustomersAsync;
-
-    @Inject
-    private ResourceBundle resourceMessages;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
