@@ -33,7 +33,7 @@ public class ContactBean extends CustomFieldBean<Contact>{
 
 	@PostConstruct
 	private void init() {
-		log.debug("start");
+		log.debug("start ContactBean");
 	}
 	
 

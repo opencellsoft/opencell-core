@@ -28,30 +28,16 @@ import org.meveo.model.communication.contact.Contact;
 
 @Entity
 @ExportIdentifier({ "addressbook" })
-@Table(name = "crm_adressbook")
+@Table(name = "crm_addressbook")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_adressbook_seq"), })
+        @Parameter(name = "sequence_name", value = "crm_addressbook_seq"), })
 public class AddressBook extends BaseEntity {
-	
-	@Column(name = "name", length = 5)
-	@Size(max = 50)
-	private String name;
-	
-    @OneToMany(mappedBy = "adressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	    @OneToMany(mappedBy = "addressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Contact> contacts = new ArrayList<Contact>();
 
-    @OneToMany(mappedBy = "adressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "addressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ContactGroup> groups = new ArrayList<ContactGroup>();
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	
 
 	/**
      * @return the contacts

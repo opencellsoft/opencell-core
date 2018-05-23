@@ -2223,6 +2223,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	
+	<navigation-case>
+		<from-outcome>addressBook</from-outcome>
+		<to-view-id>/pages/intcrm/addressBook.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	
 	
 </navigation-rule>
 

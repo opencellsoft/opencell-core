@@ -56,6 +56,11 @@ public class Customer extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
+
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "crm_addressbook_id")
+    private AddressBook addressbook;
+    
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;

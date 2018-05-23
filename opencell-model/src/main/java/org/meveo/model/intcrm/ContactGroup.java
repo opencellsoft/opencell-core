@@ -48,8 +48,8 @@ public class ContactGroup extends BaseEntity{
     private List<Campaign> campaigns;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adress_book_id")
-    private AddressBook adressBook;
+    @JoinColumn(name = "crm_address_book_id")
+    private AddressBook addressBook;
 
 	public String getName() {
 		return name;
@@ -92,16 +92,16 @@ public class ContactGroup extends BaseEntity{
 	}
 
     /**
-     * @return the adressBook
+     * @return the addressBook
      */
-    public AddressBook getAdressBook() {
-        return adressBook;
+    public AddressBook getAddressBook() {
+        return addressBook;
     }
 
     /**
-     * @param adressBook the adressBook to set
+     * @param addressBook the addressBook to set
      */
-    public void setAdressBook(AddressBook adressBook) {
-        this.adressBook = adressBook;
+    public void setAddressBook(AddressBook addressBook) {
+        this.addressBook = addressBook;
     }
 }

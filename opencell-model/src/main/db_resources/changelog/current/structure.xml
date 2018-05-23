@@ -660,18 +660,16 @@
             <column name="is_vip" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="is_suspect" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="adress_book_id" type="bigint"/>
+            <column name="address_book_id" type="bigint"/>
         </addColumn>
 
-        <createTable tableName="crm_adressbook">
+        <createTable tableName="crm_addressbook">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_adressbook_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_addressbook_pkey" />
             </column>
-            <column name="version" type="int4" />
-            <column name="name" type="varchar(50)"/>
         </createTable>
         
-        <createSequence sequenceName="crm_adressbook_seq" />
+        <createSequence sequenceName="crm_addressbook_seq" />
 
         <createTable tableName="crm_contact_group">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -681,7 +679,7 @@
             <column name="name" type="varchar(50)"/>
             <column name="description" type="varchar(255)"/>
             <column name="type" type="varchar(50)"/>
-            <column name="adress_book_id" type="bigint"/>
+            <column name="address_book_id" type="bigint"/>
         </createTable>
         
         <createSequence sequenceName="crm_contact_group_seq" />
@@ -706,11 +704,11 @@
 
         <addColumn tableName="crm_customer">
             <column name="crm_additional_details_id" type="bigint"/>
-            <column name="crm_adressbook_id" type="bigint"/>
+            <column name="crm_addressbook_id" type="bigint"/>
         </addColumn>
         
         <addColumn tableName="ar_customer_account">
-            <column name="crm_adressbook_id" type="bigint" />
+            <column name="crm_addressbook_id" type="bigint" />
         </addColumn>
 
         <createTable tableName="com_campaign_crm_group">
@@ -722,6 +720,10 @@
             </column>
         </createTable>
         <addPrimaryKey columnNames="com_campaign_id, crm_group_id" constraintName="com_campaign_crm_group_pkey" tableName="com_campaign_crm_group" />
+
+        <addColumn tableName="adm_user">
+            <column name="crm_addressbook_id" type="bigint" />
+        </addColumn>
     </changeSet>
 
 	<changeSet id="perf_mediation_20180404" author="Wassim" dbms="postgresql">

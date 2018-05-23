@@ -54,5 +54,13 @@ public class ContactService extends PersistenceService<Contact> {
 			log.error("Save Contact Fail : " + e.toString());
 		}
 	}
+	
+	public void findContactByCode(Long id) {
+		id = (long) 3;
+		Contact contact = this.findById(id);
+		log.debug(contact.toString());
+	}
 
+
+	
 }

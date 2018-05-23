@@ -43,6 +43,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -62,6 +63,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
@@ -91,6 +93,10 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
     @Size(max = 50)
     private String userName;
 
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "crm_addressbook_id")
+    private AddressBook addressbook;
+    
     @Column(name = "email", length = 100)
     @Size(max = 100)
     private String email;

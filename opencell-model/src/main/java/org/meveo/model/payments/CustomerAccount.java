@@ -67,8 +67,8 @@ public class CustomerAccount extends AccountEntity {
 	private static final long serialVersionUID = 1L;
 
 	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "crm_adressbook_id")
-	private AddressBook adressbook;
+	@JoinColumn(name = "crm_addressbook_id")
+	private AddressBook addressbook;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trading_currency_id")
@@ -128,12 +128,12 @@ public class CustomerAccount extends AccountEntity {
 		accountType = ACCOUNT_TYPE;
 	}
 	
-	public AddressBook getAdressbook() {
-		return adressbook;
+	public AddressBook getAddressbook() {
+		return addressbook;
 	}
 
-	public void setAdressbook(AddressBook adressbook) {
-		this.adressbook = adressbook;
+	public void setAddressbook(AddressBook addressbook) {
+		this.addressbook = addressbook;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
