@@ -900,4 +900,14 @@
            <column name="end_date" type="datetime" />
        </addColumn>
     </changeSet>
+    
+    <changeSet id="#3460_20180521" author="AbdelmounaimAkadid">
+     	<addColumn tableName="billing_subscription">
+           <column name="billing_cycle" type="bigint" />
+       </addColumn>
+       <addColumn tableName="ord_order">
+           <column name="billing_cycle" type="bigint" />
+       </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 

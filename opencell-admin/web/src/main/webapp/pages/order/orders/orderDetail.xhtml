@@ -44,6 +44,20 @@
             updateField=":orderForm:tabView:offer  :orderForm:tabView:offer_text :orderForm:tabView:offerTree  :orderForm:tabView:offerConfigurations" selectionListenerBean="#{orderBean}"
             selectionListenerMethod="onMainProductOfferingSet">
         </hftl:entityPopup>
+        <hftl:entityPopup id="billingCyclePopup"
+			header="#{messages['billingCycle.popup.header']}"
+			backingBean="#{billingCycleBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{orderBean.entity.billingCycle}"
+			dataModel="#{billingCycleBean.listOrderBillingCycle()}"
+			updateField=":orderForm:tabView:orderInfo:billingCycleSelectId :orderForm:tabView:orderInfo:billingCycleSelectId_text">
+		</hftl:entityPopup>
 
         <hftl:formPanel formId="orderForm" label="#{messages['order.panel']}" backingBean="#{orderBean}" edit="#{orderBean.orderEditable}" showEditButton="#{orderBean.orderEditable}" ajaxSubmit="true"
             submitPartialProcess=":orderForm:tabView:orderInfo">
@@ -56,7 +70,10 @@
                         <hftl:formField label="#{messages['order.priority']}" field="priority" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-
+					
+						<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
+                            				popupId="billingCyclePopup" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+						
                         <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false"
                             rendered="#{orderBean.entity.receivedFromApp!=null and orderBean.entity.quote==null}" />
                         <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false"
