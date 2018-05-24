@@ -2793,4 +2793,14 @@ ORDER BY
             <column name="permission_id" valueNumeric="-72"/>
         </insert>
     </changeSet>
+    
+    <changeSet author="AbdelmounaimAkadid" id="#3255_18052018">
+        <insert tableName="adm_role">
+            <column name="id" valueNumeric="-7" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="Hide Menu Header and Footer" />
+            <column name="role_name" value="hideMenuHeaderFooter" />
+        </insert>
+    </changeSet>
+    
 </databaseChangeLog>
