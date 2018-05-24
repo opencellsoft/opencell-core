@@ -27,6 +27,7 @@ import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.api.dto.billing.ProductInstanceDto;
+import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
@@ -41,6 +42,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -81,6 +83,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
@@ -96,7 +99,8 @@ import org.meveo.service.order.OrderService;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -148,6 +152,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
+    
+    @Inject
+    private RecurringChargeInstanceService recurringChargeInstanceService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -1657,6 +1664,43 @@ public class SubscriptionApi extends BaseApi {
             result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsDTO(p, true))).collect(Collectors.toList());
         }
 
+        return result;
+    }
+
+    
+    /**
+     * Rate subscription.
+     *
+     * @param postData the post data
+     * @throws BusinessException the business exception
+     * @throws MissingParameterException the missing parameter exception
+     * @throws InvalidParameterException 
+     */
+    public RateSubscriptionResponseDto rateSubscription(RateSubscriptionRequestDto postData) throws BusinessException, MissingParameterException, InvalidParameterException {
+       
+        String subscriptionCode = postData.getSubscriptionCode();
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+        Date today = new Date();
+        if (postData.getRateUntilDate() == null) {
+            postData.setRateUntilDate(today);
+        }
+        Date rateUntillDate = postData.getRateUntilDate();
+        if (today.after(rateUntillDate)) {
+            throw new InvalidParameterException("rateUntilDate", String.valueOf(rateUntillDate));
+        }
+
+        handleMissingParameters();
+
+        RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
+        
+        // Recurring charges : 
+        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode, false);
+        for (Long chargeId : activeRecurringChargeIds) {
+            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate);
+            result.addResult(chargeId, nbRating);
+        }
         return result;
     }
 }
