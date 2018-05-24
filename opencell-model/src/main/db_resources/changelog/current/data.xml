@@ -568,10 +568,6 @@ ORDER BY
             <column name="role_description" value="Hide Menu Header and Footer" />
             <column name="role_name" value="hideMenuHeaderFooter" />
         </insert>
-       	<insert tableName="adm_user_role">
-        	<column name="user_id" value="-1"></column>
-        	<column name="role_id" value="-7"></column>
-        </insert>
     </changeSet>
         
 </databaseChangeLog>
