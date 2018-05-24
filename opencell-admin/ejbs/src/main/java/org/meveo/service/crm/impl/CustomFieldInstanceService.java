@@ -52,7 +52,8 @@ import org.w3c.dom.Element;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  * 
  */
 @Stateless
@@ -201,6 +202,20 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
+     * Gets the run time CF value.
+     *
+     * @param entity the entity
+     * @param cfCode the cf code
+     * @return the run time CF value
+     */
+    private Object getRunTimeCFValue(ICustomFieldEntity entity, String cfCode) {
+        if (entity instanceof BusinessEntity) {
+            return ((BusinessEntity) entity).getRuntimeValue(cfCode);  
+        }
+        return null;
+    }
+
+    /**
      * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value.
      *
      * @param entity Entity
@@ -209,13 +224,18 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Custom field value
      */
     public Object getCFValue(ICustomFieldEntity entity, String cfCode, boolean instantiateDefaultValue) {
-
+        
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
         if (cft == null) {
             // log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 
+        Object runTimeCFValue = this.getRunTimeCFValue(entity, cfCode);
+        if (runTimeCFValue != null) {
+            return runTimeCFValue;
+        }
+        
         if (cft.isVersionable()) {
             log.warn("Trying to access a versionable custom field {}/{} value with no provided date. Current date will be used", entity.getClass().getSimpleName(), cfCode);
             return getCFValue(entity, cfCode, new Date(), instantiateDefaultValue);
@@ -268,6 +288,12 @@ public class CustomFieldInstanceService extends BaseService {
             // log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
+        
+        Object runTimeCFValue = this.getRunTimeCFValue(entity, cfCode);
+        if (runTimeCFValue != null) {
+            return runTimeCFValue;
+        }
+        
         if (!cft.isVersionable()) {
             return getCFValue(entity, cfCode, instantiateDefaultValue);
         }
