@@ -2796,7 +2796,7 @@ ORDER BY
     
     <changeSet author="AbdelmounaimAkadid" id="#3255_18052018">
         <insert tableName="adm_role">
-            <column name="id" valueNumeric="-7" />
+            <column name="id" valueNumeric="-15" />
             <column name="version" valueNumeric="0" />
             <column name="role_description" value="Hide Menu Header and Footer" />
             <column name="role_name" value="hideMenuHeaderFooter" />
