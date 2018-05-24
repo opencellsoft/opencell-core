@@ -20,7 +20,6 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,6 +31,8 @@ import org.meveo.model.billing.RatedTransaction;
  * The Class RatedTransactionDto.
  *
  * @author R.AITYAAZZA
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 
 @XmlRootElement(name = "RatedTransaction")
@@ -84,6 +85,22 @@ public class RatedTransactionDto extends BaseDto {
 
     /** The do not trigger invoicing. */
     private boolean doNotTriggerInvoicing = false;
+    
+    /** The start date. */
+    private Date startDate;
+
+    /** The end date. */
+    private Date endDate;
+
+
+    /** parameter1 : used to set more onformations in case of "DETAILLED" invoice. */
+    private String parameter1;
+
+    /** parameter2 : used to set more onformations in case of "DETAILLED" invoice. */
+    private String parameter2;
+
+    /** parameter2 : used to set more onformations in case of "DETAILLED" invoice. */
+    private String parameter3;
 
     /**
      * Instantiates a new rated transaction dto.
@@ -113,6 +130,8 @@ public class RatedTransactionDto extends BaseDto {
             this.setPriceplanCode(ratedTransaction.getPriceplan().getCode());
         }
         this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
+        this.setStartDate(ratedTransaction.getStartDate());
+        this.setEndDate(ratedTransaction.getEndDate());
     }
 
     /**
@@ -347,6 +366,97 @@ public class RatedTransactionDto extends BaseDto {
      */
     public void setPriceplanCode(String priceplanCode) {
         this.priceplanCode = priceplanCode;
+    }
+
+    /**
+     * Gets the start date.
+     *
+     * @return the start date
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the start date
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Gets the end date.
+     *
+     * @return the end date
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Sets the end date.
+     *
+     * @param endDate the end date
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+    
+    
+    /**
+     * Gets the parameter 1.
+     *
+     * @return the parameter 1
+     */
+    public String getParameter1() {
+        return parameter1;
+    }
+
+    /**
+     * Sets the parameter 1.
+     *
+     * @param parameter1 the new parameter 1
+     */
+    public void setParameter1(String parameter1) {
+        this.parameter1 = parameter1;
+    }
+
+    /**
+     * Gets the parameter 2.
+     *
+     * @return the parameter 2
+     */
+    public String getParameter2() {
+        return parameter2;
+    }
+
+    /**
+     * Sets the parameter 2.
+     *
+     * @param parameter2 the new parameter 2
+     */
+    public void setParameter2(String parameter2) {
+        this.parameter2 = parameter2;
+    }
+
+    /**
+     * Gets the parameter 3.
+     *
+     * @return the parameter 3
+     */
+    public String getParameter3() {
+        return parameter3;
+    }
+
+    /**
+     * Sets the parameter 3.
+     *
+     * @param parameter3 the new parameter 3
+     */
+    public void setParameter3(String parameter3) {
+        this.parameter3 = parameter3;
     }
 
 }

@@ -107,9 +107,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     @Inject
     private AccessService accessService;
     
-    @Inject
-    private Logger log;
-
     private TreeNode accountsHierarchy;
 
     private Long selectedEntityId;

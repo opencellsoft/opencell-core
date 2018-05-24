@@ -36,6 +36,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -49,7 +50,6 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -80,6 +80,7 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
  * 
  * @author Edward P. Legaspi
+ * @author Andrius Karpavicius
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  * 
@@ -87,12 +88,36 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
 
+    /**
+     * Entity list search parameter name - parameter's value contains entity class
+     */
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
+    /**
+     * Entity list search parameter value - parameter's value is null
+     */
     public static String SEARCH_IS_NULL = "IS_NULL";
+    /**
+     * Entity list search parameter value - parameter's value is not null
+     */
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
+    /**
+     * Entity list search parameter criteria - wildcard Or
+     */
     public static String SEARCH_WILDCARD_OR = "wildcardOr";
+
+    /**
+     * Entity list search parameter name - parameter's value contains sql statement
+     */
     public static String SEARCH_SQL = "SQL";
+
+    /**
+     * Entity list search parameter name - parameter's value contains filter name
+     */
     public static String SEARCH_FILTER = "$FILTER";
+
+    /**
+     * Entity list search parameter name - parameter's value contains filter parameters
+     */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
     @Inject
@@ -160,6 +185,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entityClass;
     }
 
+    /**
+     * Update entity in DB without firing any notification events nor publishing data to Elastic Search
+     * 
+     * @param entity Entity to update in DB
+     * @return Updated entity
+     * @throws BusinessException General business exception
+     */
     public E updateNoCheck(E entity) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
@@ -395,9 +427,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(ISearchable entity) throws BusinessException {
-       // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-         //   throw new BusinessException("Invalid characters found in entity code.");
-       // }
+        // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+        // throw new BusinessException("Invalid characters found in entity code.");
+        // }
 
         return true;
     }
@@ -407,7 +439,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+        log.debug("start of entity={}", entity.getClass().getSimpleName());
 
         if (entity instanceof ISearchable) {
             validateCode((ISearchable) entity);
@@ -415,6 +447,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
+        }
+
+        getEntityManager().persist(entity);
+
+        // Add entity to Elastic Search
+        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
+            // flush first to allow child entities to be lazy loaded
+            // getEntityManager().flush();
+            // getEntityManager().refresh(entity);
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
@@ -425,13 +467,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
-        }
-
-        getEntityManager().persist(entity);
-
-        // Add entity to Elastic Search
-        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
@@ -447,6 +482,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return list(true);
     }
 
+    /**
+     * List entities, optionally filtering by its enable/disable status
+     * 
+     * @param active True to retrieve enabled entities only, False to retrieve disabled entities only. Do not provide any value to retrieve all entities.
+     * @return A list of entities
+     */
     @SuppressWarnings("unchecked")
     public List<E> list(Boolean active) {
         final Class<? extends E> entityClass = getEntityClass();
@@ -1034,12 +1075,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return false;
     }
 
-    public void updateAudit(E e) {
-        if (e instanceof IAuditable) {
-            ((IAuditable) e).updateAudit(currentUser);
+    /**
+     * Update last modified information (created/updated date and username)
+     * 
+     * @param entity Entity to update
+     */
+    public void updateAudit(E entity) {
+        if (entity instanceof IAuditable) {
+            ((IAuditable) entity).updateAudit(currentUser);
         }
     }
 
+    /**
+     * Flush data to DB. NOTE: unlike the name suggest, no transaction commit is done
+     */
     public void commit() {
         getEntityManager().flush();
     }
@@ -1061,18 +1110,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
-        }
 
+        if (FacesContext.getCurrentInstance() != null) {
+            return em;
+        }
         return emfForJobs;
     }
 
+    /**
+     * Execute a native select query
+     * 
+     * @param query Sql query to execute
+     * @param params Parameters to pass
+     * @return A map of values retrieved
+     */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
         Session session = getEntityManager().unwrap(Session.class);

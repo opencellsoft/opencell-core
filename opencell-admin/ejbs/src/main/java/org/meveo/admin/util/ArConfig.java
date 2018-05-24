@@ -23,7 +23,7 @@ import org.meveo.commons.utils.ParamBean;
 
 public class ArConfig {
 
-	private static final String BAYAD_PROPERTIES_FILENAME = "meveo-admin.properties";
+	private static final String BAYAD_PROPERTIES_FILENAME = "opencell-admin.properties";
 
 	//private static final String DDREQUEST_HEADER_DDMODE = "bayad.ddrequest.header.DDmode";
 	private static final String DDREQUEST_HEADER_REFRENCE = "bayad.ddrequest.header.reference";

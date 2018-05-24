@@ -23,9 +23,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 	
 	RevenueScheduleService revenueScheduleService= (RevenueScheduleService)getServiceInterface("RevenueScheduleService");
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
-    	
-	public void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException{
+    public void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException{
 		List<WalletOperation> woList = new ArrayList<WalletOperation>(chargeInstance.getWalletOperations());
 		log.debug("woList {}",woList.size());
         Collections.sort(woList, new Comparator<WalletOperation>() {

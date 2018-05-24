@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.audit.logging.configuration.AuditConfiguration;
 import org.meveo.audit.logging.dto.ClassAndMethods;
 import org.meveo.audit.logging.handler.Handler;
@@ -81,11 +82,7 @@ public class AuditContext {
 			log.error("Impossible to create :" + _propertyFile);
 		} finally {
 			if (propertyFile != null) {
-				try {
-					propertyFile.close();
-				} catch (Exception e) {
-					log.error("FileInputStream error", e);
-				}
+			    IOUtils.closeQuietly(propertyFile);
 			}
 		}
 

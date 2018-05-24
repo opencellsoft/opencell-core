@@ -61,13 +61,13 @@ public class MeasurableQuantity extends EnableBusinessEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "additive")
-    private boolean additive;
-    /**
-     * expect to return a list of (Date measureDate, Long value) that will be used to create measuredValue.
-     */
-    @Column(name = "sql_query", length = 2000)
-    @Size(max = 2000)
-    private String sqlQuery;
+	private boolean additive;
+	/**
+	 * expect to return a list of (Date measureDate, Long value) that will be
+	 * used to create measuredValue. 
+	 */
+	@Column(name = "sql_query", columnDefinition = "text")
+	private String sqlQuery;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "measurement_period")

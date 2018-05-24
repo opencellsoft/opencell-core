@@ -67,9 +67,6 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     @Inject
     private InvoiceCategoryService invoiceCategoryService;
 
-    @Inject
-    private Messages messages;
-
     /**
      * InvoiceCategory Id passed as a parameter. Used when creating new InvoiceSubCategory from InvoiceCategory window, so default InvoiceCategory will be set on newly created
      * InvoiceSubCategory.
@@ -79,9 +76,6 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     private Long invoiceCategoryId;
 
     /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 
     public void newInvoiceSubcategoryCountryInstance() {

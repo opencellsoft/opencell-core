@@ -133,21 +133,15 @@ public class DocumentBean implements Serializable {
 
         File tmpFile = new File(tmpPath + File.separator + UUID.randomUUID().toString());
 
-        try {
-            FileOutputStream fout = new FileOutputStream(tmpFile);
+        try (FileOutputStream fout = new FileOutputStream(tmpFile);
             CheckedOutputStream csum = new CheckedOutputStream(fout, new CRC32());
             GZIPOutputStream out = new GZIPOutputStream(new BufferedOutputStream(csum));
-            InputStream in = new FileInputStream(new File(document.getAbsolutePath()));
+            InputStream in = new FileInputStream(new File(document.getAbsolutePath()));) {
             int sig = 0;
             byte[] buf = new byte[1024];
             while ((sig = in.read(buf, 0, 1024)) != -1)
                 out.write(buf, 0, sig);
-            in.close();
-            out.finish();
-            out.close();
-            csum.close();
-            fout.close();
-            String savePath = paramBeanFactory.getInstance().getProperty("document.path", "/tmp/docs");
+            out.finish();String savePath = paramBeanFactory.getInstance().getProperty("document.path", "/tmp/docs");
             File createdFile = new File(savePath + File.separator + document.getFilename() + ".gzip");
             if (createdFile.exists()) {
                 createdFile.delete();
@@ -162,27 +156,27 @@ public class DocumentBean implements Serializable {
     }
 
     public String download(Document document) {
+        if (document == null) {
+            return null;
+        }
+        
         log.info("start to download...");
         File f = new File(document.getAbsolutePath());
-
-        try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
-            res.setContentType("application/force-download");
-            res.setContentLength(document.getSize().intValue());
-            res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename() + "\"");
-
-            OutputStream out = res.getOutputStream();
-            InputStream fin = new FileInputStream(f);
+        javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+        HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+        res.setContentType("application/force-download");
+        res.setContentLength(document.getSize().intValue());
+        res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename() + "\"");
+        try (OutputStream out = res.getOutputStream();
+            InputStream fin = new FileInputStream(f);) {
 
             byte[] buf = new byte[1024];
             int sig = 0;
             while ((sig = fin.read(buf, 0, 1024)) != -1) {
                 out.write(buf, 0, sig);
             }
-            fin.close();
+            
             out.flush();
-            out.close();
             context.responseComplete();
             log.info("download over!");
         } catch (Exception e) {
@@ -287,7 +281,7 @@ public class DocumentBean implements Serializable {
                 result = false;
             }
 
-            if (!name.startsWith(appProvider.getCode())) {
+            if (name != null && !name.startsWith(appProvider.getCode())) {
                 result = false;
             }
             if (this.filename != null && !this.filename.equals("") && name.indexOf(filename) < 0) {

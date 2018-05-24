@@ -81,13 +81,11 @@ import org.slf4j.Logger;
  * 
  * @author Wassim Drira
  * @author Phung tien lan
- * @lastModifiedVersion 5.0.1
+ * @author anasseh
+ * @lastModifiedVersion 5.0.2
  */
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
-
-    @Inject
-    private Logger log;
 
     @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -1122,10 +1120,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         log.debug("Will apply recurring charge {} for supplement charge agreement for {} - {}", chargeInstance.getId(), applyChargeFromDate, endAgreementDate);
 
         Date applyChargeOnDate = applyChargeFromDate;
-        while (applyChargeOnDate.getTime() < endAgreementDate.getTime()) {
-
-            Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
-
+        
+        Date nextChargeDate = null;
+        while (applyChargeOnDate.getTime() < endAgreementDate.getTime() && (nextChargeDate = cal.nextCalendarDate(applyChargeOnDate)) != null ) {
             Double prorataRatio = null;
             ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
             BigDecimal inputQuantity = chargeInstance.getQuantity();
@@ -1478,6 +1475,24 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
             return resultList;
         } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    public Long countNonTreatedWOByBA(BillingAccount billingAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNonTreated WO by BA", e);
+            return null;
+        }
+    }
+    
+    public Long countNonTreatedWOByUA(UserAccount userAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByUA").setParameter("userAccount", userAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNonTreated WO by UA", e);
             return null;
         }
     }

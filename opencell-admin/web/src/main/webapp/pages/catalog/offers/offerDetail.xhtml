@@ -398,7 +398,7 @@
 									</c:if>
 									<c:if
 										test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) > 1}">
-										<p:tabView>
+										<p:tabView id="cf_tabView_#{loopStatus.index}">
 											<hftl:customFields backingBean="#{serviceTemplateBean}"
 												entity="#{ost.serviceTemplate}"
 												messagesId=":offerForm:messages"

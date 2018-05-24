@@ -94,7 +94,11 @@ public class BillingCycle extends BusinessCFEntity {
 	@Column(name = "due_date_delay_el", length = 2000)
 	@Size(max = 2000)
 	private String dueDateDelayEL;
-
+	
+	@Column(name = "invoice_type_el", length = 2000)
+    @Size(max = 2000)
+    private String invoiceTypeEl;
+	
 	public String getBillingTemplateName() {
 		return billingTemplateName;
 	}
@@ -207,4 +211,13 @@ public class BillingCycle extends BusinessCFEntity {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
+
+    public String getInvoiceTypeEl() {
+        return invoiceTypeEl;
+    }
+
+    public void setInvoiceTypeEl(String invoiceTypeEl) {
+        this.invoiceTypeEl = invoiceTypeEl;
+    }
+    
 }

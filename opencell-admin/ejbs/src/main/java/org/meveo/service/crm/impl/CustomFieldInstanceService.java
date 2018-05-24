@@ -112,7 +112,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
-     * 
+     *
      * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;:"
      * @param wildcode Filter by entity code
      * @return A list of entities
@@ -136,7 +136,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Return a value from either a custom field value or a settings/configuration parameter if CF value was not set yet by optionally setting custom field value.
-     * 
+     *
      * @param cfCode Custom field and/or settings/configuration parameter code
      * @param defaultParamBeanValue A default value to set as custom field value in case settings/configuration parameter was not set
      * @param entity Entity holding custom field value
@@ -191,7 +191,7 @@ public class CustomFieldInstanceService extends BaseService {
     /**
      * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value. Will instantiate a default value if value was
      * not found.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return Custom field value
@@ -202,7 +202,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param instantiateDefaultValue Should a default value be instantiated if value was not found
@@ -241,7 +241,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a custom field value for a given entity and a date. Will instantiate a default value if value not found.
-     * 
+     *
      * @param entity Entity
      * @param code Custom field code
      * @param date Date
@@ -253,7 +253,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a custom field value for a given entity and a date.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param date Date
@@ -296,7 +296,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get custom field values of an entity as JSON string
-     * 
+     *
      * @param entity Entity
      * @param includeParent include parentCFEntities or not
      * @return JSON format string
@@ -372,7 +372,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Set a Custom field value on an entity.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field value code
      * @param value Value to set
@@ -525,7 +525,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Remove Custom field instance.
-     * 
+     *
      * @param entity custom field entity
      * @param cfCode Custom field code to remove
      * @throws BusinessException business exception.
@@ -544,7 +544,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Remove all custom field values for a given entity.
-     * 
+     *
      * @param entity custom field entity
      * @throws BusinessException business exception.
      */
@@ -560,7 +560,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a custom field value for a given entity's parent's. (DOES NOT include a given entity). If custom field is versionable, a current date will be used to access the value.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return Custom field value
@@ -595,7 +595,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a a list of custom field CFvalues for a given entity and its parent's CF entity hierarchy up.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return A list of Custom field CFvalues. From this and all the entities CF entity hierarchy up.
@@ -637,7 +637,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a a list of custom field CFvalues for a given entity's parent's hierarchy up. (DOES NOT include a given entity)
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return A list of Custom field CFvalues. From all the entities CF entity hierarchy up.
@@ -671,7 +671,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if give entity's parent has any custom field value defined (in any period for versionable fields)
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return True if any of entity's CF parents have value for a given custom field (in any period for versionable fields)
@@ -707,7 +707,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if given entity or any of its parent has any custom field value defined (in any period for versionable fields)
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
@@ -747,7 +747,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if given entity has custom field value defined (in any period for versionable fields)
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
@@ -774,7 +774,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * get hierarchy parents of cf entity
-     * 
+     *
      * @param entity
      * @return
      */
@@ -807,7 +807,7 @@ public class CustomFieldInstanceService extends BaseService {
     /**
      * Get a cumulative and unique custom field value for a given entity's all parent chain. (DOES NOT include a given entity). Applies to Map (matrix) values only. The closest
      * parent entity's CF value will be preserved. If custom field is versionable, a current date will be used to access the value.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return Custom field value
@@ -864,7 +864,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a custom field value for a given entity's parent's and a date. (DOES NOT include a given entity)
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param date Date
@@ -900,7 +900,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a custom field value for a given entity or its parent's. If custom field is versionable, a current date will be used to access the value.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return Custom field value
@@ -946,7 +946,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Get a custom field value for a given entity or its parent's and a date
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param date Date
@@ -995,7 +995,7 @@ public class CustomFieldInstanceService extends BaseService {
      * performed by matching a full string and then reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param keyToMatch Key to match
@@ -1038,7 +1038,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Match is performed by matching a full string and then reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
-     * 
+     *
      * @param entity Entity to match
      * @param code Custom field code
      * @param date Date
@@ -1083,7 +1083,7 @@ public class CustomFieldInstanceService extends BaseService {
      * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;matrix xx key&gt;|&lt;range of numbers for the third key&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
@@ -1127,7 +1127,7 @@ public class CustomFieldInstanceService extends BaseService {
      * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;matrix xx key&gt;|&lt;range of numbers for the third key&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param date Date to match
@@ -1170,7 +1170,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Match for a given entity's or its parent's custom field (non-versionable values) map's key as a range of numbers value and return a map value.
      * 
      * Number ranges is assumed to be the following format: &lt;number from&gt;&gt;&lt;number to&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
@@ -1212,7 +1212,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key as a range of numbers value and return a map value.
      * 
      * Number ranges is assumed to be the following format: &lt;number from&gt;&gt;&lt;number to&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param date Date to match
@@ -1253,7 +1253,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * A trigger when a future custom field end period event expired
-     * 
+     *
      * @param timer Timer information
      */
     @Timeout
@@ -1271,7 +1271,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Initiate custom field end period event - either right away, or delay it for the future
-     * 
+     *
      * @param cfi Custom field instance
      */
     private void triggerEndPeriodEvent(ICustomFieldEntity entity, String cfCode, DatePeriod period) {
@@ -1319,7 +1319,7 @@ public class CustomFieldInstanceService extends BaseService {
      * full string and then reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param keyToMatch Key to match
@@ -1357,7 +1357,7 @@ public class CustomFieldInstanceService extends BaseService {
      * by matching a full string and then reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param date Date
@@ -1397,7 +1397,7 @@ public class CustomFieldInstanceService extends BaseService {
      * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;matrix xx key&gt;|&lt;range of numbers for the third key&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
@@ -1474,7 +1474,7 @@ public class CustomFieldInstanceService extends BaseService {
      * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;matrix xx key&gt;|&lt;range of numbers for the third key&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param date Date to match
@@ -1549,7 +1549,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Match for a given entity's custom field (non-versionable values) map's key as a range of numbers value and return a map value.
      * 
      * Number ranges is assumed to be the following format: &lt;number from&gt;&gt;&lt;number to&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
@@ -1590,7 +1590,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key as a range of numbers value and return a map value.
      * 
      * Number ranges is assumed to be the following format: &lt;number from&gt;&gt;&lt;number to&gt;
-     * 
+     *
      * @param entity Entity to match
      * @param cfCode Custom field code
      * @param date Date to match
@@ -1632,7 +1632,7 @@ public class CustomFieldInstanceService extends BaseService {
      * match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
-     * 
+     *
      * @param value Value to inspect
      * @param keyToMatch Key to match
      * @return Map value that closely matches map key
@@ -1663,7 +1663,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;range of numbers for the third key&gt;
-     * 
+     *
      * @param cft Custom field template
      * @param value Value to inspect
      * @param keys Keys to match. The order must correspond to the order of the keys during data entry
@@ -1708,7 +1708,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;range of numbers for the third key&gt;
-     * 
+     *
      * @param cft Custom field template
      * @param value Value to inspect
      * @param keys Keys to match. The order must correspond to the order of the keys during data entry
@@ -1748,7 +1748,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Match map's key as a range of numbers value and return a matched value.
      * 
      * Number ranges is assumed to be the following format: &lt;number from&gt;&lt;&lt;number to&gt;
-     * 
+     *
      * @param value Value to inspect
      * @param numberToMatch Number to match
      * @return Map value that closely matches map key
@@ -1773,7 +1773,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Check if a match map's key as a range of numbers value is present.
      * 
      * Number ranges is assumed to be the following format: &lt;number from&gt;&lt;&lt;number to&gt;
-     * 
+     *
      * @param value Value to inspect
      * @param numberToMatch Number to match
      * @return True if map value matches map key
@@ -1796,7 +1796,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Determine if a number value is inside the number range expressed as &lt;number from&gt;&lt;&lt;number to&gt;.
-     * 
+     *
      * @param numberRange Number range value
      * @param numberToMatchObj A double number o
      * @return True if number have matched
@@ -1870,7 +1870,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @return Custom field value
@@ -1893,7 +1893,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Instantiate a custom field value with default or inherited value for a given entity. If custom field is versionable, a current date will be used to access the value.
-     * 
+     *
      * @param entity Entity
      * @param cft Custom field definition
      * @return Custom field value
@@ -1926,7 +1926,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Instantiate a custom field value with default value for a given entity and a date.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param date Date
@@ -1945,16 +1945,33 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
+     * Instantiate all custom fields value with default value for a given entity. If custom field is versionable, a current date will be used to access the value. Can be
+     * instantiated only if cft.applicableOnEl condition pass
+     *
+     * @param entity Entity
+     */
+    public void instantiateCFWithDefaultValue(ICustomFieldEntity entity) {
+        Map<String, CustomFieldTemplate> cfts = cfTemplateService.findByAppliesTo(entity);
+        if (cfts != null && !cfts.isEmpty()) {
+            for (CustomFieldTemplate cft : cfts.values()) {
+                instantiateCFWithDefaultValue(entity, cft);
+            }
+        }
+    }
+
+    /**
      * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value. Can be instantiated
      * only if cft.applicableOnEl condition pass
-     * 
+     *
      * @param entity Entity
      * @param cft Custom field template
      * @return Custom field value
      */
     private Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
 
-        if (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !isCFTApplicableToEntity(cft, entity)) {
+        Object value = cft.getDefaultValueConverted();
+
+        if (value == null || StringUtils.isEmpty(value.toString()) || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value specified {}/{}", entity, cft.getCode());
             return null;
         }
@@ -1966,7 +1983,6 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         // Create such CF with default value if one is specified on CFT
-        Object value = cft.getDefaultValueConverted();
         entity.getCfValuesNullSafe().setValue(cft.getCode(), value);
 
         return value;
@@ -1975,7 +1991,7 @@ public class CustomFieldInstanceService extends BaseService {
     /**
      * Instantiate a custom field value with default value for a given entity and a date. Can be instantiated only if values are versioned by a calendar and cft.applicableOnEl
      * condition pass
-     * 
+     *
      * @param entity Entity
      * @param cft Custom field template
      * @param date Date
@@ -1983,7 +1999,10 @@ public class CustomFieldInstanceService extends BaseService {
      */
     private Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, CustomFieldTemplate cft, Date date) {
 
-        if (cft.getDefaultValue() == null || cft.getCalendar() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !isCFTApplicableToEntity(cft, entity)) {
+        Object value = cft.getDefaultValueConverted();
+
+        if (value == null || StringUtils.isEmpty(value.toString()) || cft.getCalendar() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
+                || !isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
             return null;
         }
@@ -1993,7 +2012,6 @@ public class CustomFieldInstanceService extends BaseService {
             return instantiateCFWithDefaultValue(entity, cft);
         }
 
-        Object value = cft.getDefaultValueConverted();
         entity.getCfValuesNullSafe().setValue(cft.getCode(), cft.getDatePeriod(date), null, value);
 
         return value;
@@ -2001,7 +2019,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if a given entity has a CF value of type Map or Matrix with a given key.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param keys Key or keys (in case of matrix) to match
@@ -2066,7 +2084,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if a given entity at a given period date has a CF value of type Map or Matrix with a given key.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param date Date
@@ -2133,7 +2151,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if a given entity or its parents have a CF value of type Map or Matrix with a given key.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param keys Key or keys (in case of matrix) to match
@@ -2169,7 +2187,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if a given entity or its parents at a given perio date have a CF value of type Map or Matrix with a given key.
-     * 
+     *
      * @param entity Entity
      * @param cfCode Custom field code
      * @param date Date
@@ -2206,7 +2224,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Deprecated. See getCFValueByKey function
-     * 
+     *
      * @param entity custom field entity
      * @param cfCode custom field code
      * @param keys list of key
@@ -2219,7 +2237,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Deprecated. See getCFValueByKey function
-     * 
+     *
      * @param entity custom field entity
      * @param cfCode custom field code
      * @param date date to check
@@ -2233,7 +2251,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Deprecated. See getInheritedCFValueByKey function
-     * 
+     *
      * @param entity custom field entity
      * @param cfCode custom field code
      * @param keys list of key
@@ -2246,7 +2264,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Deprecated. See getInheritedCFValueByKey function
-     * 
+     *
      * @param entity custom field entity
      * @param cfCode custom field code
      * @param date date to check
@@ -2260,7 +2278,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Check if Custom field template is applicable to a given entity - evaluate cft.applicableOnEl expression is set
-     * 
+     *
      * @param cft Custom field template
      * @param entity Entity to check
      * @return True if cft.applicableOnEl expression is null or evaluates to true
@@ -2274,7 +2292,7 @@ public class CustomFieldInstanceService extends BaseService {
 
     /**
      * Schedule end period events for an entity if applicable.
-     * 
+     *
      * @param entity Entity
      */
     public void scheduleEndPeriodEvents(ICustomFieldEntity entity) {

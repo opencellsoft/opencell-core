@@ -28,12 +28,6 @@ public class ImportSubscriptionsJob extends Job {
     @Inject
     private ImportSubscriptionsAsync importSubscriptionsAsync;
 
-    @Inject
-    private ResourceBundle resourceMessages;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         try {
