@@ -58,6 +58,7 @@ public class ContactService extends PersistenceService<Contact> {
 	public void findContactByCode(Long id) {
 		id = (long) 3;
 		Contact contact = this.findById(id);
+		log.debug("Long id = " + id);
 		log.debug(contact.toString());
 	}
 

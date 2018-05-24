@@ -667,6 +667,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_addressbook_pkey" />
             </column>
+            <column name="version" type="int4" />
         </createTable>
         
         <createSequence sequenceName="crm_addressbook_seq" />
@@ -679,7 +680,7 @@
             <column name="name" type="varchar(50)"/>
             <column name="description" type="varchar(255)"/>
             <column name="type" type="varchar(50)"/>
-            <column name="address_book_id" type="bigint"/>
+            <column name="crm_address_book_id" type="bigint"/>
         </createTable>
         
         <createSequence sequenceName="crm_contact_group_seq" />

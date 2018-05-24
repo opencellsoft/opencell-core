@@ -30,7 +30,11 @@ public class ContactBean extends CustomFieldBean<Contact>{
 		contactService.saveContact("Arnaud,UHLRICH,,arnaud.uhlrich@free.Fr,Magellan Partners - ASAPpro,Senior Manager - Director,\"10/20/13 9:34AM\",,SKYPE:uhlricha");
 	}
 	
-
+	public void findContactByCode() {
+		log.debug("Finding Contact");
+		contactService.findContactByCode((long) 3);
+	}
+	
 	@PostConstruct
 	private void init() {
 		log.debug("start ContactBean");

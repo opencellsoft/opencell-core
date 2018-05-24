@@ -108,7 +108,7 @@ public class Contact extends AccountEntity {
 	private List<Message> messages;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "adress_book_id")
+	@JoinColumn(name = "address_book_id")
 	private AddressBook addressBook;
 
 	public Contact() {
