@@ -76,6 +76,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -148,6 +149,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -183,7 +187,7 @@ public class SubscriptionApi extends BaseApi {
         if (userAccount == null) {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
         }
-
+        
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class,
@@ -199,6 +203,14 @@ public class SubscriptionApi extends BaseApi {
         subscription.setDescription(postData.getDescription());
         subscription.setUserAccount(userAccount);
         subscription.setOffer(offerTemplate);
+        
+        if(!StringUtils.isBlank(postData.getBillingCycle())) {
+            BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+            }
+            subscription.setBillingCycle(billingCycle);
+        }
 
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -283,6 +295,14 @@ public class SubscriptionApi extends BaseApi {
                 throw new InvalidParameterException("Cannot subscribe to disabled offer");
             }
             subscription.setOffer(offerTemplate);
+        }
+        
+        if(!StringUtils.isBlank(postData.getBillingCycle())) {
+            BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+            }
+            subscription.setBillingCycle(billingCycle);
         }
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());

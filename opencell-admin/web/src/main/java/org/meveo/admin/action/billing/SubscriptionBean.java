@@ -63,7 +63,6 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -80,7 +79,6 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -140,9 +138,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private OfferTemplateService offerTemplateService;
-    
-    @Inject
-    BillingCycleService billingCycleService;
 
     @Inject
     private TradingLanguageService tradingLanguageService;
@@ -185,8 +180,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
     private EntityListDataModelPF<ProductInstance> productInstances = null;
     
-    private DualListModel<BillingCycle> billingCycles;
-
     public SubscriptionBean() {
         super(Subscription.class);
     }
