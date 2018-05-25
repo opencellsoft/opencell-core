@@ -942,6 +942,13 @@
         <sql>insert into ${db.schema.adapted}dwh_report_extract_execution_seq values(1)</sql>
     </changeSet>
     
+    <changeSet id="#3327_20180517" author="EdwardPLegaspi">
+    	<addColumn tableName="dwh_report_extract">
+    		<column name="style" type="text"></column>
+    		<column name="image_path" type="varchar(100)" />
+    	</addColumn>
+    </changeSet>
+    
      <changeSet id="#3406_20180516" author="AbdelmounaimAkadid">
      	<addColumn tableName="billing_rated_transaction">
            <column name="start_date" type="datetime" />

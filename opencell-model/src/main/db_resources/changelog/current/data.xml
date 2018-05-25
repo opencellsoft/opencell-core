@@ -197,8 +197,8 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 INSERT INTO ${db.schema.adapted}dwh_report_extract 
 	(uuid, id, result_type, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
 VALUES 
-	('SALES_JOURNAL_UUID', -1, 'CSV', 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].csv', '
-SELECT
+	('SALES_JOURNAL_UUID', -1, 'HTML', 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].html',
+	'SELECT
     TO_CHAR(ao.invoice_date,''MM'') AS "Mois",
     TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS "Date facture",
     text(''HG'') AS "Code comptable",

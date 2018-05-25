@@ -22,11 +22,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.annotation.ImageType;
+import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -44,7 +47,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_report_extract_seq"), })
 @NamedQueries(@NamedQuery(name = "ReportExtract.listIds", query = "select re.id from ReportExtract re where re.disabled=false"))
-public class ReportExtract extends EnableBusinessCFEntity {
+public class ReportExtract extends EnableBusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 879663935811446632L;
 
@@ -75,6 +78,14 @@ public class ReportExtract extends EnableBusinessCFEntity {
     @Column(name = "result_type", length = 10)
     private ReportExtractResultTypeEnum reportExtractResultType = ReportExtractResultTypeEnum.CSV;
 
+    @Column(name = "style", columnDefinition = "TEXT")
+    private String style;
+    
+    @ImageType
+    @Column(name = "image_path", length = 100)
+    @Size(max = 100)
+    private String imagePath;
+    
     @OneToMany(mappedBy = "reportExtract", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<ReportExtractExecutionResult> executionResults = new ArrayList<>();
 
@@ -144,13 +155,29 @@ public class ReportExtract extends EnableBusinessCFEntity {
     public void setParams(Map<String, String> params) {
         this.params = params;
     }
-
+    
     public ReportExtractResultTypeEnum getReportExtractResultType() {
         return reportExtractResultType;
     }
 
     public void setReportExtractResultType(ReportExtractResultTypeEnum reportExtractResultType) {
         this.reportExtractResultType = reportExtractResultType;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public List<ReportExtractExecutionResult> getExecutionResults() {

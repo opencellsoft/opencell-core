@@ -3,20 +3,14 @@
 <head>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Opencell" />
-	<title>report.category/report.code</title>
+	<title>#{REPORT_TITLE}</title>
 	<style>
-		body {font-family: monospace;}
-		table {border-collapse: collapse;}
-		td,th {border: 1px solid black; padding: 3px 10px; text-align: center;}
-		th {font-weight: bold; background-color: #aaa}
-		tr:nth-child(odd) {background-color: #fff}
-		tr:nth-child(even) {background-color: #eee}
-		tr:hover {background-color: #fdd;}
-		td:hover {background-color: #fcc;}
+		#{REPORT_STYLE}
 	</style>
 </head>
 	<body>
+		<div><img src="#{REPORT_IMG_SRC}" /></div>
 		<h1>#{REPORT_DESCRIPTION}</h1>
-		#{TABLE}
+		#{REPORT_TABLE}
 	</body>
 </html>

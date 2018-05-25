@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.admin.exception.ReportExtractExecutionException;
+import org.meveo.admin.util.ModuleUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
@@ -190,7 +191,18 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
             table.append("</table>");
 
-            template = template.replace("#{TABLE}", table);
+            if (!StringUtils.isBlank(entity.getImagePath())) {
+                String imagePath = ModuleUtil.getPicturePath(currentUser.getProviderCode(), "reportExtract") + File.separator + entity.getImagePath();
+                String strImage = FileUtils.encodeFileToBase64Binary(new File(imagePath));
+                String imageExt = FilenameUtils.getExtension(imagePath);
+
+                imagePath = "data:image/" + imageExt + ";charset=utf-8;base64, " + strImage;
+                template = template.replace("#{REPORT_IMG_SRC}", imagePath);
+            }
+
+            template = template.replace("#{REPORT_TITLE}", entity.getCategory() != null ? entity.getCategory() : entity.getCode());
+            template = template.replace("#{REPORT_STYLE}", entity.getStyle());
+            template = template.replace("#{REPORT_TABLE}", table);
             template = template.replace("#{REPORT_DESCRIPTION}", entity.getDescriptionOrCode());
 
             // create the output file, must be html

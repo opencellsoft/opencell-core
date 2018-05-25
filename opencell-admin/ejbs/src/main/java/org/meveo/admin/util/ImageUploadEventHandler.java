@@ -19,6 +19,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.finance.ReportExtract;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -51,6 +52,8 @@ public class ImageUploadEventHandler<T extends IEntity> {
             return ModuleUtil.getPicturePath(userProviderCode, "service");
         } else if (entity instanceof ProductTemplate) {
             return ModuleUtil.getPicturePath(userProviderCode, "product");
+        } else if (entity instanceof ReportExtract) {
+            return ModuleUtil.getPicturePath(userProviderCode, "reportExtract");
         }
 
         return "";
