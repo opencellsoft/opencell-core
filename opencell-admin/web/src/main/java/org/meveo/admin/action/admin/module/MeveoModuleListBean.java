@@ -44,9 +44,6 @@ public class MeveoModuleListBean extends MeveoModuleBean {
     @Inject
     private MeveoModuleApi moduleApi;
 
-    @Inject
-    private MeveoModuleService meveoModuleService;
-
     private MeveoModuleDto selectedModuleDto;
 
     private TreeNode selectedModuleItems;

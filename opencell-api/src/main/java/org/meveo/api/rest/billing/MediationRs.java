@@ -14,6 +14,7 @@ import org.meveo.api.rest.IBaseRs;
 
 /**
  * Mediation related API REST interface
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -57,22 +58,22 @@ public interface MediationRs extends IBaseRs {
     /**
      * Confirms the reservation
      * 
-     * @param reservationDto Prepaid reservation's data
+     * @param reservation Prepaid reservation's data
      * @return Request processing status
      */
     @POST
     @Path("/confirmReservation")
-    ActionStatus confirmReservation(PrepaidReservationDto reservationDto);
+    ActionStatus confirmReservation(PrepaidReservationDto reservation);
 
     /**
      * Cancels the reservation
      * 
-     * @param reservationDto Prepaid reservation's data
+     * @param reservation Prepaid reservation's data
      * @return Request processing status
      */
     @POST
     @Path("/cancelReservation")
-    ActionStatus cancelReservation(PrepaidReservationDto reservationDto);
+    ActionStatus cancelReservation(PrepaidReservationDto reservation);
 
     /**
      * Notify of rejected CDRs

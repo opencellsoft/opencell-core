@@ -59,9 +59,6 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	@Inject
 	private TradingLanguageService tradingLanguageService;
 
-	@Inject
-	private Messages messages;
-
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.

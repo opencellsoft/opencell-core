@@ -27,11 +27,11 @@
 
 		<ui:insert name="metadata" />
 
-		<div id="layout-topbar-cover">
-
-			<ui:include src="/layout/topbar.xhtml" />
-
-		</div>
+		<c:if test="#{!currentUser.hasRole('hideMenuHeaderFooter') }">
+			<div id="layout-topbar-cover">
+				<ui:include src="/layout/topbar.xhtml" />
+			</div>
+		</c:if>
 
 		<div id="layout-portlets-cover">
 			<ui:insert name="body" />
@@ -46,7 +46,9 @@
 					});
 				</script>
 
-		<ui:include src="footer.xhtml" />
+		<c:if test="#{!currentUser.hasRole('hideMenuHeaderFooter') }">
+			<ui:include src="footer.xhtml" />
+		</c:if>
 
 		<p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
 			<f:facet name="start">

@@ -76,14 +76,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     @Inject
     private PaymentMethodService paymentMethodService;
 
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     /**
      * @param id id of customer to be checking
      * @return true if customer is found.

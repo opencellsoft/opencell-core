@@ -128,6 +128,10 @@ public class ModuleUtil {
         writePicture(file, fileData);
     }
 
+    /**
+     * @param filename file name of picture
+     * @throws Exception exception when something happens
+     */
     public static void removePicture(String filename) throws Exception {
         File file = new File(filename);
         if (file.exists()) {
@@ -142,9 +146,11 @@ public class ModuleUtil {
     }
 
     public static void cropPicture(String filename, CroppedImage croppedImage) throws Exception {
-        FileImageOutputStream imageOutput = new FileImageOutputStream(new File(filename));
-        imageOutput.write(croppedImage.getBytes(), 0, croppedImage.getBytes().length);
-        imageOutput.flush();
-        imageOutput.close();
+        try (FileImageOutputStream imageOutput = new FileImageOutputStream(new File(filename))) {
+            imageOutput.write(croppedImage.getBytes(), 0, croppedImage.getBytes().length);
+            imageOutput.flush();
+        } catch (Exception ex) {
+            throw ex;
+        }
     }
 }

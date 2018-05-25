@@ -40,9 +40,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder.entity(result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -63,9 +61,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -90,9 +86,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -112,9 +106,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @SuppressWarnings("hiding")
@@ -135,9 +127,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -156,7 +146,19 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         }
 
 
-        Response response = responseBuilder.build();
+        return buildResponse(responseBuilder);
+    }
+
+    /**
+     * @param responseBuilder response builder
+     * @return instance of Response.
+     */
+    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
+        Response response = null;
+        if (responseBuilder != null) {
+            response = responseBuilder.build();
+        }
+        
         log.debug("RESPONSE={}", response.getEntity());
         return response;
     }

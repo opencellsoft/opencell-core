@@ -32,7 +32,8 @@ import org.meveo.api.rest.payment.PaymentRs;
  * The implementation for PaymentRs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -48,11 +49,31 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     private PaymentGatewayApi paymentGatewayApi;
 
     /**
+     * Deprecated and replaced by createPayment
      * @return payment action status which contains payment id.
      * @see org.meveo.api.rest.payment.PaymentRs#create(org.meveo.api.dto.payment.PaymentDto)
      */
     @Override
+    @Deprecated
     public PaymentActionStatus create(PaymentDto postData) {
+        PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            Long id = paymentApi.createPayment(postData);
+            result.setPaymentId(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    /**
+     * @return payment action status which contains payment id.
+     * @see org.meveo.api.rest.payment.PaymentRs#create(org.meveo.api.dto.payment.PaymentDto)
+     */
+    @Override
+    public PaymentActionStatus createPayment(PaymentDto postData) {
         PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {

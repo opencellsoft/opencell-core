@@ -8,12 +8,15 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.FilterProperty;
+import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.PayByCardDto;
@@ -27,7 +30,12 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -51,9 +59,10 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  **/
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class PaymentApi extends BaseApi {
 
     @Inject
@@ -320,6 +329,11 @@ public class PaymentApi extends BaseApi {
      * @return A list of payment history
      * @throws InvalidParameterException invalid parameter exception
      */
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "paymentHistories", 
+                   itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class, allowAccessIfNull = false),
+                                              @FilterProperty(property = "customerAccountCode", entityClass = CustomerAccount.class, allowAccessIfNull = false),
+                                              @FilterProperty(property = "customerCode", entityClass = Customer.class, allowAccessIfNull = false)})
     public PaymentHistoriesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("payment", "refund"), pagingAndFiltering, PaymentHistory.class);
         Long totalCount = paymentHistoryService.count(paginationConfig);
@@ -366,6 +380,7 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setCustomerAccountCode(paymentHistory.getCustomerAccountCode());
         paymentHistoryDto.setCustomerAccountName(paymentHistory.getCustomerAccountName());
         paymentHistoryDto.setSellerCode(paymentHistory.getSellerCode());
+        paymentHistoryDto.setCustomerCode(paymentHistory.getCustomerCode());
         paymentHistoryDto.setAmountCts(paymentHistory.getAmountCts());
         paymentHistoryDto.setAsyncStatus(paymentHistory.getAsyncStatus());
         paymentHistoryDto.setErrorCode(paymentHistory.getErrorCode());

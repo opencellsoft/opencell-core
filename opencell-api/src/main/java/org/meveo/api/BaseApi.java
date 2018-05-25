@@ -58,6 +58,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -79,7 +80,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  * 
  **/
 public abstract class BaseApi {
@@ -121,8 +123,11 @@ public abstract class BaseApi {
 
     @Inject
     private RoleService roleService;
-
+    
     protected List<String> missingParameters = new ArrayList<>();
+    
+    private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
+    
 
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
@@ -141,6 +146,16 @@ public abstract class BaseApi {
     protected void handleMissingParametersAndValidate(BaseDto dto) throws MeveoApiException {
         validate(dto);
 
+        try {
+            BusinessDto bdto = (BusinessDto) dto;
+            boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
+            if(!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) ) {
+                throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
+            }
+        } catch(ClassCastException e) {
+            log.info("allow entity code update rule not applied : Not business Dto");
+        }
+        
         if (!missingParameters.isEmpty()) {
             MissingParameterException mpe = new MissingParameterException(missingParameters);
             missingParameters.clear();
@@ -384,6 +399,12 @@ public abstract class BaseApi {
 
         handleMissingParameters();
     }
+    
+    protected void validateAndConvertCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity) throws MeveoApiException {
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity); 
+        this.validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, true, false, entity);
+    }
+
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields,

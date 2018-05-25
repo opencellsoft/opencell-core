@@ -128,9 +128,7 @@ public class ParamBean {
      * @return Application configuration instance
      */
     public static ParamBean getInstance(String propertiesName) {
-        if (reload) {
-            instance = new ParamBean(propertiesName);
-        } else if (instance == null) {
+        if (reload || instance == null) {
             instance = new ParamBean(propertiesName);
         }
 
@@ -144,9 +142,9 @@ public class ParamBean {
      */
     public static ParamBean getInstance() {
         try {
-            return getInstance("meveo-admin.properties");
+            return getInstance("opencell-admin.properties");
         } catch (Exception e) {
-            log.error("Failed to initialize meveo-admin.properties file.", e);
+            log.error("Failed to initialize opencell-admin.properties file.", e);
             return null;
         }
     }
@@ -196,6 +194,10 @@ public class ParamBean {
      * @return True of multitenancy is enabled
      */
     public static boolean isMultitenancyEnabled() {
+        if (getInstance() == null) {
+            return multiTenancyEnabled;
+        }
+        
         if (multiTenancyEnabled == null) {
             multiTenancyEnabled = Boolean.valueOf(getInstance().getProperty("meveo.multiTenancy", "false"));
         }
@@ -203,12 +205,16 @@ public class ParamBean {
     }
 
     /**
-     * Get a file directory root for a given provider
+     * Get a file directory root for a given provider.
      * 
      * @param provider Provider code
      * @return Full path to provider's data files
      */
     public String getChrootDir(String provider) {
+        if (getInstance() == null) {
+            return null;
+        }
+        
         if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
             return getInstance().getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
         }
@@ -485,7 +491,7 @@ public class ParamBean {
                 outBuffer.append(aChar);
                 break;
             default:
-                if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
+                if (((aChar < 0x0020) || (aChar > 0x007e)) && escapeUnicode) {
                     outBuffer.append('\\');
                     outBuffer.append('u');
                     outBuffer.append(toHex((aChar >> 12) & 0xF));

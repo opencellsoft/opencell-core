@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -125,14 +126,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                         }
                     }
                 } catch (Exception e) {
-                    if (fileWriter != null) {
-                        try {
-                            fileWriter.close();
-                        } catch (IOException e1) {
-                        }
-                    }
-                    log.error("Cannot write report to file: {}", e.getMessage());
-                    throw new BusinessException("Cannot write report to file.");
+                    throw new BusinessException("Cannot write report to file.", e);
+                } finally {
+                    IOUtils.closeQuietly(fileWriter);
                 }
             }
 

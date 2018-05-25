@@ -50,9 +50,6 @@ public class UserRoleBean extends BaseBean<Role> {
     @Inject
     private RoleService userRoleService;
 
-    @Inject
-    private PermissionService permissionService;
-
     private DualListModel<Permission> permissionsDM;
 
     private DualListModel<Role> rolesDM;

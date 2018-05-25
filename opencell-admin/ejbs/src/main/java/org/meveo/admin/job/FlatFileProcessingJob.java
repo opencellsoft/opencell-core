@@ -38,14 +38,6 @@ public class FlatFileProcessingJob extends Job {
     @Inject
     private FlatFileProcessingJobBean flatFileProcessingJobBean;
 
-    /** The custom field instance service. */
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
-    /** The job execution service . */
-    @Inject
-    private JobExecutionService jobExecutionService;
-
     /** The param bean factory. */
     @Inject
     private ParamBeanFactory paramBeanFactory;

@@ -47,10 +47,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
         } catch (TransactionRequiredException e) {
             log.error("Transaction must have been rollbacked already (probably by exception thown in service and caught in backing bean): {}", e.getMessage());
-            if (result != null) {
-                return result;
-            }
-
+            return result;
         } catch (Exception e) {
 
             // See if can get to the root of the exception cause

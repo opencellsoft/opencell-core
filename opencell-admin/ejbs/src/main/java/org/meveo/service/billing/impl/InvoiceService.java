@@ -63,6 +63,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
@@ -168,11 +169,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private ServiceSingleton serviceSingleton;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
-    /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
 
     /** folder for adjustment pdf. */
@@ -290,6 +286,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Assign invoice number to an invoice
+     * 
      * @param invoice invoice
      * @throws BusinessException business exception
      */
@@ -298,7 +296,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
 
         InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
-        Seller seller = serviceSingleton.chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType);
+        Seller seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
 
         Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType.getId(), seller, cfName, 1);
 
@@ -401,21 +399,30 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = billingRun.getLastTransactionDate();
             invoiceDate = billingRun.getInvoiceDate();
         }
-        
+
         lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
         Invoice invoice = null;
         EntityManager em = getEntityManager();
         try {
-            BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
+            BillingCycle billingCycle = (billingRun == null || billingRun.getBillingCycle() == null) ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
             if (billingCycle == null) {
                 throw new BusinessException("Cant find the billing cycle");
             }
-            InvoiceType invoiceType = billingCycle.getInvoiceType();
+
+            InvoiceType invoiceType = null;
+            if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
+                String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun);
+                invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+            }
+            if (invoiceType == null) {
+                invoiceType = billingCycle.getInvoiceType();
+            }
             if (invoiceType == null) {
                 invoiceType = invoiceTypeService.getDefaultCommertial();
             }
+
             invoice = new Invoice();
             invoice.setInvoiceType(invoiceType);
             invoice.setBillingAccount(billingAccount);
@@ -457,11 +464,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Date dueDate = invoiceDate;
             if (delay != null) {
                 dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
-            }else {
+            } else {
                 throw new BusinessException("Due date delay is null");
             }
             invoice.setDueDate(dueDate);
-            
+
             ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, orderNumber, firstTransactionDate, lastTransactionDate);
             log.debug("appended aggregates");
 
@@ -517,9 +524,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + (endDate - startDate));
 
         } catch (Exception e) {
-            log.error("Error for BA {}", billingAccount.getCode(), e);                       
-            if (billingRun != null) {                
-                rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());                
+            log.error("Error for BA {}", billingAccount.getCode(), e);
+            if (billingRun != null) {
+                rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
             } else {
                 throw new BusinessException(e.getMessage());
             }
@@ -646,7 +653,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String pdfFilename = getOrGeneratePdfFilename(invoice);
         invoice.setPdfFilename(pdfFilename);
         String pdfFullFilename = getFullPdfFilePath(invoice, true);
-
+        InputStream reportTemplate = null;
         try {
             File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
 
@@ -725,7 +732,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             log.info(String.format("Jasper template used: %s", jasperFile.getCanonicalPath()));
 
-            InputStream reportTemplate = new FileInputStream(jasperFile);
+            reportTemplate = new FileInputStream(jasperFile);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document xmlDocument = db.parse(invoiceXmlFile);
@@ -736,18 +743,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             StringWriter writer = new StringWriter();
             trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
 
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            XPathExpression expr = xPath.compile("/invoice");
-            Object result = expr.evaluate(xmlDocument, XPathConstants.NODE);
-            Node node = (Node) result;
-
-            JRXmlDataSource dataSource = null;
-
-            if (node != null) {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
-            } else {
-                dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
-            }
+            JRXmlDataSource dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
 
             String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
@@ -772,8 +768,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             log.debug("After setPdfGenerated:" + (System.currentTimeMillis() - startDate));
 
-        } catch (IOException | JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
+        } catch (IOException | JRException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
+        } finally {
+            IOUtils.closeQuietly(reportTemplate);
         }
     }
 
@@ -1147,7 +1145,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
         }
 
-        if (!xmlFileName.toLowerCase().endsWith(".xml")) {
+        if (xmlFileName != null && !xmlFileName.toLowerCase().endsWith(".xml")) {
             xmlFileName = xmlFileName + ".xml";
         }
         xmlFileName = StringUtils.normalizeFileName(xmlFileName);
@@ -1222,7 +1220,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
         }
 
-        if (!pdfFileName.toLowerCase().endsWith(".pdf")) {
+        if (pdfFileName != null && !pdfFileName.toLowerCase().endsWith(".pdf")) {
             pdfFileName = pdfFileName + ".pdf";
         }
         pdfFileName = StringUtils.normalizeFileName(pdfFileName);
@@ -1521,10 +1519,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return invoice;
     }
-    
+
     /**
      * @param invoice invoice to delete
-     * @throws BusinessException business exception 
+     * @throws BusinessException business exception
      */
     public void deleteMinRT(Invoice invoice) throws BusinessException {
         getEntityManager().createNamedQuery("RatedTransaction.deleteMinRT").setParameter("invoice", invoice).executeUpdate();
@@ -1602,6 +1600,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         billingTemplateName = StringUtils.normalizeFileName(billingTemplateName);
         return billingTemplateName;
+    }
+
+    public String evaluateInvoiceType(String expression, BillingRun billingRun) {
+        String invoiceTypeCode = null;
+
+        if (!StringUtils.isBlank(expression)) {
+            Map<Object, Object> contextMap = new HashMap<>();
+            contextMap.put("br", billingRun);
+
+            try {
+                Object value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                if (value == null) {
+                } else if (value instanceof String) {
+                    invoiceTypeCode = (String) value;
+                } else {
+                    invoiceTypeCode = value.toString();
+                }
+            } catch (BusinessException e) {
+                // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
+            }
+        }
+
+        return invoiceTypeCode;
     }
 
     /**

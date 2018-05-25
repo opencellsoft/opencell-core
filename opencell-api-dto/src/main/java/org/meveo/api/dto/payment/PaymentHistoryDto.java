@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -19,7 +20,7 @@ import org.meveo.model.payments.PaymentStatusEnum;
  * Class to represent payments that was initiated from OC, we find payment done, ,pending,rejected and error.
  *
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -33,6 +34,10 @@ public class PaymentHistoryDto extends BaseDto {
 
     /** The seller Code. */
     private String sellerCode;
+    
+    /** The customer Code. */
+    @XmlTransient
+    private String customerCode;    
 
     /** The customer Account Name. */
     private String customerAccountName;
@@ -468,7 +473,23 @@ public class PaymentHistoryDto extends BaseDto {
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
+    
+    
 
+
+    /**
+     * @return the customerCode
+     */
+    public String getCustomerCode() {
+        return customerCode;
+    }
+
+    /**
+     * @param customerCode the customerCode to set
+     */
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
+    }
 
     @Override
     public String toString() {

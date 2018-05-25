@@ -161,10 +161,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -196,7 +192,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
-        log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
+        log.debug("Creating xml for invoice id={} number={}.", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
 
         String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider, "PROV_CUSTOM_INV_XML_SCRIPT_CODE");
 
@@ -314,7 +310,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         boolean hasInvoiceAgregates = !invoiceAgregates.isEmpty();
         BillingRun billingRun = invoice.getBillingRun();
 
-        log.debug("Creating xml for invoice id={} number={}. {}", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
+        log.debug("Creating xml for invoice id={} number={}.", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
@@ -483,6 +479,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         String billingExternalRef2 = billingAccount.getExternalRef2();
         String billingExternalRef1 = billingAccount.getExternalRef1();
+        String jobTitleBA = billingAccount.getJobTitle();
         Element billingAccountTag = doc.createElement("billingAccount");
         if (billingCycle == null) {
             billingCycle = billingAccount.getBillingCycle();
@@ -496,6 +493,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
+        billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
+
 
         if (invoiceConfiguration != null && invoiceConfiguration.getDisplayBillingCycle() != null && invoiceConfiguration.getDisplayBillingCycle()) {
             if (billingCycle == null) {
@@ -681,7 +680,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             String code = userAccount.getCode();
             userAccountTag.setAttribute("code", code != null ? code : "");
-            String jobTitle = userAccount.getCode();
+            String jobTitle = userAccount.getJobTitle();
             userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             String description = userAccount.getDescription();
             userAccountTag.setAttribute("description", description != null ? description : "");

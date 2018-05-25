@@ -18,6 +18,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private AccessService accessService;
-    
+
     @Inject
     private OrderHistoryService orderHistoryService;
 
@@ -182,15 +183,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         return subscription;
     }
-    
+
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber) throws BusinessException {
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+            throws BusinessException {
         return terminateSubscription(subscription, terminationDate, terminationReason, orderNumber, null, null);
     }
 
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
-            throws BusinessException {
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
+            Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
 
         if (terminationReason == null) {
             throw new BusinessException("terminationReason is null");
@@ -202,8 +204,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @MeveoAudit
     private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
-            throws BusinessException {
+            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
@@ -216,7 +217,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 } else {
                     serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, null);
                 }
-                
+
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
@@ -232,7 +233,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             access.setEndDate(terminationDate);
             accessService.update(access);
         }
-        
+
         // execute termination script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
@@ -281,8 +282,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
 
-        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date()).getResultList();
-        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date()).getResultList());
+        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date())
+            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList();
+        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date())
+            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList());
 
         return ids;
     }

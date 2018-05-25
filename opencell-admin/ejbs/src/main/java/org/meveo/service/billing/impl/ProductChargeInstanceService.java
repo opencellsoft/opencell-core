@@ -29,6 +29,8 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.ProductChargeInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.BusinessService;
@@ -42,32 +44,45 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 	@EJB
 	private WalletOperationService walletOperationService;
 	
+	/**
+	 * @param code code of product charge instance
+	 * @param userAccountId id of user account
+	 * @return product charge instance.
+	 */
 	public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
 		ProductChargeInstance productChargeInstance = null;
 		try {
-            log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] { "ProductChargeInstance", code, userAccountId });
+            log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] {"ProductChargeInstance", code, userAccountId});
 			QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
 			productChargeInstance = (ProductChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
             log.debug("end of find {} by code (code={}, userAccountId={}). Result found={}.",
-                new Object[] { "ProductChargeInstance", code, userAccountId, productChargeInstance != null });
+                new Object[] {"ProductChargeInstance", code, userAccountId, productChargeInstance != null });
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
 		} catch (Exception e) {
-			log.error("failed to find productChargeInstance by Code and subsription",e);
+			log.error("failed to find productChargeInstance by Code and subsription", e);
 		}
 		return productChargeInstance;
 	}
 
+    /**
+     * @param productChargeInstance product charge instance
+     * @param isVirtual true/false
+     * @return list of wallet operation
+     * @throws BusinessException business exception.
+     */
     public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = null;
         ChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
 
-        log.debug("Apply product charge. User account {}, subscription {}, offer {}, charge {}, quantity {}, date {}",
-            productChargeInstance.getUserAccount() != null ? productChargeInstance.getUserAccount().getCode() : null,
-            productChargeInstance.getSubscription() != null ? productChargeInstance.getSubscription().getCode() : null, chargeTemplate.getCode(),
+        UserAccount userAccount = productChargeInstance.getUserAccount();
+        Subscription subscription = productChargeInstance.getSubscription();
+        log.debug("Apply product charge. User account {}, subscription {}, charge {}, quantity {}, date {}",
+            userAccount != null ? userAccount.getCode() : null,
+            subscription != null ? subscription.getCode() : null, chargeTemplate.getCode(),
             productChargeInstance.getQuantity(), productChargeInstance.getChargeDate());
 
         WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, isVirtual);

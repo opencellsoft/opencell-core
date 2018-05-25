@@ -57,10 +57,6 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     private ClusterEventPublisher clusterEventPublisher;
 
     @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
-
-    @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
