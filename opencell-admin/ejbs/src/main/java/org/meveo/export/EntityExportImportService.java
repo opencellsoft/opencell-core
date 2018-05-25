@@ -2178,10 +2178,12 @@ public class EntityExportImportService implements Serializable {
         Source source = null;
         // Handle zip file
         if (sourceFilename.endsWith(".zip")) {
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceFile));
+            try (ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceFile))) {
             zis.getNextEntry();
             source = new StreamSource(zis);
-
+            } catch (Exception ex) {
+                log.error("failed to work with stream", ex);
+            }
         } else {
             source = new StreamSource(sourceFile);
         }

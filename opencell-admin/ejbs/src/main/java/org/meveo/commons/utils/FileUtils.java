@@ -364,20 +364,22 @@ public final class FileUtils {
      */
     public static void createZipArchive(String zipFilename, String... filesToAdd) {
         final int BUFFER = 2048;
-        BufferedInputStream origin = null;
         try (FileOutputStream dest = new FileOutputStream(zipFilename);
              ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest))) {
             byte[] data = new byte[BUFFER];
             for (int i = 0; i < filesToAdd.length; i++) {
-                FileInputStream fi = new FileInputStream(filesToAdd[i]);
-                origin = new BufferedInputStream(fi, BUFFER);
-                ZipEntry entry = new ZipEntry(new File(filesToAdd[i]).getName());
-                out.putNextEntry(entry);
-                int count;
-                while ((count = origin.read(data, 0, BUFFER)) != -1) {
-                    out.write(data, 0, count);
+                try (FileInputStream fi = new FileInputStream(filesToAdd[i]);
+                    BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
+                    ZipEntry entry = new ZipEntry(new File(filesToAdd[i]).getName());
+                    out.putNextEntry(entry);
+                    int count;
+                    while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                        out.write(data, 0, count);
+                    }
+                    FileUtils.closeStream(origin);
+                } catch (Exception ex) {
+                    logger.error("Error while working with zip archive", ex);
                 }
-                FileUtils.closeStream(origin);
             }
             FileUtils.closeStream(out);
         } catch (Exception e) {
@@ -437,8 +439,6 @@ public final class FileUtils {
     public static void unzipFile(String folder, InputStream in) throws Exception {
         ZipInputStream zis = null;
         BufferedInputStream bis = null;
-        OutputStream fos = null;
-        BufferedOutputStream bos = null;
         CheckedInputStream cis = null;
         try {
             cis = new CheckedInputStream(in, new CRC32());
@@ -457,20 +457,21 @@ public final class FileUtils {
                 if (!fileout.exists()) {
                     (new File(fileout.getParent())).mkdirs();
                 }
-                fos = new FileOutputStream(fileout);
-                bos = new BufferedOutputStream(fos);
-                int b = -1;
-                while ((b = bis.read()) != -1) {
-                    bos.write(b);
+                try (OutputStream fos = new FileOutputStream(fileout);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                    int b = -1;
+                    while ((b = bis.read()) != -1) {
+                        bos.write(b);
+                    }
+                    bos.flush();
+                    fos.flush();
+                } catch (Exception ex) {
+                    throw ex;
                 }
-                bos.flush();
-                fos.flush();
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         } finally {
-            IOUtils.closeQuietly(bos);
-            IOUtils.closeQuietly(fos);
             IOUtils.closeQuietly(bis);
             IOUtils.closeQuietly(zis);
             IOUtils.closeQuietly(cis);
@@ -605,22 +606,18 @@ public final class FileUtils {
      */
     public static void archiveFile(File file) throws IOException {
         byte[] buffer = new byte[1024];
-
+        try (
         FileOutputStream fos = new FileOutputStream(file.getParent() + File.separator + FilenameUtils.removeExtension(file.getName()) + ".zip");
         ZipOutputStream zos = new ZipOutputStream(fos);
+        FileInputStream in = new FileInputStream(file)) {
         ZipEntry ze = new ZipEntry(file.getName());
         zos.putNextEntry(ze);
-        FileInputStream in = new FileInputStream(file);
-
         int len;
         while ((len = in.read(buffer)) > 0) {
             zos.write(buffer, 0, len);
         }
-
-        in.close();
-        zos.closeEntry();
-
-        // remember close it
-        zos.close();
+        } catch (IOException ex) {
+            throw ex;
+        }
     }
 }

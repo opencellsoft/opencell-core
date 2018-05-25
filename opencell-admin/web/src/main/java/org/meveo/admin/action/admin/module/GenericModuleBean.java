@@ -287,12 +287,15 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         }
     }
 
+    /**
+     * crop module's logo.
+     */
     public void cropLogo() {
         try {
             String originFilename = croppedImage.getOriginalFilename();
             String formatname = originFilename.substring(originFilename.lastIndexOf(".") + 1);
             String filename = String.format("%s.%s", entity.getCode(), formatname);
-            filename.replaceAll(" ", "_");
+            filename = filename.replaceAll(" ", "_");
             log.debug("crop module picture to {}", filename);
             String dest = ModuleUtil.getModulePicturePath(currentUser.getProviderCode()) + File.separator + filename;
             ModuleUtil.cropPicture(dest, croppedImage);

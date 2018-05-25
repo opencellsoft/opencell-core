@@ -33,9 +33,6 @@ public class SubscriptionStatusJob extends Job {
     @Inject
     private SubscriptionService subscriptionService;
     
-    @Inject
-    private JobExecutionService jobExecutionService;
-
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)

@@ -72,9 +72,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     private Long customerAccountId;
 
     @Inject
-    private Messages messages;
-
-    @Inject
     private CounterInstanceService counterInstanceService;
 
     private boolean returnToAgency;

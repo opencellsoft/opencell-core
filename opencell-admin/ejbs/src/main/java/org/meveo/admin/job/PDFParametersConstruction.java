@@ -106,7 +106,9 @@ public class PDFParametersConstruction {
             parameters.put(PdfGeneratorConstants.INVOICE_NUMBER_KEY, invoice.getInvoiceNumber());
             parameters.put(PdfGeneratorConstants.BILLING_TEMPLATE, billingTemplateName);
             parameters.put(PdfGeneratorConstants.BILLING_ACCOUNT, billingAccount);
-            parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
+            if (billingAccount != null) {
+                parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
+            }
             parameters.put(PdfGeneratorConstants.INVOICE, invoice);
             Map<String, String> baCustomFields = getBACustomFields(billingAccount);
             for (String key : baCustomFields.keySet()) {

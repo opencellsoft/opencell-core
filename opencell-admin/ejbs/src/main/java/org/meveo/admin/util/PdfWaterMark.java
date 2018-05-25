@@ -29,7 +29,6 @@ public class PdfWaterMark {
 
             reader = new PdfReader(pdfBytes);
             pdfStamper = new PdfStamper(reader, new FileOutputStream(pdfFileName));
-            Image image = null;
             if (imagePath != null) {
                 Image.getInstance(imagePath);
             }
@@ -39,20 +38,15 @@ public class PdfWaterMark {
             Document document = new Document(PageSize.A4);
             BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
             for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-                if (image != null) {
-                    PdfContentByte content = pdfStamper.getUnderContent(i);
-                    image.setAbsolutePosition(150f, 750f);
-                    content.addImage(image);
-                } else {
-                    over = pdfStamper.getOverContent(i);
-                    over.setGState(gs);
-                    over.beginText();
-                    over.setTextMatrix(document.top(), document.bottom());
-                    over.setFontAndSize(bf, 100);
-                    over.setColorFill(Color.GRAY);
-                    over.showTextAligned(Element.ALIGN_CENTER, text, document.getPageSize().getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
-                    over.endText();
-                }
+                over = pdfStamper.getOverContent(i);
+                over.setGState(gs);
+                over.beginText();
+                over.setTextMatrix(document.top(), document.bottom());
+                over.setFontAndSize(bf, 100);
+                over.setColorFill(Color.GRAY);
+                over.showTextAligned(Element.ALIGN_CENTER, text, document.getPageSize().getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
+                over.endText();
+
             }
 
         } catch (Exception e) {

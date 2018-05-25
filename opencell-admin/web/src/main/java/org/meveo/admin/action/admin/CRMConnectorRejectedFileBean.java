@@ -271,10 +271,10 @@ public class CRMConnectorRejectedFileBean implements Serializable {
                 result = false;
             }
 
-            if (appProvider != null && !name.contains("_" + appProvider.getCode() + "_")) {
+            if (appProvider != null && name != null && !name.contains("_" + appProvider.getCode() + "_")) {
                 result = false;
             }
-            if (this.filename != null && !this.filename.equals("") && name.indexOf(filename) < 0) {
+            if (this.filename != null && !this.filename.equals("") && name != null && name.indexOf(filename) < 0) {
                 result = false;
             }
             if (this.fromDate != null) {

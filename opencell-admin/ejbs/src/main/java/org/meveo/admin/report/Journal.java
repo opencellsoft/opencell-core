@@ -23,20 +23,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.impl.JournalEntryService;
-import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -49,20 +47,16 @@ public class Journal extends FileProducer implements Reporting {
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Inject
-    protected Logger log;
-
-    @Inject
     private JournalEntryService journalEntryService;
-
-    public Map<String, Object> parameters = new HashMap<String, Object>();
 
     /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     public void generateJournalFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        File file = null;
+        FileWriter writer = null;
         try {
-            File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {
                 file = File.createTempFile("tempJournal", ".csv");
             } else if (outputFormat == OutputFormatEnum.CSV) {
@@ -70,7 +64,7 @@ public class Journal extends FileProducer implements Reporting {
                 sb.append(".csv");
                 file = new File(sb.toString());
             }
-            FileWriter writer = new FileWriter(file);
+            writer = new FileWriter(file);
             writer.append("Date G.L.;No de Facture;No de client;Ste;CG;CA;DA;CR;IC;GP;Debit;Credit");
             writer.append('\n');
             List<Object> records = journalEntryService.getJournalRecords(startDate, endDate);
@@ -105,7 +99,6 @@ public class Journal extends FileProducer implements Reporting {
             // then write invoices
 
             writer.flush();
-            writer.close();
             if (outputFormat == OutputFormatEnum.PDF) {
                 parameters.put("startDate", startDate);
                 parameters.put("endDate", endDate);
@@ -118,6 +111,8 @@ public class Journal extends FileProducer implements Reporting {
             }
         } catch (IOException e) {
             log.error("failed to generate journal file", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
     }
 

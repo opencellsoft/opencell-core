@@ -23,10 +23,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,10 +33,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.reporting.impl.JournalEntryService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
 
 /**
  * @author Wassim Drira
@@ -49,19 +44,10 @@ import org.slf4j.Logger;
 public class TaxStatus extends FileProducer implements Reporting {
 
     @Inject
-    protected Logger log;
-
-    @Inject
     private JournalEntryService salesTransformationService;
 
     @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
-    @Inject
     private ParamBeanFactory paramBeanFactory;
-
-    public Map<String, Object> parameters = new HashMap<String, Object>();
 
     public void generateTaxStatusFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
         // log.info("generateTaxStatusFile({},{})", startDate,endDate);

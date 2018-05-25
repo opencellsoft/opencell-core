@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -52,10 +51,6 @@ public class RefundService extends PersistenceService<Refund> {
 
     @Inject
     private AccountOperationService accountOperationService;
-
-    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     @MeveoAudit
     @Override

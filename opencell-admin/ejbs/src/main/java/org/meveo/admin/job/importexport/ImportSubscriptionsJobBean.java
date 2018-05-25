@@ -379,6 +379,7 @@ public class ImportSubscriptionsJobBean {
         Errors errors = subscriptionsError.getErrors();
         if (errors == null) {
             subscriptionsError.setErrors(new Errors());
+            errors = subscriptionsError.getErrors();
         }
 
         errors.getErrorSubscription().add(errorSubscription);
@@ -404,6 +405,7 @@ public class ImportSubscriptionsJobBean {
         Warnings warnings = subscriptionsWarning.getWarnings();
         if (warnings == null) {
             subscriptionsWarning.setWarnings(new Warnings());
+            warnings = subscriptionsWarning.getWarnings();
         }
 
         warnings.getWarningSubscription().add(warningSubscription);
@@ -463,6 +465,7 @@ public class ImportSubscriptionsJobBean {
         Errors errors = subscriptionsError.getErrors();
         if (errors == null) {
             subscriptionsError.setErrors(new Errors());
+            errors = subscriptionsError.getErrors();
         }
 
         errors.getErrorServiceInstance().add(errorServiceInstance);

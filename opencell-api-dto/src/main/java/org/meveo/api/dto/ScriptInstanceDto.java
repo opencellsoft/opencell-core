@@ -109,9 +109,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof ScriptInstanceDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        
+        if (obj == null || !(obj instanceof ScriptInstanceDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 

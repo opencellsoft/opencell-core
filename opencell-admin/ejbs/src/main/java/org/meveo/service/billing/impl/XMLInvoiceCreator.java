@@ -161,10 +161,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 

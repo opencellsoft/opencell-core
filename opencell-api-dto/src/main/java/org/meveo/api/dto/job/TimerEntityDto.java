@@ -203,9 +203,8 @@ public class TimerEntityDto extends EnableBusinessDto {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof TimerEntityDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        
+        if (obj == null || !(obj instanceof TimerEntityDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 

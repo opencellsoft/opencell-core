@@ -82,9 +82,6 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     @Inject
     protected BusinessProductModelService businessProductModelService;
     
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
     private DualListModel<DigitalResource> attachmentsDM;
     private DualListModel<WalletTemplate> walletTemplatesDM;

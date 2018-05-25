@@ -41,14 +41,16 @@ public class FileServlet extends HttpServlet {
     @CurrentUser
     private MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    /** paramBeanFactory. */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    /** base path.*/
     private String basePath;
 
     /**
      * Initialize the servlet.
+     * @throws ServletException servlet exception.
      * 
      */
     public void init() throws ServletException {

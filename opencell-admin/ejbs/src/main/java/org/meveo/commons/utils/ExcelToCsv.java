@@ -25,6 +25,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -446,8 +447,7 @@ public class ExcelToCsv {
   * @throws java.io.IOException Thrown to indicate and error occurred in the
   *                             underylying file system.
   */
- private void saveCSVFile(File file)
-                                  throws FileNotFoundException, IOException {
+ private void saveCSVFile(File file) throws FileNotFoundException, IOException {
      FileWriter fw = null;
      BufferedWriter bw = null;
      ArrayList<String> line = null;
@@ -503,11 +503,10 @@ public class ExcelToCsv {
                  bw.newLine();
              }
          }
+         
+         bw.flush();
         } finally {
-            if (bw != null) {
-                bw.flush();
-                bw.close();
-            }
+            IOUtils.closeQuietly(bw);
         }
  }
 

@@ -27,11 +27,6 @@ public class BillingRunJob extends Job {
     @Inject
     private BillingRunJobBean billingRunJobBean;
 
-    /** The custom field instance service. */
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
-    
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         String billingCycle = (String) customFieldInstanceService.getCFValue(jobInstance, "BillingRunJob_billingCycle");

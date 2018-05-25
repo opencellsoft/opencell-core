@@ -17,6 +17,7 @@ import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -40,7 +41,9 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
@@ -71,6 +74,12 @@ public class UserAccountApi extends AccountEntityApi {
 
     @Inject
     private ProductInstanceService productInstanceService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     public void create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -156,8 +165,15 @@ public class UserAccountApi extends AccountEntityApi {
             if (billingAccount == null) {
                 throw new EntityDoesNotExistsException(BillingAccount.class, postData.getBillingAccount());
             } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
-                throw new InvalidParameterException(
-                    "Can not change the parent account. User account's current parent account (billing account) is " + userAccount.getBillingAccount().getCode());
+                // a safeguard to allow this only if all the WO/RT have been invoiced.
+                Long countNonTreatedWO = walletOperationService.countNonTreatedWOByUA(userAccount);
+                if(countNonTreatedWO > 0) {
+                    throw new BusinessApiException("Can not change the parent account. User account have non treated WO");
+                }
+                Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByUA(userAccount);
+                if(countNonInvoicedRT > 0) {
+                    throw new BusinessApiException("Can not change the parent account. User account have non invoiced RT");
+                }
             }
             userAccount.setBillingAccount(billingAccount);
         }

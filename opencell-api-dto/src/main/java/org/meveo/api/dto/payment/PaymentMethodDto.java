@@ -287,13 +287,15 @@ public class PaymentMethodDto extends BaseDto implements IEnableDto {
         default:
             break;
         }
-        pmEntity.setInfo1(getInfo1());
-        pmEntity.setInfo2(getInfo2());
-        pmEntity.setInfo3(getInfo3());
-        pmEntity.setInfo4(getInfo4());
-        pmEntity.setInfo5(getInfo5());
-        pmEntity.setUserId(getUserId());
-        pmEntity.updateAudit(currentUser);
+        if (pmEntity != null) {
+            pmEntity.setInfo1(getInfo1());
+            pmEntity.setInfo2(getInfo2());
+            pmEntity.setInfo3(getInfo3());
+            pmEntity.setInfo4(getInfo4());
+            pmEntity.setInfo5(getInfo5());
+            pmEntity.setUserId(getUserId());
+            pmEntity.updateAudit(currentUser);
+        }
         return pmEntity;
     }
 

@@ -168,9 +168,6 @@ public class AccountHierarchyApi extends BaseApi {
     private TitleService titleService;
 
     @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
     private BusinessAccountModelService businessAccountModelService;
     
     @Inject
