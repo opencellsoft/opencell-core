@@ -6,6 +6,7 @@ package org.meveo.model.finance;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 2 May 2018
+ * @lastModifiedVersion 5.1
  **/
 public enum ReportExtractResultTypeEnum {
     CSV("reportExtractResultTypeEnum.CSV"), HTML("reportExtractResultTypeEnum.HTML");

@@ -6,6 +6,7 @@ package org.meveo.model.finance;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 23 Apr 2018
+ * @lastModifiedVersion 5.1
  **/
 public enum ReportExtractExecutionOrigin {
     API, JOB, GUI;

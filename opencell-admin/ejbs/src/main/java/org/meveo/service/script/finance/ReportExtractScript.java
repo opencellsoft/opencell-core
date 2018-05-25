@@ -8,6 +8,7 @@ import org.meveo.service.script.Script;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
+ * @lastModifiedVersion 5.1
  **/
 public class ReportExtractScript extends Script {
 

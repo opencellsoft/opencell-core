@@ -50,7 +50,9 @@ import org.slf4j.LoggerFactory;
  * File utilities class.
  * 
  * @author Donatas Remeika
+ * @author Edward P. Legaspi
  * 
+ * @lastModifiedVersion 5.1
  */
 public final class FileUtils {
 

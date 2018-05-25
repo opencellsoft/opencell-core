@@ -23,6 +23,7 @@ import org.meveo.model.NotifiableEntity;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 23 Apr 2018
+ * @lastModifiedVersion 5.1
  **/
 @Entity
 @Table(name = "dwh_report_extract_execution")

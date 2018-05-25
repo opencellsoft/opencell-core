@@ -37,7 +37,7 @@ import org.meveo.service.script.finance.ReportExtractScript;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class ReportExtractService extends BusinessService<ReportExtract> {

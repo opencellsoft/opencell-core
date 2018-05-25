@@ -7,10 +7,10 @@ import org.meveo.api.dto.finance.ReportExtractExecutionResultDto;
 import org.meveo.api.dto.response.SearchResponse;
 
 /** 
- * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 15 May 2018
+ * @lastModifiedVersion 5.1
  **/
 public class ReportExtractExecutionResultsResponseDto extends SearchResponse {
 

@@ -13,6 +13,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 24 Apr 2018
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class ReportExtractExecutionResultService extends PersistenceService<ReportExtractExecutionResult> {

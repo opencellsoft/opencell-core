@@ -18,7 +18,7 @@ import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtosResponse;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  */
 @WebService
 public interface FinanceWs extends IBaseWs {

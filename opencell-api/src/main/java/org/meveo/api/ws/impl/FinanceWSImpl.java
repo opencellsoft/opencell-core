@@ -25,7 +25,7 @@ import org.meveo.api.ws.FinanceWs;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  */
 @WebService(serviceName = "FinanceWs", endpointInterface = "org.meveo.api.ws.FinanceWs")
 @Interceptors({ WsRestApiInterceptor.class })

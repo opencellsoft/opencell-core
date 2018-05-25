@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class ReportExtractJobBean implements Serializable {
