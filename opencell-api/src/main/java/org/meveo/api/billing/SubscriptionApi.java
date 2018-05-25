@@ -1020,6 +1020,9 @@ public class SubscriptionApi extends BaseApi {
         dto.setStatus(subscription.getStatus());
         dto.setStatusDate(subscription.getStatusDate());
         dto.setOrderNumber(subscription.getOrderNumber());
+        if(subscription.getBillingCycle() != null) {
+            dto.setBillingCycle(subscription.getBillingCycle().getCode());
+        }
 
         if (subscription.getUserAccount() != null) {
             dto.setUserAccount(subscription.getUserAccount().getCode());
