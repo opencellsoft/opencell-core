@@ -24,9 +24,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -38,18 +40,25 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 @Entity
+@CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
-public class BillingRun extends AuditableEntity {
+public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -158,6 +167,15 @@ public class BillingRun extends AuditableEntity {
 
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
+    
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
+    
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();
 
     public Date getProcessDate() {
         return processDate;
@@ -413,5 +431,67 @@ public class BillingRun extends AuditableEntity {
         }
         rejectedBillingAccounts.add(rejectedBillingAccount);
     }
+    
+    @Override
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
 
+    @Override
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
+    
+    @Override
+    public int hashCode() {
+        return 961 + (("BR" + (id == null ? "" : id)).hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof User)) {
+            return false;
+        }
+
+        BillingRun other = (BillingRun) obj;
+
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
+        }
+
+        if (id == null) {
+            if (other.getId() != null) {
+                return false;
+            }
+        } else if (!id.equals(other.getId())) {
+            return false;
+        }
+        return true;
+    }
 }

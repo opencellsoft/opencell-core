@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 
 /**
@@ -45,6 +46,9 @@ public class CreateBillingRunDto extends BaseDto {
 
     /** The last transaction date. */
     private Date lastTransactionDate;
+    
+    /** Custom fields. */
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new creates the billing run dto.
@@ -160,11 +164,29 @@ public class CreateBillingRunDto extends BaseDto {
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
     }
+    
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
     @Override
     public String toString() {
         return "CreateBillingRunDto [billingCycleCode=" + billingCycleCode + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate=" + endDate
-                + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + "]";
+                + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", customFields=" + customFields + "]";
     }
 
 }

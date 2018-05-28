@@ -95,6 +95,9 @@ public class BillingRunDto extends BaseDto {
 
     /** The selected billing accounts. */
     private String selectedBillingAccounts;
+    
+    /** Custom fields. */
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new billing run dto.
@@ -533,6 +536,24 @@ public class BillingRunDto extends BaseDto {
      */
     public void setSelectedBillingAccounts(String selectedBillingAccounts) {
         this.selectedBillingAccounts = selectedBillingAccounts;
+    }
+    
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 
     /**
