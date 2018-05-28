@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
+ * @author Said Ramli
  * @lastModifiedVersion 5.0.1
  */
 @Named
@@ -867,7 +868,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         try {
 
-            action = entityActionScriptService.findByCode(action.getCode());
+            action = entityActionScriptService.retrieveIfNotManaged(action);
             
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
