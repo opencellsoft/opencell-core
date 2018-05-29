@@ -82,7 +82,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
         handleMissingParameters();
 
-        if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
+        if (paymentGatewayDto != null && paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
             throw new BusinessException("Cant add Natif PaymentGateway");
         }
 
