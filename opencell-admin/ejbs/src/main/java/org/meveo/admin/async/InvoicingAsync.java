@@ -84,10 +84,10 @@ public class InvoicingAsync {
     }
 
     /**
-     * Creates the agregates and invoice async. One billing account at a time in a separate transaction.
+     * Creates the aggregates and invoice async. One billing account at a time in a separate transaction.
      *
      * @param billingAccountIds the billing account ids
-     * @param billingRun the billing run
+     * @param billingRunId The billing run id
      * @param jobInstanceId the job instance id
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
@@ -95,7 +95,7 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, Long billingRunId, Long jobInstanceId, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -104,7 +104,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null, null);
+                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRunId, null, null, null, null, null);
             } catch (Exception e) {
                 log.error("Error for BA=" + billingAccountId + " : " + e);
             }

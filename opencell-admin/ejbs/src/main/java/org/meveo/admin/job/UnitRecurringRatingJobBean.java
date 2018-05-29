@@ -12,6 +12,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
     @Inject
     protected Logger log;
 
+    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long ID_activeRecurringChargeInstance, Date maxDate) {

@@ -34,6 +34,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
@@ -72,6 +73,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @param jobInstance Job instance
      * @return True if job is completely done. False if any data are left to process.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Boolean persistResult(Job job, JobExecutionResultImpl result, JobInstance jobInstance) {
         try {
@@ -256,6 +258,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @return A number of records that were removed
      */
     @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int deleteJobExecutionHistory(String jobName, Date date) {
         log.trace("Removing {} job execution history older then a {} date", jobName, date);
