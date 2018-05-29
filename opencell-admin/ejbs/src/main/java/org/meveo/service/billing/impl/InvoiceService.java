@@ -56,11 +56,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
@@ -79,6 +74,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -101,8 +97,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.order.OrderService;
@@ -168,6 +162,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private BillingRunService billingRunService;
 
     private String PDF_DIR_NAME = "pdf";
 
@@ -367,8 +364,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param billingAccountId billing account id
-     * @param billingRun billing run
+     * @param billingAccountId Billing account id
+     * @param billingRunId Billing run id
      * @param ratedTransactionFilter rated transaction filter
      * @param orderNumber order number
      * @param invoiceDate date of invoice
@@ -377,15 +374,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return created invoice
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAgregatesAndInvoice(Long billingAccountId, BillingRun billingRun, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
+    public Invoice createAgregatesAndInvoice(Long billingAccountId, Long billingRunId, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
 
         long startDate = System.currentTimeMillis();
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
-            billingAccountId, billingRun != null ? billingRun.getId() : null, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
+            billingAccountId, billingRunId, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
+
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
+        }
+
+        BillingRun billingRun = null;
+        if (billingRunId != null) {
+            billingRun = billingRunService.findById(billingRunId);
         }
 
         if (billingRun == null) {
@@ -478,7 +482,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             create(invoice);
-
             // Note that rated transactions get updated in
             // ratedTransactionservice in case of Filter or orderNumber not empty
             if (ratedTransactionFilter == null && StringUtils.isBlank(orderNumber)) {
@@ -591,6 +594,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceId id of invoice
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void produceInvoicePdfInNewTransaction(Long invoiceId) throws BusinessException {
         Invoice invoice = findById(invoiceId);
@@ -942,9 +946,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
             }
 
-            subCategoryInvoiceAgregate.setAmountWithoutTax(
-                subCategoryInvoiceAgregate.getAmountWithoutTax() != null ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP)
-                        : BigDecimal.ZERO);
+            subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax() != null
+                    ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP) : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -1231,6 +1234,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceId invoice's id
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void produceInvoiceXmlInNewTransaction(Long invoiceId) throws BusinessException {
         Invoice invoice = findById(invoiceId);
@@ -1660,6 +1664,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 

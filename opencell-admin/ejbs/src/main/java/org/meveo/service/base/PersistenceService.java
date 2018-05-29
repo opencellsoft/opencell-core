@@ -36,7 +36,6 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -55,6 +54,8 @@ import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
@@ -73,8 +74,7 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
+import org.meveo.service.notification.DefaultObserver;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -121,12 +121,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     @Inject
     private ElasticClient elasticClient;
@@ -159,7 +155,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
-
+    
     /**
      * Constructor.
      */
@@ -1109,12 +1105,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return q.getResultList();
     }
 
+    @Override
     public EntityManager getEntityManager() {
-
-        if (FacesContext.getCurrentInstance() != null) {
-            return em;
-        }
-        return emfForJobs;
+        return emWrapper.getEntityManager();
     }
 
     /**

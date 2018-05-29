@@ -295,8 +295,6 @@ public class WalletReservationService extends PersistenceService<WalletReservati
             }
 
             result = query.getSingleResult();
-            
-            log.error("AKK balance is {}", result);
 
         } catch (Exception e) {
             log.error("Failed to get balance amount ", e);

@@ -25,6 +25,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
@@ -839,6 +840,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param useSamePricePlan true if same price plan will be used
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException {
 

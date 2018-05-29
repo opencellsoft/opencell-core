@@ -5,6 +5,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ public class UnitRatedTransactionsJobBean {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
+    @JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result,Long walletOperationId ) {
 		log.debug("Running with walletOperationId={}", walletOperationId);

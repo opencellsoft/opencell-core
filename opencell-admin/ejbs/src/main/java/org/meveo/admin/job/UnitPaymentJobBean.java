@@ -10,6 +10,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -38,6 +39,7 @@ public class UnitPaymentJobBean {
     @Inject
     private PaymentService paymentService;
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway,
             PaymentMethodEnum paymentMethodType) {

@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -126,7 +124,6 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException Business exception
      * @throws Exception exception
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
