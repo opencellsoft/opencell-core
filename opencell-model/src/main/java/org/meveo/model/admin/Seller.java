@@ -57,7 +57,7 @@ import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SELLER")
+@CustomFieldEntity(cftCodePrefix = "SELLER", inheritCFValuesFrom = "seller", inheritFromProvider = true)
 @ExportIdentifier({ "code" })
 @Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

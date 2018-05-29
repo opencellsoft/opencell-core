@@ -29,9 +29,9 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * The Class BusinessEntity.
+ * Represents a business entity that can be uniquely identified by a code
  * 
- * @author Said Ramli
+ * @author Andrius Karpavicius
  * @lastModifiedVersion 5.1
  */
 @MappedSuperclass
@@ -92,6 +92,9 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         this.appendGeneratedCode = appendGeneratedCode;
     }
 
+    /**
+     * @return Description or code value if description was not provided
+     */
     public String getDescriptionOrCode() {
         if (!StringUtils.isBlank(description)) {
             return description;
@@ -100,6 +103,9 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         }
     }
 
+    /**
+     * @return Description with code in the following format: <code>_<description>
+     */
     public String getDescriptionAndCode() {
         if (!StringUtils.isBlank(description)) {
             return code + " - " + description;
@@ -165,8 +171,13 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         return String.format("%s[%s, code=%s]", this.getClass().getSimpleName(), super.toString(), code);
     }
 
-    public void setDescriptionOrCode(String val) {
-        setDescription(val);
+    /**
+     * A "fake" method needed for JSF functionality as a setter equivalent for getDescriptionOrCode()
+     * 
+     * @param description Description
+     */
+    public void setDescriptionOrCode(String description) {
+        setDescription(description);
     }
 
     /**

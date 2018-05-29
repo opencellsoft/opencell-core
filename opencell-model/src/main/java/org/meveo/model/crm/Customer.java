@@ -42,7 +42,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
 @Entity
-@CustomFieldEntity(cftCodePrefix = "CUST")
+@CustomFieldEntity(cftCodePrefix = "CUST", inheritCFValuesFrom = "seller")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
@@ -52,11 +52,11 @@ public class Customer extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_brand_id")
     private CustomerBrand customerBrand;
 
@@ -69,10 +69,10 @@ public class Customer extends AccountEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
-    
+
     @Column(name = "vat_no", length = 100)
     private String vatNo;
-    
+
     @Column(name = "registration_no", length = 100)
     private String registrationNo;
 
@@ -135,20 +135,20 @@ public class Customer extends AccountEntity {
         return Seller.class;
     }
 
-	public String getRegistrationNo() {
-		return registrationNo;
-	}
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
 
-	public void setRegistrationNo(String registrationNo) {
-		this.registrationNo = registrationNo;
-	}
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
 
-	public String getVatNo() {
-		return vatNo;
-	}
+    public String getVatNo() {
+        return vatNo;
+    }
 
-	public void setVatNo(String vatNo) {
-		this.vatNo = vatNo;
-	}
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
+    }
 
 }

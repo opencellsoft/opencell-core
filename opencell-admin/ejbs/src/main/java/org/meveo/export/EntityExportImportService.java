@@ -44,7 +44,7 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.Conversation;
+import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
@@ -204,9 +204,6 @@ public class EntityExportImportService implements Serializable {
     @Inject
     @MeveoJpaForMultiTenancyForJobs
     private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -372,16 +369,10 @@ public class EntityExportImportService implements Serializable {
         return getEntityManager();
     }
 
-    public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
+    private EntityManager getEntityManager() {
+        if (FacesContext.getCurrentInstance() != null) {
+            return em;
         }
-
         return emfForJobs;
     }
 
@@ -2179,8 +2170,8 @@ public class EntityExportImportService implements Serializable {
         // Handle zip file
         if (sourceFilename.endsWith(".zip")) {
             try (ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceFile))) {
-            zis.getNextEntry();
-            source = new StreamSource(zis);
+                zis.getNextEntry();
+                source = new StreamSource(zis);
             } catch (Exception ex) {
                 log.error("failed to work with stream", ex);
             }

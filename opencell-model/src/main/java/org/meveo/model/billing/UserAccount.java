@@ -49,7 +49,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 
 @Entity
-@CustomFieldEntity(cftCodePrefix = "UA")
+@CustomFieldEntity(cftCodePrefix = "UA", inheritCFValuesFrom="billingAccount")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")

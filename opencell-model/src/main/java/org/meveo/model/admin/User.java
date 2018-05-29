@@ -120,6 +120,10 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
     @Transient
     private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
 
@@ -275,6 +279,9 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -287,6 +294,16 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override

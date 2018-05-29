@@ -17,8 +17,8 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -78,9 +78,6 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
     @MeveoJpaForMultiTenancyForJobs
     private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
 
     @Inject
     private CurrentUserProvider currentUserProvider;
@@ -316,6 +313,12 @@ public class CustomFieldInstanceService extends BaseService {
         return value;
     }
 
+    /**
+     * Get custom field values of an entity As JSON string
+     * 
+     * @param entity Entity with custom field values
+     * @return JSON format string
+     */
     public String getCFValuesAsJson(ICustomFieldEntity entity) {
         return getCFValuesAsJson(entity, false);
     }
@@ -324,7 +327,7 @@ public class CustomFieldInstanceService extends BaseService {
      * Get custom field values of an entity as JSON string
      *
      * @param entity Entity
-     * @param includeParent include parentCFEntities or not
+     * @param includeParent Include custom field values of parent custom field entities in custom field inheritance hierarchy
      * @return JSON format string
      */
     public String getCFValuesAsJson(ICustomFieldEntity entity, boolean includeParent) {
@@ -360,10 +363,25 @@ public class CustomFieldInstanceService extends BaseService {
         return result;
     }
 
+    /**
+     * Append custom field values of an entity to XML document, each as "customField" element
+     * 
+     * @param entity Entity with custom field values
+     * @param doc Document to append custom field values to
+     * @return Appended XML document element
+     */
     public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc) {
         return getCFValuesAsDomElement(entity, doc, false);
     }
 
+    /**
+     * Append custom field values of an entity to XML document, each as "customField" element
+     * 
+     * @param entity Entity with custom field values
+     * @param doc Document to append custom field values to
+     * @param includeParent Include custom field values of parent custom field entities in custom field inheritance hierarchy
+     * @return Appended XML document element
+     */
     public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc, boolean includeParent) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
@@ -402,10 +420,9 @@ public class CustomFieldInstanceService extends BaseService {
      * @param entity Entity
      * @param cfCode Custom field value code
      * @param value Value to set
-     * @return custom field value
-     * @throws BusinessException business exception.
+     * @throws BusinessException General business exception.
      */
-    public CustomFieldValue setCFValue(ICustomFieldEntity entity, String cfCode, Object value) throws BusinessException {
+    public void setCFValue(ICustomFieldEntity entity, String cfCode, Object value) throws BusinessException {
 
         log.debug("Setting CF value. Code: {}, entity {} value {}", cfCode, entity, value);
 
@@ -425,30 +442,35 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        CustomFieldValue cfValue = null;
-        if (entity.getCfValues() != null) {
-            cfValue = entity.getCfValues().getCfValue(cfCode);
-        }
+        boolean hasCfValue = entity.hasCfValue(cfCode);
+
         // No existing CF value. Create CF value with new value. Assign(persist) NULL value only if cft.defaultValue is present
-        if (cfValue == null) {
+        if (!hasCfValue) {
             if (value == null && cft.getDefaultValue() == null) {
-                return null;
+                return;
             }
-            cfValue = entity.getCfValuesNullSafe().setValue(cfCode, value);
+            entity.setCfValue(cfCode, value);
 
             // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
         } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
-            cfValue.setValue(value);
+            entity.setCfValue(cfCode, value);
 
             // Existing CF value found, but new value is null, so remove CF value all together
         } else {
-            entity.getCfValues().removeValue(cfCode);
-            return null;
+            entity.removeCfValue(cfCode);
         }
-        return cfValue;
     }
 
-    public CustomFieldValue setCFValue(ICustomFieldEntity entity, String cfCode, Object value, Date valueDate) throws BusinessException {
+    /**
+     * Set a Custom field value on an entity for a given date. Applies to calendar versioned custom fields.
+     *
+     * @param entity Entity
+     * @param cfCode Custom field value code
+     * @param value Value to set
+     * @param valueDate Date value applies on
+     * @throws BusinessException General business exception
+     */
+    public void setCFValue(ICustomFieldEntity entity, String cfCode, Object value, Date valueDate) throws BusinessException {
 
         log.debug("Setting CF value. Code: {}, entity {} value {} valueDate {}", cfCode, entity, value, valueDate);
 
@@ -459,7 +481,8 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         if (!cft.isVersionable()) {
-            return setCFValue(entity, cfCode, value);
+            setCFValue(entity, cfCode, value);
+            return;
 
             // Calendar is needed to be able to set a value with a single date
         } else if (cft.getCalendar() == null) {
@@ -473,32 +496,38 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         // Should not match more then one record as periods are calendar based
-        CustomFieldValue cfValue = null;
-        if (entity.getCfValues() != null) {
-            cfValue = entity.getCfValues().getCfValue(cfCode, valueDate);
-        }
+        boolean hasCfValue = entity.hasCfValue(cfCode, valueDate);
+
         // No existing CF value. Create CF value with new value. Persist NULL value only if cft.defaultValue is present
-        if (cfValue == null) {
+        if (!hasCfValue) {
             if (value == null && cft.getDefaultValue() == null) {
-                return null;
+                return;
             }
-            entity.getCfValuesNullSafe().setValue(cfCode, cft.getDatePeriod(valueDate), null, value);
+            entity.setCfValue(cfCode, cft.getDatePeriod(valueDate), null, value);
 
             // Existing CFI found. Update with new value or NULL value only if cft.defaultValue is present
         } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
-            cfValue.setValue(value);
+            entity.setCfValue(cfCode, cft.getDatePeriod(valueDate), null, value);
 
             // Existing CFI found, but new value is null, so remove CFI
         } else {
-            entity.getCfValues().removeValue(cfCode, valueDate);
-            return null;
+            entity.removeCfValue(cfCode, valueDate);
         }
 
-        return cfValue;
     }
 
-    public CustomFieldValue setCFValue(ICustomFieldEntity entity, String cfCode, Object value, Date valueDateFrom, Date valueDateTo, Integer valuePriority)
-            throws BusinessException {
+    /**
+     * Set a Custom field value on an entity for a given date period. Applies to non-calendar versioned custom fields.
+     *
+     * @param entity Entity
+     * @param cfCode Custom field value code
+     * @param value Value to set
+     * @param valueDateFrom Date period value applies on - period start date
+     * @param valueDateTo Date period value applies on - period end date
+     * @param valuePriority Value priority in case multiple date periods overlap
+     * @throws BusinessException General business exception
+     */
+    public void setCFValue(ICustomFieldEntity entity, String cfCode, Object value, Date valueDateFrom, Date valueDateTo, Integer valuePriority) throws BusinessException {
 
         log.debug("Setting CF value. Code: {}, entity {} value {} valueDateFrom {} valueDateTo {}", cfCode, entity, value, valueDateFrom, valueDateTo);
 
@@ -509,14 +538,16 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         if (!cft.isVersionable()) {
-            return setCFValue(entity, cfCode, value);
+            setCFValue(entity, cfCode, value);
+            return;
 
             // If calendar is provided - use calendar by the valueDateFrom date
         } else if (cft.getCalendar() != null) {
             log.warn(
                 "Calendar is provided in Custom Field template {}/{} while trying to assign value period start and end dates with two values. Only start date will be considered",
                 entity.getClass().getSimpleName(), cfCode);
-            return setCFValue(entity, cfCode, value, valueDateFrom);
+            setCFValue(entity, cfCode, value, valueDateFrom);
+            return;
         }
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
@@ -525,28 +556,23 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         // Should not match more then one record, as match is strict
-        CustomFieldValue cfValue = null;
-        if (entity.getCfValues() != null) {
-            cfValue = entity.getCfValues().getCfValue(cfCode, valueDateFrom, valueDateTo);
-        }
+        boolean hasCFValue = entity.hasCfValue(cfCode, valueDateFrom, valueDateTo);
+
         // No existing CF value. Create CF value with new value. Persist NULL value only if cft.defaultValue is present
-        if (cfValue == null) {
+        if (!hasCFValue) {
             if (value == null && cft.getDefaultValue() == null) {
-                return null;
+                return;
             }
-            entity.getCfValuesNullSafe().setValue(cfCode, new DatePeriod(valueDateFrom, valueDateTo), valuePriority, value);
+            entity.setCfValue(cfCode, new DatePeriod(valueDateFrom, valueDateTo), valuePriority, value);
 
             // Existing CF value found. Update with new value or NULL value only if cft.defaultValue is present
         } else if (value != null || (value == null && cft.getDefaultValue() != null)) {
-            cfValue.setValue(value);
+            entity.setCfValue(cfCode, new DatePeriod(valueDateFrom, valueDateTo), valuePriority, value);
 
             // Existing CF value found, but new value is null, so remove CF value
         } else {
             entity.getCfValues().removeValue(cfCode, valueDateFrom, valueDateTo);
-            return null;
         }
-
-        return cfValue;
     }
 
     /**
@@ -2038,7 +2064,7 @@ public class CustomFieldInstanceService extends BaseService {
             return instantiateCFWithDefaultValue(entity, cft);
         }
 
-        entity.getCfValuesNullSafe().setValue(cft.getCode(), cft.getDatePeriod(date), null, value);
+        entity.setCfValue(cft.getCode(), cft.getDatePeriod(date), null, value);
 
         return value;
     }
@@ -2342,16 +2368,10 @@ public class CustomFieldInstanceService extends BaseService {
         }
     }
 
-    public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
+    private EntityManager getEntityManager() {
+        if (FacesContext.getCurrentInstance() != null) {
+            return em;
         }
-
         return emfForJobs;
     }
 }

@@ -72,6 +72,7 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpaForMultiTenancy;
 import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
@@ -132,9 +133,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     private ElasticClient elasticClient;
 
     @Inject
-    private Conversation conversation;
-
-    @Inject
     @Created
     protected Event<BaseEntity> entityCreatedEventProducer;
 
@@ -159,6 +157,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
+
+    @Inject
+    private CfValueAccumulator cfValueAccumulator;
 
     /**
      * Constructor.
@@ -421,6 +422,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
+
+        if (entity instanceof ICustomFieldEntity) {
+            cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, );
+        }
+        
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 
         return entity;
@@ -448,14 +454,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
         }
+        // Schedule end of period events
+        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
 
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
         if (ISearchable.class.isAssignableFrom(entity.getClass())) {
-            // flush first to allow child entities to be lazy loaded
-            // getEntityManager().flush();
-            // getEntityManager().refresh(entity);
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
@@ -463,10 +471,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
 
-        // Schedule end of period events
-        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (entity instanceof ICustomFieldEntity) {
-            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+            cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
@@ -1061,18 +1067,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
-    }
-
-    protected boolean isConversationScoped() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return true;
-            } catch (Exception e) {
-            }
-        }
-
-        return false;
     }
 
     /**

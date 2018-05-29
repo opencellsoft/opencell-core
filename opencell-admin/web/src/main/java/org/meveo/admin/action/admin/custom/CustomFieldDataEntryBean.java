@@ -1026,8 +1026,8 @@ public class CustomFieldDataEntryBean implements Serializable {
                 }
             }
         }
-        // Update entity custom values field
 
+        // Update entity custom values field
         if (entity != null) {
             if (newValuesByCode.isEmpty()) {
                 entity.clearCfValues();

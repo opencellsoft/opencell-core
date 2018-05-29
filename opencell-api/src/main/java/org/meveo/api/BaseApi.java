@@ -123,11 +123,10 @@ public abstract class BaseApi {
 
     @Inject
     private RoleService roleService;
-    
+
     protected List<String> missingParameters = new ArrayList<>();
-    
+
     private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
-    
 
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
@@ -149,13 +148,13 @@ public abstract class BaseApi {
         try {
             BusinessDto bdto = (BusinessDto) dto;
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
-            if(!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) ) {
+            if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
                 throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
             }
-        } catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             log.info("allow entity code update rule not applied : Not business Dto");
         }
-        
+
         if (!missingParameters.isEmpty()) {
             MissingParameterException mpe = new MissingParameterException(missingParameters);
             missingParameters.clear();
@@ -323,10 +322,6 @@ public abstract class BaseApi {
         // After saving passed CF values, validate that CustomField value is not
         // empty when field is mandatory. Check inherited values as well.
         // Instantiate CF with default value in case of a new entity
-        Map<String, List<CustomFieldValue>> cfValuesByCode = null;
-        if (entity.getCfValues() != null) {
-            cfValuesByCode = entity.getCfValues().getValuesByCode();
-        }
 
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
             if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
@@ -339,9 +334,10 @@ public abstract class BaseApi {
                 continue;
             }
 
+            boolean hasValue = entity.hasCfValue(cft.getCode());
+
             // When no instance was found
-            if (cfValuesByCode == null || !cfValuesByCode.containsKey(cft.getCode()) || cfValuesByCode.get(cft.getCode()).isEmpty()) {
-                boolean hasValue = false;
+            if (!hasValue) {
 
                 // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
                 if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
@@ -370,21 +366,12 @@ public abstract class BaseApi {
                 }
 
                 // When instance, or multiple instances in case of versioned values, were found
+                // in case of empty value, check that inherited value is available or instantiate it from an inherited value if needed
             } else {
-                boolean noCfi = true;
-                boolean emptyValue = true;
-                for (CustomFieldValue cfValue : cfValuesByCode.get(cft.getCode())) {
-                    if (cfValue != null) { // In what cases it could be null??
-                        noCfi = false;
 
-                        if (!cfValue.isValueEmpty()) {
-                            emptyValue = false;
-                            break;
-                        }
-                    }
-                }
+                boolean emptyValue = entity.hasCFValueNotEmpty(cft.getCode());
 
-                if (noCfi || emptyValue) {
+                if (emptyValue) {
                     Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
 
                     if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {

@@ -61,7 +61,7 @@ import org.meveo.model.shared.DateUtils;
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SUB")
+@CustomFieldEntity(cftCodePrefix = "SUB", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -413,7 +413,7 @@ public class Subscription extends BusinessCFEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
-    }   
+    }
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {

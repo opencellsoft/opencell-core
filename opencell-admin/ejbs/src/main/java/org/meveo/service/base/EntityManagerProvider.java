@@ -100,7 +100,7 @@ public class EntityManagerProvider {
      * @return Entity manager
      */
     @Produces
-    @RequestScoped
+//    @RequestScoped
     @MeveoJpaForMultiTenancyForJobs
     public EntityManager getEntityManagerForJobs() {
         String providerCode = currentUserProvider.getCurrentUserProviderCode();
@@ -112,11 +112,25 @@ public class EntityManagerProvider {
         }
 
         EntityManager currentEntityManager = createEntityManager(providerCode);
+return currentEntityManager;
+//        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+//            currentEntityManager.joinTransaction();
+//            return method.invoke(currentEntityManager, args);
+//        });
+    }
 
-        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-            currentEntityManager.joinTransaction();
-            return method.invoke(currentEntityManager, args);
-        });
+    /**
+     * Close Entity manager for Jobs
+     * 
+     * @param entityManager
+     */
+    public void disposeEMForJobs(@Disposes @MeveoJpaForMultiTenancyForJobs EntityManager entityManager) {
+        String providerCode = currentUserProvider.getCurrentUserProviderCode();
+        log.error("AKK will try dispose @MeveoJpaForMultiTenancyForJobs EM {}", providerCode);
+        if (providerCode != null && !isMultiTenancyEnabled && entityManager.isOpen()) {
+            log.error("AKK dispose @MeveoJpaForMultiTenancyForJobs EM");
+            entityManager.close();
+        }
     }
 
     /**
@@ -125,7 +139,7 @@ public class EntityManagerProvider {
      * @param entityManager
      */
     public void disposeEM(@Disposes @MeveoJpaForMultiTenancy EntityManager entityManager) {
-        log.error("AKK will try dispose @MeveoJpaForMultiTenancy EM");
+        log.error("AKK will try dispose @MeveoJpaForMultiTenancy EM {}", FacesContext.getCurrentInstance() != null);
         if (FacesContext.getCurrentInstance() != null && entityManager.isOpen()) {
             log.error("AKK dispose @MeveoJpaForMultiTenancy EM");
             entityManager.close();

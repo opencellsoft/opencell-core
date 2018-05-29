@@ -18,6 +18,9 @@
  */
 package org.meveo.admin.action.crm;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -83,6 +86,13 @@ public class CustomerBean extends AccountBean<Customer> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
+        Map<String,Object> params = new HashMap<>();
+        params.put("id", 4L);
+        
+        Object result = sellerService.executeSelectQuery("select cfValues from Seller where id=:id", params);
+        log.error("AKK result is {} {}", result.getClass(), result);
+        
+        
         entity.setSeller(sellerService.retrieveIfNotManaged(entity.getSeller()));
 
         String outcome = super.saveOrUpdate(killConversation);

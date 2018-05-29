@@ -29,6 +29,11 @@ import javax.validation.constraints.Size;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 
+/**
+ * Represents a business entity that has custom field
+ * 
+ * @author Andrius Karpavicius
+ */
 @MappedSuperclass
 public abstract class BusinessCFEntity extends BusinessEntity implements ICustomFieldEntity {
 
@@ -44,11 +49,18 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
     @Override
     public String getUuid() {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -61,6 +73,16 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     /**

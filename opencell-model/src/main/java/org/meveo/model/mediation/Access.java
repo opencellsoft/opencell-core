@@ -49,11 +49,11 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
- * Access linked to Subscription and Zone.
+ * Access point linked to Subscription and Zone.
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "ACC")
+@CustomFieldEntity(cftCodePrefix = "ACC", inheritCFValuesFrom = "subscription")
 @ExportIdentifier({ "accessUserId", "subscription.code" })
 @Table(name = "medina_access", uniqueConstraints = { @UniqueConstraint(columnNames = { "acces_user_id", "subscription_id" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -92,40 +92,64 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * @return Validity start date
+     */
     public Date getStartDate() {
         return startDate;
     }
 
+    /**
+     * @param startDate Validity start date
+     */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
+    /**
+     * @return Validity end date
+     */
     public Date getEndDate() {
         return endDate;
     }
 
+    /**
+     * @param endDate Validity end date
+     */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
+    /**
+     * @return Access user identifier
+     */
     public String getAccessUserId() {
         return accessUserId;
     }
 
+    /**
+     * @param accessUserId Access user identifier
+     */
     public void setAccessUserId(String accessUserId) {
         this.accessUserId = accessUserId;
     }
 
+    /**
+     * @return Subscription it relates to
+     */
     public Subscription getSubscription() {
         return subscription;
     }
 
+    /**
+     * @param subscription Subscription it relates to
+     */
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
-    }
-
-    public String getCacheKey() {
-        return accessUserId;
     }
 
     @Override
@@ -133,6 +157,9 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -172,6 +199,16 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override

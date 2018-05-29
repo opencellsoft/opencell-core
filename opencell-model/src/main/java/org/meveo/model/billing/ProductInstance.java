@@ -48,7 +48,7 @@ import org.meveo.model.catalog.ProductTemplate;
 
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE")
+@CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE", inheritCFValuesFrom = "productTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_product_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })

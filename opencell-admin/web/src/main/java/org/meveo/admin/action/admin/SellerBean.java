@@ -18,6 +18,9 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -71,23 +74,23 @@ public class SellerBean extends CustomFieldBean<Seller> {
     public SellerBean() {
         super(Seller.class);
     }
-    
+
     /**
-     * Initialize bean's entity 
+     * Initialize bean's entity
      * 
-     * @return bean's entity 
+     * @return bean's entity
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
     @Override
     public Seller initEntity() {
         super.initEntity();
-        if (entity.getAddress() == null) {
-            entity.setAddress(new Address());
-        }
-        if (entity.getContactInformation() == null) {
-            entity.setContactInformation(new ContactInformation());
-        }
+        // if (entity.getAddress() == null) {
+        // entity.setAddress(new Address());
+        // }
+        // if (entity.getContactInformation() == null) {
+        // entity.setContactInformation(new ContactInformation());
+        // }
         return entity;
     }
 
@@ -112,6 +115,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
         return super.saveOrUpdate(killConversation);
         // prefix must be set
         // if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {

@@ -23,6 +23,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -54,6 +55,9 @@ public class ApplicationInitializer {
 
     @Inject
     private EntityManagerProvider entityManagerProvider;
+
+    @Inject
+    private CfValueAccumulator cfValueAcumulator;
 
     @Inject
     private Logger log;
@@ -121,7 +125,7 @@ public class ApplicationInitializer {
 
         // Ensure that provider code in secondary provider schema matches the tenant/provider code as it was listed in main provider's secondary tenant/provider record
         if (!isMainProvider) {
-            providerService.updateProviderCode(provider.getCode());
+//            providerService.updateProviderCode(provider.getCode());
         }
 
         // Register jobs
@@ -140,6 +144,8 @@ public class ApplicationInitializer {
         if (createESIndex) {
             elasticClient.cleanAndReindex(MeveoUser.instantiate("applicationInitializer", isMainProvider ? null : provider.getCode()));
         }
+
+        cfValueAcumulator.loadCfAccumulationRules();
 
         log.info("Initialized application for provider {}", provider.getCode());
 

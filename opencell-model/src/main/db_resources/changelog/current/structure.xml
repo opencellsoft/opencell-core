@@ -900,4 +900,110 @@
            <column name="end_date" type="datetime" />
        </addColumn>
     </changeSet>
+    
+    <changeSet id="#3464_20180522" author="AndriusKarpavicius">
+        <addColumn tableName="crm_provider">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="adm_user">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_cat">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_tax">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="medina_access">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_filter">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cust_cei">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template_category">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_product_instance">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ord_order">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ord_quote">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="#3464_20180522-1" author="AndriusKarpavicius">    
+        <addColumn tableName="ar_payment_gateway">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <sql>update ${db.schema.adapted}crm_provider set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}account_entity set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}adm_user set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ar_account_operation set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_cat set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_sub_cat set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_service_instance set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_subscription set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_tax set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_charge_template set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_offer_template set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_service_template set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}crm_seller set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}medina_access set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}meveo_filter set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cust_cei set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_offer_template_category set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_product_instance set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ord_order set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ord_quote set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ar_payment_gateway set cf_values_accum=cf_values</sql>
+    </changeSet>
+    
 </databaseChangeLog> 

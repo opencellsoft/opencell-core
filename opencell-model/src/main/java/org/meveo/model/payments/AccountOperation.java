@@ -167,6 +167,10 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
     @Column(name = "bank_lot", length = 255)
     @Size(max = 255)
     private String bankLot;
@@ -365,6 +369,16 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override

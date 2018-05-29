@@ -58,7 +58,7 @@ import org.meveo.model.ICustomFieldEntity;
 @Table(name = "billing_invoice_sub_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
-@CustomFieldEntity(cftCodePrefix = "INV_SUB_CAT")
+@CustomFieldEntity(cftCodePrefix = "INV_SUB_CAT", inheritCFValuesFrom = "invoiceCategory")
 @NamedQueries({
         @NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
                 + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)", hints = {

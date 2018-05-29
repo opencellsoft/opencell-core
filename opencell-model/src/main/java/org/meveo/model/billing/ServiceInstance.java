@@ -62,7 +62,7 @@ import org.meveo.model.order.OrderItemActionEnum;
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE")
+@CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE", inheritCFValuesFrom = "serviceTemplate")
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

@@ -160,6 +160,22 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get a clean class from the proxy class
+     * 
+     * @param clazz Class or a proxied class
+     * @return Class that is not proxied
+     */
+    public static Class<?> getCleanClass(Class<?> clazz) {
+
+        String className = clazz.getName();
+
+        if (className.contains("$$")) {
+
+        }
+        return clazz;
+    }
+
+    /**
      * Convert a java type classname to a fuman readable name. E.g. CustomerAccount to Customer Account
      * 
      * @param classname Full or simple classname

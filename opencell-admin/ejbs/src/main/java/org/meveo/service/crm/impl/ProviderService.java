@@ -117,7 +117,7 @@ public class ProviderService extends PersistenceService<Provider> {
     public void updateProviderCode(String newCode) throws BusinessException {
         Provider provider = getProvider();
         provider.setCode(newCode);
-        update(provider);
+        updateNoCheck(provider);
     }
 
     /**
