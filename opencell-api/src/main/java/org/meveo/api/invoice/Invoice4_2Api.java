@@ -418,16 +418,17 @@ public class Invoice4_2Api extends BaseApi {
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
-        }
-        if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-            missingParameters.add("billingAccountCode");
-        }
+        } else {
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+                missingParameters.add("billingAccountCode");
+            }
 
-        if (generateInvoiceRequestDto.getInvoicingDate() == null) {
-            missingParameters.add("invoicingDate");
-        }
-        if (generateInvoiceRequestDto.getLastTransactionDate() == null) {
-            missingParameters.add("lastTransactionDate");
+            if (generateInvoiceRequestDto.getInvoicingDate() == null) {
+                missingParameters.add("invoicingDate");
+            }
+            if (generateInvoiceRequestDto.getLastTransactionDate() == null) {
+                missingParameters.add("lastTransactionDate");
+            }
         }
 
         handleMissingParameters();

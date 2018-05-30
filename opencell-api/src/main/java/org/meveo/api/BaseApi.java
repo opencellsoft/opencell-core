@@ -1317,7 +1317,7 @@ public abstract class BaseApi {
 
             } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
 
-                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                if (stringVal != null && (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL))) {
                     return stringVal;
                 }
 

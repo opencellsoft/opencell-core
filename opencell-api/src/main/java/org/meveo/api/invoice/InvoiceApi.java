@@ -513,7 +513,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         Filter ratedTransactionFilter = null;
-        if (generateInvoiceRequestDto.getFilter() != null) {
+        if (generateInvoiceRequestDto != null && generateInvoiceRequestDto.getFilter() != null) {
             ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
             if (ratedTransactionFilter == null) {
                 throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
