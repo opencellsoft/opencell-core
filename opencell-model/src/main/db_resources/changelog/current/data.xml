@@ -2803,4 +2803,15 @@ ORDER BY
         </insert>
     </changeSet>
     
+    <changeSet author="Edwardlegaspi" id="#3232_20180530">
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-1"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="REPORT_EXTRACT"/>
+            <column name="description" value="Report Extract"/>
+        </insert>
+    </changeSet>
+    
 </databaseChangeLog>
