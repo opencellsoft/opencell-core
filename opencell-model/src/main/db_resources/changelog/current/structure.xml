@@ -802,7 +802,7 @@
         <dropColumn tableName="wf_transition" columnName="updater" />
 
     </changeSet>
-    
+
     <changeSet id="#3271_20180423" author="AbdelmounaimAkadid">
     	<addColumn tableName="billing_cycle">
             <column name="invoice_type_el" type="varchar(2000)"  />           
@@ -899,6 +899,11 @@
            <column name="start_date" type="datetime" />
            <column name="end_date" type="datetime" />
        </addColumn>
+    </changeSet> 
+    <changeSet id="#3311_02042018" author="SaidRamli">
+        <addColumn tableName="meveo_job_instance">
+            <column name="exclude_inv_without_amount" type="${type.boolean}" />
+        </addColumn>
     </changeSet>
     
 <changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
