@@ -513,7 +513,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
         Field field = null;
 
-        if (fieldName.contains(".")) {
+        if (fieldName != null && fieldName.contains(".")) {
             Class iterationClazz = c;
             StringTokenizer tokenizer = new StringTokenizer(fieldName, ".");
             while (tokenizer.hasMoreElements()) {
@@ -626,7 +626,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
         Field field = getBeanField(getEntityClassFromEntity(), fieldName);
 
-        if (childFieldName == null) {
+        if (childFieldName == null && field != null) {
             field = getBeanField(field.getType(), childFieldName);
         }
 

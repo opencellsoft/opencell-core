@@ -85,7 +85,7 @@ public class CustomEntityInstance extends EnableBusinessCFEntity {
 
         if (code == null && other.getCode() != null) {
             return false;
-        } else if (!code.equals(other.getCode())) {
+        } else if (code != null && !code.equals(other.getCode())) {
             return false;
         } else if (cetCode == null && other.getCetCode() != null) {
             return false;

@@ -90,8 +90,10 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
         entity.setWfDecisionRules(new HashSet<WFDecisionRule>());
 
         create(entity);
-
-        workflow.getTransitions().add(entity);
+        
+        if (workflow != null) {
+            workflow.getTransitions().add(entity);
+        }
 
         if (wfActions != null) {
             for (WFAction wfAction : wfActions) {
