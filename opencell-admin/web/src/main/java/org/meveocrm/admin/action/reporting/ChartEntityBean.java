@@ -85,7 +85,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		// dimension4);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(mq.getCode(), fromDate, toDate, mq.getMeasurementPeriod(), mq);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		ChartSeries mvSeries = new ChartSeries();
 
 		mvSeries.setLabel(sdf.format(fromDate.getTime()));
