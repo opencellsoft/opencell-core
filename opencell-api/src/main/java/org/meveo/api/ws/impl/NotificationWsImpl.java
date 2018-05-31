@@ -7,16 +7,16 @@ import javax.jws.WebService;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.EmailNotificationDto;
-import org.meveo.api.dto.notification.NotificationDto;
+import org.meveo.api.dto.notification.ScriptNotificationDto;
 import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
-import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
+import org.meveo.api.dto.response.notification.GetScriptNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
 import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
 import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
-import org.meveo.api.notification.NotificationApi;
+import org.meveo.api.notification.ScriptNotificationApi;
 import org.meveo.api.notification.WebHookApi;
 import org.meveo.api.ws.NotificationWs;
 
@@ -28,7 +28,7 @@ import org.meveo.api.ws.NotificationWs;
 public class NotificationWsImpl extends BaseWs implements NotificationWs {
 
     @Inject
-    private NotificationApi notificationApi;
+    private ScriptNotificationApi notificationApi;
 
     @Inject
     private WebHookApi webhookNotificationApi;
@@ -37,7 +37,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     private EmailNotificationApi emailNotificationApi;
 
     @Override
-    public ActionStatus createNotification(NotificationDto postData) {
+    public ActionStatus createNotification(ScriptNotificationDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -50,7 +50,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     }
 
     @Override
-    public ActionStatus updateNotification(NotificationDto postData) {
+    public ActionStatus updateNotification(ScriptNotificationDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -63,8 +63,8 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     }
 
     @Override
-    public GetNotificationResponseDto findNotification(String notificationCode) {
-        GetNotificationResponseDto result = new GetNotificationResponseDto();
+    public GetScriptNotificationResponseDto findNotification(String notificationCode) {
+        GetScriptNotificationResponseDto result = new GetScriptNotificationResponseDto();
 
         try {
             result.setNotificationDto(notificationApi.find(notificationCode));
@@ -232,7 +232,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     }
 
     @Override
-    public ActionStatus createOrUpdateNotification(NotificationDto postData) {
+    public ActionStatus createOrUpdateNotification(ScriptNotificationDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             notificationApi.createOrUpdate(postData);

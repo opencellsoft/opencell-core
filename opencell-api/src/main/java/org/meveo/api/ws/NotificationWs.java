@@ -6,10 +6,10 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.notification.EmailNotificationDto;
-import org.meveo.api.dto.notification.NotificationDto;
+import org.meveo.api.dto.notification.ScriptNotificationDto;
 import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
-import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
+import org.meveo.api.dto.response.notification.GetScriptNotificationResponseDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
 import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
 import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
@@ -23,19 +23,19 @@ public interface NotificationWs extends IBaseWs {
     // notification
 
     @WebMethod
-    ActionStatus createNotification(@WebParam(name = "notification") NotificationDto postData);
+    ActionStatus createNotification(@WebParam(name = "notification") ScriptNotificationDto postData);
 
     @WebMethod
-    ActionStatus updateNotification(@WebParam(name = "notification") NotificationDto postData);
+    ActionStatus updateNotification(@WebParam(name = "notification") ScriptNotificationDto postData);
 
     @WebMethod
-    GetNotificationResponseDto findNotification(@WebParam(name = "notificationCode") String notificationCode);
+    GetScriptNotificationResponseDto findNotification(@WebParam(name = "notificationCode") String notificationCode);
 
     @WebMethod
     ActionStatus removeNotification(@WebParam(name = "notificationCode") String notificationCode);
 
     @WebMethod
-    ActionStatus createOrUpdateNotification(@WebParam(name = "notification") NotificationDto postData);
+    ActionStatus createOrUpdateNotification(@WebParam(name = "notification") ScriptNotificationDto postData);
 
     /**
      * Enable a Script type notification by its code
