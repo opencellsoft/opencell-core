@@ -466,8 +466,10 @@ public class UsageRatingService implements Serializable {
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
                     log.debug("response {}", actionStatus);
 
-                    if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+                    if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                         throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                    } else if (actionStatus != null) {
+                        throw new BusinessException("Error charging Edr");
                     }
                 }
             }

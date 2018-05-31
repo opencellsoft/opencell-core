@@ -284,7 +284,7 @@ public class DocumentBean implements Serializable {
             if (name != null && !name.startsWith(appProvider.getCode())) {
                 result = false;
             }
-            if (this.filename != null && !this.filename.equals("") && name.indexOf(filename) < 0) {
+            if (this.filename != null && !this.filename.equals("") && name != null && name.indexOf(filename) < 0) {
                 result = false;
             }
             if (this.fromDate != null) {

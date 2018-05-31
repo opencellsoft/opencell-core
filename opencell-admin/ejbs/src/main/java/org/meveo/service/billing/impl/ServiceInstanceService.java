@@ -206,7 +206,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
             throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
-        log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+        
+        if (offer != null && serviceInstance != null) {
+            log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+
+        }
         return true;
     }
 

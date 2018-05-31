@@ -409,6 +409,10 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     private void validate(Filter filter) throws ConstraintViolationException, BusinessException {
+        if (filter == null) {
+            return;
+        }
+        
         if (filter != null) {
             Set<ConstraintViolation<Filter>> violations = validator.validate(filter);
             if (!violations.isEmpty()) {

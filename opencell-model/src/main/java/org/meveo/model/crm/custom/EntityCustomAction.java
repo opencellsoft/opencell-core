@@ -119,11 +119,11 @@ public class EntityCustomAction extends EnableBusinessEntity {
 
         if (code == null && other.getCode() != null) {
             return false;
-        } else if (!code.equals(other.getCode())) {
+        } else if (code != null && !code.equals(other.getCode())) {
             return false;
         } else if (appliesTo == null && other.getAppliesTo() != null) {
             return false;
-        } else if (!appliesTo.equals(other.getAppliesTo())) {
+        } else if (appliesTo != null && !appliesTo.equals(other.getAppliesTo())) {
             return false;
         }
         return true;

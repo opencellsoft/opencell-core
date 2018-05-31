@@ -361,8 +361,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 }
             }
         }
-
-        log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
+        
+        if (entity != null) {
+            log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
+        }
     }
 
     /**
