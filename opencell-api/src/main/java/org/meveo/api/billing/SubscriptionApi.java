@@ -1365,14 +1365,17 @@ public class SubscriptionApi extends BaseApi {
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
-        for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
-            ServiceInstance serviceInstanceToSuspend = getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
-                isToSuspend ? InstanceStatusEnum.ACTIVE : InstanceStatusEnum.SUSPENDED);
 
-            if (isToSuspend) {
-                serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
-            } else {
-                serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+        if (postData != null) {
+            for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
+                ServiceInstance serviceInstanceToSuspend = getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
+                    isToSuspend ? InstanceStatusEnum.ACTIVE : InstanceStatusEnum.SUSPENDED);
+
+                if (isToSuspend) {
+                    serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+                } else {
+                    serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+                }
             }
         }
     }

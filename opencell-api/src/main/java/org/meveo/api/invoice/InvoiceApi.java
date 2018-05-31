@@ -488,7 +488,9 @@ public class InvoiceApi extends BaseApi {
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
+            return null;
         }
+
         String billingAccountCode = null;
         if (generateInvoiceRequestDto != null) {
             billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
@@ -520,8 +522,9 @@ public class InvoiceApi extends BaseApi {
             }
         }
 
-        if (isDraft) {
-            if (generateInvoiceRequestDto.getGeneratePDF() == null) {
+        Boolean generatePDF = generateInvoiceRequestDto.getGeneratePDF();
+        if (isDraft && generateInvoiceRequestDto != null) {
+            if (generatePDF == null) {
                 generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
             }
             if (generateInvoiceRequestDto.getGenerateAO() != null) {
@@ -529,9 +532,10 @@ public class InvoiceApi extends BaseApi {
             }
         }
 
-        boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
-                || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
-        boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
+        Boolean generateXML = generateInvoiceRequestDto.getGenerateXML();
+        boolean produceXml = (generateXML != null && generateXML)
+                || (generatePDF != null && generatePDF);
+        boolean producePdf = (generatePDF != null && generatePDF);
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
         Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),

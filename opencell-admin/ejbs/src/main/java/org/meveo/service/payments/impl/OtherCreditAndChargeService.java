@@ -109,7 +109,11 @@ public class OtherCreditAndChargeService extends
 		otherCreditAndCharge.setAmount(amount);
 		otherCreditAndCharge.setUnMatchingAmount(amount);
 		otherCreditAndCharge.setMatchingStatus(MatchingStatusEnum.O);
-		customerAccount.getAccountOperations().add(otherCreditAndCharge);
+		
+		if (customerAccount != null) {
+		    customerAccount.getAccountOperations().add(otherCreditAndCharge);
+		}
+		
 		create(otherCreditAndCharge);
 
 		log.info(

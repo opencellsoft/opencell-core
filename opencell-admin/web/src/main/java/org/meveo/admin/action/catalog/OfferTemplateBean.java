@@ -496,8 +496,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), serviceTemplate.getDescriptionOrCode());
                     return;
                 }
-
-                offerServiceTemplate.setOfferTemplate(entity);
+                if (offerServiceTemplate != null) {
+                    offerServiceTemplate.setOfferTemplate(entity);
+                }
                 entity.addOfferServiceTemplate(offerServiceTemplate);
                 messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.create.successful"));
             }
@@ -563,6 +564,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
 
         try {
+            ProductTemplate productTemplate = null;
             if (offerProductTemplate != null && offerProductTemplate.getProductTemplate() == null) {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
@@ -570,11 +572,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             if (offerProductTemplate != null && offerProductTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.productTemplate.update.successful"));
 
-            } else {
-
+            } 
+            
+            if (offerProductTemplate != null) {
+                productTemplate = offerProductTemplate.getProductTemplate();
                 // Validate that such service was not added earlier
-                if (entity.containsProductTemplate(offerProductTemplate.getProductTemplate())) {
-                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), offerProductTemplate.getProductTemplate().getDescriptionOrCode());
+                if (productTemplate != null && entity.containsProductTemplate(productTemplate)) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), productTemplate.getDescriptionOrCode());
                     return;
                 }
 

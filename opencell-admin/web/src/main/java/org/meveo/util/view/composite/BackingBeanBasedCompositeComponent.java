@@ -626,7 +626,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
         Field field = getBeanField(getEntityClassFromEntity(), fieldName);
 
-        if (childFieldName == null) {
+        if (childFieldName == null && field != null) {
             field = getBeanField(field.getType(), childFieldName);
         }
 

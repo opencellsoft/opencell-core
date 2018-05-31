@@ -261,13 +261,16 @@ public abstract class BaseApi {
 
             // Save the values
             for (CustomFieldDto cfDto : customFieldDtos) {
-                CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
+                CustomFieldTemplate cft = null;
+                if (customFieldTemplates != null) {
+                    cft = customFieldTemplates.get(cfDto.getCode());
+                }
 
                 // Ignore the value when creating entity and CFT.hideOnNew=true
                 // or editing entity and CFT.allowEdit=false or when
                 // CFT.applicableOnEL expression evaluates to false
-                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                if (cft != null && ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity))) {
                     // log.debug("Custom field value not applicable for this
                     // state of entity lifecycle: code={} for entity {}
                     // transient{}. Value will be ignored.", cfDto.getCode(),
@@ -327,71 +330,74 @@ public abstract class BaseApi {
         if (entity.getCfValues() != null) {
             cfValuesByCode = entity.getCfValues().getValuesByCode();
         }
+        
+        if (customFieldTemplates != null) {
 
-        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-            if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
-                continue;
-            }
-
-            // Does not apply at this moment
-            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                    || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
-                continue;
-            }
-
-            // When no instance was found
-            if (cfValuesByCode == null || !cfValuesByCode.containsKey(cft.getCode()) || cfValuesByCode.get(cft.getCode()).isEmpty()) {
-                boolean hasValue = false;
-
-                // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
-                if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
-                    Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                    hasValue = value != null;
+            for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+                if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
+                    continue;
                 }
 
-                // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
-                // field validation should pass even though current period wont have any value
-                if (!hasValue) {
-                    if (cft.isVersionable()) {
-                        hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
-                    } else {
-                        Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+                // Does not apply at this moment
+                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                    continue;
+                }
+
+                // When no instance was found
+                if (cfValuesByCode == null || !cfValuesByCode.containsKey(cft.getCode()) || cfValuesByCode.get(cft.getCode()).isEmpty()) {
+                    boolean hasValue = false;
+
+                    // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
+                    if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
+                        Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
                         hasValue = value != null;
                     }
 
-                    if (!hasValue && isNewEntity && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
-                        Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
-                        hasValue = value != null;
-                    }
-                }
+                    // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
+                    // field validation should pass even though current period wont have any value
+                    if (!hasValue) {
+                        if (cft.isVersionable()) {
+                            hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
+                        } else {
+                            Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+                            hasValue = value != null;
+                        }
 
-                if (!hasValue && cft.isValueRequired()) {
-                    missingParameters.add(cft.getCode());
-                }
-
-                // When instance, or multiple instances in case of versioned values, were found
-            } else {
-                boolean noCfi = true;
-                boolean emptyValue = true;
-                for (CustomFieldValue cfValue : cfValuesByCode.get(cft.getCode())) {
-                    if (cfValue != null) { // In what cases it could be null??
-                        noCfi = false;
-
-                        if (!cfValue.isValueEmpty()) {
-                            emptyValue = false;
-                            break;
+                        if (!hasValue && isNewEntity && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
+                            Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
+                            hasValue = value != null;
                         }
                     }
-                }
 
-                if (noCfi || emptyValue) {
-                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
-
-                    if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
-                        value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                    }
-                    if (value == null && cft.isValueRequired()) {
+                    if (!hasValue && cft.isValueRequired()) {
                         missingParameters.add(cft.getCode());
+                    }
+
+                    // When instance, or multiple instances in case of versioned values, were found
+                } else {
+                    boolean noCfi = true;
+                    boolean emptyValue = true;
+                    for (CustomFieldValue cfValue : cfValuesByCode.get(cft.getCode())) {
+                        if (cfValue != null) { // In what cases it could be null??
+                            noCfi = false;
+
+                            if (!cfValue.isValueEmpty()) {
+                                emptyValue = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (noCfi || emptyValue) {
+                        Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+
+                        if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
+                            value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
+                        }
+                        if (value == null && cft.isValueRequired()) {
+                            missingParameters.add(cft.getCode());
+                        }
                     }
                 }
             }
@@ -1334,7 +1340,7 @@ public abstract class BaseApi {
 
             } else if (Role.class.isAssignableFrom(targetClass)) {
                 // special case
-                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                if (stringVal != null && (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL))) {
                     return stringVal;
                 }
 

@@ -218,13 +218,16 @@ public class ParamBean {
         }
         
         if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
-            return getInstance().getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
+            return currentInstance.getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
         }
 
         String dir;
         dir = currentInstance.getProperty("providers.rootDir", "./opencelldata");
         dir += File.separator;
-        dir += getInstanceByProvider(provider).getProperty("provider.rootDir", provider);
+        ParamBean instanceByProvider = getInstanceByProvider(provider);
+        if (instanceByProvider != null) {
+            dir += instanceByProvider.getProperty("provider.rootDir", provider);
+        }
         return dir;
     }
 
@@ -548,9 +551,10 @@ public class ParamBean {
             if (properties != null) {
                 properties.put(key, defaultValue);
             }
-            
-            params.setProperties(properties);
-            params.saveProperties();
+            if (params != null) {
+                params.setProperties(properties);
+                params.saveProperties();
+            }
         }
         return result;
     }
@@ -576,7 +580,10 @@ public class ParamBean {
             result = properties.getProperty(key);
         } else if (params != null && params.isSubTenant) {
             // check if a value is already defined for the main tenant
-            result = getInstance().getProperty(key, defaultValue);
+            ParamBean currentInstance = getInstance();
+            if (currentInstance != null) {
+                result = currentInstance.getProperty(key, defaultValue);
+            }
             if (properties != null) {
                 properties.put(key, result);
             }

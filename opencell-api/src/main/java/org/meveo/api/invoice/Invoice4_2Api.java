@@ -415,11 +415,13 @@ public class Invoice4_2Api extends BaseApi {
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
             throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
 
+        String billingAccountCode = null;
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
         } else {
-            if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+            billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
+            if (StringUtils.isBlank(billingAccountCode)) {
                 missingParameters.add("billingAccountCode");
             }
 
@@ -433,9 +435,9 @@ public class Invoice4_2Api extends BaseApi {
 
         handleMissingParameters();
 
-        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
+        BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, Arrays.asList("billingRun"));
         if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
+            throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
         }
 
         if (billingAccount.getBillingRun() != null && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)

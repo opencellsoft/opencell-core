@@ -211,7 +211,7 @@ public class WFTransition extends BaseEntity implements Comparable<WFTransition>
         }
         if (StringUtils.isBlank(elWithoutBrackets)) {
             return combinedDecisionRuleEL.substring(5);
-        } else if (combinedDecisionRuleEL.toString().startsWith(AND)) {
+        } else if (trimmedEl != null && combinedDecisionRuleEL.toString().startsWith(AND)) {
             combinedEl.append(trimmedEl.substring(0, trimmedEl.length() - 1)).append(combinedDecisionRuleEL).append("}");
         }
         return combinedEl.toString();
