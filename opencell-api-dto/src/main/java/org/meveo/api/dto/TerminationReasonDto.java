@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 
 /**
  * The Class TerminationReasonDto.
@@ -39,12 +39,11 @@ public class TerminationReasonDto extends BusinessDto {
      *
      * @param subscriptionTerminationReason the SubscriptionTerminationReason entity
      */
-    public TerminationReasonDto(SubscriptionTerminationReason subscriptionTerminationReason) {
-        setCode(subscriptionTerminationReason.getCode());
-        setDescription(subscriptionTerminationReason.getDescription());
-        applyAgreement = subscriptionTerminationReason.isApplyAgreement();
-        applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
-        applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
+    public TerminationReasonDto(TerminationReason terminationReason) {
+        super(terminationReason);
+        applyAgreement = terminationReason.isApplyAgreement();
+        applyReimbursment = terminationReason.isApplyReimbursment();
+        applyTerminationCharges = terminationReason.isApplyTerminationCharges();
     }
 
     /**

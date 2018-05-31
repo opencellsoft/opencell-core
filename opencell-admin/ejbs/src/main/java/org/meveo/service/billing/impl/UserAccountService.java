@@ -25,131 +25,189 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.admin.exception.InvalidEntityStatusException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
+/**
+ * A service class to manage CRUD operations on UserAccount entity
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
 public class UserAccountService extends AccountService<UserAccount> {
 
-	@Inject
-	private WalletService walletService;
-	
-	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount)
-			throws BusinessException {
+    @Inject
+    private WalletService walletService;
 
-		log.debug("creating userAccount with details {}", new Object[] { userAccount});
+    @Inject
+    private SubscriptionService subscriptionService;
 
-		UserAccount existingUserAccount = findByCode(userAccount.getCode());
-		if (existingUserAccount != null) {
-			throw new AccountAlreadyExistsException(userAccount.getCode());
-		}
+    /**
+     * Create User account and associate it with a Principal wallet
+     * 
+     * @param userAccount User account to create
+     * @throws BusinessException Business exception
+     */
+    @Override
+    public void create(UserAccount userAccount) throws BusinessException {
+        super.create(userAccount);
 
-		userAccount.setBillingAccount(billingAccount);
-		create(userAccount);
-		WalletInstance wallet = new WalletInstance();
-		wallet.setCode(WalletTemplate.PRINCIPAL);
-		wallet.setUserAccount(userAccount);
-		walletService.create(wallet);
+        WalletInstance wallet = new WalletInstance();
+        wallet.setCode(WalletTemplate.PRINCIPAL);
+        wallet.setUserAccount(userAccount);
+        walletService.create(wallet);
 
-		userAccount.setWallet(wallet);
-	}
+        userAccount.setWallet(wallet);
+    }
 
-	@MeveoAudit
-	public UserAccount userAccountTermination(UserAccount userAccount, Date terminationDate,
-			SubscriptionTerminationReason terminationReason) throws BusinessException {
+    /**
+     * Terminate User account. Status will be changed to Terminated. Action will also terminate related Subscriptions.
+     * 
+     * @param userAccount User account
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @return Updated User account entity
+     * @throws BusinessException Business exception
+     */
+    @MeveoAudit
+    public UserAccount terminateUserAccount(UserAccount userAccount, Date terminationDate, TerminationReason terminationReason) throws BusinessException {
 
-		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
-		if (terminationDate == null) {
-			terminationDate = new Date();
-		}
-		List<Subscription> subscriptions = userAccount.getSubscriptions();
-		for (Subscription subscription : subscriptions) {		
-			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, subscription.getOrderNumber());
-		}
-		userAccount.setTerminationReason(terminationReason);
-		userAccount.setTerminationDate(terminationDate);
-		userAccount.setStatus(AccountStatusEnum.TERMINATED);
-		return update(userAccount);
-	}
+        if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
+            // throw new InvalidEntityStatusException(UserAccount.class, userAccount.getCode(), "terminate", userAccount.getStatus(), AccountStatusEnum.ACTIVE);
+            return userAccount;
+        }
 
-	@MeveoAudit
-	public UserAccount userAccountCancellation(UserAccount userAccount, Date cancelationDate)
-			throws BusinessException {
+        log.debug("Will terminate User account " + userAccount.getCode());
 
-		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
+        if (terminationDate == null) {
+            terminationDate = new Date();
+        }
+        List<Subscription> subscriptions = userAccount.getSubscriptions();
+        for (Subscription subscription : subscriptions) {
+            subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, subscription.getOrderNumber());
+        }
+        userAccount.setTerminationReason(terminationReason);
+        userAccount.setTerminationDate(terminationDate);
+        userAccount.setStatus(AccountStatusEnum.TERMINATED);
 
-		if (cancelationDate == null) {
-			cancelationDate = new Date();
-		}
-		List<Subscription> subscriptions = userAccount.getSubscriptions();
-		for (Subscription subscription : subscriptions) {
-			subscriptionService.subscriptionCancellation(subscription, cancelationDate);
-		}
-		userAccount.setTerminationDate(cancelationDate);
-		userAccount.setStatus(AccountStatusEnum.CANCELED);
-		return update(userAccount);
-	}
+        userAccount = update(userAccount);
 
-	@MeveoAudit
-	public UserAccount userAccountReactivation(UserAccount userAccount, Date activationDate)
-			throws BusinessException {
-		if (activationDate == null) {
-			activationDate = new Date();
-		}
-		if (userAccount.getStatus() != AccountStatusEnum.TERMINATED
-				&& userAccount.getStatus() != AccountStatusEnum.CANCELED) {
-			throw new ElementNotResiliatedOrCanceledException("user account", userAccount.getCode());
-		}
+        log.info("User account " + userAccount.getCode() + " was terminated");
 
-		userAccount.setStatus(AccountStatusEnum.ACTIVE);
-		return update(userAccount);
-	}
+        return userAccount;
+    }
 
-	public BillingWalletDetailDTO BillingWalletDetail(UserAccount userAccount) throws BusinessException {
-		BillingWalletDetailDTO BillingWalletDetailDTO = new BillingWalletDetailDTO();
+    /**
+     * Cancel User account. Status will be changed to Canceled. Action will also cancel related Subscriptions.
+     * 
+     * @param userAccount User account
+     * @param cancelationDate Cancellation date
+     * @return Updated User account entity
+     * @throws BusinessException Business exception
+     */
+    @MeveoAudit
+    public UserAccount cancelUserAccount(UserAccount userAccount, Date cancelationDate) throws BusinessException {
 
-		BigDecimal amount = BigDecimal.valueOf(0);
-		BigDecimal amountWithoutTax = BigDecimal.valueOf(0);
-		BigDecimal amountTax = BigDecimal.valueOf(0);
+        if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
+            // throw new InvalidEntityStatusException(UserAccount.class, userAccount.getCode(), "cancel", userAccount.getStatus(), AccountStatusEnum.ACTIVE);
+            return userAccount;
+        }
 
-		WalletInstance wallet = userAccount.getWallet();
-		if (wallet == null) {
-			return null;
-		}
-		for (RatedTransaction ratedTransaction : wallet.getRatedTransactions()) {
-			if (ratedTransaction.getBillingRun() == null) {
-				amount = amount.add(ratedTransaction.getAmountWithTax());
-				amountWithoutTax = amountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
-				amountTax = amountTax.add(ratedTransaction.getAmountTax());
-			}
-		}
-		BillingWalletDetailDTO.setAmount(amount);
-		BillingWalletDetailDTO.setAmountTax(amountWithoutTax);
-		BillingWalletDetailDTO.setAmountWithoutTax(amountTax);
-		return BillingWalletDetailDTO;
-	}
+        log.debug("Will cancel User account " + userAccount.getCode());
 
-	public List<RatedTransaction> BillingRatedTransactionList(UserAccount userAccount) throws BusinessException {
-		WalletInstance wallet = userAccount.getWallet();
-		return wallet.getRatedTransactions();
-	}
+        if (cancelationDate == null) {
+            cancelationDate = new Date();
+        }
+        List<Subscription> subscriptions = userAccount.getSubscriptions();
+        for (Subscription subscription : subscriptions) {
+            subscriptionService.cancelSubscription(subscription, cancelationDate);
+        }
+        userAccount.setTerminationDate(cancelationDate);
+        userAccount.setStatus(AccountStatusEnum.CANCELED);
 
+        userAccount = update(userAccount);
 
-	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
-		return billingAccount.getUsersAccounts();
-		/**
+        log.info("User account " + userAccount.getCode() + " was canceled");
+
+        return userAccount;
+    }
+
+    /**
+     * Activate previously canceled or terminated User account. Status will be changed to Active.
+     * 
+     * @param userAccount User account
+     * @param activationDate Activation date
+     * @return Updated User account entity
+     * @throws BusinessException Business exception
+     */
+    @MeveoAudit
+    public UserAccount reactivateUserAccount(UserAccount userAccount, Date activationDate) throws BusinessException {
+
+        if (userAccount.getStatus() != AccountStatusEnum.TERMINATED && userAccount.getStatus() != AccountStatusEnum.CANCELED) {
+            throw new InvalidEntityStatusException(UserAccount.class, userAccount.getCode(), "reactivate", userAccount.getStatus(), AccountStatusEnum.TERMINATED,
+                AccountStatusEnum.CANCELED);
+        }
+
+        log.debug("Will reactivate User account " + userAccount.getCode());
+
+        if (activationDate == null) {
+            activationDate = new Date();
+        }
+
+        userAccount.setStatus(AccountStatusEnum.ACTIVE);
+        userAccount.setTerminationDate(null);
+        userAccount.setTerminationReason(null);
+
+        userAccount = update(userAccount);
+
+        log.info("User account " + userAccount.getCode() + " was reactivated");
+
+        return userAccount;
+    }
+
+    public BillingWalletDetailDTO BillingWalletDetail(UserAccount userAccount) throws BusinessException {
+        BillingWalletDetailDTO BillingWalletDetailDTO = new BillingWalletDetailDTO();
+
+        BigDecimal amount = BigDecimal.valueOf(0);
+        BigDecimal amountWithoutTax = BigDecimal.valueOf(0);
+        BigDecimal amountTax = BigDecimal.valueOf(0);
+
+        WalletInstance wallet = userAccount.getWallet();
+        if (wallet == null) {
+            return null;
+        }
+        for (RatedTransaction ratedTransaction : wallet.getRatedTransactions()) {
+            if (ratedTransaction.getBillingRun() == null) {
+                amount = amount.add(ratedTransaction.getAmountWithTax());
+                amountWithoutTax = amountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
+                amountTax = amountTax.add(ratedTransaction.getAmountTax());
+            }
+        }
+        BillingWalletDetailDTO.setAmount(amount);
+        BillingWalletDetailDTO.setAmountTax(amountWithoutTax);
+        BillingWalletDetailDTO.setAmountWithoutTax(amountTax);
+        return BillingWalletDetailDTO;
+    }
+
+    public List<RatedTransaction> BillingRatedTransactionList(UserAccount userAccount) throws BusinessException {
+        WalletInstance wallet = userAccount.getWallet();
+        return wallet.getRatedTransactions();
+    }
+
+    public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
+        return billingAccount.getUsersAccounts();
+        /**
 		 * Check N + 1 query problem
 		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
 		qb.addCriterionEntity("billingAccount", billingAccount);
@@ -160,6 +218,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 			log.warn("error while getting user account list by billing account",e);
 			return null;
 		}*/
-	}
-	
+    }
+
 }

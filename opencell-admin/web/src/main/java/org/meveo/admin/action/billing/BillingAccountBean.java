@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -95,6 +96,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         super(BillingAccount.class);
     }
 
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @return billing account
+     */
     @Override
     public BillingAccount initEntity() {
         super.initEntity();
@@ -135,10 +141,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
         try {
 
-            if (entity.isTransient()) {
-                billingAccountService.initBillingAccount(entity);
-            }
-
             String outcome = super.saveOrUpdate(killConversation);
 
             if (outcome != null) {
@@ -157,12 +159,13 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         return billingAccountService;
     }
 
+    @ActionMethod
     public String terminateAccount() {
         log.debug("terminateAccount billingAccountId: {}", entity.getId());
         try {
 
             entity = billingAccountService.refreshOrRetrieve(entity);
-            entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
+            entity = billingAccountService.terminateBillingAccount(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
         } catch (Exception e) {
@@ -173,11 +176,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         return getEditViewName();
     }
 
+    @ActionMethod
     public String cancelAccount() {
         log.info("cancelAccount billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
-            entity = billingAccountService.billingAccountCancellation(entity, new Date());
+            entity = billingAccountService.cancelBillingAccount(entity, new Date());
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 
         } catch (Exception e) {
@@ -187,6 +191,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         return getEditViewName();
     }
 
+    @ActionMethod
     public String closeAccount() {
         log.info("closeAccount billingAccountId:" + entity.getId());
         try {
@@ -370,5 +375,21 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
         this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
+    }
+
+    @ActionMethod
+    public String reactivateAccount() {
+        log.info("reactivateAccount billingAccountId:" + entity.getId());
+        try {
+            entity = billingAccountService.refreshOrRetrieve(entity);
+            entity = billingAccountService.reactivateBillingAccount(entity, new Date());
+            messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
+
+        } catch (Exception e) {
+            log.error("Failed to reactivate account ", e);
+            messages.error(new BundleKey("messages", "reactivation.reactivateUnsuccessful"), e.getMessage());
+            FacesContext.getCurrentInstance().validationFailed();
+        }
+        return getEditViewName();
     }
 }

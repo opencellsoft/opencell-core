@@ -12,7 +12,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.service.billing.impl.TerminationReasonService;
 
 @Stateless
@@ -38,10 +38,10 @@ public class TerminationReasonApi extends BaseApi {
         handleMissingParametersAndValidate(postData);
 
         if (terminationReasonService.findByCode(postData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(SubscriptionTerminationReason.class, postData.getCode());
+            throw new EntityAlreadyExistsException(TerminationReason.class, postData.getCode());
         }
 
-        SubscriptionTerminationReason subscriptionTerminationReason = new SubscriptionTerminationReason();
+        TerminationReason subscriptionTerminationReason = new TerminationReason();
 
         subscriptionTerminationReason.setCode(postData.getCode());
         subscriptionTerminationReason.setDescription(postData.getDescription());
@@ -68,10 +68,10 @@ public class TerminationReasonApi extends BaseApi {
         
         handleMissingParametersAndValidate(postData);
         
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode());
+        TerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode());
 
         if (subscriptionTerminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getCode());
+            throw new EntityDoesNotExistsException(TerminationReason.class, postData.getCode());
         }
         subscriptionTerminationReason.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscriptionTerminationReason.setDescription(postData.getDescription());
@@ -97,10 +97,10 @@ public class TerminationReasonApi extends BaseApi {
             handleMissingParameters();
         }
 
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(code);
+        TerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(code);
 
         if (subscriptionTerminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, code);
+            throw new EntityDoesNotExistsException(TerminationReason.class, code);
         }
 
         terminationReasonService.remove(subscriptionTerminationReason);
@@ -121,7 +121,7 @@ public class TerminationReasonApi extends BaseApi {
             handleMissingParameters();
         }
 
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode());
+        TerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode());
 
         if (subscriptionTerminationReason == null) {
             create(postData);
@@ -145,10 +145,10 @@ public class TerminationReasonApi extends BaseApi {
             missingParameters.add("terminationReasonCode");
             handleMissingParameters();
         }
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(code);
+        TerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(code);
 
         if (subscriptionTerminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, code);
+            throw new EntityDoesNotExistsException(TerminationReason.class, code);
         }
 
         terminationReasonDto = new TerminationReasonDto(subscriptionTerminationReason);
@@ -165,10 +165,10 @@ public class TerminationReasonApi extends BaseApi {
     public List<TerminationReasonDto> list() throws MeveoApiException {
         List<TerminationReasonDto> terminationReasonDtos = new ArrayList<TerminationReasonDto>();
 
-        List<SubscriptionTerminationReason> subscriptionTerminationReasons = terminationReasonService.list();
+        List<TerminationReason> subscriptionTerminationReasons = terminationReasonService.list();
 
         if (subscriptionTerminationReasons != null && !subscriptionTerminationReasons.isEmpty()) {
-            for (SubscriptionTerminationReason subscriptionTerminationReason : subscriptionTerminationReasons) {
+            for (TerminationReason subscriptionTerminationReason : subscriptionTerminationReasons) {
                 TerminationReasonDto terminationReasonDto = new TerminationReasonDto(subscriptionTerminationReason);
                 terminationReasonDtos.add(terminationReasonDto);
             }

@@ -93,7 +93,7 @@ public interface UserAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(UserAccountDto postData);
-    
+
     /**
      * Filter counters by period date.
      *
@@ -114,4 +114,40 @@ public interface UserAccountRs extends IBaseRs {
     @POST
     @Path("/applyProduct")
     ActionStatus applyProduct(ApplyProductRequestDto postData);
+
+    /**
+     * Terminate User account. Status will be changed to Terminated. Action will also terminate related Subscriptions.
+     * 
+     * @param code User account code
+     * @param terminationReasonCode Termination reason code
+     * @param terminationDate Termination date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/terminate")
+    ActionStatus terminate(@PathParam("code") String code, @QueryParam("terminationReason") String terminationReasonCode,
+            @QueryParam("terminationDate") @RestDateParam Date terminationDate);
+
+    /**
+     * Cancel User account. Status will be changed to Canceled. Action will also cancel related Subscriptions.
+     * 
+     * @param code User account code
+     * @param cancellationDate Cancellation date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/cancel")
+    ActionStatus cancel(@PathParam("code") String code, @QueryParam("cancellationDate") @RestDateParam Date cancellationDate);
+
+    /**
+     * Activate previously canceled or terminated User account. Status will be changed to Active.
+     * 
+     * @param code User account code
+     * @param activationDate Activation date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/reactivate")
+    ActionStatus reactivate(@PathParam("code") String code, @QueryParam("activationDate") @RestDateParam Date activationDate);
+
 }

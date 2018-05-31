@@ -380,7 +380,7 @@ public class ImportCustomersJobBean {
             boolean ignoreCheck = cust.getIgnoreCheck() != null && cust.getIgnoreCheck().booleanValue();
             try {
                 if (!ignoreCheck) {
-                    customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"));
+                    customer = customerService.findByCode(cust.getCode(), Arrays.asList("seller", "customFields"));
                 }
 
             } catch (Exception e) {

@@ -38,7 +38,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -454,7 +454,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectServiceInstanceException incorrect service exception
      * @throws BusinessException business exception
      */
-    public void terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+    public void terminateService(ServiceInstance serviceInstance, Date terminationDate, TerminationReason terminationReason, String orderNumber)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
         terminateService(serviceInstance, terminationDate, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
@@ -477,7 +477,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
-            String orderNumber, SubscriptionTerminationReason terminationReason) throws BusinessException {
+            String orderNumber, TerminationReason terminationReason) throws BusinessException {
 
         if (serviceInstance.getId() != null) {
             log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);
@@ -580,7 +580,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         log.info("updateTerminationMode terminationDate={},serviceInstanceId={}", terminationDate, serviceInstance.getId());
 
-        SubscriptionTerminationReason newReason = serviceInstance.getSubscriptionTerminationReason();
+        TerminationReason newReason = serviceInstance.getSubscriptionTerminationReason();
 
         log.info("updateTerminationMode terminationDate={},serviceInstanceId={},newApplyReimbursment=#2,newApplyAgreement=#3,newApplyTerminationCharges=#4", terminationDate,
             serviceInstance.getId(), newReason.isApplyReimbursment(), newReason.isApplyAgreement(), newReason.isApplyTerminationCharges());
@@ -669,6 +669,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setSubscriptionDate(reactivationDate);
         serviceInstance.setDescription(serviceTemplate.getDescription());
         serviceInstance.setTerminationDate(null);
+        serviceInstance.setSubscriptionTerminationReason(null);
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {

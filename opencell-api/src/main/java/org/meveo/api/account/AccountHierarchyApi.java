@@ -169,10 +169,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private BusinessAccountModelService businessAccountModelService;
-    
+
     @Inject
-    private  CountryService countryService;
-    
+    private CountryService countryService;
+
     @Inject
     private PaymentMethodApi paymentMethodApi;
 
@@ -196,6 +196,7 @@ public class AccountHierarchyApi extends BaseApi {
      * Account - Billing Account - User Account
      * 
      * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastName if title provided,languageCode,billingCycleCode
+     * 
      * @param postData posted data to API to create CRM
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
@@ -382,7 +383,7 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setCode(userAccountCode);
         userAccountDto.setAddress(address);
         userAccountDto.setJobTitle(postData.getJobTitle());
-        
+
         userAccountApi.create(userAccountDto);
     }
 
@@ -1571,7 +1572,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     * @param result get account hierarchy response 
+     * @param result get account hierarchy response
      * @param billingAccount billing account.
      */
     private void addBillingAccount(GetAccountHierarchyResponseDto result, BillingAccount billingAccount) {
@@ -1847,6 +1848,9 @@ public class AccountHierarchyApi extends BaseApi {
 
         dto.setSubscriptionDate(ua.getSubscriptionDate());
         dto.setTerminationDate(ua.getTerminationDate());
+        if (ua.getTerminationReason() != null) {
+            dto.setTerminationReason(ua.getTerminationReason().getCode());
+        }
         dto.setStatus(ua.getStatus());
         dto.setStatusDate(ua.getStatusDate());
         dto.setLoaded(true);
@@ -1875,7 +1879,7 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setCode(postData.getCode());
             userAccountDto.setTerminationDate(postData.getTerminationDate());
             userAccountDto.setTerminationReason(postData.getTerminationReason());
-            accountEntity1 = userAccountApi.terminate(userAccountDto);
+            accountEntity1 = userAccountApi.terminateAccount(userAccountDto.getCode(), userAccountDto.getTerminationReason(), userAccountDto.getTerminationDate());
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
@@ -1884,7 +1888,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setCode(postData.getCode());
             billingAccountDto.setTerminationDate(postData.getTerminationDate());
             billingAccountDto.setTerminationReason(postData.getTerminationReason());
-            accountEntity2 = billingAccountApi.terminate(billingAccountDto);
+            accountEntity2 = billingAccountApi.terminateAccount(billingAccountDto.getCode(), billingAccountDto.getTerminationReason(), billingAccountDto.getTerminationDate());
         }
 
         if (businessAccountModel != null && businessAccountModel.getScript() != null) {
@@ -1913,9 +1917,7 @@ public class AccountHierarchyApi extends BaseApi {
         CustomerAccount customerAccount = null;
         if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
             // close customer account
-            CustomerAccountDto customerAccountDto = new CustomerAccountDto();
-            customerAccountDto.setCode(postData.getCode());
-            customerAccount = customerAccountApi.closeAccount(customerAccountDto);
+            customerAccount = customerAccountApi.closeAccount(postData.getCode());
         }
 
         if (businessAccountModel != null && businessAccountModel.getScript() != null && customerAccount != null) {
@@ -1987,7 +1989,7 @@ public class AccountHierarchyApi extends BaseApi {
             }
             if (!isForUpdate) {
                 paymentMethodDto.setCustomerAccountCode(postData.getCode());
-                paymentMethodApi.validate(paymentMethodDto,false);
+                paymentMethodApi.validate(paymentMethodDto, false);
             }
             listPaymentMethod.add(paymentMethodDto);
         }

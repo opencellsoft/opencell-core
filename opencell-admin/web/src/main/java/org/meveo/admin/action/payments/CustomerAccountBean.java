@@ -93,7 +93,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private PaymentMethodEnum newPaymentMethodType = PaymentMethodEnum.CARD;
     private PaymentMethod selectedPaymentMethod;
-    private boolean bicRequired = true;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -212,7 +211,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             return new BigDecimal(0);
         } else {
             return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity, new Date());
-        }
+    }
     }
 
     /**
@@ -230,8 +229,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     /**
      * Close customerAccount.
      * 
-     * @return Edit view
+     * @return Next view name
      */
+    @ActionMethod
     public String closeCustomerAccount() {
         log.info("closeAccount customerAccountId:" + entity.getId());
         try {
@@ -484,5 +484,4 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             }
         }
     }
-
 }

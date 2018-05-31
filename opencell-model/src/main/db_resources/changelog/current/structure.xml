@@ -856,8 +856,6 @@
         <sql>CREATE INDEX medina_access_subscription_id ON  ${db.schema.adapted}medina_access(subscription_id)</sql>
 	</changeSet>
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="mysql">
-		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
-        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
         
         <sql>DROP INDEX IF EXISTS billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>

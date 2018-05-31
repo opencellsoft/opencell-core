@@ -91,7 +91,7 @@ public class SubscriptionRenewal implements Serializable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auto_termin_reason_id")
-    private SubscriptionTerminationReason terminationReason;
+    private TerminationReason terminationReason;
 
     /**
      * The initial period for which the subscription will be active - unit
@@ -150,11 +150,11 @@ public class SubscriptionRenewal implements Serializable {
         this.endOfTermAction = endOfTermAction;
     }
 
-    public SubscriptionTerminationReason getTerminationReason() {
+    public TerminationReason getTerminationReason() {
         return terminationReason;
     }
 
-    public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+    public void setTerminationReason(TerminationReason terminationReason) {
         this.terminationReason = terminationReason;
     }
 

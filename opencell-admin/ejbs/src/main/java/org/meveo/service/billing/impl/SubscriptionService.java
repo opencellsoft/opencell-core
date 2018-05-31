@@ -28,16 +28,16 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.InvalidEntityStatusException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
@@ -49,6 +49,8 @@ import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
 
 /**
+ * A service class to manage CRUD operations on Subscription entity
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -67,6 +69,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Inject
     private OrderHistoryService orderHistoryService;
 
+    /**
+     * Instantiate subscription validity and renewal dates before creating Subscription and execute a subscription script if offer is tied to BusinessOfferModel
+     */
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
@@ -85,6 +90,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
+    /**
+     * Udpate subscription validity and renewal dates before updating Subscription
+     */
     @MeveoAudit
     @Override
     public Subscription update(Subscription subscription) throws BusinessException {
@@ -94,9 +102,25 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return super.update(subscription);
     }
 
+    /**
+     * Cancel active, created or suspended Subscription. Status will be changed to Canceled.
+     * 
+     * @param subscription Subscription
+     * @param cancelationDate Cancellation date
+     * @return Updated Subscription entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public Subscription subscriptionCancellation(Subscription subscription, Date cancelationDate)
+    public Subscription cancelSubscription(Subscription subscription, Date cancelationDate)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+
+        if (subscription.getStatus() != SubscriptionStatusEnum.ACTIVE && subscription.getStatus() != SubscriptionStatusEnum.CREATED
+                && subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
+            return subscription;
+        }
+
+        log.debug("Will cancel Subscription " + subscription.getCode());
+
         if (cancelationDate == null) {
             cancelationDate = new Date();
         }
@@ -106,14 +130,32 @@ public class SubscriptionService extends BusinessService<Subscription> {
          */
         subscription.setTerminationDate(cancelationDate);
         subscription.setStatus(SubscriptionStatusEnum.CANCELED);
+
         subscription = update(subscription);
+
+        log.info("Subscription" + subscription.getCode() + " was canceled");
 
         return subscription;
     }
 
+    /**
+     * Suspend active or created Subscription. Status will be changed to Suspended. Action will also suspend the services and access points.
+     * 
+     * @param subscription Subscription
+     * @param cancelationDate Cancellation date
+     * @return Updated Subscription entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public Subscription subscriptionSuspension(Subscription subscription, Date suspensionDate)
+    public Subscription suspendSubscription(Subscription subscription, Date suspensionDate)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+
+        if (subscription.getStatus() != SubscriptionStatusEnum.ACTIVE && subscription.getStatus() != SubscriptionStatusEnum.CREATED) {
+            return subscription;
+        }
+
+        log.debug("Will suspend Subscription " + subscription.getCode());
+
         if (suspensionDate == null) {
             suspensionDate = new Date();
         }
@@ -135,25 +177,40 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         subscription.setTerminationDate(suspensionDate);
         subscription.setStatus(SubscriptionStatusEnum.SUSPENDED);
+
         subscription = update(subscription);
+
         for (Access access : subscription.getAccessPoints()) {
             accessService.disable(access);
         }
 
+        log.info("Subscription" + subscription.getCode() + " was suspended");
+
         return subscription;
     }
 
+    /**
+     * Activate previously canceled, terminated or suspended Subscription. Status will be changed to Active. Action will also reactivate previously suspended Services.
+     * 
+     * @param subscription Subscription
+     * @param activationDate Activation date
+     * @return Updated Subscription entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public Subscription subscriptionReactivation(Subscription subscription, Date reactivationDate)
-            throws IncorrectSusbcriptionException, ElementNotResiliatedOrCanceledException, IncorrectServiceInstanceException, BusinessException {
-
-        if (reactivationDate == null) {
-            reactivationDate = new Date();
-        }
+    public Subscription reactivateSubscription(Subscription subscription, Date reactivationDate)
+            throws IncorrectSusbcriptionException, InvalidEntityStatusException, IncorrectServiceInstanceException, BusinessException {
 
         if (subscription.getStatus() != SubscriptionStatusEnum.RESILIATED && subscription.getStatus() != SubscriptionStatusEnum.CANCELED
                 && subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
-            throw new ElementNotResiliatedOrCanceledException("subscription", subscription.getCode());
+            throw new InvalidEntityStatusException(Subscription.class, subscription.getCode(), "reactivate", subscription.getStatus(), SubscriptionStatusEnum.RESILIATED,
+                SubscriptionStatusEnum.CANCELED, SubscriptionStatusEnum.SUSPENDED);
+        }
+
+        log.debug("Will reactivate Subscription " + subscription.getCode());
+
+        if (reactivationDate == null) {
+            reactivationDate = new Date();
         }
 
         subscription.setTerminationDate(null);
@@ -181,17 +238,41 @@ public class SubscriptionService extends BusinessService<Subscription> {
             }
         }
 
+        log.info("Subscription" + subscription.getCode() + " was reactivated");
+
         return subscription;
     }
 
+    /**
+     * Terminate active, created or suspended Subscription. Status will be changed to Terminated. Action will also terminate the services and access points.
+     * 
+     * @param subscription Subscription
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @param orderNumber Order number that initiated termination
+     * @return Updated Subscription entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, TerminationReason terminationReason, String orderNumber)
             throws BusinessException {
         return terminateSubscription(subscription, terminationDate, terminationReason, orderNumber, null, null);
     }
 
+    /**
+     * Terminate active, created or suspended Subscription. Status will be changed to Terminated. Action will also terminate the services and access points.
+     * 
+     * @param subscription Subscription
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @param orderNumber Order number that initiated termination
+     * @param orderItemId Order item Id that initiated termination
+     * @param orderItemAction Order item action that initiated termination
+     * @return Updated Subscription entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, TerminationReason terminationReason, String orderNumber,
             Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
 
         if (terminationReason == null) {
@@ -202,9 +283,32 @@ public class SubscriptionService extends BusinessService<Subscription> {
             terminationReason.isApplyTerminationCharges(), orderNumber, orderItemId, orderItemAction);
     }
 
+    /**
+     * Terminate active, created or suspended Subscription. Status will be changed to Terminated. Action will also terminate the services and access points
+     * 
+     * @param subscription Subscription
+     * @param terminationDate Termination date
+     * @param terminationReason Termination reason
+     * @param applyAgreement
+     * @param applyReimbursment
+     * @param applyTerminationCharges
+     * @param orderNumber Order number that initiated termination
+     * @param orderItemId Order item Id that initiated termination
+     * @param orderItemAction Order item action that initiated termination
+     * @return Updated Subscription entity
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
+    private Subscription terminateSubscription(Subscription subscription, Date terminationDate, TerminationReason terminationReason, boolean applyAgreement,
             boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
+
+        if (subscription.getStatus() != SubscriptionStatusEnum.ACTIVE && subscription.getStatus() != SubscriptionStatusEnum.CREATED
+                && subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
+            return subscription;
+        }
+
+        log.debug("Will terminate Subscription " + subscription.getCode());
+
         if (terminationDate == null) {
             terminationDate = new Date();
         }
@@ -238,6 +342,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
         }
+
+
+
+        log.info("Subscription" + subscription.getCode() + " was terminated");
 
         return subscription;
     }

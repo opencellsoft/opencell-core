@@ -23,12 +23,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 
 /**
- * Standard backing bean for {@link SubscriptionTerminationReason} (extends {@link BaseBean}
+ * Standard backing bean for {@link TerminationReason} (extends {@link BaseBean}
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
@@ -36,7 +36,7 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 @Named
 @ViewScoped
 public class TerminationReasonBean extends
-		BaseBean<SubscriptionTerminationReason> {
+		BaseBean<TerminationReason> {
 
 	private static final long serialVersionUID = 3745349578244346473L;
 
@@ -44,11 +44,11 @@ public class TerminationReasonBean extends
 	private TerminationReasonService terminationReasonService;
 
 	public TerminationReasonBean() {
-		super(SubscriptionTerminationReason.class);
+		super(TerminationReason.class);
 	}
 
 	@Override
-	protected IPersistenceService<SubscriptionTerminationReason> getPersistenceService() {
+	protected IPersistenceService<TerminationReason> getPersistenceService() {
 		return terminationReasonService;
 	}
 

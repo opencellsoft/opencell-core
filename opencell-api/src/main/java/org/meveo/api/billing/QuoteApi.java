@@ -31,7 +31,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
@@ -604,7 +604,7 @@ public class QuoteApi extends BaseApi {
         if (terminationReasonCode != null) {
             subscription.setTerminationDate(terminationDate);
 
-            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+            TerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
             if (terminationReason != null) {
                 subscription.setSubscriptionTerminationReason(terminationReason);
             } else {
@@ -762,7 +762,7 @@ public class QuoteApi extends BaseApi {
             if (terminationReasonCode != null) {
                 serviceInstance.setTerminationDate(terminationDate);
 
-                SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+                TerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
                 if (terminationReason != null) {
                     serviceInstance.setSubscriptionTerminationReason(terminationReason);
                 } else {

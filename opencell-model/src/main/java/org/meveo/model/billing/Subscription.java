@@ -129,7 +129,7 @@ public class Subscription extends BusinessCFEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
-    private SubscriptionTerminationReason subscriptionTerminationReason;
+    private TerminationReason subscriptionTerminationReason;
 
     @Type(type = "numeric_boolean")
     @Column(name = "default_level")
@@ -242,11 +242,11 @@ public class Subscription extends BusinessCFEntity {
         this.terminationDate = terminationDate;
     }
 
-    public SubscriptionTerminationReason getSubscriptionTerminationReason() {
+    public TerminationReason getSubscriptionTerminationReason() {
         return subscriptionTerminationReason;
     }
 
-    public void setSubscriptionTerminationReason(SubscriptionTerminationReason subscriptionTerminationReason) {
+    public void setSubscriptionTerminationReason(TerminationReason subscriptionTerminationReason) {
         this.subscriptionTerminationReason = subscriptionTerminationReason;
     }
 

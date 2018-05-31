@@ -45,8 +45,8 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
- * CRUD API for {@link CustomerAccount}.
- *  
+ * API to manage {@link CustomerAccount} information
+ * 
  * @author Edward P. Legaspi
  * @author anasseh
  * 
@@ -561,13 +561,28 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
     }
 
-    public CustomerAccount closeAccount(CustomerAccountDto postData) throws EntityDoesNotExistsException, BusinessException {
-        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
+    /**
+     * Close Customer account. Status will be changed to Closed. Action will also close related Billing accounts.
+     * 
+     * @param code Customer account code
+     * @return Updated Customer account entity
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws BusinessException Business exception
+     * @throws MissingParameterException Missing parameters
+     */
+    public CustomerAccount closeAccount(String code) throws EntityDoesNotExistsException, BusinessException, MissingParameterException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        CustomerAccount customerAccount = customerAccountService.findByCode(code);
         if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
+            throw new EntityDoesNotExistsException(CustomerAccount.class, code);
         }
 
-        customerAccountService.closeCustomerAccount(customerAccount);
+        customerAccount = customerAccountService.closeCustomerAccount(customerAccount);
 
         return customerAccount;
     }

@@ -52,10 +52,11 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.util.ApplicationProvider;
 
 /**
- * Customer Account service implementation.
+ * A service class to manage CRUD operations on CustomerAccount entity
  * 
  * @author Edward P. Legaspi
  * @author anasseh
@@ -75,6 +76,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+
+    @Inject
+    private BillingAccountService billingAccountService;
 
     /**
      * @param id id of customer to be checking
@@ -220,46 +224,61 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
+    /**
+     * Close an active Customer account. Status will be changed to Closed. Action will also close related Billing accounts.
+     * 
+     * @param customerAccount Customer account
+     * @return Updated Customer account
+     * @throws BusinessException Business exception
+     */
     @MeveoAudit
-    public void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException {
-        log.info("closeCustomerAccount customerAccount {}", (customerAccount == null ? "null" : customerAccount.getCode()));
+    public CustomerAccount closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException {
 
-        if (customerAccount == null) {
-            log.warn("closeCustomerAccount customerAccount is null");
-            throw new BusinessException("customerAccount is null");
-        }
         if (customerAccount.getStatus() == CustomerAccountStatusEnum.CLOSE) {
-            log.warn("closeCustomerAccount customerAccount already closed");
-            throw new BusinessException("customerAccount already closed");
+            return customerAccount;
         }
-        try {
-            log.debug("closeCustomerAccount  update customerAccount ok");
-            // ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-            ParamBean param = paramBeanFactory.getInstance();
-            String codeOCCTemplate = param.getProperty("occ.codeOccCloseAccount", "CLOSE_ACC");
-            BigDecimal balanceDue = customerAccountBalanceDue(customerAccount, new Date());
-            if (balanceDue == null) {
-                log.warn("closeCustomerAccount balanceDue is null");
-                throw new BusinessException("balanceDue is null");
-            }
-            log.debug("closeCustomerAccount  balanceDue:" + balanceDue);
-            if (balanceDue.compareTo(BigDecimal.ZERO) < 0) {
-                throw new BusinessException(recourceMessages.getString("closeCustomerAccount.balanceDueNegatif"));
-            }
-            if (balanceDue.compareTo(BigDecimal.ZERO) > 0) {
-                otherCreditAndChargeService.addOCC(codeOCCTemplate, null, customerAccount, balanceDue, new Date());
-                log.debug("closeCustomerAccount  add occ ok");
-            }
-            customerAccount.setStatus(CustomerAccountStatusEnum.CLOSE);
-            customerAccount.setDateStatus(new Date());
-            update(customerAccount);
-            log.info("closeCustomerAccount customerAccountCode:" + customerAccount.getCode() + " closed successfully");
-        } catch (BusinessException be) {
-            throw be;
+
+        log.debug("Will close Customer account " + customerAccount.getCode());
+
+        // ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+        ParamBean param = paramBeanFactory.getInstance();
+        String codeOCCTemplate = param.getProperty("occ.codeOccCloseAccount", "CLOSE_ACC");
+        BigDecimal balanceDue = customerAccountBalanceDue(customerAccount, new Date());
+        if (balanceDue == null) {
+            log.warn("Can not close customer account as balanceDue is null");
+            throw new BusinessException("balanceDue is null");
         }
+        if (balanceDue.compareTo(BigDecimal.ZERO) < 0) {
+            log.warn("Can not close customer account " + customerAccount.getCode() + "as balanceDue is negative");
+            throw new BusinessException(recourceMessages.getString("closeCustomerAccount.balanceDueNegatif"));
+        }
+
+        log.debug("Closing Customer account {}. Balance due is {}", customerAccount.getCode(), balanceDue);
+
+        for (BillingAccount ba : customerAccount.getBillingAccounts()) {
+            billingAccountService.closeBillingAccount(ba);
+        }
+
+        if (balanceDue.compareTo(BigDecimal.ZERO) > 0) {
+            otherCreditAndChargeService.addOCC(codeOCCTemplate, null, customerAccount, balanceDue, new Date());
+        }
+        customerAccount.setStatus(CustomerAccountStatusEnum.CLOSE);
+        customerAccount.setDateStatus(new Date());
+        customerAccount = update(customerAccount);
+
+        log.info("Customer account " + customerAccount.getCode() + " was closed");
+
+        return customerAccount;
     }
 
-    public void closeCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException, Exception {
+    /**
+     * Close an active Customer account. Status will be changed to Closed. Action will also close related Billing accounts.
+     * 
+     * @param customerAccountId Customer account id OR
+     * @param customerAccountCode Customer account code
+     * @throws BusinessException Business exception
+     */
+    public void closeCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException {
         log.info("closeCustomerAccount customerAccountCode {}, customerAccountID {}", customerAccountCode, customerAccountId);
         closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode));
     }
@@ -533,7 +552,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
     }
-    
+
     /**
      *  Compute  credit balnce.
      *  

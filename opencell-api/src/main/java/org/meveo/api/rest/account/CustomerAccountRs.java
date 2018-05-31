@@ -58,7 +58,7 @@ public interface CustomerAccountRs extends IBaseRs {
      * Search for a customer account with a given code.
      * 
      * @param customerAccountCode The customer account's code
-     * @param calculateBalances  true if needs  to calculate balances
+     * @param calculateBalances true if needs to calculate balances
      * @param inheritCF Custom field inheritance type
      * @return customer account
      */
@@ -116,4 +116,14 @@ public interface CustomerAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CustomerAccountDto postData);
+
+    /**
+     * Close Customer account. Status will be changed to Closed. Action will also close related Billing accounts.
+     * 
+     * @param code Customer account code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/close")
+    ActionStatus close(@PathParam("code") String code);
 }

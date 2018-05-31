@@ -15,7 +15,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -62,7 +62,7 @@ public class ServiceModelScriptService implements Serializable {
         scriptInterface.reactivateServiceInstance(scriptContext);
     }
 
-    public void terminateServiceInstance(ServiceInstance entity, String scriptCode, Date terminationDate, SubscriptionTerminationReason terminationReason)
+    public void terminateServiceInstance(ServiceInstance entity, String scriptCode, Date terminationDate, TerminationReason terminationReason)
             throws ElementNotFoundException, InvalidScriptException, BusinessException {
 
         ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);

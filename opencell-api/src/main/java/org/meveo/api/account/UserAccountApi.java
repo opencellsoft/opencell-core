@@ -32,7 +32,7 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductTemplate;
@@ -42,12 +42,14 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
-import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
 /**
+ * API to manage {@link UserAccount} information
+ * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
@@ -58,7 +60,7 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 public class UserAccountApi extends AccountEntityApi {
 
     @Inject
-    private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
+    private TerminationReasonService subscriptionTerminationReasonService;
 
     @Inject
     private UserAccountService userAccountService;
@@ -74,7 +76,7 @@ public class UserAccountApi extends AccountEntityApi {
 
     @Inject
     private ProductInstanceService productInstanceService;
-    
+
     @Inject
     private WalletOperationService walletOperationService;
     
@@ -131,7 +133,7 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         try {
-            userAccountService.createUserAccount(billingAccount, userAccount);
+            userAccountService.create(userAccount);
         } catch (AccountAlreadyExistsException e) {
             throw new EntityAlreadyExistsException(UserAccount.class, postData.getCode());
         }
@@ -169,7 +171,7 @@ public class UserAccountApi extends AccountEntityApi {
                 Long countNonTreatedWO = walletOperationService.countNonTreatedWOByUA(userAccount);
                 if(countNonTreatedWO > 0) {
                     throw new BusinessApiException("Can not change the parent account. User account have non treated WO");
-                }
+            }
                 Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByUA(userAccount);
                 if(countNonInvoicedRT > 0) {
                     throw new BusinessApiException("Can not change the parent account. User account have non invoiced RT");
@@ -184,9 +186,9 @@ public class UserAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getExternalRef1())) {
             userAccount.setExternalRef2(postData.getExternalRef2());
         }
-        
+
         updateAccount(userAccount, postData, checkCustomFields);
-        
+
         if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
             userAccount.setSubscriptionDate(postData.getSubscriptionDate());
         }
@@ -297,24 +299,93 @@ public class UserAccountApi extends AccountEntityApi {
         }
     }
 
-    public UserAccount terminate(UserAccountDto postData) throws MeveoApiException, BusinessException {
-        SubscriptionTerminationReason terminationReason = null;
-        try {
-            terminationReason = subscriptionTerminationReasonService.findByCodeReason(postData.getTerminationReason());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (terminationReason == null) {
-            throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());
-        }
+    /**
+     * Terminate User account. Status will be changed to Terminated. Action will also terminate related Subscriptions.
+     * 
+     * @param code Billing account code
+     * @param terminationReasonCode Termination reason code
+     * @param terminationDate Termination date
+     * @return Updated User account entity
+     * @throws BusinessException Business exception
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws MissingParameterException Missing parameters
+     */
+    public UserAccount terminateAccount(String code, String terminationReasonCode, Date terminationDate)
+            throws BusinessException, EntityDoesNotExistsException, MissingParameterException {
 
-        UserAccount userAccount = userAccountService.findByCode(postData.getCode());
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(terminationReasonCode)) {
+            missingParameters.add("terminationReason");
+        }
+        handleMissingParameters();
+
+        UserAccount userAccount = userAccountService.findByCode(code);
         if (userAccount == null) {
-            throw new EntityDoesNotExistsException(UserAccount.class, postData.getCode());
+            throw new EntityDoesNotExistsException(UserAccount.class, code);
         }
 
-        userAccountService.userAccountTermination(userAccount, postData.getTerminationDate(), terminationReason);
+        TerminationReason terminationReason = subscriptionTerminationReasonService.findByCode(terminationReasonCode);
+        if (terminationReason == null) {
+            throw new EntityDoesNotExistsException(TerminationReason.class, terminationReasonCode);
+        }
+
+        userAccount = userAccountService.terminateUserAccount(userAccount, terminationDate, terminationReason);
+
+        return userAccount;
+    }
+
+    /**
+     * Cancel User account. Status will be changed to Canceled. Action will also cancel related Subscriptions.
+     * 
+     * @param code User account code
+     * @param cancellationDate Cancellation date
+     * @return Updated User account entity
+     * @throws BusinessException Business exception
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws MissingParameterException Missing parameters
+     */
+    public UserAccount cancelAccount(String code, Date cancellationDate) throws BusinessException, EntityDoesNotExistsException, MissingParameterException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        UserAccount userAccount = userAccountService.findByCode(code);
+        if (userAccount == null) {
+            throw new EntityDoesNotExistsException(UserAccount.class, code);
+        }
+
+        userAccount = userAccountService.cancelUserAccount(userAccount, cancellationDate);
+
+        return userAccount;
+    }
+
+    /**
+     * Activate previously canceled or terminated User account. Status will be changed to Active.
+     * 
+     * @param code User account code
+     * @param activationDate Activation date
+     * @return Updated User account entity
+     * @throws BusinessException Business exception
+     * @throws EntityDoesNotExistsException Code does not correspond to an existing entity
+     * @throws MissingParameterException Missing parameters
+     */
+    public UserAccount reactivateAccount(String code, Date activationDate) throws BusinessException, EntityDoesNotExistsException, MissingParameterException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        UserAccount userAccount = userAccountService.findByCode(code);
+        if (userAccount == null) {
+            throw new EntityDoesNotExistsException(UserAccount.class, code);
+        }
+
+        userAccount = userAccountService.reactivateUserAccount(userAccount, activationDate);
 
         return userAccount;
     }
@@ -349,7 +420,8 @@ public class UserAccountApi extends AccountEntityApi {
                     missingParameters.add("userAccount.terminationReason");
                     handleMissingParametersAndValidate(postData);
                 }
-                terminate(postData);
+                terminateAccount(postData.getCode(), postData.getTerminationReason(), postData.getTerminationDate());
+
             } else {
 
                 if (!StringUtils.isBlank(postData.getBillingAccount())) {
@@ -433,4 +505,5 @@ public class UserAccountApi extends AccountEntityApi {
 
         return result;
     }
+
 }

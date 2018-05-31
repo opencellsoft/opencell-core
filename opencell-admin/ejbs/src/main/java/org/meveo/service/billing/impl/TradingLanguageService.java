@@ -23,7 +23,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.base.PersistenceService;
 

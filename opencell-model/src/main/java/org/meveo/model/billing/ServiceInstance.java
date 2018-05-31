@@ -125,7 +125,7 @@ public class ServiceInstance extends BusinessCFEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
-    private SubscriptionTerminationReason subscriptionTerminationReason;
+    private TerminationReason subscriptionTerminationReason;
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal quantity = BigDecimal.ONE;
@@ -269,11 +269,11 @@ public class ServiceInstance extends BusinessCFEntity {
         this.quantity = quantity;
     }
 
-    public SubscriptionTerminationReason getSubscriptionTerminationReason() {
+    public TerminationReason getSubscriptionTerminationReason() {
         return subscriptionTerminationReason;
     }
 
-    public void setSubscriptionTerminationReason(SubscriptionTerminationReason subscriptionTerminationReason) {
+    public void setSubscriptionTerminationReason(TerminationReason subscriptionTerminationReason) {
         this.subscriptionTerminationReason = subscriptionTerminationReason;
     }
 

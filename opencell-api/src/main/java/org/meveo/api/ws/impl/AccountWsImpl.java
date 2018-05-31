@@ -1172,4 +1172,111 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
         return result;
     }
+
+
+    @Override
+    public ActionStatus closeCustomerAccount(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customerAccountApi.closeAccount(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus terminateBillingAccount(String code, String terminationReasonCode, Date terminationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.terminateAccount(code, terminationReasonCode, terminationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus cancelBillingAccount(String code, Date cancellationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.cancelAccount(code, cancellationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus reactivateBillingAccount(String code, Date activationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.reactivateAccount(code, activationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus closeBillingAccount(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.closeAccount(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus terminateUserAccount(String code, String terminationReasonCode, Date terminationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userAccountApi.terminateAccount(code, terminationReasonCode, terminationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus cancelUserAccount(String code, Date cancellationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userAccountApi.cancelAccount(code, cancellationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus reactivateUserAccount(String code, Date activationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userAccountApi.reactivateAccount(code, activationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 }

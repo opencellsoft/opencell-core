@@ -148,7 +148,7 @@ public class BillingAccount extends AccountEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
-    private SubscriptionTerminationReason terminationReason;
+    private TerminationReason terminationReason;
 
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
@@ -330,11 +330,11 @@ public class BillingAccount extends AccountEntity {
         this.tradingLanguage = tradingLanguage;
     }
 
-    public SubscriptionTerminationReason getTerminationReason() {
+    public TerminationReason getTerminationReason() {
         return terminationReason;
     }
 
-    public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+    public void setTerminationReason(TerminationReason terminationReason) {
         this.terminationReason = terminationReason;
     }
 

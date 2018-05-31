@@ -124,4 +124,56 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         return result;
     }
 
+    @Override
+    public ActionStatus terminate(String code, String terminationReasonCode, Date terminationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.terminateAccount(code, terminationReasonCode, terminationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus cancel(String code, Date cancellationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.cancelAccount(code, cancellationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus reactivate(String code, Date activationDate) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.reactivateAccount(code, activationDate);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus close(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            billingAccountApi.closeAccount(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 }

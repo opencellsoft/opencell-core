@@ -62,10 +62,10 @@ public class StringUtils {
     }
 
     public static String concatenate(String... values) {
-        return concatenate(" ", values);
+        return concatenateWithSeparator(" ", values);
     }
 
-    public static String concatenate(String separator, String[] values) {
+    public static String concatenateWithSeparator(String separator, Object[] values) {
         return concatenate(separator, Arrays.asList(values));
     }
 

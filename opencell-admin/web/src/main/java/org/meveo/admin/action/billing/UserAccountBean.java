@@ -214,7 +214,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     protected UserAccount saveOrUpdate(UserAccount entity) throws BusinessException {
 
         if (entity.isTransient()) {
-            userAccountService.createUserAccount(entity.getBillingAccount(), entity);
+            userAccountService.create(entity);
         } else {
             entity = getPersistenceService().update(entity);
         }
@@ -224,11 +224,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return entity;
     }
 
+    @ActionMethod
     public String terminateAccount() {
         log.debug("resiliateAccount userAccountId:" + entity.getId());
         try {
             entity = userAccountService.refreshOrRetrieve(entity);
-            entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
+            entity = userAccountService.terminateUserAccount(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
         } catch (Exception e) {
@@ -238,11 +239,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return getEditViewName();
     }
 
+    @ActionMethod
     public String cancelAccount() {
         log.info("cancelAccount userAccountId:" + entity.getId());
         try {
             entity = userAccountService.refreshOrRetrieve(entity);
-            entity = userAccountService.userAccountCancellation(entity, new Date());
+            entity = userAccountService.cancelUserAccount(entity, new Date());
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 
         } catch (Exception e) {
@@ -252,11 +254,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return getEditViewName();
     }
 
+    @ActionMethod
     public String reactivateAccount() {
         log.info("reactivateAccount userAccountId:" + entity.getId());
         try {
             entity = userAccountService.refreshOrRetrieve(entity);
-            entity = userAccountService.userAccountReactivation(entity, new Date());
+            entity = userAccountService.reactivateUserAccount(entity, new Date());
             messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 
         } catch (Exception e) {

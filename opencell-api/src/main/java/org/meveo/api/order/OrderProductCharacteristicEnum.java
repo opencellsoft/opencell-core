@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TerminationReason;
 
 public enum OrderProductCharacteristicEnum {
 
@@ -82,7 +82,7 @@ public enum OrderProductCharacteristicEnum {
     /**
      * TerminationReason used when terminating subscription if endOfTermAction is to terminate
      */
-    SUBSCRIPTION_RENEW_TERMINATION_REASON("renewTerminationReason", SubscriptionTerminationReason.class),
+    SUBSCRIPTION_RENEW_TERMINATION_REASON("renewTerminationReason", TerminationReason.class),
 
     /**
      * The initial period for which the subscription will be active - unit

@@ -13,8 +13,6 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.sepa.PaynumFile;
 import org.meveo.admin.sepa.SepaFile;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;

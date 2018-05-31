@@ -183,11 +183,13 @@
                                         <p:commandButton value="#{messages['account.buttonResiliateAccount']}" onclick="PF('dlg_userAccountTerminationPopup').show()" type="button"
                                             disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
                                         <p:commandButton action="#{userAccountBean.cancelAccount()}" value="#{messages['account.buttonCancelAccount']}" immediate="true"
-                                            onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-                                            disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+                                            disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
+                                            <p:confirm header="#{messages['userAccount']}" message="#{messages['userAccount.confirmCancelAccount']}" />
+                                        </p:commandButton>
                                         <p:commandButton action="#{userAccountBean.reactivateAccount()}" value="#{messages['account.buttonReactivateAccount']}" immediate="true"
-                                            onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
-                                            disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />
+                                            disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' and userAccountBean.entity.status.toString()!='CANCELLED'}">
+                                            <p:confirm header="#{messages['userAccount']}" message="#{messages['userAccount.confirmReactivateAccount']}" />
+                                        </p:commandButton>
                                         <!--<p:commandButton type="button"
                                         value="#{messages['walletOperationPopup.button']}"
                                         onclick="PF('dlg_walletOperationPopup').show();" />

@@ -57,9 +57,6 @@ public class CalendarApi extends BaseApi {
         }
 
         handleMissingParametersAndValidate(postData);
-        
-
-        
 
         if (calendarService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Calendar.class, postData.getCode());
@@ -149,7 +146,6 @@ public class CalendarApi extends BaseApi {
             }
 
             handleMissingParameters();
-            
 
             Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code());
             Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code());
@@ -185,9 +181,6 @@ public class CalendarApi extends BaseApi {
         }
 
         handleMissingParametersAndValidate(postData);
-        
-
-        
 
         Calendar calendar = calendarService.findByCode(postData.getCode());
         if (calendar == null) {
@@ -214,9 +207,10 @@ public class CalendarApi extends BaseApi {
                 List<HourInDay> hours = new ArrayList<HourInDay>();
                 for (HourInDayDto d : postData.getHours()) {
                     HourInDay hourInDay = hourInDayService.findByHourAndMin(d.getHour(), d.getMin());
-                    if (hourInDay != null) {
-                        hours.add(hourInDay);
+                    if (hourInDay == null) {
+                        hourInDay = new HourInDay(d.getHour(), d.getMin());
                     }
+                    hours.add(hourInDay);
                 }
 
                 ((CalendarDaily) calendar).setHours(hours);
@@ -253,7 +247,6 @@ public class CalendarApi extends BaseApi {
             }
 
             handleMissingParameters();
-            
 
             Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code());
             Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code());
@@ -294,13 +287,13 @@ public class CalendarApi extends BaseApi {
 
         return result;
     }
-    
-    public List<CalendarDto> list() throws MeveoApiException{
-    	List<CalendarDto> result = new ArrayList<CalendarDto>();
-		for(Calendar calendar : calendarService.list()){
-    		result.add(new CalendarDto(calendar));
-    	}
-    	return result;
+
+    public List<CalendarDto> list() throws MeveoApiException {
+        List<CalendarDto> result = new ArrayList<CalendarDto>();
+        for (Calendar calendar : calendarService.list()) {
+            result.add(new CalendarDto(calendar));
+        }
+        return result;
     }
 
     public void remove(String calendarCode) throws MeveoApiException, BusinessException {
