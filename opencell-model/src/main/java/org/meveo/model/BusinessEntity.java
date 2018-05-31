@@ -18,6 +18,8 @@
  */
 package org.meveo.model;
 
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -26,8 +28,14 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * The Class BusinessEntity.
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @MappedSuperclass
-public class BusinessEntity extends EnableEntity implements ISearchable {
+public abstract class BusinessEntity extends AuditableEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,6 +57,10 @@ public class BusinessEntity extends EnableEntity implements ISearchable {
 
     @Transient
     protected boolean appendGeneratedCode = false;
+    
+    /** The run time values. */
+    @Transient
+    private Map<String, Object> runTimeValues;
 
     public String getCode() {
         return code;
@@ -165,4 +177,25 @@ public class BusinessEntity extends EnableEntity implements ISearchable {
     public boolean isCodeChanged() {
         return !StringUtils.equals(code, previousCode);
     }
+
+    /**
+     * @param runTimeValues the runTimeValues to set
+     */
+    public void setRunTimeValues(Map<String, Object> runTimeValues) {
+        this.runTimeValues = runTimeValues;
+    }
+    
+    /**
+     * Gets the runtime value.
+     *
+     * @param key the key
+     * @return the runtime value
+     */
+    public Object getRuntimeValue(String key) {
+        if (this.runTimeValues == null ) {
+            return null;
+        }
+        return this.runTimeValues.get(key);
+    }
+
 }

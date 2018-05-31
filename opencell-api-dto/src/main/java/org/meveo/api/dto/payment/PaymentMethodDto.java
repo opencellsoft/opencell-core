@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.IEnableDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -31,7 +32,7 @@ import org.meveo.security.MeveoUser;
  */
 @XmlRootElement(name = "PaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentMethodDto extends BaseDto {
+public class PaymentMethodDto extends BaseDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4815935377652350103L;
@@ -44,41 +45,50 @@ public class PaymentMethodDto extends BaseDto {
     private PaymentMethodEnum paymentMethodType;
 
     /**
-     * entity id.
+     * Entity id.
      */
     private Long id;
+
     /**
-     * is disabled.
+     * Is payment method disabled.
      */
-    private boolean disabled = false;
+    private Boolean disabled;
+
     /**
-     * alias.
+     * Alias.
      */
     private String alias;
+
     /**
-     * is preferred.
+     * Is it a preferred payment method
      */
     private boolean preferred;
+
     /**
-     * customerAccountCode.
+     * Customer account code.
      */
     private String customerAccountCode;
+
     /**
      * Additional info1.
      */
     private String info1;
+
     /**
      * Additional info2.
      */
     private String info2;
+
     /**
      * Additional info3.
      */
     private String info3;
+
     /**
      * Additional info4.
      */
     private String info4;
+
     /**
      * Additional info5.
      */
@@ -88,12 +98,14 @@ public class PaymentMethodDto extends BaseDto {
      * Bank account information.
      */
     private BankCoordinatesDto bankCoordinates;
+
     /**
-     * mandateIdentification for SEPA.
+     * Mandate identification for SEPA.
      */
     private String mandateIdentification;
+
     /**
-     * mandateDate for SEPA.
+     * Mandate date for SEPA.
      */
     private Date mandateDate;
 
@@ -150,9 +162,9 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
-     * constructor with paymentType.
+     * Instantiate payment method DTO of certain payment type
      *
-     * @param paymentType payment type.
+     * @param paymentType Payment method type
      */
     public PaymentMethodDto(PaymentMethodEnum paymentType) {
         this.paymentMethodType = paymentType;
@@ -174,9 +186,9 @@ public class PaymentMethodDto extends BaseDto {
     }
 
     /**
-     * Constructor with entity class.
+     * Convert payment method entity to DTO
      *
-     * @param paymentMethod the paymentMethod entity.
+     * @param paymentMethod Entity to convert
      */
     public PaymentMethodDto(PaymentMethod paymentMethod) {
         this.id = paymentMethod.getId();
@@ -253,34 +265,37 @@ public class PaymentMethodDto extends BaseDto {
      */
     public final PaymentMethod fromDto(CustomerAccount customerAccount, MeveoUser currentUser) {
         PaymentMethod pmEntity = null;
+        boolean disabledBool = isDisabled() != null ? isDisabled() : false;
         switch (getPaymentMethodType()) {
         case CARD:
-            pmEntity = new CardPaymentMethod(customerAccount, isDisabled(), getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
+            pmEntity = new CardPaymentMethod(customerAccount, disabledBool, getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
                 getMonthExpiration(), getCardType());
             break;
 
         case DIRECTDEBIT:
-            pmEntity = new DDPaymentMethod(customerAccount, isDisabled(), getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
+            pmEntity = new DDPaymentMethod(customerAccount, disabledBool, getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
                 getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
             break;
 
         case CHECK:
-            pmEntity = new CheckPaymentMethod(isDisabled(), alias, preferred, customerAccount);
+            pmEntity = new CheckPaymentMethod(disabledBool, alias, preferred, customerAccount);
             break;
 
         case WIRETRANSFER:
-            pmEntity = new WirePaymentMethod(isDisabled(), alias, preferred, customerAccount);
+            pmEntity = new WirePaymentMethod(disabledBool, alias, preferred, customerAccount);
             break;
         default:
             break;
         }
-        pmEntity.setInfo1(getInfo1());
-        pmEntity.setInfo2(getInfo2());
-        pmEntity.setInfo3(getInfo3());
-        pmEntity.setInfo4(getInfo4());
-        pmEntity.setInfo5(getInfo5());
-        pmEntity.setUserId(getUserId());
-        pmEntity.updateAudit(currentUser);
+        if (pmEntity != null) {
+            pmEntity.setInfo1(getInfo1());
+            pmEntity.setInfo2(getInfo2());
+            pmEntity.setInfo3(getInfo3());
+            pmEntity.setInfo4(getInfo4());
+            pmEntity.setInfo5(getInfo5());
+            pmEntity.setUserId(getUserId());
+            pmEntity.updateAudit(currentUser);
+        }
         return pmEntity;
     }
 
@@ -408,21 +423,13 @@ public class PaymentMethodDto extends BaseDto {
         this.id = id;
     }
 
-    /**
-     * Checks if is disabled.
-     *
-     * @return the disabled
-     */
-    public boolean isDisabled() {
+    @Override
+    public Boolean isDisabled() {
         return disabled;
     }
 
-    /**
-     * Sets the disabled.
-     *
-     * @param disabled the disabled to set
-     */
-    public void setDisabled(boolean disabled) {
+    @Override
+    public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
     }
 
@@ -789,7 +796,9 @@ public class PaymentMethodDto extends BaseDto {
         this.customerCode = customerCode;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override

@@ -43,16 +43,18 @@ public class WFTransitionApi extends BaseApi {
     private WFActionService wfActionService;
 
     /**
-     *
-     * @param workflow
-     * @param wfTransitionDto
+     * Create Workflow
+     *  
+     * @param workflow the parent workflow
+     * @param wfTransitionDto the transition that will be created and added to the given workflow
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
+     * @throws MissingParameterException missing parameter
+     * @throws EntityDoesNotExistsException lookup entity does not exist
+     * @throws EntityAlreadyExistsException entity being created already exists
+     * @throws BusinessException generic business exception
+     * @return WFTransition Workflow transition
      */
-    public void create(Workflow workflow, WFTransitionDto wfTransitionDto)
+    public WFTransition create(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
         validateDto(wfTransitionDto, false);
 
@@ -67,8 +69,7 @@ public class WFTransitionApi extends BaseApi {
                 }
             }
         }
-        WFTransition wfTransition;
-        wfTransition = fromDTO(wfTransitionDto, null);
+        WFTransition wfTransition = fromDTO(wfTransitionDto, null);
         wfTransition.setWorkflow(workflow);
         wfTransition.setWfDecisionRules(wfDecisionRuleList);
         wfTransitionService.create(wfTransition);
@@ -80,19 +81,23 @@ public class WFTransitionApi extends BaseApi {
                 priority++;
             }
         }
+        return wfTransition;
     }
 
     /**
+     * Update Workflow
+     *
+     * @param workflow workflow of the transition that will be updated
+     * @param wfTransitionDto details of the transition that will be updated
      * 
-     * @param wfTransitionDto
-     * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @throws MissingParameterException missing parameter
+     * @throws EntityDoesNotExistsException lookup entity does not exist
+     * @throws EntityAlreadyExistsException entity being created already exists
+     * @throws BusinessException generic business exception
+     * @throws BusinessApiException equivalent of business exception in api context
+     * @return WFTransition Workflow transition
      */
-    public void update(Workflow workflow, WFTransitionDto wfTransitionDto)
+    public WFTransition update(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {
         validateDto(wfTransitionDto, true);
 
@@ -101,7 +106,7 @@ public class WFTransitionApi extends BaseApi {
             throw new EntityDoesNotExistsException(WFTransition.class.getName() + "with uuid=" + wfTransitionDto.getUuid());
         }
 
-        if (workflow.equals(wfTransition.getWorkflow())) {
+        if (!workflow.equals(wfTransition.getWorkflow())) {
             throw new BusinessApiException("Workflow does not match");
         }
 
@@ -121,7 +126,7 @@ public class WFTransitionApi extends BaseApi {
         List<WFAction> wfActionList = wfTransition.getWfActions();
         wfTransition.setWorkflow(workflow);
         wfTransition.setWfDecisionRules(wfDecisionRuleList);
-        wfTransitionService.update(wfTransition);
+        wfTransition = wfTransitionService.update(wfTransition);
         List<WFAction> updatedActions = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFActionDto())) {
             for (WFActionDto wfActionDto : wfTransitionDto.getListWFActionDto()) {
@@ -149,62 +154,70 @@ public class WFTransitionApi extends BaseApi {
                 priority++;
             }
         }
+        return wfTransition;
     }
 
     /**
+     * Create or update Workflow
      *
-     * @param workflow
-     * @param wfTransitionDto
+     * @param workflow workflow of the transition that will be updated
+     * @param wfTransitionDto details of the transition that will be updated
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @throws MissingParameterException missing parameter
+     * @throws EntityDoesNotExistsException lookup entity does not exist
+     * @throws EntityAlreadyExistsException entity being created already exists
+     * @throws BusinessException generic business exception
+     * @throws BusinessApiException equivalent of business exception in api context
+     * @return WFTransition Workflow transition
      */
-    public void createOrUpdate(Workflow workflow, WFTransitionDto wfTransitionDto)
+    public WFTransition createOrUpdate(Workflow workflow, WFTransitionDto wfTransitionDto)
             throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {
+        
         WFTransition wfTransition = null;
         if (wfTransitionDto.getUuid() != null) {
             wfTransition = wfTransitionService.findWFTransitionByUUID(wfTransitionDto.getUuid());
         }
         if (wfTransition == null) {
-            create(workflow, wfTransitionDto);
+            return create(workflow, wfTransitionDto);
         } else {
-            update(workflow, wfTransitionDto);
+            return update(workflow, wfTransitionDto);
         }
     }
 
     /**
-     * 
-     * @param wfTransitionDto
-     * @throws MissingParameterException
+     * Validate Workflow transition Dto
+     *
+     * @param wfTransitionDto Workflow transition Dto
+     * @param isUpdate indicates that Dto is for update
+     * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(WFTransitionDto wfTransitionDto, boolean isUpdate) throws MissingParameterException {
         if (wfTransitionDto == null) {
             missingParameters.add("WFTransitionDto");
             handleMissingParameters();
         }
-        if (isUpdate && StringUtils.isBlank(wfTransitionDto.getUuid())) {
-            missingParameters.add("uuid");
-        }
-        if (StringUtils.isBlank(wfTransitionDto.getFromStatus())) {
-            missingParameters.add("FromStatus");
-        }
-        if (StringUtils.isBlank(wfTransitionDto.getToStatus())) {
-            missingParameters.add("ToStatus");
-        }
-        if (StringUtils.isBlank(wfTransitionDto.getDescription())) {
-            missingParameters.add("Description");
-        }
+        if (wfTransitionDto != null) {
+            if (isUpdate && StringUtils.isBlank(wfTransitionDto.getUuid())) {
+                missingParameters.add("uuid");
+            }
+            if (StringUtils.isBlank(wfTransitionDto.getFromStatus())) {
+                missingParameters.add("FromStatus");
+            }
+            if (StringUtils.isBlank(wfTransitionDto.getToStatus())) {
+                missingParameters.add("ToStatus");
+            }
+            if (StringUtils.isBlank(wfTransitionDto.getDescription())) {
+                missingParameters.add("Description");
+            }
 
-        if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFDecisionRuleDto())) {
-            for (WFDecisionRuleDto wfDecisionRuleDto : wfTransitionDto.getListWFDecisionRuleDto()) {
-                if (StringUtils.isBlank(wfDecisionRuleDto.getName())) {
-                    missingParameters.add("DecisionRuleName");
-                }
-                if (StringUtils.isBlank(wfDecisionRuleDto.getValue())) {
-                    missingParameters.add("DecisionRuleValue");
+            if (CollectionUtils.isNotEmpty(wfTransitionDto.getListWFDecisionRuleDto())) {
+                for (WFDecisionRuleDto wfDecisionRuleDto : wfTransitionDto.getListWFDecisionRuleDto()) {
+                    if (StringUtils.isBlank(wfDecisionRuleDto.getName())) {
+                        missingParameters.add("DecisionRuleName");
+                    }
+                    if (StringUtils.isBlank(wfDecisionRuleDto.getValue())) {
+                        missingParameters.add("DecisionRuleValue");
+                    }
                 }
             }
         }
@@ -212,14 +225,30 @@ public class WFTransitionApi extends BaseApi {
         handleMissingParameters();
     }
 
+    /**
+     * Find Workflow transition by uuid
+     *
+     * @param uuid uuid of workflow transition
+     * @return Workflow transition
+     */
     public WFTransition findTransitionByUUID(String uuid) {
         return wfTransitionService.findWFTransitionByUUID(uuid);
     }
 
+    /**
+     * Transform Workflow transition Dto to Workflow transition entity
+     * 
+     * @param dto Workflow transition Dto
+     * @param wfTransitionToUpdate Workflow transition to update
+     * @return Workflow transition entity
+     */
     protected WFTransition fromDTO(WFTransitionDto dto, WFTransition wfTransitionToUpdate) {
-        WFTransition wfTransition = new WFTransition();
-        if (wfTransitionToUpdate != null) {
-            wfTransition = wfTransitionToUpdate;
+        WFTransition wfTransition = wfTransitionToUpdate;
+        if (wfTransitionToUpdate == null) {
+            wfTransition = new WFTransition();
+            if (dto.getUuid() != null) {
+                wfTransition.setUuid(dto.getUuid());
+            }
         }
 
         wfTransition.setFromStatus(dto.getFromStatus());
@@ -231,6 +260,15 @@ public class WFTransitionApi extends BaseApi {
         return wfTransition;
     }
 
+    /**
+     * Create new workflow decision rule by name
+     * 
+     * @param name Workflow decision rule name
+     * @param value Workflow decision rule value
+     * @throws EntityDoesNotExistsException lookup entity does not exist
+     * @throws BusinessException generic business exception
+     * @return Workflow decision rule entity
+     */
     protected WFDecisionRule createNewWFDecisionRuleByName(String name, String value) throws EntityDoesNotExistsException, BusinessException {
         WFDecisionRule wfDecisionRule = wfDecisionRuleService.getWFDecisionRuleByName(name);
         if (wfDecisionRule == null) {
@@ -241,7 +279,6 @@ public class WFTransitionApi extends BaseApi {
         newWFDecisionRule.setConditionEl(wfDecisionRule.getConditionEl());
         newWFDecisionRule.setName(wfDecisionRule.getName());
         newWFDecisionRule.setType(wfDecisionRule.getType());
-        newWFDecisionRule.setDisabled(Boolean.FALSE);
         newWFDecisionRule.setValue(value);
         wfDecisionRuleService.create(newWFDecisionRule);
         return newWFDecisionRule;

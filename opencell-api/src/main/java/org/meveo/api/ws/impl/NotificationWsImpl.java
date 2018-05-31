@@ -255,4 +255,82 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
 
         return result;
     }
+
+    @Override
+    public ActionStatus enableNotification(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            notificationApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableNotification(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            notificationApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableWebHookNotification(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            webhookNotificationApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableWebHookNotification(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            webhookNotificationApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableEmailNotification(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            emailNotificationApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableEmailNotification(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            emailNotificationApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

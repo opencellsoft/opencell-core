@@ -10,6 +10,7 @@ import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
@@ -18,6 +19,7 @@ import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.JobWs;
+import org.meveo.model.jobs.JobCategoryEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -56,13 +58,13 @@ public class JobWsImpl extends BaseWs implements JobWs {
     public ActionStatus stop(String jobInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-             jobApi.stopJob(jobInstanceCode);           
+            jobApi.stopJob(jobInstanceCode);
         } catch (Exception e) {
             processException(e, result);
         }
         return result;
     }
-    
+
     @Override
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -203,5 +205,66 @@ public class JobWsImpl extends BaseWs implements JobWs {
         return result;
     }
 
+    @Override
+    public ActionStatus enableJobInstance(String code) {
+        ActionStatus result = new ActionStatus();
 
+        try {
+            jobInstanceApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableJobInstance(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            jobInstanceApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableTimer(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            timerEntityApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableTimer(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            timerEntityApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public JobCategoriesResponseDto listCategories() {
+        JobCategoriesResponseDto result = new JobCategoriesResponseDto();
+        try {
+            result.setJobCategories(JobCategoryEnum.values());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
 }

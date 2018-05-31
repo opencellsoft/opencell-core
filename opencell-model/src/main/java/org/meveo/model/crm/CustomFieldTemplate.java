@@ -35,8 +35,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
@@ -68,7 +68,7 @@ import org.meveo.model.shared.DateUtils;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class CustomFieldTemplate extends BusinessEntity implements Comparable<CustomFieldTemplate> {
+public class CustomFieldTemplate extends EnableBusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
 
@@ -572,11 +572,11 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
         if (code == null && other.getCode() != null) {
             return false;
-        } else if (!code.equals(other.getCode())) {
+        } else if (code != null && !code.equals(other.getCode())) {
             return false;
         } else if (appliesTo == null && other.getAppliesTo() != null) {
             return false;
-        } else if (!appliesTo.equals(other.getAppliesTo())) {
+        } else if (appliesTo != null && !appliesTo.equals(other.getAppliesTo())) {
             return false;
         }
         return true;

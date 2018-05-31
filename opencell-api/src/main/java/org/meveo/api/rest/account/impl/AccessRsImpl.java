@@ -101,4 +101,32 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
 
         return result;
     }
+
+    @Override
+    public ActionStatus enable(String accessCode, String subscriptionCode) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accessApi.enableOrDisable(accessCode, subscriptionCode, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String accessCode, String subscriptionCode) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accessApi.enableOrDisable(accessCode, subscriptionCode, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

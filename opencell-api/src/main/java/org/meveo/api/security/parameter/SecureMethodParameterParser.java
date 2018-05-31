@@ -13,7 +13,7 @@ import org.slf4j.Logger;
  * 
  * @author tonys
  *
- * @param <T>
+ * @param <T> the type of the entity
  */
 public abstract class SecureMethodParameterParser<T> {
 

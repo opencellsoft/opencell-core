@@ -6351,7 +6351,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3fda79ed-932e-4372-ab30-21d08fcab761" name="Contains 101">
               <con:configuration>
-                <token>&lt;childEntityValue code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1" description="child entity 1" cetCode="${#Project#baseEntityPrefix}_CET"></token>
+                <token>&lt;childEntityValue cetCode="${#Project#baseEntityPrefix}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1" description="child entity 1"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -7135,7 +7135,7 @@ public class Action1 extends Script {
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_CHILD_ENTITY_LIST_NV">
                      <listValue>
                         <value>
-                           <childEntityValue code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_2" description="child entity 2" cetCode="${#Project#baseEntityPrefix}_CET">
+                           <childEntityValue cetCode="${#Project#baseEntityPrefix}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_2" description="child entity 2">
                               <disabled>false</disabled>
                               <customFields>
                                  <customField code="${#Project#baseEntityPrefix}_CET_CFT1">
@@ -7145,7 +7145,7 @@ public class Action1 extends Script {
                            </childEntityValue>
                         </value>
                         <value>
-                           <childEntityValue code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_3" description="child entity 3" cetCode="${#Project#baseEntityPrefix}_CET">
+                           <childEntityValue cetCode="${#Project#baseEntityPrefix}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_3" description="child entity 3">
                               <disabled>false</disabled>
                               <customFields>
                                  <customField code="${#Project#baseEntityPrefix}_CET_CFT2">
@@ -13094,7 +13094,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET" name="Custom Entity one" description="Custom entity template one"></token>
+                <token>&lt;customEntityTemplate name="Custom Entity one" code="${#Project#entityPrefix}_${#TestSuite#index}_CET" description="Custom entity template one"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -13102,6 +13102,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1">
+                     <disabled>false</disabled>
                      <fieldType>STRING</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13122,6 +13123,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2">
+                     <disabled>false</disabled>
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13140,10 +13142,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="4e54810e-c205-4378-b8bc-57c1f6dbae02" name="Contains 4">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{!entity.active}</applicableOnEl>
                      <label>Action 1</label>
                      <script code="Action1">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
@@ -13155,10 +13159,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="62bbf5c3-270b-46c1-8dca-5723dd3e4193" name="Contains 5">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION2" description="Action 2" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION2" description="Action 2">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active}</applicableOnEl>
                      <label>Action 2</label>
                      <script code="Action2">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -13257,7 +13263,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="021f9c3e-4f5b-4bd0-90d2-facf58ab85a0" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityInstance code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI" cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET"></token>
+                <token>&lt;customEntityInstance cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -13494,7 +13500,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET" name="Custom Entity one again" description="Custom entity template one again"></token>
+                <token>&lt;customEntityTemplate name="Custom Entity one again" code="${#Project#entityPrefix}_${#TestSuite#index}_CET" description="Custom entity template one again"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -13502,6 +13508,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3" description="Custom field 1">
+                     <disabled>false</disabled>
                      <fieldType>STRING</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13522,6 +13529,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3">
               <con:configuration>
                 <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Custom field 2">
+                     <disabled>false</disabled>
                      <fieldType>LONG</fieldType>
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
@@ -13540,10 +13548,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="96f00e2d-f3fa-4a40-b9b8-3737acb19212" name="Contains 4">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active and entity.code!='test'}</applicableOnEl>
                      <label>Action 1</label>
                      <script code="Action1">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
@@ -13555,10 +13565,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="151c124b-d993-4152-a936-036410e0b528" name="Contains 5">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION3" description="Action 3" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET">
+                <token><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION3" description="Action 3">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active}</applicableOnEl>
                      <label>Action 3</label>
                      <script code="Action3">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action3 extends Script {}</script>
@@ -13657,7 +13669,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="26b8b38e-b32e-4b43-aca7-22edecc0c7b2" name="Contains 1">
               <con:configuration>
-                <token>&lt;customEntityInstance code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI instance" cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET"></token>
+                <token>&lt;customEntityInstance cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI instance"></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -31003,6 +31015,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <languageDescriptions>
     <languageCode>FRA</languageCode>
     <description>French potatoes</description>
@@ -31035,6 +31048,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>LONG</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31057,9 +31071,11 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 1</label>
   <script code="Action1">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
@@ -31074,6 +31090,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 2</label>
   <labelsTranslated>
@@ -31085,6 +31102,7 @@ public class Action1 extends Script {
     <description>English pudding</description>
   </labelsTranslated>
   <script code="Action2">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -31100,6 +31118,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31127,6 +31146,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31155,6 +31175,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31292,6 +31313,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <languageDescriptions>
     <languageCode>FRA</languageCode>
     <description>French potatoes</description>
@@ -31324,6 +31346,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31346,6 +31369,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 2</label>
   <labelsTranslated>
@@ -31357,6 +31381,7 @@ public class Action1 extends Script {
     <description>English pudding</description>
   </labelsTranslated>
   <script code="Action2">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -31372,9 +31397,11 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 3</label>
   <script code="Action3">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action3 extends Script {}</script>
@@ -31508,6 +31535,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <languageDescriptions>
     <languageCode>FRA</languageCode>
     <description>French potatoes</description>
@@ -31540,6 +31568,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -31562,6 +31591,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 2</label>
   <labelsTranslated>
@@ -31573,6 +31603,7 @@ public class Action1 extends Script {
     <description>English pudding - updated</description>
   </labelsTranslated>
   <script code="Action2">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
@@ -31588,9 +31619,11 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
                 <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 3 - updated</label>
   <script code="Action34">
+<disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
                   public class Action34 extends Script {}</script>
@@ -31731,10 +31764,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="c7befb73-88f4-4c0d-b1aa-57388e608956" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" appliesTo="JOB_PurgeJob">
+                <token><![CDATA[<entityAction appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4">
+               <disabled>false</disabled>
                <applicableOnEl>#{entity.active}</applicableOnEl>
                <label>Action 4</label>
                <script code="Action4">
+                  <disabled>false</disabled>
                   <type>JAVA</type>
                   <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
@@ -31831,10 +31866,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="c7befb73-88f4-4c0d-b1aa-57388e608956" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<entityAction code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" appliesTo="JOB_PurgeJob">
+                <token><![CDATA[<entityAction appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41">
+               <disabled>false</disabled>
                <applicableOnEl>#{entity.active}</applicableOnEl>
                <label>Action 41</label>
                <script code="Action4">
+                  <disabled>false</disabled>
                   <type>JAVA</type>
                   <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
@@ -31884,10 +31921,12 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="7499f920-d4f0-4816-9e3f-ae360bd98872" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" appliesTo="JOB_PurgeJob">
+                <token><![CDATA[<action appliesTo="JOB_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41">
+                     <disabled>false</disabled>
                      <applicableOnEl>#{entity.active}</applicableOnEl>
                      <label>Action 41</label>
                      <script code="Action4">
+                        <disabled>false</disabled>
                         <type>JAVA</type>
                         <script>import org.meveo.service.script.Script;
                   public class Action4 extends Script {}</script>
@@ -32012,7 +32051,7 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:createAccountingCode>\r
          <!--Optional:-->\r
-         <accountingCode code="205.55.77.98" description="205.55.77.98">\r
+         <accountingCode code="205.55.77.98.${#TestSuite#index}" description="205.55.77.98">\r
             <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
             <!--Optional:-->\r
             <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
@@ -32052,89 +32091,84 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createInvoiceCategory>
-         
-         <invoiceCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory" description="${#Project#entityPrefix}_invoiceCategory">
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               
-               <languageCode>FRA</languageCode>
-               
-               <description>FRANCE</description>
-            </languageDescriptions>
-            
-           <customFields>
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>x</key>
-                        <value>
-                           <dateValue>2007-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>y</key>
-                        <value>
-                           <dateValue>2007-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>z</key>
-                        <value>
-                           <dateValue>2006-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>aa</key>
-                        <value>
-                           <dateValue>2006-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField> 
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>bb</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>cc</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>dd</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ee</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>
-         </invoiceCategory>
-      </ws:createInvoiceCategory>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createInvoiceCategory>\r
+         <invoiceCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory" description="${#Project#entityPrefix}_invoiceCategory">\r
+             <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>FRANCE</description>\r
+            </languageDescriptions>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>x</key>\r
+                        <value>\r
+                           <dateValue>2007-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>y</key>\r
+                        <value>\r
+                           <dateValue>2007-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>z</key>\r
+                        <value>\r
+                           <dateValue>2006-08-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>aa</key>\r
+                        <value>\r
+                           <dateValue>2006-09-01</dateValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>bb</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>cc</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_CAT_ENTITY_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>dd</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ee</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </invoiceCategory>\r
+      </ws:createInvoiceCategory>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
@@ -32166,32 +32200,28 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createInvoiceSubCategory>
-         
-         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">
-            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>
-            <accountingCode>205.55.77.98</accountingCode>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               
-               <languageCode>FRA</languageCode>
-               
-               <description>FRANCE</description>
-            </languageDescriptions>
-             <customFields>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-09-10">
-                  <stringValue>BA_STRING_VALUE_1</stringValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-08-10">
-                  <stringValue>BA_STRING_VALUE_2</stringValue>
-               </customField>
-            </customFields>
-         </invoiceSubCategory>
-      </ws:createInvoiceSubCategory>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createInvoiceSubCategory>\r
+         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">\r
+            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>\r
+            <accountingCode>205.55.77.98.${#TestSuite#index}</accountingCode>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>FRANCE</description>\r
+            </languageDescriptions>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-09-10">\r
+                  <stringValue>BA_STRING_VALUE_1</stringValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2015-08-10">\r
+                  <stringValue>BA_STRING_VALUE_2</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </invoiceSubCategory>\r
+      </ws:createInvoiceSubCategory>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
@@ -32583,32 +32613,28 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateInvoiceSubCategory>
-         
-         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">
-            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>
-            <accountingCode>205.55.77.98</accountingCode>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               
-               <languageCode>FRA</languageCode>
-               
-               <description>FRANCE</description>
-            </languageDescriptions>
-             <customFields>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2011-09-10">
-                  <stringValue>BA_STRING_VALUE_update1</stringValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2016-08-10">
-                  <stringValue>BA_STRING_VALUE_update2</stringValue>
-               </customField>
-            </customFields>
-         </invoiceSubCategory>
-      </ws:updateInvoiceSubCategory>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateInvoiceSubCategory>\r
+         <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">\r
+            <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>\r
+            <accountingCode>205.55.77.98.${#TestSuite#index}</accountingCode>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>FRANCE</description>\r
+            </languageDescriptions>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2011-09-10">\r
+                  <stringValue>BA_STRING_VALUE_update1</stringValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_INV_SUB_CAT_STRING_SINGLE_VC" valueDate="2016-08-10">\r
+                  <stringValue>BA_STRING_VALUE_update2</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </invoiceSubCategory>\r
+      </ws:updateInvoiceSubCategory>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">

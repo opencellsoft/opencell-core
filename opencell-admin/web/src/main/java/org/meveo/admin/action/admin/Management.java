@@ -101,6 +101,8 @@ public class Management implements Serializable {
 
     /**
      * Checks if connection is available.
+     * 
+     * @return True if connection is available
      */
     public boolean checkConnection() {
         connect();

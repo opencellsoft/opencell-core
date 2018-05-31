@@ -73,9 +73,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     private Long customerAccountId;
 
     @Inject
-    private Messages messages;
-
-    @Inject
     private CounterInstanceService counterInstanceService;
 
     private boolean returnToAgency;
@@ -136,11 +133,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         return customerAccountId;
     }
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -162,9 +154,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         return null;
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
     @Override
     protected IPersistenceService<BillingAccount> getPersistenceService() {
         return billingAccountService;
@@ -250,6 +239,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Item selector getter. Item selector keeps a state of multiselect checkboxes.
+     * 
+     * @return ListItemsSelector of BillingAccount
      */
     // TODO: @BypassInterceptors
     public ListItemsSelector<BillingAccount> getItemSelector() {
@@ -261,6 +252,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Check/uncheck all select boxes.
+     * 
+     * @param event notification that the local value of the source component has been changed
      */
     public void checkUncheckAll(ValueChangeEvent event) {
         itemSelector.switchMode();
@@ -268,6 +261,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Listener of select changed event.
+     * @param event Value change event
      */
     public void selectChanged(ValueChangeEvent event) {
         BillingAccount entity = getLazyDataModel().getRowData();

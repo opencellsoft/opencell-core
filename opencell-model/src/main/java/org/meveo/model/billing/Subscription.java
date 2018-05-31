@@ -66,8 +66,9 @@ import org.meveo.model.shared.DateUtils;
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
-@NamedQueries({ @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date"),
-        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate"),
+@NamedQueries({
+        @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
+        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
 public class Subscription extends BusinessCFEntity {
@@ -157,11 +158,11 @@ public class Subscription extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
-    
+
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
-    
+
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
@@ -412,7 +413,7 @@ public class Subscription extends BusinessCFEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
-    }
+    }   
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
@@ -421,4 +422,12 @@ public class Subscription extends BusinessCFEntity {
 
     }
 
+    /**
+     * Is subscription active
+     * 
+     * @return True if Status is ACTIVE
+     */
+    public boolean isActive() {
+        return SubscriptionStatusEnum.ACTIVE == status;
+    }
 }

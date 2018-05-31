@@ -75,7 +75,7 @@ public class CalendarDaily extends Calendar {
             calendar.set(java.util.Calendar.MINUTE, hourInDay.getMinute());
             Date d = calendar.getTime();
             long dist = d.getTime() - date.getTime();
-            if (dist > 0 & dist < minDist) {
+            if (dist > 0 && dist < minDist) {
                 result = d;
                 minDist = dist;
             }
@@ -87,7 +87,7 @@ public class CalendarDaily extends Calendar {
                 calendar.set(java.util.Calendar.MINUTE, hourInDay.getMinute());
                 Date d = calendar.getTime();
                 long dist = d.getTime() - date.getTime();
-                if (dist > 0 & dist < minDist) {
+                if (dist > 0 && dist < minDist) {
                     result = d;
                     minDist = dist;
                 }
@@ -118,7 +118,7 @@ public class CalendarDaily extends Calendar {
             calendar.set(java.util.Calendar.MINUTE, hourInDay.getMinute());
             Date d = calendar.getTime();
             long dist = d.getTime() - date.getTime();
-            if (dist <= 0 & dist > minDist) {
+            if (dist <= 0 && dist > minDist) {
                 result = d;
                 minDist = dist;
             }
@@ -130,7 +130,7 @@ public class CalendarDaily extends Calendar {
                 calendar.set(java.util.Calendar.MINUTE, hourInDay.getMinute());
                 Date d = calendar.getTime();
                 long dist = d.getTime() - date.getTime();
-                if (dist <= 0 & dist > minDist) {
+                if (dist <= 0 && dist > minDist) {
                     result = d;
                     minDist = dist;
                 }

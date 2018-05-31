@@ -69,7 +69,7 @@ public class WFTransitionDto extends BaseDto {
     /** The list WF action dto. */
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
-    private List<WFActionDto> listWFActionDto = new ArrayList<WFActionDto>();
+    private List<WFActionDto> listWFActionDto = new ArrayList<>();
 
     /** The list WF decision rule dto. */
     @XmlElementWrapper(name = "decisionRules")

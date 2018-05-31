@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.admin.User;
@@ -29,7 +29,7 @@ import org.meveo.model.security.Role;
 @Table(name = "dwh_chart", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @Inheritance(strategy = InheritanceType.JOINED)
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_chart_seq"), })
-public class Chart extends BusinessEntity {
+public class Chart extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 7127515648757614672L;
 

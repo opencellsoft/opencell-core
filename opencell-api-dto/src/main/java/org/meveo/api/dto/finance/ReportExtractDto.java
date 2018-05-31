@@ -4,30 +4,26 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-
-import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 
 /**
- * The Class ReportExtractDto.
+ * DTO class for ReportExtract entity
  *
  * @author Edward P. Legaspi
- * @version %I%, %G%
  * @since 5.0
  * @lastModifiedVersion 5.0
  */
-public class ReportExtractDto extends BusinessEntityDto {
+public class ReportExtractDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3600792942683148893L;
 
     /** The script type. */
-    @NotNull
     private ReportExtractScriptTypeEnum scriptType;
 
     /** The filename format. */
-    @NotNull
     private String filenameFormat;
 
     /** The category. */
@@ -35,18 +31,50 @@ public class ReportExtractDto extends BusinessEntityDto {
 
     /** The script instance code. */
     private String scriptInstanceCode;
-    
+
     /** The sql query. */
     private String sqlQuery;
-    
+
     /** The params. */
     private Map<String, String> params = new HashMap<>();
-    
+
     /** The start date. */
     private Date startDate;
-    
+
     /** The end date. */
     private Date endDate;
+
+    /**
+     * Instantiate a new ReportExtract DTO
+     */
+    public ReportExtractDto() {
+    }
+
+    /**
+     * Convert ReportExtract entity to DTO
+     * 
+     * @param reportExtract Entity to convert
+     */
+    public ReportExtractDto(ReportExtract reportExtract) {
+        super(reportExtract);
+
+        setCategory(reportExtract.getCategory());
+        setCode(reportExtract.getCode());
+        setDescription(reportExtract.getDescription());
+        setEndDate(reportExtract.getEndDate());
+        setFilenameFormat(reportExtract.getFilenameFormat());
+        setParams(reportExtract.getParams());
+        setStartDate(reportExtract.getStartDate());
+        setScriptType(reportExtract.getScriptType());
+        if (reportExtract.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
+            if (reportExtract.getScriptInstance() != null) {
+                setScriptInstanceCode(reportExtract.getScriptInstance().getCode());
+            }
+        } else {
+            setSqlQuery(reportExtract.getSqlQuery());
+        }
+
+    }
 
     /**
      * Gets the category.

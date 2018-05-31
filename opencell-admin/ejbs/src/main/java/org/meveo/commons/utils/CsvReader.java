@@ -483,6 +483,9 @@ public class CsvReader {
         }
     }
 
+    /**
+     * @param headers array of header of CVS file.
+     */
     @SuppressWarnings("unchecked")
     public void setHeaders(String[] headers) {
         headersHolder.Headers = headers;
@@ -496,8 +499,10 @@ public class CsvReader {
         }
 
         // use headersHolder.Length here in case headers is null
-        for (int i = 0; i < headersHolder.Length; i++) {
-            headersHolder.IndexByName.put(headers[i], new Integer(i));
+        if (headers != null) {
+            for (int i = 0; i < headersHolder.Length; i++) {
+                headersHolder.IndexByName.put(headers[i], new Integer(i));
+            }
         }
     }
 

@@ -112,17 +112,16 @@ public class InvoiceTypeApi extends BaseApi {
                 if (seller == null) {
                     throw new EntityDoesNotExistsException(Seller.class, entry.getKey());
                 }
-                if (entry.getValue().getSequenceSize().intValue() < 0) {
+                SequenceDto value = entry.getValue();
+                if (value == null || value.getSequenceSize().intValue() < 0) {
                     throw new MeveoApiException("sequence size value must be positive");
                 }
-                if (entry.getValue().getCurrentInvoiceNb().intValue() < 0) {
+
+                if (value == null || value.getCurrentInvoiceNb().intValue() < 0) {
                     throw new MeveoApiException("current invoice number value must be positive");
                 }
-                if (entry.getValue() == null) {
-                    invoiceType.getSellerSequence().remove(seller);
-                } else {
-                    invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
-                }
+
+                invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, value.fromDto()));
             }
         }
         invoiceType.setMatchingAuto(postData.isMatchingAuto());

@@ -18,6 +18,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -389,8 +390,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
 
-        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date()).getResultList();
-        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date()).getResultList());
+        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date())
+            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList();
+        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date())
+            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList());
 
         return ids;
     }

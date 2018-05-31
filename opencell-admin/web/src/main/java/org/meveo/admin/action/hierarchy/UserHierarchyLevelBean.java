@@ -72,8 +72,6 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     private Boolean showUserGroupDetail = Boolean.FALSE;
 
-    private static final Logger log = LoggerFactory.getLogger(UserHierarchyLevelBean.class);
-
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link org.meveo.admin.action.BaseBean}.
      */

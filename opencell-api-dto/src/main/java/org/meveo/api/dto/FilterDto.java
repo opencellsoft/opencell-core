@@ -7,13 +7,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.filter.Filter;
 
 /**
- * The Class FilterDto.
+ * DTO class for Filter entity
  *
  * @author Tyshan Shi
  */
 @XmlRootElement(name = "Filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterDto extends BusinessDto {
+public class FilterDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -23,6 +23,25 @@ public class FilterDto extends BusinessDto {
 
     /** The input xml. */
     private String inputXml;
+
+    /**
+     * Instantiate a new Filter Dto
+     */
+    public FilterDto() {
+
+    }
+
+    /**
+     * Convert Filter entity to DTO
+     * 
+     * @param filter Entity to convert
+     */
+    public FilterDto(Filter filter) {
+        super(filter);
+
+        shared = filter.getShared();
+        inputXml = filter.getInputXml();
+    }
 
     /**
      * Gets the shared.
@@ -60,21 +79,6 @@ public class FilterDto extends BusinessDto {
         this.inputXml = inputXml;
     }
 
-    /**
-     * To dto.
-     *
-     * @param filter the filter
-     * @return the filter dto
-     */
-    public static FilterDto toDto(Filter filter) {
-        FilterDto dto = new FilterDto();
-        dto.setCode(filter.getCode());
-        dto.setDescription(filter.getDescription());
-        dto.setShared(filter.getShared());
-        dto.setInputXml(filter.getInputXml());
-        return dto;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -84,5 +88,4 @@ public class FilterDto extends BusinessDto {
     public String toString() {
         return "FilterDto [code=" + getCode() + ", description=" + getDescription() + ", shared=" + shared + ", inputXml=" + inputXml + "]";
     }
-
 }

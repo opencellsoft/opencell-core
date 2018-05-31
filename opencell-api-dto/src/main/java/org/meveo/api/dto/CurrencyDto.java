@@ -12,21 +12,29 @@ import org.meveo.model.billing.TradingCurrency;
  * The Class CurrencyDto.
  *
  * @author Edward P. Legaspi
- * @deprecated will be renammed to TradingCurrencyDto
  */
 @XmlRootElement(name = "Currency")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyDto extends BaseDto {
+public class CurrencyDto extends BaseDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 9143645109603442839L;
 
-    /** The code. */
+    /**
+     * Currency code
+     */
     @XmlAttribute(required = true)
     private String code;
 
-    /** The description. */
+    /**
+     * Description
+     */
     private String description;
+
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
     /**
      * Instantiates a new currency dto.
@@ -43,6 +51,7 @@ public class CurrencyDto extends BaseDto {
     public CurrencyDto(TradingCurrency tradingCurrency) {
         code = tradingCurrency.getCurrencyCode();
         description = tradingCurrency.getPrDescription();
+        disabled = tradingCurrency.isDisabled();
     }
 
     /**
@@ -91,12 +100,18 @@ public class CurrencyDto extends BaseDto {
         this.description = description;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
-    public String toString() {
-        return "CurrencyDto [code=" + code + ", description=" + description + "]";
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public String toString() {
+        return "CurrencyDto [code=" + code + ", description=" + description + ", disabled=" + disabled + "]";
+    }
 }

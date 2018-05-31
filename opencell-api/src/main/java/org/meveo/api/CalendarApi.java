@@ -209,7 +209,7 @@ public class CalendarApi extends BaseApi {
                 ((CalendarYearly) calendar).setDays(days);
             }
 
-        } else if (calendar instanceof CalendarYearly) {
+        } else if (calendar instanceof CalendarDaily) {
             if (postData.getHours() != null && postData.getHours().size() > 0) {
                 List<HourInDay> hours = new ArrayList<HourInDay>();
                 for (HourInDayDto d : postData.getHours()) {

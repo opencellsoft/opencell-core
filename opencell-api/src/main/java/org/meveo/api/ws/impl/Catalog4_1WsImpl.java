@@ -749,7 +749,7 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessOfferModelCode);
+            moduleApi.remove(businessOfferModelCode);
         } catch (Exception e) {
             processException(e, result);
         }

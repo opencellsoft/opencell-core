@@ -47,16 +47,16 @@ public class OfferServiceTemplateDto implements Serializable {
     /**
      * Instantiates a new offer service template dto.
      *
-     * @param offerServiceTemplate the OfferServiceTemplate entity
+     * @param e the OfferServiceTemplate entity
      * @param customFields the custom fields
      */
-    public OfferServiceTemplateDto(OfferServiceTemplate offerServiceTemplate, CustomFieldsDto customFields) {
-        if (offerServiceTemplate.getServiceTemplate() != null) {
-            serviceTemplate = new ServiceTemplateDto(offerServiceTemplate.getServiceTemplate(), customFields);
+    public OfferServiceTemplateDto(OfferServiceTemplate e, CustomFieldsDto customFields, boolean loadServiceChargeTemplate) {
+        if (e.getServiceTemplate() != null) {
+            serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), customFields, loadServiceChargeTemplate);
         }
-        mandatory = offerServiceTemplate.isMandatory();
-        if (offerServiceTemplate.getIncompatibleServices() != null) {
-            for (ServiceTemplate st : offerServiceTemplate.getIncompatibleServices()) {
+        mandatory = e.isMandatory();
+        if (e.getIncompatibleServices() != null) {
+            for (ServiceTemplate st : e.getIncompatibleServices()) {
                 incompatibleServices.add(new ServiceTemplateDto(st));
             }
         }

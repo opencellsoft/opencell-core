@@ -36,13 +36,10 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.status(Response.Status.CREATED).entity(productQuote);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -58,14 +55,11 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok().entity(productQuote);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -85,14 +79,11 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 //            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -107,14 +98,11 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok().entity(productQuote);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @SuppressWarnings("hiding")
@@ -130,14 +118,11 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return buildResponse(responseBuilder);
     }
 
     @Override
@@ -151,13 +136,37 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok().entity(productOrder);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
+        return buildResponse(responseBuilder);
+    }
+
+    /**
+     * @param result action result
+     * @param responseBuilder builder response
+     * @param e exception happened
+     */
+    private void processExceptionAndSetBuilder(ActionStatus result, Response.ResponseBuilder responseBuilder, Exception e) {
+        processException(e, result);
+        if (responseBuilder != null) {
+            responseBuilder.entity(result);
+        }
+    }
+
+    /**
+     * @param responseBuilder response builder
+     * @return instance of Response.
+     */
+    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
+        Response response = null;
+        if (responseBuilder != null) {
+            response = responseBuilder.build();
+            log.debug("RESPONSE={}", response.getEntity());
+        }
+        
+        
         return response;
     }
 }

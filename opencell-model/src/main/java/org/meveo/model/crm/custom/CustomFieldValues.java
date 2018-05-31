@@ -286,6 +286,10 @@ public class CustomFieldValues implements Serializable {
         }
 
         CustomFieldValue valueByPeriod = getCfValueByPeriod(cfCode, period, true, true);
+        if (valueByPeriod == null) {
+            return valueByPeriod;
+        }
+
         if (priority == null) {
             valueByPeriod.setPriority(0);
         } else if (priority.intValue() >= 0) {

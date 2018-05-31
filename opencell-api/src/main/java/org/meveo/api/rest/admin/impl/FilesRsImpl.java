@@ -23,9 +23,6 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
 	@Inject
 	private FilesApi filesApi;
 	
-	@Context 
-	private HttpServletResponse httpServletResponse;
-
 	@Override
 	public GetFilesResponseDto listFiles() {
 		GetFilesResponseDto result = new GetFilesResponseDto();

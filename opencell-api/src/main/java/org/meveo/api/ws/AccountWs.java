@@ -23,7 +23,6 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
@@ -55,6 +54,9 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @author anasseh
+ * 
+ * @lastModifiedVersion willBeSetHere
  **/
 @WebService
 public interface AccountWs extends IBaseWs {
@@ -432,6 +434,26 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
 
+    /**
+     * Enable an Access point with a given access code and subscription code.
+     * 
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
+
+    /**
+     * Disable an Access point with a given access code and subscription code.
+     * 
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode);
+
     @WebMethod
     AccessesResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
 
@@ -518,11 +540,6 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updatePaymentMethod(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "aoId") Long aoId,
             @WebParam(name = "paymentMethod") PaymentMethodEnum paymentMethod);
 
-    // dunning
-
-    @WebMethod
-    ActionStatus dunningInclusionExclusion(@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
-
     // title
 
     @WebMethod
@@ -562,6 +579,24 @@ public interface AccountWs extends IBaseWs {
 
     @WebMethod
     ActionStatus installBusinessAccountModel(@WebParam(name = "businessAccountModelDto") BusinessAccountModelDto postData);
+
+    /**
+     * Enable an Business Account model by its code
+     * 
+     * @param code Business Account model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableBusinessAccountModel(@WebParam(name = "code") String code);
+
+    /**
+     * Disable an Business Account model by its code
+     * 
+     * @param code Business Account model code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableBusinessAccountModel(@WebParam(name = "code") String code);
 
     // Account Hierarchy
 

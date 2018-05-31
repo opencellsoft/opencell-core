@@ -45,7 +45,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
@@ -55,7 +55,7 @@ import org.meveo.model.ExportIdentifier;
         @Parameter(name = "sequence_name", value = "wf_transition_seq"), })
 @NamedQueries({
         @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where (wft.fromStatus=:fromStatusValue or wft.fromStatus='*') and workflow=:workflowValue order by priority ASC") })
-public class WFTransition extends EnableEntity implements Comparable<WFTransition> {
+public class WFTransition extends BaseEntity implements Comparable<WFTransition> {
 
     private static final long serialVersionUID = 1L;
 
@@ -211,7 +211,7 @@ public class WFTransition extends EnableEntity implements Comparable<WFTransitio
         }
         if (StringUtils.isBlank(elWithoutBrackets)) {
             return combinedDecisionRuleEL.substring(5);
-        } else if (combinedDecisionRuleEL.toString().startsWith(AND)) {
+        } else if (trimmedEl != null && combinedDecisionRuleEL.toString().startsWith(AND)) {
             combinedEl.append(trimmedEl.substring(0, trimmedEl.length() - 1)).append(combinedDecisionRuleEL).append("}");
         }
         return combinedEl.toString();
@@ -242,13 +242,19 @@ public class WFTransition extends EnableEntity implements Comparable<WFTransitio
         }
 
         WFTransition other = (WFTransition) obj;
-        if (getId() == null) {
-            if (other.getId() != null) {
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (uuid == null) {
+            if (other.getUuid() != null) {
                 return false;
             }
-        } else if (!getId().equals(other.getId())) {
+        } else if (!uuid.equals(other.getUuid())) {
             return false;
         }
+
         return true;
     }
 

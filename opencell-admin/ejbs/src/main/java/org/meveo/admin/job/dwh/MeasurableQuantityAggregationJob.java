@@ -33,9 +33,6 @@ public class MeasurableQuantityAggregationJob extends Job {
     @Inject
     private MeasuredValueService mvService;
 
-    @Inject
-    private JobExecutionService jobExecutionService;
-
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {

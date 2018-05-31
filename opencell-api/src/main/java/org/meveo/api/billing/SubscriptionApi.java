@@ -27,6 +27,7 @@ import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.api.dto.billing.ProductInstanceDto;
+import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
@@ -41,6 +42,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -81,6 +83,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
@@ -98,7 +101,8 @@ import org.meveo.service.order.OrderService;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -150,6 +154,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
+    
+    @Inject
+    private RecurringChargeInstanceService recurringChargeInstanceService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -159,9 +166,6 @@ public class SubscriptionApi extends BaseApi {
      * @param postData The subscription dto
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
-     * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -245,9 +249,6 @@ public class SubscriptionApi extends BaseApi {
      * @param postData subscription Dto
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
-     * 
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -335,8 +336,6 @@ public class SubscriptionApi extends BaseApi {
      * @param activateServicesDto activateServicesDto
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException Business exception
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void activateServices(ActivateServicesRequestDto activateServicesDto) throws MeveoApiException, BusinessException {
 
@@ -534,8 +533,6 @@ public class SubscriptionApi extends BaseApi {
      * @param instantiateServicesDto instantiateServices Dto
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException Business exception
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
      */
     public void instantiateServices(InstantiateServicesRequestDto instantiateServicesDto) throws MeveoApiException, BusinessException {
 
@@ -952,6 +949,7 @@ public class SubscriptionApi extends BaseApi {
      * Find subscription 
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
+     * @param inheritCF Custom field inheritance type
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
@@ -1356,28 +1354,34 @@ public class SubscriptionApi extends BaseApi {
      */
     private void suspendOrResumeServices(OperationServicesRequestDto postData, boolean isToSuspend)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
+        String subscriptionCode = null;
         if (postData == null) {
             missingParameters.add("provisionningServicesRequestDto");
+        } else {
+            subscriptionCode = postData.getSubscriptionCode();
         }
 
-        if (StringUtils.isBlank(postData.getSubscriptionCode())) {
+        if (postData != null && StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
-        for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
-            ServiceInstance serviceInstanceToSuspend = getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
-                isToSuspend ? InstanceStatusEnum.ACTIVE : InstanceStatusEnum.SUSPENDED);
 
-            if (isToSuspend) {
-                serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
-            } else {
-                serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+        if (postData != null) {
+            for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
+                ServiceInstance serviceInstanceToSuspend = getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
+                    isToSuspend ? InstanceStatusEnum.ACTIVE : InstanceStatusEnum.SUSPENDED);
+
+                if (isToSuspend) {
+                    serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+                } else {
+                    serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+                }
             }
         }
     }
@@ -1672,6 +1676,43 @@ public class SubscriptionApi extends BaseApi {
             result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsDTO(p, true))).collect(Collectors.toList());
         }
 
+        return result;
+    }
+
+    
+    /**
+     * Rate subscription.
+     *
+     * @param postData the post data
+     * @throws BusinessException the business exception
+     * @throws MissingParameterException the missing parameter exception
+     * @throws InvalidParameterException 
+     */
+    public RateSubscriptionResponseDto rateSubscription(RateSubscriptionRequestDto postData) throws BusinessException, MissingParameterException, InvalidParameterException {
+       
+        String subscriptionCode = postData.getSubscriptionCode();
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+        Date today = new Date();
+        if (postData.getRateUntilDate() == null) {
+            postData.setRateUntilDate(today);
+        }
+        Date rateUntillDate = postData.getRateUntilDate();
+        if (today.after(rateUntillDate)) {
+            throw new InvalidParameterException("rateUntilDate", String.valueOf(rateUntillDate));
+        }
+
+        handleMissingParameters();
+
+        RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
+        
+        // Recurring charges : 
+        List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode, false);
+        for (Long chargeId : activeRecurringChargeIds) {
+            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate);
+            result.addResult(chargeId, nbRating);
+        }
         return result;
     }
 }

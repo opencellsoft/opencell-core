@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.ScriptInstanceDto;
@@ -45,6 +46,7 @@ import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.WorkflowDto;
+import org.meveo.model.IEntity;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.ModuleLicenseEnum;
 
@@ -55,7 +57,7 @@ import org.meveo.model.module.ModuleLicenseEnum;
  */
 @XmlRootElement(name = "Module")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MeveoModuleDto extends BaseDataModelDto {
+public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -75,40 +77,23 @@ public class MeveoModuleDto extends BaseDataModelDto {
 
     /** The module items. */
     @XmlElementWrapper(name = "moduleItems")
-	@XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class),
-			@XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class),
-			@XmlElement(name = "filter", type = FilterDto.class),
-			@XmlElement(name = "jobInstance", type = JobInstanceDto.class),
-			@XmlElement(name = "script", type = ScriptInstanceDto.class),
-			@XmlElement(name = "notification", type = NotificationDto.class),
-			@XmlElement(name = "timerEntity", type = TimerEntityDto.class),
-			@XmlElement(name = "emailNotif", type = EmailNotificationDto.class),
-			@XmlElement(name = "jobTrigger", type = JobTriggerDto.class),
-			@XmlElement(name = "webhookNotif", type = WebHookDto.class),
-			@XmlElement(name = "counter", type = CounterTemplateDto.class),
-			@XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class),
-			@XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class),
-			@XmlElement(name = "businessProductModel", type = BusinessProductModelDto.class),
-			@XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class),
-			@XmlElement(name = "subModule", type = MeveoModuleDto.class),
-			@XmlElement(name = "measurableQuantity", type = MeasurableQuantityDto.class),
-			@XmlElement(name = "pieChart", type = PieChartDto.class),
-			@XmlElement(name = "lineChart", type = LineChartDto.class),
-			@XmlElement(name = "barChart", type = BarChartDto.class),
-			@XmlElement(name = "recurringChargeTemplate", type = RecurringChargeTemplateDto.class),
-			@XmlElement(name = "usageChargeTemplate", type = UsageChargeTemplateDto.class),
-			@XmlElement(name = "oneShotChargeTemplate", type = OneShotChargeTemplateDto.class),
-			@XmlElement(name = "productChargeTemplate", type = ProductChargeTemplateDto.class),
-			@XmlElement(name = "counterTemplate", type = CounterTemplateDto.class),
-			@XmlElement(name = "pricePlanMatrix", type = PricePlanMatrixDto.class),
-			@XmlElement(name = "entityCustomAction", type = EntityCustomActionDto.class),
-			@XmlElement(name = "workflow", type = WorkflowDto.class),
-			@XmlElement(name = "offerTemplate", type = OfferTemplateDto.class),
-			@XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
-			@XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class),
-			@XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
-			@XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class),
-			@XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class), })
+    @XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class), @XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class),
+            @XmlElement(name = "filter", type = FilterDto.class), @XmlElement(name = "jobInstance", type = JobInstanceDto.class),
+            @XmlElement(name = "script", type = ScriptInstanceDto.class), @XmlElement(name = "notification", type = NotificationDto.class),
+            @XmlElement(name = "timerEntity", type = TimerEntityDto.class), @XmlElement(name = "emailNotif", type = EmailNotificationDto.class),
+            @XmlElement(name = "jobTrigger", type = JobTriggerDto.class), @XmlElement(name = "webhookNotif", type = WebHookDto.class),
+            @XmlElement(name = "counter", type = CounterTemplateDto.class), @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class),
+            @XmlElement(name = "businessServiceModel", type = BusinessServiceModelDto.class), @XmlElement(name = "businessProductModel", type = BusinessProductModelDto.class),
+            @XmlElement(name = "businessOfferModel", type = BusinessOfferModelDto.class), @XmlElement(name = "subModule", type = MeveoModuleDto.class),
+            @XmlElement(name = "measurableQuantity", type = MeasurableQuantityDto.class), @XmlElement(name = "pieChart", type = PieChartDto.class),
+            @XmlElement(name = "lineChart", type = LineChartDto.class), @XmlElement(name = "barChart", type = BarChartDto.class),
+            @XmlElement(name = "recurringChargeTemplate", type = RecurringChargeTemplateDto.class), @XmlElement(name = "usageChargeTemplate", type = UsageChargeTemplateDto.class),
+            @XmlElement(name = "oneShotChargeTemplate", type = OneShotChargeTemplateDto.class), @XmlElement(name = "productChargeTemplate", type = ProductChargeTemplateDto.class),
+            @XmlElement(name = "counterTemplate", type = CounterTemplateDto.class), @XmlElement(name = "pricePlanMatrix", type = PricePlanMatrixDto.class),
+            @XmlElement(name = "entityCustomAction", type = EntityCustomActionDto.class), @XmlElement(name = "workflow", type = WorkflowDto.class),
+            @XmlElement(name = "offerTemplate", type = OfferTemplateDto.class), @XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
+            @XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class), @XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
+            @XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class), @XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class), })
     private List<BaseDto> moduleItems;
 
     /**

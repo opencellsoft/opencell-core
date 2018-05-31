@@ -1,8 +1,7 @@
 package org.meveo.api.dto.billing;
 
-import javax.validation.constraints.NotNull;
-
-import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.ChartOfAccountTypeEnum;
 import org.meveo.model.billing.ChartOfAccountViewTypeEnum;
 
@@ -10,11 +9,10 @@ import org.meveo.model.billing.ChartOfAccountViewTypeEnum;
  * The Class AccountingCodeDto.
  *
  * @author Edward P. Legaspi
- * @version %I%, %G%
  * @since 5.0
  * @lastModifiedVersion 5.0
  */
-public class AccountingCodeDto extends BusinessEntityDto {
+public class AccountingCodeDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8093532321068428023L;
@@ -23,16 +21,10 @@ public class AccountingCodeDto extends BusinessEntityDto {
     private String parentAccountingCode;
 
     /** The chart of account type enum. */
-    @NotNull
     private ChartOfAccountTypeEnum chartOfAccountTypeEnum;
 
     /** The chart of account view type enum. */
-    @NotNull
     private ChartOfAccountViewTypeEnum chartOfAccountViewTypeEnum;
-
-    /** The disabled. */
-    @NotNull
-    private boolean disabled = false;
 
     /** The reporting account. */
     private String reportingAccount;
@@ -42,6 +34,27 @@ public class AccountingCodeDto extends BusinessEntityDto {
 
     /** The migrated. */
     private boolean migrated = false;
+
+    /**
+     * Instantiates a new AccountingCodeDto
+     */
+    public AccountingCodeDto() {
+    }
+
+    /**
+     * Converts AccountingCode JPA entity to a DTO
+     * 
+     * @param accountingCode Entity to convert
+     */
+    public AccountingCodeDto(AccountingCode accountingCode) {
+        super(accountingCode);
+
+        setChartOfAccountTypeEnum(accountingCode.getChartOfAccountTypeEnum());
+        setChartOfAccountViewTypeEnum(accountingCode.getChartOfAccountViewTypeEnum());
+        setNotes(accountingCode.getNotes());
+        setReportingAccount(accountingCode.getReportingAccount());
+        setMigrated(accountingCode.isMigrated());
+    }
 
     /**
      * Gets the parent accounting code.
@@ -134,24 +147,6 @@ public class AccountingCodeDto extends BusinessEntityDto {
     }
 
     /**
-     * Checks if is disabled.
-     *
-     * @return true, if is disabled
-     */
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    /**
-     * Sets the disabled.
-     *
-     * @param disabled the new disabled
-     */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
-    /**
      * Checks if is migrated.
      *
      * @return true, if is migrated
@@ -168,5 +163,4 @@ public class AccountingCodeDto extends BusinessEntityDto {
     public void setMigrated(boolean migrated) {
         this.migrated = migrated;
     }
-
 }

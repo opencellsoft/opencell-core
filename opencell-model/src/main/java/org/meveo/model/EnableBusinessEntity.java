@@ -16,18 +16,42 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.util;
+package org.meveo.model;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 
-import javax.inject.Qualifier;
+import org.hibernate.annotations.Type;
 
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE })
-public @interface MeveoJpaForJobs {
+/**
+ * Tracks if entity is active or inactive. Extends Business entity
+ */
+@MappedSuperclass
+public abstract class EnableBusinessEntity extends BusinessEntity implements IEnable {
 
+    private static final long serialVersionUID = -3065599477564713189L;
+    /**
+     * Is entity disabled
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "disabled", nullable = false)
+    @NotNull
+    private boolean disabled;
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isActive() {
+        return !disabled;
+    }
+
+    public void setActive(boolean active) {
+        setDisabled(!active);
+    }
 }

@@ -84,7 +84,7 @@ public class OtherCreditAndChargeService extends
 					+ codeOCCTemplate);
 		}
 
-		if (customerAccount.getStatus() == CustomerAccountStatusEnum.CLOSE) {
+		if (customerAccount != null && customerAccount.getStatus() == CustomerAccountStatusEnum.CLOSE) {
 			log.warn("addOCC  customerAccount is closed ");
 			throw new BusinessException("customerAccount is closed");
 		}
@@ -109,13 +109,18 @@ public class OtherCreditAndChargeService extends
 		otherCreditAndCharge.setAmount(amount);
 		otherCreditAndCharge.setUnMatchingAmount(amount);
 		otherCreditAndCharge.setMatchingStatus(MatchingStatusEnum.O);
-		customerAccount.getAccountOperations().add(otherCreditAndCharge);
+		
+		if (customerAccount != null) {
+		    customerAccount.getAccountOperations().add(otherCreditAndCharge);
+		}
+		
 		create(otherCreditAndCharge);
-
-		log.info(
-				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
-				new Object[] { codeOCCTemplate, customerAccount.getCode(),
-						amount, dueDate });
+		if (customerAccount != null) {
+		    log.info(
+		        "addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
+		        new Object[] { codeOCCTemplate, customerAccount.getCode(),
+		                amount, dueDate });
+		}
 	}
 
     /**

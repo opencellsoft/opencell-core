@@ -89,4 +89,26 @@ public interface CustomEntityInstanceRs extends IBaseRs {
     @POST
     @Path("/{customEntityTemplateCode}/createOrUpdate")
     ActionStatus createOrUpdate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
+
+    /**
+     * Enable a Custom entity instance with a given code
+     * 
+     * @param customEntityTemplateCode The custom entity template's code
+     * @param code Custom entity instance code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{customEntityTemplateCode}/{code}/enable")
+    ActionStatus enable(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
+
+    /**
+     * Disable a Custom entity instance with a given code
+     * 
+     * @param customEntityTemplateCode The custom entity template's code
+     * @param code Custom entity instance code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{customEntityTemplateCode}/{code}/disable")
+    ActionStatus disable(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 }

@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.BusinessEntity;
 
-
 /**
- * The dto for business entities.
+ * Equivalent of BusinessEntity in DTO
  * 
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
+ * @lastModifiedVersion 5.0.1
  **/
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -25,12 +25,16 @@ public abstract class BusinessDto extends AuditableDto {
     @XmlAttribute()
     protected Long id;
 
-    /** The code. */
+    /**
+     * The code
+     */
     // @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
     @XmlAttribute(required = true)
     protected String code;
 
-    /** The description. */
+    /**
+     * The description
+     */
     @XmlAttribute()
     protected String description;
 
@@ -45,9 +49,9 @@ public abstract class BusinessDto extends AuditableDto {
     }
 
     /**
-     * Instantiates a new business dto.
+     * Converts BusinessEntity JPA entity to DTO
      *
-     * @param businessEntity the BusinessEntity entity
+     * @param businessEntity Entity to convert
      */
     public BusinessDto(BusinessEntity businessEntity) {
         if (businessEntity != null) {
@@ -79,10 +83,10 @@ public abstract class BusinessDto extends AuditableDto {
      *
      * @return the id
      */
-    public Long getId(){
+    public Long getId() {
         return id;
     }
-    
+
     /**
      * Sets the id.
      *
@@ -91,7 +95,7 @@ public abstract class BusinessDto extends AuditableDto {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     /**
      * Gets the code.
      *

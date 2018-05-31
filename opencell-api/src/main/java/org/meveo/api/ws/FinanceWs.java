@@ -20,23 +20,41 @@ import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtosResponse;
 @WebService
 public interface FinanceWs extends IBaseWs {
 
-	@WebMethod
-	ActionStatus createRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);
+    @WebMethod
+    ActionStatus createRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);
 
-	@WebMethod
-	ActionStatus updateRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);
+    @WebMethod
+    ActionStatus updateRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);
 
-	@WebMethod
-	ActionStatus deleteRevenueRecognitionRule(@WebParam(name = "code") String code);
+    @WebMethod
+    ActionStatus deleteRevenueRecognitionRule(@WebParam(name = "code") String code);
 
-	@WebMethod
-	RevenueRecognitionRuleDtosResponse listRevenueRecognitionRules();
+    @WebMethod
+    RevenueRecognitionRuleDtosResponse listRevenueRecognitionRules();
 
-	@WebMethod
-	RevenueRecognitionRuleDtoResponse getRevenueRecognitionRule(@WebParam(name = "code") String code);
+    @WebMethod
+    RevenueRecognitionRuleDtoResponse getRevenueRecognitionRule(@WebParam(name = "code") String code);
 
-	@WebMethod
-	ActionStatus createOrUpdateRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);
+    @WebMethod
+    ActionStatus createOrUpdateRevenueRecognitionRule(@WebParam(name = "revenueRecognitionRule") RevenueRecognitionRuleDto moduleDto);
+
+    /**
+     * Enable a Revenue recognition rule by its code
+     * 
+     * @param code Revenue recognition rule code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableRevenueRecognitionRule(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Revenue recognition rule by its code
+     * 
+     * @param code Revenue recognition rule code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableRevenueRecognitionRule(@WebParam(name = "code") String code);
 
     @WebMethod
     ActionStatus createReportExtract(@WebParam(name = "reportExtract") ReportExtractDto postData);
@@ -46,6 +64,24 @@ public interface FinanceWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateReportExtract(@WebParam(name = "reportExtract") ReportExtractDto postData);
+
+    /**
+     * Enable a Report extract by its code
+     * 
+     * @param code Report extract code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableReportExtract(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Report extract by its code
+     * 
+     * @param code Report extract code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableReportExtract(@WebParam(name = "code") String code);
 
     @WebMethod
     ActionStatus removeReportExtract(@WebParam(name = "reportExtractCode") String reportExtractCode);

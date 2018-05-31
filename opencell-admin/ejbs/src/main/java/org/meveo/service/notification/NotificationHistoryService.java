@@ -38,8 +38,10 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
 
         NotificationHistory history = new NotificationHistory();
         history.setNotification(getEntityManager().getReference(Notification.class, notification.getId()));
-        history.setEntityClassName(entity.getClass().getName());
-        history.setSerializedEntity(entity.getId() == null ? entity.toString() : entity.getId().toString());
+        if (entity != null) {
+            history.setEntityClassName(entity.getClass().getName());
+            history.setSerializedEntity(entity.getId() == null ? entity.toString() : entity.getId().toString());
+        }
         history.setResult(result);
         history.setStatus(status);
 
