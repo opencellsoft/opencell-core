@@ -476,22 +476,24 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
 
         try {
+            ServiceTemplate serviceTemplate = null;;
             if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 
             if (offerServiceTemplate != null) {
+                serviceTemplate = offerServiceTemplate.getServiceTemplate();
                 offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
             }
 
-            if (offerServiceTemplate.getId() != null) {
+            if (offerServiceTemplate != null && offerServiceTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.update.successful"));
 
             } else {
 
                 // Validate that such service was not added earlier
-                if (entity.containsServiceTemplate(offerServiceTemplate.getServiceTemplate())) {
-                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), offerServiceTemplate.getServiceTemplate().getDescriptionOrCode());
+                if (serviceTemplate != null && entity.containsServiceTemplate(serviceTemplate)) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), serviceTemplate.getDescriptionOrCode());
                     return;
                 }
 

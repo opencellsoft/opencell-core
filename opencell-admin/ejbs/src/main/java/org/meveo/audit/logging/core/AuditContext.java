@@ -65,7 +65,6 @@ public class AuditContext {
 		}
 
 		boolean result = false;
-		FileInputStream propertyFile = null;
 		File file = new File(_propertyFile);
 		try {
 			if (file.createNewFile()) {
@@ -80,10 +79,6 @@ public class AuditContext {
 			}
 		} catch (IOException e1) {
 			log.error("Impossible to create :" + _propertyFile);
-		} finally {
-			if (propertyFile != null) {
-			    IOUtils.closeQuietly(propertyFile);
-			}
 		}
 
 		return result;

@@ -59,14 +59,15 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
     @Override
     public PaymentGateway create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
+        String code = null;
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
-        }
-        if (paymentGatewayDto != null) {
-            if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
+        } else if (paymentGatewayDto != null) {
+            code = paymentGatewayDto.getCode();
+            if (StringUtils.isBlank(code)) {
                 missingParameters.add("code");
             }
-
+            
             if (paymentGatewayDto.getType() == null) {
                 missingParameters.add("type");
             }
@@ -82,14 +83,13 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
         handleMissingParameters();
 
-        if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
+        if (paymentGatewayDto != null && paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
             throw new BusinessException("Cant add Natif PaymentGateway");
         }
 
-        PaymentGateway paymentGateway = null;
-        paymentGateway = paymentGatewayService.findByCode(paymentGatewayDto.getCode());
+        PaymentGateway paymentGateway = paymentGatewayService.findByCode(code);
         if (paymentGateway != null) {
-            throw new EntityAlreadyExistsException(PaymentGateway.class, paymentGatewayDto.getCode());
+            throw new EntityAlreadyExistsException(PaymentGateway.class, code);
         }
 
         ScriptInstance scriptInstance = scriptInstanceService.findByCode(paymentGatewayDto.getScriptInstanceCode());
@@ -116,7 +116,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setType(paymentGatewayDto.getType());
         paymentGateway.setApplicationEL(paymentGatewayDto.getApplicationEL());
         paymentGateway.setCardType(paymentGatewayDto.getCardType());
-        paymentGateway.setCode(paymentGatewayDto.getCode());
+        paymentGateway.setCode(code);
         paymentGateway.setDescription(paymentGatewayDto.getDescription());
         paymentGateway.setPaymentMethodType(paymentGatewayDto.getPaymentMethodType());
         paymentGateway.setScriptInstance(scriptInstance);
@@ -143,10 +143,11 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
     @Override
     public PaymentGateway update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
+        String code = null;
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
-        }
-        if (paymentGatewayDto != null && StringUtils.isBlank(paymentGatewayDto.getCode())) {
+        } else if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
+            code = paymentGatewayDto.getCode();
             missingParameters.add("code");
         }
         handleMissingParameters();
@@ -156,9 +157,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
 
         PaymentGateway paymentGateway = null;
-        paymentGateway = paymentGatewayService.findByCode(paymentGatewayDto.getCode());
+        paymentGateway = paymentGatewayService.findByCode(code);
         if (paymentGateway == null) {
-            throw new EntityDoesNotExistsException(PaymentGateway.class, paymentGatewayDto.getCode());
+            throw new EntityDoesNotExistsException(PaymentGateway.class, code);
         }
 
         if (!StringUtils.isBlank(paymentGatewayDto.getTradingCurrencyCode())) {
@@ -194,7 +195,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (paymentGatewayDto.getPaymentMethodType() != null) {
             paymentGateway.setPaymentMethodType(paymentGatewayDto.getPaymentMethodType());
         }
-        paymentGateway.setCode(StringUtils.isBlank(paymentGatewayDto.getUpdatedCode()) ? paymentGatewayDto.getCode() : paymentGatewayDto.getUpdatedCode());
+        paymentGateway.setCode(StringUtils.isBlank(paymentGatewayDto.getUpdatedCode()) ? code : paymentGatewayDto.getUpdatedCode());
 
         try {
             populateCustomFields(paymentGatewayDto.getCustomFields(), paymentGateway, true, true);

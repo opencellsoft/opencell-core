@@ -84,7 +84,7 @@ public class OtherCreditAndChargeService extends
 					+ codeOCCTemplate);
 		}
 
-		if (customerAccount.getStatus() == CustomerAccountStatusEnum.CLOSE) {
+		if (customerAccount != null && customerAccount.getStatus() == CustomerAccountStatusEnum.CLOSE) {
 			log.warn("addOCC  customerAccount is closed ");
 			throw new BusinessException("customerAccount is closed");
 		}

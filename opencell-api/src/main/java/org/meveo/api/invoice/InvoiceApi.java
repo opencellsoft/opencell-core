@@ -489,8 +489,10 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
         }
+        String billingAccountCode = null;
         if (generateInvoiceRequestDto != null) {
-            if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+            billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
+            if (StringUtils.isBlank(billingAccountCode)) {
                 missingParameters.add("billingAccountCode");
             }
 
@@ -505,13 +507,13 @@ public class InvoiceApi extends BaseApi {
 
         handleMissingParameters();
 
-        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
+        BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, Arrays.asList("billingRun"));
         if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
+            throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
         }
 
         Filter ratedTransactionFilter = null;
-        if (generateInvoiceRequestDto.getFilter() != null) {
+        if (generateInvoiceRequestDto != null && generateInvoiceRequestDto.getFilter() != null) {
             ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
             if (ratedTransactionFilter == null) {
                 throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
