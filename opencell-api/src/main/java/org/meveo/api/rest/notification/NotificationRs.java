@@ -12,8 +12,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.notification.NotificationDto;
-import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
+import org.meveo.api.dto.notification.ScriptNotificationDto;
+import org.meveo.api.dto.response.notification.GetScriptNotificationResponseDto;
 import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
 import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -35,7 +35,7 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    ActionStatus create(NotificationDto postData);
+    ActionStatus create(ScriptNotificationDto postData);
 
     /**
      * Update an existing notification
@@ -45,17 +45,17 @@ public interface NotificationRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    ActionStatus update(NotificationDto postData);
+    ActionStatus update(ScriptNotificationDto postData);
 
     /**
      * Find a notification with a given code
      * 
      * @param notificationCode The notification's code
-     * @return
+     * @return Script notification information
      */
     @GET
     @Path("/")
-    GetNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
+    GetScriptNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
     /**
      * Remove an existing notification with a given code
@@ -90,7 +90,7 @@ public interface NotificationRs extends IBaseRs {
     /**
      * List the notification history
      * 
-     * @return
+     * @return Notification history list
      */
     @GET
     @Path("/listNotificationHistory")
@@ -99,7 +99,7 @@ public interface NotificationRs extends IBaseRs {
     /**
      * List inbound requests
      * 
-     * @return
+     * @return A list of inbound requests
      */
     @GET
     @Path("/listInboundRequest")
@@ -113,5 +113,5 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    ActionStatus createOrUpdate(NotificationDto postData);
+    ActionStatus createOrUpdate(ScriptNotificationDto postData);
 }

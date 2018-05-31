@@ -42,7 +42,7 @@ import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.notification.JobTriggerDto;
-import org.meveo.api.dto.notification.NotificationDto;
+import org.meveo.api.dto.notification.ScriptNotificationDto;
 import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.WorkflowDto;
@@ -68,7 +68,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
 
     /** The logo picture. */
     private String logoPicture;
-    
+
     /** The logo picture file. */
     private byte[] logoPictureFile;
 
@@ -79,7 +79,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
     @XmlElementWrapper(name = "moduleItems")
     @XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class), @XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class),
             @XmlElement(name = "filter", type = FilterDto.class), @XmlElement(name = "jobInstance", type = JobInstanceDto.class),
-            @XmlElement(name = "script", type = ScriptInstanceDto.class), @XmlElement(name = "notification", type = NotificationDto.class),
+            @XmlElement(name = "script", type = ScriptInstanceDto.class), @XmlElement(name = "notification", type = ScriptNotificationDto.class),
             @XmlElement(name = "timerEntity", type = TimerEntityDto.class), @XmlElement(name = "emailNotif", type = EmailNotificationDto.class),
             @XmlElement(name = "jobTrigger", type = JobTriggerDto.class), @XmlElement(name = "webhookNotif", type = WebHookDto.class),
             @XmlElement(name = "counter", type = CounterTemplateDto.class), @XmlElement(name = "businessAccountModel", type = BusinessAccountModelDto.class),
@@ -200,7 +200,9 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.model.IEntity#isTransient()
      */
     @Override
@@ -235,7 +237,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
         return StringUtils.isBlank(getDescription()) && license == null && StringUtils.isBlank(logoPicture) && logoPictureFile == null && script == null
                 && (moduleItems == null || moduleItems.isEmpty());
     }
-    
+
     @Override
     public String toString() {
         final int maxLen = 10;

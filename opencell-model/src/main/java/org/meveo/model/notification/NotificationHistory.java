@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -20,6 +22,11 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "adm_notif_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_notif_history_seq"), })
+@NamedQueries({ @NamedQuery(name = "NotificationHistory.countHistoryToPurgeByDate", query = "select count(*) FROM NotificationHistory hist WHERE hist.auditable.created<=:date"),
+        @NamedQuery(name = "NotificationHistory.purgeHistoryByDate", query = "delete NotificationHistory hist WHERE hist.auditable.created<=:date"),
+        @NamedQuery(name = "NotificationHistory.countHistoryToPurgeByDateAndNotification", query = "select count(*) FROM NotificationHistory hist WHERE hist.auditable.created<=:date and hist.notification=:notification"),
+        @NamedQuery(name = "NotificationHistory.purgeHistoryByDateAndNotification", query = "delete NotificationHistory hist WHERE hist.auditable.created<=:date and hist.notification=:notification"),
+        @NamedQuery(name = "NotificationHistory.deleteHistoryByNotification", query = "delete NotificationHistory hist WHERE hist.notification=:notification") })
 public class NotificationHistory extends AuditableEntity {
 
     private static final long serialVersionUID = -6882236977852466160L;
