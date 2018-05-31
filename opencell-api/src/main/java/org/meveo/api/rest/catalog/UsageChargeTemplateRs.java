@@ -30,7 +30,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
     /**
      * Create new usage charge template.
      * 
-     * @param postData The usage charge template's data 
+     * @param postData The usage charge template's data
      * @return Request processing status
      */
     @POST
@@ -77,4 +77,23 @@ public interface UsageChargeTemplateRs extends IBaseRs {
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
 
+    /**
+     * Enable a Usage charge template with a given code
+     * 
+     * @param code Usage charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Usage charge template with a given code
+     * 
+     * @param code Usage charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

@@ -66,7 +66,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
     /**
      * DataModel for primefaces lazy loading datatable component.
-     * 
+     * @param counterType counter type enumeration
      * @return LazyDataModel implementation.
      */
     public LazyDataModel<CounterTemplate> getLazyDataModel(CounterTypeEnum counterType) {
@@ -102,7 +102,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
                     } else if (!level.endsWith("%")) {
                         dblLevel = Double.parseDouble(level);
-                        if (entity.getCeiling() != null && entity.getCeiling().compareTo(new BigDecimal(dblLevel)) < 0) {
+                        if (entity.getCeiling() != null && entity.getCeiling().compareTo(BigDecimal.valueOf(dblLevel)) < 0) {
                             FacesContext.getCurrentInstance().validationFailed();
                             messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels.higherNumbers"));
                             return null;

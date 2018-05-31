@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "adm_notif_history")
@@ -27,7 +27,7 @@ import org.meveo.model.EnableEntity;
         @NamedQuery(name = "NotificationHistory.countHistoryToPurgeByDateAndNotification", query = "select count(*) FROM NotificationHistory hist WHERE hist.auditable.created<=:date and hist.notification=:notification"),
         @NamedQuery(name = "NotificationHistory.purgeHistoryByDateAndNotification", query = "delete NotificationHistory hist WHERE hist.auditable.created<=:date and hist.notification=:notification"),
         @NamedQuery(name = "NotificationHistory.deleteHistoryByNotification", query = "delete NotificationHistory hist WHERE hist.notification=:notification") })
-public class NotificationHistory extends EnableEntity {
+public class NotificationHistory extends AuditableEntity {
 
     private static final long serialVersionUID = -6882236977852466160L;
 

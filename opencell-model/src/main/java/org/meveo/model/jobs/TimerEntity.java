@@ -35,161 +35,159 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code"})
-@Table(name = "meveo_timer", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_timer_seq"), })
-public class TimerEntity extends BusinessEntity{
+@ExportIdentifier({ "code" })
+@Table(name = "meveo_timer", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "meveo_timer_seq"), })
+public class TimerEntity extends EnableBusinessEntity {
 
-	private static final long serialVersionUID = -3764934334462355788L;
+    private static final long serialVersionUID = -3764934334462355788L;
 
-	@Column(name = "sc_year", nullable = false, length = 255)
-	@Size(max = 255)
-	@NotNull
-	private String year = "*";
-
-	@Column(name = "sc_month", nullable = false, length = 255)
+    @Column(name = "sc_year", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
-	private String month = "*";
+    private String year = "*";
 
-	@Column(name = "sc_d_o_month", nullable = false, length = 255)
+    @Column(name = "sc_month", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
-	private String dayOfMonth = "*";
+    private String month = "*";
 
-	@Column(name = "sc_d_o_week", nullable = false, length = 255)
+    @Column(name = "sc_d_o_month", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
-	private String dayOfWeek = "*";
+    private String dayOfMonth = "*";
 
-	@Column(name = "sc_hour", nullable = false, length = 255)
+    @Column(name = "sc_d_o_week", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
-	private String hour = "*";
+    private String dayOfWeek = "*";
 
-	@Column(name = "sc_min", nullable = false, length = 255)
+    @Column(name = "sc_hour", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
-	private String minute = "0";
+    private String hour = "*";
 
-	@Column(name = "sc_sec", nullable = false, length = 255)
+    @Column(name = "sc_min", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
-	private String second = "0";
+    private String minute = "0";
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "sc_start", nullable = true)
-	private Date start;
+    @Column(name = "sc_sec", nullable = false, length = 255)
+    @Size(max = 255)
+    @NotNull
+    private String second = "0";
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "sc_end", nullable = true)
-	private Date end;
-	
-	@OneToMany(mappedBy = "timerEntity", fetch = FetchType.LAZY)
-	private List<JobInstance> jobInstances = new ArrayList<JobInstance>();
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "sc_start", nullable = true)
+    private Date start;
 
-	public TimerEntity(){
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "sc_end", nullable = true)
+    private Date end;
 
-	}
+    @OneToMany(mappedBy = "timerEntity", fetch = FetchType.LAZY)
+    private List<JobInstance> jobInstances = new ArrayList<JobInstance>();
 
+    public TimerEntity() {
 
-	public String getYear() {
-		return year;
-	}
+    }
 
-	public void setYear(String year) {
-		this.year = year;
-	}
+    public String getYear() {
+        return year;
+    }
 
-	public String getMonth() {
-		return month;
-	}
+    public void setYear(String year) {
+        this.year = year;
+    }
 
-	public void setMonth(String month) {
-		this.month = month;
-	}
+    public String getMonth() {
+        return month;
+    }
 
-	public String getDayOfMonth() {
-		return dayOfMonth;
-	}
+    public void setMonth(String month) {
+        this.month = month;
+    }
 
-	public void setDayOfMonth(String dayOfMonth) {
-		this.dayOfMonth = dayOfMonth;
-	}
+    public String getDayOfMonth() {
+        return dayOfMonth;
+    }
 
-	public String getDayOfWeek() {
-		return dayOfWeek;
-	}
+    public void setDayOfMonth(String dayOfMonth) {
+        this.dayOfMonth = dayOfMonth;
+    }
 
-	public void setDayOfWeek(String dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
-	}
+    public String getDayOfWeek() {
+        return dayOfWeek;
+    }
 
-	public String getHour() {
-		return hour;
-	}
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
 
-	public void setHour(String hour) {
-		this.hour = hour;
-	}
+    public String getHour() {
+        return hour;
+    }
 
-	public String getMinute() {
-		return minute;
-	}
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
 
-	public void setMinute(String minute) {
-		this.minute = minute;
-	}
+    public String getMinute() {
+        return minute;
+    }
 
-	public String getSecond() {
-		return second;
-	}
+    public void setMinute(String minute) {
+        this.minute = minute;
+    }
 
-	public void setSecond(String second) {
-		this.second = second;
-	}
+    public String getSecond() {
+        return second;
+    }
 
-	public Date getStart() {
-		return start;
-	}
+    public void setSecond(String second) {
+        this.second = second;
+    }
 
-	public void setStart(Date start) {
-		this.start = start;
-	}
+    public Date getStart() {
+        return start;
+    }
 
-	public Date getEnd() {
-		return end;
-	}
+    public void setStart(Date start) {
+        this.start = start;
+    }
 
-	public void setEnd(Date end) {
-		this.end = end;
-	}
-	
+    public Date getEnd() {
+        return end;
+    }
 
-	/**
-	 * @return the jobInstances
-	 */
-	public List<JobInstance> getJobInstances() {
-		return jobInstances;
-	}
+    public void setEnd(Date end) {
+        this.end = end;
+    }
 
+    /**
+     * @return the jobInstances
+     */
+    public List<JobInstance> getJobInstances() {
+        return jobInstances;
+    }
 
-	/**
-	 * @param jobInstances the jobInstances to set
-	 */
-	public void setJobInstances(List<JobInstance> jobInstances) {
-		this.jobInstances = jobInstances;
-	}
+    /**
+     * @param jobInstances the jobInstances to set
+     */
+    public void setJobInstances(List<JobInstance> jobInstances) {
+        this.jobInstances = jobInstances;
+    }
 
-	public String getTimerSchedule() {
-		return String.format("Hour %s Minute %s Second %s Year %s Month %s Day of month %s Day of week %s", hour, minute, second, year, month, dayOfMonth, dayOfWeek);    
-	}
+    public String getTimerSchedule() {
+        return String.format("Hour %s Minute %s Second %s Year %s Month %s Day of month %s Day of week %s", hour, minute, second, year, month, dayOfMonth, dayOfWeek);
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -215,18 +213,15 @@ public class TimerEntity extends BusinessEntity{
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "TimerEntity [year=" + year + ", month=" + month + ", dayOfMonth=" + dayOfMonth + ", dayOfWeek=" + dayOfWeek + ", hour=" + hour + ", minute=" + minute + ", second="
+                + second + ", start=" + start + ", end=" + end + "]";
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "TimerEntity [year=" + year + ", month=" + month
-				+ ", dayOfMonth=" + dayOfMonth + ", dayOfWeek=" + dayOfWeek
-				+ ", hour=" + hour + ", minute=" + minute + ", second="
-				+ second + ", start=" + start + ", end=" + end
-				+ "]";
-	}
-	
-	
 }

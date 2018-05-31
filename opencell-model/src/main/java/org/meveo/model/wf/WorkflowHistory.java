@@ -36,143 +36,143 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "wf_history")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_history_seq"), })
-public class WorkflowHistory extends EnableEntity {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "wf_history_seq"), })
+public class WorkflowHistory extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "action_date")
-	private Date actionDate;
-	
+    private static final long serialVersionUID = 1L;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "action_date")
+    private Date actionDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workflow_id")   
-	private Workflow workflow;
-    
-	@Column(name = "entity_instance_code")
-	@NotNull 
+    @JoinColumn(name = "workflow_id")
+    private Workflow workflow;
+
+    @Column(name = "entity_instance_code")
+    @NotNull
     private String entityInstanceCode;
 
-	@Column(name = "from_status")
-	@NotNull    
-	String fromStatus = null;
-	
-	@Column(name = "to_status")
-	@NotNull    
-	String toStatus = null;	
+    @Column(name = "from_status")
+    @NotNull
+    String fromStatus = null;
 
-	@Column(name = "transition_name")
-	@NotNull    
-	String transitionName = null;	
-	
-    @OneToMany(mappedBy = "workflowHistory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)    
-	private List<WorkflowHistoryAction> actionsAndReports = new ArrayList<WorkflowHistoryAction>();
-	
-	
-	public WorkflowHistory(){
-		
-	}
+    @Column(name = "to_status")
+    @NotNull
+    String toStatus = null;
 
-	/**
-	 * @return the actionDate
-	 */
-	public Date getActionDate() {
-		return actionDate;
-	}
+    @Column(name = "transition_name")
+    @NotNull
+    String transitionName = null;
 
-	/**
-	 * @param actionDate the actionDate to set
-	 */
-	public void setActionDate(Date actionDate) {
-		this.actionDate = actionDate;
-	}
+    @OneToMany(mappedBy = "workflowHistory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<WorkflowHistoryAction> actionsAndReports = new ArrayList<WorkflowHistoryAction>();
 
-	/**
-	 * @return the entityInstanceCode
-	 */
-	public String getEntityInstanceCode() {
-		return entityInstanceCode;
-	}
+    public WorkflowHistory() {
 
-	/**
-	 * @param entityInstanceCode the entityInstanceCode to set
-	 */
-	public void setEntityInstanceCode(String entityInstanceCode) {
-		this.entityInstanceCode = entityInstanceCode;
-	}
+    }
 
-	/**
-	 * @return the fromStatus
-	 */
-	public String getFromStatus() {
-		return fromStatus;
-	}
+    /**
+     * @return the actionDate
+     */
+    public Date getActionDate() {
+        return actionDate;
+    }
 
-	/**
-	 * @param fromStatus the fromStatus to set
-	 */
-	public void setFromStatus(String fromStatus) {
-		this.fromStatus = fromStatus;
-	}
+    /**
+     * @param actionDate the actionDate to set
+     */
+    public void setActionDate(Date actionDate) {
+        this.actionDate = actionDate;
+    }
 
-	/**
-	 * @return the toStatus
-	 */
-	public String getToStatus() {
-		return toStatus;
-	}
+    /**
+     * @return the entityInstanceCode
+     */
+    public String getEntityInstanceCode() {
+        return entityInstanceCode;
+    }
 
-	/**
-	 * @param toStatus the toStatus to set
-	 */
-	public void setToStatus(String toStatus) {
-		this.toStatus = toStatus;
-	}
+    /**
+     * @param entityInstanceCode the entityInstanceCode to set
+     */
+    public void setEntityInstanceCode(String entityInstanceCode) {
+        this.entityInstanceCode = entityInstanceCode;
+    }
 
-	/**
-	 * @return the transitionName
-	 */
-	public String getTransitionName() {
-		return transitionName;
-	}
+    /**
+     * @return the fromStatus
+     */
+    public String getFromStatus() {
+        return fromStatus;
+    }
 
-	/**
-	 * @param transitionName the transitionName to set
-	 */
-	public void setTransitionName(String transitionName) {
-		this.transitionName = transitionName;
-	}
+    /**
+     * @param fromStatus the fromStatus to set
+     */
+    public void setFromStatus(String fromStatus) {
+        this.fromStatus = fromStatus;
+    }
 
-	/**
-	 * @return the actionsAndReports
-	 */
-	public List<WorkflowHistoryAction> getActionsAndReports() {
-		return actionsAndReports;
-	}
+    /**
+     * @return the toStatus
+     */
+    public String getToStatus() {
+        return toStatus;
+    }
 
-	/**
-	 * @param actionsAndReports the actionsAndReports to set
-	 */
-	public void setActionsAndReports(List<WorkflowHistoryAction> actionsAndReports) {
-		this.actionsAndReports = actionsAndReports;
-	}
+    /**
+     * @param toStatus the toStatus to set
+     */
+    public void setToStatus(String toStatus) {
+        this.toStatus = toStatus;
+    }
 
-	/**
-	 * @return the workflow
-	 */
-	public Workflow getWorkflow() {
-		return workflow;
-	}
+    /**
+     * @return the transitionName
+     */
+    public String getTransitionName() {
+        return transitionName;
+    }
 
-	/**
-	 * @param workflow the workflow to set
-	 */
-	public void setWorkflow(Workflow workflow) {
-		this.workflow = workflow;
-	}
-	
+    /**
+     * @param transitionName the transitionName to set
+     */
+    public void setTransitionName(String transitionName) {
+        this.transitionName = transitionName;
+    }
+
+    /**
+     * @return the actionsAndReports
+     */
+    public List<WorkflowHistoryAction> getActionsAndReports() {
+        return actionsAndReports;
+    }
+
+    /**
+     * @param actionsAndReports the actionsAndReports to set
+     */
+    public void setActionsAndReports(List<WorkflowHistoryAction> actionsAndReports) {
+        this.actionsAndReports = actionsAndReports;
+    }
+
+    /**
+     * @return the workflow
+     */
+    public Workflow getWorkflow() {
+        return workflow;
+    }
+
+    /**
+     * @param workflow the workflow to set
+     */
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
+    }
+
 }

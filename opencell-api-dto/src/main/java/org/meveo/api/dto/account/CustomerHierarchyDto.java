@@ -9,23 +9,37 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.SellersDto;
 
 /**
+ * The Class CustomerHierarchyDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CustomerHierarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerHierarchyDto extends BaseDto {
 
-	private static final long serialVersionUID = -7727040970378439778L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7727040970378439778L;
 
-	@XmlElement(required = true)
-	private SellersDto sellers;
+    /** The sellers. */
+    @XmlElement(required = true)
+    private SellersDto sellers;
 
-	public SellersDto getSellers() {
-		return sellers;
-	}
+    /**
+     * Gets the sellers.
+     *
+     * @return the sellers
+     */
+    public SellersDto getSellers() {
+        return sellers;
+    }
 
-	public void setSellers(SellersDto sellers) {
-		this.sellers = sellers;
-	}
+    /**
+     * Sets the sellers.
+     *
+     * @param sellers the new sellers
+     */
+    public void setSellers(SellersDto sellers) {
+        this.sellers = sellers;
+    }
 
 }

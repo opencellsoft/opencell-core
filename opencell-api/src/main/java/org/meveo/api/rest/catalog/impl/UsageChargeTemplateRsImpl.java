@@ -87,4 +87,29 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         return result;
     }
 
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            usageChargeTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            usageChargeTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

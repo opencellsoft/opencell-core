@@ -10,102 +10,189 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
 
 /**
+ * The Class CountryDto.
+ *
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
- * 
- * @deprecated will be renammed to TradingCountryDto
- **/
+ */
 @XmlRootElement(name = "Country")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryDto extends BaseDto {
+public class CountryDto extends BaseDto implements IEnableDto {
 
-	private static final long serialVersionUID = -4175660113940481232L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -4175660113940481232L;
 
-	@XmlAttribute(required = true)
-	private String countryCode;
+    /**
+     * The country code
+     */
+    @XmlAttribute(required = true)
+    private String countryCode;
 
-	@XmlAttribute()
-	private String name;
+    /**
+     * The country name
+     */
+    @XmlAttribute()
+    private String name;
 
-	@XmlElement(required = true)
-	private String currencyCode;
+    /**
+     * The currency code
+     */
+    @XmlElement(required = true)
+    private String currencyCode;
 
-	private String languageCode;
+    /**
+     * Corresponding language code
+     */
+    private String languageCode;
 
-	public CountryDto() {
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
-	}
+    /**
+     * Instantiates a new country dto.
+     */
+    public CountryDto() {
 
-	public CountryDto(Country e) {
-		countryCode = e.getCountryCode();
-		name = e.getDescription();
-		currencyCode = e.getCurrency().getCurrencyCode();
+    }
 
-		if (e.getLanguage() != null) {
-			languageCode = e.getLanguage().getLanguageCode();
-		}
-	}
+    /**
+     * Instantiates a new country dto.
+     *
+     * @param country the Country enntity
+     */
+    public CountryDto(Country country) {
+        countryCode = country.getCountryCode();
+        name = country.getDescription();
+        currencyCode = country.getCurrency().getCurrencyCode();
 
-	public CountryDto(TradingCountry e) {
-		countryCode = e.getCountryCode();
-		name = e.getPrDescription();
+        if (country.getLanguage() != null) {
+            languageCode = country.getLanguage().getLanguageCode();
+        }
+    }
 
-		if (e.getCountry() != null && e.getCountry().getCurrency() != null) {
-			currencyCode = e.getCountry().getCurrency().getCurrencyCode();
-		}
+    /**
+     * Instantiates a new country dto.
+     *
+     * @param tradingCountry the TradingCountry entity
+     */
+    public CountryDto(TradingCountry tradingCountry) {
+        countryCode = tradingCountry.getCountryCode();
+        name = tradingCountry.getPrDescription();
 
-		if (e.getCountry() != null && e.getCountry().getLanguage() != null) {
-			languageCode = e.getCountry().getLanguage().getLanguageCode();
-		}
-	}
+        if (tradingCountry.getCountry() != null && tradingCountry.getCountry().getCurrency() != null) {
+            currencyCode = tradingCountry.getCountry().getCurrency().getCurrencyCode();
+        }
 
-	public CountryDto(TradingCountry e, Country c) {
-		countryCode = e.getCountryCode();
-		name = e.getPrDescription();
+        if (tradingCountry.getCountry() != null && tradingCountry.getCountry().getLanguage() != null) {
+            languageCode = tradingCountry.getCountry().getLanguage().getLanguageCode();
+        }
+        disabled = tradingCountry.isDisabled();
+    }
 
-		currencyCode = c.getCurrency().getCurrencyCode();
+    /**
+     * Instantiates a new country dto.
+     *
+     * @param tradingCountry the TradingCountry entity
+     * @param country the Country entity
+     */
+    public CountryDto(TradingCountry tradingCountry, Country country) {
+        countryCode = tradingCountry.getCountryCode();
+        name = tradingCountry.getPrDescription();
 
-		if (c.getLanguage() != null) {
-			languageCode = c.getLanguage().getLanguageCode();
-		}
-	}
+        currencyCode = country.getCurrency().getCurrencyCode();
 
-	public String getCountryCode() {
-		return countryCode;
-	}
+        if (country.getLanguage() != null) {
+            languageCode = country.getLanguage().getLanguageCode();
+        }
+        disabled = tradingCountry.isDisabled();
+    }
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
+    /**
+     * Gets the country code.
+     *
+     * @return the country code
+     */
+    public String getCountryCode() {
+        return countryCode;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * Sets the country code.
+     *
+     * @param countryCode the new country code
+     */
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+    /**
+     * Sets the name.
+     *
+     * @param name the new name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    /**
+     * Gets the currency code.
+     *
+     * @return the currency code
+     */
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-	public String getLanguageCode() {
-		return languageCode;
-	}
+    /**
+     * Sets the currency code.
+     *
+     * @param currencyCode the new currency code
+     */
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
+    /**
+     * Gets the language code.
+     *
+     * @return the language code
+     */
+    public String getLanguageCode() {
+        return languageCode;
+    }
 
-	@Override
-	public String toString() {
-		return "CountryDto [countryCode=" + countryCode + ", name=" + name + ", currencyCode=" + currencyCode
-				+ ", languageCode=" + languageCode + "]";
-	}
+    /**
+     * Sets the language code.
+     *
+     * @param languageCode the new language code
+     */
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
+    @Override
+    public String toString() {
+        return "CountryDto [countryCode=" + countryCode + ", name=" + name + ", currencyCode=" + currencyCode + ", languageCode=" + languageCode + ", disabled=" + disabled + "]";
+    }
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
+    }
 }

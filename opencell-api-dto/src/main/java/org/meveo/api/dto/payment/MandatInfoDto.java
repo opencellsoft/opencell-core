@@ -13,6 +13,8 @@ import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.payments.MandatStateEnum;
 
 /**
+ * The Class MandatInfoDto.
+ *
  * @author anasseh
  * @lastModifiedVersion 5.0
  */
@@ -20,24 +22,46 @@ import org.meveo.model.payments.MandatStateEnum;
 @XmlRootElement(name = "MandatInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MandatInfoDto extends BaseResponse {
-    /**
-     * 
-     */
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8669878897612306520L;
+    
+    /** The id. */
     private String id;
+    
+    /** The reference. */
     private String reference;
+    
+    /** The state. */
     private MandatStateEnum state;
+    
+    /** The standard. */
     private String standard;
+    
+    /** The initial score. */
     private int initialScore;
+    
+    /** The date created. */
     private Date dateCreated;
+    
+    /** The date signed. */
     private Date dateSigned;
+    
+    /** The payment scheme. */
     private String paymentScheme;
+    
+    /** The bic. */
     private String bic;
+    
+    /** The iban. */
     private String iban;
+    
+    /** The bank name. */
     private String bankName;
 
-
     /**
+     * Gets the id.
+     *
      * @return the id
      */
     public String getId() {
@@ -45,6 +69,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the id.
+     *
      * @param id the id to set
      */
     public void setId(String id) {
@@ -52,6 +78,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the reference.
+     *
      * @return the reference
      */
     public String getReference() {
@@ -59,6 +87,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the reference.
+     *
      * @param reference the reference to set
      */
     public void setReference(String reference) {
@@ -66,6 +96,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the state.
+     *
      * @return the state
      */
     public MandatStateEnum getState() {
@@ -73,6 +105,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the state.
+     *
      * @param state the state to set
      */
     public void setState(MandatStateEnum state) {
@@ -80,6 +114,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the standard.
+     *
      * @return the standard
      */
     public String getStandard() {
@@ -87,6 +123,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the standard.
+     *
      * @param standard the standard to set
      */
     public void setStandard(String standard) {
@@ -94,6 +132,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the initial score.
+     *
      * @return the initialScore
      */
     public int getInitialScore() {
@@ -101,6 +141,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the initial score.
+     *
      * @param initialScore the initialScore to set
      */
     public void setInitialScore(int initialScore) {
@@ -108,6 +150,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the date created.
+     *
      * @return the dateCreated
      */
     public Date getDateCreated() {
@@ -115,6 +159,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the date created.
+     *
      * @param dateCreated the dateCreated to set
      */
     public void setDateCreated(Date dateCreated) {
@@ -122,6 +168,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the date signed.
+     *
      * @return the dateSigned
      */
     public Date getDateSigned() {
@@ -129,6 +177,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the date signed.
+     *
      * @param dateSigned the dateSigned to set
      */
     public void setDateSigned(Date dateSigned) {
@@ -136,6 +186,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the payment scheme.
+     *
      * @return the paymentScheme
      */
     public String getPaymentScheme() {
@@ -143,14 +195,17 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the payment scheme.
+     *
      * @param paymentScheme the paymentScheme to set
      */
     public void setPaymentScheme(String paymentScheme) {
         this.paymentScheme = paymentScheme;
     }
-    
 
     /**
+     * Gets the bic.
+     *
      * @return the bic
      */
     public String getBic() {
@@ -158,6 +213,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the bic.
+     *
      * @param bic the bic to set
      */
     public void setBic(String bic) {
@@ -165,6 +222,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Gets the iban.
+     *
      * @return the iban
      */
     public String getIban() {
@@ -172,14 +231,17 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the iban.
+     *
      * @param iban the iban to set
      */
     public void setIban(String iban) {
         this.iban = iban;
     }
 
-    
     /**
+     * Gets the bank name.
+     *
      * @return the bankName
      */
     public String getBankName() {
@@ -187,6 +249,8 @@ public class MandatInfoDto extends BaseResponse {
     }
 
     /**
+     * Sets the bank name.
+     *
      * @param bankName the bankName to set
      */
     public void setBankName(String bankName) {

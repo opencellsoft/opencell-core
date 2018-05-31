@@ -11,36 +11,46 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class UsageChargeAggregateResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "UsageChargeAggregateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UsageChargeAggregateResponseDto extends BaseResponse {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@XmlElementWrapper
-    @XmlElement(name="chargeAggregate")
-	List<ChargeAggregateDto> listChargeAggregate = new ArrayList<ChargeAggregateDto>();
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public UsageChargeAggregateResponseDto() {
+    /** The list charge aggregate. */
+    @XmlElementWrapper
+    @XmlElement(name = "chargeAggregate")
+    List<ChargeAggregateDto> listChargeAggregate = new ArrayList<ChargeAggregateDto>();
 
-	}
+    /**
+     * Instantiates a new usage charge aggregate response dto.
+     */
+    public UsageChargeAggregateResponseDto() {
 
-	/**
-	 * @return the listChargeAggregate
-	 */
-	public List<ChargeAggregateDto> getListChargeAggregate() {
-		return listChargeAggregate;
-	}
+    }
 
-	/**
-	 * @param listChargeAggregate the listChargeAggregate to set
-	 */
-	public void setListChargeAggregate(List<ChargeAggregateDto> listChargeAggregate) {
-		this.listChargeAggregate = listChargeAggregate;
-	}
-	
-	
+    /**
+     * Gets the list charge aggregate.
+     *
+     * @return the listChargeAggregate
+     */
+    public List<ChargeAggregateDto> getListChargeAggregate() {
+        return listChargeAggregate;
+    }
+
+    /**
+     * Sets the list charge aggregate.
+     *
+     * @param listChargeAggregate the listChargeAggregate to set
+     */
+    public void setListChargeAggregate(List<ChargeAggregateDto> listChargeAggregate) {
+        this.listChargeAggregate = listChargeAggregate;
+    }
+
 }

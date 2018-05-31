@@ -46,38 +46,37 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCountry())) {
             missingParameters.add("country");
         }
-        
+
         if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
             missingParameters.add("tax");
         }
 
         handleMissingParameters();
-        
+
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
         TradingCountry tradingCountry = null;
-        if(!StringUtils.isBlank(postData.getCountry())){		
-	        tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
-	        if (tradingCountry == null) {
-	            throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
-	        }
-			if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
-					tradingCountry, postData.getStartValidityDate(), postData.getEndValidityDate()) != null) {
-				throw new EntityAlreadyExistsException(
-						"InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory()
-								+ ", tradingCountry=" + postData.getCountry() + " already exists.");
-			}
+        if (!StringUtils.isBlank(postData.getCountry())) {
+            tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
+            if (tradingCountry == null) {
+                throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
+            }
+            if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, postData.getStartValidityDate(),
+                postData.getEndValidityDate()) != null) {
+                throw new EntityAlreadyExistsException(
+                    "InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry=" + postData.getCountry() + " already exists.");
+            }
         }
-        
+
         Tax tax = null;
-        if(!StringUtils.isBlank(postData.getTax())){
-	        tax = taxService.findByCode(postData.getTax());
-	        if (tax == null) {
-	            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
-	        }
+        if (!StringUtils.isBlank(postData.getTax())) {
+            tax = taxService.findByCode(postData.getTax());
+            if (tax == null) {
+                throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
+            }
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
@@ -89,7 +88,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
         invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
         invoiceSubcategoryCountry.setPriority(postData.getPriority());
-        
+
         invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
     }
 
@@ -105,7 +104,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             missingParameters.add("tax");
         }
 
-        handleMissingParameters();        
+        handleMissingParameters();
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
         if (tradingCountry == null) {
@@ -118,30 +117,29 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         }
 
         Tax tax = null;
-        if(!StringUtils.isBlank(postData.getTax())){
-	        tax = taxService.findByCode(postData.getTax());
-	        if (tax == null) {
-	            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
-	        }
+        if (!StringUtils.isBlank(postData.getTax())) {
+            tax = taxService.findByCode(postData.getTax());
+            if (tax == null) {
+                throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
+            }
         }
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, postData.getStartValidityDate(),
-						postData.getEndValidityDate());
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
+            tradingCountry, postData.getStartValidityDate(), postData.getEndValidityDate());
 
         if (invoiceSubcategoryCountry == null) {
-            throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
-                    + postData.getCountry() + " does not exists.");
+            throw new EntityDoesNotExistsException(
+                "InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry=" + postData.getCountry() + " does not exists.");
         }
-        
-        if(postData.getStartValidityDate() != null) {
-        	invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
+
+        if (postData.getStartValidityDate() != null) {
+            invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
         }
-        if(postData.getEndValidityDate() != null) {
-        	invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
+        if (postData.getEndValidityDate() != null) {
+            invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
         }
-        if(postData.getPriority() != 0) {
-        	invoiceSubcategoryCountry.setPriority(postData.getPriority());
+        if (postData.getPriority() != 0) {
+            invoiceSubcategoryCountry.setPriority(postData.getPriority());
         }
 
         invoiceSubcategoryCountry.setTax(tax);
@@ -171,11 +169,11 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
         }
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry,
-            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
+            tradingCountry, Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
         if (invoiceSubcategoryCountry == null) {
-            throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode
-                    + " already exists.");
+            throw new EntityDoesNotExistsException(
+                "InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode + " already exists.");
         }
 
         return new InvoiceSubCategoryCountryDto(invoiceSubcategoryCountry);
@@ -202,25 +200,25 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
         }
 
-        List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategoryCountryService.listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry,
-            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
-		if (invoiceSubcategoryCountries == null) {
-			throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory="
-					+ invoiceSubCategoryCode + ", tradingCountry=" + countryCode + " does not exists.");
-		} else {
-			for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubcategoryCountries) {
-				invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
-			}
-		}
+        List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategoryCountryService.listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
+            tradingCountry, Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
+        if (invoiceSubcategoryCountries == null) {
+            throw new EntityDoesNotExistsException(
+                "InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode + " does not exists.");
+        } else {
+            for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubcategoryCountries) {
+                invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
+            }
+        }
     }
 
     /**
      * Create or update InvoiceSubCategoryCountry based on the invoice sub-category and country attached.
      * 
      * @param postData instance of InvoiceSubCategoryCountryDto
-
+     * 
      * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception.
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(InvoiceSubCategoryCountryDto postData) throws MeveoApiException, BusinessException {
 
@@ -228,9 +226,8 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, postData.getStartValidityDate(),
-						postData.getEndValidityDate());
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
+            tradingCountry, postData.getStartValidityDate(), postData.getEndValidityDate());
 
         if (invoiceSubcategoryCountry == null) {
             create(postData);

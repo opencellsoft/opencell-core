@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
@@ -42,7 +42,7 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "wf_decision_rule", uniqueConstraints = @UniqueConstraint(columnNames = { "name", "value" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "wf_decision_rule_seq"), })
-public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisionRule> {
+public class WFDecisionRule extends BaseEntity implements Comparable<WFDecisionRule> {
 
     private static final long serialVersionUID = 1L;
 

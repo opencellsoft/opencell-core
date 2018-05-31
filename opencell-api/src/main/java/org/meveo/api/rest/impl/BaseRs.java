@@ -174,6 +174,9 @@ public abstract class BaseRs implements IBaseRs {
         handleErrorStatus(status);
     }
 
+    /**
+     * @param status action status.
+     */
     private void handleErrorStatus(ActionStatus status) {
         if (StringUtils.isBlank(status.getErrorCode())) {
             throw new InternalServerErrorException(status);
@@ -189,11 +192,9 @@ public abstract class BaseRs implements IBaseRs {
                 throw new NotAuthorizedException(status);
             } else if ("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str) //
                     || "DELETE_REFERENCED_ENTITY_EXCEPTION".equals(str) //
-                    || "DUPLICATE_ACCESS".equals(str) //
-                    || "INSUFFICIENT_BALANCE".equals(str)//
+                    || "DUPLICATE_ACCESS".equals(str)
                     || "ACTION_FORBIDDEN".equals(str)//
-                    || "INSUFFICIENT_BALANCE".equals(str)//
-                    || "DUPLICATE_ACCESS".equals(str)) {
+                    || "INSUFFICIENT_BALANCE".equals(str)) {
                 throw new ForbiddenException(status);
             } else if ("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)) {
                 throw new NotFoundException(status);

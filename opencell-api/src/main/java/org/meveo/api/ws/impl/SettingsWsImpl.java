@@ -63,8 +63,6 @@ import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
-import org.meveo.api.dto.response.GetCountryResponse;
-import org.meveo.api.dto.response.GetCurrencyResponse;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
@@ -75,7 +73,6 @@ import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceTypeResponse;
 import org.meveo.api.dto.response.GetInvoiceTypesResponse;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
@@ -85,6 +82,9 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
+import org.meveo.api.dto.response.GetTradingCountryResponse;
+import org.meveo.api.dto.response.GetTradingCurrencyResponse;
+import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -107,11 +107,10 @@ import org.meveo.api.ws.SettingsWs;
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
-@SuppressWarnings("deprecation")
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class SettingsWsImpl extends BaseWs implements SettingsWs {
-    
+
     @Inject
     private OccTemplateApi occTemplateApi;
 
@@ -198,10 +197,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Deprecated
     @Override
-    public GetCountryResponse findCountry(String countryCode) {
-        GetCountryResponse result = new GetCountryResponse();
+    public GetTradingCountryResponse findCountry(String countryCode) {
+        GetTradingCountryResponse result = new GetTradingCountryResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
@@ -213,7 +211,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Deprecated
     @Override
     public ActionStatus removeCountry(String countryCode, String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -227,7 +224,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Deprecated
     @Override
     public ActionStatus updateCountry(CountryDto countryDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -241,7 +237,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Deprecated
     @Override
     public ActionStatus createCurrency(CurrencyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -257,8 +252,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Deprecated
     @Override
-    public GetCurrencyResponse findCurrency(String currencyCode) {
-        GetCurrencyResponse result = new GetCurrencyResponse();
+    public GetTradingCurrencyResponse findCurrency(String currencyCode) {
+        GetTradingCurrencyResponse result = new GetTradingCurrencyResponse();
 
         try {
             result.setCurrency(currencyApi.find(currencyCode));
@@ -269,7 +264,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Deprecated
     @Override
     public ActionStatus removeCurrency(String currencyCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -283,7 +277,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Deprecated
     @Override
     public ActionStatus updateCurrency(CurrencyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -297,7 +290,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-    @Deprecated
     @Override
     public ActionStatus createOrUpdateCurrency(CurrencyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -481,8 +473,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetLanguageResponse findLanguage(String languageCode) {
-        GetLanguageResponse result = new GetLanguageResponse();
+    public GetTradingLanguageResponse findLanguage(String languageCode) {
+        GetTradingLanguageResponse result = new GetTradingLanguageResponse();
 
         try {
             result.setLanguage(languageApi.find(languageCode));
@@ -743,12 +735,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus createExternalUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
-        try {            
+        try {
             userApi.createExternalUser(getHttpServletRequest(), postData);
         } catch (Exception e) {
             processException(e, result);
@@ -756,12 +748,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus updateExternalUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
-        try {            
+        try {
             userApi.updateExternalUser(getHttpServletRequest(), postData);
         } catch (Exception e) {
             processException(e, result);
@@ -769,12 +761,12 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus deleteExternalUser(String username) {
         ActionStatus result = new ActionStatus();
 
-        try {            
+        try {
             userApi.deleteExternalUser(getHttpServletRequest(), username);
         } catch (Exception e) {
             processException(e, result);
@@ -1330,7 +1322,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public RolesDto listExternalRoles() {
         RolesDto result = new RolesDto();
@@ -1947,13 +1939,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public GetOccTemplatesResponseDto listOccTemplate(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         GetOccTemplatesResponseDto result = new GetOccTemplatesResponseDto();
 
         PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(query, null, offset, limit, sortBy, sortOrder);
-        
+
         try {
             result = occTemplateApi.list(pagingAndFiltering);
         } catch (Exception e) {
@@ -1962,5 +1954,82 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-   
+
+    @Override
+    public ActionStatus enableLanguage(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            languageApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableLanguage(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            languageApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableCountry(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            countryApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableCountry(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            countryApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableCurrency(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            currencyApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableCurrency(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            currencyApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

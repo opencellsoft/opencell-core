@@ -10,29 +10,46 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CatMessagesDto;
 
+/**
+ * The Class CatMessagesListDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "CatMessages")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatMessagesListDto implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private List<CatMessagesDto> catMessage;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public List<CatMessagesDto> getCatMessage() {
-		if (catMessage == null) {
-			catMessage = new ArrayList<CatMessagesDto>();
-		}
-		return catMessage;
-	}
+    /** The cat message. */
+    private List<CatMessagesDto> catMessage;
 
-	public void setCatMessage(List<CatMessagesDto> catMessage) {
-		this.catMessage = catMessage;
-	}
+    /**
+     * Gets the cat message.
+     *
+     * @return the cat message
+     */
+    public List<CatMessagesDto> getCatMessage() {
+        if (catMessage == null) {
+            catMessage = new ArrayList<CatMessagesDto>();
+        }
+        return catMessage;
+    }
 
-	@Override
-	public String toString() {
-		return "CatMessagesListDto [catMessage=" + catMessage + "]";
-	}
+    /**
+     * Sets the cat message.
+     *
+     * @param catMessage the new cat message
+     */
+    public void setCatMessage(List<CatMessagesDto> catMessage) {
+        this.catMessage = catMessage;
+    }
 
-	
+
+    @Override
+    public String toString() {
+        return "CatMessagesListDto [catMessage=" + catMessage + "]";
+    }
+
 }

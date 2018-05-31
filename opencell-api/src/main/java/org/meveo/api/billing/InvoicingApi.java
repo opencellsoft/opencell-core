@@ -127,7 +127,7 @@ public class InvoicingApi extends BaseApi {
             handleMissingParameters();
         }
 
-        if (billingRunId.longValue() <= 0) {
+        if (billingRunId == null || billingRunId.longValue() <= 0) {
             throw new BusinessApiException("The billingRunId should be a positive value");
         }
 

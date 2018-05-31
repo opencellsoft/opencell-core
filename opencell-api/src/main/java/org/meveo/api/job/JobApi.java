@@ -1,12 +1,19 @@
 package org.meveo.api.job;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -20,7 +27,8 @@ import org.meveo.service.job.JobInstanceService;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class JobApi extends BaseApi {
@@ -54,6 +62,8 @@ public class JobApi extends BaseApi {
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
+        // #3063 Ability to pass parameters when running job instance                                                                                  
+        this.setRunTimeJobValues(jobExecution, jobInstance);
 
         if (jobExecution.isForceExecution()) {
             jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
@@ -64,11 +74,44 @@ public class JobApi extends BaseApi {
         return findJobExecutionResult(null, executionId);
     }
 
+    
+    /**
+     * Sets the run time job values.
+     *
+     * @param jobExecution the job execution
+     * @param jobInstance the job instance
+     * @throws MeveoApiException 
+     */
+    private void setRunTimeJobValues(JobInstanceInfoDto jobExecution, JobInstance jobInstance) throws MeveoApiException {
+        
+        Map<String , Object> runTimeValues = new HashMap<>();
+        
+        final String  runOnNodes = jobExecution.getRunOnNodes();
+        if (isNotEmpty(runOnNodes)) {
+            runTimeValues.put("runOnNodes", runOnNodes);
+        }
+        final String parameters = jobExecution.getParameters();
+        if (isNotEmpty(parameters)) {
+            runTimeValues.put("parameters", parameters);
+        }
+        
+        CustomFieldsDto customFieldsDto = jobExecution.getCustomFields();
+        if (customFieldsDto != null && CollectionUtils.isNotEmpty(customFieldsDto.getCustomField())) {
+            List<CustomFieldDto> cfDtos = customFieldsDto.getCustomField();
+            this.validateAndConvertCustomFields(cfDtos, jobInstance);
+            
+            for (CustomFieldDto cfDto : cfDtos) {
+                runTimeValues.put(cfDto.getCode(), cfDto.getValueConverted());
+            }
+        }
+        jobInstance.setRunTimeValues(runTimeValues);
+    }
+
     /**
      * Stop running job
      * 
      * @param jobInstanceCode job instance code to stop
-     * @throws MeveoApiException
+     * @throws MeveoApiException Meveo api exception
      */
     public void stopJob(String jobInstanceCode) throws MeveoApiException {
         if (StringUtils.isBlank(jobInstanceCode)) {
@@ -90,8 +133,7 @@ public class JobApi extends BaseApi {
     /**
      * Retrieve job execution result.
      * 
-     * @param code
-     * 
+     * @param code The job instance code
      * @param id Job execution result identifier
      * @return Job execution result DTO
      * @throws MeveoApiException meveo api exception

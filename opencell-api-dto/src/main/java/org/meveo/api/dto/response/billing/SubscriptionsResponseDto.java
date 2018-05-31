@@ -8,27 +8,40 @@ import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class SubscriptionsResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "SubscriptionsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class SubscriptionsResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 5980154480190489704L;
-	
-	public SubscriptionsDto subscriptions;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5980154480190489704L;
 
-	public SubscriptionsDto getSubscriptions() {
-		return subscriptions;
-	}
+    /** The subscriptions. */
+    public SubscriptionsDto subscriptions;
 
-	public void setSubscriptions(SubscriptionsDto subscriptions) {
-		this.subscriptions = subscriptions;
-	}
+    /**
+     * Gets the subscriptions.
+     *
+     * @return the subscriptions
+     */
+    public SubscriptionsDto getSubscriptions() {
+        return subscriptions;
+    }
 
-	@Override
-	public String toString() {
-		return "ListSubscriptionResponseDto [subscriptions=" + subscriptions + ", toString()=" + super.toString() + "]";
-	}
+    /**
+     * Sets the subscriptions.
+     *
+     * @param subscriptions the new subscriptions
+     */
+    public void setSubscriptions(SubscriptionsDto subscriptions) {
+        this.subscriptions = subscriptions;
+    }
 
+    @Override
+    public String toString() {
+        return "ListSubscriptionResponseDto [subscriptions=" + subscriptions + ", toString()=" + super.toString() + "]";
+    }
 }

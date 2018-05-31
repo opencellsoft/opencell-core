@@ -30,7 +30,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
 
     @Inject
     private RevenueRecognitionRuleApi rrrApi;
-    
+
     @Inject
     private ReportExtractApi reportExtractApi;
 
@@ -188,7 +188,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus runReportExtract(RunReportExtractDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -201,5 +201,57 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
 
         return result;
     }
-    
+
+    @Override
+    public ActionStatus enableRevenueRecognitionRule(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            rrrApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableRevenueRecognitionRule(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            rrrApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableReportExtract(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            reportExtractApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableReportExtract(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            reportExtractApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
 }

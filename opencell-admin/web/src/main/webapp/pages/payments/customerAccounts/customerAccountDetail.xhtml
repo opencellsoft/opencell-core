@@ -104,9 +104,10 @@
                                             </hftl:decorateFormField>
                                         </h:panelGroup>
 
-                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false" listBean="#{titleBean}"
-                                            listenerUpdate=":parentTab:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft" />
 
+                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false" listBean="#{titleBean}"
+                                            listenerUpdate=":parentTab:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft" />
+                                            
                                         <h:panelGroup id="userNamePanel" layout="block">
                                             <hftl:formField
                                                 label="#{messages[(customerAccountBean.entity.name.title != null and customerAccountBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
@@ -331,14 +332,14 @@
                                 <h:outputText value="#{entity.occCode}" />
                             </p:column>
 
-                            <p:column width="10%">
+                            <p:column width="20%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['accountOperation.occDescription']}" />
                                 </f:facet>
                                 <h:outputText value="#{entity.occDescription}" />
                             </p:column>
 
-                            <p:column width="20%">
+                            <p:column width="10%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['order.number']}" />
                                 </f:facet>
@@ -362,8 +363,6 @@
 
                             <hftl:column label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus.label" isMessage="true" width="10%" />
 
-                            <hftl:column label="#{messages['accountOperation.excludedFromDunning']}" field="excludedFromDunning" isMessage="true" width="10%" />
-
                             <hftl:actionsColumn width="15%" renderDeleteLink="false" editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true" />
                             
                             <ui:define name="add-on-buttons">
@@ -373,12 +372,10 @@
                                     <p:commandButton action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonConsultMatching']}"
                                         rendered="#{customerAccountBean.isActiveAccount()}" />
 
-                                    <p:commandButton action="#{accountOperationBean.dunningInclusionExclusion(customerAccountBean.entity.id,true)}"
-                                        value="#{messages['customerAccount.excludeFromDunning']}" rendered="#{customerAccountBean.isActiveAccount()}"
-                                        disabled="#{accountOperationBean.isSelectedOperationExcluded()}" />
-                                    <p:commandButton action="#{accountOperationBean.dunningInclusionExclusion(customerAccountBean.entity.id,false)}"
-                                        value="#{messages['customerAccount.includeToDunning']}" rendered="#{customerAccountBean.isActiveAccount()}"
-                                        disabled="#{accountOperationBean.isSelectedOperationIncluded()}" />
+                                    <p:commandButton action="#{accountOperationBean.addLitigation(customerAccountBean.entity.id)}"
+                                        value="#{messages['accountOperation_I.buttonAddLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" />
+                                    <p:commandButton action="#{accountOperationBean.cancelLitigation(customerAccountBean.entity.id)}"
+                                        value="#{messages['accountOperation_I.buttonCancelLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" />
                                 </h:panelGroup>
                             </ui:define>
                         </hftl:dataList>

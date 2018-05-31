@@ -24,8 +24,12 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 
+
 /**
  * The Class FlatFileProcessingJob consume any flat file and execute the given script for each line/record, the beanIO is used to describe file format.
+ * @author anasseh
+ *
+ * @lastModifiedVersion willBeSetLater
  */
 @Stateless
 public class FlatFileProcessingJob extends Job {
@@ -34,16 +38,18 @@ public class FlatFileProcessingJob extends Job {
     @Inject
     private FlatFileProcessingJobBean flatFileProcessingJobBean;
 
-    /** The custom field instance service. */
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
-    /** The job execution service . */
-    @Inject
-    private JobExecutionService jobExecutionService;
-
+    /** The param bean factory. */
     @Inject
     private ParamBeanFactory paramBeanFactory;
+    
+    /** The Constant CONTINUE. */
+    public static final String CONTINUE = "CONTINUE";
+    
+    /** The Constant STOP. */
+    public static final String STOP = "STOP";
+    
+    /** The Constant ROLLBBACK. */
+    public static final String ROLLBBACK = "ROLLBBACK";
 
     @SuppressWarnings("unchecked")
     @Override
@@ -57,6 +63,7 @@ public class FlatFileProcessingJob extends Job {
             String recordVariableName = null;
             String originFilename = null;
             String formatTransfo = null;
+            String errorAction = null;
             Map<String, Object> initContext = new HashMap<String, Object>();
             try {
                 recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_recordVariableName");
@@ -66,6 +73,7 @@ public class FlatFileProcessingJob extends Job {
                 fileNameExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_fileNameExtension");
                 scriptInstanceFlowCode = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_scriptsFlow");
                 formatTransfo = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_formatTransfo");
+                errorAction = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_errorAction");
                 if (customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_variables") != null) {
                     initContext = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_variables");
                 }
@@ -91,7 +99,7 @@ public class FlatFileProcessingJob extends Job {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-                flatFileProcessingJobBean.execute(result, inputDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, originFilename, formatTransfo);
+                flatFileProcessingJobBean.execute(result, inputDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, originFilename, formatTransfo,errorAction);
             }
 
         } catch (Exception e) {
@@ -100,10 +108,12 @@ public class FlatFileProcessingJob extends Job {
         }
     }
 
+
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.MEDIATION;
     }
+
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
@@ -199,6 +209,21 @@ public class FlatFileProcessingJob extends Job {
         listValues.put("Xlsx_to_Csv", "Excel cvs");
         formatTransfo.setListValues(listValues);
         result.put("FlatFileProcessingJob_formatTransfo", formatTransfo);
+        
+        CustomFieldTemplate errorAction = new CustomFieldTemplate();
+        errorAction.setCode("FlatFileProcessingJob_errorAction");
+        errorAction.setAppliesTo("JOB_FlatFileProcessingJob");
+        errorAction.setActive(true);
+        errorAction.setDefaultValue(FlatFileProcessingJob.CONTINUE);
+        errorAction.setDescription("Error action");
+        errorAction.setFieldType(CustomFieldTypeEnum.LIST);
+        errorAction.setValueRequired(false);
+        Map<String, String> listValuesErrorAction = new HashMap<String, String>();
+        listValuesErrorAction.put(FlatFileProcessingJob.CONTINUE, "Continue");
+        listValuesErrorAction.put(FlatFileProcessingJob.STOP, "Stop");
+        listValuesErrorAction.put(FlatFileProcessingJob.ROLLBBACK, "Rollback");
+        errorAction.setListValues(listValuesErrorAction);
+        result.put("FlatFileProcessingJob_errorAction", errorAction);
 
         return result;
     }

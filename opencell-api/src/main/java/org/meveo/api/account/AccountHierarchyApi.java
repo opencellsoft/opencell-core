@@ -101,7 +101,8 @@ import org.meveo.util.MeveoParamBean;
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  */
 
 @SuppressWarnings("deprecation")
@@ -165,9 +166,6 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private BusinessAccountModelService businessAccountModelService;
@@ -250,10 +248,22 @@ public class AccountHierarchyApi extends BaseApi {
         currencyApi.findOrCreate(postData.getCurrencyCode());
         languageApi.findOrCreate(postData.getLanguageCode());
 
-        sellerDto.setCountryCode(postData.getCountryCode());
-        sellerDto.setCurrencyCode(postData.getCurrencyCode());
-        sellerDto.setLanguageCode(postData.getLanguageCode());
-        sellerApi.createOrUpdate(sellerDto);
+        boolean updateSeller = false;
+        if (!postData.getCountryCode().equals(sellerDto.getCountryCode())) {
+            sellerDto.setCountryCode(postData.getCountryCode());
+            updateSeller = true;
+        }
+        if (!postData.getCurrencyCode().equals(sellerDto.getCurrencyCode())) {
+            sellerDto.setCurrencyCode(postData.getCurrencyCode());
+            updateSeller = true;
+        }
+        if (!postData.getLanguageCode().equals(sellerDto.getLanguageCode())) {
+            sellerDto.setLanguageCode(postData.getLanguageCode());
+            updateSeller = true;
+        }
+        if (updateSeller) {
+            sellerApi.createOrUpdate(sellerDto);
+        }
 
         String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         if (postData.getUsePrefix() != null && !postData.getUsePrefix()) {
@@ -1777,6 +1787,8 @@ public class AccountHierarchyApi extends BaseApi {
         dto.setStatus(ba.getStatus());
         dto.setStatusDate(ba.getStatusDate());
         dto.setPhone(ba.getPhone());
+        dto.setMinimumAmountEl(ba.getMinimumAmountEl());
+        dto.setMinimumLabelEl(ba.getMinimumLabelEl());
         if (ba.getTerminationReason() != null) {
             dto.setTerminationReason(ba.getTerminationReason().getCode());
         }

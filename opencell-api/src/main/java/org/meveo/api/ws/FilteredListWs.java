@@ -19,6 +19,7 @@ public interface FilteredListWs extends IBaseWs {
      * @param filter - if the code is set we lookup the filter in DB, else we parse the inputXml to create a transient filter
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
+     * @param parameters - filter parameters
      * @return FilteredListResponseDto
      */
     @WebMethod

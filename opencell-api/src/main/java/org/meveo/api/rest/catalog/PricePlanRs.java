@@ -49,7 +49,7 @@ public interface PricePlanRs extends IBaseRs {
     ActionStatus update(PricePlanMatrixDto postData);
 
     /**
-     * Find a price plan matrix with a given code 
+     * Find a price plan matrix with a given code
      * 
      * @param pricePlanCode The price plan's code
      * @return pricePlanMatrixDto Returns pricePlanMatrixDto containing pricePlan
@@ -59,7 +59,7 @@ public interface PricePlanRs extends IBaseRs {
     GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
 
     /**
-     * Remove an existing price plan matrix with a given code 
+     * Remove an existing price plan matrix with a given code
      * 
      * @param pricePlanCode The price plan's code
      * @return Request processing status
@@ -77,7 +77,7 @@ public interface PricePlanRs extends IBaseRs {
     @Path("/list")
     @GET
     PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
-    
+
     /**
      * Create new or update an existing price plan matrix
      * 
@@ -87,4 +87,25 @@ public interface PricePlanRs extends IBaseRs {
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(PricePlanMatrixDto postData);
+
+    /**
+     * Enable a Price plan with a given code
+     * 
+     * @param code Price plan code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Price plan with a given code
+     * 
+     * @param code Price plan code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
 }

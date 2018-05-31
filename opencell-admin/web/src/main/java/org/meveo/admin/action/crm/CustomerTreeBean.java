@@ -107,9 +107,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     @Inject
     private AccessService accessService;
     
-    @Inject
-    private Logger log;
-
     private TreeNode accountsHierarchy;
 
     private Long selectedEntityId;
@@ -165,6 +162,9 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     /**
      * Build account hierarchy for Primefaces tree component. Check entity type that was provided then loads {@link Customer} entity that is on top on hierarchy, and delegates
      * building logic to private build() recursion.
+     * 
+     * @param entity entity to build hierarchy for
+     * @return TreeNode faces object
      */
     public TreeNode buildAccountsHierarchy(BaseEntity entity) {
 

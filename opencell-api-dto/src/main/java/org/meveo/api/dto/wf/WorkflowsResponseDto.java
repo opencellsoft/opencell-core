@@ -13,27 +13,37 @@ import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * 
- * @author TyshanaShi(tyshan@manaty.net)
- * 
+ * The Class WorkflowsResponseDto.
  *
+ * @author TyshanaShi(tyshan@manaty.net)
  */
-@XmlRootElement(name="WorkflowsResponse")
+@XmlRootElement(name = "WorkflowsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowsResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1262341691039525086L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1262341691039525086L;
 
-    @XmlElementWrapper(name="workflows")
-    @XmlElement(name="workflow")
+    /** The workflows. */
+    @XmlElementWrapper(name = "workflows")
+    @XmlElement(name = "workflow")
     private List<WorkflowDto> workflows = new ArrayList<WorkflowDto>();
 
+    /**
+     * Gets the workflows.
+     *
+     * @return the workflows
+     */
     public List<WorkflowDto> getWorkflows() {
         return workflows;
     }
 
+    /**
+     * Sets the workflows.
+     *
+     * @param workflows the new workflows
+     */
     public void setWorkflows(List<WorkflowDto> workflows) {
         this.workflows = workflows;
     }
 }
-

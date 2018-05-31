@@ -214,7 +214,7 @@
 
                                                 
                                                 
-                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
+                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false"
                                         listBean="#{titleBean}" listenerUpdate=":parentTab:formId:childTab:userNamePanel" styleClass="clearLeft"/>
 
                                     <h:panelGroup id="userNamePanel" layout="block">
@@ -226,7 +226,20 @@
                                                 rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>                                                
                                     
-                                 	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />               
+                                 	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />     
+                                 	
+                                 	<c:choose> 
+		                                <c:when test="${appProvider.entreprise}">
+									        <c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithoutTax']} EL" />
+									    </c:when>
+									    <c:otherwise>
+									    	<c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithTax']} EL" />
+									    </c:otherwise>
+									</c:choose>   
+                                 	
+                                 	<hftl:formField label="#{messages['billingAccount.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />   
+                                 	<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
+                                 	       
 							     </p:fieldset>		
 							     
                                  <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >

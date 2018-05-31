@@ -195,26 +195,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if (preferedPaymentMethod != null) {
                 paymentMethodEnum = preferedPaymentMethod.getPaymentType();
             }
-            switch (paymentMethodEnum) {
-            case CHECK:
-                checkBillableBANumber++;
-                checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-                break;
-            case DIRECTDEBIT:
-                directDebitBillableBANumber++;
-                directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-                break;
-            case WIRETRANSFER:
-                wiretransferBillableBANumber++;
-                wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-                break;
+            if (paymentMethodEnum != null) {
+                switch (paymentMethodEnum) {
+                case CHECK:
+                    checkBillableBANumber++;
+                    checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                    break;
+                case DIRECTDEBIT:
+                    directDebitBillableBANumber++;
+                    directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                    break;
+                case WIRETRANSFER:
+                    wiretransferBillableBANumber++;
+                    wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                    break;
 
-            case CARD:
-                creditDebitCardBillableBANumber++;
-                creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                case CARD:
+                    creditDebitCardBillableBANumber++;
+                    creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 
-            default:
-                break;
+                default:
+                    break;
+                }
             }
         }
 
@@ -429,6 +431,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
+        
+        Query queryMinTrans = getEntityManager().createQuery("delete from " + RatedTransaction.class.getName() + " where billingRun=:billingRun AND wallet IS null");
+        queryMinTrans.setParameter("billingRun", billingRun);
+        queryMinTrans.executeUpdate();
 
         Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryAgregate.setParameter("billingRun", billingRun);
@@ -819,13 +825,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
                 if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
                     log.info("Will proceed to create aggregates and invoice");
-                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billingAccountIds);
+                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, null);
                     billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
                 }
             }
 
         } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billingAccountIds);
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, null);
             billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
 
         } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {

@@ -8,27 +8,40 @@ import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetTriggeredEdrResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetTriggeredEdrResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetTriggeredEdrResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -408801271188966214L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -408801271188966214L;
 
-	private TriggeredEdrTemplateDto triggeredEdrTemplate;
+    /** The triggered edr template. */
+    private TriggeredEdrTemplateDto triggeredEdrTemplate;
 
-	public TriggeredEdrTemplateDto getTriggeredEdrTemplate() {
-		return triggeredEdrTemplate;
-	}
+    /**
+     * Gets the triggered edr template.
+     *
+     * @return the triggered edr template
+     */
+    public TriggeredEdrTemplateDto getTriggeredEdrTemplate() {
+        return triggeredEdrTemplate;
+    }
 
-	public void setTriggeredEdrTemplate(TriggeredEdrTemplateDto triggeredEdrTemplate) {
-		this.triggeredEdrTemplate = triggeredEdrTemplate;
-	}
+    /**
+     * Sets the triggered edr template.
+     *
+     * @param triggeredEdrTemplate the new triggered edr template
+     */
+    public void setTriggeredEdrTemplate(TriggeredEdrTemplateDto triggeredEdrTemplate) {
+        this.triggeredEdrTemplate = triggeredEdrTemplate;
+    }
 
-	@Override
-	public String toString() {
-		return "GetTriggeredEdrResponseDto [triggeredEdrTemplate=" + triggeredEdrTemplate + ", getActionStatus()=" + getActionStatus() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetTriggeredEdrResponseDto [triggeredEdrTemplate=" + triggeredEdrTemplate + ", getActionStatus()=" + getActionStatus() + "]";
+    }
 }

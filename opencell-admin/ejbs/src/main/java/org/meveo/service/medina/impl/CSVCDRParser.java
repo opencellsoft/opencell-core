@@ -19,79 +19,72 @@
 package org.meveo.service.medina.impl;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Map;
 
+import org.meveo.admin.parse.csv.CDR;
 
 /**
- * This Interface must be implemented to parse CDR and create EDR from it
- * The implementation must be a Named class, i.e. a class annotated
- * with the javax.ejb.Nammed annotation.
+ * This Interface must be implemented to parse CDR and create EDR from it The implementation must be a Named class, i.e. a class annotated with the javax.ejb.Nammed annotation.
+ * @lastModifiedVersion willBeSetLater
  * 
  */
 public interface CSVCDRParser {
+
 
     /**
      * @param CDRFile cdr file.
      */
     void init(File CDRFile);
-	
-	/**
-	 * 
-	 * @return a unique identifier from the batch
-	 */	
-	Map<String, String> getOriginBatch();
-	
-	/**
-	 * Verify that the format of the CDR is correct and
-	 *  modify it if needed.
-	 *  The implementation should save locally the CDR as call to other methods do not contain reference to the CDR
-	 * @param line : the input CDR
-	 * @return the modified CDR
-	 * @throws InvalidFormatException  invalid format exception.
-	 */
-	Serializable getCDR(String line) throws InvalidFormatException;
-	
-	/**
-	 * Build and return a unique identifier from the CDR in order.
-	 * to avoid importing twice the same CDR in MEVEO
-	 * @param cdr : CDR returned by the getCDR method
-	 * @param origin origin.
-	 * @return CDR's unique key
-	 */
-	String getOriginRecord(Serializable cdr, String origin);
 
-	/**
-	 * Return in the form of an AccessDAO object the user id and sercice id 
-	 *  that will allow to lookup the ACCESS.
-	 * @param cdr : CDR returned by the getCDR method
-	 * @return the Access userId
-	 * @throws InvalidAccessException invalid access exception.
-	 */
-	String getAccessUserId(Serializable cdr) throws InvalidAccessException;
+    /**
+     * 
+     * @return a unique identifier from the batch
+     */
+    Map<String, String> getOriginBatch();
 
-	/**
-	 * Construct EDRDAO from the CDR.
-	 * @param cdr : CDR returned by the getCDR method
-	 * @param origin origin
-	 * @return  EDR Data Access Object
-	 * 
-	 */
-	EDRDAO getEDR(Serializable cdr, String origin);
+    /**
+     * Verify that the format of the CDR is correct and modify it if needed. The implementation should save locally the CDR as call to other methods do not contain reference to the
+     * CDR
+     * 
+     * @param line : the input CDR
+     * @param origin Origin, source of CDR
+     * @return the modified CDR
+     * @throws InvalidFormatException invalid format exception.
+     */
+    CDR getCDR(String line, String origin) throws InvalidFormatException;
 
-	/**
-	 * Construct a csv record for the rejected CDR with given rejection reason.
-	 * @param cdr cdr
-	 * @param reason reason
-	 * @return cdr line
-	 */
-	String getCDRLine(Serializable cdr, String reason);
+    /**
+     * Build and return a unique identifier from the CDR in order. to avoid importing twice the same CDR in MEVEO
+     * 
+     * @param cdr : CDR returned by the getCDR method
+     * @param origin origin.
+     * @return CDR's unique key
+     */
+    String getOriginRecord(CDR cdr, String origin);
 
-	/**
-	 * @param username user name
-	 * @param ip Ip address.
-	 * 
-	 */
-	void initByApi(String username, String ip);
-	
+    /**
+     * Return in the form of an AccessDAO object the user id and sercice id that will allow to lookup the ACCESS.
+     * 
+     * @param cdr : CDR returned by the getCDR method
+     * @return the Access userId
+     * @throws InvalidAccessException invalid access exception.
+     */
+    String getAccessUserId(CDR cdr) throws InvalidAccessException;
+
+    /**
+     * Construct a csv record for the rejected CDR with given rejection reason.
+     * 
+     * @param cdr cdr
+     * @param reason reason
+     * @return cdr line
+     */
+    String getCDRLine(CDR cdr, String reason);
+
+    /**
+     * @param username user name
+     * @param ip Ip address.
+     * 
+     */
+    void initByApi(String username, String ip);
+
 }

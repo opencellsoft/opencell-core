@@ -8,41 +8,49 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
-
+/**
+ * The Class GetPdfInvoiceResponseDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetPdfInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetPdfInvoiceResponseDto extends BaseResponse{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private byte[] pdfContent;
-	
-	public GetPdfInvoiceResponseDto(){
-		
-	}
+public class GetPdfInvoiceResponseDto extends BaseResponse {
+    
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+    
+    /** The pdf content. */
+    private byte[] pdfContent;
 
-	/**
-	 * @return the pdfContent
-	 */
-	public byte[] getPdfContent() {
-		return pdfContent;
-	}
+    /**
+     * Instantiates a new gets the pdf invoice response dto.
+     */
+    public GetPdfInvoiceResponseDto() {
 
-	/**
-	 * @param pdfContent the pdfContent to set
-	 */
-	public void setPdfContent(byte[] pdfContent) {
-		this.pdfContent = pdfContent;
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "GetPdfInvoiceResponseDto [pdfContent=" + Arrays.toString(pdfContent) + "]";
-	}
+    /**
+     * Gets the pdf content.
+     *
+     * @return the pdfContent
+     */
+    public byte[] getPdfContent() {
+        return pdfContent;
+    }
 
-		
+    /**
+     * Sets the pdf content.
+     *
+     * @param pdfContent the pdfContent to set
+     */
+    public void setPdfContent(byte[] pdfContent) {
+        this.pdfContent = pdfContent;
+    }
+
+    @Override
+    public String toString() {
+        return "GetPdfInvoiceResponseDto [pdfContent=" + Arrays.toString(pdfContent) + "]";
+    }
+
 }

@@ -30,10 +30,6 @@ public class GenericNotificationService extends BusinessService<Notification> {
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     static boolean useNotificationCache = true;
 
     @PostConstruct

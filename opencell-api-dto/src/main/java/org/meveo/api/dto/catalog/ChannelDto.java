@@ -4,20 +4,38 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.catalog.Channel;
 
+/**
+ * The Class ChannelDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "Channel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChannelDto extends BusinessDto {
+public class ChannelDto extends EnableBusinessDto {
 
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public ChannelDto() {
-	}
+    /**
+     * Instantiates a new channel dto.
+     */
+    public ChannelDto() {
+    }
 
-	public ChannelDto(Channel channel) {
-		super(channel);
-	}
+    /**
+     * Instantiates a new channel dto.
+     *
+     * @param channel the channel
+     */
+    public ChannelDto(Channel channel) {
+        super(channel);
+    }
 
+    @Override
+    public String toString() {
+        return "ChannelDto [id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + "]";
+    }
 }

@@ -32,9 +32,7 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
@@ -70,6 +68,12 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.payments.PaymentMethodEnum;
 
+/**
+ * Accounts webservice soap implimentation.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion willBeSetHere
+ */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountWsImpl extends BaseWs implements AccountWs {
@@ -466,6 +470,34 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
+    public ActionStatus enableAccess(String accessCode, String subscriptionCode) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accessApi.enableOrDisable(accessCode, subscriptionCode, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableAccess(String accessCode, String subscriptionCode) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accessApi.enableOrDisable(accessCode, subscriptionCode, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public CustomerListResponse findAccountHierarchy(AccountHierarchyDto postData) {
         CustomerListResponse result = new CustomerListResponse();
 
@@ -531,7 +563,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows, PagingAndFiltering pagingAndFiltering) {
+    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows,
+            PagingAndFiltering pagingAndFiltering) {
 
         try {
             return customerApi.list(postData, pagingAndFiltering == null ? new PagingAndFiltering(null, null, firstRow, numberOfRows, null, null) : pagingAndFiltering);
@@ -672,17 +705,6 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
-    @Override
-    public ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto dunningDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            customerAccountApi.dunningExclusionInclusion(dunningDto);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
 
     @Override
     public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) {
@@ -985,7 +1007,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(bamCode);
+            moduleApi.remove(bamCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -996,11 +1018,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     @Override
     public MeveoModuleDtosResponse listBusinessAccountModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessAccountModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessAccountModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1128,4 +1147,29 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
+    @Override
+    public ActionStatus enableBusinessAccountModel(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableBusinessAccountModel(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

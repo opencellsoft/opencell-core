@@ -69,6 +69,8 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     @Override
     public T enable(T notification) throws BusinessException {
         notification = super.enable(notification);
+        // case when the entity was created as disabled
+        notificationCacheContainerProvider.removeNotificationFromCache(notification);
         notificationCacheContainerProvider.addNotificationToCache(notification);
         return notification;
     }

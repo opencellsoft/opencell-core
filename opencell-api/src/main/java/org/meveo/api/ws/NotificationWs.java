@@ -20,64 +20,117 @@ import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 @WebService
 public interface NotificationWs extends IBaseWs {
 
-	// notification
+    // notification
 
-	@WebMethod
-	ActionStatus createNotification(@WebParam(name = "notification") NotificationDto postData);
+    @WebMethod
+    ActionStatus createNotification(@WebParam(name = "notification") NotificationDto postData);
 
-	@WebMethod
-	ActionStatus updateNotification(@WebParam(name = "notification") NotificationDto postData);
+    @WebMethod
+    ActionStatus updateNotification(@WebParam(name = "notification") NotificationDto postData);
 
-	@WebMethod
-	GetNotificationResponseDto findNotification(@WebParam(name = "notificationCode") String notificationCode);
+    @WebMethod
+    GetNotificationResponseDto findNotification(@WebParam(name = "notificationCode") String notificationCode);
 
-	@WebMethod
-	ActionStatus removeNotification(@WebParam(name = "notificationCode") String notificationCode);
+    @WebMethod
+    ActionStatus removeNotification(@WebParam(name = "notificationCode") String notificationCode);
 
-	@WebMethod
-	ActionStatus createOrUpdateNotification(@WebParam(name = "notification") NotificationDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateNotification(@WebParam(name = "notification") NotificationDto postData);
 
-	// webHook
+    /**
+     * Enable a Script type notification by its code
+     * 
+     * @param code Script type notification code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableNotification(@WebParam(name = "code") String code);
 
-	@WebMethod
-	ActionStatus createWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
+    /**
+     * Disable a Script type notification by its code
+     * 
+     * @param code Script type notification code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableNotification(@WebParam(name = "code") String code);
 
-	@WebMethod
-	ActionStatus updateWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
+    // webHook
 
-	@WebMethod
-	GetWebHookNotificationResponseDto findWebHookNotification(
-			@WebParam(name = "notificationCode") String notificationCode);
+    @WebMethod
+    ActionStatus createWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
 
-	@WebMethod
-	ActionStatus removeWebHookNotification(@WebParam(name = "notificationCode") String notificationCode);
+    @WebMethod
+    ActionStatus updateWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
 
-	@WebMethod
-	ActionStatus createOrUpdateWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
+    @WebMethod
+    GetWebHookNotificationResponseDto findWebHookNotification(@WebParam(name = "notificationCode") String notificationCode);
 
-	// email
+    @WebMethod
+    ActionStatus removeWebHookNotification(@WebParam(name = "notificationCode") String notificationCode);
 
-	@WebMethod
-	ActionStatus createEmailNotification(@WebParam(name = "notification") EmailNotificationDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateWebHookNotification(@WebParam(name = "notification") WebHookDto postData);
 
-	@WebMethod
-	ActionStatus updateEmailNotification(@WebParam(name = "notification") EmailNotificationDto postData);
+    /**
+     * Enable a Webhook notification by its code
+     * 
+     * @param code Webhook notification code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableWebHookNotification(@WebParam(name = "code") String code);
 
-	@WebMethod
-	GetEmailNotificationResponseDto findEmailNotification(@WebParam(name = "notificationCode") String notificationCode);
+    /**
+     * Disable a Webhook notification by its code
+     * 
+     * @param code Webhook notification code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableWebHookNotification(@WebParam(name = "code") String code);
 
-	@WebMethod
-	ActionStatus removeEmailNotification(@WebParam(name = "notificationCode") String notificationCode);
+    // email
 
-	@WebMethod
-	ActionStatus createOrUpdateEmailNotification(@WebParam(name = "notification") EmailNotificationDto postData);
+    @WebMethod
+    ActionStatus createEmailNotification(@WebParam(name = "notification") EmailNotificationDto postData);
 
-	// history
+    @WebMethod
+    ActionStatus updateEmailNotification(@WebParam(name = "notification") EmailNotificationDto postData);
 
-	@WebMethod
-	NotificationHistoriesResponseDto listNotificationHistory();
+    @WebMethod
+    GetEmailNotificationResponseDto findEmailNotification(@WebParam(name = "notificationCode") String notificationCode);
 
-	@WebMethod
-	InboundRequestsResponseDto listInboundRequest();
+    @WebMethod
+    ActionStatus removeEmailNotification(@WebParam(name = "notificationCode") String notificationCode);
+
+    @WebMethod
+    ActionStatus createOrUpdateEmailNotification(@WebParam(name = "notification") EmailNotificationDto postData);
+
+    /**
+     * Enable a Email notification by its code
+     * 
+     * @param code Email notification code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableEmailNotification(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Email notification by its code
+     * 
+     * @param code Email notification code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableEmailNotification(@WebParam(name = "code") String code);
+
+    // history
+
+    @WebMethod
+    NotificationHistoriesResponseDto listNotificationHistory();
+
+    @WebMethod
+    InboundRequestsResponseDto listInboundRequest();
 
 }

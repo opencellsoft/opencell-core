@@ -7,27 +7,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.dwh.ChartDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class GetChartResponse.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetChartResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetChartResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	private ChartDto chartDto;
+    /** The chart dto. */
+    private ChartDto chartDto;
 
-	public ChartDto getChartDto() {
+    /**
+     * Gets the chart dto.
+     *
+     * @return the chart dto
+     */
+    public ChartDto getChartDto() {
 
-		return chartDto;
+        return chartDto;
 
-	}
+    }
 
-	public void setChartDto(ChartDto chartDto) {
-		this.chartDto = chartDto;
-	}
+    /**
+     * Sets the chart dto.
+     *
+     * @param chartDto the new chart dto
+     */
+    public void setChartDto(ChartDto chartDto) {
+        this.chartDto = chartDto;
+    }
 
-	@Override
-	public String toString() {
-		return "GetChartResponse [chartDto=" + chartDto + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetChartResponse [chartDto=" + chartDto + "]";
+    }
 }

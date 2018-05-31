@@ -32,8 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
@@ -63,7 +63,7 @@ import org.meveo.model.scripts.ScriptInstance;
         @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code order by e.validity.from desc, e.validity.to desc"),
         @NamedQuery(name = "ProductOffering.findMatchingVersions", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code and e.id !=:id order by id"),
         @NamedQuery(name = "ProductOffering.findActiveByDate", query = "select e from ProductOffering e where e.lifeCycleStatus='ACTIVE' AND type(e)= :clazz and ((e.validity.from IS NULL and e.validity.to IS NULL) or (e.validity.from<=:date and :date<e.validity.to) or (e.validity.from<=:date and e.validity.to IS NULL) or (e.validity.from IS NULL and :date<e.validity.to))") })
-public abstract class ProductOffering extends BusinessCFEntity implements IImageUpload {
+public abstract class ProductOffering extends EnableBusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 6877386866687396135L;
 
@@ -96,7 +96,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     /**
      * @deprecated As of v 5.0, replaced by ${@link #customerCategories}}
      */
-    @Deprecated 
+    @Deprecated
     @ManyToMany
     @JoinTable(name = "cat_product_offer_bam", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "bam_id"))
     @OrderColumn(name = "INDX")
@@ -126,7 +126,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @ManyToMany
     @JoinTable(name = "cat_product_offer_seller", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
     private List<Seller> sellers = new ArrayList<>();
-    
+
     @ManyToMany
     @JoinTable(name = "cat_product_offer_customer_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "customer_category_id"))
     @OrderColumn(name = "INDX")

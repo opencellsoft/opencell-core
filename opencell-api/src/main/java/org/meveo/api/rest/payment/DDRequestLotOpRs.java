@@ -26,8 +26,8 @@ public interface DDRequestLotOpRs extends IBaseRs {
 	/**
 	 * Create a ddrequestLotOp by dto
      *
-	 * @param dto
-	 * @return
+	 * @param dto DDRequestLotOp Dto
+	 * @return Action status
 	 */
     @POST
     @Path("/")
@@ -36,10 +36,10 @@ public interface DDRequestLotOpRs extends IBaseRs {
     /**
      * List ddrequestLotOps by fromDueDate,toDueDate,status
      *
-     * @param fromDueDate
-     * @param toDueDate
-     * @param status
-     * @return
+     * @param fromDueDate Start of search due date interval
+     * @param toDueDate End of search due date interval
+     * @param status DDRequestOp status
+     * @return DDRequestLotOps response 
      */
     @GET
     @Path("/list")

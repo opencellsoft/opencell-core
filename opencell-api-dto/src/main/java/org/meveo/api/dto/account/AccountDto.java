@@ -12,40 +12,71 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
 
 /**
+ * The Class AccountDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "Account")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AccountDto extends BusinessDto {
 
-	private static final long serialVersionUID = -8818317499795113026L;	
-	
-	private String externalRef1;
-	private String externalRef2;
-	private NameDto name;
-	private AddressDto address;
-	private String jobTitle;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8818317499795113026L;
 
-	@XmlElement(name = "businessAccountModel")
-	private BusinessEntityDto businessAccountModel;
-	private CustomFieldsDto customFields;
-	
-	@XmlTransient
-	protected boolean loaded = false;
-	
-	public AccountDto() {
-		super();
-	}
+    /** The external ref 1. */
+    private String externalRef1;
+    
+    /** The external ref 2. */
+    private String externalRef2;
+    
+    /** The name. */
+    private NameDto name;
+    
+    /** The address. */
+    private AddressDto address;
+    
+    /** The job title. */
+    private String jobTitle;
 
-	public AccountDto(AccountEntity e, CustomFieldsDto customFieldInstances) {
-		initFromEntity(e, customFieldInstances);
-	}
+    /** The business account model. */
+    @XmlElement(name = "businessAccountModel")
+    private BusinessEntityDto businessAccountModel;
+    
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
 
-	public void initFromEntity(AccountEntity account, CustomFieldsDto customFieldInstances) {
-		setCode(account.getCode());
-		setDescription(account.getDescription());
-		setExternalRef1(account.getExternalRef1());
-		setExternalRef2(account.getExternalRef2());
+    /** The loaded. */
+    @XmlTransient
+    protected boolean loaded = false;
+
+    /**
+     * Instantiates a new account dto.
+     */
+    public AccountDto() {
+        super();
+    }
+
+    /**
+     * Instantiates a new account dto.
+     *
+     * @param accountEntity the accountEntity entity
+     * @param customFieldInstances the custom field instances
+     */
+    public AccountDto(AccountEntity accountEntity, CustomFieldsDto customFieldInstances) {
+        initFromEntity(accountEntity, customFieldInstances);
+    }
+
+    /**
+     * Inits the from entity.
+     *
+     * @param account the account
+     * @param customFieldInstances the custom field instances
+     */
+    public void initFromEntity(AccountEntity account, CustomFieldsDto customFieldInstances) {
+        setCode(account.getCode());
+        setDescription(account.getDescription());
+        setExternalRef1(account.getExternalRef1());
+        setExternalRef2(account.getExternalRef2());
         if (account.getName() != null) {
             setName(new NameDto(account.getName()));
         }
@@ -55,105 +86,188 @@ public abstract class AccountDto extends BusinessDto {
 
         customFields = customFieldInstances;
 
-		loaded = true;
-	}
+        loaded = true;
+    }
 
-	public String getExternalRef1() {
-		return externalRef1;
-	}
+    /**
+     * Gets the external ref 1.
+     *
+     * @return the external ref 1
+     */
+    public String getExternalRef1() {
+        return externalRef1;
+    }
 
-	public void setExternalRef1(String externalRef1) {
-		this.externalRef1 = externalRef1;
-	}
+    /**
+     * Sets the external ref 1.
+     *
+     * @param externalRef1 the new external ref 1
+     */
+    public void setExternalRef1(String externalRef1) {
+        this.externalRef1 = externalRef1;
+    }
 
-	public String getExternalRef2() {
-		return externalRef2;
-	}
+    /**
+     * Gets the external ref 2.
+     *
+     * @return the external ref 2
+     */
+    public String getExternalRef2() {
+        return externalRef2;
+    }
 
-	public void setExternalRef2(String externalRef2) {
-		this.externalRef2 = externalRef2;
-	}
+    /**
+     * Sets the external ref 2.
+     *
+     * @param externalRef2 the new external ref 2
+     */
+    public void setExternalRef2(String externalRef2) {
+        this.externalRef2 = externalRef2;
+    }
 
-	public NameDto getName() {
-		return name;
-	}
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
+    public NameDto getName() {
+        return name;
+    }
 
-	public void setName(NameDto name) {
-		this.name = name;
-	}
+    /**
+     * Sets the name.
+     *
+     * @param name the new name
+     */
+    public void setName(NameDto name) {
+        this.name = name;
+    }
 
-	public AddressDto getAddress() {
-		return address;
-	}
+    /**
+     * Gets the address.
+     *
+     * @return the address
+     */
+    public AddressDto getAddress() {
+        return address;
+    }
 
-	public void setAddress(AddressDto address) {
-		this.address = address;
-	}
+    /**
+     * Sets the address.
+     *
+     * @param address the new address
+     */
+    public void setAddress(AddressDto address) {
+        this.address = address;
+    }
 
-	public BusinessEntityDto getBusinessAccountModel() {
-		return businessAccountModel;
-	}
+    /**
+     * Gets the business account model.
+     *
+     * @return the business account model
+     */
+    public BusinessEntityDto getBusinessAccountModel() {
+        return businessAccountModel;
+    }
 
-	public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
-		this.businessAccountModel = businessAccountModel;
-	}
+    /**
+     * Sets the business account model.
+     *
+     * @param businessAccountModel the new business account model
+     */
+    public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
+        this.businessAccountModel = businessAccountModel;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-	public boolean isLoaded() {
-		return loaded;
-	}
+    /**
+     * Checks if is loaded.
+     *
+     * @return true, if is loaded
+     */
+    public boolean isLoaded() {
+        return loaded;
+    }
 
-	public void setLoaded(boolean loaded) {
-		this.loaded = loaded;
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getCode() == null) ? 0 : getCode().hashCode());
-		return result;
-	}
+    /**
+     * Sets the loaded.
+     *
+     * @param loaded the new loaded
+     */
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AccountDto other = (AccountDto) obj;
-		if (getCode() == null) {
-			if (other.getCode() != null)
-				return false;
-		} else if (!getCode().equals(other.getCode()))
-			return false;
-		return true;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getCode() == null) ? 0 : getCode().hashCode());
+        return result;
+    }
 
-	@Override
-	public String toString() {
-		return "AccountDto [code=" + getCode() + ", description=" + getDescription()
-				+ ", externalRef1=" + externalRef1 + ", externalRef2="
-				+ externalRef2 + ", name=" + name + ", address=" + address
-				+ ", customFields=" + customFields + ", loaded=" + loaded
-				+ ", businessAccountModel=" + businessAccountModel +  "]";
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AccountDto other = (AccountDto) obj;
+        if (getCode() == null) {
+            if (other.getCode() != null)
+                return false;
+        } else if (!getCode().equals(other.getCode()))
+            return false;
+        return true;
+    }
 
-	public String getJobTitle() {
-		return jobTitle;
-	}
+    /**
+     * Gets the job title.
+     *
+     * @return the job title
+     */
+    public String getJobTitle() {
+        return jobTitle;
+    }
 
-	public void setJobTitle(String jobTitle) {
-		this.jobTitle = jobTitle;
-	}
+    /**
+     * Sets the job title.
+     *
+     * @param jobTitle the new job title
+     */
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+    
+    @Override
+    public String toString() {
+        return "AccountDto [code=" + getCode() + ", description=" + getDescription() + ", externalRef1=" + externalRef1 + ", externalRef2=" + externalRef2 + ", name=" + name
+                + ", address=" + address + ", customFields=" + customFields + ", loaded=" + loaded + ", businessAccountModel=" + businessAccountModel + "]";
+    }
 
 }

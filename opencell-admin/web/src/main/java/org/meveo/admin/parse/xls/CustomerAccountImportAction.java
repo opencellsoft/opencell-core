@@ -83,7 +83,7 @@ public class CustomerAccountImportAction implements Serializable {
 	 * 
 	 * @return Return view.
 	 * 
-	 * @throws BusinessException
+	 * @throws BusinessException General business exception
 	 */
 	public String doImport() throws BusinessException {
 		if (xls == null) {

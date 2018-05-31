@@ -15,62 +15,109 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 
 /**
+ * The Class OfferServiceTemplateDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "OfferServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferServiceTemplateDto implements Serializable{
+public class OfferServiceTemplateDto implements Serializable {
 
-	private static final long serialVersionUID = 7137259235916807339L;
-	private ServiceTemplateDto serviceTemplate;
-	private Boolean mandatory;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 7137259235916807339L;
 
-	@XmlElementWrapper(name = "incompatibleServices")
-	@XmlElement(name = "incompatibleServiceTemplate")
-	private List<ServiceTemplateDto> incompatibleServices = new ArrayList<>();
+    /** The service template. */
+    private ServiceTemplateDto serviceTemplate;
 
-	public OfferServiceTemplateDto() {
+    /** The mandatory. */
+    private Boolean mandatory;
 
-	}
+    /** The incompatible services. */
+    @XmlElementWrapper(name = "incompatibleServices")
+    @XmlElement(name = "incompatibleServiceTemplate")
+    private List<ServiceTemplateDto> incompatibleServices = new ArrayList<>();
 
-	public OfferServiceTemplateDto(OfferServiceTemplate e,CustomFieldsDto customFields) {
-		if (e.getServiceTemplate() != null) {
-			serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), customFields);
-		}
-		mandatory = e.isMandatory();
-		if (e.getIncompatibleServices() != null) {
-			for (ServiceTemplate st : e.getIncompatibleServices()) {
-				incompatibleServices.add(new ServiceTemplateDto(st));
-			}
-		}		
-	}
+    /**
+     * Instantiates a new offer service template dto.
+     */
+    public OfferServiceTemplateDto() {
 
-	public void setMandatory(Boolean mandatory) {
-		this.mandatory = mandatory;
-	}
+    }
 
-	public List<ServiceTemplateDto> getIncompatibleServices() {
-		return incompatibleServices;
-	}
+    /**
+     * Instantiates a new offer service template dto.
+     *
+     * @param e the OfferServiceTemplate entity
+     * @param customFields the custom fields
+     */
+    public OfferServiceTemplateDto(OfferServiceTemplate e, CustomFieldsDto customFields, boolean loadServiceChargeTemplate) {
+        if (e.getServiceTemplate() != null) {
+            serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), customFields, loadServiceChargeTemplate);
+        }
+        mandatory = e.isMandatory();
+        if (e.getIncompatibleServices() != null) {
+            for (ServiceTemplate st : e.getIncompatibleServices()) {
+                incompatibleServices.add(new ServiceTemplateDto(st));
+            }
+        }
+    }
 
-	public void setIncompatibleServices(List<ServiceTemplateDto> incompatibleServices) {
-		this.incompatibleServices = incompatibleServices;
-	}
+    /**
+     * Sets the mandatory.
+     *
+     * @param mandatory the new mandatory
+     */
+    public void setMandatory(Boolean mandatory) {
+        this.mandatory = mandatory;
+    }
 
-	@Override
-	public String toString() {
-		return "OfferServiceTemplateDto [serviceTemplate=" + serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices + "]";
-	}
+    /**
+     * Gets the incompatible services.
+     *
+     * @return the incompatible services
+     */
+    public List<ServiceTemplateDto> getIncompatibleServices() {
+        return incompatibleServices;
+    }
 
-	public ServiceTemplateDto getServiceTemplate() {
-		return serviceTemplate;
-	}
+    /**
+     * Sets the incompatible services.
+     *
+     * @param incompatibleServices the new incompatible services
+     */
+    public void setIncompatibleServices(List<ServiceTemplateDto> incompatibleServices) {
+        this.incompatibleServices = incompatibleServices;
+    }
 
-	public void setServiceTemplate(ServiceTemplateDto serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
+    /**
+     * Gets the service template.
+     *
+     * @return the service template
+     */
+    public ServiceTemplateDto getServiceTemplate() {
+        return serviceTemplate;
+    }
 
-	public Boolean getMandatory() {
-		return mandatory;
-	}	
+    /**
+     * Sets the service template.
+     *
+     * @param serviceTemplate the new service template
+     */
+    public void setServiceTemplate(ServiceTemplateDto serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
+
+    /**
+     * Gets the mandatory.
+     *
+     * @return the mandatory
+     */
+    public Boolean getMandatory() {
+        return mandatory;
+    }
+    
+    @Override
+    public String toString() {
+        return "OfferServiceTemplateDto [serviceTemplate=" + serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices + "]";
+    }
 }

@@ -1,7 +1,5 @@
 package org.meveo.api.rest.account.impl;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -11,7 +9,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.ParentListResponse;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
@@ -78,7 +75,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(bamCode);
+            moduleApi.remove(bamCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -89,11 +86,8 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
     @Override
     public MeveoModuleDtosResponse list() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessAccountModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessAccountModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

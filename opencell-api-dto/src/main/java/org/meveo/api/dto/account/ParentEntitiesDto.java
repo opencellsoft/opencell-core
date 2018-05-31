@@ -8,23 +8,37 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class ParentEntitiesDto.
+ *
  * @author Tony Alejandro.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ParentEntitiesDto implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	private List<ParentEntityDto> parent;
+    /** The parent. */
+    private List<ParentEntityDto> parent;
 
-	public List<ParentEntityDto> getParent() {
-		if(parent == null) {
-			parent = new ArrayList<>();
-		}
-		return parent;
-	}
+    /**
+     * Gets the parent.
+     *
+     * @return the parent
+     */
+    public List<ParentEntityDto> getParent() {
+        if (parent == null) {
+            parent = new ArrayList<>();
+        }
+        return parent;
+    }
 
-	public void setParent(List<ParentEntityDto> parent) {
-		this.parent = parent;
-	}
+    /**
+     * Sets the parent.
+     *
+     * @param parent the new parent
+     */
+    public void setParent(List<ParentEntityDto> parent) {
+        this.parent = parent;
+    }
 }

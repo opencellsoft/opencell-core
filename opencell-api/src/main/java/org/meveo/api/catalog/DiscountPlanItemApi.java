@@ -12,6 +12,7 @@ import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -181,13 +182,14 @@ public class DiscountPlanItemApi extends BaseApi {
         return discountPlanItemDtos;
     }
 
-    public DiscountPlanItem fromDto(DiscountPlanItemDto dto, DiscountPlanItem entity) throws MeveoApiException {
-        DiscountPlanItem discountPlanItem = null;
-        if (entity == null) {
+    public DiscountPlanItem fromDto(DiscountPlanItemDto dto, DiscountPlanItem discountPlanItemToUpdate) throws MeveoApiException {
+        DiscountPlanItem discountPlanItem = discountPlanItemToUpdate;
+        if (discountPlanItem == null) {
             discountPlanItem = new DiscountPlanItem();
             discountPlanItem.setCode(dto.getCode());
-        } else {
-            discountPlanItem = entity;
+            if (dto.isDisabled() != null) {
+                discountPlanItem.setDisabled(dto.isDisabled());
+            }
         }
 
         if (!StringUtils.isBlank(dto.getDiscountPlanCode())) {
@@ -229,6 +231,35 @@ public class DiscountPlanItemApi extends BaseApi {
         if (dto.getDiscountPercentEl() != null) {
             discountPlanItem.setDiscountPercentEl(dto.getDiscountPercentEl());
         }
+
         return discountPlanItem;
+    }
+
+    /**
+     * Enable or disable Discount plan item
+     * 
+     * @param code Discount plan item code
+     * @param enable Should Discount plan item be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(code);
+        if (discountPlanItem == null) {
+            throw new EntityDoesNotExistsException(DiscountPlanItem.class, code);
+        }
+        if (enable) {
+            discountPlanItemService.enable(discountPlanItem);
+        } else {
+            discountPlanItemService.disable(discountPlanItem);
+        }
     }
 }

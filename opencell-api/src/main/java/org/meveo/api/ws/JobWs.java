@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
@@ -23,7 +24,7 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     JobExecutionResultResponseDto execute(@WebParam(name = "jobInstanceInfo") JobInstanceInfoDto postData);
-    
+
     @WebMethod
     ActionStatus stop(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
@@ -42,6 +43,24 @@ public interface JobWs extends IBaseWs {
     @WebMethod
     ActionStatus removeJobInstance(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
+    /**
+     * Enable a Job instance by its code
+     * 
+     * @param code Job instance code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableJobInstance(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Job instance by its code
+     * 
+     * @param code Job instance code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableJobInstance(@WebParam(name = "code") String code);
+
     // timer
 
     @WebMethod
@@ -58,8 +77,34 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     ActionStatus removeTimer(@WebParam(name = "timerCode") String timerCode);
-    
+
+    /**
+     * Enable a Timer scheduler by its code
+     * 
+     * @param code Timer scheduler code
+     * @return Request processing status
+     */
     @WebMethod
-    JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name="code") String code, @WebParam(name="jobExecutionResultId") Long jobExecutionResultId);
+    ActionStatus enableTimer(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Timer scheduler by its code
+     * 
+     * @param code Timer scheduler code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableTimer(@WebParam(name = "code") String code);
+
+    @WebMethod
+    JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name = "code") String code, @WebParam(name = "jobExecutionResultId") Long jobExecutionResultId);
     
+    /**
+     * List job categories
+     * 
+     * @return object containing the list of job categories
+     */
+    @WebMethod
+    JobCategoriesResponseDto listCategories();
+
 }

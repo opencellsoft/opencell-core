@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.billing.CounterInstance;
@@ -46,7 +46,7 @@ import org.meveo.validation.constraint.ClassName;
                 @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
         @NamedQuery(name = "Notification.getActiveNotificationsByEventAndClasses", query = "SELECT n from Notification n where n.disabled=false and n.eventTypeFilter=:eventTypeFilter and n.classNameFilter in :classNameFilter order by priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class Notification extends BusinessEntity {
+public class Notification extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
 

@@ -12,28 +12,55 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.BundleTemplate;
 
+/**
+ * The Class BundleTemplateDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "BundleTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BundleTemplateDto extends ProductTemplateDto implements Serializable {
 
-	private static final long serialVersionUID = -6581346092486998984L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6581346092486998984L;
 
-	@XmlElementWrapper(required = true, name = "bundleProducts")
-	@XmlElement(required = true, name = "bundleProduct")
-	private List<BundleProductTemplateDto> bundleProductTemplates;
+    /** The bundle product templates. */
+    @XmlElementWrapper(required = true, name = "bundleProducts")
+    @XmlElement(required = true, name = "bundleProduct")
+    private List<BundleProductTemplateDto> bundleProductTemplates;
 
-	public BundleTemplateDto() {
-	}
+    /**
+     * Instantiates a new bundle template dto.
+     */
+    public BundleTemplateDto() {
+    }
 
-	public BundleTemplateDto(BundleTemplate bundleTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
-		super(bundleTemplate, customFieldsDto, asLink);
-	}
+    /**
+     * Instantiates a new bundle template dto.
+     *
+     * @param bundleTemplate the bundle template
+     * @param customFieldsDto the custom fields dto
+     * @param asLink the as link
+     */
+    public BundleTemplateDto(BundleTemplate bundleTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+        super(bundleTemplate, customFieldsDto, asLink, true);
+    }
 
-	public List<BundleProductTemplateDto> getBundleProductTemplates() {
-		return bundleProductTemplates;
-	}
+    /**
+     * Gets the bundle product templates.
+     *
+     * @return the bundle product templates
+     */
+    public List<BundleProductTemplateDto> getBundleProductTemplates() {
+        return bundleProductTemplates;
+    }
 
-	public void setBundleProductTemplates(List<BundleProductTemplateDto> bundleProductTemplates) {
-		this.bundleProductTemplates = bundleProductTemplates;
-	}
+    /**
+     * Sets the bundle product templates.
+     *
+     * @param bundleProductTemplates the new bundle product templates
+     */
+    public void setBundleProductTemplates(List<BundleProductTemplateDto> bundleProductTemplates) {
+        this.bundleProductTemplates = bundleProductTemplates;
+    }
 }

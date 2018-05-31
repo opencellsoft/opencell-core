@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -42,7 +43,7 @@ public interface OfferTemplateCategoryRs extends IBaseRs {
     ActionStatus update(OfferTemplateCategoryDto postData);
 
     /**
-     * Find a offer template category with a given code 
+     * Find a offer template category with a given code
      * 
      * @param offerTemplateCategoryCode The offer template category's code
      * @return Return offerTemplateCategoryCodeDto containing offerTemplateCategoryCode
@@ -52,7 +53,7 @@ public interface OfferTemplateCategoryRs extends IBaseRs {
     GetOfferTemplateCategoryResponseDto find(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
 
     /**
-     * Remove an existing offer template category with a given code 
+     * Remove an existing offer template category with a given code
      * 
      * @param offerTemplateCategoryCode The offer template category's code
      * @return Request processing status
@@ -70,5 +71,25 @@ public interface OfferTemplateCategoryRs extends IBaseRs {
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(OfferTemplateCategoryDto postData);
+
+    /**
+     * Enable a Offer template category with a given code
+     * 
+     * @param code Offer template category code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Offer template category with a given code
+     * 
+     * @param code Offer template category code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 
 }

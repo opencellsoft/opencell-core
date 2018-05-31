@@ -44,15 +44,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     @Inject
     private WFTransitionService wfTransitionService;
 
-    /**
-     * 
-     * @param workflowDto
-     * 
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     */
+    @Override
     public Workflow create(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
 
         validateDto(workflowDto, false);
@@ -77,16 +69,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         return workflow;
     }
 
-    /**
-     * 
-     * @param workflowDto
-     * 
-     * @throws EntityDoesNotExistsException
-     * @throws MeveoApiException
-     * @throws BusinessException
-     * @throws MissingParameterException
-     * @throws EntityAlreadyExistsException
-     */
+    @Override
     public Workflow update(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
 
         validateDto(workflowDto, true);
@@ -116,14 +99,19 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         }
 
         List<WFTransition> currentWfTransitions = workflow.getTransitions();
+        List<WFTransition> wfTransitionsToRemove = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
             currentWfTransitions.removeAll(listUpdate);
             if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
                 for (WFTransition wfTransition : currentWfTransitions) {
+                    wfTransitionsToRemove.add(wfTransition);
                     wfTransitionService.remove(wfTransition);
                 }
             }
         }
+
+        workflow.getTransitions().removeAll(wfTransitionsToRemove);
+
         if (workflowDto.getListWFTransitionDto() != null && !workflowDto.getListWFTransitionDto().isEmpty()) {
             int priority = 1;
             for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
@@ -158,32 +146,9 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     }
 
     /**
+     * Return list of workflow dto
      * 
-     * @param workflowCode
-     * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws BusinessException
-     */
-    public void remove(String workflowCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-
-        if (StringUtils.isBlank(workflowCode)) {
-            missingParameters.add("workflowCode");
-            handleMissingParameters();
-        }
-        Workflow workflow = workflowService.findByCode(workflowCode);
-        if (workflow == null) {
-            throw new EntityDoesNotExistsException(Workflow.class, workflowCode);
-        }
-
-        workflowService.remove(workflow);
-    }
-
-    /**
-     * 
-     * 
-     * @return
-     *
+     * @return list of workflow dto
      */
     public List<WorkflowDto> list() {
         List<WorkflowDto> result = new ArrayList<>();
@@ -196,31 +161,14 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         return result;
     }
 
-    /**
-     * 
-     * @param workflowDto
-     * 
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws EntityDoesNotExistsException
-     * @throws MissingParameterException
-     */
-    @Override
-    public Workflow createOrUpdate(WorkflowDto workflowDto) throws MeveoApiException, BusinessException {
-        Workflow workflow = workflowService.findByCode(workflowDto.getCode());
-        if (workflow == null) {
-            return create(workflowDto);
-        } else {
-            return update(workflowDto);
-        }
-    }
-
     protected Workflow fromDTO(WorkflowDto dto, Workflow workflowToUpdate) {
-        Workflow workflow = new Workflow();
-        if (workflowToUpdate != null) {
-            workflow = workflowToUpdate;
-        } else {
+        Workflow workflow = workflowToUpdate;
+        if (workflowToUpdate == null) {
+            workflow = new Workflow();
             workflow.setWfType(dto.getWfType());
+            if (dto.isDisabled() != null) {
+                workflow.setDisabled(dto.isDisabled());
+            }
         }
 
         workflow.setCode(dto.getCode());
@@ -231,9 +179,11 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     }
 
     /**
+     * Validate Workflow Dto
      * 
-     * @param workflowDto
-     * @throws MissingParameterException
+     * @param workflowDto Workflow Dto
+     * @param isUpdate Indicates that Dto is for update
+     * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(WorkflowDto workflowDto, boolean isUpdate) throws MissingParameterException {
         if (StringUtils.isBlank(workflowDto.getCode())) {
@@ -248,10 +198,9 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     /**
      * Find a Workflow by an Entity
      * 
-     * @param baseEntityName
-     * 
-     * @return
-     * @throws MeveoApiException
+     * @param baseEntityName Base entity name
+     * @return list of Workflow Dto
+     * @throws MeveoApiException Meveo api exception
      */
     @SuppressWarnings("unchecked")
     public List<WorkflowDto> findByEntity(String baseEntityName) throws MeveoApiException {
@@ -275,12 +224,11 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
     /**
      * 
-     * @param baseEntityName
-     * @param baseEntityInstanceId
-     * @param workflowCode
-     * 
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @param baseEntityName Base entity name
+     * @param baseEntityInstanceId Base entity instance Id
+     * @param workflowCode Workflow code
+     * @throws BusinessException General business exception
+     * @throws MeveoApiException Meveo api exception
      */
     @SuppressWarnings("unchecked")
     public void execute(String baseEntityName, String baseEntityInstanceId, String workflowCode) throws BusinessException, MeveoApiException {

@@ -12,31 +12,38 @@ import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * 
- * @author TyshanaShi(tyshan@manaty.net)
+ * The Class DDRequestLotOpsResponseDto.
  *
+ * @author TyshanaShi(tyshan@manaty.net)
  */
-@XmlRootElement(name="DDRequestLotOpsResponse")
+@XmlRootElement(name = "DDRequestLotOpsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DDRequestLotOpsResponseDto extends BaseResponse {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 317999006133708067L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 317999006133708067L;
 
-	@XmlElementWrapper(name="ddrequestLotOps")
-	@XmlElement(name="ddrequestLotOp")
-	private List<DDRequestLotOpDto> ddrequestLotOps;
+    /** The ddrequest lot ops. */
+    @XmlElementWrapper(name = "ddrequestLotOps")
+    @XmlElement(name = "ddrequestLotOp")
+    private List<DDRequestLotOpDto> ddrequestLotOps;
 
-	public List<DDRequestLotOpDto> getDdrequestLotOps() {
-		return ddrequestLotOps;
-	}
+    /**
+     * Gets the ddrequest lot ops.
+     *
+     * @return the ddrequest lot ops
+     */
+    public List<DDRequestLotOpDto> getDdrequestLotOps() {
+        return ddrequestLotOps;
+    }
 
-	public void setDdrequestLotOps(List<DDRequestLotOpDto> ddrequestLotOps) {
-		this.ddrequestLotOps = ddrequestLotOps;
-	}
+    /**
+     * Sets the ddrequest lot ops.
+     *
+     * @param ddrequestLotOps the new ddrequest lot ops
+     */
+    public void setDdrequestLotOps(List<DDRequestLotOpDto> ddrequestLotOps) {
+        this.ddrequestLotOps = ddrequestLotOps;
+    }
 
-	
 }
-

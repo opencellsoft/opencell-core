@@ -6,24 +6,39 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.RoleDto;
 
+/**
+ * The Class GetRoleResponse.
+ */
 @XmlRootElement(name = "GetRoleResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetRoleResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
-	
-	private RoleDto roleDto;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public RoleDto getRoleDto() {
-		return roleDto;
-	}
+    /** The role dto. */
+    private RoleDto roleDto;
 
-	public void setRoleDto(RoleDto roleDto) {
-		this.roleDto = roleDto;
-	}
+    /**
+     * Gets the role dto.
+     *
+     * @return the role dto
+     */
+    public RoleDto getRoleDto() {
+        return roleDto;
+    }
 
-	@Override
-	public String toString() {
-		return "GetRoleResponse [roleDto=" + roleDto + "]";
-	}
+    /**
+     * Sets the role dto.
+     *
+     * @param roleDto the new role dto
+     */
+    public void setRoleDto(RoleDto roleDto) {
+        this.roleDto = roleDto;
+    }
+
+    @Override
+    public String toString() {
+        return "GetRoleResponse [roleDto=" + roleDto + "]";
+    }
 }

@@ -7,32 +7,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.ProviderDto;
 
 /**
+ * The Class GetProviderResponse.
+ *
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
- **/
+ */
 @XmlRootElement(name = "GetProviderResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetProviderResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -7308813550235264178L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7308813550235264178L;
 
-	private ProviderDto provider;
+    /** The provider. */
+    private ProviderDto provider;
 
-	public GetProviderResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new gets the provider response.
+     */
+    public GetProviderResponse() {
+        super();
+    }
 
-	public ProviderDto getProvider() {
-		return provider;
-	}
+    /**
+     * Gets the provider.
+     *
+     * @return the provider
+     */
+    public ProviderDto getProvider() {
+        return provider;
+    }
 
-	public void setProvider(ProviderDto provider) {
-		this.provider = provider;
-	}
+    /**
+     * Sets the provider.
+     *
+     * @param provider the new provider
+     */
+    public void setProvider(ProviderDto provider) {
+        this.provider = provider;
+    }
 
-	@Override
-	public String toString() {
-		return "GetProviderResponse [provider=" + provider + ", toString()=" + super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetProviderResponse [provider=" + provider + ", toString()=" + super.toString() + "]";
+    }
 }

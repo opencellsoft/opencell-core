@@ -25,47 +25,89 @@ import javax.xml.bind.annotation.XmlElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFDecisionRule;
 
+/**
+ * The Class WFDecisionRuleDto.
+ * 
+ * @author anasseh
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WFDecisionRuleDto extends BaseDto {
-	private static final long serialVersionUID = 8309866046667741458L;
+    
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 8309866046667741458L;
 
-	@XmlElement(required = true)
-	private String name;
+    /** The name. */
+    @XmlElement(required = true)
+    private String name;
 
+    /** The value. */
     @XmlElement(required = true)
     private String value;
 
-	public WFDecisionRuleDto(){
-	}
+    /**
+     * Instantiates a new WF decision rule dto.
+     */
+    public WFDecisionRuleDto() {
+    }
 
-	public WFDecisionRuleDto(WFDecisionRule wfDecisionRule) {
-		this.name = wfDecisionRule.getName();
+    /**
+     * Instantiates a new WF decision rule dto.
+     *
+     * @param wfDecisionRule the wf decision rule
+     */
+    public WFDecisionRuleDto(WFDecisionRule wfDecisionRule) {
+        this.name = wfDecisionRule.getName();
         this.value = wfDecisionRule.getValue();
-	}
-	
-	public WFDecisionRule fromDto(WFDecisionRule wfDecisionRule) {
-		if(wfDecisionRule == null)
+    }
+
+    /**
+     * From dto.
+     *
+     * @param wfDecisionRule the wf decision rule
+     * @return the WF decision rule
+     */
+    public WFDecisionRule fromDto(WFDecisionRule wfDecisionRule) {
+        if (wfDecisionRule == null)
             wfDecisionRule = new WFDecisionRule();
         wfDecisionRule.setName(getName());
         wfDecisionRule.setValue(getValue());
-		return wfDecisionRule;
-	}
+        return wfDecisionRule;
+    }
 
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name.
+     *
+     * @param name the new name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the value.
+     *
+     * @return the value
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Sets the value.
+     *
+     * @param value the new value
+     */
     public void setValue(String value) {
         this.value = value;
     }
 
 }
-

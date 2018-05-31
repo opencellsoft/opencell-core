@@ -116,4 +116,30 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
         return result;
     }
+
+    @Override
+    public ActionStatus enable(String customEntityTemplateCode, String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityInstanceApi.enableOrDisable(customEntityTemplateCode, code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String customEntityTemplateCode, String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            customEntityInstanceApi.enableOrDisable(customEntityTemplateCode, code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

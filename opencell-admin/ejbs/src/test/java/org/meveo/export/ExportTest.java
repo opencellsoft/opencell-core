@@ -66,8 +66,8 @@ public class ExportTest {
     /**
      * Just test/debug on how export/import template is serialized
      * 
-     * @throws ClassNotFoundException
-     * @throws IOException
+     * @throws ClassNotFoundException class is not found
+     * @throws IOException error when reading / writing a file on disk
      */
     // @Test
     public void testExport() throws ClassNotFoundException, IOException {

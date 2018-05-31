@@ -9,32 +9,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CurrencyIsoDto;
 
 /**
+ * The Class GetCurrenciesIsoResponse.
+ *
  * @author Edward P. Legaspi
  * @since Aug 1, 2017
- **/
+ */
 @XmlRootElement(name = "GetCurrenciesIsoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetCurrenciesIsoResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 12269486818856166L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 12269486818856166L;
 
-	private List<CurrencyIsoDto> currencies;
+    /** The currencies. */
+    private List<CurrencyIsoDto> currencies;
 
-	public GetCurrenciesIsoResponse() {
-		super();
-	}
+    /**
+     * Instantiates a new gets the currencies iso response.
+     */
+    public GetCurrenciesIsoResponse() {
+        super();
+    }
 
-	public List<CurrencyIsoDto> getCurrencies() {
-		return currencies;
-	}
+    /**
+     * Gets the currencies.
+     *
+     * @return the currencies
+     */
+    public List<CurrencyIsoDto> getCurrencies() {
+        return currencies;
+    }
 
-	public void setCurrencies(List<CurrencyIsoDto> currencies) {
-		this.currencies = currencies;
-	}
+    /**
+     * Sets the currencies.
+     *
+     * @param currencies the new currencies
+     */
+    public void setCurrencies(List<CurrencyIsoDto> currencies) {
+        this.currencies = currencies;
+    }
 
-	@Override
-	public String toString() {
-		return "GetCurrenciesIsoResponse [currencies=" + currencies + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetCurrenciesIsoResponse [currencies=" + currencies + "]";
+    }
 }

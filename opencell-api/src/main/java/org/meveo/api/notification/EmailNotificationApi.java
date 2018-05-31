@@ -37,6 +37,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Override
     public EmailNotification create(EmailNotificationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -90,7 +91,6 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setParams(postData.getScriptParams());
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
-
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
         notif.setSubject(postData.getSubject());
@@ -108,9 +108,6 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         return notif;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public EmailNotificationDto find(String notificationCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         EmailNotificationDto result = new EmailNotificationDto();
@@ -132,6 +129,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         return result;
     }
 
+    @Override
     public EmailNotification update(EmailNotificationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -184,12 +182,16 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setParams(postData.getScriptParams());
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
-
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
         notif.setSubject(postData.getSubject());
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
+
+        if (postData.isDisabled() != null) {
+            notif.setDisabled(postData.isDisabled());
+        }
+
         Set<String> emails = new HashSet<String>();
         for (String email : postData.getSendToMail()) {
             emails.add(email);
@@ -199,30 +201,5 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif = emailNotificationService.update(notif);
 
         return notif;
-    }
-
-    public void remove(String notificationCode) throws MeveoApiException, BusinessException {
-        if (!StringUtils.isBlank(notificationCode)) {
-            EmailNotification notif = emailNotificationService.findByCode(notificationCode);
-
-            if (notif == null) {
-                throw new EntityDoesNotExistsException(EmailNotification.class, notificationCode);
-            }
-
-            emailNotificationService.remove(notif);
-        } else {
-            missingParameters.add("code");
-
-            handleMissingParameters();
-        }
-    }
-
-    @Override
-    public EmailNotification createOrUpdate(EmailNotificationDto postData) throws MeveoApiException, BusinessException {
-        if (emailNotificationService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

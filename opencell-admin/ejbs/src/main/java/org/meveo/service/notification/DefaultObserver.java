@@ -65,6 +65,12 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
+/**
+ * Handles events associated with CDRUD operations on entities
+ * 
+ * @lastModifiedVersion willBeSetLater
+ * @author Andrius Karpavicius
+ */
 @Singleton
 @Startup
 @LoggedEvent
@@ -133,9 +139,12 @@ public class DefaultObserver {
             Map<Object, Object> userMap = new HashMap<>();
             userMap.put("event", entityOrEvent);
             userMap.put("manager", manager);
+
+            context.put("entityOrEvent", entityOrEvent);
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
             }
+
             scriptInterface.init(context);
             scriptInterface.execute(context);
             scriptInterface.finalize(context);

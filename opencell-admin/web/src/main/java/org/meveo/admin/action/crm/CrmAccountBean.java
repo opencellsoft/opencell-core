@@ -48,6 +48,7 @@ public class CrmAccountBean extends BaseBean<AccountEntity> {
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
 	 * 
+	 * @return Account entity
 	 */
 	@Produces
 	@Named("accountEntity")

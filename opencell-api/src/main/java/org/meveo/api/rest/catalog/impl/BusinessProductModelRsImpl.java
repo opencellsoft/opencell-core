@@ -1,7 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -9,7 +7,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessProductModelDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.catalog.GetBusinessProductModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -72,7 +69,7 @@ public class BusinessProductModelRsImpl extends BaseRs implements BusinessProduc
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessProductModelCode);
+            moduleApi.remove(businessProductModelCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -96,11 +93,8 @@ public class BusinessProductModelRsImpl extends BaseRs implements BusinessProduc
     @Override
     public MeveoModuleDtosResponse list() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessProductModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessProductModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

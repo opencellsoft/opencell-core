@@ -11,80 +11,101 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 
+/**
+ * The Class CatUsageDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "CatUsage")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatUsageDto extends BaseDto {
 
-	private static final long serialVersionUID = 1L;
-	private String code;
-	private String description;
-	
-	@XmlElementWrapper
-    @XmlElement(name="subCatUsage")
-	List<SubCatUsageDto> listSubCatUsage = new ArrayList<SubCatUsageDto>();
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+    
+    /** The code. */
+    private String code;
+    
+    /** The description. */
+    private String description;
 
-	public CatUsageDto() {
+    /** The list sub cat usage. */
+    @XmlElementWrapper
+    @XmlElement(name = "subCatUsage")
+    List<SubCatUsageDto> listSubCatUsage = new ArrayList<SubCatUsageDto>();
 
-	}
+    /**
+     * Instantiates a new cat usage dto.
+     */
+    public CatUsageDto() {
 
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
+    }
 
-	/**
-	 * @param code
-	 *            the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	/**
-	 * @param description
-	 *            the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * @return the listSubCatUsage
-	 */
-	public List<SubCatUsageDto> getListSubCatUsage() {
-		return listSubCatUsage;
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	/**
-	 * @param listSubCatUsage
-	 *            the listSubCatUsage to set
-	 */
-	public void setListSubCatUsage(List<SubCatUsageDto> listSubCatUsage) {
-		this.listSubCatUsage = listSubCatUsage;
-	}
+    /**
+     * Gets the list sub cat usage.
+     *
+     * @return the listSubCatUsage
+     */
+    public List<SubCatUsageDto> getListSubCatUsage() {
+        return listSubCatUsage;
+    }
 
-	/**
-	 * @return the serialversionuid
-	 */
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+    /**
+     * Sets the list sub cat usage.
+     *
+     * @param listSubCatUsage the listSubCatUsage to set
+     */
+    public void setListSubCatUsage(List<SubCatUsageDto> listSubCatUsage) {
+        this.listSubCatUsage = listSubCatUsage;
+    }
 
+    /**
+     * Gets the serialversionuid.
+     *
+     * @return the serialversionuid
+     */
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
 
-	@Override
-	public String toString() {
-		return "CatUsageDto [code=" + code + ", description=" + description + ", listSubCatUsage=" + listSubCatUsage + "]";
-	}
-	
-	
-
+    @Override
+    public String toString() {
+        return "CatUsageDto [code=" + code + ", description=" + description + ", listSubCatUsage=" + listSubCatUsage + "]";
+    }
 }

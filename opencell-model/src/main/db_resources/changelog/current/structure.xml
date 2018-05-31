@@ -636,7 +636,7 @@
 	            tableName="ar_payment_gateway"/>	           
 	</changeSet>
 	<changeSet id="perf_mediation_20180404" author="Wassim" dbms="postgresql">
-		<sql>DROP INDEX IF EXISTS rating_edr_index</sql>
+		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}rating_edr_index</sql>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>
 	</changeSet>
 	
@@ -688,4 +688,256 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
     </changeSet>
+    
+    <changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="postgresql">
+		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}ar_account_operation_index</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+	</changeSet>
+	
+	<changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="mysql">
+		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+	</changeSet>   
+	
+	<changeSet id="#3019_20180312" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_billing_account">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_amount_el" type="varchar(2000)"  />           
+            <column name="minimum_label_el" type="varchar(2000)"  />           
+        </addColumn>
+	</changeSet>
+	
+
+    <changeSet id="#3353_2018_0410" author="AndriusKarpavicius">
+        <dropColumn tableName="billing_invoice_agregate" columnName="disabled" />
+        <dropColumn tableName="billing_invoice" columnName="disabled" />
+        <dropColumn tableName="billing_billing_run_list" columnName="disabled" />
+        <dropColumn tableName="billing_billing_run" columnName="disabled" />
+        <dropColumn tableName="ar_account_operation" columnName="disabled" />
+        <dropColumn tableName="account_entity" columnName="disabled" />
+        <dropColumn tableName="billing_cycle" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_cat" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_sub_cat" columnName="disabled" />
+        <dropColumn tableName="ord_order" columnName="disabled" />
+        <dropColumn tableName="billing_product_instance" columnName="disabled" />
+        <dropColumn tableName="ord_quote" columnName="disabled" />
+        <dropColumn tableName="crm_seller" columnName="disabled" />
+        <dropColumn tableName="billing_service_instance" columnName="disabled" />
+        <dropColumn tableName="billing_subscription" columnName="disabled" />
+        <dropColumn tableName="billing_tax" columnName="disabled" />
+        <dropColumn tableName="cat_calendar" columnName="disabled" />
+        <dropColumn tableName="com_campaign" columnName="disabled" />
+        <dropColumn tableName="billing_charge_instance" columnName="disabled" />
+        <dropColumn tableName="com_contact_coords" columnName="disabled" />
+        <dropColumn tableName="billing_counter" columnName="disabled" />
+        <dropColumn tableName="billing_counter_period" columnName="disabled" />
+        <dropColumn tableName="ar_credit_category" columnName="disabled" />
+        <dropColumn tableName="crm_customer_brand" columnName="disabled" />
+        <dropColumn tableName="crm_customer_category" columnName="disabled" />
+        <dropColumn tableName="ftp_imported_file" columnName="disabled" />
+        <dropColumn tableName="hierarchy_entity" columnName="disabled" />
+        <dropColumn tableName="adm_inbound_request" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_type" columnName="disabled" />
+        <dropColumn tableName="com_sender_config" columnName="disabled" />
+        <dropColumn tableName="com_message_template" columnName="disabled" />
+        <dropColumn tableName="com_msg_tmpl_variable" columnName="disabled" />
+        <dropColumn tableName="com_msg_var_value" columnName="disabled" />
+        <dropColumn tableName="com_meveo_instance" columnName="disabled" />
+        <dropColumn tableName="ar_occ_template" columnName="disabled" />
+        <dropColumn tableName="crm_provider_contact" columnName="disabled" />
+        <dropColumn tableName="rm_service_param_template" columnName="disabled" />
+        <dropColumn tableName="billing_subscrip_termin_reason" columnName="disabled" />
+        <dropColumn tableName="adm_title" columnName="disabled" />
+        <dropColumn tableName="cat_triggered_edr" columnName="disabled" />
+        <dropColumn tableName="billing_wallet" columnName="disabled" />
+        <dropColumn tableName="billing_wallet_operation" columnName="disabled" />
+        <dropColumn tableName="cat_wallet_template" columnName="disabled" />
+        <dropColumn tableName="adm_user" columnName="disabled" />
+        <dropColumn tableName="ar_matching_amount" columnName="disabled" />
+        <dropColumn tableName="ar_matching_code" columnName="disabled" />
+        <dropColumn tableName="billing_reservation" columnName="disabled" />
+        <dropColumn tableName="billing_invoice_cat_lang" columnName="disabled" />
+        <dropColumn tableName="billing_inv_sub_cat_country" columnName="disabled" />
+        <dropColumn tableName="billing_tax_language" columnName="disabled" />
+        <dropColumn tableName="billing_rejected_billing_accounts" columnName="disabled" />
+        <dropColumn tableName="wf_decision_rule" columnName="disabled" />
+        <dropColumn tableName="wf_action" columnName="disabled" />
+        <dropColumn tableName="wf_transition" columnName="disabled" />
+        <dropColumn tableName="wf_history" columnName="disabled" />
+        <dropColumn tableName="ar_payment_history" columnName="disabled" />
+        <dropColumn tableName="adm_notif_history" columnName="disabled" />
+        <dropColumn tableName="ar_due_date" columnName="disabled" />
+        <dropColumn tableName="ar_ddrequest_item" columnName="disabled" />
+        <dropColumn tableName="ar_ddrequest_lot" columnName="disabled" />
+        <dropColumn tableName="ar_ddrequest_lot_op" columnName="disabled" />
+        <dropColumn tableName="ar_dunning_lot" columnName="disabled" />
+        <dropColumn tableName="ar_action_dunning" columnName="disabled" />
+
+        <dropColumn tableName="wf_decision_rule" columnName="created" />
+        <dropColumn tableName="wf_decision_rule" columnName="updated" />
+        <dropColumn tableName="wf_decision_rule" columnName="creator" />
+        <dropColumn tableName="wf_decision_rule" columnName="updater" />
+        <dropColumn tableName="wf_action" columnName="created" />
+        <dropColumn tableName="wf_action" columnName="updated" />
+        <dropColumn tableName="wf_action" columnName="creator" />
+        <dropColumn tableName="wf_action" columnName="updater" />
+        <dropColumn tableName="wf_transition" columnName="created" />
+        <dropColumn tableName="wf_transition" columnName="updated" />
+        <dropColumn tableName="wf_transition" columnName="creator" />
+        <dropColumn tableName="wf_transition" columnName="updater" />
+
+    </changeSet>
+
+    <changeSet id="#3271_20180423" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_cycle">
+            <column name="invoice_type_el" type="varchar(2000)"  />           
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#3118_20180502" author="AbdelmounaimAkadid">
+    	<addColumn tableName="cat_price_plan_matrix">
+            <column name="invoice_subcategory_el" type="varchar(2000)"  />           
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="invoice_sub_category_id" type="bigint"  />           
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+	
+	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
+		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
+	</changeSet>
+	
+    <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
+       <addColumn tableName="ar_payment_history">
+           <column name="customer_code" type="varchar(256)" />
+       </addColumn>
+    </changeSet>
+
+	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="postgresql">
+		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_quote_id</sql>
+        <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}account_entity_upper_code</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}rating_edr_status</sql>
+        <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_subscription_upper_code</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_wallet_operation_status</sql>
+        <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_agregate_category_inv_agg</sql>
+        <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_billing_account_id</sql>
+        <sql>CREATE INDEX billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS ${db.schema.adapted}medina_access_subscription_id</sql>
+        <sql>CREATE INDEX medina_access_subscription_id ON  ${db.schema.adapted}medina_access(subscription_id)</sql>
+	</changeSet>
+	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="mysql">
+        
+        <sql>DROP INDEX IF EXISTS billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice</sql>
+        <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS account_entity_upper_code ON ${db.schema.adapted}account_entity</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS rating_edr_status ON ${db.schema.adapted}rating_edr</sql>
+        <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(UPPER(code))</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation</sql>
+        <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate</sql>
+        <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
+        
+        <sql>DROP INDEX IF EXISTS billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice</sql>
+        <sql>CREATE INDEX billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS medina_access_subscription_id ON ${db.schema.adapted}medina_access</sql>
+        <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
+	</changeSet>   
+	
+	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
+		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
+	</changeSet>
+	
+    <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
+       <addColumn tableName="ar_payment_history">
+           <column name="customer_code" type="varchar(256)" />
+       </addColumn>
+    </changeSet>
+    
+     <changeSet id="#3406_20180516" author="AbdelmounaimAkadid">
+     	<addColumn tableName="billing_rated_transaction">
+           <column name="start_date" type="datetime" />
+           <column name="end_date" type="datetime" />
+       </addColumn>
+    </changeSet> 
+    <changeSet id="#3311_02042018" author="SaidRamli">
+        <addColumn tableName="meveo_job_instance">
+            <column name="exclude_inv_without_amount" type="${type.boolean}" />
+        </addColumn>
+    </changeSet>
+    
+<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+	   <sql splitStatements="false" stripComments="false"><![CDATA[	
+	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
+	         BEGIN
+	         	RETURN  translate($1,
+	   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
+	   							 'cCaaAAeeeEEEiIuUoO');
+	        END;
+			$$ LANGUAGE plpgsql;
+		]]></sql>
+	</changeSet>
+
+    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
+    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+	    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+			create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
+							returns varchar(2000)
+							begin				
+								set @textvalue =  input_text;
+								set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
+								set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
+								set @count = length(@withaccents);
+								
+								while @count > 0 do
+								    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+								    set @count = @count - 1;
+								end while;					
+								return @textvalue;				
+			end;
+		]]></sql>
+</changeSet>    
+    <changeSet id="#2577_20180322" author="anasseh">
+        <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
+        <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
+    </changeSet> 
 </databaseChangeLog> 

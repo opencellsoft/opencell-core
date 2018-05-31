@@ -17,32 +17,31 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
- * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt;
- * &lt;li&gt;Custom: The administrator can define the implementation in a script.&lt;/li&gt;
- * &lt;li&gt;Native: The business implementation code is available on the opencell core, currently the available PSP are Inginico Ogone, and  Slimpay .&lt;/li&gt;
- *  &lt;/ul&gt;
+ * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt; &lt;li&gt;Custom: The administrator
+ * can define the implementation in a script.&lt;/li&gt; &lt;li&gt;Native: The business implementation code is available on the opencell core, currently the available PSP are
+ * Inginico Ogone, and Slimpay .&lt;/li&gt; &lt;/ul&gt;
  *
  *
  * @author anasseh
  * @since Opencell 4.8
- * @lastModifiedVersion willBeSetLater
+ * @lastModifiedVersion 5.0.1
  */
 
 @Entity
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "PAYMENT_GW")
-@Table(name = "ar_payment_gateway", uniqueConstraints = @UniqueConstraint(columnNames = { "payment_method","country_id","trading_currency_id" }))
+@Table(name = "ar_payment_gateway", uniqueConstraints = @UniqueConstraint(columnNames = { "payment_method", "country_id", "trading_currency_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_gateway_seq"), })
-public class PaymentGateway extends BusinessCFEntity {
+public class PaymentGateway extends EnableBusinessCFEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 697688141736383814L;
@@ -87,18 +86,18 @@ public class PaymentGateway extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
     private CreditCardTypeEnum cardType;
-    
+
     /** The nb tries. */
     @Column(name = "nb_tries")
     private Integer nbTries;
-    
+
     /** The replay cause. */
     @Enumerated(EnumType.STRING)
     @Column(name = "replay_cause")
     private PaymentReplayCauseEnum replayCause;
-    
+
     @Column(name = "errors_to_replay")
-    private String errorsToReplay ;
+    private String errorsToReplay;
 
     public PaymentGateway() {
 
@@ -160,8 +159,6 @@ public class PaymentGateway extends BusinessCFEntity {
         this.applicationEL = applicationEL;
     }
 
-    
-
     /**
      * @return the country
      */
@@ -217,8 +214,6 @@ public class PaymentGateway extends BusinessCFEntity {
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
         this.paymentMethodType = paymentMethodType;
     }
-    
-    
 
     /**
      * @return the nbTries
@@ -265,7 +260,7 @@ public class PaymentGateway extends BusinessCFEntity {
     @Override
     public String toString() {
         return "PaymentGateway [type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance=" + (scriptInstance == null ? null : scriptInstance.getCode())
-                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", Country=" + (country == null ? null : country.getCountryCode()) + ", tradingCurrency="
-                + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode()) + ", cardType=" + cardType + "]";
+                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", Country=" + (country == null ? null : country.getCountryCode())
+                + ", tradingCurrency=" + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode()) + ", cardType=" + cardType + "]";
     }
 }

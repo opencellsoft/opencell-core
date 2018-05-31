@@ -46,7 +46,7 @@ public class MonitoringBean implements Serializable {
 
     private static String macAddress = null;
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
 
     public static String getMacAddress() {
         if (macAddress == null) {
@@ -71,12 +71,12 @@ public class MonitoringBean implements Serializable {
                             sb.append(String.format("%02X%s", bmac[i], (i < bmac.length - 1) ? "-" : ""));
                         }
 
-                        if (sb.toString().isEmpty() == false) {
+                        if (sb.toString().isEmpty()) {
                             addressByNetwork.put(network.getName(), sb.toString());
                             // System.out.println("Address = "+sb.toString()+" @ ["+network.getName()+"] "+network.getDisplayName());
                         }
 
-                        if (sb.toString().isEmpty() == false && firstInterface == null) {
+                        if (sb.toString().isEmpty() && firstInterface == null) {
                             firstInterface = network.getName();
                         }
                     }

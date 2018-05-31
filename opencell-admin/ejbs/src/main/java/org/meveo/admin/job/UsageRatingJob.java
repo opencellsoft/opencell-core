@@ -28,10 +28,6 @@ public class UsageRatingJob extends Job {
     @Inject
     private UsageRatingJobBean usageRatingJobBean;
 
-    /** The resource messages. */
-    @Inject
-    private ResourceBundle resourceMessages;
-
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
