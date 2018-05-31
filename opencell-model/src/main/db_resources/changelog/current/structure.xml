@@ -662,7 +662,16 @@
             <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="address_book_id" type="bigint"/>
         </addColumn>
-
+		
+		<createTable tableName="crm_addressbook_contact">
+			<column name="address_book_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+			<column name="contact_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+		</createTable>
+        
         <createTable tableName="crm_addressbook">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_addressbook_pkey" />

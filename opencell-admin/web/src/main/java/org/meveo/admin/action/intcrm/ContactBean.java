@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.intcrm.impl.ContactService;
@@ -33,8 +34,14 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	public void findContactByCode() {
 		log.debug("Finding Contact");
 		contactService.findContactByCode((long) 3);
+		log.debug("Contact Found");
 	}
 	
+	public void removeAllContacts() throws BusinessException {
+		log.debug("Removing Contacts");
+		contactService.removeAllContacts();
+		log.debug("Contacts Removed");
+	}
 	@PostConstruct
 	private void init() {
 		log.debug("start ContactBean");

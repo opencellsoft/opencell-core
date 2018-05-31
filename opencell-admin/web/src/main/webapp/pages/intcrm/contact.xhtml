@@ -21,6 +21,11 @@
 					<p:commandButton id="test2" value="Test Show Button" action="#{contactBean.findContactByCode}"></p:commandButton>
 				</p:panel>
 			</h:form>
+			<h:form>
+				<p:panel>
+					<p:commandButton id="test3" value="Delete All" action="#{contactBean.removeAllContacts}"></p:commandButton>
+				</p:panel>
+			</h:form>
 		</div>
 	</ui:define>
 </ui:composition>

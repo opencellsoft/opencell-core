@@ -135,8 +135,16 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
 
     public User() {
     }
+    
+    public AddressBook getAddressbook() {
+		return addressbook;
+	}
 
-    public Set<Role> getRoles() {
+	public void setAddressbook(AddressBook addressbook) {
+		this.addressbook = addressbook;
+	}
+
+	public Set<Role> getRoles() {
         return roles;
     }
 

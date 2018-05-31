@@ -1,14 +1,20 @@
 package org.meveo.service.intcrm.impl;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.TitleService;
+import org.slf4j.Logger;
 
 @Stateless
 public class ContactService extends PersistenceService<Contact> {
@@ -16,6 +22,9 @@ public class ContactService extends PersistenceService<Contact> {
 	@Inject
 	private TitleService titleService;
 
+	@Inject
+	private Logger log;
+	
 	public void create(Contact contact) throws BusinessException {
 		super.create(contact);
 	}
@@ -28,7 +37,7 @@ public class ContactService extends PersistenceService<Contact> {
 
 		String firstName = split[0];
 		String lastName = split[1];
-		String address = split[2];
+		String strAddress = split[2];
 		String email = split[3];
 		String company = split[4];
 		String connectedOn = split[5];
@@ -38,6 +47,9 @@ public class ContactService extends PersistenceService<Contact> {
 		Title title = titleService.findByCode("Mr.");
 		c.setName(new Name(title, firstName, lastName));
 		c.setEmail(email);
+		Address address = new Address(strAddress,"","","", "", null , "");
+		c.setAddress(address);
+		c.setAgreedToUA(false);
 
 		c.setCode(split[0] + split[1]);
 
@@ -51,17 +63,29 @@ public class ContactService extends PersistenceService<Contact> {
 			this.create(c);
 		} catch (BusinessException e) {
 			// TODO Auto-generated catch block
-			log.error("Save Contact Fail : " + e.toString());
+			log.error("Save Contact Failed : " + e.toString());
 		}
 	}
 	
 	public void findContactByCode(Long id) {
-		id = (long) 3;
 		Contact contact = this.findById(id);
 		log.debug("Long id = " + id);
 		log.debug(contact.toString());
 	}
-
+	
+	@SuppressWarnings("unchecked")
+    public List<Contact> getAllContacts() {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
+    }
+	
+	public void removeAllContacts() throws BusinessException {
+		List<Contact> contacts = getAllContacts();
+		for(Contact e : contacts) {
+			super.remove(e);
+		}
+	}
 
 	
 }

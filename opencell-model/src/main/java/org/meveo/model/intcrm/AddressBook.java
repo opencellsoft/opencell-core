@@ -14,10 +14,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
@@ -32,28 +37,24 @@ import org.meveo.model.communication.contact.Contact;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_addressbook_seq"), })
 public class AddressBook extends BaseEntity {
-	    @OneToMany(mappedBy = "addressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Contact> contacts = new ArrayList<Contact>();
-
     @OneToMany(mappedBy = "addressBook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ContactGroup> groups = new ArrayList<ContactGroup>();
 
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "crm_addressbook_contact", joinColumns = @JoinColumn(name = "address_book_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
+    private Set<Contact> contacts = new HashSet<Contact>();
 
-	/**
-     * @return the contacts
-     */
-    public List<Contact> getContacts() {
-        return contacts;
-    }
+    
+    public Set<Contact> getContacts() {
+		return contacts;
+	}
 
-    /**
-     * @param contacts the contacts to set
-     */
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
-    }
+	public void setContacts(Set<Contact> contacts) {
+		this.contacts = contacts;
+	}
 
-    public List<ContactGroup> getGroups() {
+	public List<ContactGroup> getGroups() {
 		return groups;
 	}
 

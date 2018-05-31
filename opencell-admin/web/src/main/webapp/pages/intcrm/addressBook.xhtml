@@ -13,7 +13,12 @@
 			<H1>BUTTON BELLOW</H1>
 			<h:form>
 				<p:panel>
-					<p:commandButton id="test1" value=" AddressBook Exist?" action="#{addressBookBean.currentUserHasAddressBook}"></p:commandButton>
+					<p:commandButton id="test1" value=" Create" action="#{addressBookBean.createAddressBook}"></p:commandButton>
+				</p:panel>
+			</h:form>
+			<h:form>
+				<p:panel>
+					<p:commandButton id="test2" value="Find AddressBook" action="#{addressBookBean.findAddressBookByCode}"></p:commandButton>
 				</p:panel>
 			</h:form>
 		</div>
