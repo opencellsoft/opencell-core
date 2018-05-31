@@ -419,6 +419,7 @@ public class Invoice4_2Api extends BaseApi {
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
+            return null;
         } else {
             billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
             if (StringUtils.isBlank(billingAccountCode)) {

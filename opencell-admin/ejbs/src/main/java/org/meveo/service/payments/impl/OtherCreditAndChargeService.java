@@ -115,11 +115,12 @@ public class OtherCreditAndChargeService extends
 		}
 		
 		create(otherCreditAndCharge);
-
-		log.info(
-				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
-				new Object[] { codeOCCTemplate, customerAccount.getCode(),
-						amount, dueDate });
+		if (customerAccount != null) {
+		    log.info(
+		        "addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
+		        new Object[] { codeOCCTemplate, customerAccount.getCode(),
+		                amount, dueDate });
+		}
 	}
 
     /**

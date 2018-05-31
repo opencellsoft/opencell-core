@@ -285,7 +285,7 @@ public abstract class BaseApi {
                     // In case of child entity save CustomEntityInstance objects
                     // first and then set CF value to a list of
                     // EntityReferenceWrapper objects
-                    if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                    if (cft != null && cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
 
                         List<EntityReferenceWrapper> childEntityReferences = new ArrayList<>();
 
@@ -296,7 +296,7 @@ public abstract class BaseApi {
 
                         customFieldInstanceService.setCFValue(entity, cfDto.getCode(), childEntityReferences);
 
-                    } else {
+                    } else if (cft != null) {
 
                         if (cft.isVersionable()) {
                             if (cft.getCalendar() != null) {
