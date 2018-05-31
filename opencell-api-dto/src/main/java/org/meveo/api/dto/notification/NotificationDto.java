@@ -21,7 +21,7 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
  */
 @XmlRootElement(name = "Notification")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NotificationDto extends EnableBusinessDto {
+public abstract class NotificationDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3931479706274647165L;
