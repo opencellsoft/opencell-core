@@ -492,21 +492,19 @@ public class InvoiceApi extends BaseApi {
             return null;
         }
 
-        String billingAccountCode = null;
-        if (generateInvoiceRequestDto != null) {
-            billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
-            if (StringUtils.isBlank(billingAccountCode)) {
-                missingParameters.add("billingAccountCode");
-            }
-
-            if (generateInvoiceRequestDto.getInvoicingDate() == null) {
-                missingParameters.add("invoicingDate");
-            }
-            if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
-                    && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
-                missingParameters.add("lastTransactionDate or filter or orderNumber");
-            }
+        String billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
+        if (StringUtils.isBlank(billingAccountCode)) {
+            missingParameters.add("billingAccountCode");
         }
+
+        if (generateInvoiceRequestDto.getInvoicingDate() == null) {
+            missingParameters.add("invoicingDate");
+        }
+        if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
+                && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
+            missingParameters.add("lastTransactionDate or filter or orderNumber");
+        }
+
 
         handleMissingParameters();
 
@@ -516,7 +514,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         Filter ratedTransactionFilter = null;
-        if (generateInvoiceRequestDto != null && generateInvoiceRequestDto.getFilter() != null) {
+        if (generateInvoiceRequestDto.getFilter() != null) {
             ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
             if (ratedTransactionFilter == null) {
                 throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
@@ -524,7 +522,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         Boolean generatePDF = generateInvoiceRequestDto.getGeneratePDF();
-        if (isDraft && generateInvoiceRequestDto != null) {
+        if (isDraft) {
             if (generatePDF == null) {
                 generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
             }
