@@ -75,7 +75,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public String getMrrOnSubscriptionsValues() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_MRR_REC_PER_MONTH_SUBS");
         ChartJsModel jsModel = new ChartJsModel();
         jsModel.getDatasets().put("regular", new ArrayList<BigDecimal>());
@@ -95,7 +95,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public String getChurnValues() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_CHURN_SUB_PER_MONTH");
         ChartJsModel jsModel = new ChartJsModel();
         jsModel.getDatasets().put("subscriptions", new ArrayList<BigDecimal>());
@@ -116,7 +116,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public String getMrrOnOffers() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_MRR_REC_PER_MONTH_PER_OFFER");
         ChartJsModel jsModel = new ChartJsModel();
         jsModel.getDatasets().put("offer1", new ArrayList<BigDecimal>());
