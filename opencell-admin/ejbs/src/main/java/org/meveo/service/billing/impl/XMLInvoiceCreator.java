@@ -204,8 +204,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             methodContext.put("XMLInvoiceCreator", this);
             if (script == null) {
                 log.debug("script is null");
+            } else {
+                script.execute(methodContext);
             }
-            script.execute(methodContext);
+            
             return (File) methodContext.get(Script.RESULT_VALUE);
         }
 

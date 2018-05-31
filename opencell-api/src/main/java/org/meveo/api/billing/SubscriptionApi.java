@@ -1348,28 +1348,34 @@ public class SubscriptionApi extends BaseApi {
      */
     private void suspendOrResumeServices(OperationServicesRequestDto postData, boolean isToSuspend)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
+        String subscriptionCode = null;
         if (postData == null) {
             missingParameters.add("provisionningServicesRequestDto");
+        } else {
+            subscriptionCode = postData.getSubscriptionCode();
         }
 
-        if (postData != null && StringUtils.isBlank(postData.getSubscriptionCode())) {
+        if (postData != null && StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
 
         handleMissingParametersAndValidate(postData);
 
-        Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
         if (subscription == null) {
-            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
-        for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
-            ServiceInstance serviceInstanceToSuspend = getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
-                isToSuspend ? InstanceStatusEnum.ACTIVE : InstanceStatusEnum.SUSPENDED);
 
-            if (isToSuspend) {
-                serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
-            } else {
-                serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+        if (postData != null) {
+            for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
+                ServiceInstance serviceInstanceToSuspend = getSingleServiceInstance(serviceToSuspendDto.getId(), serviceToSuspendDto.getCode(), subscription,
+                    isToSuspend ? InstanceStatusEnum.ACTIVE : InstanceStatusEnum.SUSPENDED);
+
+                if (isToSuspend) {
+                    serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+                } else {
+                    serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+                }
             }
         }
     }
