@@ -520,10 +520,9 @@ public class InvoiceApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
             }
         }
-
-        Boolean generatePDF = generateInvoiceRequestDto.getGeneratePDF();
+        
         if (isDraft) {
-            if (generatePDF == null) {
+            if (generateInvoiceRequestDto.getGeneratePDF() == null) {
                 generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
             }
             if (generateInvoiceRequestDto.getGenerateAO() != null) {
@@ -531,10 +530,9 @@ public class InvoiceApi extends BaseApi {
             }
         }
 
-        Boolean generateXML = generateInvoiceRequestDto.getGenerateXML();
-        boolean produceXml = (generateXML != null && generateXML)
-                || (generatePDF != null && generatePDF);
-        boolean producePdf = (generatePDF != null && generatePDF);
+        boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
+                || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
+        boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
         Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),
