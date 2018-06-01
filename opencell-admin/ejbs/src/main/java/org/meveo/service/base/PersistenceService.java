@@ -41,7 +41,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
@@ -51,7 +50,6 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -94,6 +92,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
     public static String SEARCH_WILDCARD_OR = "wildcardOr";
+    public static String SEARCH_WILDCARD_OR_IGNORE_CAS = "wildcardOrIgnoreCase";
     public static String SEARCH_SQL = "SQL";
     public static String SEARCH_FILTER = "$FILTER";
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
@@ -693,6 +692,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>likeCriterias. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will
      * be used. In either case case insensative matching is used. Applies to String type fields.</li>
      * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
+     * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case
      * String type fields.</li>
      * <li>ne. Not equal.
      * </ul>
@@ -941,6 +941,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         queryBuilder.startOrClause();
                         for (String field : fields) {
                             queryBuilder.addSql("a." + field + " like '%" + filterValue + "%'");
+                        }
+                        queryBuilder.endOrClause();
+
+                        // Just like wildcardOr but ignoring case :
+                    } else if (SEARCH_WILDCARD_OR_IGNORE_CAS.equals(condition)) {
+                        queryBuilder.startOrClause();
+                        for (String field : fields) {  // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
+                            queryBuilder.addSql("lower(a." + field + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
                         }
                         queryBuilder.endOrClause();
 

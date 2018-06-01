@@ -119,7 +119,7 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	    // 'name' filtering :
         if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("name")) {
             Object filterValue = searchCriteria.remove("name");
-            searchCriteria.put("wildcardOr name", filterValue);
+            searchCriteria.put(PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS.concat(" name"), filterValue);
         }
         // 'valid from' filtering : 
         if (MapUtils.isNotEmpty(searchCriteria) &&  searchCriteria.containsKey("validity.from")) {

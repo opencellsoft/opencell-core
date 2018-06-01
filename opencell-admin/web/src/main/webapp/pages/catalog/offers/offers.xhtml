@@ -357,7 +357,7 @@
 						             
 						            <f:facet name="filter">
 										<p:calendar  pattern="dd/MM/yyyy">
-										    <p:ajax event="dateSelect"  oncomplete="PF('cellEntity_results').filter()" />
+										    <p:ajax event="blur"  oncomplete="PF('cellEntity_results').filter()" />
 										</p:calendar>
 									</f:facet>
 			                        <h:outputText value="#{entity.validity.from}">
@@ -370,7 +370,7 @@
 						             
 						            <f:facet name="filter">
 										<p:calendar  pattern="dd/MM/yyyy">
-										    <p:ajax event="dateSelect"  oncomplete="PF('cellEntity_results').filter()" />
+										    <p:ajax event="blur" oncomplete="PF('cellEntity_results').filter()" />
 										</p:calendar>
 									</f:facet>
 			                        <h:outputText value="#{entity.validity.to}">
