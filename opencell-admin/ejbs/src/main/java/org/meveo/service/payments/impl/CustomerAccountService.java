@@ -518,13 +518,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     @SuppressWarnings("unchecked")
     public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
-        long startDate = System.currentTimeMillis();
+
         Query query = this.getEntityManager()
             .createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
         query.setParameter("id", billingAccount.getId());
         try {
             List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
-            log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
             return resultList;
 
         } catch (NoResultException e) {

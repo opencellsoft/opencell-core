@@ -67,6 +67,7 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.exceptions.ConfigurationException;
@@ -358,8 +359,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return null;
     }
-    
-    
+
     /**
      * Query invoice ids with no account operation.
      *
@@ -375,16 +375,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return qb;
     }
-    
+
     /**
      * @param br billing run
-     * @return list of invoice's which doesn't have the account operation, and have an amount 
+     * @return list of invoice's which doesn't have the account operation, and have an amount
      */
     public List<Long> queryInvoiceIdsWithNoAccountOperation(BillingRun br, boolean excludeInvoicesWithoutAmount) {
         try {
             QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
             if (excludeInvoicesWithoutAmount) {
-                qb.addSql("i.amount != 0 ");    
+                qb.addSql("i.amount != 0 ");
             }
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
@@ -552,7 +552,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             invoice.assignTemporaryInvoiceNumber();
 
-            Long endDate = System.currentTimeMillis();
+            long endDate = System.currentTimeMillis();
             log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
                     + (endDate - startDate));
 
@@ -657,7 +657,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
         log.debug("Creating pdf for invoice id={} number={}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
-        long startDate = System.currentTimeMillis();
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
@@ -788,8 +787,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-            log.debug("After jasperPrint:" + (System.currentTimeMillis() - startDate));
-
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
 
             // if (invoice.getInvoiceNumber() == null) {
@@ -799,8 +796,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setPdfFilename(pdfFilename);
 
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
-
-            log.debug("After setPdfGenerated:" + (System.currentTimeMillis() - startDate));
 
         } catch (IOException | JRException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
@@ -1507,25 +1502,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if (ratedTxFilter == null && lastTransactionDate == null && StringUtils.isBlank(orderNumber)) {
-            throw new BusinessException("lastTransactionDate or filter or orderNumber is null");
+            throw new ValidationException("lastTransactionDate or filter or orderNumber is null");
         }
 
         if (billingAccount.getBillingRun() != null && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
                 || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.PREVALIDATED)
                 || billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.POSTVALIDATED))) {
 
-            throw new BusinessException("The billingAccount is already in an billing run with status " + billingAccount.getBillingRun().getStatus());
+            throw new ValidationException("The billingAccount is already in an billing run with status " + billingAccount.getBillingRun().getStatus());
         }
 
         ratedTransactionService.createRatedTransaction(billingAccount.getId(), invoiceDate);
         if (ratedTxFilter == null && StringUtils.isBlank(orderNumber)) {
             if (!ratedTransactionService.isBillingAccountBillable(billingAccount, firstTransactionDate, lastTransactionDate)) {
-                throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
+                throw new ValidationException(resourceMessages.getString("error.invoicing.noTransactions"), "error.invoicing.noTransactions");
             }
         }
         if (!StringUtils.isBlank(orderNumber)) {
             if (!ratedTransactionService.isBillingAccountBillable(billingAccount, orderNumber, firstTransactionDate, lastTransactionDate)) {
-                throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
+                throw new ValidationException(resourceMessages.getString("error.invoicing.noTransactions"), "error.invoicing.noTransactions");
             }
         }
 
@@ -1698,10 +1693,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
         Invoice invoice = findById(invoiceId);
         assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
-        log.debug("After assignInvoiceNumberFromReserve:" + (System.currentTimeMillis() - startDate));
 
         BillingAccount billingAccount = invoice.getBillingAccount();
 
@@ -1713,8 +1706,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         billingAccount.setNextInvoiceDate(nextCalendarDate);
         billingAccount.updateAudit(currentUser);
         invoice = update(invoice);
-
-        log.debug("After update:" + (System.currentTimeMillis() - startDate));
     }
 
     /**
@@ -1770,13 +1761,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @SuppressWarnings("unchecked")
     public List<SubCategoryInvoiceAgregate> listByInvoice(Invoice invoice) {
-        long startDate = System.currentTimeMillis();
         QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
         qb.addCriterionEntity("invoice", invoice);
 
         try {
             List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
-            log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
             return resultList;
         } catch (NoResultException e) {
             log.warn("error while getting user account list by billing account", e);

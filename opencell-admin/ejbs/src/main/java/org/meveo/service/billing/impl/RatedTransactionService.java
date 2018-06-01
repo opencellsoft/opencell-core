@@ -748,7 +748,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return list of rated transaction.
      */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
-        long startDate = System.currentTimeMillis();
+
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
         qb.addCriterionEntity("c.wallet", wallet);
         qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
@@ -764,7 +764,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
 
-        log.debug("getRatedTransactions time: " + (System.currentTimeMillis() - startDate));
 
         return ratedTransactions;
 
@@ -776,7 +775,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(Invoice invoice) {
 
-        long startDate = System.currentTimeMillis();
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
         qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
         qb.addCriterionEntity("c.invoice", invoice);
@@ -789,7 +787,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
 
-        log.debug("getRatedTransactions time: " + (System.currentTimeMillis() - startDate));
 
         return ratedTransactions;
 
@@ -802,7 +799,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return list of rated transactions.
      */
     public List<RatedTransaction> getRatedTransactions(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
-        long startDate = System.currentTimeMillis();
+
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
         qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
         qb.addCriterionEntity("c.wallet", wallet);
@@ -813,7 +810,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
 
-        log.info("getRatedTransactions time: " + (System.currentTimeMillis() - startDate));
 
         return ratedTransactions;
 

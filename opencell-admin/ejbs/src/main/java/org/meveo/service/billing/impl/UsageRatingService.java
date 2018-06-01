@@ -662,7 +662,6 @@ public class UsageRatingService implements Serializable {
      */
     private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, boolean requirePP) throws BusinessException, ChargeWitoutPricePlanException {
 
-        long startDate = System.currentTimeMillis();
         UsageChargeTemplate chargeTemplate = null;
         if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
             chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate();
@@ -671,8 +670,6 @@ public class UsageRatingService implements Serializable {
         }
 
         String filter1 = chargeTemplate.getFilterParam1();
-
-        log.debug("Retrieved ChargeTemplate in: {}", (System.currentTimeMillis() - startDate));
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
             String filter2 = chargeTemplate.getFilterParam2();
@@ -686,9 +683,7 @@ public class UsageRatingService implements Serializable {
 
                             if (requirePP) {
                                 String chargeCode = chargeTemplate.getCode();
-                                startDate = System.currentTimeMillis();
                                 List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(chargeCode);
-                                log.debug("Retrieved PPs in: {}", (System.currentTimeMillis() - startDate));
                                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                                     throw new ChargeWitoutPricePlanException(chargeCode);
                                 }

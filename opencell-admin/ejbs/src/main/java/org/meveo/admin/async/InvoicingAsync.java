@@ -194,7 +194,6 @@ public class InvoicingAsync {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            long startDate = System.currentTimeMillis();
             try {
                 invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
                 result.registerSucces();
@@ -203,7 +202,6 @@ public class InvoicingAsync {
                 allOk = false;
                 log.error("Failed to create XML invoice for invoice {}", invoiceId, e);
             }
-            log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate));
         }
 
         return new AsyncResult<Boolean>(allOk);
