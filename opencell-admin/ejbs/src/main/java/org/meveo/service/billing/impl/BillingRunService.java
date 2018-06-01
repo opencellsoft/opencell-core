@@ -195,26 +195,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if (preferedPaymentMethod != null) {
                 paymentMethodEnum = preferedPaymentMethod.getPaymentType();
             }
-            switch (paymentMethodEnum) {
-            case CHECK:
-                checkBillableBANumber++;
-                checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-                break;
-            case DIRECTDEBIT:
-                directDebitBillableBANumber++;
-                directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-                break;
-            case WIRETRANSFER:
-                wiretransferBillableBANumber++;
-                wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-                break;
+            if (paymentMethodEnum != null) {
+                switch (paymentMethodEnum) {
+                case CHECK:
+                    checkBillableBANumber++;
+                    checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                    break;
+                case DIRECTDEBIT:
+                    directDebitBillableBANumber++;
+                    directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                    break;
+                case WIRETRANSFER:
+                    wiretransferBillableBANumber++;
+                    wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                    break;
 
-            case CARD:
-                creditDebitCardBillableBANumber++;
-                creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                case CARD:
+                    creditDebitCardBillableBANumber++;
+                    creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 
-            default:
-                break;
+                default:
+                    break;
+                }
             }
         }
 

@@ -9,7 +9,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -19,7 +18,9 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @author anasseh
  * 
+ * @lastModifiedVersion willBeSetHere
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -88,18 +89,6 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
             result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto dunningDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            customerAccountApi.dunningExclusionInclusion(dunningDto);
-        } catch (Exception e) {
-            processException(e, result);
         }
 
         return result;

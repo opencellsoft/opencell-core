@@ -85,6 +85,9 @@ public class InvoiceDto extends BaseDto {
     /** The xml filename. */
     private String xmlFilename;
     
+    /** The xml. */
+    private String xml;
+    
     /** The pdf filename. */
     private String pdfFilename;
     
@@ -570,5 +573,19 @@ public class InvoiceDto extends BaseDto {
      */
     public void setNetToPay(BigDecimal netToPay) {
         this.netToPay = netToPay;
+    }
+
+    /**
+     * @return the xml
+     */
+    public String getXml() {
+        return xml;
+    }
+
+    /**
+     * @param xml the xml to set
+     */
+    public void setXml(String xml) {
+        this.xml = xml;
     }
 }

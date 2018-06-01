@@ -289,7 +289,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         // TODO:check that setting the principal wallet at this stage is correct
         walletOperation.setWallet(userAccount.getWallet());
-        if (chargeInstance.getSubscription() != null) {
+        if (chargeInstance != null && chargeInstance.getSubscription() != null) {
             walletOperation.setBillingAccount(billingAccount);
         }
 
@@ -411,8 +411,10 @@ public class RatingService extends BusinessService<WalletOperation> {
                     Response response = meveoInstanceService.callTextServiceMeveoInstance(url, triggeredEDRTemplate.getMeveoInstance(), cdr.toCsv());
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
                     log.debug("response {}", actionStatus);
-                    if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+                    if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                         throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                    } else if (actionStatus == null) {
+                        throw new BusinessException("Error charging Edr on remote instance");
                     }
                 }
             }

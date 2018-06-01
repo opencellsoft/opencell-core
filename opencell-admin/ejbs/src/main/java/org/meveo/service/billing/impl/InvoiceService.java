@@ -118,7 +118,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -350,15 +351,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public List<Long> getInvoiceIdsWithNoAccountOperation(BillingRun br) {
         try {
-            QueryBuilder qb = new QueryBuilder(Invoice.class, " i");
-            qb.addSql("i.invoiceNumber is not null");
-            qb.addSql("i.recordedInvoice is null");
-            if (br != null) {
-                qb.addCriterionEntity("i.billingRun", br);
-            }
+            QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
             return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to get invoices with no account operation", ex);
+        }
+        return null;
+    }
+    
+    
+    /**
+     * Query invoice ids with no account operation.
+     *
+     * @param br the br
+     * @return the query builder
+     */
+    private QueryBuilder queryInvoiceIdsWithNoAccountOperation(BillingRun br) {
+        QueryBuilder qb = new QueryBuilder(Invoice.class, " i");
+        qb.addSql("i.invoiceNumber is not null");
+        qb.addSql("i.recordedInvoice is null");
+        if (br != null) {
+            qb.addCriterionEntity("i.billingRun", br);
+        }
+        return qb;
+    }
+    
+    /**
+     * @param br billing run
+     * @return list of invoice's which doesn't have the account operation, and have an amount 
+     */
+    public List<Long> queryInvoiceIdsWithNoAccountOperation(BillingRun br, boolean excludeInvoicesWithoutAmount) {
+        try {
+            QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
+            if (excludeInvoicesWithoutAmount) {
+                qb.addSql("i.amount != 0 ");    
+            }
+            return qb.getIdQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to get invoices with amount and with no account operation", ex);
         }
         return null;
     }

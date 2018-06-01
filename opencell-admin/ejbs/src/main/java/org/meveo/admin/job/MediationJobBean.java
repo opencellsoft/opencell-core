@@ -275,8 +275,10 @@ public class MediationJobBean {
                 log.error("Failed to create a rejection file {}", rejectFile.getAbsolutePath());
             }
         }
-
-        rejectFileWriter.println(line + "\t" + reason.name());
+        
+        if (rejectFileWriter != null) {
+            rejectFileWriter.println(line + "\t" + reason.name());
+        }
 
     }
 

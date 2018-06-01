@@ -68,6 +68,11 @@
 							<h:outputText value="#{jobInstanceBean.getPartOfModules()}" />
 						</hftl:decorateFormField>
 						<hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" newLine="true" />
+						<h:panelGroup id="invoiceInfo">
+							<hftl:formField label="#{messages['jobInstance.invoiceWithZeroAmount']}" 
+							                field="excludeInvoicesWithoutAmount"
+							                rendered="#{jobInstanceBean.entity != null and (jobInstanceBean.entity.jobTemplate eq 'AccountOperationsGenerationJob')}"  />
+						</h:panelGroup>
 					</p:tab>
 
 					<hftl:customFields backingBean="#{jobInstanceBean}" messagesId=":formId:messages" />

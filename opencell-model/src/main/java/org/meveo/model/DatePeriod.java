@@ -170,9 +170,11 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
             return 1;
         } else if (this.from == null && other.getFrom() != null) {
             return -1;
-        } else {
+        } else if (this.from != null) {
             return this.from.compareTo(other.getFrom());
         }
+        
+        return 0;
     }
 
     /**
