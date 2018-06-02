@@ -124,6 +124,24 @@ public class BusinessOfferApi extends BaseApi {
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
         }
+        
+        for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
+            ServiceTemplate serviceTemplate = ost.getServiceTemplate();
+            for (ServiceConfigurationDto serviceConfigurationDto : postData.getServicesToActivate()) {
+                String serviceTemplateCode = ost.getOfferTemplate().getId() + "_" + serviceConfigurationDto.getCode();
+                if (serviceConfigurationDto.isInstantiatedFromBSM()) {
+                    serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getId() + "_" + serviceConfigurationDto.getCode();
+                }
+                if (serviceTemplateCode.equals(serviceTemplate.getCode())) {
+                    try {
+                        saveImage(serviceTemplate, serviceConfigurationDto.getImagePath(), serviceConfigurationDto.getImageBase64());
+                    } catch (IOException e1) {
+                        log.error("Invalid image data={}", e1.getMessage());
+                        throw new InvalidImageData();
+                    }
+                }
+            }
+        }
 
         // populate service custom fields
         for (OfferServiceTemplate ost : newOfferTemplate.getOfferServiceTemplates()) {
