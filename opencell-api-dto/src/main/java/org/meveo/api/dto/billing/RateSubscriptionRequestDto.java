@@ -2,14 +2,14 @@ package org.meveo.api.dto.billing;
 
 import java.util.Date;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class RateSubscriptionRequestDto.
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
-public class RateSubscriptionRequestDto extends BaseDto {
+public class RateSubscriptionRequestDto extends BaseEntityDto {
 
 
     /** The Constant serialVersionUID. */

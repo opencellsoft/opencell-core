@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "Currencies")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrenciesDto extends BaseDto {
+public class CurrenciesDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7446426816621551014L;

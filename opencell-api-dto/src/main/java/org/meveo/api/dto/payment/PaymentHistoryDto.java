@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -24,7 +24,7 @@ import org.meveo.model.payments.PaymentStatusEnum;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentHistoryDto extends BaseDto {
+public class PaymentHistoryDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

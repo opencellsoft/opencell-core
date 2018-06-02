@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class GetPdfInvoiceRequestDto.
@@ -13,7 +13,7 @@ import org.meveo.api.dto.BaseDto;
  */
 @XmlRootElement(name = "GetPdfInvoiceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetPdfInvoiceRequestDto extends BaseDto {
+public class GetPdfInvoiceRequestDto extends BaseEntityDto {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

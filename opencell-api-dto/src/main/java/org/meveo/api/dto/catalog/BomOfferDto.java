@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 
@@ -22,7 +22,7 @@ import org.meveo.model.catalog.LifeCycleStatusEnum;
  */
 @XmlRootElement(name = "BomOffer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BomOfferDto extends BaseDto {
+public class BomOfferDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4557706201829891403L;

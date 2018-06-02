@@ -855,7 +855,7 @@ public class InvoiceApi extends BaseApi {
     private InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf, boolean includeXml) {
 
         InvoiceDto invoiceDto = new InvoiceDto();
-
+		invoiceDto.setAuditable(invoice);
         invoiceDto.setInvoiceId(invoice.getId());
         invoiceDto.setBillingAccountCode(invoice.getBillingAccount().getCode());
         invoiceDto.setInvoiceDate(invoice.getInvoiceDate());

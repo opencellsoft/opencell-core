@@ -1,15 +1,14 @@
 package org.meveo.api.dto.hierarchy;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.hierarchy.HierarchyLevel;
 
 /**
@@ -19,18 +18,10 @@ import org.meveo.model.hierarchy.HierarchyLevel;
  */
 @XmlRootElement(name = "UserHierarchyLevel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserHierarchyLevelDto implements Serializable {
+public class UserHierarchyLevelDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1332916104721562522L;
-
-    /** The code. */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /** The description. */
-    @XmlAttribute(required = false)
-    private String description;
 
     /** The parent level. */
     private String parentLevel;
@@ -56,48 +47,11 @@ public class UserHierarchyLevelDto implements Serializable {
      * @param level the HierarchyLevel
      */
     public UserHierarchyLevelDto(@SuppressWarnings("rawtypes") HierarchyLevel level) {
-        code = level.getCode();
-        description = level.getDescription();
+        super(level);
         orderLevel = level.getOrderLevel();
         if (level.getParentLevel() != null) {
             parentLevel = level.getParentLevel().getCode();
         }
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**

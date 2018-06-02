@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.crm.Customer;
+
 /**
  * The Class CustomerDto.
  *
@@ -57,6 +59,15 @@ public class CustomerDto extends AccountDto {
      */
     public CustomerDto() {
         super();
+    }
+    
+    /**
+     * Instantiates a new customer dto.
+     * 
+     * @param e Customer entity
+     */
+    public CustomerDto(Customer e) {
+        super(e);
     }
 
     /**

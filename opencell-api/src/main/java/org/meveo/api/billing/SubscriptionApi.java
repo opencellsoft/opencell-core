@@ -1001,9 +1001,7 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionDto
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
-        SubscriptionDto dto = new SubscriptionDto();
-        dto.setCode(subscription.getCode());
-        dto.setDescription(subscription.getDescription());
+        SubscriptionDto dto = new SubscriptionDto(subscription);
         dto.setStatus(subscription.getStatus());
         dto.setStatusDate(subscription.getStatusDate());
         dto.setOrderNumber(subscription.getOrderNumber());

@@ -37,7 +37,7 @@ import org.meveo.model.billing.RatedTransaction;
 
 @XmlRootElement(name = "RatedTransaction")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RatedTransactionDto extends BaseDto {
+public class RatedTransactionDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7627662294414998797L;

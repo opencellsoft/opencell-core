@@ -377,6 +377,7 @@ public class PaymentApi extends BaseApi {
      */
     public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {
         PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
+        paymentHistoryDto.setAuditable(paymentHistory);
         paymentHistoryDto.setCustomerAccountCode(paymentHistory.getCustomerAccountCode());
         paymentHistoryDto.setCustomerAccountName(paymentHistory.getCustomerAccountName());
         paymentHistoryDto.setSellerCode(paymentHistory.getSellerCode());

@@ -50,7 +50,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * @author Edward P. Legaspi
  * @author anasseh
  * 
- * @lastModifiedVersion willBeSetHere
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
@@ -515,6 +515,7 @@ public class AccountOperationApi extends BaseApi {
             matchingAmountsDto.setMatchingAmount(new ArrayList<>());
             for (MatchingAmount matchingAmount : matchingAmounts) {
                 matchingAmountDto = new MatchingAmountDto();
+                matchingAmountDto.setAuditable(matchingAmount);
                 if (matchingAmount.getMatchingCode() != null) {
                     matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
                 }
