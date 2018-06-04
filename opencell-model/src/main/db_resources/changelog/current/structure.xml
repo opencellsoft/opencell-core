@@ -904,40 +904,61 @@
         </addColumn>
     </changeSet>
     
-<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
-	   <sql splitStatements="false" stripComments="false"><![CDATA[	
-	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
-	         BEGIN
-	         	RETURN  translate($1,
-	   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
-	   							 'cCaaAAeeeEEEiIuUoO');
-	        END;
-			$$ LANGUAGE plpgsql;
-		]]></sql>
-	</changeSet>
-
-    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
-    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
-     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
-	    <sql splitStatements="false" stripComments="false"><![CDATA[	     
-			create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
-							returns varchar(2000)
-							begin				
-								set @textvalue =  input_text;
-								set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
-								set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
-								set @count = length(@withaccents);
-								
-								while @count > 0 do
-								    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
-								    set @count = @count - 1;
-								end while;					
-								return @textvalue;				
-			end;
-		]]></sql>
-</changeSet>    
+	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+		   <sql splitStatements="false" stripComments="false"><![CDATA[	
+		   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
+		         BEGIN
+		         	RETURN  translate($1,
+		   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
+		   							 'cCaaAAeeeEEEiIuUoO');
+		        END;
+				$$ LANGUAGE plpgsql;
+			]]></sql>
+		</changeSet>
+	
+	    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
+	    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+	     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+		    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+				create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
+								returns varchar(2000)
+								begin				
+									set @textvalue =  input_text;
+									set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
+									set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
+									set @count = length(@withaccents);
+									
+									while @count > 0 do
+									    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+									    set @count = @count - 1;
+									end while;					
+									return @textvalue;				
+				end;
+			]]></sql>
+	</changeSet>    
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
-    </changeSet> 
+    </changeSet>
+
+	<changeSet author="SaidRamli" id="#3457_04062018">
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="ar_customer_account" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="ar_customer_account" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="ar_customer_account" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_customer" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_customer" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_customer" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_seller" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_seller" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_seller" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="billing_billing_account" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_provider_contact" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_provider_contact" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_provider_contact" />
+	</changeSet>
+    
 </databaseChangeLog> 
