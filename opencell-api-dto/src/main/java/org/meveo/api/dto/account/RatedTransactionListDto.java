@@ -15,21 +15,11 @@ public class RatedTransactionListDto implements Serializable {
     private static final long serialVersionUID = 1L;
     
     /** The rated transaces. */
-    private List<RatedTransactionDto> ratedTransaces;
+    private List<RatedTransactionDto> ratedTransactions;
 
     /** The total number of records. */
     private Long totalNumberOfRecords;
     
-    /**
-     * @return the ratedTransaces
-     */
-    public List<RatedTransactionDto> getRatedTransaces() {
-        if (this.ratedTransaces == null) {
-           this.ratedTransaces = new ArrayList<>(); 
-        }
-        return ratedTransaces;
-    }
-
     /**
      * @return the totalNumberOfRecords
      */
@@ -42,6 +32,16 @@ public class RatedTransactionListDto implements Serializable {
      */
     public void setTotalNumberOfRecords(Long totalNumberOfRecords) {
         this.totalNumberOfRecords = totalNumberOfRecords;
+    }
+    
+    /**
+     * @return the ratedTransactions
+     */
+    public List<RatedTransactionDto> getRatedTransactions() {
+        if (this.ratedTransactions == null) {
+            this.ratedTransactions = new ArrayList<>(); 
+         }
+        return ratedTransactions;
     }
 
 }

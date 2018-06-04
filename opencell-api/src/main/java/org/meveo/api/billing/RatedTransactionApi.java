@@ -46,7 +46,7 @@ public class RatedTransactionApi extends BaseApi {
         if (totalCount > 0) {
             List<RatedTransaction> ratedTransactions = ratedTransactionService.list(paginationConfig);
             for (RatedTransaction rt : ratedTransactions) {
-                ratedTransactionListDto.getRatedTransaces().add(new RatedTransactionDto(rt, postData.getReturnUserAccountCode()));
+                ratedTransactionListDto.getRatedTransactions().add(new RatedTransactionDto(rt, postData.getReturnUserAccountCode()));
             }
         }
         result.setRatedTransactionListDto(ratedTransactionListDto);
