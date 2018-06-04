@@ -19,7 +19,7 @@ import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
 @Stateless
-public class ScriptingJobBean {
+public class ScriptingJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;

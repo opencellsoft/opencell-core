@@ -20,7 +20,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.slf4j.Logger;
 
 @Stateless
-public class SubscriptionStatusJobBean {
+public class SubscriptionStatusJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;

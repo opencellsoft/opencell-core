@@ -13,8 +13,6 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.sepa.PaynumFile;
 import org.meveo.admin.sepa.SepaFile;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -24,7 +22,6 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
@@ -35,7 +32,7 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class SepaDirectDebitJobBean {
+public class SepaDirectDebitJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
@@ -45,9 +42,6 @@ public class SepaDirectDebitJobBean {
 
     @Inject
     private DDRequestItemService ddRequestItemService;
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private DDRequestLOTService dDRequestLOTService;
@@ -66,7 +60,7 @@ public class SepaDirectDebitJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for parameter={}", jobInstance.getParametres());
         try {
-            String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat");
+            String fileFormat = (String) this.getParamOrCFValue(jobInstance, "fileFormat");
 
             List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(DDRequestFileFormatEnum.valueOf(fileFormat));
 

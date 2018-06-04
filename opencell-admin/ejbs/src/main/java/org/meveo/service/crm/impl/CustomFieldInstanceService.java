@@ -39,6 +39,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -209,8 +210,8 @@ public class CustomFieldInstanceService extends BaseService {
      * @return the run time CF value
      */
     private Object getRunTimeCFValue(ICustomFieldEntity entity, String cfCode) {
-        if (entity instanceof BusinessEntity) {
-            return ((BusinessEntity) entity).getRuntimeValue(cfCode);  
+        if (entity instanceof JobInstance) {
+            return ((JobInstance) entity).getParamValue(cfCode);  
         }
         return null;
     }

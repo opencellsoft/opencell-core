@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 5.0
  */
 @Stateless
-public class PaymentJobBean {
+public class PaymentJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
@@ -45,9 +45,6 @@ public class PaymentJobBean {
 
     @Inject
     private PaymentAsync paymentAsync;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private PaymentGatewayService paymentGatewayService;
@@ -72,19 +69,19 @@ public class PaymentJobBean {
             PaymentMethodEnum paymentMethodType = PaymentMethodEnum.CARD;
 
             PaymentGateway paymentGateway = null;
-            if ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
-                paymentGatewayService.findByCode(((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
+            if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
+                paymentGatewayService.findByCode(((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
             }
             try {
-                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
-                paymentMethodType = PaymentMethodEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                operationCategory = OperationCategoryEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
+                paymentMethodType = PaymentMethodEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                createAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_createAO"));
-                matchingAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_createAO"));
+                createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
+                matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
 
             } catch (Exception e) {
                 nbRuns = new Long(1);

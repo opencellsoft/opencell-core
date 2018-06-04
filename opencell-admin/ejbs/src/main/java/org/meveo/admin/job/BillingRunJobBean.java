@@ -45,7 +45,7 @@ public class BillingRunJobBean {
 		log.debug("Running with parameter={}", parameter);
 		
 		if(!StringUtils.isBlank(billingCycleCode)){
-			parameter=billingCycleCode;
+			parameter = billingCycleCode;
 		}
 		try {
 			List<BillingRun> billruns = billingRunService.getBillingRuns(parameter, POSTVALIDATED,NEW,PREVALIDATED,PREINVOICED);
