@@ -12,6 +12,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -28,6 +29,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     @Inject
     private BillingAccountService billingAccountService;
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateBRAmounts(Long billingRunId) throws BusinessException {
 
@@ -83,11 +85,12 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         billingRun = updateNoCheck(billingRun);
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateBillingRun(BillingRun billingRun, Integer sizeBA, Integer billableBA, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
+    public void updateBillingRun(Long billingRunId, Integer sizeBA, Integer billableBA, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
 
         log.error("UpdateBillingRun in new transaction");
-        billingRun = findById(billingRun.getId());
+        BillingRun billingRun = findById(billingRunId);
 
         if (sizeBA != null) {
             billingRun.setBillingAccountNumber(sizeBA);

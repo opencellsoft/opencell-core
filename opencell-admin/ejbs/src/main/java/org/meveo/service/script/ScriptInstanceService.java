@@ -36,6 +36,7 @@ import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -160,6 +161,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @param parameters The array of parameters accepted by the method. They must be specified in exactly the same order as the target method.
      * @throws BusinessException business exception.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void callWithNewTransaction(String workerName, String methodName, Object... parameters) throws BusinessException {
         try {

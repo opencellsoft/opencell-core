@@ -11,6 +11,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.script.ScriptInterface;
 
@@ -25,6 +26,7 @@ public class UnitFilteringJobBean {
      * @param scriptInterface the script to execute
      * @param recordVariableName the recordVariableName
      */
+    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Object obj, ScriptInterface scriptInterface, String recordVariableName) {

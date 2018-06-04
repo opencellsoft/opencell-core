@@ -17,6 +17,7 @@ import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.BillingAccount;
@@ -59,6 +60,7 @@ public class ExportAccountsJobBean {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {

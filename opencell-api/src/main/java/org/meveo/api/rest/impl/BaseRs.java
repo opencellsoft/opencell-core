@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -134,7 +135,11 @@ public abstract class BaseRs implements IBaseRs {
             status.setMessage(e.getMessage());
 
         } else {
-            log.warn("Failed to execute API", e);
+            if (e instanceof ValidationException) {
+                log.error("Failed to execute API: {}", e.getMessage());
+            } else {
+                log.error("Failed to execute API", e);
+            }
 
             String message = e.getMessage();
             MeveoApiErrorCodeEnum errorCode = e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
@@ -192,8 +197,7 @@ public abstract class BaseRs implements IBaseRs {
                 throw new NotAuthorizedException(status);
             } else if ("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str) //
                     || "DELETE_REFERENCED_ENTITY_EXCEPTION".equals(str) //
-                    || "DUPLICATE_ACCESS".equals(str)
-                    || "ACTION_FORBIDDEN".equals(str)//
+                    || "DUPLICATE_ACCESS".equals(str) || "ACTION_FORBIDDEN".equals(str)//
                     || "INSUFFICIENT_BALANCE".equals(str)) {
                 throw new ForbiddenException(status);
             } else if ("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)) {

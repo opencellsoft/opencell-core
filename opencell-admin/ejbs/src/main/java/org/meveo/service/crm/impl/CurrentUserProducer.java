@@ -7,10 +7,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.base.EntityManagerProvider;
 import org.slf4j.Logger;
 
 /**

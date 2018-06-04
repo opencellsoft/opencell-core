@@ -13,6 +13,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -61,7 +62,12 @@ public abstract class BaseWs {
             status.setMessage(e.getMessage());
 
         } else {
-            log.warn("Failed to execute API", e);
+
+            if (e instanceof ValidationException) {
+                log.error("Failed to execute API: {}", e.getMessage());
+            } else {
+                log.error("Failed to execute API", e);
+            }
 
             String message = e.getMessage();
             MeveoApiErrorCodeEnum errorCode = e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
@@ -98,7 +104,7 @@ public abstract class BaseWs {
             status.setMessage(message);
         }
     }
-    
+
     protected HttpServletRequest getHttpServletRequest() {
         MessageContext mc = webServiceContext.getMessageContext();
         return (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);

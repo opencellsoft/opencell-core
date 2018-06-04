@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -30,6 +31,7 @@ import org.meveo.service.base.PersistenceService;
  */
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethod paymentMethod) throws BusinessException {
