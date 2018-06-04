@@ -40,6 +40,7 @@ import org.meveo.admin.exception.InvalidEntityStatusException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -303,6 +304,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return null;
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) throws BusinessException {
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
@@ -1019,4 +1021,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return totalInvoiceAmountWithoutTax;
     }
 
+    /**
+     * Find billing accounts by billing run
+     * 
+     * @param billingRunId Billing run id
+     * @return A list of billing account identifiers
+     */
+    public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
+        return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+    }
 }

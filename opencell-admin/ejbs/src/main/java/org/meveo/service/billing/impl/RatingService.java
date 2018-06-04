@@ -25,6 +25,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
@@ -228,8 +229,6 @@ public class RatingService extends BusinessService<WalletOperation> {
             Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
             ChargeApplicationModeEnum mode, UserAccount userAccount) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
-
         WalletOperation walletOperation = new WalletOperation();
         Auditable auditable = new Auditable(currentUser);
         walletOperation.setAuditable(auditable);
@@ -295,9 +294,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         BigDecimal unitPriceWithoutTax = amountWithoutTax;
         BigDecimal unitPriceWithTax = amountWithTax;
 
-        log.debug("Before  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
         rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency);
-        log.debug("After  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
         log.debug(" wo amountWithoutTax={}", walletOperation.getAmountWithoutTax());
         return walletOperation;
 
@@ -435,13 +432,11 @@ public class RatingService extends BusinessService<WalletOperation> {
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency)
             throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
         PricePlanMatrix pricePlan = null;
 
         if ((unitPriceWithoutTax == null && appProvider.isEntreprise()) || (unitPriceWithTax == null && !appProvider.isEntreprise())) {
 
             List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
-            log.debug("RS line 437 retrieval PPs in: {}", (System.currentTimeMillis() - startDate));
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                 throw new BusinessException("No price plan for charge code " + bareWalletOperation.getCode());
             }
@@ -475,7 +470,6 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
 
-        log.debug("After unitPriceWithoutTax:" + (System.currentTimeMillis() - startDate));
 
         // if the wallet operation correspond to a recurring charge that is
         // shared, we divide the price by the number of
@@ -497,7 +491,6 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
 
-        log.debug("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
 
         calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
 
@@ -591,7 +584,6 @@ public class RatingService extends BusinessService<WalletOperation> {
             executeRatingScript(bareWalletOperation, productOffering.getGlobalRatingScriptInstance().getCode());
         }
 
-        log.debug("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
     }
 
     /**
@@ -841,6 +833,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param useSamePricePlan true if same price plan will be used
      * @throws BusinessException business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException {
 
@@ -939,7 +932,6 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount);
 
-        // log.debug("AKK before evaluating expression");
         Object res = null;
         try {
             res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);

@@ -464,7 +464,7 @@ public class Invoice4_2Api extends BaseApi {
         billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1);
         log.info("update billingRun ON_GOING");
 
-        billingRunService.createAgregatesAndInvoice(billingRun, 1, 0, null, null);
+        billingRunService.createAgregatesAndInvoice(billingRun.getId(), 1, 0, null, null);
         log.info("createAgregatesAndInvoice ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null);

@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.EndOfTerm;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -32,6 +33,7 @@ public class SubscriptionStatusJobBean {
     @EndOfTerm
     protected Event<Subscription> endOfTermEventProducer;
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateSubscriptionStatus(JobExecutionResultImpl result, Long subscriptionId) throws BusinessException {
         try {

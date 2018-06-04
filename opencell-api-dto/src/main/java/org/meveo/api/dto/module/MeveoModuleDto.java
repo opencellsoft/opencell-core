@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EnableBusinessDto;
@@ -94,7 +94,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
             @XmlElement(name = "offerTemplate", type = OfferTemplateDto.class), @XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
             @XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class), @XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
             @XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class), @XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class), })
-    private List<BaseDto> moduleItems;
+    private List<BaseEntityDto> moduleItems;
 
     /**
      * Instantiates a new meveo module dto.
@@ -111,7 +111,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
         super(meveoModule);
         this.license = meveoModule.getLicense();
         this.logoPicture = meveoModule.getLogoPicture();
-        this.moduleItems = new ArrayList<BaseDto>();
+        this.moduleItems = new ArrayList<BaseEntityDto>();
         if (meveoModule.getScript() != null) {
             this.setScript(new ScriptInstanceDto(meveoModule.getScript()));
         }
@@ -176,7 +176,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
      *
      * @return the module items
      */
-    public List<BaseDto> getModuleItems() {
+    public List<BaseEntityDto> getModuleItems() {
         return moduleItems;
     }
 
@@ -185,7 +185,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
      *
      * @param moduleItems the new module items
      */
-    public void setModuleItems(List<BaseDto> moduleItems) {
+    public void setModuleItems(List<BaseEntityDto> moduleItems) {
         this.moduleItems = moduleItems;
     }
 
@@ -194,7 +194,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
      *
      * @param item the item
      */
-    public void addModuleItem(BaseDto item) {
+    public void addModuleItem(BaseEntityDto item) {
         if (!moduleItems.contains(item)) {
             moduleItems.add(item);
         }

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.billing.ChargeInstance;
 
 /**
@@ -14,15 +14,12 @@ import org.meveo.model.billing.ChargeInstance;
  * @author Edward P. Legaspi
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChargeInstanceDto {
+public class ChargeInstanceDto extends BusinessEntityDto {
 
-    /** The code. */
-    @XmlAttribute
-    private String code;
-
-    /** The description. */
-    @XmlAttribute
-    private String description;
+    /**
+     * The auto generated serial no
+     */
+    private static final long serialVersionUID = -1785188672347740647L;
 
     /** The status. */
     private String status;
@@ -52,7 +49,7 @@ public class ChargeInstanceDto {
      * @param chargeInstance the ChargeInstance entity
      */
     public ChargeInstanceDto(ChargeInstance chargeInstance) {
-        super();
+        super(chargeInstance);
         if (chargeInstance != null) {
             this.code = chargeInstance.getCode();
             this.description = chargeInstance.getDescription();
@@ -90,42 +87,6 @@ public class ChargeInstanceDto {
         this.amountWithoutTax = amountWithoutTax;
         this.sellerCode = sellerCode;
         this.userAccountCode = userAccountCode;
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**

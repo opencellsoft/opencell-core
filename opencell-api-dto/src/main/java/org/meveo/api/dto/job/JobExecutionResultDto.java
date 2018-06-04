@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 
 /**
@@ -20,7 +20,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
  */
 @XmlRootElement(name = "JobExecutionResult")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JobExecutionResultDto extends BaseDto {
+public class JobExecutionResultDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5117909144385779437L;

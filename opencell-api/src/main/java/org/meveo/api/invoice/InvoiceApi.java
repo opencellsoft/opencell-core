@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
@@ -127,7 +125,6 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException Business exception
      * @throws Exception exception
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
@@ -520,10 +517,9 @@ public class InvoiceApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
             }
         }
-
-        Boolean generatePDF = generateInvoiceRequestDto.getGeneratePDF();
+        
         if (isDraft) {
-            if (generatePDF == null) {
+            if (generateInvoiceRequestDto.getGeneratePDF() == null) {
                 generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
             }
             if (generateInvoiceRequestDto.getGenerateAO() != null) {
@@ -531,10 +527,9 @@ public class InvoiceApi extends BaseApi {
             }
         }
 
-        Boolean generateXML = generateInvoiceRequestDto.getGenerateXML();
-        boolean produceXml = (generateXML != null && generateXML)
-                || (generatePDF != null && generatePDF);
-        boolean producePdf = (generatePDF != null && generatePDF);
+        boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
+                || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
+        boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
         Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),
@@ -857,7 +852,7 @@ public class InvoiceApi extends BaseApi {
     private InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf, boolean includeXml) {
 
         InvoiceDto invoiceDto = new InvoiceDto();
-
+		invoiceDto.setAuditable(invoice);
         invoiceDto.setInvoiceId(invoice.getId());
         invoiceDto.setBillingAccountCode(invoice.getBillingAccount().getCode());
         invoiceDto.setInvoiceDate(invoice.getInvoiceDate());

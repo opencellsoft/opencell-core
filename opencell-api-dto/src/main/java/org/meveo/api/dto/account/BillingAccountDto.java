@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -113,7 +114,16 @@ public class BillingAccountDto extends AccountDto {
      * Instantiates a new billing account dto.
      */
     public BillingAccountDto() {
-
+        super();
+    }
+    
+    /**
+     * Instantiates a new billing account dto.
+     * 
+     * @param e BillingAccount entity
+     */
+    public BillingAccountDto(BillingAccount e) {
+        super(e);
     }
 
     /**

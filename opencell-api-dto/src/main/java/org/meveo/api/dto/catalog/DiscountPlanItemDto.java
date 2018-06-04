@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 
@@ -23,7 +23,7 @@ import org.meveo.model.catalog.DiscountPlanItem;
  */
 @XmlRootElement(name = "DiscountPlanItem")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DiscountPlanItemDto extends BaseDto implements IEnableDto {
+public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4512584223794507921L;

@@ -63,6 +63,12 @@ public class ServiceConfigurationDto implements Serializable {
      * Use when matching service template in bsm vs offer.
      */
     private boolean match = false;
+    
+    /** The image base64 encoding string. */
+    private String imageBase64;
+    
+    /** The image path. */
+    private String imagePath;
 
     /**
      * Gets the code.
@@ -189,6 +195,42 @@ public class ServiceConfigurationDto implements Serializable {
      */
     public void setCfValues(Map<String, List<CustomFieldValue>> cfValues) {
         this.cfValues = cfValues;
+    }
+    
+    /**
+     * Gets the image Base64 encoding string.
+     *
+     * @return the image Base64 encoding string
+     */
+    public String getImageBase64() {
+        return imageBase64;
+    }
+    
+    /**
+     * Sets the image Base64 encoding string.
+     *
+     * @param imageBase64 the image Base64 encoding string
+     */
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+    
+    /**
+     * Gets the image path.
+     *
+     * @return the image path
+     */
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    /**
+     * Sets the image path.
+     *
+     * @param imagePath the new image path
+     */
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     @Override

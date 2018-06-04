@@ -12,8 +12,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.meveo.admin.listener.ApplicationInitializer;
+import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.EntityManagerProvider;
 import org.slf4j.Logger;
 
 /**

@@ -722,8 +722,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     public List<WalletOperation> applyReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate,
             boolean forSchedule) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
-
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
 
         Calendar cal = recurringChargeTemplate.getCalendar();
@@ -824,7 +822,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
         chargeInstance.setNextChargeDate(applyChargeToDate);
 
-        log.debug("Before return applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
         return walletOperations;
     }
 
@@ -920,8 +917,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     public List<WalletOperation> applyNotAppliedinAdvanceReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement,
             RecurringChargeTemplate recurringChargeTemplate) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
-
         Calendar cal = recurringChargeTemplate.getCalendar();
         cal.setInitDate(chargeInstance.getSubscriptionDate());
 
@@ -1014,22 +1009,17 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
             log.debug("Applying not applied in advance recurring charge {} for {}-{}, quantity {}", chargeInstance.getId(), applyChargeOnDate, nextChargeDate, inputQuantity);
 
-            log.debug("Before walletOperation:" + (System.currentTimeMillis() - startDate));
-
             WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(chargeInstance,
                 reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum, nextChargeDate, chargeInstance.getAmountWithoutTax(),
                 chargeInstance.getAmountWithTax(), inputQuantity, null, currency, tradingCountry.getId(), tax.getPercent(), null, nextChargeDate, invoiceSubCategory,
                 chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), chargeInstance.getOrderNumber(), applyChargeOnDate, nextChargeDate,
                 reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, false, false);
 
-            log.debug("After walletOperation:" + (System.currentTimeMillis() - startDate));
 
             walletOperation.setSubscriptionDate(chargeInstance.getSubscriptionDate());
 
             List<WalletOperation> operations = chargeWalletOperation(walletOperation);
             walletOperations.addAll(operations);
-
-            log.debug("After chargeWalletOperation:" + (System.currentTimeMillis() - startDate));
 
             // create(walletOperation);
             // em.flush();
@@ -1048,8 +1038,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         chargeInstance.setChargeDate(applyChargeOnDate);
         Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
         chargeInstance.setNextChargeDate(nextChargeDate);
-
-        log.debug("Before exit:" + (System.currentTimeMillis() - startDate));
 
         return walletOperations;
     }
@@ -1326,7 +1314,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     }
 
     public List<WalletOperation> chargeWalletOperation(WalletOperation op) throws BusinessException {
-        long startDate = System.currentTimeMillis();
 
         List<WalletOperation> result = new ArrayList<>();
         ChargeInstance chargeInstance = op.getChargeInstance();
@@ -1340,7 +1327,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             log.debug("chargeWalletOperation is create schedule on wallet {}", op.getWallet());
             result.add(op);
             create(op);
-            log.debug("After create:" + (System.currentTimeMillis() - startDate));
 
             // Balance and reserved balance deals with prepaid wallets. If charge instance does not contain any prepaid wallet, then it is a postpaid charge and dont need to deal
             // with wallet cache at all
@@ -1355,7 +1341,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             List<Long> walletIds = walletService.getWalletIds((UsageChargeInstance) chargeInstance);
             log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
             result = chargeOnWalletIds(walletIds, op);
-            log.debug("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
 
             // The usage charge is taken care of in IF before, as it is cached
             // Prepaid charges only

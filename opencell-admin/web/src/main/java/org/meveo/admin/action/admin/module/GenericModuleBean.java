@@ -40,7 +40,7 @@ import org.meveo.admin.action.script.ScriptInstanceBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -148,7 +148,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
                     return module;
                 }
 
-                for (BaseDto itemDto : dto.getModuleItems()) {
+                for (BaseEntityDto itemDto : dto.getModuleItems()) {
                     TreeNode classNode = getOrCreateNodeByClass(itemDto.getClass().getName());
                     new DefaultTreeNode("item", itemDto, classNode);
                 }

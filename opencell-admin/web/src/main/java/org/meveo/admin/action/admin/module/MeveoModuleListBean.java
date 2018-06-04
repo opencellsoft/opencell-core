@@ -26,7 +26,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.module.MeveoModuleApi;
@@ -43,6 +43,9 @@ public class MeveoModuleListBean extends MeveoModuleBean {
 
     @Inject
     private MeveoModuleApi moduleApi;
+    
+    @Inject
+    private MeveoModuleService meveoModuleService;
 
     private MeveoModuleDto selectedModuleDto;
 
@@ -66,7 +69,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
         }
 
         if (selectedModuleDto.getModuleItems() != null) {
-            for (BaseDto item : selectedModuleDto.getModuleItems()) {
+            for (BaseEntityDto item : selectedModuleDto.getModuleItems()) {
 
                 TreeNode classNode = getOrCreateNodeByClass(item.getClass().getSimpleName());
                 new DefaultTreeNode("item", item, classNode);

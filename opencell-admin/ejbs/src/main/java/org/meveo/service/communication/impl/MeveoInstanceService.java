@@ -32,7 +32,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.communication.CommunicationRequestDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
@@ -76,7 +76,7 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
      * @return reponses
      * @throws BusinessException business exception.
      */
-    public Response publishDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws BusinessException {
+    public Response publishDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException {
         String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
         String username = meveoInstance.getAuthUsername() != null ? meveoInstance.getAuthUsername() : "";
         String password = meveoInstance.getAuthPassword() != null ? meveoInstance.getAuthPassword() : "";

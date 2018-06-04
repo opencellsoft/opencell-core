@@ -246,7 +246,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     public int applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isStrictlyBeforeMaxDate) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
         int MaxRecurringRatingHistory = Integer.parseInt(paramBeanFactory.getInstance().getProperty("rating.recurringMaxRetry", "100"));
         int nbRating = 0;
 
@@ -302,8 +301,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 } else {
                     wos = walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, false);
                 }
-
-                log.debug("After applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 
                 log.debug("Recurring charge {} applied for {} - {}, produced {} wallet operations", activeRecurringChargeInstance.getId(),
                     activeRecurringChargeInstance.getChargeDate(), activeRecurringChargeInstance.getNextChargeDate(), wos.size());

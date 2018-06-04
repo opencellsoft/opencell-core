@@ -13,7 +13,7 @@ import org.meveo.model.billing.TerminationReason;
  */
 @XmlRootElement(name = "TerminationReasonDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerminationReasonDto extends BusinessDto {
+public class TerminationReasonDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6013621511892042364L;

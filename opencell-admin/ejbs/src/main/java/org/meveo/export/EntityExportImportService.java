@@ -44,7 +44,6 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.Conversation;
 import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
@@ -92,6 +91,9 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.XStreamCDATAConverter;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
@@ -104,8 +106,6 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
@@ -198,15 +198,8 @@ public class EntityExportImportService implements Serializable {
     private Map<String, ExportTemplate> exportImportTemplates;
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -372,17 +365,8 @@ public class EntityExportImportService implements Serializable {
         return getEntityManager();
     }
 
-    public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
-        }
-
-        return emfForJobs;
+    private EntityManager getEntityManager() {
+        return emWrapper.getEntityManager();
     }
 
     /**
@@ -548,6 +532,7 @@ public class EntityExportImportService implements Serializable {
      * 
      * @param exportStats Export statistics, including entities to remove
      */
+    @JpaAmpNewTx
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void removeEntitiesAfterExport(ExportImportStatistics exportStats) {
@@ -581,6 +566,7 @@ public class EntityExportImportService implements Serializable {
      * @param exportStats Export statistics
      * @param writer Writer for serialized entity output
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
@@ -835,6 +821,7 @@ public class EntityExportImportService implements Serializable {
      * @return Import statistics
      */
     // This should not be here if want to deserialize each entity in its own transaction
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ExportImportStatistics importEntities(ExportTemplate exportTemplate, HierarchicalStreamReader reader, boolean preserveId, boolean ignoreNotFoundFK,
             Provider forceToProvider) {
@@ -2182,8 +2169,8 @@ public class EntityExportImportService implements Serializable {
         // Handle zip file
         if (sourceFilename.endsWith(".zip")) {
             try (ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceFile))) {
-            zis.getNextEntry();
-            source = new StreamSource(zis);
+                zis.getNextEntry();
+                source = new StreamSource(zis);
             } catch (Exception ex) {
                 log.error("failed to work with stream", ex);
             }

@@ -166,6 +166,9 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private BusinessAccountModelService businessAccountModelService;
@@ -1639,8 +1642,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public void accountEntityToDto(AccountDto dto, AccountEntity account, CustomFieldInheritanceEnum inheritCF) {
-        dto.setCode(account.getCode());
-        dto.setDescription(account.getDescription());
+        dto.setAuditable(account);
         dto.setExternalRef1(account.getExternalRef1());
         dto.setExternalRef2(account.getExternalRef2());
         dto.setJobTitle(account.getJobTitle());
@@ -1650,8 +1652,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (account.getAddress() != null) {
             dto.setAddress(new AddressDto(account.getAddress()));
         }
-        dto.setCreated(account.getAuditable().getCreated());
-
+        
         BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
 
         if (businessAccountModel != null) {
@@ -1666,7 +1667,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF) {
-        CustomerDto dto = new CustomerDto();
+        CustomerDto dto = new CustomerDto(customer);
         accountEntityToDto(dto, customer, inheritCF);
 
         dto.setVatNo(customer.getVatNo());
@@ -1705,7 +1706,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF) {
-        CustomerAccountDto dto = new CustomerAccountDto();
+        CustomerAccountDto dto = new CustomerAccountDto(ca);
         accountEntityToDto(dto, ca, inheritCF);
 
         if (ca.getCustomer() != null) {
@@ -1764,7 +1765,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF) {
 
-        BillingAccountDto dto = new BillingAccountDto();
+        BillingAccountDto dto = new BillingAccountDto(ba);
         accountEntityToDto(dto, ba, inheritCF);
 
         if (ba.getCustomerAccount() != null) {
@@ -1828,7 +1829,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     public UserAccountDto userAccountToDto(UserAccount ua, CustomFieldInheritanceEnum inheritCF) {
 
-        UserAccountDto dto = new UserAccountDto();
+        UserAccountDto dto = new UserAccountDto(ua);
         accountEntityToDto(dto, ua, inheritCF);
 
         if (ua.getBillingAccount() != null) {
