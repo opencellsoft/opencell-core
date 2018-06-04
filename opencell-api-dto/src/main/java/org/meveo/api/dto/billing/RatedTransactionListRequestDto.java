@@ -1,6 +1,6 @@
 package org.meveo.api.dto.billing;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
@@ -8,7 +8,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
  * Dto containing the request to find a list of rated transactions
  * @author Said Ramli
  */
-public class RatedTransactionListRequestDto extends BaseDto {
+public class RatedTransactionListRequestDto extends BaseEntityDto {
     
 
     /** The Constant serialVersionUID. */
