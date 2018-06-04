@@ -87,9 +87,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     private ProductTemplateService productTemplateService;
 
     @Inject
-    private SellerService sellerService;
-
-    @Inject
     private SubscriptionApi subscriptionApi;
 
     @Inject

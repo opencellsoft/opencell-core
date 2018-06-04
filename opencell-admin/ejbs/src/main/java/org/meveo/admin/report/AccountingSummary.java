@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
@@ -57,18 +58,15 @@ public class AccountingSummary extends FileProducer implements Reporting {
     };
 
     @Inject
-    protected Logger log;
-
-    @Inject
     private DWHAccountOperationService accountOperationTransformationService;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     private String templateFilename;
-    public Map<String, Object> parameters = new HashMap<String, Object>();
-
+    
     public void generateAccountingSummaryFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        FileWriter writer = null;
         try {
             File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {
@@ -78,7 +76,7 @@ public class AccountingSummary extends FileProducer implements Reporting {
                 sb.append(".csv");
                 file = new File(sb.toString());
             }
-            FileWriter writer = new FileWriter(file);
+            writer = new FileWriter(file);
             writer.append("Code opération;Libellé de l'opération;Débit;Crédit");
             writer.append('\n');
             List<Object> listCategory1 = accountOperationTransformationService.getAccountingSummaryRecords(new Date(), 1);
@@ -104,7 +102,6 @@ public class AccountingSummary extends FileProducer implements Reporting {
                 writer.append('\n');
             }
             writer.flush();
-            writer.close();
             if (outputFormat == OutputFormatEnum.PDF) {
                 parameters.put("startDate", startDate);
                 parameters.put("endDate", endDate);
@@ -114,6 +111,8 @@ public class AccountingSummary extends FileProducer implements Reporting {
             }
         } catch (IOException e) {
             log.error("failed to generate accounting summary file", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
     }
 

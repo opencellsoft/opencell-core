@@ -763,7 +763,12 @@ public class EntityExportImportService implements Serializable {
                 reader.close();
                 inputStream.close();
                 File convertedFile = actualizeVersionOfExportFile(fileToImport, filename, version);
-                return importEntities(convertedFile, convertedFile.getName(), preserveId, ignoreNotFoundFK, forceToProvider);
+                String name = null;
+                if (convertedFile != null) {
+                    name = convertedFile.getName();
+                }
+                
+                return importEntities(convertedFile, name, preserveId, ignoreNotFoundFK, forceToProvider);
             }
 
             if (forceToProvider != null) {
@@ -1583,13 +1588,10 @@ public class EntityExportImportService implements Serializable {
 
                 for (Field field : cls.getDeclaredFields()) {
 
-                    if (field.isAnnotationPresent(Transient.class)) {
+                    if (field.isAnnotationPresent(Transient.class) || field.isAnnotationPresent(Lob.class)) {
                         attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
 
                         // This is a workaround to BLOB import issue "blobs may not be accessed after serialization"// TODO need a better solution as field is simply ignored
-                    } else if (field.isAnnotationPresent(Lob.class)) {
-                        attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
-
                     } else if (field.isAnnotationPresent(OneToMany.class)) {
 
                         // Omit attribute only if backward relationship is set
@@ -1684,10 +1686,11 @@ public class EntityExportImportService implements Serializable {
                 }
             }
         }
-
-        for (Field field : classToCheck.getDeclaredFields()) {
-            if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
-                return true;
+        if (classToCheck != null) {
+            for (Field field : classToCheck.getDeclaredFields()) {
+                if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -2178,10 +2181,12 @@ public class EntityExportImportService implements Serializable {
         Source source = null;
         // Handle zip file
         if (sourceFilename.endsWith(".zip")) {
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceFile));
+            try (ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceFile))) {
             zis.getNextEntry();
             source = new StreamSource(zis);
-
+            } catch (Exception ex) {
+                log.error("failed to work with stream", ex);
+            }
         } else {
             source = new StreamSource(sourceFile);
         }

@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class ApplyOneShotChargeInstanceRequestDto.
@@ -17,7 +17,7 @@ import org.meveo.api.dto.BaseDto;
  */
 @XmlRootElement(name = "ApplyOneShotChargeInstanceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ApplyOneShotChargeInstanceRequestDto extends BaseDto {
+public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3910185882621015476L;

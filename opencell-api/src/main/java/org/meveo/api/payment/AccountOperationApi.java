@@ -48,6 +48,8 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * The Class AccountOperationApi.
  *
  * @author Edward P. Legaspi
+ * @author anasseh
+ * 
  * @lastModifiedVersion 5.0
  */
 @Stateless
@@ -162,11 +164,6 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setTaxAmount(postData.getTaxAmount());
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());
-        if (!StringUtils.isBlank(postData.getExcludedFromDunning())) {
-            accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());
-        } else {
-            accountOperation.setExcludedFromDunning(false);
-        }
 
         // populate customFields
         try {
@@ -510,7 +507,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setAmountWithoutTax(accountOp.getAmountWithoutTax());
         accountOperationDto.setOrderNumber(accountOp.getOrderNumber());
         accountOperationDto.setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null );
-        accountOperationDto.setExcludedFromDunning(accountOp.getExcludedFromDunning());
+        accountOperationDto.setExcludedFromDunning(accountOp.getMatchingStatus() == MatchingStatusEnum.I);
         List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
         if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
             MatchingAmountDto matchingAmountDto = null;
@@ -518,6 +515,7 @@ public class AccountOperationApi extends BaseApi {
             matchingAmountsDto.setMatchingAmount(new ArrayList<>());
             for (MatchingAmount matchingAmount : matchingAmounts) {
                 matchingAmountDto = new MatchingAmountDto();
+                matchingAmountDto.setAuditable(matchingAmount);
                 if (matchingAmount.getMatchingCode() != null) {
                     matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
                 }

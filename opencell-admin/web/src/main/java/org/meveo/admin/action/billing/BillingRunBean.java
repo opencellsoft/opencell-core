@@ -73,9 +73,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
     private boolean launchInvoicingRejectedBA = false;
 
-    @Inject
-    private Messages messages;
-
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */

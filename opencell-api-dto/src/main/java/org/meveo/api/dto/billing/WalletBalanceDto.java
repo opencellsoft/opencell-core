@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * Parameters to calculate wallet balance. Seller, customer, customer account, billing account and user account code parameters are mutually exclusive and only one of them should
@@ -17,7 +17,7 @@ import org.meveo.api.dto.BaseDto;
  **/
 @XmlRootElement(name = "WalletBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletBalanceDto extends BaseDto {
+public class WalletBalanceDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2275297081429778741L;

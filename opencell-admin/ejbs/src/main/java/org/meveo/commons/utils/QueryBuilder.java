@@ -319,14 +319,16 @@ public class QueryBuilder {
         Object nvalue = value;
 
         if (caseInsensitive && (value instanceof String)) {
-            sql.append("lower(" + field + ")");
-        } else {
+            sql.append("fn_unaccent(lower(" + field + "))");
+        } else if((value instanceof String)) {
+            sql.append("fn_unaccent("+field+")");
+        }else {
             sql.append(field);
         }
         sql.append(operator + ":" + param);
 
         if (caseInsensitive && (value instanceof String)) {
-            nvalue = ((String) value).toLowerCase();
+            nvalue = (StringUtils.enleverAccent((String) value)).toLowerCase();
         }
 
         return addSqlCriterion(sql.toString(), param, nvalue);

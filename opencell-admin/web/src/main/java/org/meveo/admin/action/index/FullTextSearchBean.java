@@ -143,12 +143,12 @@ public class FullTextSearchBean implements Serializable {
 
         ElasticSearchClassInfo scopeInfo = elasticClient.getSearchScopeInfo(classnameOrCetCode);
 
-        QueryBuilder qb = new QueryBuilder(scopeInfo.getClazz(), "be", null);
-        qb.addCriterion("be.code", "=", code, true);
-
-        List<? extends BusinessEntity> results = qb.getQuery(businessEntityService.getEntityManager()).getResultList();
-        if (!results.isEmpty()) {
-            BusinessEntity entity = results.get(0);
+        BusinessEntity entity = null;
+        if (BusinessEntity.class.isAssignableFrom(scopeInfo.getClazz())) {
+            businessEntityService.setEntityClass((Class<BusinessEntity>) scopeInfo.getClazz());
+            entity = businessEntityService.findByCode(code);
+        }
+        if (entity != null) {
             viewInfo[0] = BaseBean.getEditViewName(entity.getClass());
             viewInfo[1] = entity.getId().toString();
 

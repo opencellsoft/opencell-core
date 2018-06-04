@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class AccountOperationsGenerationJobBean {
@@ -51,7 +53,8 @@ public class AccountOperationsGenerationJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         try {
 
-            List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null);
+            boolean excludeInvoicesWithoutAmount = jobInstance.getExcludeInvoicesWithoutAmount();
+            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, excludeInvoicesWithoutAmount);
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
             Long nbRuns = new Long(1);

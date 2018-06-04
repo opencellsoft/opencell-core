@@ -395,7 +395,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         Long totalCount = bundleTemplateService.count(paginationConfig);
 
         GetListBundleTemplateResponseDto result = new GetListBundleTemplateResponseDto();
-        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {

@@ -1154,7 +1154,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, wallet, billingAccount,
             invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getParameterExtra(),
             walletOperation.getOrderNumber(), walletOperation.getInputUnitDescription(), walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
-            walletOperation.getOfferCode(), walletOperation.getEdr(), null, null);
+            walletOperation.getOfferCode(), walletOperation.getEdr(), null, null, walletOperation.getStartDate(), walletOperation.getEndDate());
 
         walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 
@@ -1234,6 +1234,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         try {
             return (List<RatedTransaction>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    public Long countNotInvoicedRTByBA(BillingAccount billingAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotInvoiced RT by BA", e);
+            return null;
+        }
+    }
+    
+    public Long countNotInvoicedRTByUA(UserAccount userAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByUA").setParameter("userAccount", userAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotInvoiced RT by UA", e);
             return null;
         }
     }

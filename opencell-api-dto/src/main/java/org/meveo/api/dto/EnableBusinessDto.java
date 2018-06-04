@@ -10,7 +10,7 @@ import org.meveo.model.IEnable;
  * @since 5.1
  * 
  */
-public abstract class EnableBusinessDto extends BusinessDto implements IEnableDto {
+public abstract class EnableBusinessDto extends BusinessEntityDto implements IEnableDto {
 
     private static final long serialVersionUID = -6333871594207883527L;
 

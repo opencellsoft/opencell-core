@@ -14,7 +14,7 @@ import org.meveo.model.billing.InvoiceSubcategoryCountry;
  */
 @XmlRootElement(name = "InvoiceSubCategoryCountry")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceSubCategoryCountryDto extends BaseDto {
+public class InvoiceSubCategoryCountryDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7702371660532457108L;
@@ -63,6 +63,7 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
      * @param invoiceSubcategoryCountry the invoice subcategory country
      */
     public InvoiceSubCategoryCountryDto(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+        super(invoiceSubcategoryCountry);
         invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory().getCode();
         sellingCountry = invoiceSubcategoryCountry.getSellingCountry() == null ? null : invoiceSubcategoryCountry.getSellingCountry().getCountryCode();
         country = invoiceSubcategoryCountry.getTradingCountry() == null ? null : invoiceSubcategoryCountry.getTradingCountry().getCountryCode();

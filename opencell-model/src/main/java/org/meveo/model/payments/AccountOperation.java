@@ -61,7 +61,7 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
  * Account Transaction.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  * 
  */
 @Entity
@@ -149,10 +149,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "occ_description", length = 255)
     @Size(max = 255)
     private String occDescription;
-
-    @Type(type = "numeric_boolean")
-    @Column(name = "excluded_from_dunning")
-    private boolean excludedFromDunning;
 
     @Column(name = "order_num")
     private String orderNumber;// order number, '|' will be used as seperator if many orders
@@ -333,14 +329,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         return matchingAmounts;
     }
 
-    public boolean getExcludedFromDunning() {
-        return excludedFromDunning;
-    }
-
-    public void setExcludedFromDunning(boolean excludedFromDunning) {
-        this.excludedFromDunning = excludedFromDunning;
-    }
-
     @Override
     public String getUuid() {
         return uuid;
@@ -357,25 +345,14 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         return oldUuid;
     }
 
+    @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
     }
 
+    @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
-    }
-
-    @Override
-    public CustomFieldValues getCfValuesNullSafe() {
-        if (cfValues == null) {
-            cfValues = new CustomFieldValues();
-        }
-        return cfValues;
-    }
-
-    @Override
-    public void clearCfValues() {
-        cfValues = null;
     }
 
     @Override

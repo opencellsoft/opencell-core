@@ -9,10 +9,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
+
 /**
  * The Class JobInstanceInfoDto.
  *
  * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "JobInstanceInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -41,6 +45,30 @@ public class JobInstanceInfoDto implements Serializable {
 
     /** Ignore a check if job is currently running and launch it anyway. */
     private boolean forceExecution;
+    
+    /** The run on nodes. */
+    private String runOnNodes;
+    
+    /** The parametres. */
+    private String parameters;
+    
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+    
+    /**
+     * @return the parameters
+     */
+    public String getParameters() {
+        return parameters;
+    }
+
+    /**
+     * @param parameters the parameters to set
+     */
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
 
     /**
      * Gets the last transaction date.
@@ -150,6 +178,34 @@ public class JobInstanceInfoDto implements Serializable {
         this.forceExecution = forceExecution;
     }
     
+    /**
+     * @return the runOnNodes
+     */
+    public String getRunOnNodes() {
+        return runOnNodes;
+    }
+
+    /**
+     * @param runOnNodes the runOnNodes to set
+     */
+    public void setRunOnNodes(String runOnNodes) {
+        this.runOnNodes = runOnNodes;
+    }
+
+    /**
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
     @Override
     public String toString() {
         return "JobInstanceInfoDto [timerName=" + timerName + ", code=" + code + ", lastTransactionDate=" + lastTransactionDate + ", invoiceDate=" + invoiceDate + ", billingCycle="

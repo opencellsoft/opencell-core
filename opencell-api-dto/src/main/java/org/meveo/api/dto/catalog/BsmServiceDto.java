@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 
 /**
@@ -18,7 +18,7 @@ import org.meveo.api.dto.CustomFieldDto;
  */
 @XmlRootElement(name = "BsmService")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BsmServiceDto extends BaseDto {
+public class BsmServiceDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5612754939639937822L;
@@ -37,7 +37,7 @@ public class BsmServiceDto extends BaseDto {
     @XmlElementWrapper(name = "parameters")
     @XmlElement(name = "parameter")
     private List<CustomFieldDto> customFields;
-    
+
     /** The image base64 encoding string. */
     private String imageBase64;
     
@@ -104,8 +104,8 @@ public class BsmServiceDto extends BaseDto {
     public void setCustomFields(List<CustomFieldDto> customFields) {
         this.customFields = customFields;
     }
-    
-    /**
+
+       /**
      * Gets the image Base64 encoding string.
      *
      * @return the image Base64 encoding string

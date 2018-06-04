@@ -85,9 +85,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @Inject
     private SubscriptionService subscriptionService;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     /**
      * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
      */
@@ -479,24 +476,29 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
 
         try {
+            ServiceTemplate serviceTemplate = null;;
             if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 
-            offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+            if (offerServiceTemplate != null) {
+                serviceTemplate = offerServiceTemplate.getServiceTemplate();
+                offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+            }
 
-            if (offerServiceTemplate.getId() != null) {
+            if (offerServiceTemplate != null && offerServiceTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.update.successful"));
 
             } else {
 
                 // Validate that such service was not added earlier
-                if (entity.containsServiceTemplate(offerServiceTemplate.getServiceTemplate())) {
-                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), offerServiceTemplate.getServiceTemplate().getDescriptionOrCode());
+                if (serviceTemplate != null && entity.containsServiceTemplate(serviceTemplate)) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), serviceTemplate.getDescriptionOrCode());
                     return;
                 }
-
-                offerServiceTemplate.setOfferTemplate(entity);
+                if (offerServiceTemplate != null) {
+                    offerServiceTemplate.setOfferTemplate(entity);
+                }
                 entity.addOfferServiceTemplate(offerServiceTemplate);
                 messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.create.successful"));
             }
@@ -562,18 +564,21 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
 
         try {
+            ProductTemplate productTemplate = null;
             if (offerProductTemplate != null && offerProductTemplate.getProductTemplate() == null) {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 
-            if (offerProductTemplate.getId() != null) {
+            if (offerProductTemplate != null && offerProductTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.productTemplate.update.successful"));
 
-            } else {
-
+            } 
+            
+            if (offerProductTemplate != null) {
+                productTemplate = offerProductTemplate.getProductTemplate();
                 // Validate that such service was not added earlier
-                if (entity.containsProductTemplate(offerProductTemplate.getProductTemplate())) {
-                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), offerProductTemplate.getProductTemplate().getDescriptionOrCode());
+                if (productTemplate != null && entity.containsProductTemplate(productTemplate)) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), productTemplate.getDescriptionOrCode());
                     return;
                 }
 
