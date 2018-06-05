@@ -1010,9 +1010,8 @@
     <changeSet id="#3148_20180522" author="FranckValot">
     	<dropColumn tableName="com_contact" columnName="contact_code"/>
     </changeSet>
-</databaseChangeLog> 
 
-<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
 	   <sql splitStatements="false" stripComments="false"><![CDATA[	
 	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
 	         BEGIN
@@ -1043,7 +1042,7 @@
 								return @textvalue;				
 			end;
 		]]></sql>
-</changeSet>    
+	</changeSet>    
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />

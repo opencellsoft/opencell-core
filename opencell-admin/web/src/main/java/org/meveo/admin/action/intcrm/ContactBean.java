@@ -28,7 +28,8 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	
 	public void importContacts() {
 		log.debug("Importing Contacts");
-		contactService.saveContact("Arnaud,UHLRICH,,arnaud.uhlrich@free.Fr,Magellan Partners - ASAPpro,Senior Manager - Director,\"10/20/13 9:34AM\",,SKYPE:uhlricha");
+		contactService.parseFile();
+		//contactService.saveContact("Arnaud,UHLRICH,,arnaud.uhlrich@free.Fr,Magellan Partners - ASAPpro,Senior Manager - Director,\"10/20/13 9:34AM\",,SKYPE:uhlricha");
 	}
 	
 	public void findContactByCode() {

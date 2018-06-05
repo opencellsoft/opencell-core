@@ -1,11 +1,16 @@
 package org.meveo.service.intcrm.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Scanner;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.parse.csv.CSVUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
@@ -29,6 +34,26 @@ public class ContactService extends PersistenceService<Contact> {
 		super.create(contact);
 	}
 
+	public void parseFile() {
+		String csvFile = System.getProperty("jboss.server.temp.dir") + "\\Connections.csv";
+		log.debug(csvFile);
+		
+		
+        Scanner scanner;
+		try {
+			scanner = new Scanner(new File(csvFile));
+			
+			while (scanner.hasNext()) {
+	            List<String> line = CSVUtils.parseLine(scanner.nextLine());
+	            System.out.println(line.get(0) + " " + line.get(1) + " " + line.get(2));
+	        }
+	        scanner.close();
+		} catch (FileNotFoundException e) {
+			log.debug(e.toString());
+		}
+        
+	}
+	
 	public Contact parse(String line) {
 		log.debug("Parsing Contact Line : " + line);
 		Contact c = new Contact();
@@ -83,7 +108,9 @@ public class ContactService extends PersistenceService<Contact> {
 	public void removeAllContacts() throws BusinessException {
 		List<Contact> contacts = getAllContacts();
 		for(Contact e : contacts) {
+			log.debug("Removing : " + e.getName().toString());
 			super.remove(e);
+			
 		}
 	}
 
