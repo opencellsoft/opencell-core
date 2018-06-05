@@ -223,4 +223,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CustomerDto postData);
 
+    @GET
+    @Path("/exportCustomerHierarchy")
+    ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
 }

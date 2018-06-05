@@ -56,11 +56,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
@@ -101,8 +96,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.order.OrderService;
@@ -1778,4 +1771,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+    
+	public List<String> listPdfInvoice(Customer cust) {
+		List<String> result = new ArrayList<>();
+		if (cust.getCustomerAccounts() != null && !cust.getCustomerAccounts().isEmpty()) {
+			for (CustomerAccount ca : cust.getCustomerAccounts()) {
+				if (ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
+					for (BillingAccount ba : ca.getBillingAccounts()) {
+						if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
+							for (Invoice inv : ba.getInvoices()) {
+								result.add(getFullPdfFilePath(inv, false));
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return result;
+	}
 }

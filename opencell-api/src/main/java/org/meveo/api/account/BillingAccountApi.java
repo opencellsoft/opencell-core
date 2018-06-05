@@ -36,6 +36,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -99,6 +100,9 @@ public class BillingAccountApi extends AccountEntityApi {
     
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private UserAccountApi userAccountApi;
 
     public void create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -649,4 +653,23 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
     }
+
+	public BillingAccountDto exportBillingAccountHierarchy(BillingAccount ba) {
+		BillingAccountDto result = new BillingAccountDto(ba);
+
+		if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
+			for (Invoice invoice : ba.getInvoices()) {
+				result.getInvoices().add(invoiceApi.invoiceToDto(invoice, true, true));
+			}
+		}
+
+		if (ba.getUsersAccounts() != null && !ba.getUsersAccounts().isEmpty()) {
+			for (UserAccount ua : ba.getUsersAccounts()) {
+				result.getUserAccounts().getUserAccount().add(userAccountApi.exportUserAccountHierarchy(ua));
+			}
+		}
+
+		return result;
+	}
+
 }

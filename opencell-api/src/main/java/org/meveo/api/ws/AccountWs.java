@@ -530,4 +530,11 @@ public interface AccountWs extends IBaseWs {
 
     @WebMethod
     ParentEntitiesResponseDto findParents(@WebParam(name = "parentSearchDto") CRMAccountTypeSearchDto searchDto);
+    
+    /**
+     * Exports customer hierarchy with subscription, payments and invoices.
+     * @param customerCode the code of the customer
+     */
+	@WebMethod
+	ActionStatus exportCustomerHierarchy(@WebParam(name = "customerCode") String customerCode);
 }

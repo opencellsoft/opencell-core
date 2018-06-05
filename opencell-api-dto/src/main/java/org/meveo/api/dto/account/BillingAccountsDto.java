@@ -26,9 +26,12 @@ public class BillingAccountsDto implements Serializable {
      *
      * @return the billing account
      */
-    public List<BillingAccountDto> getBillingAccount() {
-        return billingAccount;
-    }
+	public List<BillingAccountDto> getBillingAccount() {
+		if (billingAccount == null) {
+			billingAccount = new ArrayList<>();
+		}
+		return billingAccount;
+	}
 
     /**
      * Sets the billing account.
