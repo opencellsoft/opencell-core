@@ -577,23 +577,13 @@ ORDER BY
         <delete tableName="adm_role">
             <where>id=-8</where>
         </delete>
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-29"/>
-            <column name="name" value="Finance Management"/>
-            <column name="permission" value="financeManagement"/>
-        </insert>
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-30"/>
-            <column name="name" value="Finance Visualization"/>
-            <column name="permission" value="financeVisualization"/>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1"/>
+            <column name="permission_id" valueNumeric="-20"/>
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-1"/>
-            <column name="permission_id" valueNumeric="-29"/>
-        </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-1"/>
-            <column name="permission_id" valueNumeric="-30"/>
+            <column name="permission_id" valueNumeric="-21"/>
         </insert>
     </changeSet>
 
