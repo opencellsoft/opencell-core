@@ -130,8 +130,8 @@
                                         <hftl:formField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false" required="false" id="email"
                                             validateEmail="true" />
 
-                                        <hftl:formField label="#{messages['contactInformation.phone']}" field="contactInformation" childField="phone" popup="false" />
-                                        <hftl:formField label="#{messages['contactInformation.mobile']}" field="contactInformation" childField="mobile" popup="false" />
+                                        <hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="contactInformation" childField="phone" popup="false" />
+                                        <hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50" field="contactInformation" childField="mobile" popup="false" />
                                     </p:fieldset>
                                     <p:fieldset legend="#{messages['commons.address']}">
                                         <hftl:formField label="#{messages['address.address1']}" field="address" id="address1" childField="address1" popup="false" />

@@ -985,5 +985,25 @@
     <changeSet id="#3206_20180531" author="Andrius Karpavicius">
         <sql> update ${db.schema.adapted}meveo_module_item set item_type='org.meveo.model.notification.ScriptNotification' where item_type='org.meveo.model.notification.Notification' </sql>
     </changeSet>
+    
+    <changeSet author="SaidRamli" id="#3457_04062018">
+        <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="ar_customer_account" />
+        <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="ar_customer_account" />
+        <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="ar_customer_account" />
+        
+        <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_customer" />
+        <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_customer" />
+        <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_customer" />
+        
+        <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_seller" />
+        <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_seller" />
+        <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_seller" />
+        
+        <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="billing_billing_account" />
+        
+        <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_provider_contact" />
+        <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_provider_contact" />
+        <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_provider_contact" />
+    </changeSet>
 
 </databaseChangeLog> 
