@@ -17,7 +17,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
@@ -41,6 +40,9 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.Auditable;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -57,8 +59,6 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.meveo.util.EntityCustomizationUtils;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -100,12 +100,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     protected Provider appProvider;
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
@@ -118,6 +114,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * @return Number of items added
      */
     @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int populateIndex(String classname, int from, ReindexingStatistics statistics) {
 
@@ -174,10 +171,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     private EntityManager getEntityManager() {
-        if (FacesContext.getCurrentInstance() != null) {
-            return em;
-        }
-        return emfForJobs;
+        return emWrapper.getEntityManager();
     }
 
     /**
@@ -426,6 +420,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * 
      * @throws BusinessException business exception.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 

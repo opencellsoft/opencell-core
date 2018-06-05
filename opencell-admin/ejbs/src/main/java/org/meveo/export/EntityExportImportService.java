@@ -44,7 +44,6 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
@@ -92,6 +91,9 @@ import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.XStreamCDATAConverter;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
@@ -104,8 +106,6 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
@@ -198,12 +198,8 @@ public class EntityExportImportService implements Serializable {
     private Map<String, ExportTemplate> exportImportTemplates;
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -370,10 +366,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     private EntityManager getEntityManager() {
-        if (FacesContext.getCurrentInstance() != null) {
-            return em;
-        }
-        return emfForJobs;
+        return emWrapper.getEntityManager();
     }
 
     /**
@@ -539,6 +532,7 @@ public class EntityExportImportService implements Serializable {
      * 
      * @param exportStats Export statistics, including entities to remove
      */
+    @JpaAmpNewTx
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void removeEntitiesAfterExport(ExportImportStatistics exportStats) {
@@ -572,6 +566,7 @@ public class EntityExportImportService implements Serializable {
      * @param exportStats Export statistics
      * @param writer Writer for serialized entity output
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
             List<? extends IEntity> selectedEntitiesToExport, ExportImportStatistics exportStats, HierarchicalStreamWriter writer) {
@@ -754,7 +749,12 @@ public class EntityExportImportService implements Serializable {
                 reader.close();
                 inputStream.close();
                 File convertedFile = actualizeVersionOfExportFile(fileToImport, filename, version);
-                return importEntities(convertedFile, convertedFile.getName(), preserveId, ignoreNotFoundFK, forceToProvider);
+                String name = null;
+                if (convertedFile != null) {
+                    name = convertedFile.getName();
+            }
+
+                return importEntities(convertedFile, name, preserveId, ignoreNotFoundFK, forceToProvider);
             }
 
             if (forceToProvider != null) {
@@ -821,6 +821,7 @@ public class EntityExportImportService implements Serializable {
      * @return Import statistics
      */
     // This should not be here if want to deserialize each entity in its own transaction
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ExportImportStatistics importEntities(ExportTemplate exportTemplate, HierarchicalStreamReader reader, boolean preserveId, boolean ignoreNotFoundFK,
             Provider forceToProvider) {
@@ -1574,13 +1575,10 @@ public class EntityExportImportService implements Serializable {
 
                 for (Field field : cls.getDeclaredFields()) {
 
-                    if (field.isAnnotationPresent(Transient.class)) {
+                    if (field.isAnnotationPresent(Transient.class) || field.isAnnotationPresent(Lob.class)) {
                         attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
 
                         // This is a workaround to BLOB import issue "blobs may not be accessed after serialization"// TODO need a better solution as field is simply ignored
-                    } else if (field.isAnnotationPresent(Lob.class)) {
-                        attributesToOmitLocal.put(clazz.getName() + "." + field.getName(), new Object[] { clazz, field });
-
                     } else if (field.isAnnotationPresent(OneToMany.class)) {
 
                         // Omit attribute only if backward relationship is set
@@ -1675,11 +1673,12 @@ public class EntityExportImportService implements Serializable {
                 }
             }
         }
-
+        if (classToCheck != null) {
         for (Field field : classToCheck.getDeclaredFields()) {
             if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
                 return true;
             }
+        }
         }
         return false;
     }

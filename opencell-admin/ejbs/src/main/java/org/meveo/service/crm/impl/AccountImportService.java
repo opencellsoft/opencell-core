@@ -14,6 +14,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -109,6 +110,7 @@ public class AccountImportService extends ImportService {
     int nbSubscriptionsCreated;
     SubscriptionImportHisto subscriptionImportHisto;
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public org.meveo.model.billing.BillingAccount importBillingAccount(org.meveo.model.jaxb.account.BillingAccount billAccount, CustomerAccount createdCustomerAccount)
             throws BusinessException, ImportWarningException {
@@ -241,6 +243,7 @@ public class AccountImportService extends ImportService {
         return billingAccount;
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public org.meveo.model.billing.BillingAccount updateBillingAccount(org.meveo.model.jaxb.account.BillingAccount billingAccountDto)
             throws BusinessException, ImportWarningException {
@@ -324,6 +327,7 @@ public class AccountImportService extends ImportService {
         return billingAccount;
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public UserAccount importUserAccount(org.meveo.model.billing.BillingAccount billingAccount, org.meveo.model.jaxb.account.BillingAccount billAccount,
             org.meveo.model.jaxb.account.UserAccount uAccount) throws BusinessException, ImportWarningException {
@@ -555,6 +559,7 @@ public class AccountImportService extends ImportService {
         subscriptionsError.getErrors().getErrorSubscription().add(errorSubscription);
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateUserAccount(org.meveo.model.billing.BillingAccount billingAccount, org.meveo.model.jaxb.account.BillingAccount billAccount,
             org.meveo.model.jaxb.account.UserAccount userAccountDto) throws BusinessException, ImportWarningException {

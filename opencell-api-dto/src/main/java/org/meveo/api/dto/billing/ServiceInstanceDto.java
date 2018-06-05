@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -24,7 +24,7 @@ import org.meveo.model.billing.UsageChargeInstance;
  * @author anasseh
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceInstanceDto extends BusinessDto {
+public class ServiceInstanceDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4084004747483067153L;
@@ -93,10 +93,8 @@ public class ServiceInstanceDto extends BusinessDto {
      * @param customFieldInstances the custom field instances
      */
     public ServiceInstanceDto(ServiceInstance serviceInstance, CustomFieldsDto customFieldInstances) {
-
+        super(serviceInstance);
         id = serviceInstance.getId();
-        code = serviceInstance.getCode();
-        description = serviceInstance.getDescription();
         status = serviceInstance.getStatus();
         statusDate = serviceInstance.getStatusDate();
         subscriptionDate = serviceInstance.getSubscriptionDate();

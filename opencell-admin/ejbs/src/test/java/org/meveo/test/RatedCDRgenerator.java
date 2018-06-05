@@ -44,7 +44,6 @@ public class RatedCDRgenerator implements Runnable {
 				out.close();
 			}
 		}
-		System.out.println("Time :" + (System.currentTimeMillis() - startTime));
 
 	}
 

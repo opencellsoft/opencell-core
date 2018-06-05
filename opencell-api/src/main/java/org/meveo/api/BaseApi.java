@@ -29,8 +29,8 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
@@ -58,7 +58,6 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
-import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -142,11 +141,11 @@ public abstract class BaseApi {
      * @param dto base data transfer object.
      * @throws MeveoApiException meveo api exception.
      */
-    protected void handleMissingParametersAndValidate(BaseDto dto) throws MeveoApiException {
+    protected void handleMissingParametersAndValidate(BaseEntityDto dto) throws MeveoApiException {
         validate(dto);
 
         try {
-            BusinessDto bdto = (BusinessDto) dto;
+            BusinessEntityDto bdto = (BusinessEntityDto) dto;
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
             if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
                 throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
@@ -162,7 +161,7 @@ public abstract class BaseApi {
         }
     }
 
-    protected void handleMissingParameters(BaseDto dto, String... fields) throws MeveoApiException {
+    protected void handleMissingParameters(BaseEntityDto dto, String... fields) throws MeveoApiException {
 
         for (String fieldName : fields) {
 
@@ -260,13 +259,16 @@ public abstract class BaseApi {
 
             // Save the values
             for (CustomFieldDto cfDto : customFieldDtos) {
-                CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
+                CustomFieldTemplate cft = null;
+                if (customFieldTemplates != null) {
+                    cft = customFieldTemplates.get(cfDto.getCode());
+                }
 
                 // Ignore the value when creating entity and CFT.hideOnNew=true
                 // or editing entity and CFT.allowEdit=false or when
                 // CFT.applicableOnEL expression evaluates to false
-                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                if (cft != null && ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity))) {
                     // log.debug("Custom field value not applicable for this
                     // state of entity lifecycle: code={} for entity {}
                     // transient{}. Value will be ignored.", cfDto.getCode(),
@@ -281,7 +283,7 @@ public abstract class BaseApi {
                     // In case of child entity save CustomEntityInstance objects
                     // first and then set CF value to a list of
                     // EntityReferenceWrapper objects
-                    if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                    if (cft != null && cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
 
                         List<EntityReferenceWrapper> childEntityReferences = new ArrayList<>();
 
@@ -292,7 +294,7 @@ public abstract class BaseApi {
 
                         customFieldInstanceService.setCFValue(entity, cfDto.getCode(), childEntityReferences);
 
-                    } else {
+                    } else if (cft != null) {
 
                         if (cft.isVersionable()) {
                             if (cft.getCalendar() != null) {
@@ -322,6 +324,8 @@ public abstract class BaseApi {
         // After saving passed CF values, validate that CustomField value is not
         // empty when field is mandatory. Check inherited values as well.
         // Instantiate CF with default value in case of a new entity
+
+        if (customFieldTemplates != null) {
 
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
             if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
@@ -382,6 +386,7 @@ public abstract class BaseApi {
                     }
                 }
             }
+        }
         }
 
         handleMissingParameters();
@@ -712,8 +717,8 @@ public abstract class BaseApi {
                     Class entityClass = entityField.getType();
 
                     // Process DTOs that have exposed their own API (extends
-                    // BaseDto class)
-                    if (dtoValue instanceof BaseDto) {
+                    // BaseEntityDto class)
+                    if (dtoValue instanceof BaseEntityDto) {
 
                         // For BusinessEntity DTO, a full DTO entity or only a
                         // reference (e.g. Code) is passed
@@ -736,8 +741,8 @@ public abstract class BaseApi {
                                 // Create or update a full entity DTO passed
                             } else {
 
-                                ApiService apiService = getApiService((BusinessDto) dtoValue, true);
-                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessDto) dtoValue);
+                                ApiService apiService = getApiService((BusinessEntityDto) dtoValue, true);
+                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessEntityDto) dtoValue);
                             }
 
                             // Update field with a new entity
@@ -747,8 +752,8 @@ public abstract class BaseApi {
                             // full entity DTO passed
                         } else {
 
-                            ApiService apiService = getApiService((BusinessDto) dtoValue, true);
-                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessDto) dtoValue);
+                            ApiService apiService = getApiService((BusinessEntityDto) dtoValue, true);
+                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BusinessEntityDto) dtoValue);
 
                             // Update field with a new entity
                             FieldUtils.writeField(entityToPopulate, dtoField.getName(), valueAsEntity, true);
@@ -844,7 +849,7 @@ public abstract class BaseApi {
      * @throws ClassNotFoundException class not found exception.
      */
     @SuppressWarnings("rawtypes")
-    protected ApiService getApiService(BaseDto dto, boolean throwException) throws MeveoApiException, ClassNotFoundException {
+    protected ApiService getApiService(BaseEntityDto dto, boolean throwException) throws MeveoApiException, ClassNotFoundException {
         String entityClassName = dto.getClass().getSimpleName().substring(0, dto.getClass().getSimpleName().lastIndexOf("Dto"));
 
         return getApiService(entityClassName, throwException);
@@ -934,7 +939,7 @@ public abstract class BaseApi {
      * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings("rawtypes")
-    protected PersistenceService getPersistenceService(BaseDto dto, boolean throwException) throws MeveoApiException {
+    protected PersistenceService getPersistenceService(BaseEntityDto dto, boolean throwException) throws MeveoApiException {
         String entityClassName = dto.getClass().getSimpleName().substring(0, dto.getClass().getSimpleName().lastIndexOf("Dto"));
 
         PersistenceService persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClassName + "Service");
@@ -1304,7 +1309,7 @@ public abstract class BaseApi {
 
             } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
 
-                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                if (stringVal != null && (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL))) {
                     return stringVal;
                 }
 
@@ -1321,7 +1326,7 @@ public abstract class BaseApi {
 
             } else if (Role.class.isAssignableFrom(targetClass)) {
                 // special case
-                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                if (stringVal != null && (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL))) {
                     return stringVal;
                 }
 
@@ -1340,4 +1345,5 @@ public abstract class BaseApi {
         }
         return null;
     }
+
 }

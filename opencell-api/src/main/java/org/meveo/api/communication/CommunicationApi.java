@@ -22,24 +22,31 @@ public class CommunicationApi extends BaseApi {
 	 * @throws MeveoApiException meveo api exception
 	 */
 	public void inboundCommunication(CommunicationRequestDto communicationRequestDto) throws MeveoApiException {
+	    String meveoInstanceCode = null;
+        if (communicationRequestDto == null) {
+	        missingParameters.add("Request");
+	    } else {
+	        meveoInstanceCode = communicationRequestDto.getMeveoInstanceCode();
+	        if (StringUtils.isBlank(meveoInstanceCode)) {
+	            missingParameters.add("MeveoInstanceCode");
+	        }
 
-		if (communicationRequestDto == null || StringUtils.isBlank(communicationRequestDto.getMeveoInstanceCode())) {
-			missingParameters.add("MeveoInstanceCode");
-		}
-
-		if (communicationRequestDto == null || StringUtils.isBlank(communicationRequestDto.getSubject())) {
-			missingParameters.add("Subject");
-		}
+	        if (StringUtils.isBlank(communicationRequestDto.getSubject())) {
+	            missingParameters.add("Subject");
+	        }
+	    }
+	    
+		
 		
 		handleMissingParameters();
 		
 
-		MeveoInstance meveoInstance = meveoInstanceService.findByCode(communicationRequestDto.getMeveoInstanceCode());
+		MeveoInstance meveoInstance = meveoInstanceService.findByCode(meveoInstanceCode);
 		if (meveoInstance != null) {
 			// if(meveoInstance.getStatus() == MeveoInstanceStatusEnum.UNKNOWN)
 			meveoInstanceService.fireInboundCommunicationEvent(communicationRequestDto);
 		} else {
-			throw new EntityDoesNotExistsException(MeveoInstance.class, communicationRequestDto.getMeveoInstanceCode());
+			throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceCode);
 		}
 	}
 

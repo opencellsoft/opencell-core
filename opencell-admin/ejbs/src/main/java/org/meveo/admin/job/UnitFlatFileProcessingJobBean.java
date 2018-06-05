@@ -7,6 +7,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.service.script.ScriptInterface;
 
 /**
@@ -25,6 +26,7 @@ public class UnitFlatFileProcessingJobBean {
      * @param executeParams script context parameters
      * @throws BusinessException Business Exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(ScriptInterface script, Map<String, Object> executeParams) throws BusinessException {
         script.execute(executeParams);

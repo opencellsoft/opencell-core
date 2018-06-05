@@ -40,6 +40,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -69,6 +70,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
  * The Class BillingAccountService.
+ * 
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
@@ -250,6 +252,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return null;
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) throws BusinessException {
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
@@ -878,9 +881,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 }
                             }
 
-                            if(billingAccountAmountMap.get(invoiceSubCategory) != null) {
+                            if (billingAccountAmountMap.get(invoiceSubCategory) != null) {
                                 Map<String, BigDecimal> billingAccountAmount = billingAccountAmountMap.get(invoiceSubCategory);
-                                billingAccountAmount.put("billingAccountAmountWithoutTax", billingAccountAmount.get("billingAccountAmountWithoutTax").add(subscriptionAmountWithoutTax));
+                                billingAccountAmount.put("billingAccountAmountWithoutTax",
+                                    billingAccountAmount.get("billingAccountAmountWithoutTax").add(subscriptionAmountWithoutTax));
                                 billingAccountAmount.put("billingAccountAmountWithTax", billingAccountAmount.get("billingAccountAmountWithTax").add(subscriptionAmountWithTax));
                                 billingAccountAmountMap.put(invoiceSubCategory, billingAccountAmount);
                             } else {
@@ -965,4 +969,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return totalInvoiceAmountWithoutTax;
     }
 
+    /**
+     * Find billing accounts by billing run
+     * 
+     * @param billingRunId Billing run id
+     * @return A list of billing account identifiers
+     */
+    public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
+        return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+    }
 }

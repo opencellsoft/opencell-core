@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.wf.WorkflowHistoryAction;
 
 /**
@@ -32,7 +32,7 @@ import org.meveo.model.wf.WorkflowHistoryAction;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WorkflowHistoryActionDto extends BaseDto {
+public class WorkflowHistoryActionDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8309866046667741458L;

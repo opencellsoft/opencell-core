@@ -856,8 +856,6 @@
         <sql>CREATE INDEX medina_access_subscription_id ON  ${db.schema.adapted}medina_access(subscription_id)</sql>
 	</changeSet>
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="mysql">
-		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
-        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
         
         <sql>DROP INDEX IF EXISTS billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
@@ -900,6 +898,49 @@
            <column name="end_date" type="datetime" />
        </addColumn>
     </changeSet>
+    <changeSet id="#3311_02042018" author="SaidRamli">
+        <addColumn tableName="meveo_job_instance">
+            <column name="exclude_inv_without_amount" type="${type.boolean}" />
+        </addColumn>
+    </changeSet>
+    
+	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+	   <sql splitStatements="false" stripComments="false"><![CDATA[	
+	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
+	         BEGIN
+	         	RETURN  translate($1,
+	   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
+	   							 'cCaaAAeeeEEEiIuUoO');
+	        END;
+			$$ LANGUAGE plpgsql;
+		]]></sql>
+	</changeSet>
+
+    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
+    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+	    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+			create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
+							returns varchar(2000)
+							begin				
+								set @textvalue =  input_text;
+								set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
+								set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
+								set @count = length(@withaccents);
+								
+								while @count > 0 do
+								    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+								    set @count = @count - 1;
+								end while;					
+								return @textvalue;				
+			end;
+		]]></sql>
+	</changeSet>    
+    <changeSet id="#2577_20180322" author="anasseh">
+        <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
+        <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
+    </changeSet> 
+</databaseChangeLog> 
     
     <changeSet id="#3464_20180522" author="AndriusKarpavicius">
         <addColumn tableName="crm_provider">

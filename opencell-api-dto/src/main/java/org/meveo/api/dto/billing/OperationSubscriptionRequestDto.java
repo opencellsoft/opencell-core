@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class OperationSubscriptionRequestDto.
@@ -16,7 +16,7 @@ import org.meveo.api.dto.BaseDto;
  */
 @XmlRootElement(name = "OperationSubscriptionRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OperationSubscriptionRequestDto extends BaseDto {
+public class OperationSubscriptionRequestDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4477259461644796968L;

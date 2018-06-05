@@ -10,9 +10,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 
 /**
@@ -24,7 +25,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubscriptionDto extends BusinessDto {
+public class SubscriptionDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6021918810749866648L;
@@ -108,7 +109,16 @@ public class SubscriptionDto extends BusinessDto {
      * Instantiates a new subscription dto.
      */
     public SubscriptionDto() {
-
+        super();
+    }
+    
+    /**
+     * Instantiates a new subscription dto.
+     * 
+     * @param e Subscription entity
+     */
+    public SubscriptionDto(Subscription e) {
+        super(e);
     }
 
     /**

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.base;
+package org.meveo.jpa;
 
 import java.lang.reflect.Proxy;
 import java.util.Map;
@@ -39,8 +39,6 @@ import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -58,10 +56,10 @@ public class EntityManagerProvider {
     private EntityManager emfForJobs;
 
     @Inject
-    CurrentUserProvider currentUserProvider;
+    private CurrentUserProvider currentUserProvider;
 
     @Inject
-    Logger log;
+    private Logger log;
 
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-multiTenant-cache")
     private Cache<String, EntityManagerFactory> entityManagerFactories;
@@ -75,75 +73,46 @@ public class EntityManagerProvider {
      */
     @Produces
     @RequestScoped
-    @MeveoJpaForMultiTenancy
-    public EntityManager getEntityManager() {
+    @MeveoJpa
+    public EntityManagerWrapper getEntityManager() {
         String providerCode = currentUserProvider.getCurrentUserProviderCode();
 
         log.trace("Produce EM for provider {}", providerCode);
 
-        final EntityManager currentEntityManager;
         if (providerCode == null || !isMultiTenancyEnabled) {
-            currentEntityManager = emf.createEntityManager();
-        } else {
-            currentEntityManager = createEntityManager(providerCode);
+
+            // Create an container managed persistence context main provider, for API and JOBs
+            if (FacesContext.getCurrentInstance() == null) {
+                return new EntityManagerWrapper(emfForJobs, false);
+
+                // Create an application managed persistence context main provider, for GUI
+            } else {
+                final EntityManager em = emf.createEntityManager();
+                EntityManager emProxy = (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+                    em.joinTransaction();
+                    return method.invoke(em, args);
+                });
+                return new EntityManagerWrapper(emProxy, true);
+            }
         }
 
-        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-            currentEntityManager.joinTransaction();
-            return method.invoke(currentEntityManager, args);
+        // Create an application managed persistence context for provider
+        final EntityManager em = createEntityManager(providerCode);
+        EntityManager emProxy = (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+            em.joinTransaction();
+            return method.invoke(em, args);
         });
-    }
-
-    /**
-     * Instantiates an Entity manager for use in API and Jobs. Will consider a tenant that currently connected user belongs to
-     * 
-     * @return Entity manager
-     */
-    @Produces
-//    @RequestScoped
-    @MeveoJpaForMultiTenancyForJobs
-    public EntityManager getEntityManagerForJobs() {
-        String providerCode = currentUserProvider.getCurrentUserProviderCode();
-
-        log.trace("Produce EM for Jobs for provider {}", providerCode);
-
-        if (providerCode == null || !isMultiTenancyEnabled) {
-            return emfForJobs;
-        }
-
-        EntityManager currentEntityManager = createEntityManager(providerCode);
-return currentEntityManager;
-//        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-//            currentEntityManager.joinTransaction();
-//            return method.invoke(currentEntityManager, args);
-//        });
-    }
-
-    /**
-     * Close Entity manager for Jobs
-     * 
-     * @param entityManager
-     */
-    public void disposeEMForJobs(@Disposes @MeveoJpaForMultiTenancyForJobs EntityManager entityManager) {
-        String providerCode = currentUserProvider.getCurrentUserProviderCode();
-        log.error("AKK will try dispose @MeveoJpaForMultiTenancyForJobs EM {}", providerCode);
-        if (providerCode != null && !isMultiTenancyEnabled && entityManager.isOpen()) {
-            log.error("AKK dispose @MeveoJpaForMultiTenancyForJobs EM");
-            entityManager.close();
-        }
+        return new EntityManagerWrapper(emProxy, true);
     }
 
     /**
      * Close Entity manager for GUI
      * 
-     * @param entityManager
+     * @param entityManagerWrapper Entity manager wrapper to dispose
      */
-    public void disposeEM(@Disposes @MeveoJpaForMultiTenancy EntityManager entityManager) {
-        log.error("AKK will try dispose @MeveoJpaForMultiTenancy EM {}", FacesContext.getCurrentInstance() != null);
-        if (FacesContext.getCurrentInstance() != null && entityManager.isOpen()) {
-            log.error("AKK dispose @MeveoJpaForMultiTenancy EM");
-            entityManager.close();
-        }
+    public void disposeEMWrapper(@Disposes @MeveoJpa EntityManagerWrapper entityManagerWrapper) {
+        // log.error("AKK will try dispose entityManagerWrapper");
+        entityManagerWrapper.dispose();
     }
 
     /**

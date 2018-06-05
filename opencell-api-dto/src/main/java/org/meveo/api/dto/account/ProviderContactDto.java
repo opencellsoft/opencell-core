@@ -2,31 +2,23 @@ package org.meveo.api.dto.account;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.crm.ProviderContact;
 
 /**
  * The Class ProviderContactDto.
  *
  * @author Tyshan Shi(tyshan@manaty.net)
+ * @author Edward P. Legaspi (edward.legaspi@manaty.net)
  */
 @XmlRootElement(name = "ProviderContract")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProviderContactDto extends BaseDto {
+public class ProviderContactDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -763450889692487278L;
-
-    /** The code. */
-    @XmlAttribute(required = true)
-    private String code;
-    
-    /** The description. */
-    @XmlAttribute
-    private String description;
     
     /** The first name. */
     private String firstName;
@@ -65,8 +57,7 @@ public class ProviderContactDto extends BaseDto {
      * @param providerContact the provider contact
      */
     public ProviderContactDto(ProviderContact providerContact) {
-        this.code = providerContact.getCode();
-        this.description = providerContact.getDescription();
+        super(providerContact);
         this.firstName = providerContact.getFirstName();
         this.lastName = providerContact.getLastName();
         this.email = providerContact.getEmail();
@@ -77,42 +68,6 @@ public class ProviderContactDto extends BaseDto {
         if (providerContact.getAddress() != null) {
             this.addressDto = new AddressDto(providerContact.getAddress());
         }
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
