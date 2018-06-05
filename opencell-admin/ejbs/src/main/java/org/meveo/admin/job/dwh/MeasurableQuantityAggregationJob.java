@@ -14,6 +14,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -53,6 +54,7 @@ public class MeasurableQuantityAggregationJob extends Job {
         }
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq) throws BusinessException {
         if (report.length() == 0) {

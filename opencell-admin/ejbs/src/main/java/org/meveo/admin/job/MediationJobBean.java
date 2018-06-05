@@ -21,6 +21,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
@@ -233,6 +234,7 @@ public class MediationJobBean {
      * @throws CDRParsingException the CDR parsing exception
      * @throws BusinessException the business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void createEdr(String line) throws CDRParsingException, BusinessException {
         List<EDR> edrs = cdrParser.getEDRList(line, CDRParsingService.CDR_ORIGIN_JOB);
@@ -284,6 +286,7 @@ public class MediationJobBean {
      * @param edr the edr
      * @throws BusinessException the business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createEdr(EDR edr) throws BusinessException {
         edrService.create(edr);

@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
@@ -410,6 +411,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return A number of counter periods that were removed
      */
     @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long deleteCounterPeriods(Date date) {
         log.trace("Removing counter periods which end date is older then a {} date", date);

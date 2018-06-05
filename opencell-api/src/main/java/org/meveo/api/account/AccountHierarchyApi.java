@@ -251,10 +251,22 @@ public class AccountHierarchyApi extends BaseApi {
         currencyApi.findOrCreate(postData.getCurrencyCode());
         languageApi.findOrCreate(postData.getLanguageCode());
 
-        sellerDto.setCountryCode(postData.getCountryCode());
-        sellerDto.setCurrencyCode(postData.getCurrencyCode());
-        sellerDto.setLanguageCode(postData.getLanguageCode());
-        sellerApi.createOrUpdate(sellerDto);
+        boolean updateSeller = false;
+        if (!postData.getCountryCode().equals(sellerDto.getCountryCode())) {
+            sellerDto.setCountryCode(postData.getCountryCode());
+            updateSeller = true;
+        }
+        if (!postData.getCurrencyCode().equals(sellerDto.getCurrencyCode())) {
+            sellerDto.setCurrencyCode(postData.getCurrencyCode());
+            updateSeller = true;
+        }
+        if (!postData.getLanguageCode().equals(sellerDto.getLanguageCode())) {
+            sellerDto.setLanguageCode(postData.getLanguageCode());
+            updateSeller = true;
+        }
+        if (updateSeller) {
+            sellerApi.createOrUpdate(sellerDto);
+        }
 
         String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         if (postData.getUsePrefix() != null && !postData.getUsePrefix()) {

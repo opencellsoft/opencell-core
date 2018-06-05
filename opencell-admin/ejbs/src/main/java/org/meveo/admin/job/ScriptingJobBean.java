@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.async.ScriptingAsync;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -37,6 +38,7 @@ public class ScriptingJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void init(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
         ScriptInterface script = null;
@@ -49,6 +51,7 @@ public class ScriptingJobBean {
         }
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
         MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -68,6 +71,7 @@ public class ScriptingJobBean {
 
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void finalize(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
         ScriptInterface script = null;

@@ -17,7 +17,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
@@ -41,7 +40,15 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.*;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.Auditable;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -53,8 +60,6 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.meveo.util.EntityCustomizationUtils;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -96,15 +101,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     protected Provider appProvider;
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
@@ -117,6 +115,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * @return Number of items added
      */
     @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int populateIndex(String classname, int from, ReindexingStatistics statistics) {
 
@@ -172,17 +171,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         return found;
     }
 
-    public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
-        }
-
-        return emfForJobs;
+    private EntityManager getEntityManager() {
+        return emWrapper.getEntityManager();
     }
 
     /**
@@ -433,6 +423,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * 
      * @throws BusinessException business exception.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 

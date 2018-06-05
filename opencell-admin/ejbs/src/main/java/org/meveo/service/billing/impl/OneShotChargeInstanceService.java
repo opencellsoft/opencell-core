@@ -31,6 +31,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -224,6 +225,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         return qb.getQuery(getEntityManager()).getResultList();
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void matchPrepaidWallet(WalletInstance wallet, String matchingChargeCode) throws BusinessException {
         // get the id of the last OPEN walletOperation

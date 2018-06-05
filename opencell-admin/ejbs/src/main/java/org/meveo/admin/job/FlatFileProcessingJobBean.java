@@ -23,6 +23,7 @@ import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -92,6 +93,7 @@ public class FlatFileProcessingJobBean {
      * @param originFilename the origin filename
      * @param formatTransfo the format transfo
      */
+    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String inputDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName,

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.base;
+package org.meveo.jpa;
 
 import java.lang.reflect.Proxy;
 import java.util.Map;
@@ -24,23 +24,21 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -50,81 +48,72 @@ import org.slf4j.Logger;
  */
 @Stateless
 public class EntityManagerProvider {
-    @Inject
-    @MeveoJpa
-    private EntityManager em;
 
-    @Inject
-    @MeveoJpaForJobs
+    @PersistenceUnit(unitName = "MeveoAdmin")
+    private EntityManagerFactory emf;
+
+    @PersistenceContext(unitName = "MeveoAdmin")
     private EntityManager emfForJobs;
 
     @Inject
-    private Conversation conversation;
+    private CurrentUserProvider currentUserProvider;
 
     @Inject
-    CurrentUserProvider currentUserProvider;
-
-    @Inject
-    Logger log;
+    private Logger log;
 
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-multiTenant-cache")
     private Cache<String, EntityManagerFactory> entityManagerFactories;
 
     private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
+    /**
+     * Instantiates an Entity manager for use in GUI exclusively. Will consider a tenant that currently connected user belongs to
+     * 
+     * @return Entity manager
+     */
     @Produces
     @RequestScoped
-    @MeveoJpaForMultiTenancy
-    public EntityManager getEntityManager() {
+    @MeveoJpa
+    public EntityManagerWrapper getEntityManager() {
         String providerCode = currentUserProvider.getCurrentUserProviderCode();
 
         log.trace("Produce EM for provider {}", providerCode);
 
         if (providerCode == null || !isMultiTenancyEnabled) {
-            return em;
+
+            // Create an container managed persistence context main provider, for API and JOBs
+            if (FacesContext.getCurrentInstance() == null) {
+                return new EntityManagerWrapper(emfForJobs, false);
+
+                // Create an application managed persistence context main provider, for GUI
+            } else {
+                final EntityManager em = emf.createEntityManager();
+                EntityManager emProxy = (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+                    em.joinTransaction();
+                    return method.invoke(em, args);
+                });
+                return new EntityManagerWrapper(emProxy, true);
+            }
         }
 
-        EntityManager currentEntityManager = createEntityManager(providerCode);
-
-        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-            currentEntityManager.joinTransaction();
-            return method.invoke(currentEntityManager, args);
+        // Create an application managed persistence context for provider
+        final EntityManager em = createEntityManager(providerCode);
+        EntityManager emProxy = (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+            em.joinTransaction();
+            return method.invoke(em, args);
         });
+        return new EntityManagerWrapper(emProxy, true);
     }
 
-    @Produces
-    @RequestScoped
-    @MeveoJpaForMultiTenancyForJobs
-    public EntityManager getEntityManagerForJobs() {
-        String providerCode = currentUserProvider.getCurrentUserProviderCode();
-
-        log.trace("Produce EM for Jobs for provider {}", providerCode);
-
-        if (providerCode == null || !isMultiTenancyEnabled) {
-            return emfForJobs;
-        }
-
-        EntityManager currentEntityManager = createEntityManager(providerCode);
-
-        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
-            currentEntityManager.joinTransaction();
-            return method.invoke(currentEntityManager, args);
-        });
+    /**
+     * Close Entity manager for GUI
+     * 
+     * @param entityManagerWrapper Entity manager wrapper to dispose
+     */
+    public void disposeEMWrapper(@Disposes @MeveoJpa EntityManagerWrapper entityManagerWrapper) {
+        // log.error("AKK will try dispose entityManagerWrapper");
+        entityManagerWrapper.dispose();
     }
-
-    public void disposeEM(@Disposes @MeveoJpaForMultiTenancy EntityManager entityManager) {
-        if (conversation != null && entityManager.isOpen()) {
-            // log.error("AKK dispose @MeveoJpaForMultiTenancy EM");
-            entityManager.close();
-        }
-    }
-
-    // public void disposeEMForJobs(@Disposes @MeveoJpaForMultiTenancyForJobs EntityManager entityManager) {
-    // if (conversation != null && entityManager.isOpen()) {
-    // log.error("AKK dispose @MeveoJpaForMultiTenancy EM for Jobs");
-    // entityManager.close();
-    // }
-    // }
 
     /**
      * Get entity manager for a given provider
@@ -139,44 +128,16 @@ public class EntityManagerProvider {
         boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
         if (providerCode == null || !isMultiTenancyEnabled) {
-            return getDefaultEntityManager();
+            return emfForJobs;
         }
 
-        EntityManager currentEntityManager = null;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                currentEntityManager = createEntityManager(providerCode);
-            } catch (Exception e) {
-                currentEntityManager = createEntityManager(providerCode);
-            }
-        } else {
-            currentEntityManager = createEntityManager(providerCode);
-        }
+        EntityManager currentEntityManager = createEntityManager(providerCode);
 
         final EntityManager currentEntityManagerFinal = currentEntityManager;
         return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
             currentEntityManagerFinal.joinTransaction();
             return method.invoke(currentEntityManagerFinal, args);
         });
-    }
-
-    /**
-     * Get a default entity manager
-     * 
-     * @return Entity manager instance
-     */
-    private EntityManager getDefaultEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
-
-        return result;
     }
 
     private EntityManager createEntityManager(String providerCode) {
@@ -189,6 +150,11 @@ public class EntityManagerProvider {
         return null;
     }
 
+    /**
+     * Create a new Entity manager factory for a given tenant
+     * 
+     * @param providerCode Provider/tenant code
+     */
     public void registerEntityManagerFactory(String providerCode) {
         log.trace("Create EMF for provider {}", providerCode);
 
@@ -206,6 +172,11 @@ public class EntityManagerProvider {
         log.debug("Created EMF for provider {}", providerCode);
     }
 
+    /**
+     * Remove Entity manager factory for a given tenant
+     * 
+     * @param providerCode Provider/tenant code
+     */
     public void unregisterEntityManagerFactory(String providerCode) {
 
         log.trace("Remove EMF for provider {}", providerCode);

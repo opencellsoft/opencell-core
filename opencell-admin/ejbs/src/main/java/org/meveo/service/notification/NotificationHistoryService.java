@@ -6,6 +6,7 @@ import javax.ejb.TransactionAttributeType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.IEvent;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationHistory;
@@ -27,6 +28,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
      * @return notification history
      * @throws BusinessException business exception.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public NotificationHistory create(Notification notification, Object entityOrEvent, String result, NotificationHistoryStatusEnum status) throws BusinessException {
         IEntity entity = null;
