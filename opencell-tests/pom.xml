@@ -43,6 +43,20 @@
 				<artifactId>soapui-maven-plugin</artifactId>
 				<version>5.3.0</version>
 				<configuration>
+				   <projectFiles>
+				      <scan>
+				      <baseDirectory>${basedir}/api/soapui/</baseDirectory>
+				      <includes>
+				        <include>Full-WS-CRUD-Test-Entities.xml</include>
+				        <include>Jax-Rs_TMForum.xml</include>
+				        <include>Jax-Ws_Mediation.xml</include>
+				        <include>Jax-Ws_CFs.xml</include>
+				        <!-- 
+				        <include>Jax-Ws_Jobs.xml</include>
+				         -->
+				      </includes>
+				      </scan>
+				   </projectFiles>
 					<projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
 					<outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 					<junitReport>true</junitReport>
