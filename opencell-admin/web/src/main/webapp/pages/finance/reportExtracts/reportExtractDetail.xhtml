@@ -59,11 +59,11 @@
 			                <pe:codeMirror required="true" id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
 			            </hftl:decorateFormField>
 		            </p:outputPanel>
+		            <p:outputPanel id="resultType">
+		            	<hftl:formField listenerUpdate="style" label="#{messages['reportExtract.resultType']}" field="reportExtractResultType" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}" required="true" />
+		            </p:outputPanel>
 		            <p:outputPanel id="style">
 		            	<hftl:formField textArea="true" label="#{messages['reportExtract.style']}" field="style" rendered="#{reportExtractBean.entity.reportExtractResultType eq ReportExtractResultTypeEnum.HTML}" />
-		            </p:outputPanel>
-		            <p:outputPanel id="resultType">
-		            	<hftl:formField listenerUpdate="style" label="#{messages['reportExtract.resultType']}" field="reportExtractResultType" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}" />
 		            </p:outputPanel>
 		            <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
 	            </p:panel>
