@@ -42,36 +42,7 @@
 				<groupId>com.smartbear.soapui</groupId>
 				<artifactId>soapui-maven-plugin</artifactId>
 				<version>5.3.0</version>
-				<configuration>
-					<outputFolder>${basedir}/target/surefire-reports/</outputFolder>
-					<junitReport>true</junitReport>
-					<exportwAll>true</exportwAll>
-					<printReport>true</printReport>
-					<testFailIgnore>true</testFailIgnore>
-					<soapuiProperties>
-						<property>
-							<name>opencell.url</name>
-							<value>${opencell.url}</value>
-						</property>
-					</soapuiProperties>
-					<projectProperties>
-						<value>opencell.url=${opencell.url}</value>
-						<value>opencell.url2=${opencell.url2}</value>
-						<value>elasticSearchUrl=${elasticSearchUrl}</value>
-						<value>ingenico.SecretApiKey=${ingenico.SecretApiKey}</value>
-						<value>ingenico.ApiKeyId=${ingenico.ApiKeyId}</value>
-						<value>ingenico.merchantId=${ingenico.merchantId}</value>
-						<value>slimPay.secretKey=${slimPay.secretKey}</value>
-						<value>slimPay.userId=${slimPay.userId}</value>
-						<value>adminUsername=${adminUsername}</value>
-						<value>adminPassword=${adminPassword}</value>
-						<value>superUsername=${superUsername}</value>
-						<value>superPassword=${superPassword}</value>
-						<value>provider=${provider}</value>
-						<value>provider_description=${provider_description}</value>
-					</projectProperties>
-				</configuration>
-				<executions>
+					<executions>
                     <execution>
                     	<id>fullCRUD</id>
                         <phase>test</phase>
@@ -80,6 +51,33 @@
                         </goals>
                         <configuration>
                             <projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
+                            <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
+							<junitReport>true</junitReport>
+							<exportwAll>true</exportwAll>
+							<printReport>true</printReport>
+							<testFailIgnore>true</testFailIgnore>
+							<soapuiProperties>
+								<property>
+									<name>opencell.url</name>
+									<value>${opencell.url}</value>
+								</property>
+							</soapuiProperties>
+							<projectProperties>
+								<value>opencell.url=${opencell.url}</value>
+								<value>opencell.url2=${opencell.url2}</value>
+								<value>elasticSearchUrl=${elasticSearchUrl}</value>
+								<value>ingenico.SecretApiKey=${ingenico.SecretApiKey}</value>
+								<value>ingenico.ApiKeyId=${ingenico.ApiKeyId}</value>
+								<value>ingenico.merchantId=${ingenico.merchantId}</value>
+								<value>slimPay.secretKey=${slimPay.secretKey}</value>
+								<value>slimPay.userId=${slimPay.userId}</value>
+								<value>adminUsername=${adminUsername}</value>
+								<value>adminPassword=${adminPassword}</value>
+								<value>superUsername=${superUsername}</value>
+								<value>superPassword=${superPassword}</value>
+								<value>provider=${provider}</value>
+								<value>provider_description=${provider_description}</value>
+							</projectProperties>
                         </configuration>
                     </execution>
                     <execution>
@@ -90,6 +88,89 @@
                         </goals>
                         <configuration>
                             <projectFile>${basedir}/api/soapui/Jax-Rs_TMForum.xml</projectFile>
+                            <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
+							<junitReport>true</junitReport>
+							<exportwAll>true</exportwAll>
+							<printReport>true</printReport>
+							<testFailIgnore>true</testFailIgnore>
+							<soapuiProperties>
+								<property>
+									<name>opencell.url</name>
+									<value>${opencell.url}</value>
+								</property>
+							</soapuiProperties>
+							<projectProperties>
+								<value>opencell.url=${opencell.url}</value>
+								<value>opencell.url2=${opencell.url2}</value>
+								<value>elasticSearchUrl=${elasticSearchUrl}</value>
+								<value>adminUsername=${adminUsername}</value>
+								<value>adminPassword=${adminPassword}</value>
+								<value>provider=${provider}</value>
+								<value>provider_description=${provider_description}</value>
+							</projectProperties>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>Mediation</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${basedir}/api/soapui/Jax-Ws_Mediation.xml</projectFile>
+                            <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
+							<junitReport>true</junitReport>
+							<exportwAll>true</exportwAll>
+							<printReport>true</printReport>
+							<testFailIgnore>true</testFailIgnore>
+							<soapuiProperties>
+								<property>
+									<name>opencell.url</name>
+									<value>${opencell.url}</value>
+								</property>
+							</soapuiProperties>
+							<projectProperties>
+								<value>opencell.url=${opencell.url}</value>
+								<value>opencell.url2=${opencell.url2}</value>
+								<value>elasticSearchUrl=${elasticSearchUrl}</value>
+								<value>adminUsername=${adminUsername}</value>
+								<value>adminPassword=${adminPassword}</value>
+								<value>superUsername=${superUsername}</value>
+								<value>superPassword=${superPassword}</value>
+								<value>provider=${provider}</value>
+								<value>provider_description=${provider_description}</value>
+							</projectProperties>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>CFs</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${basedir}/api/soapui/Jax-Ws_CFs.xml</projectFile>
+                            <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
+							<junitReport>true</junitReport>
+							<exportwAll>true</exportwAll>
+							<printReport>true</printReport>
+							<testFailIgnore>true</testFailIgnore>
+							<soapuiProperties>
+								<property>
+									<name>opencell.url</name>
+									<value>${opencell.url}</value>
+								</property>
+							</soapuiProperties>
+							<projectProperties>
+								<value>opencell.url=${opencell.url}</value>
+								<value>opencell.url2=${opencell.url2}</value>
+								<value>adminUsername=${adminUsername}</value>
+								<value>adminPassword=${adminPassword}</value>
+								<value>superUsername=${superUsername}</value>
+								<value>superPassword=${superPassword}</value>
+								<value>provider=${provider}</value>
+								<value>provider_description=${provider_description}</value>
+							</projectProperties>
                         </configuration>
                     </execution>
                 </executions>
