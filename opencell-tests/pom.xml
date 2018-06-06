@@ -43,7 +43,6 @@
 				<artifactId>soapui-maven-plugin</artifactId>
 				<version>5.3.0</version>
 				<configuration>
-					<projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
 					<outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 					<junitReport>true</junitReport>
 					<exportwAll>true</exportwAll>
@@ -80,7 +79,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <projectFile>Full-WS-CRUD-Test-Entities.xml</projectFile>
+                            <projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -90,7 +89,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <projectFile>Jax-Rs_TMForum.xml</projectFile>
+                            <projectFile>${basedir}/api/soapui/Jax-Rs_TMForum.xml</projectFile>
                         </configuration>
                     </execution>
                 </executions>
