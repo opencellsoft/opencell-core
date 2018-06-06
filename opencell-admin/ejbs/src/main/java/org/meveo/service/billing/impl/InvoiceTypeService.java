@@ -24,14 +24,17 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * @author anasseh
  * @author Phung tien lan
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  * 
  */
 @Stateless
@@ -42,6 +45,13 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     @Inject
     OCCTemplateService oCCTemplateService;
+
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+
+    @Inject
+    private ProviderService providerService;
 
     public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
 
@@ -111,7 +121,36 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         if (getCommercialCode().equals(invoiceType.getCode())) {
             cfName = "INVOICE_SEQUENCE";
         }
-        
+
         return cfName;
+    }
+
+    /**
+     * @return
+     * @throws BusinessException
+     */
+    public Long getCurrentGlobalInvoiceBb() throws BusinessException {
+        appProvider = providerService.findById(appProvider.getId());
+        Long currentInvoiceNb = appProvider.getInvoiceConfiguration().getCurrentInvoiceNb();
+        if (currentInvoiceNb == null) {
+            throw new BusinessException("Cant get global CurrentGlobalInvoiceNb ");
+        }
+        return currentInvoiceNb;
+    }
+
+    /**
+     * @param l
+     * @throws BusinessException
+     */
+    public void setCurrentGlobalInvoiceBb(Long l) throws BusinessException {
+        try {
+
+            appProvider = providerService.findById(appProvider.getId());
+
+            appProvider.getInvoiceConfiguration().setCurrentInvoiceNb(l);
+
+        } catch (Exception e) {
+            throw new BusinessException("Cant update global InvoiceTypeSequence : " + e.getMessage());
+        }
     }
 }
