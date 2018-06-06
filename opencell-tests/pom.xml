@@ -39,9 +39,9 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.smartbear.soapui</groupId>
-				<artifactId>soapui-maven-plugin</artifactId>
-				<version>5.3.0</version>
+				<groupId>com.github.redfish4ktc.soapui</groupId>
+                <artifactId>maven-soapui-extension-plugin</artifactId>
+				<version>4.6.4.1</version>
 				<configuration>
 				   <projectFiles>
 				      <scan>
@@ -57,7 +57,6 @@
 				      </includes>
 				      </scan>
 				   </projectFiles>
-					<projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
 					<outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 					<junitReport>true</junitReport>
 					<exportwAll>true</exportwAll>
