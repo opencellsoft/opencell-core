@@ -75,6 +75,12 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+/**
+ * RatedTransactionService : A class for Rated transaction persistence services 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ * 
+ */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
@@ -1242,6 +1248,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByUA").setParameter("userAccount", userAccount).getSingleResult();
         } catch (NoResultException e) {
             log.warn("failed to countNotInvoiced RT by UA", e);
+            return null;
+        }
+    }
+
+    /**
+     * Find the rated transaction by wallet operation id.
+     *
+     * @param id the id
+     */
+    public RatedTransaction findByWalletOperationId(Long walletOperationId) {
+        try {
+            QueryBuilder qb = new QueryBuilder(getEntityClass(), "rt");
+            qb.addCriterion("rt.walletOperationId", "=", walletOperationId, false);
+            return (RatedTransaction) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("No Rated transaction foud for this walletOperationId {} ", walletOperationId);
             return null;
         }
     }
