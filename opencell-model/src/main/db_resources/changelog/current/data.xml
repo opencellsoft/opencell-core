@@ -95,7 +95,7 @@
     </changeSet>
 
     <changeSet id="#2125_20180328 Report Extracts" author="EdwardPLegaspi">
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-1, 0, 0, now(), 'ACCOUNT_OPS', 'Export account operations', 'JAVA', '
+		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-1, 0, 0, now(), 'ACCOUNT_OPS', 'Export account operations', 'JAVA', '
 			package org.meveo.service.script.export;
 
 import java.io.File;
@@ -127,12 +127,14 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 	public void execute(Map<String, Object> initContext) throws BusinessException {
 		try {
 			LOGGER.debug("#####################Starting of script ExportAccountOperationScript");
-
-			Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE);
+	
+			Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE);	
 			Date endDate = (Date) initContext.get(ReportExtractScript.END_DATE);
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
+			 
 			List<AccountOperation> accountOperations = accountOperationService.list();
+			initContext.put(ReportExtractScript.LINE_COUNT, accountOperations.size());
+			
 	        String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR));
 	        File dir = new File(exportDir);
 	        if (!dir.exists()) {
@@ -142,10 +144,10 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 	        StringBuilder sb =new StringBuilder();
 	        sb.append("Transaction Date;Transaction Type;Amount;Due Date;Reference;Transaction Category;Invoice Date;"
 	        		+ "Customer Account Code;Customer Account Description\n");
-	        for (AccountOperation accountOperation : accountOperations) {
+	        for (AccountOperation accountOperation : accountOperations) { 
 	        	if(accountOperation.getTransactionDate().equals(startDate) || accountOperation.getTransactionDate().equals(endDate)
 	        			|| (accountOperation.getTransactionDate().after(startDate) && accountOperation.getTransactionDate().before(endDate))) {
-
+	        		
 	        		customerAccount = accountOperation.getCustomerAccount();
 	        		sb.append(nil(accountOperation.getTransactionDate().toString())+ ";");
 		        	sb.append(nil(accountOperation.getType()) + ";");
@@ -162,7 +164,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 		        	sb.append(nil(customerAccount.getCode()) + ";");
 		        	sb.append(nil(customerAccount.getDescriptionOrCode()) + ";\n");
 
-
+		        	
 	        	}
 	        }
           	String strFilename = String.valueOf(initContext.get(ReportExtractScript.FILENAME));
@@ -172,15 +174,16 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 	        FileWriter fileWriter = new FileWriter(file);
 	        fileWriter.write(sb.toString());
 	        fileWriter.close();
-
+	        
 			LOGGER.debug("#####################Ending of script ExportAccountOperationScript");
 		} catch (Exception e) {
+			initContext.put(ReportExtractScript.ERROR_MESSAGE, e.getMessage());
 			LOGGER.error("Exception:", e);
 			throw new BusinessException(e.getMessage());
 		}
-
+		
 	}
-
+  
   private String isNull(Object obj) {
     if(obj == null) {
       return "";
@@ -188,7 +191,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
       return obj.toString();
     }
   }
-
+  
 	private String nil(String word) {
 		if (word == null || "null".equalsIgnoreCase(word)) {
 			return "";
@@ -196,15 +199,15 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 			return word;
 		}
 	}
-}
+}		
 		');]]></sql>
-
-        <sql><![CDATA[
-INSERT INTO ${db.schema.adapted}dwh_report_extract
-	(id, version, disabled, created, code, description, category, script_type, filename_format, sql_query)
-VALUES
-	(-1, 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].csv', '
-SELECT
+		
+		<sql><![CDATA[
+INSERT INTO ${db.schema.adapted}dwh_report_extract 
+	(uuid, id, result_type, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
+VALUES 
+	('SALES_JOURNAL_UUID', -1, 'HTML', 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].html',
+	'SELECT
     TO_CHAR(ao.invoice_date,''MM'') AS "Mois",
     TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS "Date facture",
     text(''HG'') AS "Code comptable",
@@ -235,45 +238,47 @@ ORDER BY
     split_part(bac.code, '','', 2);
 ')
 		]]></sql>
-
-        <insert tableName="dwh_report_extract_params">
-            <column name="reportextract_id" value="-1"></column>
-            <column name="params_key" value="START_DATE"></column>
-            <column name="params" value="31/01/2017"></column>
-        </insert>
-
-        <insert tableName="dwh_report_extract_params">
-            <column name="reportextract_id" value="-1"></column>
-            <column name="params_key" value="END_DATE"></column>
-            <column name="params" value="31/12/2018"></column>
-        </insert>
-
-        <insert tableName="dwh_report_extract">
-            <column name="id" valueNumeric="-2"/>
-            <column name="version" valueNumeric="0"/>
-            <column name="disabled" valueNumeric="0"/>
-            <column name="created" valueDate="now()"/>
-            <column name="code" value="ACCOUNT_OPS"/>
-            <column name="description" value="Export account operations"/>
-            <column name="category" value="sales"></column>
-            <column name="script_type" value="JAVA"></column>
-            <column name="filename_format" value="accounts-ops-[yyyy_MM_dd].csv"></column>
-            <column name="script_instance_id" value="-1"></column>
-        </insert>
-
-        <insert tableName="dwh_report_extract_params">
-            <column name="reportextract_id" value="-2"></column>
-            <column name="params_key" value="START_DATE"></column>
-            <column name="params" value="31/01/2017"></column>
-        </insert>
-
-        <insert tableName="dwh_report_extract_params">
-            <column name="reportextract_id" value="-2"></column>
-            <column name="params_key" value="END_DATE"></column>
-            <column name="params" value="31/12/2018"></column>
-        </insert>
-
-    </changeSet>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-1"></column>
+			<column name="params_key" value="START_DATE"></column>
+			<column name="params" value="31/01/2017"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-1"></column>
+			<column name="params_key" value="END_DATE"></column>
+			<column name="params" value="31/12/2018"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="ACCOUNT_OPS" />
+			<column name="description" value="Export account operations" />
+			<column name="category" value="sales"></column>
+			<column name="script_type" value="JAVA"></column>
+			<column name="filename_format" value="accounts-ops-[yyyy_MM_dd].csv"></column>
+			<column name="script_instance_id" value="-1"></column>
+			<column name="uuid" value="ACOUNT_OPS_UUID"></column>
+			<column name="result_type" value="CSV"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-2"></column>
+			<column name="params_key" value="START_DATE"></column>
+			<column name="params" value="31/01/2017"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-2"></column>
+			<column name="params_key" value="END_DATE"></column>
+			<column name="params" value="31/12/2018"></column>
+		</insert>
+		
+	</changeSet>
 
     <changeSet id="#3234_05042018_1 - Homogenization of Account Operation types" author="anansseh" dbms="mysql">
         <sql>INSERT INTO ${db.schema.adapted}billing_accounting_code (version, disabled, created, code, creator,
@@ -606,6 +611,14 @@ ORDER BY
             <column name="user_id" value="-3"></column>
             <column name="role_id" value="-6"></column>
         </insert>
+    </changeSet>
+    
+    <changeSet id="#3326_20180502" author="EdwardPLegaspi">
+    	<sql>update dwh_report_extract set result_type='CSV' where result_type is null;</sql>
+    </changeSet>
+    
+    <changeSet id="#3326_20180502 Mysql" author="EdwardPLegaspi" dbms="mysql">
+    	<sql>update ${db.schema.adapted}dwh_report_extract set result_type='CSV' where result_type is null;</sql>
     </changeSet>
 
     <changeSet author="anasseh" id="#3119_09052018">
