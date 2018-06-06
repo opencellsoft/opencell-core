@@ -77,6 +77,9 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
+    
+    @Column(name = "current_invoice_nb")
+    private Long currentInvoiceNb = 0L;
 
     public Boolean getDisplaySubscriptions() {
         return displaySubscriptions;
@@ -186,6 +189,22 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
      */
     public void setDisplayOrders(Boolean displayOrders) {
         this.displayOrders = displayOrders;
+    }
+    
+    
+
+    /**
+     * @return the currentInvoiceNb
+     */
+    public Long getCurrentInvoiceNb() {
+        return currentInvoiceNb;
+    }
+
+    /**
+     * @param currentInvoiceNb the currentInvoiceNb to set
+     */
+    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+        this.currentInvoiceNb = currentInvoiceNb;
     }
 
     @Override

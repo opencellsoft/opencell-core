@@ -904,7 +904,7 @@
         </addColumn>
     </changeSet>
     
-<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
 	   <sql splitStatements="false" stripComments="false"><![CDATA[	
 	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
 	         BEGIN
@@ -935,9 +935,20 @@
 								return @textvalue;				
 			end;
 		]]></sql>
-</changeSet>    
+	</changeSet>    
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
     </changeSet> 
+    
+    <changeSet id="#3290_04062018" author="anasseh">
+        <addColumn tableName="billing_invoice_type">
+            <column name="use_self_sequeunce" type="${type.boolean}" />
+        </addColumn>
+         <sql>update ${db.schema.adapted}billing_invoice_type set use_self_sequeunce = 0 </sql>
+         <addColumn tableName="billing_invoice_configuration">
+            <column name="current_invoice_nb" type="bigint" />
+        </addColumn>
+        <sql>update billing_invoice_configuration set current_invoice_nb = (max(select max(current_invoice_nb) from billing_invoice_type,select max(current_invoice_nb) from billing_seq_invtyp))</sql>
+    </changeSet>
 </databaseChangeLog> 

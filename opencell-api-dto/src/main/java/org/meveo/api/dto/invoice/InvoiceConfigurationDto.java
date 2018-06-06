@@ -12,6 +12,7 @@ import org.meveo.model.billing.InvoiceConfiguration;
  * The Class InvoiceConfigurationDto.
  *
  * @author Mohamed Hamidi
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "InvoiceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,6 +56,8 @@ public class InvoiceConfigurationDto implements Serializable {
     
     /** The display orders. */
     private Boolean displayOrders;
+    
+    private Long currentInvoiceNb = 0L;
 
     /**
      * Instantiates a new invoice configuration dto.
@@ -79,6 +82,7 @@ public class InvoiceConfigurationDto implements Serializable {
         displayChargesPeriods = invoiceConfiguration.getDisplayChargesPeriods();
         displayBillingCycle = invoiceConfiguration.getDisplayBillingCycle();
         displayOrders = invoiceConfiguration.getDisplayOrders();
+        currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
     }
 
     /**
@@ -296,12 +300,28 @@ public class InvoiceConfigurationDto implements Serializable {
     public void setDisplayOrders(Boolean displayOrders) {
         this.displayOrders = displayOrders;
     }
+    
+    
+
+    /**
+     * @return the currentInvoiceNb
+     */
+    public Long getCurrentInvoiceNb() {
+        return currentInvoiceNb;
+    }
+
+    /**
+     * @param currentInvoiceNb the currentInvoiceNb to set
+     */
+    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+        this.currentInvoiceNb = currentInvoiceNb;
+    }
 
     @Override
     public String toString() {
         return "InvoiceConfigurationDto [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers
                 + ", displayEdrs=" + displayEdrs + ", displayPricePlans=" + displayPricePlans + ", displayCfAsXML=" + displayCfAsXML + ", displayProvider=" + displayProvider
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
-                + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + "]";
+                + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+"]";
     }
 }

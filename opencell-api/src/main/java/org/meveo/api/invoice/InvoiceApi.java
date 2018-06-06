@@ -217,7 +217,7 @@ public class InvoiceApi extends BaseApi {
                                 taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, invoice));
                             }
                         }
-                        if (currentTax == null) {                           
+                        if (currentTax == null) {
                             if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
                                 currentTax = invoicesubcatCountry.getTax();
                             } else {
@@ -229,9 +229,9 @@ public class InvoiceApi extends BaseApi {
                 if (currentTax == null) {
                     throw new BusinessApiException("Cant find tax for InvoiceSubCategory:" + subCatInvAgrDTO.getInvoiceSubCategoryCode());
                 }
-                
+
                 boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name());
-                
+
                 for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
 
                     BigDecimal amountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
@@ -284,7 +284,7 @@ public class InvoiceApi extends BaseApi {
                 invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
                 invoiceAgregateSubcat.setTaxPercent(currentTax.getPercent());
                 invoiceAgregateSubcat.setSubCategoryTaxes(new HashSet<Tax>(Arrays.asList(currentTax)));
-                
+
                 if (isDetailledInvoiceMode) {
                     invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());
                     invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
@@ -370,7 +370,6 @@ public class InvoiceApi extends BaseApi {
         }
 
         invoice = invoiceService.update(invoice);
-
         CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
         response.setInvoiceId(invoice.getId());
         response.setAmountWithoutTax(invoice.getAmountWithoutTax());
@@ -389,6 +388,7 @@ public class InvoiceApi extends BaseApi {
                 response.setXmlInvoice(invoiceXml);
                 response.setXmlFilename(invoice.getXmlFilename());
             }
+
             if (invoiceDTO.isReturnPdf()) {
                 invoice = invoiceService.produceInvoicePdf(invoice);
                 byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
@@ -396,6 +396,7 @@ public class InvoiceApi extends BaseApi {
                 response.setPdfFilename(invoice.getPdfFilename());
             }
         }
+
         return response;
     }
 
@@ -505,7 +506,6 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("lastTransactionDate or filter or orderNumber");
         }
 
-
         handleMissingParameters();
 
         BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, Arrays.asList("billingRun"));
@@ -520,7 +520,7 @@ public class InvoiceApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
             }
         }
-        
+
         if (isDraft) {
             if (generateInvoiceRequestDto.getGeneratePDF() == null) {
                 generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
@@ -802,9 +802,9 @@ public class InvoiceApi extends BaseApi {
      */
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions)
             throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
-       return this.find(id, invoiceNumber, invoiceTypeCode, includeTransactions, false, false);
+        return this.find(id, invoiceNumber, invoiceTypeCode, includeTransactions, false, false);
     }
-    
+
     /**
      * @param includePdf if true return pdf , else if null or false don't return pdf
      * @param includeXml if true return pdf , else if null or false don't return xml
@@ -879,7 +879,7 @@ public class InvoiceApi extends BaseApi {
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
                 subCategoryInvoiceAgregateDto.setType("R");
                 subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                if(invoiceAgregate.getAccountingCode() != null) {
+                if (invoiceAgregate.getAccountingCode() != null) {
                     subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
                 }
                 subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
@@ -899,7 +899,7 @@ public class InvoiceApi extends BaseApi {
                     subCategoryInvoiceAgregateDto.setType("F");
                     subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(subCategoryAggregate.getInvoiceSubCategory().getCode());
                     subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    if(invoiceAgregate.getAccountingCode() != null) {
+                    if (invoiceAgregate.getAccountingCode() != null) {
                         subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
                     }
                     subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
@@ -955,7 +955,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         this.setInvoicePdf(invoice, includePdf, invoiceDto);
-        
+
         // #2236 if includeXml return xml file content
         if (includeXml) {
             this.setInvoiceXml(invoice, invoiceDto);
@@ -964,7 +964,7 @@ public class InvoiceApi extends BaseApi {
         if (invoiceService.isInvoiceXmlExist(invoice)) {
             invoiceDto.setXmlFilename(invoice.getXmlFilename());
         }
-        
+
         invoiceDto.setNetToPay(invoice.getNetToPay());
 
         return invoiceDto;
@@ -972,6 +972,7 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * Setting invoice pdf contents
+     * 
      * @param invoice
      * @param includePdf
      * @param invoiceDto
@@ -1003,6 +1004,7 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * #2236 setting invoice xml
+     * 
      * @param invoice
      * @param invoiceDto
      * @throws BusinessException
@@ -1010,17 +1012,17 @@ public class InvoiceApi extends BaseApi {
     private void setInvoiceXml(Invoice invoice, InvoiceDto invoiceDto) {
         try {
             if (!invoiceService.isInvoiceXmlExist(invoice)) {
-                invoiceService.produceInvoiceXml(invoice);                
-            } 
+                invoiceService.produceInvoiceXml(invoice);
+            }
             String xml = invoiceService.getInvoiceXml(invoice);
             invoiceDto.setXml(xml != null ? Base64.encodeBase64String(xml.getBytes()) : null);
         } catch (BusinessException e) {
-           log.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
-    
+
     public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf) {
-       return this.invoiceToDto(invoice, includeTransactions, includePdf, false); 
+        return this.invoiceToDto(invoice, includeTransactions, includePdf, false);
     }
 
     private Invoice find(Long id, String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
