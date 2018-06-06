@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.RatedTransaction;
 
 /**
- * The Class RatedTransactionDto.
+ * A Dto class for Rated Transaction informations
  *
  * @author R.AITYAAZZA
  * @author Said Ramli

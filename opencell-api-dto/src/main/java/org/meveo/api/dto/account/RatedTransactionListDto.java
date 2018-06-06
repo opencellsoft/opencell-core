@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import org.meveo.api.dto.RatedTransactionDto;
 
 /**
@@ -15,6 +18,8 @@ public class RatedTransactionListDto implements Serializable {
     private static final long serialVersionUID = 1L;
     
     /** The rated transaces. */
+    @XmlElementWrapper
+    @XmlElement(name = "ratedTransactions")
     private List<RatedTransactionDto> ratedTransactions;
 
     /** The total number of records. */
