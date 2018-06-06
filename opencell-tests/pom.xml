@@ -39,24 +39,11 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.github.redfish4ktc.soapui</groupId>
-                <artifactId>maven-soapui-extension-plugin</artifactId>
-				<version>4.6.4.1</version>
+				<groupId>com.smartbear.soapui</groupId>
+				<artifactId>soapui-maven-plugin</artifactId>
+				<version>5.3.0</version>
 				<configuration>
-				   <projectFiles>
-				      <scan>
-				      <baseDirectory>${basedir}/api/soapui/</baseDirectory>
-				      <includes>
-				        <include>Full-WS-CRUD-Test-Entities.xml</include>
-				        <include>Jax-Rs_TMForum.xml</include>
-				        <include>Jax-Ws_Mediation.xml</include>
-				        <include>Jax-Ws_CFs.xml</include>
-				        <!-- 
-				        <include>Jax-Ws_Jobs.xml</include>
-				         -->
-				      </includes>
-				      </scan>
-				   </projectFiles>
+					<projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
 					<outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 					<junitReport>true</junitReport>
 					<exportwAll>true</exportwAll>
@@ -85,6 +72,28 @@
 						<value>provider_description=${provider_description}</value>
 					</projectProperties>
 				</configuration>
+				<executions>
+                    <execution>
+                    	<id>fullCRUD</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>Full-WS-CRUD-Test-Entities.xml</projectFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>TMForum</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>Jax-Rs_TMForum.xml</projectFile>
+                        </configuration>
+                    </execution>
+                </executions>
 				<dependencies>
 
 					<dependency>
@@ -92,13 +101,6 @@
 						<artifactId>forms</artifactId>
 						<version>1.0.7</version>
 					</dependency>
-					<!-- https://mvnrepository.com/artifact/com.github.redfish4ktc.soapui/maven-soapui-extension-plugin -->
-					<dependency>
-					    <groupId>com.github.redfish4ktc.soapui</groupId>
-					    <artifactId>maven-soapui-extension-plugin</artifactId>
-					    <version>4.6.4.1</version>
-					</dependency>
-					<!-- 										
 					<dependency>
 						<groupId>com.smartbear.soapui</groupId>
 						<artifactId>soapui</artifactId>
@@ -110,7 +112,7 @@
 							</exclusion>
 						</exclusions>
 					</dependency>
-					 -->
+
 				</dependencies>
 			</plugin>
 			<plugin>
