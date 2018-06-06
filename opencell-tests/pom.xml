@@ -92,6 +92,13 @@
 						<artifactId>forms</artifactId>
 						<version>1.0.7</version>
 					</dependency>
+					<!-- https://mvnrepository.com/artifact/com.github.redfish4ktc.soapui/maven-soapui-extension-plugin -->
+					<dependency>
+					    <groupId>com.github.redfish4ktc.soapui</groupId>
+					    <artifactId>maven-soapui-extension-plugin</artifactId>
+					    <version>4.6.4.1</version>
+					</dependency>
+					<!-- 										
 					<dependency>
 						<groupId>com.smartbear.soapui</groupId>
 						<artifactId>soapui</artifactId>
@@ -103,7 +110,7 @@
 							</exclusion>
 						</exclusions>
 					</dependency>
-
+					 -->
 				</dependencies>
 			</plugin>
 			<plugin>
