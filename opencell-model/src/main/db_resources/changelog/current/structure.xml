@@ -960,5 +960,45 @@
 		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_provider_contact" />
 		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_provider_contact" />
 	</changeSet>
+	
+	<changeSet id="#3232_20180529" author="EdwardLegaspi">
+    	<createTable tableName="meveo_script_instance_cat">
+    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_script_instance_cat_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+    	</createTable>
+    	
+    	<createSequence sequenceName="meveo_script_instance_cat_seq" />
+    	
+    	<addColumn tableName="meveo_script_instance">
+    		<column name="script_instance_cat_id" type="bigint"></column>
+    	</addColumn>
+    	
+    	<addForeignKeyConstraint baseColumnNames="script_instance_cat_id" baseTableName="meveo_script_instance" constraintName="fk_meveo_script_instance-category" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance_cat" />
+    </changeSet>
+    
+    <changeSet id="#3232_20180529 Mysql" author="EdwardPLegaspi" dbms="mysql">
+        <createTable tableName="meveo_script_instance_cat_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_script_instance_cat_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}meveo_script_instance_cat_seq values(1)</sql>
+    </changeSet>
     
 </databaseChangeLog> 

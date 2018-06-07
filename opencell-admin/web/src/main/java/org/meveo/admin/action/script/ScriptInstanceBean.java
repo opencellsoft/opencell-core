@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.catalog;
+package org.meveo.admin.action.script;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,18 +34,23 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstanceCategory;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.CustomScriptService;
-import org.meveo.service.script.GenericScriptService;
+import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link ScriptInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
  */
 @Named
 @ViewScoped
@@ -60,6 +65,9 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
 
     @Inject
     private RoleService roleService;
+    
+    @Inject
+    private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
@@ -232,5 +240,17 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
             messages.info(new BundleKey("messages", "scriptInstance.compilationSuccessfull"));
         }
     }
+    
+
+    
+	public LazyDataModel<ScriptInstance> getScriptInstanceByCategory(String catCode) {
+		ScriptInstanceCategory category = scriptInstanceCategoryService.findByCode(catCode);
+		if (category != null) {
+			filters.put("scriptInstanceCategory", category);
+			return getLazyDataModel();
+		}
+		
+		return null;
+	}
 
 }
