@@ -35,15 +35,15 @@ public class ContactInformation implements Serializable, Cloneable {
 	protected String email;
 
 	@Column(name = "phone", length = 50)
-	@Size(max = 15)
+	@Size(max = 50)
 	protected String phone;
 
 	@Column(name = "mobile", length = 50)
-	@Size(max = 15)
+	@Size(max = 50)
 	protected String mobile;
 
 	@Column(name = "fax", length = 50)
-	@Size(max = 15)
+	@Size(max = 50)
 	protected String fax;
 
 	public ContactInformation() {
