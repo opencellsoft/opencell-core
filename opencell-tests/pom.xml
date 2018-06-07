@@ -11,6 +11,10 @@
 			<id>eviwarePluginRepository</id>
 			<url>http://www.soapui.org/repository/maven2/</url>
 		</pluginRepository>
+		<pluginRepository>
+			<id>jacocoPluginRepository</id>
+			<url>https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin</url>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<properties>
@@ -181,7 +185,6 @@
                 <version>0.7.9</version>
                 <executions>
                     <execution>
-                        <phase>test</phase>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
