@@ -28,7 +28,7 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	
 	public void importContacts() {
 		log.debug("Importing Contacts");
-		contactService.parseFile();
+		contactService.parseLinkedInFile(null);
 		//contactService.saveContact("Arnaud,UHLRICH,,arnaud.uhlrich@free.Fr,Magellan Partners - ASAPpro,Senior Manager - Director,\"10/20/13 9:34AM\",,SKYPE:uhlricha");
 	}
 	

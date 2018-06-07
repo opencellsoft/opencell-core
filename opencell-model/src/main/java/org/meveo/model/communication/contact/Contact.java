@@ -72,6 +72,10 @@ public class Contact extends AccountEntity {
 	@Column(name = "position", length = 50)
 	@Size(max = 50)
 	private String position;
+	
+	@Column(name = "website_url", length = 255)
+	@Size(max = 255)
+	private String websiteUrl;
 
 	@Column(name = "imported_from", length = 50)
 	@Size(max = 50)
@@ -145,6 +149,15 @@ public class Contact extends AccountEntity {
 
 	public void setPosition(String position) {
 		this.position = position;
+	}
+
+
+	public String getWebsiteUrl() {
+		return websiteUrl;
+	}
+
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
 	}
 
 	public String getImportedFrom() {

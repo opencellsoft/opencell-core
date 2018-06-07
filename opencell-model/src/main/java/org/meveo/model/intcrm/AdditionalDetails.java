@@ -23,11 +23,7 @@ public class AdditionalDetails extends BaseEntity{
 	@Column(name = "position", length = 50)
 	@Size(max = 50)
 	private String position;
-	
-	@Column(name = "website_url", length = 255)
-	@Size(max = 255)
-	private String websiteUrl;
-	
+		
 	@Column(name = "instant_messengers", length = 2000)
 	@Size(max = 500)
 	private String instantMessengers;
@@ -46,14 +42,6 @@ public class AdditionalDetails extends BaseEntity{
 
 	public void setPosition(String position) {
 		this.position = position;
-	}
-
-	public String getWebsiteUrl() {
-		return websiteUrl;
-	}
-
-	public void setWebsiteUrl(String websiteUrl) {
-		this.websiteUrl = websiteUrl;
 	}
 
 	public String getInstantMessengers() {
