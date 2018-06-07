@@ -96,19 +96,33 @@ public class ReportExtractRsImpl extends BaseRs implements ReportExtractRs {
 
         return result;
     }
-
+    
     @Override
-    public ReportExtractsResponseDto list() {
+	public ReportExtractsResponseDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy,
+			SortOrder sortOrder) {
         ReportExtractsResponseDto result = new ReportExtractsResponseDto();
 
         try {
-            result.setReportExtracts(reportExtractApi.list());
+            result = reportExtractApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 
         return result;
     }
+    
+	@Override
+	public ReportExtractsResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
+		ReportExtractsResponseDto result = new ReportExtractsResponseDto();
+
+        try {
+            result = reportExtractApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
 
     @Override
     public ActionStatus runReport(RunReportExtractDto postData) {

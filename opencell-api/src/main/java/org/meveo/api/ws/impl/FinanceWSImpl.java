@@ -167,11 +167,11 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
     }
 
     @Override
-    public ReportExtractsResponseDto listReportExtract() {
+    public ReportExtractsResponseDto listReportExtract(PagingAndFiltering pagingAndFiltering) {
         ReportExtractsResponseDto result = new ReportExtractsResponseDto();
 
         try {
-            result.setReportExtracts(reportExtractApi.list());
+            result = reportExtractApi.list(pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
