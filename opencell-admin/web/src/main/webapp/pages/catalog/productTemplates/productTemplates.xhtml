@@ -1,67 +1,66 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
-	
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{productTemplateListBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{productTemplateListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem outcome="productTemplates"
-					value="#{messages['menu.productTemplates']}" />
-			</p:breadCrumb>
-		</h:form>
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="productTemplates"
+                    value="#{messages['menu.productTemplates']}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:searchPanel label="#{messages['productTemplate.search']}"
-			backingBean="#{productTemplateListBean}">
-			<hftl:searchField label="#{messages['BusinessEntity.code']}"
-				field="code" />
-			<hftl:searchField label="#{messages['BusinessEntity.description']}"
-				id="description" field="description" />
-			<hftl:searchField label="#{messages['commons.name']}" id="name"
-				field="name" />
+        <hftl:searchPanel label="#{messages['productTemplate.search']}"
+            backingBean="#{productTemplateListBean}">
+            <hftl:searchField label="#{messages['BusinessEntity.code']}"
+                field="code" />
+            <hftl:searchField label="#{messages['BusinessEntity.description']}"
+                id="description" field="description" />
+            <hftl:searchField label="#{messages['commons.name']}" id="name"
+                field="name" />
             <hftl:searchField label="#{messages['commons.validFrom']}"
                 field="validity.from" rangeSearch="true"/>
             <hftl:searchField label="#{messages['commons.validTo']}"
                 field="validity.to" rangeSearch="true"/>    
-			<hftl:searchField label="#{messages['enableEntity.disabled']}"
-				field="disabled" />
-		</hftl:searchPanel>
+            <hftl:searchField label="#{messages['enableEntity.disabled']}"
+                field="disabled" />
+        </hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['productTemplate.title']}"
-			backingBean="#{productTemplateListBean}" sortBy="code">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['BusinessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['commons.validFrom']}" field="validity.from" isDate="true"/>
+        <hftl:dataList label="#{messages['productTemplate.title']}"
+            backingBean="#{productTemplateListBean}" sortBy="code">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.description']}"
+                field="description" />
+            <hftl:column label="#{messages['commons.validFrom']}" field="validity.from" isDate="true"/>
             <hftl:column label="#{messages['commons.validTo']}" field="validity.to" isDate="true"/>
-			<hftl:column label="#{messages['commons.name']}" field="name" />
-			<hftl:column label="#{messages['enableEntity.active']}"
-				field="active" isMessage="true" />
-			<hftl:actionsColumn
-				permission="#{currentUser.hasRole('catalogManagement')}"
-				renderEnableLink="#{productTemplateListBean.canUserUpdateEntity()}" 
-				renderDuplicateLink="true" width="10%">
+            <hftl:column label="#{messages['commons.name']}" field="name" />
+            <hftl:column label="#{messages['enableEntity.active']}"
+                field="active" isMessage="true" />
+            <hftl:actionsColumn
+                permission="#{currentUser.hasRole('catalogManagement')}"
+                renderEnableLink="#{productTemplateListBean.canUserUpdateEntity()}" 
+                renderDuplicateLink="true" width="10%">
 
-				<p:tooltip for="newVersionLink" value="#{messages['commons.newVersion']}" showEffect="slide" hideEffect="slide" />
-				<p:button id="newVersionLink" outcome="#{productTemplateListBean.editViewName}" icon="ui-icon-copy">
-					<f:param name="objectId" value="#{entity.id}" />
-					<f:param name="edit" value="true" />
-					<f:param name="newVersion" value="true" />
-					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-				</p:button>
-			</hftl:actionsColumn>				
-		</hftl:dataList>
-	</ui:define>
+                <p:button id="newVersionLink" outcome="#{productTemplateListBean.editViewName}" icon="ui-icon-copy">
+                    <f:param name="objectId" value="#{entity.id}" />
+                    <f:param name="edit" value="true" />
+                    <f:param name="newVersion" value="true" />
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </p:button>
+            </hftl:actionsColumn>               
+        </hftl:dataList>
+    </ui:define>
 
 </ui:composition>
