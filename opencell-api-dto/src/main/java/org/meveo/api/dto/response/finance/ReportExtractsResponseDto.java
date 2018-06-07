@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response.finance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,7 +10,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.finance.ReportExtractDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
 
 /**
  * The Class ReportExtractsResponseDto.
@@ -21,7 +22,7 @@ import org.meveo.api.dto.response.BaseResponse;
  */
 @XmlRootElement(name = "ReportExtractsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ReportExtractsResponseDto extends BaseResponse {
+public class ReportExtractsResponseDto extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4212820720933880625L;
@@ -29,7 +30,7 @@ public class ReportExtractsResponseDto extends BaseResponse {
     /** The report extracts. */
     @XmlElementWrapper(name = "reportExtracts")
     @XmlElement(name = "reportExtract")
-    private List<ReportExtractDto> reportExtracts;
+    private List<ReportExtractDto> reportExtracts = new ArrayList<>();
 
     /**
      * Gets the report extracts.

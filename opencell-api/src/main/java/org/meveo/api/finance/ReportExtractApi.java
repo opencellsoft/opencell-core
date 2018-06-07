@@ -1,6 +1,5 @@
 package org.meveo.api.finance;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +14,7 @@ import org.meveo.api.dto.finance.ReportExtractDto;
 import org.meveo.api.dto.finance.ReportExtractExecutionResultDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.finance.ReportExtractExecutionResultsResponseDto;
+import org.meveo.api.dto.response.finance.ReportExtractsResponseDto;
 import org.meveo.api.dto.response.finance.RunReportExtractDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -100,10 +100,28 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         return reportExtract;
     }
 
-    public List<ReportExtractDto> list() {
-        List<ReportExtract> reportExtracts = reportExtractService.list();
-        return (reportExtracts == null || reportExtracts.isEmpty()) ? new ArrayList<>() : reportExtracts.stream().map(p -> new ReportExtractDto(p)).collect(Collectors.toList());
-    }
+	public ReportExtractsResponseDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+		if (pagingAndFiltering == null) {
+			pagingAndFiltering = new PagingAndFiltering();
+		}
+
+		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null,
+				pagingAndFiltering, ReportExtractExecutionResult.class);
+		Long totalCount = reportExtractService.count(paginationConfig);
+		ReportExtractsResponseDto result = new ReportExtractsResponseDto();
+
+		result.setPaging(pagingAndFiltering);
+		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		if (totalCount > 0) {
+			List<ReportExtract> reportExtractExecutionResults = reportExtractService.list(paginationConfig);
+			for (ReportExtract e : reportExtractExecutionResults) {
+				result.getReportExtracts().add(new ReportExtractDto(e));
+			}
+		}
+
+		return result;
+	}
 
     @Override
     public ReportExtractDto find(String code) throws EntityDoesNotExistsException {

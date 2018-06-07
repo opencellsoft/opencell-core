@@ -23,6 +23,8 @@ import org.meveo.api.dto.response.finance.RunReportExtractDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
+ * API for managing ReportExtract.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
@@ -33,30 +35,85 @@ import org.meveo.api.rest.IBaseRs;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface ReportExtractRs extends IBaseRs {
 
+	/**
+	 * Creates a report extract with the given data.
+	 * 
+	 * @param postData ReportExtract DTO representation
+	 * @return status of the call
+	 */
     @POST
     @Path("/")
     ActionStatus create(ReportExtractDto postData);
 
+    /**
+     * Updates a report extract with the given data.
+     * @param postData ReportExtract DTO representation
+     * @return status of the call
+     */
     @POST
     @Path("/")
     ActionStatus update(ReportExtractDto postData);
 
+    /**
+     * Create / update a report extract with the given data.
+     * @param postData ReportExtract DTO representation
+     * @return status of the call
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ReportExtractDto postData);
 
+    /**
+     * 
+     * @param reportExtractCode code of the ReportExtract
+     * @return status of the call
+     */
     @DELETE
     @Path("/")
     ActionStatus remove(String reportExtractCode);
 
-    @GET
-    @Path("/list")
-    ReportExtractsResponseDto list();
+    /**
+     * Returns a paginated list of ReportExtract.
+     * 
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return list of ReportExtract
+     */
+	@GET
+	@Path("/list")
+	ReportExtractsResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields,
+			@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
+			@DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
+    /**
+     * Returns a list of filtered and paginated ReportExtract.
+     * 
+     * @param pagingAndFiltering managed filtering and paging
+     * @return list of ReportExtract
+     */
+    @POST
+    @Path("/executionHistory/list")
+    ReportExtractsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Search for a report extract with a given code.
+     * @param reportExtractCode code to search
+     * @return matched report extract
+     */
     @GET
     @Path("/")
     ReportExtractResponseDto find(@QueryParam("reportExtractCode") String reportExtractCode);
 
+    /**
+     * Runs a report extract with the given parameter.
+     * @param postData contains the report extract code and parameters
+     * @return status of the call
+     */
     @POST
     @Path("/run")
     ActionStatus runReport(RunReportExtractDto postData);
@@ -85,7 +142,7 @@ public interface ReportExtractRs extends IBaseRs {
      * Returns a list of filtered and paginated report extract execution history.
      * 
      * @param pagingAndFiltering managed filtering and paging
-     * @return list of ReportExtract
+     * @return list of ReportExtract run history
      */
     @POST
     @Path("/executionHistory/list")
@@ -100,7 +157,7 @@ public interface ReportExtractRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
-     * @return list of ReportExtract
+     * @return list of ReportExtract run history
      */
     @GET
     @Path("/executionHistory/list")

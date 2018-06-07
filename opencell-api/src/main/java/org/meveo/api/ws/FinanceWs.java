@@ -90,7 +90,7 @@ public interface FinanceWs extends IBaseWs {
     ActionStatus removeReportExtract(@WebParam(name = "reportExtractCode") String reportExtractCode);
 
     @WebMethod
-    ReportExtractsResponseDto listReportExtract();
+    ReportExtractsResponseDto listReportExtract(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     @WebMethod
     ReportExtractResponseDto findReportExtract(@WebParam(name = "reportExtractCode") String reportExtractCode);
