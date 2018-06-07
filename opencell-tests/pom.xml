@@ -79,7 +79,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
+                            <projectFile>${basedir}/api/soapui/Full-Ws-CRUD-Test-Entities.xml</projectFile>
                         </configuration>
                     </execution>
                     <execution>
