@@ -4,10 +4,13 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.EJB;
@@ -676,6 +679,13 @@ public class CustomerApi extends AccountEntityApi {
 		}
 	}
 
+	/**
+	 * Exports an account hierarchy given a specific customer selected in the GUI.
+	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
+	 * as a zipped file along with the pdf invoices.
+	 * 
+	 * @throws Exception when zipping fail
+	 */
 	public void exportCustomerHierarchy(String customerCode, HttpServletResponse response) throws Exception {
 		CustomerDto result;
 
@@ -703,30 +713,35 @@ public class CustomerApi extends AccountEntityApi {
 		File accountHierarchyFile = File.createTempFile(customerCode, ".json");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(accountHierarchyFile))) {
 			writer.write(accountHierarchy);
-			writer.flush();
 		}
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(bos);
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+			try (ZipOutputStream zipOut = new ZipOutputStream(bos)) {
 
-		FileUtils.addFileToZip(accountHierarchyFile, zos, null);
+				try (FileInputStream fis = new FileInputStream(accountHierarchyFile)) {
+					ZipEntry zipEntry = new ZipEntry(customerCode + File.separator + accountHierarchyFile.getName());
+					FileUtils.addZipEntry(zipOut, fis, zipEntry);
+				}
 
-		for (String pdfFile : invoicePdfs) {
-			FileUtils.addFileToZip(new File(pdfFile), zos, null);
-		}
+				for (String pdfFile : invoicePdfs) {
+					try (FileInputStream fis = new FileInputStream(pdfFile)) {
+						ZipEntry zipEntry = new ZipEntry(
+								customerCode + File.separator + Paths.get(pdfFile).getFileName().toString());
+						FileUtils.addZipEntry(zipOut, fis, zipEntry);
+					}
+				}
+			}
 
-		zos.flush();
-		bos.flush();
-		bos.close();
-		
-		try (InputStream is = new ByteArrayInputStream(bos.toByteArray())) {
-			response.setContentType("application/octet-stream");
-			response.setContentLength((int) bos.size());
-			response.addHeader("Content-disposition", "attachment;filename=\"" + customerCode + ".zip\"");
-			IOUtils.copy(is, response.getOutputStream());
-			response.flushBuffer();
-		} catch (IOException e) {
-			throw new BusinessApiException("Error zipping customer data.");
+			try (InputStream is = new ByteArrayInputStream(bos.toByteArray())) {
+				response.setContentType("application/octet-stream");
+				response.setContentLength((int) bos.size());
+				response.addHeader("Content-disposition", "attachment;filename=\"" + customerCode + ".zip\"");
+				IOUtils.copy(is, response.getOutputStream());
+				response.flushBuffer();
+				
+			} catch (IOException e) {
+				throw new BusinessApiException("Error zipping customer data.");
+			}
 		}
 	}
 }

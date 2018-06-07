@@ -436,6 +436,12 @@ public class UserAccountApi extends AccountEntityApi {
         return result;
     }
 
+    /**
+     * Exports a json representation of the UserAcount hierarchy. It include subscription, accountOperations and invoices.
+     * 
+     * @param ua the selected UserAccount
+     * @return DTO representation of the UserAccount
+     */
 	public UserAccountDto exportUserAccountHierarchy(UserAccount ua) {
 		UserAccountDto result = new UserAccountDto(ua);
 		

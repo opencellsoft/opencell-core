@@ -654,12 +654,18 @@ public class BillingAccountApi extends AccountEntityApi {
         }
     }
 
+    /**
+     * Exports a json representation of the BillingAcount hierarchy. It include subscription, accountOperations and invoices.
+     * 
+     * @param ba the selected BillingAccount
+     * @return DTO representation of BillingAccount
+     */
 	public BillingAccountDto exportBillingAccountHierarchy(BillingAccount ba) {
 		BillingAccountDto result = new BillingAccountDto(ba);
 
 		if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
 			for (Invoice invoice : ba.getInvoices()) {
-				result.getInvoices().add(invoiceApi.invoiceToDto(invoice, true, true));
+				result.getInvoices().add(invoiceApi.invoiceToDto(invoice, true, false));
 			}
 		}
 

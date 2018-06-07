@@ -639,6 +639,12 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
     }
 
+    /**
+     * Exports a json representation of the CustomerAcount hierarchy. It include subscription, accountOperations and invoices.
+     * 
+     * @param ca the selected CustomerAccount
+     * @return DTO representation of a CustomerAccount
+     */
 	public CustomerAccountDto exportCustomerAccountHierarchy(CustomerAccount ca) {
 		CustomerAccountDto result = new CustomerAccountDto(ca);
 		
