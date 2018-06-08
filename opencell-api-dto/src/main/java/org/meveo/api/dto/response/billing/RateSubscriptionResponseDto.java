@@ -6,7 +6,7 @@ import java.util.Map;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * The Class RateSubscriptionResponseDto.
+ * A Dto class holding the request criterion for the Rate Subscription.
  */
 public class RateSubscriptionResponseDto extends BaseResponse {
 

@@ -26,7 +26,8 @@ import org.meveo.api.rest.impl.BaseRs;
  * Wallet operation and balance related REST API
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -180,11 +181,12 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
     }
 
     @Override
-    public FindWalletOperationsResponseDto listOperationsGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public FindWalletOperationsResponseDto listOperationsGet(String query, 
+            String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, Boolean withRTs) {
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
         try {
-            result = walletApi.findOperations(null, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+            result = walletApi.findOperations(null, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder), withRTs);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -193,11 +195,11 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
     }
 
     @Override
-    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering) {
+    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering, Boolean withRTs) {
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
         try {
-            result = walletApi.findOperations(null, pagingAndFiltering);
+            result = walletApi.findOperations(null, pagingAndFiltering, withRTs);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
