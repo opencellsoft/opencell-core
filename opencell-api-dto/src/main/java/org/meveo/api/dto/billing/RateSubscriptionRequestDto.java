@@ -5,7 +5,7 @@ import java.util.Date;
 import org.meveo.api.dto.BaseEntityDto;
 
 /**
- * The Class RateSubscriptionRequestDto.
+ * A Dto class holding the Rate subscription response.
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
