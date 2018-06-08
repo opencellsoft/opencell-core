@@ -649,12 +649,12 @@
         <createSequence sequenceName="crm_additional_details_seq" />
         
         <addColumn tableName="com_contact">
-        	<column name="code" type="varchar(255)))">
+            <column name="email" type="varchar(255)">
+        		<constraints nullable="false" />
         	</column>
-            <column name="email" type="varchar(255)"/>
             <column name="assistant_name" type="varchar(50)"/>
             <column name="assistant_phone" type="varchar(15)"/>
-            <column name="position" type="varchar(50)"/>
+            <column name="position" type="varchar(100)"/>
             <column name="imported_from" type="varchar(50)"/>
             <column name="imported_by" type="varchar(50)"/>
             <column name="social_identifier" type="varchar(2000)"/>
@@ -665,7 +665,6 @@
             <column name="address_book_id" type="bigint"/>
         </addColumn>
 		
-		<addUniqueConstraint columnNames="code" constraintName="com_contact_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact" />
 		<addUniqueConstraint columnNames="email" constraintName="com_contact_email" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact" />
 		
 		

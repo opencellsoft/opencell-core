@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -17,22 +18,24 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CSVUtils;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.Country;
+import org.meveo.model.admin.User;
+import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.slf4j.Logger;
 
 @Stateless
-public class ContactService extends PersistenceService<Contact> {
+public class ContactService extends BusinessService<Contact> {
 
 	@Inject
 	private TitleService titleService;
@@ -44,16 +47,16 @@ public class ContactService extends PersistenceService<Contact> {
 		super.create(contact);
 	}
 	
-	public Set<Contact> parseLinkedInFromText(String context) {
+	public Set<Contact> parseLinkedInFromText(String context) throws IOException, BusinessException {
 		log.debug(context);
 		Set<Contact> contacts = new HashSet<Contact>();
-		BufferedReader br = null;
+		Set<Contact> failedToPersistContacts = new HashSet<Contact>();
 		
-		br = new BufferedReader(new StringReader(context));
+		try (BufferedReader br = new BufferedReader(new StringReader(context))) {
 		
-		String available;
-        try {
+			String available;
         	boolean headerLine = true;
+        	Title title = titleService.findByCode("MR");
 			while((available = br.readLine()) != null) {
 				if(headerLine)headerLine = false;
 				else {
@@ -64,15 +67,16 @@ public class ContactService extends PersistenceService<Contact> {
 					String lastName = line.get(1);
 					String strAddress = line.get(2);
 					String email = line.get(3);
-					String code = email;
+					String code = line.get(3);
 					String company = line.get(4);
 					String position = line.get(5);
 					//Date connectedOn = new Date(line.get(6));
 					String websiteUrl = line.get(7);
 					String instantMessengers = line.get(8);
 					String importedBy = this.currentUser.getFullName();
+					List<Message> messages= new ArrayList<>();
+					Message message = new Message();
 					
-					Title title = titleService.findByCode("Mr.");
 					c.setName(new Name(title, firstName, lastName));
 					c.setEmail(email);
 					c.setCode(code);
@@ -83,18 +87,20 @@ public class ContactService extends PersistenceService<Contact> {
 					Address address = new Address(strAddress,"","","", "", null , "");
 					c.setAddress(address);
 					c.setAgreedToUA(false);
-					c.setMessages(null);
+					c.setMessages(messages);
 					
 					contacts.add(c);
-				    System.out.println(line.get(0) + " " + line.get(1) + " " + line.get(2));
-				}
-				for(Contact c: contacts) {
-					this.create(c);
+					//why not create here?
 				}
 			}
-		} catch (IOException | BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			for(Contact c: contacts) {
+				try{
+					this.create(c);
+				}
+				catch(BusinessException e) {
+					failedToPersistContacts.add(c);
+				}
+			}
 		}
         
 		return contacts;
@@ -113,60 +119,21 @@ public class ContactService extends PersistenceService<Contact> {
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
 			contacts = parseLinkedInFromText(new String(encoded,  Charset.defaultCharset()));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException | BusinessException e) {
+			log.error("Failed parsing file={}", e.getMessage());
 		}
 		
 		return contacts;
 	}
 	
-	public Contact parse(String line) {
-		log.debug("Parsing Contact Line : " + line);
-		Contact c = new Contact();
-
-		String[] split = line.split(",");
-
-		String firstName = split[0];
-		String lastName = split[1];
-		String strAddress = split[2];
-		String email = split[3];
-		String company = split[4];
-		String connectedOn = split[5];
-		String website = split[6];
-		String instantMessengers = split[7];
-
-		Title title = titleService.findByCode("Mr.");
-		c.setName(new Name(title, firstName, lastName));
-		c.setEmail(email);
-		Address address = new Address(strAddress,"","","", "", null , "");
-		c.setAddress(address);
-		c.setAgreedToUA(false);
-
-		c.setCode(split[0] + split[1]);
-
-		return c;
-	}
-
-	public void saveContact(String line) {
-		log.debug("Saving Contact Service");
-		Contact c = parse(line);
-		try {
-			this.create(c);
-		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			log.error("Save Contact Failed : " + e.toString());
-		}
-	}
 	
-	public void findContactByCode(Long id) {
+	public Contact findContactById(Long id) {
 		Contact contact = this.findById(id);
 		log.debug("Long id = " + id);
 		log.debug(contact.toString());
+		return contact;
 	}
+	
 	
 	@SuppressWarnings("unchecked")
     public List<Contact> getAllContacts() {
@@ -177,9 +144,9 @@ public class ContactService extends PersistenceService<Contact> {
 	
 	public void removeAllContacts() throws BusinessException {
 		List<Contact> contacts = getAllContacts();
-		for(Contact e : contacts) {
-			log.debug("Removing : " + e.getName().toString());
-			super.remove(e);
+		for(Contact c : contacts) {
+			log.debug("Removing : " + c.getName().toString());
+			super.remove(c);
 			
 		}
 	}

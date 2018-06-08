@@ -19,6 +19,8 @@ public class ContactDto extends AccountDto {
 
 	private String position;
 
+	private String websiteUrl;
+	
 	private String importedFrom;
 
 	private String importedBy;
@@ -69,6 +71,15 @@ public class ContactDto extends AccountDto {
 
 	public void setPosition(String position) {
 		this.position = position;
+	}
+
+	
+	public String getWebsiteUrl() {
+		return websiteUrl;
+	}
+
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
 	}
 
 	public String getImportedFrom() {

@@ -34,8 +34,18 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	
 	public void findContactByCode() {
 		log.debug("Finding Contact");
-		contactService.findContactByCode((long) 3);
-		log.debug("Contact Found");
+		Contact contact = contactService.findByCode("uhlrich@free.Fr");
+		if(contact == null) log.debug("Contact not found");
+	}
+	
+	public void findContactById() {
+		log.debug("Finding Contact");
+		Contact contact = contactService.findById((long) 3);
+		if(contact == null)
+			log.debug("Contact not found");
+		else {
+			log.debug(contact.toString());
+		}
 	}
 	
 	public void removeAllContacts() throws BusinessException {

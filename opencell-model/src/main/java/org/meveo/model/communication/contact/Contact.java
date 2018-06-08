@@ -48,7 +48,7 @@ import org.meveo.model.intcrm.ContactGroup;
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "com_contact")
-@DiscriminatorValue(value = "ACCT_CONTACT")
+@DiscriminatorValue(value = "ACCT_CTACT")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "com_contact_seq"), })
 public class Contact extends AccountEntity {
@@ -69,8 +69,8 @@ public class Contact extends AccountEntity {
 	@Size(max = 15)
 	private String assistantPhone;
 
-	@Column(name = "position", length = 50)
-	@Size(max = 50)
+	@Column(name = "position", length = 100)
+	@Size(max = 100)
 	private String position;
 	
 	@Column(name = "website_url", length = 255)
