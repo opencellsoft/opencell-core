@@ -6,6 +6,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.handler.MessageContext;
 
 import org.meveo.api.account.AccessApi;
 import org.meveo.api.account.AccountHierarchyApi;
@@ -1172,6 +1174,21 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
         return result;
     }
+
+	@Override
+	public ActionStatus exportCustomerHierarchy(String customerCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		 MessageContext mc = webServiceContext.getMessageContext();
+         HttpServletResponse response = (HttpServletResponse) mc.get(MessageContext.SERVLET_RESPONSE);
+         
+        try {
+            customerApi.exportCustomerHierarchy(customerCode, response);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
 
 
     @Override

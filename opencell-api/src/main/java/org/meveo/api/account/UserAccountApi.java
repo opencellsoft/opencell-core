@@ -16,6 +16,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
@@ -32,6 +33,7 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
@@ -52,7 +54,7 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
  * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  *
  */
 @Stateless
@@ -506,4 +508,22 @@ public class UserAccountApi extends AccountEntityApi {
         return result;
     }
 
+
+    /**
+     * Exports a json representation of the UserAcount hierarchy. It include subscription, accountOperations and invoices.
+     * 
+     * @param ua the selected UserAccount
+     * @return DTO representation of the UserAccount
+     */
+	public UserAccountDto exportUserAccountHierarchy(UserAccount ua) {
+		UserAccountDto result = new UserAccountDto(ua);
+		
+		if (ua.getSubscriptions() != null && !ua.getSubscriptions().isEmpty()) {
+			for (Subscription sub : ua.getSubscriptions()) {
+				result.getSubscriptions().getSubscription().add(new SubscriptionDto(sub));
+			}
+		}
+
+		return result;
+	}
 }

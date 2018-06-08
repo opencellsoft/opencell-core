@@ -1005,61 +1005,35 @@ public class SubscriptionApi extends BaseApi {
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
         SubscriptionDto dto = new SubscriptionDto(subscription);
-        dto.setStatus(subscription.getStatus());
-        dto.setStatusDate(subscription.getStatusDate());
-        dto.setOrderNumber(subscription.getOrderNumber());
-
-        if (subscription.getUserAccount() != null) {
-            dto.setUserAccount(subscription.getUserAccount().getCode());
-        }
-
-        if (subscription.getOffer() != null) {
-            dto.setOfferTemplate(subscription.getOffer().getCode());
-        }
-
-        dto.setSubscriptionDate(subscription.getSubscriptionDate());
-        dto.setTerminationDate(subscription.getTerminationDate());
-        if (subscription.getSubscriptionTerminationReason() != null) {
-            dto.setTerminationReason(subscription.getSubscriptionTerminationReason().getCode());
-        }
-        dto.setEndAgreementDate(subscription.getEndAgreementDate());
-
         if (subscription.getAccessPoints() != null) {
-            for (Access ac : subscription.getAccessPoints()) {
-                CustomFieldsDto customFieldsDTO = null;
-                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, inheritCF);
+        	for (Access ac : subscription.getAccessPoints()) {
+        		CustomFieldsDto customFieldsDTO = null;
+        		customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, inheritCF);
 
-                AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
-                dto.getAccesses().getAccess().add(accessDto);
-            }
+        		AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
+        		dto.getAccesses().getAccess().add(accessDto);
+        	}
         }
 
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription, inheritCF));
-        dto.setSubscribedTillDate(subscription.getSubscribedTillDate());
-        dto.setRenewed(subscription.isRenewed());
-        dto.setRenewalNotifiedDate(subscription.getRenewalNotifiedDate());
-
-        dto.setRenewalRule(new SubscriptionRenewalDto(subscription.getSubscriptionRenewal()));
-
         if (subscription.getServiceInstances() != null) {
-            for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                ServiceInstanceDto serviceInstanceDto = null;
-                CustomFieldsDto customFieldsDTO = null;
-                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, inheritCF);
+        	for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+        		ServiceInstanceDto serviceInstanceDto = null;
+        		CustomFieldsDto customFieldsDTO = null;
+        		customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, inheritCF);
 
-                serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
-                dto.getServices().addServiceInstance(serviceInstanceDto);
-            }
+        		serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
+        		dto.getServices().addServiceInstance(serviceInstanceDto);
+        	}
         }
 
         if (subscription.getProductInstances() != null) {
-            for (ProductInstance productInstance : subscription.getProductInstances()) {
-                CustomFieldsDto customFieldsDTO = null;
-                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
+        	for (ProductInstance productInstance : subscription.getProductInstances()) {
+        		CustomFieldsDto customFieldsDTO = null;
+        		customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
 
-                dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
-
-            }
+        		dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
+        	}
         }
 
         return dto;

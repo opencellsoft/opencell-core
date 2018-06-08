@@ -16,6 +16,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
+import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -28,11 +29,13 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -76,6 +79,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @EJB
     private AccountHierarchyApi accountHierarchyApi;
+    
+    @Inject
+    private BillingAccountApi billingAccountApi;
 
     public void create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -647,5 +653,29 @@ public class CustomerAccountApi extends AccountEntityApi {
             update(existedCustomerAccountDto);
         }
     }
+
+    /**
+     * Exports a json representation of the CustomerAcount hierarchy. It include subscription, accountOperations and invoices.
+     * 
+     * @param ca the selected CustomerAccount
+     * @return DTO representation of a CustomerAccount
+     */
+	public CustomerAccountDto exportCustomerAccountHierarchy(CustomerAccount ca) {
+		CustomerAccountDto result = new CustomerAccountDto(ca);
+		
+		if(ca.getAccountOperations() != null && !ca.getAccountOperations().isEmpty()) {
+			for(AccountOperation ao : ca.getAccountOperations()) {
+				result.getAccountOperations().add(new AccountOperationDto(ao));
+			}
+		}
+		
+		if(ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
+			for(BillingAccount ba : ca.getBillingAccounts()) {
+				result.getBillingAccounts().getBillingAccount().add(billingAccountApi.exportBillingAccountHierarchy(ba));
+			}
+		}
+		
+		return result;
+	}
 
 }

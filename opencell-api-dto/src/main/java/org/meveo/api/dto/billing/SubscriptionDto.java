@@ -119,6 +119,29 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public SubscriptionDto(Subscription e) {
         super(e);
+        
+        setStatus(e.getStatus());
+        setStatusDate(e.getStatusDate());
+        setOrderNumber(e.getOrderNumber());
+
+        if (e.getUserAccount() != null) {
+        	setUserAccount(e.getUserAccount().getCode());
+        }
+
+        if (e.getOffer() != null) {
+        	setOfferTemplate(e.getOffer().getCode());
+        }
+        
+        setSubscriptionDate(e.getSubscriptionDate());
+        setTerminationDate(e.getTerminationDate());
+        if (e.getSubscriptionTerminationReason() != null) {
+        	setTerminationReason(e.getSubscriptionTerminationReason().getCode());
+        }
+        setEndAgreementDate(e.getEndAgreementDate());
+        setSubscribedTillDate(e.getSubscribedTillDate());
+        setRenewed(e.isRenewed());
+        setRenewalNotifiedDate(e.getRenewalNotifiedDate());
+        setRenewalRule(new SubscriptionRenewalDto(e.getSubscriptionRenewal()));
     }
 
     /**
