@@ -2,7 +2,7 @@ package org.meveo.api.dto.finance;
 
 import java.util.Date;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.finance.ReportExtractExecutionResult;
 
@@ -12,7 +12,7 @@ import org.meveo.model.finance.ReportExtractExecutionResult;
  * @since 15 May 2018
  * @lastModifiedVersion 5.1
  **/
-public class ReportExtractExecutionResultDto extends BaseDto {
+public class ReportExtractExecutionResultDto extends BaseEntityDto {
 
     private static final long serialVersionUID = -7664046664640373627L;
     
