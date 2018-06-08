@@ -68,7 +68,7 @@
 		            	<hftl:formField listenerUpdate="style" label="#{messages['reportExtract.resultType']}" field="reportExtractResultType" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}" required="true" />
 		            </p:outputPanel>
 		            <p:outputPanel id="style">
-		            	<hftl:formField textArea="true" label="#{messages['reportExtract.style']}" field="style" rendered="#{reportExtractBean.entity.reportExtractResultType eq ReportExtractResultTypeEnum.HTML}" />
+		            	<hftl:formField textArea="true" label="#{messages['reportExtract.style']}" field="style" rendered="#{reportExtractBean.entity.reportExtractResultType eq ReportExtractResultTypeEnum.HTML}" rows="10" maxlength="2000" />
 		            </p:outputPanel>
 		            <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
 	            </p:panel>
