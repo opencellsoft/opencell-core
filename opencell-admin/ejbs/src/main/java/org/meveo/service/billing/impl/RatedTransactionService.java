@@ -1255,7 +1255,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Find the rated transaction by wallet operation id.
      *
-     * @param id the id
+     * @param walletOperationId the wallet operation id
+     * @return the rated transaction
      */
     public RatedTransaction findByWalletOperationId(Long walletOperationId) {
         try {
