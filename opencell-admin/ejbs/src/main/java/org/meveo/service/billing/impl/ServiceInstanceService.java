@@ -421,8 +421,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             
             walletOperationService.initializeAndApplyFirstRecuringCharge(recurringChargeInstance);
 
+            RecurringChargeInstance activeRecurringChargeInstance = recurringChargeInstanceService.retrieveIfNotManaged(recurringChargeInstance);
             Long chargeInstanceId = recurringChargeInstance.getId();
-            RecurringChargeInstance activeRecurringChargeInstance = recurringChargeInstanceService.findById(chargeInstanceId);
             if (walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
                 log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
                 int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId,
