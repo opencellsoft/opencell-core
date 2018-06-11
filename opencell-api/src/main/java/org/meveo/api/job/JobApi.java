@@ -63,7 +63,7 @@ public class JobApi extends BaseApi {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
         // #3063 Ability to pass parameters when running job instance                                                                                  
-        this.setRunTimeJobValues(jobExecution, jobInstance);
+        this.setJobRunTimeJobValues(jobExecution, jobInstance);
 
         if (jobExecution.isForceExecution()) {
             jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
@@ -82,17 +82,17 @@ public class JobApi extends BaseApi {
      * @param jobInstance the job instance
      * @throws MeveoApiException 
      */
-    private void setRunTimeJobValues(JobInstanceInfoDto jobExecution, JobInstance jobInstance) throws MeveoApiException {
+    private void setJobRunTimeJobValues(JobInstanceInfoDto jobExecution, JobInstance jobInstance) throws MeveoApiException {
         
-        Map<String , Object> runTimeValues = new HashMap<>();
+        Map<String , Object> jobRunTimeValues = new HashMap<>();
         
         final String  runOnNodes = jobExecution.getRunOnNodes();
         if (isNotEmpty(runOnNodes)) {
-            runTimeValues.put("runOnNodes", runOnNodes);
+            jobRunTimeValues.put("runOnNodes", runOnNodes);
         }
         final String parameters = jobExecution.getParameters();
         if (isNotEmpty(parameters)) {
-            runTimeValues.put("parameters", parameters);
+            jobRunTimeValues.put("parameters", parameters);
         }
         
         CustomFieldsDto customFieldsDto = jobExecution.getCustomFields();
@@ -101,10 +101,10 @@ public class JobApi extends BaseApi {
             this.validateAndConvertCustomFields(cfDtos, jobInstance);
             
             for (CustomFieldDto cfDto : cfDtos) {
-                runTimeValues.put(cfDto.getCode(), cfDto.getValueConverted());
+                jobRunTimeValues.put(cfDto.getCode(), cfDto.getValueConverted());
             }
         }
-        jobInstance.setRunTimeValues(runTimeValues);
+        jobInstance.setRunTimeValues(jobRunTimeValues);
     }
 
     /**

@@ -39,7 +39,7 @@ import org.slf4j.Logger;
  *
  */
 @Stateless
-public class FilteringJobBean {
+public class FilteringJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
@@ -49,9 +49,6 @@ public class FilteringJobBean {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private FiltringJobAsync filtringJobAsync;
@@ -76,8 +73,8 @@ public class FilteringJobBean {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
@@ -86,9 +83,9 @@ public class FilteringJobBean {
                 waitingMillis = new Long(0);
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
-            String filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_filter")).getCode();
-            String scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_script")).getCode();
-            String recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_recordVariableName");
+            String filterCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_filter")).getCode();
+            String scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_script")).getCode();
+            String recordVariableName = (String) this.getParamOrCFValue(jobInstance, "FilteringJob_recordVariableName");
 
             try {
                 scriptInterface = scriptInstanceService.getScriptInstance(scriptCode);
@@ -98,7 +95,7 @@ public class FilteringJobBean {
                 return;
             }
 
-            context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FilteringJob_variables");
+            context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_variables");
             if (context == null) {
                 context = new HashMap<String, Object>();
             }

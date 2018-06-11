@@ -16,7 +16,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
 
 /**
  * Handles subscription renewal or termination once subscription expires, fire handles renewal notice events

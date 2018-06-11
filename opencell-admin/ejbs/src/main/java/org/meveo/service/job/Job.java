@@ -229,6 +229,20 @@ public abstract class Job {
 
         return null;
     }
+    
+    /**
+     * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
+     *
+     * @param key the key
+     * @return the runtime value
+     */
+    protected Object getParamOrCFValue(JobInstance jobInstance, String cfCode) {
+        Object value = jobInstance.getParamValue(cfCode);
+        if (value == null) {
+            return customFieldInstanceService.getCFValue(jobInstance, cfCode);
+        }
+        return value;
+    }
 
     /*
      * those methods will be used later for asynchronous jobs
