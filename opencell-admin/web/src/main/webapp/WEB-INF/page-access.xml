@@ -59,6 +59,10 @@
 		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
 	</page>
 	
+	<page view-id=".+\/tradingCountries\/tradingCountry.*">
+		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
+	</page>
+	
 	<page view-id=".+\/admin\/sellers\/.*">
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
