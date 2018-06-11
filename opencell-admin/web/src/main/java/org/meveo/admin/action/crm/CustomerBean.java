@@ -118,6 +118,7 @@ public class CustomerBean extends AccountBean<Customer> {
 	 * 
 	 * @throws Exception when zipping fail
 	 */
+    @ActionMethod
 	public void exportCustomerHierarchy() throws Exception {
 		javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
