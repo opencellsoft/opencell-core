@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 
 /**
  * Defines how CF value changes should be propagated downwards in case of custom field value inheritance
@@ -97,8 +98,11 @@ public class CfValueAccumulatorRule implements Serializable {
                     accumulateFrom.put(entityClazz, new ArrayList<>());
                 }
 
-                String path = CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) == null ? null
-                        : (CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) + (accumulationPath != null ? "." + accumulationPath : ""));
+                // For provider path will be always null
+                String path = null;
+                if (!Provider.class.equals(lastEntityClassWithCft) && CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) != null) {
+                    path = CfValueAccumulator.treeAcumulateFrom.get(entityClazz).get(previousClazzInHierarchy) + (accumulationPath != null ? "." + accumulationPath : "");
+                }
                 accumulateFrom.get(entityClazz).add(new CfValueAccumulatorPath(lastEntityClassWithCft, path));
             }
             lastEntityClassWithCft = entityClazz;

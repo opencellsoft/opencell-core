@@ -247,8 +247,8 @@ public interface ICustomFieldEntity {
     public default CustomFieldValues getCfAccumulatedValuesNullSafe() {
         CustomFieldValues cfValues = getCfAccumulatedValues();
         if (cfValues == null) {
-            setCfValues(new CustomFieldValues());
-            return getCfValues();
+            setCfAccumulatedValues(new CustomFieldValues());
+            return getCfAccumulatedValues();
         }
         return cfValues;
     }

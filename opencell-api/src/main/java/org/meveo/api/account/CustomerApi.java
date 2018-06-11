@@ -171,9 +171,6 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
         }
-        if (StringUtils.isBlank(postData.getSeller())) {
-            missingParameters.add("seller");
-        }
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }

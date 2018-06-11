@@ -460,20 +460,26 @@ public class CustomFieldValues implements Serializable {
             valuesByCode = new HashMap<>();
         }
 
-        // Mark dirty fields - value change
-        dirtyCfValues.add(cfCode);
-
         List<CustomFieldValue> cfValues = valuesByCode.get(cfCode);
-        if (cfValues == null || cfValues.isEmpty() || cfValues.size() > 0) {
+        if (cfValues == null || cfValues.isEmpty() || cfValues.size() > 1) {
             valuesByCode.put(cfCode, new ArrayList<>());
             CustomFieldValue cfValue = new CustomFieldValue(value);
             valuesByCode.get(cfCode).add(cfValue);
+
+            // Mark dirty fields - value change
+            dirtyCfValues.add(cfCode);
 
             // Mark dirty fields - new period
             dirtyCfPeriods.add(cfCode);
 
         } else {
-            cfValues.get(0).setValue(value);
+
+            Object oldValue = cfValues.get(0).getValue();
+            if ((oldValue != null && !oldValue.equals(value)) || (oldValue == null && value != null)) {
+                // Mark dirty fields - value change
+                dirtyCfValues.add(cfCode);
+                cfValues.get(0).setValue(value);
+            }
         }
     }
 
@@ -497,12 +503,26 @@ public class CustomFieldValues implements Serializable {
         } else if (priority != null && priority.intValue() >= 0) {
             valueByPeriod.setPriority(priority);
         }
-        valueByPeriod.setValue(value);
 
-        dirtyCfValues.add(cfCode);
         if (valueByPeriod.isNewPeriod) {
+
+            valueByPeriod.setValue(value);
+
+            // Mark dirty fields - value change
+            dirtyCfValues.add(cfCode);
+
+            // Mark dirty fields - new period
             dirtyCfPeriods.add(cfCode);
+        } else {
+            Object oldValue = valueByPeriod.getValue();
+            if ((oldValue != null && !oldValue.equals(value)) || (oldValue == null && value != null)) {
+                valueByPeriod.setValue(value);
+                
+                // Mark dirty fields - value change
+                dirtyCfValues.add(cfCode);
+            }
         }
+
     }
 
     private CustomFieldValue getCfValueByPeriod(String cfCode, DatePeriod period, boolean strictMatch, Boolean createIfNotFound) {
@@ -703,14 +723,15 @@ public class CustomFieldValues implements Serializable {
      * Append missing (or missing periods) RAW custom field value entities to existing ones for a given custom field
      * 
      * @param cfCode Custom field code
-     * @param cfValues Custom field value holder with values to append
+     * @param cfValuesToAppend Custom field value holder with values to append
+     * @param source Source/path that value was accumulated from
      * @return True if new values were appended
      */
-    public boolean appendCfValues(String cfCode, CustomFieldValues cfValues) {
-        if (cfValues == null) {
+    public boolean appendCfValues(String cfCode, CustomFieldValues cfValuesToAppend, String source) {
+        if (cfValuesToAppend == null) {
             return false;
         }
-        List<CustomFieldValue> cfValueList = cfValues.getCfValues(cfCode);
+        List<CustomFieldValue> cfValueList = cfValuesToAppend.getCfValues(cfCode);
         if (cfValueList == null || cfValueList.isEmpty()) {
             return false;
         }
@@ -722,6 +743,9 @@ public class CustomFieldValues implements Serializable {
                 if (!valuesByCode.containsKey(cfCode)) {
                     valuesByCode.put(cfCode, new ArrayList<>());
                 }
+                customFieldValueToOverride = customFieldValueToOverride.clone();
+                customFieldValueToOverride.setSource(source);
+
                 valuesByCode.get(cfCode).add(customFieldValueToOverride);// TODO need to increment priority in case of versioned fields
                 hasChanged = true;
 
@@ -751,11 +775,50 @@ public class CustomFieldValues implements Serializable {
         if (cfValueList == null || cfValueList.isEmpty()) {
             removeValue(cfCode);
         } else {
-            valuesByCode.put(cfCode, cfValueList);
+            List<CustomFieldValue> cfValueListCopy = new ArrayList<>(cfValueList);
+
+            valuesByCode.put(cfCode, cfValueListCopy);
 
             // Mark fields dirty - both period and value change
             dirtyCfPeriods.add(cfCode);
             dirtyCfValues.add(cfCode);
         }
+    }
+
+    /**
+     * Clear values with a given path. Applies to accumulated values.
+     * 
+     * @param cfCode Custom field value code
+     * @param source Source/path that value was accumulated from
+     * @return boolean True if values were removed
+     */
+    public boolean clearValues(String cfCode, String source) {
+        if (valuesByCode == null || !valuesByCode.containsKey(cfCode) || source == null) {
+            return false;
+        }
+        boolean wasRemoved = false;
+        List<CustomFieldValue> cfValues = valuesByCode.get(cfCode);
+        for (int i = cfValues.size() - 1; i >= 0; i--) {
+            if (source.equals(cfValues.get(i).getSource())) {
+                cfValues.remove(i);
+                wasRemoved = true;
+            }
+        }
+
+        return wasRemoved;
+    }
+
+    /**
+     * @return Custom fields (codes) that were added, modified, or removed.
+     */
+    public Set<String> getDirtyCfValues() {
+        return dirtyCfValues;
+    }
+
+    /**
+     * @return Custom fields (codes) periods that were added or removed. Same as dirtyCfValues minus the custom fields, which had change in value only
+     */
+    public Set<String> getDirtyCfPeriods() {
+        return dirtyCfPeriods;
     }
 }

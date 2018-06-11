@@ -2,6 +2,7 @@ package org.meveo.service.custom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +12,14 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -26,12 +28,11 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
- * Handles CF value acumulation rules
+ * Handles CF value accumulation rules
  * 
  * <pre>
 Given the following CFT structure:
@@ -133,16 +134,16 @@ public class CfValueAccumulator {
     private Logger log;
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      * Load Custom field entity hierarchy constructing two lists/maps - where CF values are being accumulated from and where to cf values should be propagated to
@@ -190,9 +191,15 @@ public class CfValueAccumulator {
 
         treeAcumulateFrom.keySet().forEach(x -> appliesToMap.put(((CustomFieldEntity) x.getAnnotation(CustomFieldEntity.class)).cftCodePrefix(), x));
 
-        // Find topmost and bottom accumulation classes
+        // Find topmost accumulation classes
         topPropagateToClasses.addAll(treePropagateTo.keySet());
         topPropagateToClasses.removeAll(treeAcumulateFrom.keySet());
+
+        // Move provider to be the first class in a list. ONLY to solve the issue with subscription's multiparent issue
+        int providerPos = topPropagateToClasses.indexOf(Provider.class);
+        if (providerPos > 0) {
+            topPropagateToClasses.add(0, topPropagateToClasses.remove(providerPos));
+        }
     }
 
     /**
@@ -200,6 +207,7 @@ public class CfValueAccumulator {
      */
     public void loadCfAccumulationRules() {
 
+        log.trace("Constructing CF accumulation rules");
         String providerPrefix = currentUser.getProviderCode() + "_";
 
         // Remove all rules for a current provider
@@ -211,9 +219,10 @@ public class CfValueAccumulator {
         Map<String, List<CustomFieldTemplate>> cftMap = cfts.stream().collect(Collectors.groupingBy(CustomFieldTemplate::getCode));
 
         for (Entry<String, List<CustomFieldTemplate>> groupedCfts : cftMap.entrySet()) {
-
             cfAccumulatorRules.put(providerPrefix + groupedCfts.getKey(), new CfValueAccumulatorRule(groupedCfts.getValue()));
         }
+
+        log.trace("CF accumulation rules constructed {}", cfAccumulatorRules);
     }
 
     /**
@@ -249,7 +258,7 @@ public class CfValueAccumulator {
         }
 
         String cfCode = cft.getCode();
-        
+
         int from = 0;
         Query query = getEntityManager().createQuery("select e from " + entityClass.getSimpleName() + " e order by e.id").setMaxResults(paginationSize);
 
@@ -258,7 +267,7 @@ public class CfValueAccumulator {
 
             entitiesToAccumulateFor.stream().forEach(entity -> {
                 // Populate accumulated custom field value field
-                accumulateCfValue(entity, cfCode);
+                accumulateCfValue(entity, cfCode, cft.isVersionable());
             });
 
             from += paginationSize;
@@ -272,15 +281,26 @@ public class CfValueAccumulator {
      * hierarchy.
      * 
      * @param entity Entity that was updated
-     * @param cfsChanged Custom field codes that were changed
+     * @param cfsWithValueChanged Custom fields (codes) that were added, modified, or removed. Also includes any changes in periods.
+     * @param cfsWithPeriodsChanged Custom fields (codes) periods that were added or removed. Same as dirtyCfValues minus the custom fields, which had change in value only.
      */
-    public void entityUpdated(ICustomFieldEntity entity, List<String> cfsChanged) {
-        for (String cfCode : cfsChanged) {
+    public void entityUpdated(ICustomFieldEntity entity, Set<String> cfsWithValueChanged, Set<String> cfsWithPeriodsChanged) {
 
-            boolean propagateDown = accumulateCfValue(entity, cfCode);
+        if (cfsWithValueChanged == null || cfsWithValueChanged.isEmpty()) {
+            return;
+        }
+
+        if (cfsWithPeriodsChanged == null) {
+            cfsWithPeriodsChanged = new HashSet<>();
+        }
+
+        for (String cfCode : cfsWithValueChanged) {
+            boolean periodsChanged = cfsWithPeriodsChanged.contains(cfCode);
+
+            boolean propagateDown = accumulateCfValue(entity, cfCode, periodsChanged);
             // Get a list of child entities and call propagateCFValues on each of them
             if (propagateDown) {
-                propagateCFValue(entity, cfCode);
+                propagateCFValue(entity, cfCode, periodsChanged);
             }
         }
     }
@@ -296,10 +316,10 @@ public class CfValueAccumulator {
 
         for (String cfCode : cfCodes) {
 
-            boolean propagateDown = accumulateCfValue(entity, cfCode);
+            boolean propagateDown = accumulateCfValue(entity, cfCode, true);
             // Get a list of child entities and call propagateCFValues on each of them
             if (propagateDown) {
-                propagateCFValue(entity, cfCode);
+                propagateCFValue(entity, cfCode, true);
             }
         }
     }
@@ -310,9 +330,10 @@ public class CfValueAccumulator {
      * 
      * @param entity Entity with source of CF values
      * @param cfCode Custom field code to update
+     * @param periodDatesChanged True if there were any changes in periods (new, removed or period dates changed). False if there was a change in value only.
      */
     @SuppressWarnings("unchecked")
-    private void propagateCFValue(ICustomFieldEntity entity, String cfCode) {
+    private void propagateCFValue(ICustomFieldEntity entity, String cfCode, boolean periodDatesChanged) {
 
         String providerPrefix = currentUser.getProviderCode() + "_";
 
@@ -323,6 +344,8 @@ public class CfValueAccumulator {
             return;
         }
 
+        log.trace("Will propagate CF value {} from entity {}", cfCode, entity);
+
         // For each propagation path, find corresponding entities, update their CF accumulated value and propagate it downwards the hierarchy
         EntityManager entityManager = getEntityManager();
         for (Class<?> classToPropagateTo : entityClassesToPropagateTo) {
@@ -330,20 +353,87 @@ public class CfValueAccumulator {
             if (paths == null || paths.isEmpty()) {
                 continue;
             }
-            for (CfValueAccumulatorPath cfValueAccumulatorPath : paths) {
-                int from = 0;
-                Query query = entityManager
-                    .createQuery("select e from " + cfValueAccumulatorPath.getClazz().getSimpleName() + " e where e." + cfValueAccumulatorPath.getPath() + "=:entity order by e.id")
-                    .setParameter("entity", entity).setMaxResults(paginationSize);
 
+            // If child class has only one way of accumulating CF values, or periods were not changed (only the values changed)
+            // append or override the ones from parent and propagate downwards if there were any changes
+            if (paths.size() == 1 || !periodDatesChanged) {
+
+                for (CfValueAccumulatorPath cfValueAccumulatorPath : paths) {
+                    if (!cfValueAccumulatorPath.getClazz().equals(entityClass)) {
+                        continue;
+                    }
+
+                    int from = 0;
+                    log.trace("Will propagate CF value {} from entity {} to {} by path {}", cfCode, entityClass.getSimpleName(), classToPropagateTo.getSimpleName(),
+                        cfValueAccumulatorPath.getPath());
+
+                    // If path is null, then return all entities.
+                    // If path is not null, ten return only those entities that are linked to a given entity
+                    Query query = null;
+                    if (cfValueAccumulatorPath.getPath() == null) {
+                        query = entityManager.createQuery("select e from " + classToPropagateTo.getSimpleName() + " e order by e.id").setMaxResults(paginationSize);
+                    } else {
+                        query = entityManager
+                            .createQuery("select e from " + classToPropagateTo.getSimpleName() + " e where e." + cfValueAccumulatorPath.getPath() + "=:entity order by e.id")
+                            .setParameter("entity", entity).setMaxResults(paginationSize);
+                    }
+
+                    String sourceForCFValue = cfValueAccumulatorPath.getPath() == null ? entityClass.getSimpleName() : cfValueAccumulatorPath.getPath();
+
+                    List<ICustomFieldEntity> entitiesToAccumulateFor = query.getResultList();
+                    while (!entitiesToAccumulateFor.isEmpty()) {
+
+                        entitiesToAccumulateFor.stream().forEach(e -> {
+                            // Clear values that came from the same path and reappend values from parent again
+                            boolean hasChanged = e.getCfAccumulatedValuesNullSafe().clearValues(cfCode, sourceForCFValue);
+                            boolean wasAppended = e.getCfAccumulatedValuesNullSafe().appendCfValues(cfCode, entity.getCfAccumulatedValues(), sourceForCFValue);
+                            hasChanged = hasChanged || wasAppended;
+
+                            // And propagate it downwards the hierarchy if there were any changes
+                            if (hasChanged) {
+                                log.trace("CF {} accumulated value was updated for {} entity and will propage the change down", cfCode, e);
+                                propagateCFValue(e, cfCode, periodDatesChanged);
+                            }
+                        });
+
+                        from += paginationSize;
+                        entitiesToAccumulateFor = query.setFirstResult(from).getResultList();
+                    }
+                }
+                // Child entity accumulates values from multiple entities in parallel then clear its value and let it accumulate value for itself
+            } else {
+
+                CfValueAccumulatorPath cfValueAccumulatorPath = null;
+                for (CfValueAccumulatorPath cfValueAccumulatorPathIter : paths) {
+                    if (cfValueAccumulatorPathIter.getClazz().equals(entityClass)) {
+                        cfValueAccumulatorPath = cfValueAccumulatorPathIter;
+                        break;
+                    }
+                }
+
+                int from = 0;
+                log.trace("Will propagate CF value {} from entity {} to {} by path {}. Propagation will be by accumulation.", cfCode, entityClass.getSimpleName(),
+                    classToPropagateTo.getSimpleName(), cfValueAccumulatorPath.getPath());
+
+                // If path is null, then return all entities.
+                // If path is not null, then return only those entities that are linked to a given entity
+                Query query = null;
+                if (cfValueAccumulatorPath.getPath() == null) {
+                    query = entityManager.createQuery("select e from " + classToPropagateTo.getSimpleName() + " e order by e.id").setMaxResults(paginationSize);
+                } else {
+                    query = entityManager
+                        .createQuery("select e from " + classToPropagateTo.getSimpleName() + " e where e." + cfValueAccumulatorPath.getPath() + "=:entity order by e.id")
+                        .setParameter("entity", entity).setMaxResults(paginationSize);
+                }
                 List<ICustomFieldEntity> entitiesToAccumulateFor = query.getResultList();
                 while (!entitiesToAccumulateFor.isEmpty()) {
 
                     entitiesToAccumulateFor.stream().forEach(e -> {
-                        // Update their CF accumulated value and propagate it downwards the hierarchy
-                        boolean hasChanged = e.getCfValuesNullSafe().appendCfValues(cfCode, entity.getCfValues());
+                        // Force to accumulate CF values again as in case of multiple path, no way to respect the priority without reconstructing the field again
+                        boolean hasChanged = accumulateCfValue(e, cfCode, true);
                         if (hasChanged) {
-                            propagateCFValue(e, cfCode);
+                            log.trace("CF accumulated value was updated for {} entity and will propage the change down");
+                            propagateCFValue(e, cfCode, true);
                         }
                     });
 
@@ -360,9 +450,11 @@ public class CfValueAccumulator {
      * 
      * @param entity Entity to accumulate the values for
      * @param cfCode Custom field code
+     * @param periodDatesChanged True if there were any changes in periods (new, removed or period dates changed) - will force to query and aaccumulate values from parent. False if
+     *        there was a change in value only - no need to query and accumulate from parent.
      * @return Should value change be propagated down the inheritance hierarchy to other entities
      */
-    private boolean accumulateCfValue(ICustomFieldEntity entity, String cfCode) {
+    private boolean accumulateCfValue(ICustomFieldEntity entity, String cfCode, boolean periodDatesChanged) {
 
         String providerPrefix = currentUser.getProviderCode() + "_";
 
@@ -371,15 +463,17 @@ public class CfValueAccumulator {
 
         // Just copy the value to accumulated values field when:
         // CFT does not participate in inheritance
-        // When CFT is not versionable and value is present
+        // When CFT does participate in inheritance, but field is not versionable and value is present - no way field value could come from other entity
         if (accumulationRule == null || (hasCfValue && !accumulationRule.isVersionable())) {
             entity.getCfAccumulatedValuesNullSafe().copyCfValues(cfCode, entity.getCfValues());
-            return accumulationRule == null;
+            // Propagate when CFT participate in inheritance
+            return accumulationRule != null;
         }
 
         Class<?> entityClass = ReflectionUtils.getCleanClass(entity.getClass());
 
-        boolean periodDatesChanged = true;
+        log.trace("Will accumulate values for {} field (periods changed = {}) of entity {}", cfCode, periodDatesChanged, entity);
+
         boolean appendAccumulatedValuesFromParent = true;
 
         // For versionable CFT, in case when only CF values has changed (no change in period dates, new periods, or periods removed), simply override the accumulated values with
@@ -405,16 +499,22 @@ public class CfValueAccumulator {
             EntityManager entityManager = getEntityManager();
             for (CfValueAccumulatorPath cfValueAccumulatorPath : accumulationPaths) {
 
-                Query query = entityManager
-                    .createQuery("select e." + cfValueAccumulatorPath.getPath() + ".cfAccumulatedValues from " + entityClass.getSimpleName() + " e where e=:entity")
-                    .setParameter("entity", entity);
-                try {
-                    CustomFieldValues cfValuesFromParent = (CustomFieldValues) ((Object[]) query.getSingleResult())[0];
-                    entity.getCfAccumulatedValuesNullSafe().appendCfValues(cfCode, cfValuesFromParent);
+                String sourceForCFValue = cfValueAccumulatorPath.getPath() == null ? cfValueAccumulatorPath.getClazz().getSimpleName() : cfValueAccumulatorPath.getPath();
 
-                } catch (NoResultException e) {
-                    // No worries here
-                    continue;
+                if (Provider.class.equals(cfValueAccumulatorPath.getClazz())) {
+                    entity.getCfAccumulatedValuesNullSafe().appendCfValues(cfCode, appProvider.getCfValues(), sourceForCFValue);
+                } else {
+                    Query query = entityManager
+                        .createQuery("select e." + cfValueAccumulatorPath.getPath() + ".cfAccumulatedValues from " + entityClass.getSimpleName() + " e where e=:entity")
+                        .setParameter("entity", entity);
+                    try {
+                        CustomFieldValues cfValuesFromParent = (CustomFieldValues) query.getSingleResult();
+                        entity.getCfAccumulatedValuesNullSafe().appendCfValues(cfCode, cfValuesFromParent, sourceForCFValue);
+
+                    } catch (NoResultException e) {
+                        // No worries here
+                        continue;
+                    }
                 }
             }
         }
@@ -422,10 +522,6 @@ public class CfValueAccumulator {
     }
 
     private EntityManager getEntityManager() {
-
-        if (FacesContext.getCurrentInstance() != null) {
-            return em;
-        }
-        return emfForJobs;
+        return emWrapper.getEntityManager();
     }
 }

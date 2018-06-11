@@ -179,16 +179,13 @@ public class UsageRatingService implements Serializable {
         walletOperation.setOrderNumber(chargeInstance.getOrderNumber());
         walletOperation.setEdr(edr);
 
-        // log.debug("AKK URS line 193");
         UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
-        // log.debug("AKK URS line 196");
 
         TradingCountry tradingCountry = chargeInstance.getCountry();
 
         ChargeTemplate chargeTemplate = usageChargeInstance.getChargeTemplate();// em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplateId());
 
-        // log.debug("AKK URS line 202");
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(chargeTemplate.getInvoiceSubCategory(),
             tradingCountry, edr.getEventDate());
 
@@ -197,9 +194,7 @@ public class UsageRatingService implements Serializable {
                 "No tax defined for country=" + tradingCountry.getCountryCode() + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategory().getCode());
         }
 
-        // log.debug("AKK URS line 211");
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
-        // log.debug("AKK URS line 213");
 
         walletOperation.setSeller(chargeInstance.getSeller());
 
@@ -225,7 +220,6 @@ public class UsageRatingService implements Serializable {
         walletOperation.setBillingAccount(billingAccount);
         walletOperation.setCode(chargeTemplate.getCode());
 
-        // log.debug("AKK URS line 232 descriptionMap is empty {}", descriptionMap.isEmpty());
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
 
         String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
@@ -238,7 +232,6 @@ public class UsageRatingService implements Serializable {
             descriptionMap.put(translationKey, descTranslated);
         }
 
-        // log.debug("AKK URS line 245");
         walletOperation.setDescription(descTranslated);
 
         walletOperation.setInputQuantity(quantityToCharge);
@@ -254,9 +247,7 @@ public class UsageRatingService implements Serializable {
         // walletOperation.setOfferCode(subscription.getOffer().getCode()); Offer code is set in walletOperation.setOfferTemplate()
         walletOperation.setOfferTemplate(subscription.getOffer());
 
-        // log.debug("AKK URS line 261 offer id is {}", subscription.getOffer().getId());
         ratingService.rateBareWalletOperation(walletOperation, usageChargeInstance.getAmountWithoutTax(), usageChargeInstance.getAmountWithTax(), tradingCountry.getId(), currency);
-        // log.debug("AKK URS line 263");
     }
 
     /**

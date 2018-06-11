@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -69,13 +68,13 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.service.notification.DefaultObserver;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -360,8 +359,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         if (entity != null) {
-        log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
-    }
+            log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
+        }
     }
 
     /**
@@ -420,11 +419,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
-
         if (entity instanceof ICustomFieldEntity) {
-            cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, );
+            CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
+            cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, cfValues != null ? cfValues.getDirtyCfValues() : null,
+                cfValues != null ? cfValues.getDirtyCfPeriods() : null);
         }
-        
+
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 
         return entity;
@@ -1104,7 +1104,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public EntityManager getEntityManager() {
         return emWrapper.getEntityManager();
-        }
+    }
 
     /**
      * Execute a native select query

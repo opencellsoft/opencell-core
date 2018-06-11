@@ -209,9 +209,12 @@ public abstract class Job {
     public void trigger(Timer timer) {
 
         JobInstance jobInstance = (JobInstance) timer.getInfo();
+        if (jobInstance == null) {
+            return;
+        }
 
         try {
-            jobExecutionInJaasService.executeInJaas((JobInstance) timer.getInfo(), this);
+            jobExecutionInJaasService.executeInJaas(jobInstance, this);
         } catch (Exception e) {
             log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
         }

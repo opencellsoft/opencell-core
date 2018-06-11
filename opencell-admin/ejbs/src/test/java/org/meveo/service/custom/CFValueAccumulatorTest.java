@@ -38,7 +38,7 @@ public class CFValueAccumulatorTest {
         Assert.assertTrue(rule.getPropagateTo().containsKey(OfferTemplate.class));
         Assert.assertEquals(rule.getPropagateTo().size(), 5);
         Assert.assertArrayEquals(new Class[] { Seller.class }, rule.getPropagateTo().get(Provider.class).toArray());
-        Assert.assertArrayEquals(new Class[] { Seller.class, Customer.class }, rule.getPropagateTo().get(Seller.class).toArray());
+        Assert.assertArrayEquals(new Class[] { Customer.class, Seller.class }, rule.getPropagateTo().get(Seller.class).toArray());
         Assert.assertArrayEquals(new Class[] { BillingAccount.class }, rule.getPropagateTo().get(Customer.class).toArray());
         Assert.assertArrayEquals(new Class[] { Subscription.class }, rule.getPropagateTo().get(BillingAccount.class).toArray());
         Assert.assertArrayEquals(new Class[] { Subscription.class }, rule.getPropagateTo().get(OfferTemplate.class).toArray());
@@ -53,8 +53,8 @@ public class CFValueAccumulatorTest {
         Assert.assertArrayEquals(new CfValueAccumulatorPath[] { new CfValueAccumulatorPath(Seller.class, "seller") }, rule.getAcumulateFrom().get(Customer.class).toArray());
         Assert.assertArrayEquals(new CfValueAccumulatorPath[] { new CfValueAccumulatorPath(Customer.class, "customerAccount.customer") },
             rule.getAcumulateFrom().get(BillingAccount.class).toArray());
-        Assert.assertArrayEquals(new CfValueAccumulatorPath[] { new CfValueAccumulatorPath(OfferTemplate.class, "offer"),
-                new CfValueAccumulatorPath(BillingAccount.class, "userAccount.billingAccount") },
+        Assert.assertArrayEquals(new CfValueAccumulatorPath[] { new CfValueAccumulatorPath(BillingAccount.class, "userAccount.billingAccount"),
+                new CfValueAccumulatorPath(OfferTemplate.class, "offer") },
             rule.getAcumulateFrom().get(Subscription.class).toArray());
     }
 }

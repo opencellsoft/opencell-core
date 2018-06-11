@@ -170,7 +170,13 @@ public class ReflectionUtils {
         String className = clazz.getName();
 
         if (className.contains("$$")) {
-
+            className = getCleanClassName(className);
+            try {
+                clazz = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
+                log.error("Failed to obtain a class by name {}", className);
+            }
         }
         return clazz;
     }
