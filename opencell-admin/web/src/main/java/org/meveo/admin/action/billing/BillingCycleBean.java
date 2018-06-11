@@ -29,7 +29,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingCycleTypeEnum;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -81,7 +81,7 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
         List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
 
         for (BillingCycle billingCycle : billingCycleSource) {
-            if(BillingCycleTypeEnum.SUBSCRIPTION.equals(billingCycle.getType())) {
+            if(BillingEntityTypeEnum.SUBSCRIPTION.equals(billingCycle.getType())) {
                 billingCycleTarget.add(billingCycle);
             }
         }
@@ -93,7 +93,7 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
         List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
 
         for (BillingCycle billingCycle : billingCycleSource) {
-            if(BillingCycleTypeEnum.ORDER.equals(billingCycle.getType())) {
+            if(BillingEntityTypeEnum.ORDER.equals(billingCycle.getType())) {
                 billingCycleTarget.add(billingCycle);
             }
         }
@@ -105,7 +105,7 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
         List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
 
         for (BillingCycle billingCycle : billingCycleSource) {
-            if(BillingCycleTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) || StringUtils.isBlank(billingCycle.getType())) {
+            if(BillingEntityTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) || StringUtils.isBlank(billingCycle.getType())) {
                 billingCycleTarget.add(billingCycle);
             }
         }

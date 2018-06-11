@@ -40,6 +40,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -62,6 +63,7 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -228,11 +230,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
         return null;
     }
-
-    public List<Long> findBillingAccountIds(BillingCycle billingCycle, Date startdate, Date endDate) {
+    
+    @SuppressWarnings("unchecked")
+    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
-            QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle", billingCycle);
+            QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
+            qb.addCriterionEntity("s.billingCycle", billingCycle);
 
             if (startdate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
@@ -242,7 +245,29 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
             }
 
-            return qb.getIdQuery(getEntityManager()).getResultList();
+            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find billing accounts", ex);
+        }
+
+        return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Order> findOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
+        try {
+            QueryBuilder qb = new QueryBuilder(Order.class, "o", null);
+            qb.addCriterionEntity("o.billingCycle", billingCycle);
+
+            if (startdate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+            }
+
+            if (endDate != null) {
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
+            }
+
+            return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
         }
@@ -251,35 +276,45 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) throws BusinessException {
-        log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
-        BillingAccount billingAccount = findById(billingAccountId);
-        BigDecimal invoiceAmount = createMinAmountsRT(billingAccount, billingRun.getLastTransactionDate());
-
-        if (invoiceAmount != null) {
-            BillingCycle billingCycle = billingRun.getBillingCycle();
-            BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
-
-            if (invoicingThreshold != null) {
-                if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
-                    log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
-                        billingAccount.getCode(), invoiceAmount, invoicingThreshold);
-                    return false;
+    public boolean updateEntityTotalAmounts(IEntity entity, BillingRun billingRun) throws BusinessException {
+        log.debug("updateEntityTotalAmounts  entity:" + entity.getId());
+        //BillingAccount billingAccount = findById(billingAccountId);
+        
+        if(entity instanceof BillingAccount) {
+            BillingAccount billingAccount = findByCode(((BillingAccount) entity).getCode());
+            BigDecimal invoiceAmount = createMinAmountsRT(billingAccount, billingRun.getLastTransactionDate());
+            if (invoiceAmount != null) {
+                BillingCycle billingCycle = billingRun.getBillingCycle();
+                BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
+    
+                if (invoicingThreshold != null) {
+                    if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
+                        log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
+                            billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+                        return false;
+                    } else {
+                        log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
+                            billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+                    }
                 } else {
-                    log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
-                        billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+                    log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
                 }
-            } else {
-                log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
+                billingAccount.setBrAmountWithoutTax(invoiceAmount);
+    
+                log.debug("set brAmount {} in BA {}", invoiceAmount, entity.getId());
             }
-            billingAccount.setBrAmountWithoutTax(invoiceAmount);
-
-            log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
+            billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+            updateNoCheck(billingAccount);
         }
 
-        billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
-
-        updateNoCheck(billingAccount);
+        //TODO other entites
+        /*
+        if(entity instanceof Subscription) {
+            Subscription subscription = findByCode(((Subscription) entity).getCode());
+            subscription.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+        }
+        */
+        
 
         return true;
     }
@@ -783,7 +818,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
                                             RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax,
                                                 BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                                                invoiceSubCategory, "", "", "", "", null, "", "", null, "NO_OFFER", null,
+                                                invoiceSubCategory, "", "", "", "", null, null, "", "", null, "NO_OFFER", null,
                                                 RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel, null, null);
                                             ratedTransactionService.create(ratedTransaction);
 
@@ -868,7 +903,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
                                     RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax,
                                         BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "",
-                                        "", "", "", null, "", "", null, "NO_OFFER", null,
+                                        "", "", "", null, null, "", "", null, "NO_OFFER", null,
                                         RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), subscriptionMinLabel, null, null);
                                     ratedTransactionService.create(ratedTransaction);
 
@@ -950,7 +985,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                     BigDecimal amountTax = unitAmountTax;
 
                     RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, BigDecimal.ONE,
-                        amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null, "", "", null,
+                        amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null, null, "", "", null,
                         "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), billingAccountMinLabel, null, null);
                     ratedTransactionService.create(ratedTransaction);
 

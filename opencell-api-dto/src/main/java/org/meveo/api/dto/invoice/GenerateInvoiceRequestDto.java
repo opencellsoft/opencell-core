@@ -18,9 +18,11 @@ import org.meveo.api.dto.FilterDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GenerateInvoiceRequestDto {
 
-    /** The billing account code. */
     @XmlElement(required = true)
-    private String billingAccountCode;
+    private String targetType;
+    
+    @XmlElement(required = true)
+    private String targetCode;
 
     /** The invoicing date. */
     @XmlElement(required = true)
@@ -50,6 +52,8 @@ public class GenerateInvoiceRequestDto {
     
     /** The generate AO. */
     private Boolean generateAO;
+    
+    
 
     /**
      * Instantiates a new generate invoice request dto.
@@ -59,21 +63,39 @@ public class GenerateInvoiceRequestDto {
     }
 
     /**
-     * Gets the billing account code.
+     * Gets the target type.
      *
-     * @return the billingAccountCode
+     * @return the targetType
      */
-    public String getBillingAccountCode() {
-        return billingAccountCode;
+    public String getTargetType() {
+        return targetType;
     }
 
     /**
-     * Sets the billing account code.
+     * Sets the target type.
      *
-     * @param billingAccountCode the billingAccountCode to set
+     * @param targetType the targetType to set
      */
-    public void setBillingAccountCode(String billingAccountCode) {
-        this.billingAccountCode = billingAccountCode;
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
+
+    /**
+     * Gets the target code.
+     *
+     * @return the targetCode
+     */
+    public String getTargetCode() {
+        return targetCode;
+    }
+
+    /**
+     * Sets the target code.
+     *
+     * @param targetCode the targetCode to set
+     */
+    public void setTargetCode(String targetCode) {
+        this.targetCode = targetCode;
     }
 
     /**
@@ -222,7 +244,7 @@ public class GenerateInvoiceRequestDto {
 
     @Override
     public String toString() {
-        return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate
+        return "GenerateInvoiceRequestDto [targetCode=" + targetCode + ", targetType=" + targetType + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate
                 + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
     }
 }

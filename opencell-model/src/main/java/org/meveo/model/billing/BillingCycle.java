@@ -42,6 +42,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle.
@@ -103,7 +104,11 @@ public class BillingCycle extends BusinessCFEntity {
 	
     @Enumerated(EnumType.STRING)
     @Column(name = "billing_cycle_type")
-    private BillingCycleTypeEnum type;
+    private BillingEntityTypeEnum type;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance scriptInstance;
 	
 	public String getBillingTemplateName() {
 		return billingTemplateName;
@@ -226,12 +231,20 @@ public class BillingCycle extends BusinessCFEntity {
         this.invoiceTypeEl = invoiceTypeEl;
     }
 
-    public BillingCycleTypeEnum getType() {
+    public BillingEntityTypeEnum getType() {
         return type;
     }
 
-    public void setType(BillingCycleTypeEnum type) {
+    public void setType(BillingEntityTypeEnum type) {
         this.type = type;
+    }
+    
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
+    }
+
+    public void setScriptInstance(ScriptInstance scriptInstance) {
+        this.scriptInstance = scriptInstance;
     }
 
 }

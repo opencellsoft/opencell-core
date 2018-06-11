@@ -3,6 +3,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:hftl="http://hftl.org"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	template="/layout/template.xhtml"
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui">
@@ -192,11 +193,11 @@
 				</p:commandButton>
 			</p:panel>
 		</p:panel>
-	
-		<p:panel header="#{messages['postInvoicingReport.rejectedBillingAccounts']}"  id="rejectedBA_panel" width="100">
+		
+		<c:if test="#{billingRunBean.entity.billingCycle.type eq 'BILLINGACCOUNT' or billingRunBean.entity.billingCycle.type eq null}">
+			<p:panel header="#{messages['postInvoicingReport.rejectedBillingAccounts']}"  id="rejectedBA_panel" width="100">
 			
-			<hftl:dataList exportToXml="false" resultsId="dataListRekectedBAs" dataModel="#{rejectedBillingAccountBean.getBArejected(billingRunBean.entity)}"   backingBean="#{rejectedBillingAccountBean}">
-
+				<hftl:dataList exportToXml="false" resultsId="dataListRekectedBAs" dataModel="#{rejectedBillingAccountBean.getBArejected(billingRunBean.entity)}"   backingBean="#{rejectedBillingAccountBean}">
 
 					<hftl:column label="#{messages['businessEntity.code']}"
 						field="billingAccount.code" />
@@ -208,17 +209,19 @@
 						label="#{messages['RejectedBillingAccounts.rejectCause']}"
 						field="rejectCause" />
 
-				</hftl:dataList>
+				</hftl:dataList>	
 
-		
-
-			<hftl:decorateFormField label="#{messages['billingRuns.launchInvoicing']}" displayOneLine="true" componentWidth="50">
-				<p:selectBooleanCheckbox
-					value="#{billingRunBean.launchInvoicingRejectedBA}" />
-			</hftl:decorateFormField>
-	
+				<hftl:decorateFormField label="#{messages['billingRuns.launchInvoicing']}" displayOneLine="true" componentWidth="50">
+					<p:selectBooleanCheckbox
+						value="#{billingRunBean.launchInvoicingRejectedBA}" />
+				</hftl:decorateFormField>
+				
+			</p:panel>
+		</c:if>
+			
+		<p:panel width="100">
 			<h:form id="operationsForm" rendered="#{!edit}">
-				<div class="action-buttons">
+				<div class="action-buttons" style="margin: 0 auto; width: 200px; height: 50px;">
 					<p:commandButton action="#{billingRunBean.validateInvoicing()}"
 						value="#{messages['action.validate']}" 
 						rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"/>
@@ -236,7 +239,7 @@
 						rendered="#{billingRunBean.entity.status.toString() == 'VALIDATED'}" />
 				</div>
 			</h:form>
-		
 		</p:panel>
+		
 	</ui:define>
 </ui:composition>

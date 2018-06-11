@@ -41,7 +41,9 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -66,8 +68,10 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
 import org.primefaces.model.SortOrder;
@@ -87,6 +91,12 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private BillingAccountService billingAccountService;
+    
+    @Inject
+    private SubscriptionService subscriptionService;
+    
+    @Inject
+    private OrderService orderService;
 
     @Inject
     private BillingRunService billingRunService;
@@ -239,7 +249,7 @@ public class InvoiceApi extends BaseApi {
 
                     RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
                         ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
-                        amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null,
+                        amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null,
                         ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
                         ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate());
 
@@ -490,8 +500,11 @@ public class InvoiceApi extends BaseApi {
             handleMissingParameters();
         }
         if (generateInvoiceRequestDto != null) {
-            if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-                missingParameters.add("billingAccountCode");
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
+                missingParameters.add("targetCode");
+            }
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetType())) {
+                missingParameters.add("targetType");
             }
 
             if (generateInvoiceRequestDto.getInvoicingDate() == null) {
@@ -504,10 +517,18 @@ public class InvoiceApi extends BaseApi {
         }
 
         handleMissingParameters();
+        
+        IEntity entity = null;
+        if(BillingEntityTypeEnum.BILLINGACCOUNT.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+            entity = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+        } else if(BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+            entity = subscriptionService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+        } else if(BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+            entity = orderService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+        }
 
-        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
-        if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getTargetCode());
         }
 
         Filter ratedTransactionFilter = null;
@@ -532,7 +553,7 @@ public class InvoiceApi extends BaseApi {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-        Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),
+        Invoice invoice = invoiceService.generateInvoice(entity, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),
             generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft, produceXml, producePdf, generateAO);
 
         GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);

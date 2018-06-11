@@ -913,4 +913,16 @@
        	</addColumn>
     </changeSet>
     
+    <changeSet id="#3461_20180602" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_cycle">
+    		<column name="script_instance_id" type="bigint" />
+    	</addColumn>
+    	<addColumn tableName="billing_rated_transaction">
+    		<column name="subscription_id" type="bigint" />
+    	</addColumn>
+    	<addColumn tableName="billing_wallet_operation">
+    		<column name="subscription_id" type="bigint" />
+    	</addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 

@@ -14,6 +14,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.IEntity;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -55,7 +57,7 @@ public class InvoicingAsync {
     /**
      * Update billing account total amounts async. One billing account at a time in a separate transaction.
      *
-     * @param billingAccountIds Billing account ids
+     * @param entities Entities
      * @param billingRun The billing run
      * @param jobInstanceId Job instance id
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -65,17 +67,17 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
+    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<IEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
             throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         int count = 0;
-        for (Long billingAccountId : billingAccountIds) {
+        for (IEntity entity : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
+            if (billingAccountService.updateEntityTotalAmounts(entity, billingRun)) {
                 count++;
             }
         }
@@ -83,6 +85,36 @@ public class InvoicingAsync {
         return new AsyncResult<Integer>(new Integer(count));
     }
 
+    /**
+     * Creates the agregates and invoice async. One entity at a time in a separate transaction.
+     *
+     * @param entities the entity objects
+     * @param billingRun the billing run
+     * @param jobInstanceId the job instance id
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return the future
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> createAgregatesAndInvoiceAsync(List<?> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        for (IEntity entity : (List<IEntity>) entities) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, null);
+            } catch (Exception e) {
+                log.error("Error for entity=" + entity + " : " + e);
+            }
+        }
+        return new AsyncResult<String>("OK");
+    }
+    
+    
     /**
      * Creates the agregates and invoice async. One billing account at a time in a separate transaction.
      *
@@ -93,9 +125,9 @@ public class InvoicingAsync {
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
-    @Asynchronous
+    /*@Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser, String orderNumber) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -104,13 +136,13 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null, null);
+                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, orderNumber, null, null, null);
             } catch (Exception e) {
                 log.error("Error for BA=" + billingAccountId + " : " + e);
             }
         }
         return new AsyncResult<String>("OK");
-    }
+    }*/
 
     /**
      * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.

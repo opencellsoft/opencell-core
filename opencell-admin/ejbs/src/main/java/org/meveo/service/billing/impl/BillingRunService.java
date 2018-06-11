@@ -39,8 +39,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -528,18 +530,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
-     * Gets the billing account ids.
+     * Gets entities.
      *
      * @param billingRun the billing run
-     * @return the billing account ids
+     * @return the entity objects
      */
-    public List<Long> getBillingAccountIds(BillingRun billingRun) {
+    public List<? extends IEntity> getEntities(BillingRun billingRun) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
         log.debug("getBillingAccount ids for billingRun {}", billingRun.getId());
 
         if (billingCycle != null) {
+            
             Date startDate = billingRun.getStartDate();
             Date endDate = billingRun.getEndDate();
 
@@ -547,17 +550,24 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 endDate = new Date();
             }
 
-            return billingAccountService.findBillingAccountIds(billingCycle, startDate, endDate);
-
+            if(billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) { 
+                return billingAccountService.findSubscriptions(billingCycle, startDate, endDate);
+            }
+            
+            if(billingCycle.getType() == BillingEntityTypeEnum.ORDER) { 
+                return billingAccountService.findOrders(billingCycle, startDate, endDate);
+            }
+            
+            return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
         } else {
-            List<Long> result = new ArrayList<Long>();
+            List<BillingAccount> result = new ArrayList<BillingAccount>();
             String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 
             for (String id : Arrays.asList(baIds)) {
-                Long baId = Long.valueOf(id);
-                result.add(baId);
+                //Long baId = Long.valueOf(id);
+                //result.add(baId);
+                result.add(billingAccountService.findById(new Long(id)));
             }
-
             return result;
         }
     }
@@ -576,13 +586,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
         // List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
         // .getResultList();
-
-        List<Long> billingAccountIds = getBillingAccountIds(billingRun);
-
+        
+        List<? extends IEntity> entities = getEntities(billingRun);
+        
         SubListCreator subListCreator = null;
 
         try {
-            subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
+            subListCreator = new SubListCreator(entities, (int) nbRuns);
         } catch (Exception e1) {
             throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
         }
@@ -590,7 +600,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
@@ -616,19 +626,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param nbRuns nb of runs
      * @param waitingMillis waiting millis
      * @param jobInstanceId the job instance id
-     * @param billingAccountIds list of biling acount id
+     * @param entities list of entities
      * @throws BusinessException business exception.
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<Long> billingAccountIds) throws BusinessException {
+    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<? extends IEntity> entities) throws BusinessException {
         SubListCreator subListCreator = null;
         try {
-            if (billingAccountIds == null) {
-                billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
-                    .getResultList();
-            }
-            subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
+            subListCreator = new SubListCreator(entities, (int) nbRuns);
         } catch (Exception e1) {
             throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
         }
@@ -636,7 +642,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync(subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
@@ -790,20 +796,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws Exception {
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
-        List<Long> billingAccountIds = getBillingAccountIds(billingRun);
+        List<? extends IEntity> entities = getEntities(billingRun);
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 
             billingRunExtensionService.updateBRAmounts(billingRun.getId());
 
-            log.info("Nb billingAccounts to process={}", (billingAccountIds != null ? billingAccountIds.size() : 0));
-            if (billingAccountIds != null && billingAccountIds.size() > 0) {
-                int billableBA = 0;
-                SubListCreator subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
+            log.info("Nb entities to process={}", (entities != null ? entities.size() : 0));
+            if (entities != null && entities.size() > 0) {
+                int billableEntities = 0;
+                SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
                 List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
                 MeveoUser lastCurrentUser = currentUser.unProxy();
                 while (subListCreator.isHasNext()) {
-                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
+                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<IEntity>)subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
                         lastCurrentUser);
                     asyncReturns.add(count);
                     try {
@@ -813,23 +819,26 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     }
                 }
 
-                for (Future<Integer> futureItsNow : asyncReturns) {
-                    billableBA += futureItsNow.get().intValue();
+                if(billingRun.getBillingCycle().getType() == BillingEntityTypeEnum.BILLINGACCOUNT) {
+                    for (Future<Integer> futureItsNow : asyncReturns) {
+                        billableEntities += futureItsNow.get().intValue();
+                    }
+                } else {
+                    billableEntities = entities.size();
                 }
 
-                log.info("Total billableBA:" + billableBA);
-
-                billingRunExtensionService.updateBillingRun(billingRun, billingAccountIds.size(), billableBA, BillingRunStatusEnum.PREINVOICED, new Date());
+                log.info("Total billable entities:" + billableEntities);
+                billingRunExtensionService.updateBillingRun(billingRun, entities.size(), billableEntities, BillingRunStatusEnum.PREINVOICED, new Date());
 
                 if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
                     log.info("Will proceed to create aggregates and invoice");
-                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billingAccountIds);
+                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, entities);
                     billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
                 }
             }
 
         } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billingAccountIds);
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, entities);
             billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
 
         } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {

@@ -288,6 +288,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         // TODO:check that setting the principal wallet at this stage is correct
         walletOperation.setWallet(userAccount.getWallet());
+        walletOperation.setSubscription(chargeInstance.getSubscription());
         if (chargeInstance.getSubscription() != null) {
             walletOperation.setBillingAccount(billingAccount);
         }

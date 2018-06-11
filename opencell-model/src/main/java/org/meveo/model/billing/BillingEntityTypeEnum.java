@@ -18,7 +18,7 @@
  */
 package org.meveo.model.billing;
 
-public enum BillingCycleTypeEnum {
+public enum BillingEntityTypeEnum {
     
     BILLINGACCOUNT(1, "billingCycleType.billingaccount"), 
     SUBSCRIPTION(2, "billingCycleType.subscription"), 
@@ -29,7 +29,7 @@ public enum BillingCycleTypeEnum {
 	private String label;
  
 	
-	private BillingCycleTypeEnum(Integer id, String label) {
+	private BillingEntityTypeEnum(Integer id, String label) {
 		this.id = id;
 		this.label = label;
 	}

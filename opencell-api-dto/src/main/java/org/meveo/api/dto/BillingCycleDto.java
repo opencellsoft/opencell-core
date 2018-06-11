@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingCycleTypeEnum;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 
 
 /**
@@ -65,7 +65,7 @@ public class BillingCycleDto extends BusinessDto {
     
     /** The billing cycle type. */
     @XmlElement
-    private BillingCycleTypeEnum type;
+    private BillingEntityTypeEnum type;
 
 
     /**
@@ -319,7 +319,7 @@ public class BillingCycleDto extends BusinessDto {
      *
      * @return the billing cycle type
      */
-    public BillingCycleTypeEnum getType() {
+    public BillingEntityTypeEnum getType() {
         return type;
     }
 
@@ -328,7 +328,7 @@ public class BillingCycleDto extends BusinessDto {
      *
      * @param type the billing cycle type
      */
-    public void setType(BillingCycleTypeEnum type) {
+    public void setType(BillingEntityTypeEnum type) {
         this.type = type;
     }
 
