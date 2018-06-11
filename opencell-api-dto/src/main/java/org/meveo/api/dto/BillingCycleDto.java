@@ -17,7 +17,7 @@ import org.meveo.model.billing.BillingCycle;
  */
 @XmlRootElement(name = "BillingCycle")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BillingCycleDto extends BusinessDto {
+public class BillingCycleDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5986901351613880941L;

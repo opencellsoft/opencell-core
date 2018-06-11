@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -19,7 +19,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
  */
 @XmlRootElement(name = "BillingRun")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BillingRunDto extends BaseDto {
+public class BillingRunDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -541,6 +541,7 @@ public class BillingRunDto extends BaseDto {
      * @param billingRunEntity the new from entity
      */
     public void setFromEntity(BillingRun billingRunEntity) {
+        setAuditable(billingRunEntity);
         setProcessDate(billingRunEntity.getProcessDate());
         setStatus(billingRunEntity.getStatus());
         setStatusDate(billingRunEntity.getStatusDate());

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 
 /**
@@ -21,7 +21,7 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 
 @XmlRootElement(name = "CreateBillingRunDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CreateBillingRunDto extends BaseDto {
+public class CreateBillingRunDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

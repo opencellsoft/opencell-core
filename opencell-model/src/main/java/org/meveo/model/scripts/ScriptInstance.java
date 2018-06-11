@@ -27,6 +27,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -48,6 +49,10 @@ import org.meveo.model.security.Role;
 public class ScriptInstance extends CustomScript {
 
     private static final long serialVersionUID = -7691357496569390167L;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "script_instance_cat_id")
+	private ScriptInstanceCategory scriptInstanceCategory;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "adm_script_exec_role", joinColumns = @JoinColumn(name = "script_instance_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -88,4 +93,12 @@ public class ScriptInstance extends CustomScript {
     public void setSourcingRoles(Set<Role> sourcingRoles) {
         this.sourcingRoles = sourcingRoles;
     }
+
+	public ScriptInstanceCategory getScriptInstanceCategory() {
+		return scriptInstanceCategory;
+	}
+
+	public void setScriptInstanceCategory(ScriptInstanceCategory scriptInstanceCategory) {
+		this.scriptInstanceCategory = scriptInstanceCategory;
+	}
 }

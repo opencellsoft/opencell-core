@@ -62,6 +62,8 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         String code = null;
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
+            handleMissingParameters();
+            return null;
         } else if (paymentGatewayDto != null) {
             code = paymentGatewayDto.getCode();
             if (StringUtils.isBlank(code)) {
@@ -146,7 +148,11 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         String code = null;
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
-        } else if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
+            handleMissingParameters();
+            return null;
+        }
+
+        if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
             code = paymentGatewayDto.getCode();
             missingParameters.add("code");
         }

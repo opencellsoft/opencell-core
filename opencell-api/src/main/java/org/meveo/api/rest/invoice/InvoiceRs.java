@@ -49,7 +49,7 @@ public interface InvoiceRs extends IBaseRs {
     @GET
     @Path("/")
     public GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType,
-            @QueryParam("includeTransactions") boolean includeTransactions);
+            @QueryParam("includeTransactions") boolean includeTransactions, @QueryParam("includePdf") Boolean includePdf,  @QueryParam("includeXml") Boolean includeXml);
 
     /**
      * Create invoice. Invoice number depends on invoice type

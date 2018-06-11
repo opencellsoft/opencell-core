@@ -7,14 +7,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class PrepaidReservationDto.
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PrepaidReservationDto extends BaseDto {
+public class PrepaidReservationDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1511340678838442101L;

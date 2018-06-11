@@ -19,11 +19,13 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.scripts.ScriptInstanceCategory;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.script.CustomScriptService;
+import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -35,6 +37,9 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+    
+    @Inject
+    private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
     @Inject
     private RoleService roleService;
@@ -215,6 +220,14 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         scriptInstance.setDescription(dto.getDescription());
         scriptInstance.setScript(dto.getScript());
 
+		if (!StringUtils.isBlank(dto.getScriptInstanceCategoryCode())) {
+			ScriptInstanceCategory scriptInstanceCategory = scriptInstanceCategoryService
+					.findByCode(dto.getScriptInstanceCategoryCode());
+			if (scriptInstanceCategory != null) {
+				scriptInstance.setScriptInstanceCategory(scriptInstanceCategory);
+			}
+		}
+        
         if (dto.getType() != null) {
             scriptInstance.setSourceTypeEnum(dto.getType());
         } else {

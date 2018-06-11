@@ -14,7 +14,7 @@ import org.meveo.model.admin.SecuredEntity;
  */
 @XmlRootElement(name = "SecuredEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SecuredEntityDto extends BaseDto {
+public class SecuredEntityDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8941891021770440273L;

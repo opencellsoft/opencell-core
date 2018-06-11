@@ -12,10 +12,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -126,7 +125,6 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException Business exception
      * @throws Exception exception
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
@@ -488,22 +486,22 @@ public class InvoiceApi extends BaseApi {
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
+            return null;
         }
-        String billingAccountCode = null;
-        if (generateInvoiceRequestDto != null) {
-            billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
-            if (StringUtils.isBlank(billingAccountCode)) {
-                missingParameters.add("billingAccountCode");
-            }
 
-            if (generateInvoiceRequestDto.getInvoicingDate() == null) {
-                missingParameters.add("invoicingDate");
-            }
-            if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
-                    && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
-                missingParameters.add("lastTransactionDate or filter or orderNumber");
-            }
+        String billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
+        if (StringUtils.isBlank(billingAccountCode)) {
+            missingParameters.add("billingAccountCode");
         }
+
+        if (generateInvoiceRequestDto.getInvoicingDate() == null) {
+            missingParameters.add("invoicingDate");
+        }
+        if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
+                && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
+            missingParameters.add("lastTransactionDate or filter or orderNumber");
+        }
+
 
         handleMissingParameters();
 
@@ -513,13 +511,13 @@ public class InvoiceApi extends BaseApi {
         }
 
         Filter ratedTransactionFilter = null;
-        if (generateInvoiceRequestDto != null && generateInvoiceRequestDto.getFilter() != null) {
+        if (generateInvoiceRequestDto.getFilter() != null) {
             ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
             if (ratedTransactionFilter == null) {
                 throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
             }
         }
-
+        
         if (isDraft) {
             if (generateInvoiceRequestDto.getGeneratePDF() == null) {
                 generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
@@ -801,6 +799,24 @@ public class InvoiceApi extends BaseApi {
      */
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions)
             throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
+       return this.find(id, invoiceNumber, invoiceTypeCode, includeTransactions, false, false);
+    }
+    
+    /**
+     * @param includePdf if true return pdf , else if null or false don't return pdf
+     * @param includeXml if true return pdf , else if null or false don't return xml
+     * @param id Invoice id. Either id or invoice number and type must be provided
+     * @param invoiceNumber Invoice number
+     * @param invoiceTypeCode Invoice type code
+     * @param includeTransactions Should invoice list associated transactions
+     * @return invoice dto
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
+     */
+    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, boolean includePdf, boolean includeXml)
+            throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
         Invoice invoice = find(id, invoiceNumber, invoiceTypeCode);
         if (invoice == null) {
             if (id != null)
@@ -808,7 +824,7 @@ public class InvoiceApi extends BaseApi {
             else
                 throw new EntityDoesNotExistsException(Invoice.class, "invoiceNumber", invoiceNumber, "invoiceType", invoiceTypeCode);
         }
-        return invoiceToDto(invoice, includeTransactions, false);
+        return invoiceToDto(invoice, includeTransactions, includePdf, includeXml);
     }
 
     /**
@@ -833,10 +849,10 @@ public class InvoiceApi extends BaseApi {
         return amountWithTax.subtract(amountWithoutTax);
     }
 
-    public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf) {
+    private InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf, boolean includeXml) {
 
         InvoiceDto invoiceDto = new InvoiceDto();
-
+		invoiceDto.setAuditable(invoice);
         invoiceDto.setInvoiceId(invoice.getId());
         invoiceDto.setBillingAccountCode(invoice.getBillingAccount().getCode());
         invoiceDto.setInvoiceDate(invoice.getInvoiceDate());
@@ -935,8 +951,30 @@ public class InvoiceApi extends BaseApi {
             invoiceDto.setRecordedInvoiceDto(recordedInvoiceDto);
         }
 
-        boolean pdfFileExists = invoiceService.isInvoicePdfExist(invoice);
+        this.setInvoicePdf(invoice, includePdf, invoiceDto);
+        
+        // #2236 if includeXml return xml file content
+        if (includeXml) {
+            this.setInvoiceXml(invoice, invoiceDto);
+        }
 
+        if (invoiceService.isInvoiceXmlExist(invoice)) {
+            invoiceDto.setXmlFilename(invoice.getXmlFilename());
+        }
+        
+        invoiceDto.setNetToPay(invoice.getNetToPay());
+
+        return invoiceDto;
+    }
+
+    /**
+     * Setting invoice pdf contents
+     * @param invoice
+     * @param includePdf
+     * @param invoiceDto
+     */
+    private void setInvoicePdf(Invoice invoice, boolean includePdf, InvoiceDto invoiceDto) {
+        boolean pdfFileExists = invoiceService.isInvoicePdfExist(invoice);
         // Generate PDF file if requested, but not available yet
         if (includePdf && !pdfFileExists) {
             try {
@@ -954,17 +992,32 @@ public class InvoiceApi extends BaseApi {
                     invoiceDto.setPdf(invoiceService.getInvoicePdf(invoice));
                 } catch (BusinessException e) {
                     // Should not happen as file was found few lines above
+                    log.error(e.getMessage(), e);
                 }
             }
         }
+    }
 
-        if (invoiceService.isInvoiceXmlExist(invoice)) {
-            invoiceDto.setXmlFilename(invoice.getXmlFilename());
+    /**
+     * #2236 setting invoice xml
+     * @param invoice
+     * @param invoiceDto
+     * @throws BusinessException
+     */
+    private void setInvoiceXml(Invoice invoice, InvoiceDto invoiceDto) {
+        try {
+            if (!invoiceService.isInvoiceXmlExist(invoice)) {
+                invoiceService.produceInvoiceXml(invoice);                
+            } 
+            String xml = invoiceService.getInvoiceXml(invoice);
+            invoiceDto.setXml(xml != null ? Base64.encodeBase64String(xml.getBytes()) : null);
+        } catch (BusinessException e) {
+           log.error(e.getMessage(), e);
         }
-
-        invoiceDto.setNetToPay(invoice.getNetToPay());
-
-        return invoiceDto;
+    }
+    
+    public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf) {
+       return this.invoiceToDto(invoice, includeTransactions, includePdf, false); 
     }
 
     private Invoice find(Long id, String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {

@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 
 /**
@@ -15,7 +15,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
  */
 @XmlRootElement(name = "TriggeredEdrTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TriggeredEdrTemplateDto extends BusinessDto {
+public class TriggeredEdrTemplateDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5790679004639676207L;

@@ -962,14 +962,9 @@
         <sql>CREATE INDEX medina_access_subscription_id ON  ${db.schema.adapted}medina_access(subscription_id)</sql>
 	</changeSet>
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="mysql">
-		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
-        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
         
         <sql>DROP INDEX IF EXISTS billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
-        
-        <sql>DROP INDEX IF EXISTS account_entity_upper_code ON ${db.schema.adapted}account_entity</sql> <!-- duplicate because of using upper - need to update in core -->
-        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
         
         <sql>DROP INDEX IF EXISTS rating_edr_status ON ${db.schema.adapted}rating_edr</sql>
         <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
@@ -1048,8 +1043,133 @@
 			end;
 		]]></sql>
 	</changeSet>    
+	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+		   <sql splitStatements="false" stripComments="false"><![CDATA[	
+		   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
+		         BEGIN
+		         	RETURN  translate($1,
+		   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
+		   							 'cCaaAAeeeEEEiIuUoO');
+		        END;
+				$$ LANGUAGE plpgsql;
+			]]></sql>
+		</changeSet>
+	
+	    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
+	    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+	     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+		    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+				create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
+								returns varchar(2000)
+								begin				
+									set @textvalue =  input_text;
+									set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
+									set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
+									set @count = length(@withaccents);
+									
+									while @count > 0 do
+									    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+									    set @count = @count - 1;
+									end while;					
+									return @textvalue;				
+				end;
+			]]></sql>
+	</changeSet>    
+	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+		   <sql splitStatements="false" stripComments="false"><![CDATA[	
+		   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
+		         BEGIN
+		         	RETURN  translate($1,
+		   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
+		   							 'cCaaAAeeeEEEiIuUoO');
+		        END;
+				$$ LANGUAGE plpgsql;
+			]]></sql>
+		</changeSet>
+	
+	    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
+	    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+	     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+		    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+				create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
+								returns varchar(2000)
+								begin				
+									set @textvalue =  input_text;
+									set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
+									set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
+									set @count = length(@withaccents);
+									
+									while @count > 0 do
+									    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+									    set @count = @count - 1;
+									end while;					
+									return @textvalue;				
+				end;
+			]]></sql>
+	</changeSet>    
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
-    </changeSet> 
+    </changeSet>
+
+	<changeSet author="SaidRamli" id="#3457_04062018">
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="ar_customer_account" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="ar_customer_account" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="ar_customer_account" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_customer" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_customer" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_customer" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_seller" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_seller" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_seller" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="billing_billing_account" />
+		
+		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_provider_contact" />
+		<modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_provider_contact" />
+		<modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_provider_contact" />
+	</changeSet>
+	
+	<changeSet id="#3232_20180529" author="EdwardLegaspi">
+    	<createTable tableName="meveo_script_instance_cat">
+    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_script_instance_cat_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+    	</createTable>
+    	
+    	<createSequence sequenceName="meveo_script_instance_cat_seq" />
+    	
+    	<addColumn tableName="meveo_script_instance">
+    		<column name="script_instance_cat_id" type="bigint"></column>
+    	</addColumn>
+    	
+    	<addForeignKeyConstraint baseColumnNames="script_instance_cat_id" baseTableName="meveo_script_instance" constraintName="fk_meveo_script_instance-category" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance_cat" />
+    </changeSet>
+    
+    <changeSet id="#3232_20180529 Mysql" author="EdwardPLegaspi" dbms="mysql">
+        <createTable tableName="meveo_script_instance_cat_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_script_instance_cat_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}meveo_script_instance_cat_seq values(1)</sql>
+    </changeSet>
+    
 </databaseChangeLog> 
