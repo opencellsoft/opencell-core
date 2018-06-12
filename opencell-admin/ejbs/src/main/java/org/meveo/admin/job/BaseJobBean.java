@@ -14,10 +14,11 @@ public abstract class BaseJobBean {
     private CustomFieldInstanceService customFieldInstanceService;
     
     /**
-     * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
+     * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService.
      *
-     * @param key the key
-     * @return the runtime value
+     * @param jobInstance the job instance
+     * @param cfCode the cf code
+     * @return the param or CF value
      */
     protected Object getParamOrCFValue(JobInstance jobInstance, String cfCode) {
         Object value = jobInstance.getParamValue(cfCode);
