@@ -121,9 +121,15 @@
                                         rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
                                     <hftl:formField label="#{messages['subscription.endOfTermAction']}" field="subscriptionRenewal" childField="endOfTermAction" required="true"
                                         listenerUpdate="subscriptionRenewal" />
-                                    <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="subscriptionRenewal" childField="terminationReason" required="true"
-                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode"
-                                        listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+									<hftl:formField
+										label="#{messages['subscription.endOfTermTerminationReason']}" 
+										field="subscriptionRenewal" 
+										childField="terminationReason" 
+										valueLabelField="descriptionOrCode"
+										required="true"
+										rendered="#{offerTemplateBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode"
+										listBean="#{subscriptionTerminationReasonBean}" 
+										styleClass="clearLeft" />
                                 </h:panelGroup>
                             </h:panelGroup>
                         </p:fieldset>

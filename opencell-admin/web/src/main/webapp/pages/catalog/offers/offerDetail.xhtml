@@ -197,12 +197,15 @@
 							required="true" listenerUpdate="subscriptionRenewal" />
 						<hftl:formField
 							label="#{messages['subscription.endOfTermTerminationReason']}"
-							field="subscriptionRenewal" childField="terminationReason"
-							required="true"
+							field="subscriptionRenewal" 
+							childField="terminationReason"
 							rendered="#{offerTemplateBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}"
 							valueLabelField="descriptionOrCode"
-							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
-					</h:panelGroup>
+							required="true"
+							listBean="#{subscriptionTerminationReasonBean}" 
+							styleClass="clearLeft" />
+		
+						</h:panelGroup>
 				</h:panelGroup>
 			</p:fieldset>
 
