@@ -990,7 +990,6 @@
 								return @textvalue;				
 			end;
 		]]></sql>
-<<<<<<< HEAD
 </changeSet>    
 
 	<changeSet id="#3232_20180529" author="EdwardLegaspi">
@@ -1032,15 +1031,11 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}meveo_script_instance_cat_seq values(1)</sql>
     </changeSet>
-
-=======
-	</changeSet>    
->>>>>>> eae087337f... re #3290 - [invoicing] Manage invoice sequence as separate entity
+ 
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
     </changeSet> 
-<<<<<<< HEAD
 
     <changeSet id="#3206_20180531" author="Andrius Karpavicius">
         <sql> update ${db.schema.adapted}meveo_module_item set item_type='org.meveo.model.notification.ScriptNotification' where item_type='org.meveo.model.notification.Notification' </sql>
@@ -1065,8 +1060,6 @@
         <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_provider_contact" />
         <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_provider_contact" />
     </changeSet>
-
-=======
     
     <changeSet id="#3290_04062018" author="anasseh">
         <addColumn tableName="billing_invoice_type">
@@ -1078,5 +1071,4 @@
         </addColumn>
         <sql>update billing_invoice_configuration set current_invoice_nb = (max(select max(current_invoice_nb) from billing_invoice_type,select max(current_invoice_nb) from billing_seq_invtyp))</sql>
     </changeSet>
->>>>>>> eae087337f... re #3290 - [invoicing] Manage invoice sequence as separate entity
 </databaseChangeLog> 
