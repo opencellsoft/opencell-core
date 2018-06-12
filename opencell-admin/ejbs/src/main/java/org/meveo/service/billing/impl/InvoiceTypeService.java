@@ -133,7 +133,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         appProvider = providerService.findById(appProvider.getId());
         Long currentInvoiceNb = appProvider.getInvoiceConfiguration().getCurrentInvoiceNb();
         if (currentInvoiceNb == null) {
-            throw new BusinessException("Cant get global CurrentGlobalInvoiceNb ");
+            currentInvoiceNb = 0L;
         }
         return currentInvoiceNb;
     }

@@ -1069,6 +1069,12 @@
          <addColumn tableName="billing_invoice_configuration">
             <column name="current_invoice_nb" type="bigint" />
         </addColumn>
-        <sql>update billing_invoice_configuration set current_invoice_nb = (max(select max(current_invoice_nb) from billing_invoice_type,select max(current_invoice_nb) from billing_seq_invtyp))</sql>
+       <createTable tableName="temp_to_delete">
+            <column name="max_id" type="bigint" />
+        </createTable>
+         <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_invoice_type)); </sql>
+         <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_seq_invtyp_sell)); </sql>
+         <sql>update ${db.schema.adapted}billing_invoice_configuration set current_invoice_nb = (select max(max_id) from temp_to_delete);</sql>
+         <dropTable tableName="temp_to_delete"/>
     </changeSet>
 </databaseChangeLog> 
