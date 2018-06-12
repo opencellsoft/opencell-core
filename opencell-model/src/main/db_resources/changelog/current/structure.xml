@@ -923,6 +923,12 @@
     	<addColumn tableName="billing_wallet_operation">
     		<column name="subscription_id" type="bigint" />
     	</addColumn>
+    	<addColumn tableName="billing_subscription">
+    		<column name="billing_run" type="bigint" />
+    	</addColumn>
+    	<addColumn tableName="ord_order">
+    		<column name="billing_run" type="bigint" />
+    	</addColumn>
     </changeSet>
     
 </databaseChangeLog> 

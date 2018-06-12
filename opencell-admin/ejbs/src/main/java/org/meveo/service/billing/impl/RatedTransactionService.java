@@ -273,7 +273,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         boolean entreprise = appProvider.isEntreprise();
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 

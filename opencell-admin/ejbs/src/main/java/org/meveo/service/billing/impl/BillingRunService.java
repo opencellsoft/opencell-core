@@ -39,6 +39,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -535,7 +536,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run
      * @return the entity objects
      */
-    public List<? extends IEntity> getEntities(BillingRun billingRun) {
+    public List<? extends IBillableEntity> getEntities(BillingRun billingRun) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
@@ -796,7 +797,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws Exception {
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
-        List<? extends IEntity> entities = getEntities(billingRun);
+        List<? extends IBillableEntity> entities = getEntities(billingRun);
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 
@@ -809,7 +810,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
                 MeveoUser lastCurrentUser = currentUser.unProxy();
                 while (subListCreator.isHasNext()) {
-                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<IEntity>)subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
+                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<IBillableEntity>)subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
                         lastCurrentUser);
                     asyncReturns.add(count);
                     try {

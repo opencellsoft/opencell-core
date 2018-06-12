@@ -49,6 +49,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
@@ -71,7 +72,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -170,6 +171,10 @@ public class Subscription extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run")
+    private BillingRun billingRun;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -432,6 +437,14 @@ public class Subscription extends BusinessCFEntity {
 
         }
 
+    }
+    
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
+
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
     }
 
     /**

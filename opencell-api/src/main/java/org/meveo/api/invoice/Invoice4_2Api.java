@@ -387,8 +387,8 @@ public class Invoice4_2Api extends BaseApi {
             BillingProcessTypesEnum.AUTOMATIC);
     }
 
-    private void updateBAtotalAmount(Long billingAccountId, BillingRun billingRun) throws BusinessException {
-        billingAccountService.updateEntityTotalAmounts(billingAccountId, billingRun);
+    private void updateBAtotalAmount(BillingAccount billingAccount, BillingRun billingRun) throws BusinessException {
+        billingAccountService.updateEntityTotalAmounts(billingAccount, billingRun);
         log.debug("updateBillingAccountTotalAmounts ok");
     }
 
@@ -419,22 +419,26 @@ public class Invoice4_2Api extends BaseApi {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
         }
-        if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-            missingParameters.add("billingAccountCode");
-        }
-
-        if (generateInvoiceRequestDto.getInvoicingDate() == null) {
-            missingParameters.add("invoicingDate");
-        }
-        if (generateInvoiceRequestDto.getLastTransactionDate() == null) {
-            missingParameters.add("lastTransactionDate");
+        if (generateInvoiceRequestDto != null) {
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
+                missingParameters.add("targetCode");
+            }
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetType())) {
+                missingParameters.add("targetType");
+            }
+            if (generateInvoiceRequestDto.getInvoicingDate() == null) {
+                missingParameters.add("invoicingDate");
+            }
+            if (generateInvoiceRequestDto.getLastTransactionDate() == null) {
+                missingParameters.add("lastTransactionDate");
+            }
         }
 
         handleMissingParameters();
 
-        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
+        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
         if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
+            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getTargetCode());
         }
 
         if (billingAccount.getBillingRun() != null && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
@@ -454,7 +458,7 @@ public class Invoice4_2Api extends BaseApi {
         Long billingRunId = billingRun.getId();
         log.info("launchExceptionalInvoicing ok , billingRun.id:" + billingRunId);
 
-        updateBAtotalAmount(billingAccount.getId(), billingRun);
+        updateBAtotalAmount(billingAccount, billingRun);
         log.info("updateBillingAccountTotalAmounts ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1);

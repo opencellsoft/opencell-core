@@ -14,8 +14,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -67,13 +67,13 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<IEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
+    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
             throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         int count = 0;
-        for (IEntity entity : entities) {
+        for (IBillableEntity entity : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
@@ -101,7 +101,7 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        for (IEntity entity : (List<IEntity>) entities) {
+        for (IBillableEntity entity : (List<IBillableEntity>) entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }

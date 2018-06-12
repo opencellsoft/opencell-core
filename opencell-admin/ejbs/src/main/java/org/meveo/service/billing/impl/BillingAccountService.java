@@ -40,7 +40,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.IEntity;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -68,6 +68,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.order.OrderService;
 
 /**
  * The Class BillingAccountService.
@@ -79,6 +80,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     @Inject
     private UserAccountService userAccountService;
+
+    @Inject
+    private SubscriptionService subscriptionService;
+
+    @Inject
+    private OrderService orderService;
 
     @EJB
     private BillingRunService billingRunService;
@@ -276,7 +283,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public boolean updateEntityTotalAmounts(IEntity entity, BillingRun billingRun) throws BusinessException {
+    public boolean updateEntityTotalAmounts(IBillableEntity entity, BillingRun billingRun) throws BusinessException {
         log.debug("updateEntityTotalAmounts  entity:" + entity.getId());
         //BillingAccount billingAccount = findById(billingAccountId);
         
@@ -303,18 +310,19 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     
                 log.debug("set brAmount {} in BA {}", invoiceAmount, entity.getId());
             }
-            billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
-            updateNoCheck(billingAccount);
         }
-
-        //TODO other entites
-        /*
-        if(entity instanceof Subscription) {
-            Subscription subscription = findByCode(((Subscription) entity).getCode());
-            subscription.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
-        }
-        */
         
+        entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+        
+        if(entity instanceof BillingAccount) {
+            updateNoCheck((BillingAccount)entity);
+        }
+        if(entity instanceof Order) {
+            orderService.updateNoCheck((Order)entity);
+        }
+        if(entity instanceof Subscription) {
+            subscriptionService.updateNoCheck((Subscription)entity);
+        }
 
         return true;
     }
