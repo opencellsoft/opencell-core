@@ -54,7 +54,7 @@ public class SepaRejectedTransactionsJob extends Job {
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         ParamBean param = paramBeanFactory.getInstance();
-        String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat");
+        String fileFormat = (String) this.getParamOrCFValue(jobInstance, "fileFormat");
         String defaultPrefix = "PAYNUM".equalsIgnoreCase(fileFormat) ? "*" : "Pain002_";
         String defaultExtension = "PAYNUM".equalsIgnoreCase(fileFormat) ? "csv" : "xml";
 

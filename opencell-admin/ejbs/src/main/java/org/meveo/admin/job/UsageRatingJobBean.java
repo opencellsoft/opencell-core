@@ -24,11 +24,10 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
 @Stateless
-public class UsageRatingJobBean {
+public class UsageRatingJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
@@ -42,9 +41,6 @@ public class UsageRatingJobBean {
     @Inject
     @Rejected
     private Event<Serializable> rejectededEdrProducer;
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     @CurrentUser
@@ -61,12 +57,12 @@ public class UsageRatingJobBean {
             Long waitingMillis = new Long(0);
             Date rateUntilDate = null;
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUtilDate");
+                rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
             } catch (Exception e) {
                 nbRuns = new Long(1);
                 waitingMillis = new Long(0);
