@@ -998,4 +998,11 @@
         <sql>insert into ${db.schema.adapted}meveo_script_instance_cat_seq values(1)</sql>
     </changeSet>
     
+    <changeSet id="#3462_20180528" author="AbdelmounaimAkadid">
+     	<addColumn tableName="billing_billing_run">
+           <column name="uuid" type="varchar(60)" />
+           <column name="cf_values" type="text" />
+       </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 
