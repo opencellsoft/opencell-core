@@ -31,6 +31,12 @@
 					<p:commandButton id="test3" value="Delete All" action="#{contactBean.removeAllContacts}"></p:commandButton>
 				</p:panel>
 			</h:form>
+			
+			<h:form id="form" enctype="multipart/form-data">
+				 <h:inputFile id="file" value="#{contactBean.file}"/>
+				 <h:commandButton value="Upload"
+				      action="#{contactBean.upload}"/>
+			</h:form>
 		</div>
 	</ui:define>
 </ui:composition>

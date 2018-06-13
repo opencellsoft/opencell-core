@@ -1,9 +1,13 @@
 package org.meveo.admin.action.intcrm;
 
+import java.io.IOException;
+import java.util.Scanner;
+
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.Part;
 
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -22,6 +26,9 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	@Inject	
 	private Logger log;
 	
+	private Part file;
+	private String fileContent;
+	  
 	public ContactBean() {
 		super(Contact.class);
 	}
@@ -58,6 +65,23 @@ public class ContactBean extends CustomFieldBean<Contact>{
 		log.debug("start ContactBean");
 	}
 	
+	public void upload() {
+	    try {
+	    	fileContent = new Scanner(file.getInputStream())
+	          .useDelimiter("\\A").next();
+	    	contactService.parseLinkedInFromText(fileContent);
+	    } catch (IOException | BusinessException e) {
+	      // Error handling
+	    }
+	}
+	
+	public Part getFile() {
+	    return file;
+	}
+	 
+	  public void setFile(Part file) {
+	    this.file = file;
+	}
 
 	@Override
 	protected IPersistenceService<Contact> getPersistenceService() {
