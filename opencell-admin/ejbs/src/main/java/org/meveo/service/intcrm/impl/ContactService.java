@@ -50,7 +50,6 @@ public class ContactService extends BusinessService<Contact> {
 	public Set<Contact> parseLinkedInFromText(String context) throws IOException, BusinessException {
 		log.debug(context);
 		Set<Contact> contacts = new HashSet<Contact>();
-		Set<Contact> failedToPersistContacts = new HashSet<Contact>();
 		
 		try (BufferedReader br = new BufferedReader(new StringReader(context))) {
 		
@@ -74,8 +73,9 @@ public class ContactService extends BusinessService<Contact> {
 					String websiteUrl = line.get(7);
 					String instantMessengers = line.get(8);
 					String importedBy = this.currentUser.getFullName();
-					List<Message> messages= new ArrayList<>();
+					List<Message> messages= new ArrayList<Message>();
 					Message message = new Message();
+					messages.add(message);
 					
 					c.setName(new Name(title, firstName, lastName));
 					c.setEmail(email);
@@ -90,20 +90,26 @@ public class ContactService extends BusinessService<Contact> {
 					c.setMessages(messages);
 					
 					contacts.add(c);
-					//why not create here?
-				}
-			}
-			for(Contact c: contacts) {
-				try{
-					this.create(c);
-				}
-				catch(BusinessException e) {
-					failedToPersistContacts.add(c);
 				}
 			}
 		}
         
-		return contacts;
+		return this.create(contacts);
+	}
+	
+	public Set<Contact> create(Set<Contact> contacts) {
+		Set<Contact> failedToPersistContacts = new HashSet<Contact>();
+
+		for(Contact c : contacts) {
+			try {
+				this.create(c);
+			} catch (BusinessException e) {
+				log.debug("Failed to save contact : " + c.toString());
+				failedToPersistContacts.add(c);
+			}
+		}
+		
+		return failedToPersistContacts;
 	}
 	
 	public Set<Contact> parseLinkedInFile(File file) {

@@ -108,7 +108,7 @@ public class Contact extends AccountEntity {
 	@Embedded
 	private CommunicationPolicy contactPolicy;
 
-	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL)
 	private List<Message> messages;
 
 	@ManyToOne(fetch = FetchType.LAZY)

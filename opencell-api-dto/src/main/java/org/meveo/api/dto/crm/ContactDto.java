@@ -3,10 +3,13 @@ package org.meveo.api.dto.crm;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.meveo.api.dto.AuditableDto;
 import org.meveo.api.dto.account.AccountDto;
+import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.NameDto;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
+import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
@@ -40,6 +43,34 @@ public class ContactDto extends AccountDto {
 	private List<Message> messages;
 	
 	private AddressBook addressBook;
+
+	public ContactDto () {
+		
+	}
+	
+	public ContactDto(Contact contact) {
+		this.setName(new NameDto(contact.getName()));
+		this.setAddress(new AddressDto(contact.getAddress()));
+		this.setCode(contact.getCode());
+		this.setAssistantName(contact.getAssistantName());
+		this.setAssistantPhone(contact.getAssistantPhone());
+		this.setEmail(contact.getEmail());
+		this.setPosition(contact.getPosition());
+		this.setWebsiteUrl(contact.getWebsiteUrl());
+		this.setImportedBy(contact.getImportedBy());
+		this.setImportedFrom(contact.getImportedFrom());
+		this.setSocialIdentifier(contact.getSocialIdentifier());
+		this.setAgreedToUA(contact.isAgreedToUA());
+		this.setVip(contact.isVip());
+		this.setSuspect(contact.isSuspect());
+		this.setAddressBook(contact.getAddressBook());
+		this.setMessages(contact.getMessages());
+		this.setAuditable(new AuditableDto(contact.getAuditable()));
+		this.setCode(contact.getCode());
+		this.setId(contact.getId());
+		this.setDescription(contact.getDescription());
+		
+	}
 
 	public String getEmail() {
 		return email;

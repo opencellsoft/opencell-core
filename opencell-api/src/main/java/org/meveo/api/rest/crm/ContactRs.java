@@ -19,8 +19,11 @@ import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
+import org.meveo.api.dto.response.crm.ContactsResponseDto;
+import org.meveo.api.dto.response.crm.GetContactResponseDto;
 import org.meveo.api.rest.IBaseRs;
-
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 @Path("/contact")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -35,7 +38,7 @@ import org.meveo.api.rest.IBaseRs;
     
     @GET
     @Path("/")
-    String find(@QueryParam("code") String code);
+    GetContactResponseDto find(@QueryParam("code") String code);
     
     @DELETE
     @Path("/{code}")
@@ -45,4 +48,33 @@ import org.meveo.api.rest.IBaseRs;
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ContactDto postData);
     
+    /**
+     * List customers matching a given criteria
+     *
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return List of contacts
+     */
+    @GET
+    @Path("/list")
+    public ContactsResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+    
+    @POST
+    @Path("/list")
+    public ContactsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    
+    @POST
+    @Path("/importLinkedInFromText")
+    ActionStatus importLinkedInFromText(String context);
+    
+    @POST
+    @Path("/importLinkedInFile")
+    ActionStatus importLinkedInFile();
+       
  }
