@@ -194,12 +194,13 @@ public class ParamBean {
      * @return True of multitenancy is enabled
      */
     public static boolean isMultitenancyEnabled() {
-        if (getInstance() == null) {
+        ParamBean currentInstance = getInstance();
+        if (currentInstance == null) {
             return multiTenancyEnabled;
         }
         
         if (multiTenancyEnabled == null) {
-            multiTenancyEnabled = Boolean.valueOf(getInstance().getProperty("meveo.multiTenancy", "false"));
+            multiTenancyEnabled = Boolean.valueOf(currentInstance.getProperty("meveo.multiTenancy", "false"));
         }
         return multiTenancyEnabled;
     }
@@ -211,18 +212,22 @@ public class ParamBean {
      * @return Full path to provider's data files
      */
     public String getChrootDir(String provider) {
-        if (getInstance() == null) {
+        ParamBean currentInstance = getInstance();
+        if (currentInstance == null) {
             return null;
         }
         
         if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
-            return getInstance().getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
+            return currentInstance.getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
         }
 
         String dir;
-        dir = getInstance().getProperty("providers.rootDir", "./opencelldata");
+        dir = currentInstance.getProperty("providers.rootDir", "./opencelldata");
         dir += File.separator;
-        dir += getInstanceByProvider(provider).getProperty("provider.rootDir", provider);
+        ParamBean instanceByProvider = getInstanceByProvider(provider);
+        if (instanceByProvider != null) {
+            dir += instanceByProvider.getProperty("provider.rootDir", provider);
+        }
         return dir;
     }
 
@@ -255,7 +260,6 @@ public class ParamBean {
         }
 
         boolean result = false;
-        FileInputStream propertyFile = null;
         Properties pr = new Properties();
         File file = new File(_propertyFile);
         try {
@@ -270,14 +274,6 @@ public class ParamBean {
             }
         } catch (IOException e1) {
             log.error("Impossible to create :" + _propertyFile);
-        } finally {
-            if (propertyFile != null) {
-                try {
-                    propertyFile.close();
-                } catch (Exception e) {
-                    log.error("FileInputStream error", e);
-                }
-            }
         }
         // log.debug("-Fin initialize , result:" + result
         // + ", portability.defaultDelay="
@@ -543,15 +539,22 @@ public class ParamBean {
     public String getProperty(String key, String defaultValue, String provider) {
         String result = null;
         ParamBean params = getInstanceByProvider(provider);
-        Properties properties = params.getProperties();
+        Properties properties = null;
+        if (params != null) {
+            properties = params.getProperties();
+        }
 
-        if (properties.containsKey(key)) {
+        if (properties != null && properties.containsKey(key)) {
             result = properties.getProperty(key);
         } else if (defaultValue != null) {
             result = defaultValue;
-            properties.put(key, defaultValue);
-            params.setProperties(properties);
-            params.saveProperties();
+            if (properties != null) {
+                properties.put(key, defaultValue);
+            }
+            if (params != null) {
+                params.setProperties(properties);
+                params.saveProperties();
+            }
         }
         return result;
     }
@@ -567,15 +570,23 @@ public class ParamBean {
      */
     public String getInheritedProperty(String key, String defaultValue, String provider) {
         String result = null;
+        Properties properties = null;
         ParamBean params = getInstanceByProvider(provider);
-        Properties properties = params.getProperties();
+        if (params != null) {
+            properties = params.getProperties();
+        }
 
-        if (properties.containsKey(key)) {
+        if (properties != null && properties.containsKey(key)) {
             result = properties.getProperty(key);
-        } else if (params.isSubTenant) {
+        } else if (params != null && params.isSubTenant) {
             // check if a value is already defined for the main tenant
-            result = getInstance().getProperty(key, defaultValue);
-            properties.put(key, result);
+            ParamBean currentInstance = getInstance();
+            if (currentInstance != null) {
+                result = currentInstance.getProperty(key, defaultValue);
+            }
+            if (properties != null) {
+                properties.put(key, result);
+            }
             params.setProperties(properties);
             params.saveProperties();
         }
@@ -592,7 +603,11 @@ public class ParamBean {
      */
     public String getDateFormat(String provider) {
         if (!isSubTenant) {
-            return getInstanceByProvider(provider).getDateFormat();
+            ParamBean instanceByProvider = getInstanceByProvider(provider);
+            if (instanceByProvider != null) {
+                return instanceByProvider.getDateFormat();
+            }
+
         }
         return getDateFormat();
     }
@@ -606,7 +621,11 @@ public class ParamBean {
      */
     public String getDateTimeFormat(String provider) {
         if (!isSubTenant) {
-            return getInstanceByProvider(provider).getDateTimeFormat();
+            ParamBean instanceByProvider = getInstanceByProvider(provider);
+            if (instanceByProvider != null) {
+                return instanceByProvider.getDateTimeFormat();
+            }
+            
         }
         return getDateTimeFormat();
     }

@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.payments.CreditCardTypeEnum;
 
 /**
@@ -14,7 +14,7 @@ import org.meveo.model.payments.CreditCardTypeEnum;
  */
 @XmlRootElement(name = "PayByCard")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PayByCardDto extends BaseDto {
+public class PayByCardDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3586462140358234151L;

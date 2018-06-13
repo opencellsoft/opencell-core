@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.AuditableEntityDto;
+
 /**
  * The Class MatchingAmountDto.
  * 
@@ -13,7 +15,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "MatchingAmount")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MatchingAmountDto {
+public class MatchingAmountDto extends AuditableEntityDto {
+
+    /**
+     * The auto generated serial no
+     */
+    private static final long serialVersionUID = 8509128338503816584L;
 
     /** The matching code. */
     private String matchingCode;

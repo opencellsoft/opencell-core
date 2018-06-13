@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
@@ -18,7 +17,7 @@ import org.meveo.model.AccountEntity;
  */
 @XmlRootElement(name = "Account")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AccountDto extends BusinessDto {
+public abstract class AccountDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8818317499795113026L;
@@ -55,6 +54,15 @@ public abstract class AccountDto extends BusinessDto {
     public AccountDto() {
         super();
     }
+    
+    /**
+     * Instantiates a new account dto. Used on account hierarchy
+     *
+     * @param accountEntity the accountEntity entity
+     */
+    public AccountDto(AccountEntity accountEntity) {
+        super(accountEntity);
+    }
 
     /**
      * Instantiates a new account dto.
@@ -63,6 +71,7 @@ public abstract class AccountDto extends BusinessDto {
      * @param customFieldInstances the custom field instances
      */
     public AccountDto(AccountEntity accountEntity, CustomFieldsDto customFieldInstances) {
+        super(accountEntity);
         initFromEntity(accountEntity, customFieldInstances);
     }
 
@@ -73,8 +82,7 @@ public abstract class AccountDto extends BusinessDto {
      * @param customFieldInstances the custom field instances
      */
     public void initFromEntity(AccountEntity account, CustomFieldsDto customFieldInstances) {
-        setCode(account.getCode());
-        setDescription(account.getDescription());
+        setAuditable(account);
         setExternalRef1(account.getExternalRef1());
         setExternalRef2(account.getExternalRef2());
         if (account.getName() != null) {

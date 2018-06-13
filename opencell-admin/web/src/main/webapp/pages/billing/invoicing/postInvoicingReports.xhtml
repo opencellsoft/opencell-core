@@ -171,8 +171,9 @@
 
 		<p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">		
 			<hftl:dataList  id="dataListInvoicess" dataModel="#{invoiceBean.getBillingRunInvoices(billingRunBean.entity)}"   backingBean="#{invoiceBean}">
-	        <p:ajax event="rowSelectCheckbox"    listener="#{invoiceBean.onRowSelectCheckbox}" update=":excludeBa" />
-	        <p:ajax event="rowUnselectCheckbox"  listener="#{invoiceBean.onRowUnSelectCheckbox}"  update=":excludeBa"  /> 
+	        <p:ajax event="rowSelectCheckbox"     update=":excludeBa" />
+	        <p:ajax event="rowUnselectCheckbox"   update=":excludeBa"  /> 
+	        <p:ajax event="toggleSelect" update=":excludeBa"/>
 	
 				<hftl:column label="#{messages['businessEntity.code']}" objectIdParamName="billingAccountId"
 					field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
@@ -190,7 +191,7 @@
 			 <p:panel styleClass="action-buttons" id="actionsButtons" >
 				<p:tooltip for="excludeBa"
 					showEffect="slide" hideEffect="slide" />
-				<p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{!invoiceBean.selectedInvoices}"
+				<p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{invoiceBean.excludeBaDisabled}"
 					value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
 					update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" 
 					rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">

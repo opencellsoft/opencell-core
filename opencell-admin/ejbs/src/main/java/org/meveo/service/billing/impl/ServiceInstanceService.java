@@ -29,6 +29,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -204,9 +205,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException {
         OfferTemplate offer = serviceInstance.getSubscription().getOffer();
         if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
-            throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
+            throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
-        log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+        
+        if (offer != null && serviceInstance != null) {
+            log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+
+        }
         return true;
     }
 
@@ -540,7 +545,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
                 if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
                     log.debug("Applying the termination charge {}", oneShotChargeInstance.getId());
+                    
+                    // #3174 Setting termination informations which will be also reachable from within the "rating scripts"
                     oneShotChargeInstance.setChargeDate(terminationDate);
+                    oneShotChargeInstance.getTerminationServiceInstance().setSubscriptionTerminationReason(terminationReason);
+                    
                     oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity(), orderNumber);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
                 } else {

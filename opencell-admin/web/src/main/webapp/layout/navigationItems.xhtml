@@ -343,8 +343,12 @@
 			value="#{messages['menu.meveoModules']}" />
 		<p:menuitem id="customizedEntities" outcome="customizedEntities"
 			value="#{messages['menu.customizedEntities']}" />
-		<p:menuitem id="scriptInstances" outcome="scriptInstances"
-			value="#{messages['menu.scriptInstances']}" />
+			
+		<p:submenu id="script" label="#{messages['menu.script']}">
+			<p:menuitem id="scriptInstanceCategories" outcome="scriptInstanceCategories" value="#{messages['menu.scriptInstanceCategory']}" />
+			<p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
+		</p:submenu>
+			
 		<p:menuitem id="filters" outcome="filters"
 			value="#{messages['menu.filters']}" />
 		<p:submenu id="workflows" label="#{messages['menu.workflow']}"

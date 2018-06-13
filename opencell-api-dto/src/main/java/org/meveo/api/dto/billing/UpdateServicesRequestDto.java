@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.order.OrderItemActionEnum;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlRootElement(name = "UpdateServicesRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties({ "orderNumber", "orderItemId", "orderItemAction" })
-public class UpdateServicesRequestDto extends BaseDto {
+public class UpdateServicesRequestDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8352154466061113933L;

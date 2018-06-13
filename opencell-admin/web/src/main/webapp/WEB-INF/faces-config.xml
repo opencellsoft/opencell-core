@@ -189,6 +189,16 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/admin/scriptInstances/scriptInstanceDetail.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
+	<navigation-case>
+		<from-outcome>scriptInstanceCategories</from-outcome>
+		<to-view-id>/pages/admin/scriptInstanceCategories/scriptInstanceCategories.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>scriptInstanceCategoryDetail</from-outcome>
+		<to-view-id>/pages/admin/scriptInstanceCategories/scriptInstanceCategoryDetail.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
 
 	<navigation-case>
 		<from-outcome>timers</from-outcome>

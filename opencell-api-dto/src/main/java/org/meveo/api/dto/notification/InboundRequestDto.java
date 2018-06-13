@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.notification.InboundRequest;
 
 /**
@@ -14,7 +14,7 @@ import org.meveo.model.notification.InboundRequest;
  */
 @XmlRootElement(name = "InboundRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InboundRequestDto extends BaseDto {
+public class InboundRequestDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3195747154300291876L;
@@ -68,6 +68,7 @@ public class InboundRequestDto extends BaseDto {
      * @param inboundRequest the InboundRequest entity
      */
     public InboundRequestDto(InboundRequest inboundRequest) {
+        super(inboundRequest);
         contentLength = inboundRequest.getContentLength();
         contentType = inboundRequest.getContentType();
         protocol = inboundRequest.getProtocol();

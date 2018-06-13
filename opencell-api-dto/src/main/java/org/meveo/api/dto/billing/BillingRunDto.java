@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -16,10 +16,13 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 
 /**
  * The Class BillingRunDto.
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "BillingRun")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BillingRunDto extends BaseDto {
+public class BillingRunDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -539,22 +542,22 @@ public class BillingRunDto extends BaseDto {
     }
     
     /**
-     * Gets the custom fields.
-     *
-     * @return the custom fields
-     */
-    public CustomFieldsDto getCustomFields() {
-        return customFields;
-    }
-
-    /**
-     * Sets the custom fields.
-     *
-     * @param customFields the new custom fields
-     */
-    public void setCustomFields(CustomFieldsDto customFields) {
-        this.customFields = customFields;
-    }
+      * Gets the custom fields.
+      *
+      * @return the custom fields
+      */
+     public CustomFieldsDto getCustomFields() {
+         return customFields;
+     }
+    
+     /**
+      * Sets the custom fields.
+      *
+      * @param customFields the new custom fields
+      */
+     public void setCustomFields(CustomFieldsDto customFields) {
+         this.customFields = customFields;
+     }
 
     /**
      * Sets the from entity.
@@ -562,6 +565,7 @@ public class BillingRunDto extends BaseDto {
      * @param billingRunEntity the new from entity
      */
     public void setFromEntity(BillingRun billingRunEntity) {
+        setAuditable(billingRunEntity);
         setProcessDate(billingRunEntity.getProcessDate());
         setStatus(billingRunEntity.getStatus());
         setStatusDate(billingRunEntity.getStatusDate());

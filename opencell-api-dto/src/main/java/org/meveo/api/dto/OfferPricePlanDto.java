@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "OfferPricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferPricePlanDto extends BaseDto {
+public class OfferPricePlanDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3592282981490299021L;
