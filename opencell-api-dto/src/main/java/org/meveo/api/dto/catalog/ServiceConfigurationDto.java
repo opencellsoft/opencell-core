@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * The Class ServiceConfigurationDto.
  *
  * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "ServiceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,6 +52,10 @@ public class ServiceConfigurationDto implements Serializable {
     @XmlTransient
     @JsonIgnore
     private Map<String, List<CustomFieldValue>> cfValues;
+    
+    @XmlTransient
+    @JsonIgnore
+    private Integer itemIndex;
 
     /** The mandatory. */
     private boolean mandatory;
@@ -231,6 +237,20 @@ public class ServiceConfigurationDto implements Serializable {
      */
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    /**
+     * @return the itemIndex
+     */
+    public Integer getItemIndex() {
+        return itemIndex;
+    }
+
+    /**
+     * @param itemIndex the itemIndex to set
+     */
+    public void setItemIndex(Integer itemIndex) {
+        this.itemIndex = itemIndex;
     }
 
     @Override

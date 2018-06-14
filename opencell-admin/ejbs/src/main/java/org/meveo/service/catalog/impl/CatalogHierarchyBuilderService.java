@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
  * A service that duplicate a hierarchy such as {@link OfferTemplate} and {@link ServiceTemplate}.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class CatalogHierarchyBuilderService {
@@ -430,7 +431,12 @@ public class CatalogHierarchyBuilderService {
 
             // update code if duplicate
             if (instantiatedFromBOM) {
-                prefix = prefix + newServiceTemplate.getId() + "_";
+                Integer serviceConfItemIndex = serviceConfiguration.getItemIndex();
+                if(serviceConfItemIndex != null) {
+                    prefix = prefix + serviceConfItemIndex + "_";
+                } else {
+                    prefix = prefix + newServiceTemplate.getId() + "_";                    
+                }
                 newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
                 newServiceTemplate = serviceTemplateService.update(newServiceTemplate);
             }

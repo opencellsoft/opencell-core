@@ -19,6 +19,8 @@
 
     <ui:define name="body">
         <o:importConstants type="org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum"/>
+        <o:importConstants type="org.meveo.model.catalog.LifeCycleStatusEnum"/>
+        
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -330,25 +332,67 @@
                                        exportXlsxButton="false" sortOrder="DESCENDING"
                                        styleClass="DataListCenter">
  							
-  							<hftl:column label="#{messages['commons.nameOrCode']}"
-                                         field="name">
-  							 </hftl:column>
-                            <hftl:column label="#{messages['commons.category']}"
-                                         field="offerTemplateCategories" isList="true"
-                                         valueLabelField="description">
-                            </hftl:column>
-                            <hftl:column label="#{messages['commons.validFrom']}"
-                                         field="validity.from" isDate="true">
-                            </hftl:column>
-                            <hftl:column label="#{messages['commons.validTo']}"
-                                         field="validity.to" isDate="true">
-                            </hftl:column>
-                            <p:column>
-                                <f:facet name="header">#{messages['commons.status']}</f:facet>
-                                <h:outputText
+ 							
+ 							<p:column headerText="#{messages['commons.nameOrCode']}" sortBy="#{entity.name}" filterBy="#{entity.name}">
+					            <h:outputText value="#{entity.name}" />
+					        </p:column>
+					        
+					        <p:column headerText="#{messages['commons.categories']}" filterBy="#{entity.offerTemplateCategories}" sortBy="#{entity.offerTemplateCategories}" >
+					             <f:facet name="filter">
+									<p:selectCheckboxMenu onchange="PF('cellEntity_results').filter()" label="#{messages['commons.choose']}">
+									    <f:converter converterId="offerTemplateCategoryConverter" />
+									    <p:ajax event="toggleSelect"  process="@this" partialSubmit="true" oncomplete="PF('cellEntity_results').filter()"/>
+					                    <f:selectItems value="#{offerTemplateListBean.activeOfferTemplateCategories}" var="item" itemValue="#{item}" 
+					                                   itemLabel="#{item.description}"/>
+					                </p:selectCheckboxMenu>
+								</f:facet>
+					            <p:dataList value="#{entity.offerTemplateCategories}" var="category" type="unordered">
+					                <h:outputText value="#{category.description}" />
+					            </p:dataList>
+					        </p:column>
+
+						   <p:column headerText="#{messages['commons.validFrom']}" 
+						             sortBy="#{entity.validity.from}" 
+						             filterBy="#{entity.validity.from}">
+						             
+						            <f:facet name="filter">
+										<p:calendar  pattern="dd/MM/yyyy">
+										    <p:ajax event="blur"  oncomplete="PF('cellEntity_results').filter()" />
+										</p:calendar>
+									</f:facet>
+			                        <h:outputText value="#{entity.validity.from}">
+			                            <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+			                        </h:outputText>
+					        </p:column>
+					        <p:column headerText="#{messages['commons.validTo']}" 
+						             sortBy="#{entity.validity.to}" 
+						             filterBy="#{entity.validity.to}">
+						             
+						            <f:facet name="filter">
+										<p:calendar  pattern="dd/MM/yyyy">
+										    <p:ajax event="blur" oncomplete="PF('cellEntity_results').filter()" />
+										</p:calendar>
+									</f:facet>
+			                        <h:outputText value="#{entity.validity.to}">
+			                            <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+			                        </h:outputText>
+					        </p:column>
+					        
+					         <p:column  filterBy="#{entity.lifeCycleStatus}"  sortBy="#{entity.lifeCycleStatus}" headerText="#{messages['commons.status']}" >
+					            <f:facet name="filter">
+					                <p:selectOneMenu onchange="PF('cellEntity_results').filter()">
+					                    <f:converter converterId="enumConverter" />
+					                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.catalog.LifeCycleStatusEnum" />
+					                    <f:selectItem />
+					                    <f:selectItems value="#{LifeCycleStatusEnum}" var="item" itemValue="#{item}" 
+					                                   itemLabel="#{messages[of:concat('enum.LifeCycleStatusEnum.', item)]}"/>
+					                </p:selectOneMenu>
+					            </f:facet>
+					            <h:outputText
                                         value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
                                         styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}"/>
-                            </p:column>
+					        </p:column>
+                            
                             <p:column headerText="#{messages['commons.actions']}">
                                 <p:link outcome="mm_offerTemplateDetail"
                                         styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
