@@ -289,6 +289,10 @@
             </column>
             <column name="sql_query" type="varchar(2000)" />
             <column name="script_instance_id" type="bigint" />
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}"/>
 		</createTable>
 		
 		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="dwh_report_extract" constraintName="fk_report_extract_script_instance" deferrable="false" initiallyDeferred="false"
@@ -803,6 +807,12 @@
 
     </changeSet>
 
+    <changeSet id="#3326_20180502" author="EdwardPLegaspi">
+    	<addColumn tableName="dwh_report_extract">
+    		<column name="result_type" type="varchar(10)"></column>
+    	</addColumn>
+    </changeSet>
+    
     <changeSet id="#3271_20180423" author="AbdelmounaimAkadid">
     	<addColumn tableName="billing_cycle">
             <column name="invoice_type_el" type="varchar(2000)"  />           
@@ -856,9 +866,14 @@
         <sql>CREATE INDEX medina_access_subscription_id ON  ${db.schema.adapted}medina_access(subscription_id)</sql>
 	</changeSet>
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="mysql">
+		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
         
         <sql>DROP INDEX IF EXISTS billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
+        
+        <sql>DROP INDEX IF EXISTS account_entity_upper_code ON ${db.schema.adapted}account_entity</sql> <!-- duplicate because of using upper - need to update in core -->
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
         
         <sql>DROP INDEX IF EXISTS rating_edr_status ON ${db.schema.adapted}rating_edr</sql>
         <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
@@ -887,6 +902,51 @@
        <addColumn tableName="ar_payment_history">
            <column name="customer_code" type="varchar(256)" />
        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#3368_20180424" author="EdwardPLegaspi">
+	    <createTable tableName="dwh_report_extract_execution">
+		    <column name="id" type="bigint" autoIncrement="${id.auto}">
+		        <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_report_extract_execution_pk" />
+		    </column>
+		    <column name="version" type="int4" />
+		    <column name="created" type="datetime">
+		        <constraints nullable="false" />
+		    </column>
+		    <column name="updated" type="datetime" />
+		    <column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+			<column name="report_extract_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="start_date" type="datetime" />
+			<column name="end_date" type="datetime" />
+			<column name="file_path" type="varchar(100)" />
+			<column name="line_count" type="int" />
+			<column name="origin" type="varchar(20)" />
+			<column name="error_message" type="text" />
+			<column name="status" type="boolean" />
+		</createTable>
+		<createSequence sequenceName="dwh_report_extract_execution_seq" />
+		
+		<addForeignKeyConstraint baseColumnNames="report_extract_id" baseTableName="dwh_report_extract_execution" constraintName="dwh_report_extract_execution_re_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dwh_report_extract" />
+	</changeSet>
+	
+	<changeSet id="#3368_20180424 - Mysql" author="EdwardPLegaspi" dbms="mysql">
+		<createTable tableName="dwh_report_extract_execution_seq">
+	        <column name="next_val" type="BIGINT">
+	            <constraints nullable="false" primaryKey="true" primaryKeyName="pk_dwh_report_extract_execution_seq" />
+	        </column>
+	    </createTable>
+        <sql>insert into ${db.schema.adapted}dwh_report_extract_execution_seq values(1)</sql>
+    </changeSet>
+    
+    <changeSet id="#3327_20180517" author="EdwardPLegaspi">
+    	<addColumn tableName="dwh_report_extract">
+    		<column name="style" type="text"></column>
+    		<column name="image_path" type="varchar(100)" />
+    	</addColumn>
     </changeSet>
     
      <changeSet id="#3406_20180516" author="AbdelmounaimAkadid">

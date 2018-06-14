@@ -133,6 +133,8 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 			List<AccountOperation> accountOperations = accountOperationService.list();
+			initContext.put(ReportExtractScript.LINE_COUNT, accountOperations.size());
+			
 	        String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR));
 	        File dir = new File(exportDir);
 	        if (!dir.exists()) {
@@ -175,6 +177,7 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 
 			LOGGER.debug("#####################Ending of script ExportAccountOperationScript");
 		} catch (Exception e) {
+			initContext.put(ReportExtractScript.ERROR_MESSAGE, e.getMessage());
 			LOGGER.error("Exception:", e);
 			throw new BusinessException(e.getMessage());
 		}
@@ -196,15 +199,15 @@ public class ExportAccountOperationScript extends ReportExtractScript {
 			return word;
 		}
 	}
-}
+}		
 		');]]></sql>
 
         <sql><![CDATA[
-INSERT INTO ${db.schema.adapted}dwh_report_extract
-	(id, version, disabled, created, code, description, category, script_type, filename_format, sql_query)
+INSERT INTO ${db.schema.adapted}dwh_report_extract 
+	(uuid, id, result_type, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
 VALUES
-	(-1, 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].csv', '
-SELECT
+	('SALES_JOURNAL_UUID', -1, 'HTML', 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].html',
+	'SELECT
     TO_CHAR(ao.invoice_date,''MM'') AS "Mois",
     TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS "Date facture",
     text(''HG'') AS "Code comptable",
@@ -259,6 +262,8 @@ ORDER BY
             <column name="script_type" value="JAVA"></column>
             <column name="filename_format" value="accounts-ops-[yyyy_MM_dd].csv"></column>
             <column name="script_instance_id" value="-1"></column>
+            <column name="uuid" value="ACOUNT_OPS_UUID"></column>
+			<column name="result_type" value="CSV"></column>
         </insert>
 
         <insert tableName="dwh_report_extract_params">
@@ -596,6 +601,14 @@ ORDER BY
             <column name="user_id" value="-3"></column>
             <column name="role_id" value="-6"></column>
         </insert>
+    </changeSet>
+    
+    <changeSet id="#3326_20180502" author="EdwardPLegaspi">
+    	<sql>update dwh_report_extract set result_type='CSV' where result_type is null;</sql>
+    </changeSet>
+    
+    <changeSet id="#3326_20180502 Mysql" author="EdwardPLegaspi" dbms="mysql">
+    	<sql>update ${db.schema.adapted}dwh_report_extract set result_type='CSV' where result_type is null;</sql>
     </changeSet>
 
     <changeSet author="anasseh" id="#3119_09052018">
