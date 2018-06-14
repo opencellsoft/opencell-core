@@ -4,7 +4,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org"
+	xmlns:hftl="http://hftl.org"  
 	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
 	template="/layout/template.xhtml">
 
@@ -208,9 +208,17 @@
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1" id="hierarchyGroup">
-					<hf:hierarchyPanel
-						treeBean="#{customerTreeBean}"
-						entity="#{subscriptionBean.entity}" />
+	            <c:if test="#{subscriptionBean.entity.id != null}">
+						<hf:hierarchyPanel
+							treeBean="#{customerTreeBean}"
+							entity="#{subscriptionBean.entity}" />
+				</c:if>
+				<c:if test="#{subscriptionBean.entity.id == null}">
+						<hf:hierarchyPanel
+							treeBean="#{customerTreeBean}"
+							entity="#{subscriptionBean.entity.userAccount}" />
+				</c:if>
+				
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
 
