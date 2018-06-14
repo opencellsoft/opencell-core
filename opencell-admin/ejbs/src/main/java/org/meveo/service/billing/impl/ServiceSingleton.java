@@ -56,7 +56,7 @@ public class ServiceSingleton {
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
      * @param invoiceDate Invoice date
-     * @param invoiceTypeId Invoice type id
+     * @param invoiceType Invoice type id
      * @param seller Seller
      * @param cfName CFT name
      * @param incrementBy A number to increment by
@@ -66,7 +66,7 @@ public class ServiceSingleton {
      */
     @Lock(LockType.WRITE)
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Sequence incrementInvoiceNumberSequence(Date invoiceDate, Long invoiceTypeId, Seller seller, String cfName, long incrementBy) throws BusinessException {
+    public Sequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
         Long currentNbFromCF = null;
         Long previousInvoiceNb = null;
 
@@ -87,7 +87,6 @@ public class ServiceSingleton {
             }
         }
 
-        InvoiceType invoiceType = invoiceTypeService.findById(invoiceTypeId);
         Sequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
         if (sequence == null) {
             sequence = invoiceType.getSequence();
@@ -109,8 +108,7 @@ public class ServiceSingleton {
             previousInvoiceNb = sequence.getCurrentInvoiceNb();
             sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
         }
-        invoiceType = invoiceTypeService.update(invoiceType);
-
+        
         // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
 
@@ -140,7 +138,7 @@ public class ServiceSingleton {
         Seller seller = sellerService.findById(sellerId);
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
-        Sequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceTypeId, seller, cfName, numberOfInvoices);
+        Sequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
 
         try {
             sequence = (Sequence) BeanUtils.cloneBean(sequence);

@@ -66,6 +66,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -1205,6 +1206,30 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                 .setParameter("userAccount", userAccount).getResultList();
         } catch (Exception e) {
             log.error("listToInvoiceByUserAccount error ", e);
+        }
+        return walletOperations;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<WalletOperation> listToInvoiceBySubscription(Date invoicingDate, Subscription subscription) {
+        List<WalletOperation> walletOperations = null;
+        try {
+            walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceBySubscription").setParameter("invoicingDate", invoicingDate)
+                .setParameter("subscription", subscription).getResultList();
+        } catch (Exception e) {
+            log.error("listToInvoiceBySubscription error ", e);
+        }
+        return walletOperations;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<WalletOperation> listToInvoiceByOrder(Date invoicingDate, Order order) {
+        List<WalletOperation> walletOperations = null;
+        try {
+            walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByOrderNumber").setParameter("invoicingDate", invoicingDate)
+                .setParameter("orderNumber", order.getOrderNumber()).getResultList();
+        } catch (Exception e) {
+            log.error("listToInvoiceByOrder error ", e);
         }
         return walletOperations;
     }

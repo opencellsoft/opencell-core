@@ -312,11 +312,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
         Seller seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
 
-        Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType.getId(), seller, cfName, 1);
+        Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
 
         String prefix = sequence.getPrefixEL();
         int sequenceSize = sequence.getSequenceSize();
-
+        
         if (prefix != null && !StringUtils.isBlank(prefix)) {
             prefix = evaluatePrefixElExpression(prefix, invoice);
         }
@@ -561,7 +561,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         throw new BusinessException("Due date delay is null");
                     }
                     invoice.setDueDate(dueDate);
-    
+                    
                     this.create(invoice);
                     
                     ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, ratedTransactionSelection, orderNumber, firstTransactionDate, lastTransactionDate, false, false);
@@ -594,7 +594,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
     
                     invoice.assignTemporaryInvoiceNumber();
-                    //assignInvoiceNumber(invoice);
     
                     Long endDate = System.currentTimeMillis();
                     log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
@@ -1582,11 +1581,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             throw new BusinessException("The billingAccount is already in an billing run with status " + entity.getBillingRun().getStatus());
         }
-
+        
+        ratedTransactionService.createRatedTransaction(entity, invoiceDate);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate);
         
         Invoice invoice = invoices.get(0);
-        
         if (!isDraft) {
             assignInvoiceNumber(invoice);
         }

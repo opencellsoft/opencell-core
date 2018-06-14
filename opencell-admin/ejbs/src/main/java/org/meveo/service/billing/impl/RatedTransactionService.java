@@ -43,6 +43,7 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -65,6 +66,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
@@ -1142,21 +1144,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * @param billingAccountId id of billing account
+     * @param entity entity to bill
      * @param invoicingDate invoicing date
      * @throws BusinessException business exception.
      */
-    public void createRatedTransaction(Long billingAccountId, Date invoicingDate) throws BusinessException {
-        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+    public void createRatedTransaction(IBillableEntity entity, Date invoicingDate) throws BusinessException {
         List<WalletOperation> walletOps = new ArrayList<WalletOperation>();
-        for (UserAccount ua : userAccounts) {
-            walletOps.addAll(walletOperationService.listToInvoiceByUserAccount(invoicingDate, ua));
+        if(entity instanceof BillingAccount) {
+            BillingAccount billingAccount = billingAccountService.findById(((BillingAccount)entity).getId());
+            List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+            for (UserAccount ua : userAccounts) {
+                walletOps.addAll(walletOperationService.listToInvoiceByUserAccount(invoicingDate, ua));
+            }
+        } else if(entity instanceof Subscription) {
+            walletOps.addAll(walletOperationService.listToInvoiceBySubscription(invoicingDate, (Subscription) entity));
+        } else if(entity instanceof Order) {
+            walletOps.addAll(walletOperationService.listToInvoiceByOrder(invoicingDate, (Order) entity));
         }
+        
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
         }
-        billingAccountService.createMinAmountsRT(billingAccount, invoicingDate);
+        
+        if(entity instanceof BillingAccount) {
+            billingAccountService.createMinAmountsRT((BillingAccount)entity, invoicingDate);
+        }
     }
 
     /**

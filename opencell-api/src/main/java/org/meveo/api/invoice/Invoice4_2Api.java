@@ -393,7 +393,8 @@ public class Invoice4_2Api extends BaseApi {
     }
 
     public void createRatedTransaction(Long billingAccountId, Date invoicingDate) throws Exception {
-        ratedTransactionService.createRatedTransaction(billingAccountId, invoicingDate);
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+        ratedTransactionService.createRatedTransaction(billingAccount, invoicingDate);
     }
 
     public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber) throws BusinessException {
