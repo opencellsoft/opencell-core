@@ -20,6 +20,7 @@ package org.meveo.model.jobs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -114,6 +115,11 @@ public class JobInstance extends EnableBusinessCFEntity {
     /** Code of provider, that job belongs to. */
     @Transient
     private String providerCode;
+    
+    /** The run time values. */
+    @Transient
+    private Map<String, Object> runTimeValues;
+
 
     /**
      * Gets the job template.
@@ -139,7 +145,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return the parametres
      */
     public String getParametres() {
-        Object value = this.getRuntimeValue("parameters");
+        Object value = this.getParamValue("parameters");
         return value != null ? String.valueOf(value) : parametres;
     }
     
@@ -147,7 +153,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return the parametres
      */
     public String getRunTimeParametres() {
-        Object value = this.getRuntimeValue("parameters");
+        Object value = this.getParamValue("parameters");
         return value != null ? String.valueOf(value) : parametres;
     }
 
@@ -238,7 +244,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return the run on nodes
      */
     public String getRunOnNodes() {
-        Object value = this.getRuntimeValue("runOnNodes");
+        Object value = this.getParamValue("runOnNodes");
         return value != null ? String.valueOf(value) : runOnNodes;
     }
 
@@ -353,5 +359,32 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setExcludeInvoicesWithoutAmount(Boolean excludeInvoicesWithoutAmount) {
         this.excludeInvoicesWithoutAmount = excludeInvoicesWithoutAmount;
+    }
+    
+    /**
+     * @param runTimeValues the runTimeValues to set
+     */
+    public void setRunTimeValues(Map<String, Object> runTimeValues) {
+        this.runTimeValues = runTimeValues;
+    }
+    
+    /**
+     * @return the runTimeValues
+     */
+    public Map<String, Object> getRunTimeValues() {
+        return runTimeValues;
+    }
+
+    /**
+     * Gets the runtime value.
+     *
+     * @param key the key
+     * @return the runtime value
+     */
+    public Object getParamValue(String key) {
+        if (this.runTimeValues == null ) {
+            return null;
+        }
+        return this.runTimeValues.get(key);
     }
 }

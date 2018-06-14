@@ -582,23 +582,13 @@ ORDER BY
         <delete tableName="adm_role">
             <where>id=-8</where>
         </delete>
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-29"/>
-            <column name="name" value="Finance Management"/>
-            <column name="permission" value="financeManagement"/>
-        </insert>
-        <insert tableName="adm_permission">
-            <column name="id" valueNumeric="-30"/>
-            <column name="name" value="Finance Visualization"/>
-            <column name="permission" value="financeVisualization"/>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1"/>
+            <column name="permission_id" valueNumeric="-20"/>
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-1"/>
-            <column name="permission_id" valueNumeric="-29"/>
-        </insert>
-        <insert tableName="adm_role_permission">
-            <column name="role_id" valueNumeric="-1"/>
-            <column name="permission_id" valueNumeric="-30"/>
+            <column name="permission_id" valueNumeric="-21"/>
         </insert>
     </changeSet>
 
@@ -993,6 +983,26 @@ ORDER BY
             <column name="name" value="Mediation button visibility in the menu"/>
             <column name="permission" value="cc-module-mediation-menu"/>
         </insert>
+         <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-104"/>
+            <column name="name" value="'Home' -resume infos SC homeSelefcare B2B"/>
+            <column name="permission" value="sc-module-home-menu"/>
+        </insert>
+         <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-105"/>
+            <column name="name" value="'My account' -customer's account"/>
+            <column name="permission" value="sc-module-myaccount-menu"/>
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-106"/>
+            <column name="name" value="'My subscriptions' -subscription list"/>
+            <column name="permission" value="sc-module-mysubs-menu"/>
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-107"/>
+            <column name="name" value="'My users' -user management"/>
+            <column name="permission" value="sc-module-myusers-menu"/>
+        </insert>
         <insert tableName="adm_role">
             <column name="id" valueNumeric="-7"/>
             <column name="version" valueNumeric="0"/>
@@ -1040,6 +1050,22 @@ ORDER BY
             <column name="version" valueNumeric="0"/>
             <column name="role_description" value="SUPER_ADMIN"/>
             <column name="role_name" value="SUPER_ADMIN"/>
+        </insert>
+         <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-7"/>
+            <column name="permission_id" valueNumeric="-104"/>
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-7"/>
+            <column name="permission_id" valueNumeric="-105"/>
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-7"/>
+            <column name="permission_id" valueNumeric="-106"/>
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-7"/>
+            <column name="permission_id" valueNumeric="-107"/>
         </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-7"/>

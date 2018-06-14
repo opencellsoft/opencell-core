@@ -58,10 +58,6 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     @Transient
     protected boolean appendGeneratedCode = false;
     
-    /** The run time values. */
-    @Transient
-    private Map<String, Object> runTimeValues;
-
     public String getCode() {
         return code;
     }
@@ -177,25 +173,4 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     public boolean isCodeChanged() {
         return !StringUtils.equals(code, previousCode);
     }
-
-    /**
-     * @param runTimeValues the runTimeValues to set
-     */
-    public void setRunTimeValues(Map<String, Object> runTimeValues) {
-        this.runTimeValues = runTimeValues;
-    }
-    
-    /**
-     * Gets the runtime value.
-     *
-     * @param key the key
-     * @return the runtime value
-     */
-    public Object getRuntimeValue(String key) {
-        if (this.runTimeValues == null ) {
-            return null;
-        }
-        return this.runTimeValues.get(key);
-    }
-
 }

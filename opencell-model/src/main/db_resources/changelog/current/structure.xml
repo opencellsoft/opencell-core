@@ -1077,4 +1077,50 @@
          <sql>update ${db.schema.adapted}billing_invoice_configuration set current_invoice_nb = (select max(max_id) from temp_to_delete);</sql>
          <dropTable tableName="temp_to_delete"/>
     </changeSet>
+    
+    <changeSet id="#3289_20180612 - Service renewal" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_service_template">
+    		<column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="days_notify_renew" type="INT4" />
+			<column name="end_of_term_action" type="varchar(10)" />
+			<column name="auto_termin_reason_id" type="bigint" />
+			<column name="init_active_unit" type="varchar(5)" />
+            <column name="init_active" type="INT4" />
+			 <column name="match_end_aggr_date" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="renew_for_unit" type="varchar(5)" />
+			<column name="renew_for" type="INT4" />
+    	</addColumn>
+    	
+    	<addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="cat_service_template" constraintName="fk_st_auto_tr_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+            
+        <addColumn tableName="billing_service_instance">
+    		<column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="days_notify_renew" type="INT4" />
+			<column name="end_of_term_action" type="varchar(10)" />
+			<column name="auto_termin_reason_id" type="bigint" />
+			<column name="init_active_unit" type="varchar(5)" />
+            <column name="init_active" type="INT4" />
+			 <column name="match_end_aggr_date" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="renew_for_unit" type="varchar(5)" />
+			<column name="renew_for" type="INT4" />
+			<column name="subscribed_till_date" type="datetime" />
+			<column name="renewed" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="notify_of_renewal_date" type="datetime" />
+			<column name="renewal_notified_date" type="datetime" />
+    	</addColumn>
+    	
+    	<addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_service_instance" constraintName="fk_si_auto_tr_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+    </changeSet>
 </databaseChangeLog> 

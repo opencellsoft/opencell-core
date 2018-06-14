@@ -5,7 +5,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
- * Dto containing the request to find a list of rated transactions
+ * Dto containing the request criterion to find a list of rated transactions
  * @author Said Ramli
  */
 public class RatedTransactionListRequestDto extends BaseEntityDto {

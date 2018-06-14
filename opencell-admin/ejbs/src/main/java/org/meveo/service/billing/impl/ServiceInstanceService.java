@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -283,6 +284,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
 
+        serviceInstance.setServiceRenewal(serviceTemplate.getServiceRenewal());
+        
         if (!isVirtual) {
             create(serviceInstance);
         }
@@ -709,11 +712,20 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             return null;
         }
     }
+    
+    @Override
+    public void create(ServiceInstance entity) throws BusinessException {
+    	entity.updateSubscribedTillAndRenewalNotifyDates();
+    	
+    	super.create(entity);
+    }
 
     @Override
     public ServiceInstance update(ServiceInstance entity) throws BusinessException {
 
         boolean quantityChanged = entity.isQuantityChanged();
+        
+        entity.updateSubscribedTillAndRenewalNotifyDates();
 
         entity = super.update(entity);
         // update quantity in charges
@@ -788,5 +800,26 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         return serviceInstances;
+    }
+
+    /**
+     * Get a list of service ids that are about to expire or have expired already
+     * 
+     * @return A list of service ids
+     */
+    public List<Long> getSubscriptionsToRenewOrNotify() {
+		List<Long> ids = getEntityManager().createNamedQuery("ServiceInstance.getExpired", Long.class) //
+				.setParameter("date", new Date()) //
+				.setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
+				.setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+				.getResultList();
+		
+		ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
+				.setParameter("date", new Date()) //
+				.setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
+				.setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+				.getResultList());
+
+        return ids;
     }
 }

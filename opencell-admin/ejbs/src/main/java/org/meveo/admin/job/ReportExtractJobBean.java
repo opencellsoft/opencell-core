@@ -21,7 +21,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.finance.ReportExtractService;
 import org.slf4j.Logger;
 
@@ -34,15 +33,12 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 5.1
  **/
 @Stateless
-public class ReportExtractJobBean implements Serializable {
+public class ReportExtractJobBean extends BaseJobBean implements Serializable {
 
     private static final long serialVersionUID = 9159856207913605563L;
 
     @Inject
     private Logger log;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private ReportExtractService reportExtractService;
@@ -64,10 +60,10 @@ public class ReportExtractJobBean implements Serializable {
             Long waitingMillis = new Long(0);
             Date startDate = null, endDate = null;
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
-                startDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "startDate");
-                endDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "endDate");
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
+                startDate = (Date) this.getParamOrCFValue(jobInstance, "startDate");
+                endDate = (Date) this.getParamOrCFValue(jobInstance, "endDate");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }

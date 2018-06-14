@@ -22,7 +22,7 @@ import org.meveo.service.notification.NotificationHistoryService;
 import org.slf4j.Logger;
 
 @Stateless
-public class PurgeJobBean implements Serializable {
+public class PurgeJobBean extends BaseJobBean implements Serializable {
 
     private static final long serialVersionUID = 2226065462536318643L;
 
@@ -67,7 +67,7 @@ public class PurgeJobBean implements Serializable {
             }
 
             // Purge counter periods
-            nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays");
+            nbDays = (Long) this.getParamOrCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays");
             if (nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date);

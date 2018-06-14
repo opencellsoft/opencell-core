@@ -12,6 +12,9 @@
     </ui:define>
 
     <ui:define name="body">
+    	<p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+        
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.crm']}" disabled="true" />
@@ -51,7 +54,7 @@
                         field="terminationDate" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.quantity']}" field="quantity"/>
                     <hftl:formField label="#{messages['serviceInstance.terminationReason']}" allowEdit="false" field="subscriptionTerminationReason"
-                        valueLabelField="descriptionOrCode" rendered="#{not empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
+                        listBean="#{subscriptionTerminationReasonBean}" valueLabelField="descriptionOrCode" rendered="#{not empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
                      <hftl:formField label="#{messages['serviceInstance.rateUntilDate']}" field="rateUntilDate" /> 
                     
                     <hftl:formField label="#{messages['serviceTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"  />  
@@ -65,6 +68,33 @@
 					</c:choose>
 					<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />  
                        
+                    <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
+	                    <h:panelGroup id="serviceRenewal">
+                            <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="serviceRenewal" childField="initialyActiveFor" size="2" minValue="1" componentWidth="15" disabled="#{serviceInstanceBean.entity.renewed}" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceInstanceBean}" actionListenerMethod="updateSubscribedTillDate"/>
+                            <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="serviceRenewal" childField="initialyActiveForUnit" required="#{serviceInstanceBean.entity.serviceRenewal.initialyActiveFor!=null}" disabled="#{serviceInstanceBean.entity.serviceRenewal.initialyActiveFor==null || serviceInstanceBean.entity.renewed}" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceInstanceBean}" actionListenerMethod="updateSubscribedTillDate" />
+                            <h:panelGroup rendered="#{serviceInstanceBean.entity.subscribedTillDate!=null}">
+	                            <hftl:formField label="#{messages['subscription.autoRenew']}" field="serviceRenewal" childField="autoRenew" required="true"
+	                                listenerUpdate="serviceRenewal" newLine="true" />
+	                            <hftl:formField label="#{messages['subscription.renewFor']}" field="serviceRenewal" childField="renewFor" size="2" required="true"
+	                                rendered="#{serviceInstanceBean.entity.serviceRenewal.autoRenew}" listenerUpdate="serviceRenewal"
+	                                actionListenerBean="#{serviceInstanceBean.entity.serviceRenewal}" actionListenerMethod="setDefaultRenewForUnit" />
+	                            <hftl:formField label="#{messages['subscription.renewForUnit']}" field="serviceRenewal" childField="renewForUnit" required="true"
+	                                rendered="#{serviceInstanceBean.entity.serviceRenewal.autoRenew}" listenerUpdate="serviceRenewal" />
+	                            <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="serviceRenewal" childField="daysNotifyRenewal" size="2" minValue="1"
+	                                rendered="#{serviceInstanceBean.entity.serviceRenewal.autoRenew}" />
+	                            <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="serviceRenewal" childField="extendAgreementPeriodToSubscribedTillDate"
+	                                rendered="#{serviceInstanceBean.entity.serviceRenewal.autoRenew}" />
+	                            <hftl:formField label="#{messages['subscription.endOfTermAction']}" field="serviceRenewal" childField="endOfTermAction" required="true"
+	                                listenerUpdate="serviceRenewal" />
+	                            <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="serviceRenewal" childField="terminationReason" required="true"
+	                                rendered="#{serviceInstanceBean.entity.serviceRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode"
+	                                listBean="#{subscriptionTerminationReasonBean}" listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+	                        </h:panelGroup>
+	                        
+	                         <hftl:formField label="#{messages['subscription.renewed']}" field="renewed" edit="false" rendered="#{serviceInstanceBean.entity.renewed}"/>
+                             <hftl:formField label="#{messages['subscription.renewalNotifiedDate']}" field="renewalNotifiedDate" edit="false" rendered="#{serviceInstanceBean.entity.renewalNotifiedDate != null}"/>
+	                    </h:panelGroup>
+	                </p:fieldset>
                 </p:tab>
                 <p:tab title="#{messages['order.history']}">
                 	<p:dataTable id="selectedEntitiesDatatable" var="ohEntity" value="#{serviceInstanceBean.entity.orderHistories}" paginator="true" rows="10"
