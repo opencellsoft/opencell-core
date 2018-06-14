@@ -67,6 +67,17 @@ public class ContactApi extends BaseApi {
         Name name = new Name(title, firstName, lastName);
         contact.setName(name);
         
+        String company = postData.getCompany();
+        contact.setCompany(company);
+        
+        String description = postData.getDescription();
+        contact.setDescription(description);
+        
+        String mobile = postData.getMobile();
+        String phone = postData.getPhone();
+        contact.setMobile(mobile);
+        contact.setPhone(phone);
+        
         String email = postData.getEmail();
         String code = postData.getCode();
         
@@ -101,10 +112,10 @@ public class ContactApi extends BaseApi {
         contact.setWebsiteUrl(websiteUrl);
         
         Boolean isVip = postData.isVip();
-        Boolean isSuspect = postData.isSuspect();
+        Boolean isProspect = postData.isProspect();
         Boolean agreedToUA = postData.isAgreedToUA();
         contact.setVip(isVip);
-        contact.setSuspect(isSuspect);
+        contact.setProspect(isProspect);
         contact.setAgreedToUA(agreedToUA);
         
         contactService.create(contact);
@@ -159,16 +170,29 @@ public class ContactApi extends BaseApi {
         String position = postData.getPosition();
         if (position != null) contact.setPosition(position);
         
+
+        String company = postData.getCompany();
+        if (company != null) contact.setCompany(company);
+        
+        String description = postData.getDescription();
+        if(description != null) contact.setDescription(description);
+        
+        String mobile = postData.getMobile();
+        String phone = postData.getPhone();
+        if(mobile != null) contact.setMobile(mobile);
+        if(phone != null) contact.setPhone(phone);
+        
+        
         String socialIdentifier = postData.getSocialIdentifier();
         String websiteUrl = postData.getWebsiteUrl();
         if (socialIdentifier != null) contact.setSocialIdentifier(socialIdentifier);
         if (websiteUrl != null) contact.setWebsiteUrl(websiteUrl);
         
         Boolean isVip = postData.isVip();
-        Boolean isSuspect = postData.isSuspect();
+        Boolean isProspect = postData.isProspect();
         Boolean agreedToUA = postData.isAgreedToUA();
         if (isVip != null) contact.setVip(isVip);
-        if (isSuspect != null) contact.setSuspect(isSuspect);
+        if (isProspect != null) contact.setProspect(isProspect);
         if (agreedToUA != null) contact.setAgreedToUA(agreedToUA);
         
         return contactService.update(contact);
@@ -200,8 +224,6 @@ public class ContactApi extends BaseApi {
         else {
         	return update(postData);
         }
-		
-        
 	}
 	
 	public void remove(String code) throws BusinessException, EntityDoesNotExistsException {
@@ -231,9 +253,6 @@ public class ContactApi extends BaseApi {
         contactDto = new ContactDto(contact);
         
         return contactDto;
-        
-        
-        
 	}
 	
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)

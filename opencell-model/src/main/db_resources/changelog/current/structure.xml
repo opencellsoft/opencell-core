@@ -655,11 +655,14 @@
             <column name="assistant_name" type="varchar(50)"/>
             <column name="assistant_phone" type="varchar(15)"/>
             <column name="position" type="varchar(100)"/>
+            <column name="company" type="varchar(100)"/>
+            <column name="phone" type="varchar(15)"/>
+            <column name="mobile" type="varchar(15)"/>
             <column name="imported_from" type="varchar(50)"/>
             <column name="imported_by" type="varchar(50)"/>
             <column name="social_identifier" type="varchar(2000)"/>
             <column name="is_vip" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="is_suspect" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="is_prospect" type="${type.boolean}" defaultValueNumeric="1"/>
             <column name="website_url" type="varchar(255)"/>
             <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="address_book_id" type="bigint"/>

@@ -81,6 +81,7 @@ public class ContactService extends BusinessService<Contact> {
 					c.setEmail(email);
 					c.setCode(code);
 					c.setPosition(position);
+					c.setCompany(company);
 					c.setWebsiteUrl(websiteUrl);
 					c.setSocialIdentifier(instantMessengers);
 					c.setImportedBy(importedBy);

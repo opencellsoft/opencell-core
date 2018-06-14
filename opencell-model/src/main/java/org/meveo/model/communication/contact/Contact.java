@@ -73,6 +73,18 @@ public class Contact extends AccountEntity {
 	@Size(max = 100)
 	private String position;
 	
+	@Column(name = "company", length = 100)
+	@Size(max = 100)
+	private String company;
+	
+	@Column(name = "mobile", length = 15)
+	@Size(max = 15)
+	private String mobile;
+	
+	@Column(name = "phone", length = 15)
+	@Size(max = 15)
+	private String phone;
+		
 	@Column(name = "website_url", length = 255)
 	@Size(max = 255)
 	private String websiteUrl;
@@ -94,8 +106,8 @@ public class Contact extends AccountEntity {
 	private boolean isVip;
 
 	@Type(type = "numeric_boolean")
-	@Column(name = "is_suspect", columnDefinition = "tinyint default yes")
-	private boolean isSuspect;
+	@Column(name = "is_prospect", columnDefinition = "tinyint default yes")
+	private boolean isProspect;
 
 	@Type(type = "numeric_boolean")
 	@Column(name = "agreed_ua", columnDefinition = "tinyint default false")
@@ -151,6 +163,30 @@ public class Contact extends AccountEntity {
 		this.position = position;
 	}
 
+	
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
 	public String getWebsiteUrl() {
 		return websiteUrl;
@@ -192,12 +228,12 @@ public class Contact extends AccountEntity {
 		this.isVip = isVip;
 	}
 
-	public boolean isSuspect() {
-		return isSuspect;
+	public boolean isProspect() {
+		return isProspect;
 	}
 
-	public void setSuspect(boolean isSuspect) {
-		this.isSuspect = isSuspect;
+	public void setProspect(boolean isProspect) {
+		this.isProspect = isProspect;
 	}
 
 	public boolean isAgreedToUA() {

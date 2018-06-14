@@ -26,13 +26,13 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 
 	@Override
 	public ActionStatus create(ContactDto postData) {
-        ActionStatus result = new ActionStatus();
+		ActionStatus result = new ActionStatus();
 
-        try {
-            contactApi.create(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
+		try {
+			contactApi.create(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
 		return result;
 	}
 
@@ -40,80 +40,83 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	public ActionStatus update(ContactDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        try {
-        	contactApi.update(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
+		try {
+			contactApi.update(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
 		return result;
 	}
-
 
 	@Override
 	public ActionStatus createOrUpdate(ContactDto postData) {
-        ActionStatus result = new ActionStatus();
-        try {
-        	contactApi.createOrUpdate(postData);
-        }
-        catch(Exception e){
-        	processException(e, result);
-        }
+		ActionStatus result = new ActionStatus();
+		try {
+			contactApi.createOrUpdate(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
 		return result;
 	}
 
-	
 	@Override
 	public ActionStatus remove(@PathParam("code") String code) {
-        ActionStatus result = new ActionStatus();
+		ActionStatus result = new ActionStatus();
 
-        try {
-        	contactApi.remove(code);
-        } catch (Exception e) {
-            processException(e, result);
-        }
+		try {
+			contactApi.remove(code);
+		} catch (Exception e) {
+			processException(e, result);
+		}
 		return result;
 	}
-
 
 	@Override
 	public GetContactResponseDto find(String code) {
 		GetContactResponseDto result = new GetContactResponseDto();
 		try {
 			result.setContact(contactApi.findByCode(code));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			processException(e, result.getActionStatus());
-        }
+		}
 		return result;
 	}
 
 	@Override
 	public ContactsResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
 		try {
-            return contactApi.list(null, pagingAndFiltering);
+			return contactApi.list(null, pagingAndFiltering);
 		} catch (Exception e) {
-            ContactsResponseDto result = new ContactsResponseDto();
-            processException(e, result.getActionStatus());
-            return result;
-        }
+			ContactsResponseDto result = new ContactsResponseDto();
+			processException(e, result.getActionStatus());
+			return result;
+		}
 	}
 
 	@Override
 	public ContactsResponseDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy,
 			SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
 		try {
-            return contactApi.list(null, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder), inheritCF);
-        } catch (Exception e) {
-            ContactsResponseDto result = new ContactsResponseDto();
-            processException(e, result.getActionStatus());
-            return result;
-        }
+			return contactApi.list(null, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder),
+					inheritCF);
+		} catch (Exception e) {
+			ContactsResponseDto result = new ContactsResponseDto();
+			processException(e, result.getActionStatus());
+			return result;
+		}
 	}
 
 	@Override
 	public ActionStatus importLinkedInFromText(String context) {
-		contactApi.importLinkedInFromText(context);
-		return null;
+
+		ActionStatus result = new ActionStatus();
+
+		try {
+			contactApi.importLinkedInFromText(context);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return result;
 	}
 
 	@Override

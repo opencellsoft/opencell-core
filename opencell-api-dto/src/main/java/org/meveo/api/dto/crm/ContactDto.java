@@ -14,6 +14,9 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
 public class ContactDto extends AccountDto {
+
+	private static final long serialVersionUID = -7359294810585172609L;
+
 	private String email;
 
 	private String assistantName;
@@ -22,6 +25,12 @@ public class ContactDto extends AccountDto {
 
 	private String position;
 
+	private String company;
+	
+	private String mobile;
+	
+	private String phone;
+	
 	private String websiteUrl;
 	
 	private String importedFrom;
@@ -32,7 +41,7 @@ public class ContactDto extends AccountDto {
 
 	private boolean isVip;
 
-	private boolean isSuspect;
+	private boolean isProspect;
 
 	private boolean agreedToUA;
 
@@ -50,19 +59,23 @@ public class ContactDto extends AccountDto {
 	
 	public ContactDto(Contact contact) {
 		this.setName(new NameDto(contact.getName()));
+		this.setDescription(contact.getDescription());
 		this.setAddress(new AddressDto(contact.getAddress()));
 		this.setCode(contact.getCode());
 		this.setAssistantName(contact.getAssistantName());
 		this.setAssistantPhone(contact.getAssistantPhone());
 		this.setEmail(contact.getEmail());
 		this.setPosition(contact.getPosition());
+		this.setCompany(contact.getCompany());
+		this.setPhone(contact.getPhone());
+		this.setMobile(contact.getMobile());
 		this.setWebsiteUrl(contact.getWebsiteUrl());
 		this.setImportedBy(contact.getImportedBy());
 		this.setImportedFrom(contact.getImportedFrom());
 		this.setSocialIdentifier(contact.getSocialIdentifier());
 		this.setAgreedToUA(contact.isAgreedToUA());
 		this.setVip(contact.isVip());
-		this.setSuspect(contact.isSuspect());
+		this.setProspect(contact.isProspect());
 		this.setAddressBook(contact.getAddressBook());
 		this.setMessages(contact.getMessages());
 		this.setAuditable(new AuditableDto(contact.getAuditable()));
@@ -105,6 +118,30 @@ public class ContactDto extends AccountDto {
 	}
 
 	
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	public String getWebsiteUrl() {
 		return websiteUrl;
 	}
@@ -137,12 +174,12 @@ public class ContactDto extends AccountDto {
 		this.isVip = isVip;
 	}
 
-	public boolean isSuspect() {
-		return isSuspect;
+	public boolean isProspect() {
+		return isProspect;
 	}
 
-	public void setSuspect(boolean isSuspect) {
-		this.isSuspect = isSuspect;
+	public void setProspect(boolean isProspect) {
+		this.isProspect = isProspect;
 	}
 
 	public boolean isAgreedToUA() {
