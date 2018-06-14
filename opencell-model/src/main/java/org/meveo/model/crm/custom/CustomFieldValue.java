@@ -545,6 +545,23 @@ public class CustomFieldValue implements Serializable, Cloneable {
     }
 
     /**
+     * Append source entity/accumulation path that value came from
+     * 
+     * @param sourceToAdd Source entity/accumulation path that value came from
+     */
+    public void addSource(String sourceToAdd) {
+        if (sourceToAdd == null) {
+            return;
+        }
+        if (this.source == null) {
+            this.source = sourceToAdd;
+        } else if (!this.source.contains(sourceToAdd)) { // TODO this could be potentially a problem when path are similar e.g. customer.ca and customer.ca.ba and search is by
+                                                         // "customer.ca", but right now - unlikely.
+            this.source = this.source + "," + sourceToAdd;
+        }
+    }
+
+    /**
      * @param businessEntity Business entity value when set from GUI
      */
     public void setEntityReferenceValueForGUI(BusinessEntity businessEntity) {
@@ -1461,7 +1478,21 @@ public class CustomFieldValue implements Serializable, Cloneable {
     @Override
     public CustomFieldValue clone() {
         try {
-            return (CustomFieldValue) super.clone();
+            CustomFieldValue cloned = (CustomFieldValue) super.clone();
+            if (mapStringValue != null) {
+                cloned.mapStringValue = new LinkedHashMap<>(mapStringValue);
+            } else if (mapDateValue != null) {
+                cloned.mapDateValue = new LinkedHashMap<>(mapDateValue);
+            } else if (mapDoubleValue != null) {
+                cloned.mapDoubleValue = new LinkedHashMap<>(mapDoubleValue);
+            } else if (mapLongValue != null) {
+                cloned.mapLongValue = new LinkedHashMap<>(mapLongValue);
+            } else if (mapEntityValue != null) {
+                cloned.mapEntityValue = new LinkedHashMap<>(mapEntityValue);
+            }
+
+            return cloned;
+
         } catch (CloneNotSupportedException e) {
             Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
             log.error("Failed to clone", e);

@@ -22,6 +22,7 @@ import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -354,9 +355,10 @@ public class CfValueAccumulator {
                 continue;
             }
 
-            // If child class has only one way of accumulating CF values, or periods were not changed (only the values changed)
+            // If child class has only one way of accumulating CF values, OR
+            // periods were not changed (only the values changed) and its not a Map type storage
             // append or override the ones from parent and propagate downwards if there were any changes
-            if (paths.size() == 1 || !periodDatesChanged) {
+            if (paths.size() == 1 || (!periodDatesChanged && !accumulationRule.isStoredAsMap())) {
 
                 for (CfValueAccumulatorPath cfValueAccumulatorPath : paths) {
                     if (!cfValueAccumulatorPath.getClazz().equals(entityClass)) {
@@ -371,7 +373,14 @@ public class CfValueAccumulator {
                     // If path is not null, ten return only those entities that are linked to a given entity
                     Query query = null;
                     if (cfValueAccumulatorPath.getPath() == null) {
-                        query = entityManager.createQuery("select e from " + classToPropagateTo.getSimpleName() + " e order by e.id").setMaxResults(paginationSize);
+
+                        // Seller is a special case that has recursive relationship to another seller, so propagation from provider should select only topmost sellers (no FK to
+                        // another seller)
+                        if (Seller.class.equals(classToPropagateTo)) {
+                            query = entityManager.createQuery("select e from Seller e where e.seller is null order by e.id").setMaxResults(paginationSize);
+                        } else {
+                            query = entityManager.createQuery("select e from " + classToPropagateTo.getSimpleName() + " e order by e.id").setMaxResults(paginationSize);
+                        }
                     } else {
                         query = entityManager
                             .createQuery("select e from " + classToPropagateTo.getSimpleName() + " e where e." + cfValueAccumulatorPath.getPath() + "=:entity order by e.id")
@@ -384,9 +393,16 @@ public class CfValueAccumulator {
                     while (!entitiesToAccumulateFor.isEmpty()) {
 
                         entitiesToAccumulateFor.stream().forEach(e -> {
-                            // Clear values that came from the same path and reappend values from parent again
+                            // Clear values that came from the same path
                             boolean hasChanged = e.getCfAccumulatedValuesNullSafe().clearValues(cfCode, sourceForCFValue);
-                            boolean wasAppended = e.getCfAccumulatedValuesNullSafe().appendCfValues(cfCode, entity.getCfAccumulatedValues(), sourceForCFValue);
+
+                            // Map/matrix is a special case as it deals with not value as a whole, but value's items. So clearing values that came from the same path would remove
+                            // whole value altogether, so need to re-add value from the entity first, and only then - of its parents
+                            if (hasChanged && accumulationRule.isStoredAsMap()) {
+                                e.getCfAccumulatedValues().appendCfValues(cfCode, e.getCfValues(), null);
+                            }
+                            // Re-append values from parent again
+                            boolean wasAppended = e.getCfAccumulatedValues().appendCfValues(cfCode, entity.getCfAccumulatedValues(), sourceForCFValue);
                             hasChanged = hasChanged || wasAppended;
 
                             // And propagate it downwards the hierarchy if there were any changes
@@ -400,7 +416,10 @@ public class CfValueAccumulator {
                         entitiesToAccumulateFor = query.setFirstResult(from).getResultList();
                     }
                 }
-                // Child entity accumulates values from multiple entities in parallel then clear its value and let it accumulate value for itself
+                // Child entity accumulates values from multiple entities in parallel then reset target entities accumulated CF values completely and let it accumulate value for
+                // itself.
+                // This case applies to versioned or map type CF values in multi-hierarchy case as value is broken down further into periods (versioned case) or map keys (map and
+                // matrix type fields) and there is no way to reconstruct accumulated value by propagation (especially in CF period/map key removal case)
             } else {
 
                 CfValueAccumulatorPath cfValueAccumulatorPath = null;
@@ -463,8 +482,8 @@ public class CfValueAccumulator {
 
         // Just copy the value to accumulated values field when:
         // CFT does not participate in inheritance
-        // When CFT does participate in inheritance, but field is not versionable and value is present - no way field value could come from other entity
-        if (accumulationRule == null || (hasCfValue && !accumulationRule.isVersionable())) {
+        // When CFT does participate in inheritance, but field is not versionable and is not map type and value is present - no way field value could come from other entity
+        if (accumulationRule == null || (hasCfValue && !accumulationRule.isVersionable() && !accumulationRule.isStoredAsMap())) {
             entity.getCfAccumulatedValuesNullSafe().copyCfValues(cfCode, entity.getCfValues());
             // Propagate when CFT participate in inheritance
             return accumulationRule != null;
@@ -499,7 +518,15 @@ public class CfValueAccumulator {
             EntityManager entityManager = getEntityManager();
             for (CfValueAccumulatorPath cfValueAccumulatorPath : accumulationPaths) {
 
+                // Seller is a special case that has recursive relationship to another seller, so accumulation from provider should be for only topmost sellers (no FK to
+                // another seller)
+                if (Provider.class.equals(cfValueAccumulatorPath.getClazz()) && entityClass.equals(Seller.class) && ((Seller) entity).getSeller() != null) {
+                    continue;
+                }
+
                 String sourceForCFValue = cfValueAccumulatorPath.getPath() == null ? cfValueAccumulatorPath.getClazz().getSimpleName() : cfValueAccumulatorPath.getPath();
+
+                log.trace("Will accumulate values from parent for {} field of entity {}. Parent path {}", cfCode, entity, sourceForCFValue);
 
                 if (Provider.class.equals(cfValueAccumulatorPath.getClazz())) {
                     entity.getCfAccumulatedValuesNullSafe().appendCfValues(cfCode, appProvider.getCfValues(), sourceForCFValue);

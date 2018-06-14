@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 
 /**
  * Defines how CF value changes should be propagated downwards in case of custom field value inheritance
@@ -34,6 +35,11 @@ public class CfValueAccumulatorRule implements Serializable {
      * Calendar used to version custom field value periods
      */
     private Calendar calendar;
+
+    /**
+     * Is field stored as a map
+     */
+    private boolean storedAsMap;
 
     /**
      * Where to cf values should be propagated to. Key is an entity class and value is a list of entity classes that should receive updated CF value
@@ -63,6 +69,7 @@ public class CfValueAccumulatorRule implements Serializable {
         cfCode = cft.getCode();
         versionable = cft.isVersionable();
         calendar = cft.getCalendar();
+        storedAsMap = cft.getStorageType() == CustomFieldStorageTypeEnum.MAP || cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX;
 
         Map<Class<?>, CustomFieldTemplate> cftsByClass = cftList.stream().collect(Collectors.toMap(x -> CfValueAccumulator.appliesToMap.get(x.getAppliesTo()), x -> x));
 
@@ -204,6 +211,13 @@ public class CfValueAccumulatorRule implements Serializable {
      */
     public void setAcumulateFrom(Map<Class<?>, List<CfValueAccumulatorPath>> acumulateFrom) {
         this.accumulateFrom = acumulateFrom;
+    }
+
+    /**
+     * @return True if field is stored as a map (applies to map and matrix type fields)
+     */
+    public boolean isStoredAsMap() {
+        return storedAsMap;
     }
 
     @Override

@@ -24,10 +24,13 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
@@ -35,7 +38,7 @@ import org.slf4j.Logger;
 /**
  * A Message Driven Bean to handle data synchronization between cluster nodes. Messages are read from a topic "topic/CLUSTEREVENTTOPIC".
  * 
- * Currently two event types are supported - job instance and script instance refresh
+ * Currently the following event types are supported - job instance, compiled script instance, role mapping and CFT accumulation rule refresh
  * 
  * @author Andrius Karpavicius
  */
@@ -55,6 +58,12 @@ public class ClusterEventMonitor implements MessageListener {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+
+    @Inject
+    private CfValueAccumulator cfValueAccumulator;
+
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     /**
      * @see MessageListener#onMessage(Message)
@@ -96,6 +105,9 @@ public class ClusterEventMonitor implements MessageListener {
         } else if (eventDto.getClazz().equals(Role.class.getSimpleName())) {
             currentUserProvider.invalidateRoleToPermissionMapping();
 
+        } else if (eventDto.getClazz().equals(CustomFieldTemplate.class.getSimpleName())) {
+            CustomFieldTemplate cft = customFieldTemplateService.findById(eventDto.getId());
+            cfValueAccumulator.refreshCfAccumulationRules(cft);
         }
     }
 }

@@ -39814,6 +39814,179 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <maxValue>50</maxValue>\r
                   <guiPosition>tab:Custom fields:0;field:1</guiPosition>\r
                </field>\r
+               <field code="E" description="E">\r
+                  <auditable created="2018-06-06T09:49:40.580-03:00" creator="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                  </languageDescriptions>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>PROVIDER</accountLevel>\r
+                  <appliesTo>PROVIDER</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
+               </field>\r
+               <field code="F" description="F">\r
+                  <auditable created="2018-06-06T09:53:38.443-03:00" creator="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                  </languageDescriptions>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>PROVIDER</accountLevel>\r
+                  <appliesTo>PROVIDER</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>MAP</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
+                  <mapKeyType>STRING</mapKeyType>\r
+               </field>\r
+            </fields>\r
+            <actions/>\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Customize seller" id="bc61907c-0308-4e40-81c4-5790809700c7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Customize seller" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.admin.Seller">\r
+            <fields>\r
+               <field code="B" description="B">\r
+                  <auditable created="2018-06-06T09:50:04.701-03:00" updated="2018-06-06T09:51:02.299-03:00" creator="opencell.admin" updater="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>SELLER</accountLevel>\r
+                  <appliesTo>SELLER</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:1</guiPosition>\r
+               </field>\r
+               <field code="C" description="C">\r
+                  <auditable created="2018-06-06T09:56:06.796-03:00" creator="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                  </languageDescriptions>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>SELLER</accountLevel>\r
+                  <appliesTo>SELLER</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>true</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <calendar>MONTHLY</calendar>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:1</guiPosition>\r
+               </field>\r
+               <field code="E" description="E">\r
+                  <auditable created="2018-06-06T09:49:40.580-03:00" creator="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                  </languageDescriptions>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>CA</accountLevel>\r
+                  <appliesTo>CA</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
+               </field>\r
+               <field code="F" description="F">\r
+                  <auditable created="2018-06-06T09:53:38.443-03:00" creator="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                  </languageDescriptions>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>CA</accountLevel>\r
+                  <appliesTo>CA</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>MAP</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
+                  <mapKeyType>STRING</mapKeyType>\r
+               </field>\r
             </fields>\r
             <actions/>\r
          </entityCustomization>\r
@@ -39963,6 +40136,51 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   <hideOnNew>false</hideOnNew>\r
                   <maxValue>50</maxValue>\r
                   <guiPosition>tab:Custom fields:0;field:1</guiPosition>\r
+               </field>\r
+               <field code="E" description="E">\r
+                  <auditable created="2018-06-06T09:49:40.580-03:00" creator="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                  </languageDescriptions>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>CA</accountLevel>\r
+                  <appliesTo>CA</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
+               </field>\r
+               <field code="F" description="F">\r
+                  <auditable created="2018-06-06T09:53:38.443-03:00" creator="opencell.admin"/>\r
+                  <disabled>false</disabled>\r
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                  </languageDescriptions>\r
+                  <fieldType>STRING</fieldType>\r
+                  <accountLevel>CA</accountLevel>\r
+                  <appliesTo>CA</appliesTo>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>MAP</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+                  <allowEdit>true</allowEdit>\r
+                  <hideOnNew>false</hideOnNew>\r
+                  <maxValue>50</maxValue>\r
+                  <guiPosition>tab:Custom fields:0;field:0</guiPosition>\r
+                  <mapKeyType>STRING</mapKeyType>\r
                </field>\r
             </fields>\r
             <actions/>\r
@@ -40403,6 +40621,31 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                <customField code="B">\r
                   <stringValue>B_P</stringValue>\r
                </customField>\r
+               <customField code="E">\r
+                  <stringValue>E_P</stringValue>\r
+               </customField>\r
+               <customField code="F">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>one</key>\r
+                        <value>\r
+                           <stringValue>F_P1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>two</key>\r
+                        <value>\r
+                           <stringValue>F_P2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>three</key>\r
+                        <value>\r
+                           <stringValue>F_P3</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
             </customFields>\r
          </provider>\r
       </ws:updateProvider>\r
@@ -40438,17 +40681,300 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createSeller>
-         <seller code="${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER">
-            <currencyCode>EUR</currencyCode>
-            <countryCode>FR</countryCode>
-            <languageCode>FRA</languageCode>
-         </seller>
-      </ws:createSeller>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createSeller>\r
+         <seller code="${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER">\r
+            <currencyCode>EUR</currencyCode>\r
+            <countryCode>FR</countryCode>\r
+            <languageCode>FRA</languageCode>\r
+            <customFields>\r
+               <customField code="E">\r
+                  <stringValue>E_S</stringValue>\r
+               </customField>\r
+               <customField code="F">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>one</key>\r
+                        <value>\r
+                           <stringValue>F_S1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>two</key>\r
+                        <value>\r
+                           <stringValue>F_S2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>four</key>\r
+                        <value>\r
+                           <stringValue>F_S4</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </seller>\r
+      </ws:createSeller>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create seller -child 1" id="9b5fd746-cfe6-45d3-b9e4-25f046f87495">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="Create seller -child 1" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createSeller>\r
+         <seller code="${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH1">\r
+            <currencyCode>EUR</currencyCode>\r
+            <countryCode>FR</countryCode>\r
+            <languageCode>FRA</languageCode>\r
+            <parentSeller>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER</parentSeller>
+            <customFields>\r
+               <customField code="E">\r
+                  <stringValue>E_S-CH1</stringValue>\r
+               </customField>\r
+               <customField code="F">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>one</key>\r
+                        <value>\r
+                           <stringValue>F_S1-CH1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>five</key>\r
+                        <value>\r
+                           <stringValue>F_S5-CH1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </seller>\r
+      </ws:createSeller>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create seller -child 2" id="bcd87a8e-4088-4a8e-b770-6554253b356a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="Create seller -child 2" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createSeller>\r
+         <seller code="${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH2">\r
+            <currencyCode>EUR</currencyCode>\r
+            <countryCode>FR</countryCode>\r
+            <languageCode>FRA</languageCode>\r
+            <parentSeller>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH1</parentSeller>
+            <customFields>\r
+               <customField code="E">\r
+                  <stringValue>E_S-CH2</stringValue>\r
+               </customField>\r
+               <customField code="F">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>one</key>\r
+                        <value>\r
+                           <stringValue>F_S1-CH2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>six</key>\r
+                        <value>\r
+                           <stringValue>F_S6-CH2</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </seller>\r
+      </ws:createSeller>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create seller no CF" id="f4cb9850-6103-4d19-a2e3-499089024c08">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="Create seller no CF" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createSeller>\r
+         <seller code="${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF">\r
+            <currencyCode>EUR</currencyCode>\r
+            <countryCode>FR</countryCode>\r
+            <languageCode>FRA</languageCode>\r
+         </seller>\r
+      </ws:createSeller>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create seller no CF - child 1" id="e6716d0c-ad20-47aa-b0b3-68b9e9e58fea">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="Create seller no CF - child 1" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createSeller>\r
+         <seller code="${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH1">\r
+            <currencyCode>EUR</currencyCode>\r
+            <countryCode>FR</countryCode>\r
+            <languageCode>FRA</languageCode>\r
+            <parentSeller>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF</parentSeller>
+         </seller>\r
+      </ws:createSeller>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create seller no CF - child 2" id="39a6106c-3b5b-494d-8bfd-e11640808dec">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createSeller</con:operation>
+          <con:request name="Create seller no CF - child 2" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createSeller>\r
+         <seller code="${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH2">\r
+            <currencyCode>EUR</currencyCode>\r
+            <countryCode>FR</countryCode>\r
+            <languageCode>FRA</languageCode>\r
+            <parentSeller>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH1</parentSeller>
+         </seller>\r
+      </ws:createSeller>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
             <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
@@ -40506,6 +41032,48 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                   </mapValue>\r
                </customField>\r
             </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create customer for seller child 2" id="b3a0e4d0-ee15-4cda-b8bc-4f918a6ece8f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer for seller child 2" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#Project#entityPrefix}_${#TestSuite#index}_AC_CUST_SELLER_CH2">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <seller>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH2</seller>\r
          </customer>\r
       </ws:createCustomer>\r
    </soapenv:Body>\r
@@ -40601,6 +41169,25 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                <customField code="C" valueDate="2018-05-06">\r
                   <stringValue>C_CA_05</stringValue>\r
                </customField>\r
+               <customField code="E">\r
+                  <stringValue>E_CA</stringValue>\r
+               </customField>\r
+               <customField code="F">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>one</key>\r
+                        <value>\r
+                           <stringValue>F_CA1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>seven</key>\r
+                        <value>\r
+                           <stringValue>F_CA7</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
             </customFields>\r
          </customerAccount>\r
       </ws:createCustomerAccount>\r
@@ -40666,6 +41253,49 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create customer account of seller child 2" id="d2ac5eaa-a527-4795-801f-7956cfb4db08">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer account of seller child 2" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomerAccount>\r
+         <customerAccount code="${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_SELLER_CH2">\r
+            <customer>${#Project#entityPrefix}_${#TestSuite#index}_AC_CUST_SELLER_CH2</customer>\r
+            <currency>EUR</currency>\r
+            <creditCategory>Pro</creditCategory>\r
+            <language>FRA</language>\r
+         </customerAccount>\r
+      </ws:createCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create billing account" id="6ef97013-0ccd-4a19-bddc-3800d39748b8">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -40707,7 +41337,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                      <entry>\r
                         <key>three</key>\r
                         <value>\r
-                           <stringValue>D_BA2</stringValue>\r
+                           <stringValue>D_BA3</stringValue>\r
                         </value>\r
                      </entry>\r
                   </mapValue>\r
@@ -41314,6 +41944,49 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="988e1a07-f0a5-4ab0-8fb9-677a6ddcde75" name="XPath Match 2">
+              <con:configuration>
+                <path>//customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_P</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="babf0064-ee96-40d6-b348-f75c9edcf331" name="XPath Match 3">
+              <con:configuration>
+                <path>//customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_P1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_P2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -41351,11 +42024,600 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple NotContains" id="355334e6-2132-4467-bb03-d3bd2f590aff" name="Not Contains">
+            <con:assertion type="XPath Match" id="3d71a7f1-e35a-443e-bc0c-a005573e31b0" name="XPath Match">
               <con:configuration>
-                <token>&lt;customFields</token>
+                <path>//seller/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f6120048-e2fc-4b13-99a1-1ba829d37a27" name="XPath Match 1">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller child1" id="07b25f0d-84a9-451d-b0d6-d61f22358389">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller child1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH1</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3d71a7f1-e35a-443e-bc0c-a005573e31b0" name="XPath Match">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH1</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f6120048-e2fc-4b13-99a1-1ba829d37a27" name="XPath Match 1">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH1</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller child 2" id="a441bcc3-f393-4dcb-9e40-b875b2cf700f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller child 2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH2</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3d71a7f1-e35a-443e-bc0c-a005573e31b0" name="XPath Match">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH2</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f6120048-e2fc-4b13-99a1-1ba829d37a27" name="XPath Match 1">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>six</key>
+      <value>
+        <stringValue>F_S6-CH2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH2</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>six</key>
+      <value>
+        <stringValue>F_S6-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller no CF" id="45c74e25-f8b7-4c72-a761-a01f3daca477">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller no CF" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_P</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_P1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_P2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller no CF child 1" id="a26d0e87-cec9-4323-ac71-27a7fd2fd943">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller no CF child 1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH1</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_P</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_P1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_P2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller no CF child 2" id="4dc54074-a4ed-42fc-93be-38cfc3da310b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller no CF child 2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH2</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_P</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_P1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_P2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -41560,6 +42822,98 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="0d029702-0643-4ca8-909a-721d0b559426" name="XPath Match 5">
+              <con:configuration>
+                <path>//customerAccount/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_CA</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9f7fc8fa-626a-4af0-83ef-7b02bdb0964f" name="XPath Match 6">
+              <con:configuration>
+                <path>//customerAccount/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_CA1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>seven</key>
+      <value>
+        <stringValue>F_CA7</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="047ed28a-afaa-490f-8085-00e88d1f2572" name="XPath Match 7">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_CA</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="94a88f94-ad56-4ed5-a3ce-ad966b1ce75c" name="XPath Match 8">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_CA1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>seven</key>
+      <value>
+        <stringValue>F_CA7</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -41605,6 +42959,153 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
   <stringValue>B_P</stringValue>
 </inheritedCustomField>]]></content>
                 <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="604b9a08-c263-4ce1-8592-a66a827c7270" name="XPath Match">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="192f932a-c056-4e60-9912-a65ff2a64492" name="XPath Match 2">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find customer account seller child 2" id="07d1da65-a718-4368-8b8a-474c7033458b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomerAccount</con:operation>
+          <con:request name="Find customer account seller child 2" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccount>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_SELLER_CH2</customerAccountCode>\r
+      </ws:findCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="6c0dd5f5-6a05-4f1f-8a55-41ad6a61c336" name="XPath Match 1">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH2</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fcf0d203-9e08-465b-a528-c7cbc8d05d8b" name="XPath Match 2">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>six</key>
+      <value>
+        <stringValue>F_S6-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -41706,7 +43207,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -41776,7 +43277,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>D_Cust2</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -42060,6 +43567,18 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
         <stringValue>D_UA4</stringValue>
       </value>
     </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>D_Cust2</stringValue>
+      </value>
+    </entry>
   </mapValue>
 </inheritedCustomField>]]></content>
                 <allowWildcards>false</allowWildcards>
@@ -42108,7 +43627,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="5fca5f9b-4360-40b7-baa0-ccedf54230a6" name="XPath Match 1">
               <con:configuration>
                 <path>//userAccount/customFields/inheritedCustomField[@code="D"]</path>
-                <content><![CDATA[<inheritedCustomField code="D" description="D" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<inheritedCustomField code="D" description="D">
   <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
@@ -42120,7 +43639,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>D_Cust2</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -42234,19 +43759,19 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="5fca5f9b-4360-40b7-baa0-ccedf54230a6" name="XPath Match 1">
               <con:configuration>
                 <path>//userAccount/customFields/inheritedCustomField[@code="D"]</path>
-                <content><![CDATA[<inheritedCustomField code="D" description="D" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<inheritedCustomField code="D" description="D">
   <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>one</key>
       <value>
-        <stringValue>D_BA1</stringValue>
+        <stringValue>D_Cust1</stringValue>
       </value>
     </entry>
     <entry>
-      <key>three</key>
+      <key>two</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_Cust2</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -42297,19 +43822,19 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="5fca5f9b-4360-40b7-baa0-ccedf54230a6" name="XPath Match 1">
               <con:configuration>
                 <path>//userAccount/customFields/inheritedCustomField[@code="D"]</path>
-                <content><![CDATA[<inheritedCustomField code="D" description="D" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<inheritedCustomField code="D" description="D">
   <fieldType>STRING</fieldType>
   <mapValue>
     <entry>
       <key>one</key>
       <value>
-        <stringValue>D_BA1</stringValue>
+        <stringValue>D_Cust1</stringValue>
       </value>
     </entry>
     <entry>
-      <key>three</key>
+      <key>two</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_Cust2</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -42760,7 +44285,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                 <path>//subscription/customFields/inheritedCustomField[@code="A"]</path>
                 <content><![CDATA[<inheritedCustomField code="A" description="A">
   <fieldType>STRING</fieldType>
-  <stringValue>A_BA</stringValue>
+  <stringValue>A_P</stringValue>
 </inheritedCustomField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -42781,10 +44306,10 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:assertion>
             <con:assertion type="XPath Match" id="077a9614-810e-4fed-95fe-e303be6800a3" name="XPath Match 2">
               <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][1]</path>
+                <path>//subscription/customFields/inheritedCustomField[@code="C" and stringValue="C_CA_06"]</path>
                 <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
   <fieldType>STRING</fieldType>
-  <stringValue>C_BA_06</stringValue>
+  <stringValue>C_CA_06</stringValue>
 </inheritedCustomField>]]></content>
                 <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -42793,19 +44318,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:assertion>
             <con:assertion type="XPath Match" id="f9aa2512-42a7-402d-acd9-3337389993da" name="XPath Match 9">
               <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][2]</path>
-                <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-07-01T00:00:00*" valuePeriodEndDate="2018-08-01T00:00:00*">
-  <fieldType>STRING</fieldType>
-  <stringValue>C_BA_07</stringValue>
-</inheritedCustomField>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="XPath Match" id="1a873291-c812-4afc-865a-605dde1f912a" name="XPath Match 10">
-              <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][3]</path>
+                <path>//subscription/customFields/inheritedCustomField[@code="C" and stringValue="C_CA_05"]</path>
                 <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-05-01T00:00:00*" valuePeriodEndDate="2018-06-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_CA_05</stringValue>
@@ -42817,7 +44330,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:assertion>
             <con:assertion type="XPath Match" id="20adbcc0-e0e8-4efd-9855-8547de96cdb1" name="XPath Match 3">
               <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][4]</path>
+                <path>//subscription/customFields/inheritedCustomField[@code="C" and stringValue="C_O_04"]</path>
                 <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-04-01T00:00:00*" valuePeriodEndDate="2018-05-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_O_04</stringValue>
@@ -42830,7 +44343,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="191405de-b5e0-4daf-b341-558a1e25179f" name="XPath Match 12">
               <con:configuration>
                 <path>count(//subscription/customFields/inheritedCustomField[@code="C"])</path>
-                <content>4</content>
+                <content>3</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -42878,7 +44391,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                 <path>//subscription/customFields/inheritedCustomField[@code="A"]</path>
                 <content><![CDATA[<inheritedCustomField code="A" description="A">
   <fieldType>STRING</fieldType>
-  <stringValue>A_BA</stringValue>
+  <stringValue>A_P</stringValue>
 </inheritedCustomField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -42899,10 +44412,10 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:assertion>
             <con:assertion type="XPath Match" id="077a9614-810e-4fed-95fe-e303be6800a3" name="XPath Match 2">
               <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][1]</path>
+                <path>//subscription/customFields/inheritedCustomField[@code="C" and stringValue="C_CA_06"]</path>
                 <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
   <fieldType>STRING</fieldType>
-  <stringValue>C_BA_06</stringValue>
+  <stringValue>C_CA_06</stringValue>
 </inheritedCustomField>]]></content>
                 <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -42911,19 +44424,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:assertion>
             <con:assertion type="XPath Match" id="f9aa2512-42a7-402d-acd9-3337389993da" name="XPath Match 9">
               <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][2]</path>
-                <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-07-01T00:00:00*" valuePeriodEndDate="2018-08-01T00:00:00*">
-  <fieldType>STRING</fieldType>
-  <stringValue>C_BA_07</stringValue>
-</inheritedCustomField>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="XPath Match" id="1a873291-c812-4afc-865a-605dde1f912a" name="XPath Match 10">
-              <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][3]</path>
+                <path>//subscription/customFields/inheritedCustomField[@code="C" and stringValue="C_CA_05"]</path>
                 <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-05-01T00:00:00*" valuePeriodEndDate="2018-06-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_CA_05</stringValue>
@@ -42935,7 +44436,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:assertion>
             <con:assertion type="XPath Match" id="20adbcc0-e0e8-4efd-9855-8547de96cdb1" name="XPath Match 3">
               <con:configuration>
-                <path>//subscription/customFields/inheritedCustomField[@code="C"][4]</path>
+                <path>//subscription/customFields/inheritedCustomField[@code="C" and stringValue="C_O_04"]</path>
                 <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-04-01T00:00:00*" valuePeriodEndDate="2018-05-01T00:00:00*">
   <fieldType>STRING</fieldType>
   <stringValue>C_O_04</stringValue>
@@ -42948,7 +44449,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="XPath Match" id="191405de-b5e0-4daf-b341-558a1e25179f" name="XPath Match 12">
               <con:configuration>
                 <path>count(//subscription/customFields/inheritedCustomField[@code="C"])</path>
-                <content>4</content>
+                <content>3</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -43302,7 +44803,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -43372,7 +44873,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>D_Cust2</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -44217,7 +45724,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -44287,7 +45794,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>D_Cust2</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -44960,6 +46473,201 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Find billing account - D change" id="28e15ce9-2f91-460c-beb8-20c5f81f87b0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomerAccount</con:operation>
+          <con:request name="Find billing account - D change" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findBillingAccount>\r
+         <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA</billingAccountCode>\r
+      </ws:findBillingAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="6edd5813-7654-4aa9-a823-f80c2df3d5a7" name="XPath Match">
+              <con:configuration>
+                <path>//billingAccount/customFields/customField[@code="A"]</path>
+                <content><![CDATA[<customField code="A" description="A">
+  <fieldType>STRING</fieldType>
+  <stringValue>A_BA</stringValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="acf44eb5-20b5-4905-9bea-10e41139b5aa" name="XPath Match 1">
+              <con:configuration>
+                <path>//billingAccount/customFields/customField[@code="C"][1]</path>
+                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00-03:00" valuePeriodEndDate="2018-07-01T00:00:00-03:00">
+  <fieldType>STRING</fieldType>
+  <stringValue>C_BA_06</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b93d560a-ae64-4412-89f3-92aca45969fa" name="XPath Match 2">
+              <con:configuration>
+                <path>//billingAccount/customFields/customField[@code="C"][2]</path>
+                <content><![CDATA[<customField code="C" description="C" valuePeriodStartDate="2018-07-01T00:00:00*" valuePeriodEndDate="2018-08-01T00:00:00*">
+  <fieldType>STRING</fieldType>
+  <stringValue>C_BA_07</stringValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="4c53466f-ed73-49e9-b53f-86b43771e1e9" name="XPath Match 3">
+              <con:configuration>
+                <path>count(//billingAccount/customFields/customField[@code="C"])</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ab99c51d-67ef-432b-98dd-eddc496db418" name="XPath Match 4">
+              <con:configuration>
+                <path>//billingAccount/customFields/customField[@code="D"]</path>
+                <content><![CDATA[<customField code="D" description="D">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>D_BA1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="900100df-4eec-44c6-a450-4d48ed11ef23" name="XPath Match 5">
+              <con:configuration>
+                <path>//billingAccount/customFields/inheritedCustomField[@code="C"][1]</path>
+                <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
+  <fieldType>STRING</fieldType>
+  <stringValue>C_BA_06</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ff559555-7f98-4e30-a074-0a8378f6fe73" name="XPath Match 6">
+              <con:configuration>
+                <path>//billingAccount/customFields/inheritedCustomField[@code="C"][2]</path>
+                <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-07-01T00:00:00*" valuePeriodEndDate="2018-08-01T00:00:00*">
+  <fieldType>STRING</fieldType>
+  <stringValue>C_BA_07</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="96a5a801-73c7-4964-bbd8-c36112525d40" name="XPath Match 7">
+              <con:configuration>
+                <path>//billingAccount/customFields/inheritedCustomField[@code="C"][3]</path>
+                <content><![CDATA[<inheritedCustomField code="C" description="C" valuePeriodStartDate="2018-05-01T00:00:00*" valuePeriodEndDate="2018-06-01T00:00:00*">
+  <fieldType>STRING</fieldType>
+  <stringValue>C_CA_05-1</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ccd56811-0d7a-4adb-9530-b0f0fc1a6ee2" name="XPath Match 8">
+              <con:configuration>
+                <path>count(//billingAccount/customFields/inheritedCustomField[@code="C"])</path>
+                <content>3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="6274b221-30cf-40db-8d9e-07e2987f2937" name="XPath Match 9">
+              <con:configuration>
+                <path>//billingAccount/customFields/inheritedCustomField[@code="D"]</path>
+                <content><![CDATA[<inheritedCustomField code="D" description="D">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>D_BA1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>D_Cust2-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="987a7ba9-f717-4397-a403-5da98976e7ce" name="XPath Match 10">
+              <con:configuration>
+                <path>//billingAccount/customFields/inheritedCustomField[@code="A"]</path>
+                <content><![CDATA[<inheritedCustomField code="A" description="A">
+  <fieldType>STRING</fieldType>
+  <stringValue>A_BA</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find billing account no CF - D change" id="6004049b-e87b-4133-8368-60ba2444658a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -45377,7 +47085,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -45447,7 +47155,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <entry>
       <key>three</key>
       <value>
-        <stringValue>D_BA2</stringValue>
+        <stringValue>D_BA3</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>D_Cust2-1</stringValue>
       </value>
     </entry>
   </mapValue>
@@ -46022,12 +47736,1084 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Update provider - EF change" id="e4b26c7a-3ddf-42c4-9288-a17cf484beda">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateSeller</con:operation>
+          <con:request name="Update provider - EF change" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateProvider>\r
+         <provider>\r
+            <customFields>\r
+               <customField code="E">\r
+                  <stringValue>E_P-1</stringValue>\r
+               </customField>\r
+               <customField code="F">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>one</key>\r
+                        <value>\r
+                           <stringValue>F_P1-1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>two</key>\r
+                        <value>\r
+                           <stringValue>F_P2-1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>three</key>\r
+                        <value>\r
+                           <stringValue>F_P3-1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>eight</key>\r
+                        <value>\r
+                           <stringValue>F_P8-1</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </provider>\r
+      </ws:updateProvider>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find provider - EF change" id="5b620564-1434-4af3-8cc4-4dbd7dfa1f7d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findProvider</con:operation>
+          <con:request name="Find provider - EF change" id="105d4cfe-6455-4394-8bf6-6308b8c5386d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findProvider>\r
+      </ws:findProvider>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="e8d6ca82-da1f-476e-81f1-84922cdb6476"/>
+            <con:assertion type="Simple Contains" id="7361f561-7ab4-4faa-ae83-83bf22f4eac7" name="Code Status Success">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="988e1a07-f0a5-4ab0-8fb9-677a6ddcde75" name="XPath Match 2">
+              <con:configuration>
+                <path>//customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_P-1</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="babf0064-ee96-40d6-b348-f75c9edcf331" name="XPath Match 3">
+              <con:configuration>
+                <path>//customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_P1-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_P2-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller - EF change" id="e9a8874c-1fc6-4a31-84a7-f69bfb78c5dd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller - EF change" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3d71a7f1-e35a-443e-bc0c-a005573e31b0" name="XPath Match">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f6120048-e2fc-4b13-99a1-1ba829d37a27" name="XPath Match 1">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller child 1  - EF change" id="93f76ca0-39d3-4e6c-98a1-b43013b75ce3">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller child 1  - EF change" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH1</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3d71a7f1-e35a-443e-bc0c-a005573e31b0" name="XPath Match">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH1</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f6120048-e2fc-4b13-99a1-1ba829d37a27" name="XPath Match 1">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH1</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller child 2  - EF change" id="0e80e117-c5bd-4f02-b15b-e558677bceac">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller child 2  - EF change" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH2</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3d71a7f1-e35a-443e-bc0c-a005573e31b0" name="XPath Match">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH2</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f6120048-e2fc-4b13-99a1-1ba829d37a27" name="XPath Match 1">
+              <con:configuration>
+                <path>//seller/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>six</key>
+      <value>
+        <stringValue>F_S6-CH2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH2</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>six</key>
+      <value>
+        <stringValue>F_S6-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller no CF - EF change" id="38365be2-027d-4545-8373-16cf93322016">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller no CF - EF change" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_P-1</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_P1-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_P2-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find seller no CF child 1 - EF change" id="d7ae2c0a-1430-4df1-89d9-825b95a0c4b7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>findSeller</con:operation>
+          <con:request name="Find seller no CF child 1 - EF change" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="39ad528f-5eb6-4e69-8683-91994e879f72">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findSeller>         
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH1</sellerCode>
+      </ws:findSeller>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4f7ba4f3-7793-4258-9dee-0ef93d47d4f7" name="Code Success Status">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d72bd42b-a882-4457-9215-23c941f47967" name="XPath Match 2">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_P-1</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="42559b08-608f-4e57-b1cf-a5f116c63a8e" name="XPath Match 3">
+              <con:configuration>
+                <path>//seller/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_P1-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_P2-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find customer account - EF change" id="de4f3b09-a4b0-44e8-a71e-df4749ade1c4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomerAccount</con:operation>
+          <con:request name="Find customer account - EF change" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccount>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA</customerAccountCode>\r
+      </ws:findCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0d029702-0643-4ca8-909a-721d0b559426" name="XPath Match 5">
+              <con:configuration>
+                <path>//customerAccount/customFields/customField[@code="E"]</path>
+                <content><![CDATA[<customField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_CA</stringValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9f7fc8fa-626a-4af0-83ef-7b02bdb0964f" name="XPath Match 6">
+              <con:configuration>
+                <path>//customerAccount/customFields/customField[@code="F"]</path>
+                <content><![CDATA[<customField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_CA1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>seven</key>
+      <value>
+        <stringValue>F_CA7</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="047ed28a-afaa-490f-8085-00e88d1f2572" name="XPath Match 7">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_CA</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="94a88f94-ad56-4ed5-a3ce-ad966b1ce75c" name="XPath Match 8">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_CA1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>seven</key>
+      <value>
+        <stringValue>F_CA7</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find customer account no CF - EF change" id="025c98c3-8e12-4ac6-b632-8c991b122137">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomerAccount</con:operation>
+          <con:request name="Find customer account no CF - EF change" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccount>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_NO_CF</customerAccountCode>\r
+      </ws:findCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="604b9a08-c263-4ce1-8592-a66a827c7270" name="XPath Match">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="192f932a-c056-4e60-9912-a65ff2a64492" name="XPath Match 2">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find customer account seller child 2 - EF change" id="b66fdc82-50e1-4a26-80b2-9c641a2ca967">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomerAccount</con:operation>
+          <con:request name="Find customer account seller child 2 - EF change" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomerAccount>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_SELLER_CH2</customerAccountCode>\r
+      </ws:findCustomerAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="6c0dd5f5-6a05-4f1f-8a55-41ad6a61c336" name="XPath Match 1">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="E"]</path>
+                <content><![CDATA[<inheritedCustomField code="E" description="E" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <stringValue>E_S-CH2</stringValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fcf0d203-9e08-465b-a528-c7cbc8d05d8b" name="XPath Match 2">
+              <con:configuration>
+                <path>//customerAccount/customFields/inheritedCustomField[@code="F"]</path>
+                <content><![CDATA[<inheritedCustomField code="F" description="F">
+  <fieldType>STRING</fieldType>
+  <mapValue>
+    <entry>
+      <key>one</key>
+      <value>
+        <stringValue>F_S1-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>six</key>
+      <value>
+        <stringValue>F_S6-CH2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>five</key>
+      <value>
+        <stringValue>F_S5-CH1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>two</key>
+      <value>
+        <stringValue>F_S2</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>four</key>
+      <value>
+        <stringValue>F_S4</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>three</key>
+      <value>
+        <stringValue>F_P3-1</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>eight</key>
+      <value>
+        <stringValue>F_P8-1</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</inheritedCustomField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>2</con:value>
+        <con:value>4</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

@@ -21,6 +21,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarDaily;
@@ -53,6 +55,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @EJB
     private CfValueAccumulator cfValueAccumulator;
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
 
     static boolean useCFTCache = true;
 
@@ -199,7 +204,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         elasticClient.updateCFMapping(cft);
         boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
-        if (reaccumulateCFValues){
+        if (reaccumulateCFValues) {
+
+            clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
             cfValueAccumulator.accumulateCfValues(cft);
         }
     }

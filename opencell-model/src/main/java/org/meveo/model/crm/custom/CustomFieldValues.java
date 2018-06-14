@@ -517,7 +517,7 @@ public class CustomFieldValues implements Serializable {
             Object oldValue = valueByPeriod.getValue();
             if ((oldValue != null && !oldValue.equals(value)) || (oldValue == null && value != null)) {
                 valueByPeriod.setValue(value);
-                
+
                 // Mark dirty fields - value change
                 dirtyCfValues.add(cfCode);
             }
@@ -727,6 +727,7 @@ public class CustomFieldValues implements Serializable {
      * @param source Source/path that value was accumulated from
      * @return True if new values were appended
      */
+    @SuppressWarnings("unchecked")
     public boolean appendCfValues(String cfCode, CustomFieldValues cfValuesToAppend, String source) {
         if (cfValuesToAppend == null) {
             return false;
@@ -737,22 +738,54 @@ public class CustomFieldValues implements Serializable {
         }
         boolean hasChanged = false;
 
-        for (CustomFieldValue customFieldValueToOverride : cfValueList) {
-            CustomFieldValue customFieldValueFound = getCfValueByPeriod(cfCode, customFieldValueToOverride.getPeriod(), true, false);
+        for (CustomFieldValue cfValueToAppend : cfValueList) {
+            CustomFieldValue customFieldValueFound = getCfValueByPeriod(cfCode, cfValueToAppend.getPeriod(), true, false);
+
+            // In case of non-map fields, add value only if no value is present
             if (customFieldValueFound == null) {
                 if (!valuesByCode.containsKey(cfCode)) {
                     valuesByCode.put(cfCode, new ArrayList<>());
                 }
-                customFieldValueToOverride = customFieldValueToOverride.clone();
-                customFieldValueToOverride.setSource(source);
+                cfValueToAppend = cfValueToAppend.clone();
+                cfValueToAppend.setSource(source);
 
-                valuesByCode.get(cfCode).add(customFieldValueToOverride);// TODO need to increment priority in case of versioned fields
+                valuesByCode.get(cfCode).add(cfValueToAppend);// TODO need to increment priority in case of versioned fields
                 hasChanged = true;
 
                 // Mark fields dirty - both period and value change
                 dirtyCfPeriods.add(cfCode);
                 dirtyCfValues.add(cfCode);
+
+                // In case of map fields, need to append missing keys
+            } else if (cfValueToAppend.getMapValue() != null) {
+
+                if (customFieldValueFound.getMapValue() == null) {
+
+                    customFieldValueFound.setMapValue((Map<String, Object>) cfValueToAppend.getMapValue());
+                    customFieldValueFound.addSource(source);
+
+                    hasChanged = true;
+
+                } else {
+
+                    Map<String, Object> mapValue = customFieldValueFound.getMapValue();
+
+                    for (Object entriesToOverride : cfValueToAppend.getMapValue().entrySet()) {
+                        String key = ((Entry<String, ?>) entriesToOverride).getKey();
+                        if (!mapValue.containsKey(key)) {
+                            mapValue.put(key, ((Entry<String, ?>) entriesToOverride).getValue());
+                            customFieldValueFound.addSource(source);
+                            hasChanged = true;
+                        }
+                    }
+                }
+
+                // Mark fields dirty - value change
+                if (hasChanged) {
+                    dirtyCfValues.add(cfCode);
+                }
             }
+
         }
         return hasChanged;
     }
@@ -774,8 +807,12 @@ public class CustomFieldValues implements Serializable {
         List<CustomFieldValue> cfValueList = cfValues.getCfValues(cfCode);
         if (cfValueList == null || cfValueList.isEmpty()) {
             removeValue(cfCode);
+
         } else {
-            List<CustomFieldValue> cfValueListCopy = new ArrayList<>(cfValueList);
+            List<CustomFieldValue> cfValueListCopy = new ArrayList<>();
+            for (CustomFieldValue customFieldValue : cfValueList) {
+                cfValueListCopy.add(customFieldValue.clone());
+            }
 
             valuesByCode.put(cfCode, cfValueListCopy);
 
@@ -799,7 +836,7 @@ public class CustomFieldValues implements Serializable {
         boolean wasRemoved = false;
         List<CustomFieldValue> cfValues = valuesByCode.get(cfCode);
         for (int i = cfValues.size() - 1; i >= 0; i--) {
-            if (source.equals(cfValues.get(i).getSource())) {
+            if (cfValues.get(i).getSource() != null && cfValues.get(i).getSource().contains(source)) {
                 cfValues.remove(i);
                 wasRemoved = true;
             }

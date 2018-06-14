@@ -101,9 +101,11 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Override
     public Provider update(Provider provider) throws BusinessException {
-        provider = super.update(provider);
         // Refresh appProvider application scope variable
         refreshAppProvider(provider);
+        
+        provider = super.update(provider);
+
         // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
         return provider;
     }
