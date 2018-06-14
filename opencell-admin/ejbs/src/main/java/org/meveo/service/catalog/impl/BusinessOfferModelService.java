@@ -286,7 +286,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         return newOfferProductTemplates;
     }
 
-    private List<OfferServiceTemplate> instantiateServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
+    public List<OfferServiceTemplate> instantiateServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
             BusinessOfferModel businessOfferModel) throws BusinessException {
         List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
         // we need this to check in case of non-bsm, non-existing service template

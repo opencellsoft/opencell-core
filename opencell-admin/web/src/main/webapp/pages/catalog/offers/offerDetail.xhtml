@@ -359,7 +359,7 @@
                             <p:panel>
                                 <p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}"
                                     style="margin-right: 2px; position: relative; top: 5px"
-                                    rendered="#{offerTemplateBean.visibleServiceCheckbox}">
+                                    rendered="#{offerTemplateBean.visibleServiceCheckbox and offerTemplateBean.edit}">
                                     <p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
                                 </p:selectBooleanCheckbox>
                         
@@ -375,8 +375,10 @@
                             </p:panel>
 
                             <p:panel id="serviceCf_panel_#{loopStatus.index}">
-                                <c:if
-                                    test="#{(!offerTemplateBean.instantiatedFromBom and !offerTemplateBean.newVersionFlag and offerTemplateBean.visibleServiceCF) or (offerTemplateBean.instantiatedFromBom and offerTemplateBean.visibleServiceCF and ost.serviceTemplate.selected) or (offerTemplateBean.newVersionFlag and ost.serviceTemplate.selected)}">
+                            <c:if test="#{(!offerTemplateBean.instantiatedFromBom and !offerTemplateBean.newVersionFlag and ost.serviceTemplate.selected) or 
+                                            (offerTemplateBean.instantiatedFromBom and ost.serviceTemplate.selected) or 
+                                            (offerTemplateBean.newVersionFlag and ost.serviceTemplate.selected)}">
+
                                     <hftl:decorateFormField
                                         fieldId="serviceMandatory_#{loopStatus.index}"
                                         label="#{messages['offerServiceTemplate.mandatory']}"
