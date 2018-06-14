@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,12 +24,15 @@ import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
+import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -44,6 +48,7 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
@@ -706,8 +711,15 @@ public class CustomerApi extends AccountEntityApi {
 		List<String> invoicePdfs = invoiceService.listPdfInvoice(customer);
 
 		XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
+		xstream.registerConverter(new CustomBigDecimalConverter());
 		xstream.setMode(XStream.NO_REFERENCES);
 		xstream.alias("customer", CustomerDto.class);
+		xstream.omitField(AuditableEntityDto.class, "auditable");
+		xstream.omitField(AccountOperationDto.class, "accountCode");
+		xstream.omitField(AccountOperationDto.class, "accountingCode");
+		xstream.omitField(AccountOperationDto.class, "accountCodeClientSide");
+		xstream.omitField(PaymentMethodDto.class, "tokenId");		
+		
 		String accountHierarchy = xstream.toXML(result);
 
 		File accountHierarchyFile = File.createTempFile(customerCode, ".json");
@@ -728,6 +740,8 @@ public class CustomerApi extends AccountEntityApi {
 						ZipEntry zipEntry = new ZipEntry(
 								customerCode + File.separator + Paths.get(pdfFile).getFileName().toString());
 						FileUtils.addZipEntry(zipOut, fis, zipEntry);
+					} catch (FileNotFoundException e) {
+						log.warn("Report is not yet generated with path={}", e.getMessage());
 					}
 				}
 			}
