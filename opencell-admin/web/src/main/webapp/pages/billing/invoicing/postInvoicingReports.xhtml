@@ -17,12 +17,12 @@
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
-                <p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />                
+                <p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />
                 <p:menuitem
                     value="#{messages['billingRun.panel']} - #{billingRunBean.entity.id}"
                     disabled="true" rendered="#{!billingRunBean.entity.transient}" />
             </p:breadCrumb>
-        </h:form>   
+        </h:form>
          <p:messages id="messages" />
         <hftl:formPanel formId="form3" edit="false"
             label="#{messages['postInvoicingReport.title']}"
@@ -79,7 +79,7 @@
 
 
 
-            <p:fieldset legend="#{messages['postInvoicingReport.invoicesNumberPerPaymentMode']}" styleClass="clearLeft">                
+            <p:fieldset legend="#{messages['postInvoicingReport.invoicesNumberPerPaymentMode']}" styleClass="clearLeft">
 
                 <hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
                     field="postInvoicingReports" childField="checkInvoicesNumber"
@@ -93,19 +93,19 @@
                     label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
                     field="postInvoicingReports"
                     childField="wiretransferInvoicesNumber" popup="false" displayOneLine="true" componentWidth="20" />
-                    
+
                 <hftl:formField
                     label="#{messages['PaymentMethodEnum.CARD']}"
                     field="postInvoicingReports"
-                    childField="creditDebitCardInvoicesNumber" popup="false" displayOneLine="true" componentWidth="20" />   
-                    
+                    childField="creditDebitCardInvoicesNumber" popup="false" displayOneLine="true" componentWidth="20" />
+
                 <hftl:formField label="#{messages['PaymentMethodEnum.NO_VALID']}"
                     field="postInvoicingReports" childField="npmInvoicesNumber"
-                    popup="false" displayOneLine="true" componentWidth="20" />          
-                    
-             </p:fieldset>   
-            
-            <p:fieldset legend="#{messages['postInvoicingReport.amoutHtPerPaymentMode']}" styleClass="clearLeft">   
+                    popup="false" displayOneLine="true" componentWidth="20" />
+
+             </p:fieldset>
+
+            <p:fieldset legend="#{messages['postInvoicingReport.amoutHtPerPaymentMode']}" styleClass="clearLeft">
 
                 <hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
                     field="postInvoicingReports" childField="checkAmuontHT"
@@ -119,23 +119,23 @@
                     label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
                     field="postInvoicingReports" childField="wiretransferAmuontHT"
                     popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
-                    
+
                 <hftl:formField
                     label="#{messages['PaymentMethodEnum.CARD']}"
                     field="postInvoicingReports" childField="creditDebitCardAmountHT"
                     popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
-                    
+
                 <hftl:formField
                     label="#{messages['PaymentMethodEnum.NO_VALID']}"
                     field="postInvoicingReports" childField="npmAmountHT"
-                    popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />   
+                    popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 
              </p:fieldset>
-             
+
              <p:fieldset legend="#{messages['postInvoicingReport.amoutTtcPerPaymentMode']}" styleClass="clearLeft">
-                    
+
                 <hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
-                    field="postInvoicingReports" childField="checkAmuont" popup="false" 
+                    field="postInvoicingReports" childField="checkAmuont" popup="false"
                     converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 
                 <hftl:formField label="#{messages['PaymentMethodEnum.DIRECTDEBIT']}"
@@ -146,32 +146,33 @@
                     label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
                     field="postInvoicingReports" childField="wiretransferAmuont"
                     popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
-                    
+
                 <hftl:formField
                     label="#{messages['PaymentMethodEnum.CARD']}"
                     field="postInvoicingReports" childField="creditDebitCardAmount"
                     popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
-                    
+
                 <hftl:formField
                     label="#{messages['PaymentMethodEnum.NO_VALID']}"
                     field="postInvoicingReports" childField="npmAmount"
                     popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
-                                        
+
             </p:fieldset>
 
+<<<<<<< HEAD
         </hftl:formPanel>
 
-        <p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">        
+        <p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">
             <hftl:dataList  id="dataListInvoicess" dataModel="#{invoiceBean.getBillingRunInvoices(billingRunBean.entity)}"   backingBean="#{invoiceBean}">
             <p:ajax event="rowSelectCheckbox"    listener="#{invoiceBean.onRowSelectCheckbox}" update=":excludeBa" />
-            <p:ajax event="rowUnselectCheckbox"  listener="#{invoiceBean.onRowUnSelectCheckbox}"  update=":excludeBa"  /> 
-    
+            <p:ajax event="rowUnselectCheckbox"  listener="#{invoiceBean.onRowUnSelectCheckbox}"  update=":excludeBa"  />
+
                 <hftl:column label="#{messages['businessEntity.code']}" objectIdParamName="billingAccountId"
                     field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
-            
+
                 <hftl:column label="#{messages['billingAccount.name']}"
                     field="billingAccount.name" />
-    
+
                 <hftl:column label="#{messages['invoice.amountWithoutTax']}"
                     field="amountWithoutTax" converterParam="4digits"/>
                 <hftl:column label="#{messages['invoice.amountTax']}"
@@ -182,7 +183,7 @@
              <p:panel styleClass="action-buttons" id="actionsButtons" >
                 <p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{!invoiceBean.selectedInvoices}"
                     value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
-                    update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" 
+                    update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}"
                     rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
                     <p:confirm header="#{messages['commons.confirmationHeader']}"
                         message="#{messages['commons.excludeBillingAccounts']}"
@@ -190,9 +191,9 @@
                 </p:commandButton>
             </p:panel>
         </p:panel>
-    
+
         <p:panel header="#{messages['postInvoicingReport.rejectedBillingAccounts']}"  id="rejectedBA_panel" width="100">
-            
+
             <hftl:dataList exportToXml="false" resultsId="dataListRekectedBAs" dataModel="#{rejectedBillingAccountBean.getBArejected(billingRunBean.entity)}"   backingBean="#{rejectedBillingAccountBean}">
 
                     <hftl:column label="#{messages['businessEntity.code']}"
@@ -207,17 +208,17 @@
 
                 </hftl:dataList>
 
-        
+
 
             <hftl:decorateFormField label="#{messages['billingRuns.launchInvoicing']}" displayOneLine="true" componentWidth="50">
                 <p:selectBooleanCheckbox
                     value="#{billingRunBean.launchInvoicingRejectedBA}" />
             </hftl:decorateFormField>
-    
+
             <h:form id="operationsForm" rendered="#{!edit}">
                 <div class="action-buttons">
                     <p:commandButton action="#{billingRunBean.validateInvoicing()}"
-                        value="#{messages['action.validate']}" 
+                        value="#{messages['action.validate']}"
                         rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"/>
                     <!-- <h:commandButton
                     action="#{billingRunBean.rerateConfirmedInvoicing()}"
@@ -227,13 +228,100 @@
                         value="#{messages['action.cancel']}"
                         rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"
                         onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
-                    
+
                     <p:button id="backToBillingRuns" outcome="billingRuns"
                         value="#{messages['action.back']}"
                         rendered="#{billingRunBean.entity.status.toString() == 'VALIDATED'}" />
                 </div>
             </h:form>
-        
+
         </p:panel>
     </ui:define>
+=======
+			</p:tab>
+                <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
+            </p:tabView>
+
+		</hftl:formPanel>
+
+		<p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">
+			<hftl:dataList  id="dataListInvoicess" dataModel="#{invoiceBean.getBillingRunInvoices(billingRunBean.entity)}"   backingBean="#{invoiceBean}">
+	        <p:ajax event="rowSelectCheckbox"     update=":excludeBa" />
+	        <p:ajax event="rowUnselectCheckbox"   update=":excludeBa"  />
+	        <p:ajax event="toggleSelect" update=":excludeBa"/>
+
+				<hftl:column label="#{messages['businessEntity.code']}" objectIdParamName="billingAccountId"
+					field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
+
+				<hftl:column label="#{messages['billingAccount.name']}"
+					field="billingAccount.name" />
+
+				<hftl:column label="#{messages['invoice.amountWithoutTax']}"
+					field="amountWithoutTax" converterParam="4digits"/>
+				<hftl:column label="#{messages['invoice.amountTax']}"
+					field="amountTax" converterParam="4digits" />
+				<hftl:column label="#{messages['invoice.amountWithTax']}"
+					field="amountWithTax" converterParam="4digits" />
+			</hftl:dataList>
+			 <p:panel styleClass="action-buttons" id="actionsButtons" >
+				<p:tooltip for="excludeBa"
+					showEffect="slide" hideEffect="slide" />
+				<p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{invoiceBean.excludeBaDisabled}"
+					value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
+					update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}"
+					rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
+						message="#{messages['commons.excludeBillingAccounts']}"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:panel>
+		</p:panel>
+
+		<p:panel header="#{messages['postInvoicingReport.rejectedBillingAccounts']}"  id="rejectedBA_panel" width="100">
+
+			<hftl:dataList exportToXml="false" resultsId="dataListRekectedBAs" dataModel="#{rejectedBillingAccountBean.getBArejected(billingRunBean.entity)}"   backingBean="#{rejectedBillingAccountBean}">
+
+
+					<hftl:column label="#{messages['businessEntity.code']}"
+						field="billingAccount.code" />
+
+					<hftl:column label="#{messages['billingAccount.name']}"
+						field="billingAccount.name" />
+
+					<hftl:column
+						label="#{messages['RejectedBillingAccounts.rejectCause']}"
+						field="rejectCause" />
+
+				</hftl:dataList>
+
+
+
+			<hftl:decorateFormField label="#{messages['billingRuns.launchInvoicing']}" displayOneLine="true" componentWidth="50">
+				<p:selectBooleanCheckbox
+					value="#{billingRunBean.launchInvoicingRejectedBA}" />
+			</hftl:decorateFormField>
+
+			<h:form id="operationsForm" rendered="#{!edit}">
+				<div class="action-buttons">
+					<p:commandButton action="#{billingRunBean.validateInvoicing()}"
+						value="#{messages['action.validate']}"
+						rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"/>
+					<!-- <h:commandButton
+					action="#{billingRunBean.rerateConfirmedInvoicing()}"
+					value="Rerate" /> -->
+					<p:commandButton
+						action="#{billingRunBean.cancelConfirmedInvoicing()}"
+						value="#{messages['action.cancel']}"
+						rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"
+						onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
+
+					<p:button id="backToBillingRuns" outcome="billingRuns"
+						value="#{messages['action.back']}"
+						rendered="#{billingRunBean.entity.status.toString() == 'VALIDATED'}" />
+				</div>
+			</h:form>
+
+		</p:panel>
+	</ui:define>
+>>>>>>> Payment_method_Issue_in_ES_search_result
 </ui:composition>

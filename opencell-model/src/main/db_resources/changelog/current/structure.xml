@@ -27,8 +27,8 @@
         <modifyDataType tableName="billing_charge_instance" columnName="termination_date" newDataType="datetime" />
         <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime" />
     </changeSet>
-    
-    <changeSet id="#3196_20180131-migration" author="AndriusKarpavicius">    
+
+    <changeSet id="#3196_20180131-migration" author="AndriusKarpavicius">
         <sql>update ${db.schema.adapted}billing_recurring_charge_inst set next_charge_date = date(next_charge_date) + cast(subscription_date as time)
         where recurring_chrg_tmpl_id in (select chrgt.id from ${db.schema.adapted}cat_recurring_charge_templ chrgt join ${db.schema.adapted}cat_calendar cal on chrgt.calendar_id = cal.id where cal.cal_type='PERIOD')</sql>
     </changeSet>
@@ -91,7 +91,7 @@
             billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority
         </sql>
     </changeSet>
-    
+
     <changeSet author="EdwardPLegaspi" id="#2370_20180306 - customer categories">
         <createTable tableName="cat_product_offer_customer_category">
             <column name="product_id" type="bigint">
@@ -260,7 +260,7 @@
     <changeSet id="#2875_20171201-End" author="anasseh">
         <dropColumn tableName="ar_payment_gateway" columnName="trading_country_id" />
     </changeSet>
-    
+
     <changeSet id="#2870_20180129" author="EdwardLegaspi">
         <createTable tableName="dwh_report_extract">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -294,11 +294,11 @@
             </column>
             <column name="cf_values" type="${type.json}"/>
 		</createTable>
-		
+
 		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="dwh_report_extract" constraintName="fk_report_extract_script_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 		<createSequence sequenceName="dwh_report_extract_seq" />
-		
+
 		<createTable tableName="dwh_report_extract_params">
             <column name="reportextract_id" type="bigint">
                 <constraints nullable="false" />
@@ -310,7 +310,7 @@
         </createTable>
         <addPrimaryKey columnNames="reportextract_id, params_key" constraintName="pk_report_extract_params" tableName="dwh_report_extract_params" />
     </changeSet>
-    
+
      <changeSet id="#2870_20180129 Mysql" author="EdwardLegaspi" dbms="mysql">
         <createTable tableName="dwh_report_extract_seq">
             <column name="next_val" type="BIGINT">
@@ -319,7 +319,7 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}dwh_report_extract_seq values(1)</sql>
      </changeSet>
-     
+
      <changeSet id="#3234_13032018_1 - Homogenization of Account Operation types" author="anansseh" dbms="mysql">
 	    <sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),'411000000','445510000','TAX_VAT_00','Tax - VAT','DEBIT','opencell.admin')</sql>
 		<sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),'411000000','445510000','TAX_VAT_05','Tax - VAT','DEBIT','opencell.admin')</sql>
@@ -331,9 +331,9 @@
 		<sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),'411000000','709000000','INV_REB','Invoice - rebate sub-item','CREDIT','opencell.admin')</sql>
 		<sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),'411000000','709000000','INV_DIS','Invoice - discount sub-item','CREDIT','opencell.admin')</sql>
 		<sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),'411000000','701000000','INV_CRN','Invoice - credit note sub-item','CREDIT','opencell.admin')</sql>
-		<sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),'512010000','411000000','REF_TIP','Refund - TIP','DEBIT','opencell.admin')</sql>		
+		<sql>insert into ${db.schema.adapted}ar_occ_template (version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (0,0,CURRENT_TIMESTAMP(),'512010000','411000000','REF_TIP','Refund - TIP','DEBIT','opencell.admin')</sql>
     </changeSet>
-     
+
     <changeSet id="#3234_13032018_2 - Homogenization of Account Operation types" author="anansseh" dbms="postgresql">
 	    <sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,'411000000','445510000','TAX_VAT_00','Tax - VAT','DEBIT','opencell.admin')</sql>
 		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,'411000000','445510000','TAX_VAT_05','Tax - VAT','DEBIT','opencell.admin')</sql>
@@ -345,7 +345,7 @@
 		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,'411000000','709000000','INV_REB','Invoice - rebate sub-item','CREDIT','opencell.admin')</sql>
 		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,'411000000','709000000','INV_DIS','Invoice - discount sub-item','CREDIT','opencell.admin')</sql>
 		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,'411000000','701000000','INV_CRN','Invoice - credit note sub-item','CREDIT','opencell.admin')</sql>
-		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,'512010000','411000000','REF_TIP','Refund - TIP','DEBIT','opencell.admin')</sql>		
+		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,account_code,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,'512010000','411000000','REF_TIP','Refund - TIP','DEBIT','opencell.admin')</sql>
     </changeSet>
     <changeSet id="#3234_13032018_3 - Homogenization of Account Operation types" author="anansseh">
         <sql>update ${db.schema.adapted}ar_occ_template set code='INV_STD', description='Standard invoice sub-item', account_code='411000000', account_code_client_side='445510000' , creator = 'opencell.admin' where code ='FA_FACT'</sql>
@@ -381,7 +381,7 @@
 		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='TRANS_DEB'</sql>
 		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_EXC'</sql>
 		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_IRRE'</sql>
-		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_CL_CC'</sql>				
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_CL_CC'</sql>
     </changeSet>
 
     <changeSet id="#1705_20180219" author="EdwardPLegaspi">
@@ -405,19 +405,19 @@
 	        <column name="updater" type="varchar(100)" />
 	        <column name="parent_accounting_code_id" type="bigint" />
 			<column name="chart_of_account_type" type="varchar(25)" />
-			<column name="reporting_account" type="varchar(50)" />        
+			<column name="reporting_account" type="varchar(50)" />
 	        <column name="chart_of_account_view_type" type="varchar(25)" />
 	        <column name="notes" type="varchar(2000)" />
 	        <column name="migrated" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
 		</createTable>
-        
+
         <createSequence sequenceName="billing_accounting_code_seq" />
         <addUniqueConstraint columnNames="code" constraintName="uk_billing_accounting_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_accounting_code" />
         <addForeignKeyConstraint baseColumnNames="parent_accounting_code_id" baseTableName="billing_accounting_code" constraintName="fk_billing_accounting_code_parent" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
-            
+
         <addColumn tableName="billing_invoice_sub_cat">
         	<column name="accounting_code_id" type="bigint"></column>
         </addColumn>
@@ -439,7 +439,7 @@
         <addColumn tableName="ar_account_operation">
         	<column name="accounting_code_id" type="bigint"></column>
         </addColumn>
-        
+
         <addForeignKeyConstraint constraintName="fk_billing_invoice_sub_cat_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_invoice_sub_cat" referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_billing_tax_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_tax" referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_billing_invoice_aggregate_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="billing_invoice_agregate" baseColumnNames="accounting_code_id" />
@@ -448,7 +448,7 @@
         <addForeignKeyConstraint constraintName="fk_ar_occ_template_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_occ_template" baseColumnNames="accounting_code_id" />
         <addForeignKeyConstraint constraintName="fk_ar_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_account_operation" baseColumnNames="accounting_code_id" />
     </changeSet>
-    
+
     <changeSet id="#1705_20180219 Mysql" author="EdwardPLegaspi" dbms="mysql">
         <createTable tableName="billing_accounting_code_seq">
             <column name="next_val" type="BIGINT">
@@ -457,14 +457,14 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_accounting_code_seq values(1)</sql>
     </changeSet>
-    
+
     <changeSet id="#1705_20180220-migration" author="EdwardPLegaspi" dbms="postgresql">
     	<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-			    from 
-			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
+				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR'
+			    from
+			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>''
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
 			]]>
 		</sql>
@@ -476,9 +476,9 @@
 		<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-			    from 
-			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
+				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR'
+			    from
+			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>''
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
 			]]>
 		</sql>
@@ -488,9 +488,9 @@
 		<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.account_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-			    from 
-			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
+				select a.account_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR'
+			    from
+			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>''
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
 			]]>
 		</sql>
@@ -509,7 +509,7 @@
 		<sql>
 			<![CDATA[update ${db.schema.adapted}ar_account_operation set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
 		</sql>
-		
+
 		<sql>
 			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
 		</sql>
@@ -519,9 +519,9 @@
         <sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-			    from 
-			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR'
+			    from
+			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>''
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
 			]]>
 		</sql>
@@ -533,9 +533,9 @@
 		<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-			    from 
-			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR'
+			    from
+			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>''
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
 			]]>
 		</sql>
@@ -545,9 +545,9 @@
 		<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.account_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-			    from 
-			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
+				select a.account_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR'
+			    from
+			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>''
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
 			]]>
 		</sql>
@@ -566,15 +566,15 @@
 		<sql>
 			<![CDATA[update ${db.schema.adapted}ar_account_operation set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
 		</sql>
-		
+
 		<sql>
 			<![CDATA[update ${db.schema.adapted}billing_accounting_code_seq set next_val=(select id+1 from ${db.schema.adapted}billing_accounting_code order by id desc limit 1);]]>
 			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
 		</sql>
         <dropUniqueConstraint tableName="dwh_journal_entries" constraintName="uk_og8li9rlut4trrxgajab23j7y"/>
     </changeSet>
-    
-    <changeSet id="#1705_20180220-migration-end" author="EdwardPLegaspi" >        
+
+    <changeSet id="#1705_20180220-migration-end" author="EdwardPLegaspi" >
 		<dropColumn tableName="billing_invoice_sub_cat" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="billing_tax" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="billing_invoice_agregate" columnName="accounting_code"></dropColumn>
@@ -582,10 +582,10 @@
 		<dropColumn tableName="dwh_journal_entries" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="ar_occ_template" columnName="account_code"></dropColumn>
 		<dropColumn tableName="ar_account_operation" columnName="account_code"></dropColumn>
-		
+
 		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_orinvacid" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
     </changeSet>
-    
+
     <changeSet id="#3029_20180213 - Rating minimum on priceplan" author="EdwardPLegaspi">
     	<addColumn tableName="cat_price_plan_matrix">
     		<column name="minimum_amount_without_tax_el" type="varchar(2000)">
@@ -595,13 +595,13 @@
                 <constraints nullable="true" />
             </column>
     	</addColumn>
-    	
+
     	<addColumn tableName="billing_wallet_operation">
     		<column name="raw_amount_without_tax" type="numeric(23, 12)" />
             <column name="raw_amount_with_tax" type="numeric(23, 12)" />
     	</addColumn>
     </changeSet>
-    
+
     <changeSet id="#3213_20180312 - add order history table" author="EdwardPLegaspi">
     	<createTable tableName="ord_order_history">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -616,7 +616,7 @@
             <column name="event_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-            <column name="order_number" type="varchar(100)" />            
+            <column name="order_number" type="varchar(100)" />
 		</createTable>
 		<createSequence sequenceName="ord_order_history_seq" />
         <addForeignKeyConstraint baseColumnNames="order_item_id" baseTableName="ord_order_history" constraintName="fk_order_history_order_item" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -624,7 +624,7 @@
        	<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="ord_order_history" constraintName="fk_order_history_billing_service_instance" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
         	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
     </changeSet>
-    
+
     <changeSet id="#3213_20180312 - add order history table - mysql" author="EdwardPLegaspi" dbms="mysql">
     	<createTable tableName="ord_order_history_seq">
 			<column name="next_val" type="BIGINT">
@@ -634,25 +634,25 @@
 		<sql>insert into ${db.schema.adapted}ord_order_history_seq values(1)</sql>
     </changeSet>
 	 <changeSet author="anasseh" id="#3323_27032018">
-	    <addUniqueConstraint 
+	    <addUniqueConstraint
 	            columnNames="payment_method,country_id,trading_currency_id"
 	            constraintName="uk_payment_gateway"
-	            tableName="ar_payment_gateway"/>	           
+	            tableName="ar_payment_gateway"/>
 	</changeSet>
 	<changeSet id="perf_mediation_20180404" author="Wassim" dbms="postgresql">
 		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}rating_edr_index</sql>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>
 	</changeSet>
-	
+
 	<changeSet id="perf_mediation_20180409" author="PHUNGTienLan" dbms="mysql">
 		<sql>DROP INDEX IF EXISTS rating_edr_index ON ${db.schema.adapted}rating_edr</sql>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>
-	</changeSet>   
-	
+	</changeSet>
+
 	<changeSet id="#3351_20180407" author="EdwardPLegaspi">
 		<modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="text" />
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="#1706_20180408" author="EdwardPLegaspi">
 		<createTable tableName="billing_finance_segment">
 			<column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -679,11 +679,11 @@
             	<constraints nullable="false"/>
             </column>
 		</createTable>
-		
+
 		<addUniqueConstraint columnNames="code" tableName="billing_finance_segment"/>
 		<createSequence sequenceName="billing_finance_segment_seq" />
 	</changeSet>
-	
+
 	<changeSet id="#1706_20180408-M" author="EdwardPLegaspi" dbms="mysql">
         <createTable tableName="billing_finance_segment_seq">
             <column name="next_val" type="BIGINT">
@@ -692,40 +692,40 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
     </changeSet>
-    
+
     <changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="postgresql">
 		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}ar_account_operation_index</sql>
         <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
 	</changeSet>
-	
+
 	<changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="mysql">
 		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
         <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
-	</changeSet>   
-	
+	</changeSet>
+
 	<changeSet id="#3019_20180312" author="AbdelmounaimAkadid">
     	<addColumn tableName="billing_billing_account">
-            <column name="minimum_amount_el" type="varchar(2000)"  />           
-            <column name="minimum_label_el" type="varchar(2000)"  />           
+            <column name="minimum_amount_el" type="varchar(2000)"  />
+            <column name="minimum_label_el" type="varchar(2000)"  />
         </addColumn>
         <addColumn tableName="billing_service_instance">
-            <column name="minimum_amount_el" type="varchar(2000)"  />           
-            <column name="minimum_label_el" type="varchar(2000)"  />           
+            <column name="minimum_amount_el" type="varchar(2000)"  />
+            <column name="minimum_label_el" type="varchar(2000)"  />
         </addColumn>
         <addColumn tableName="cat_service_template">
-            <column name="minimum_amount_el" type="varchar(2000)"  />           
-            <column name="minimum_label_el" type="varchar(2000)"  />           
+            <column name="minimum_amount_el" type="varchar(2000)"  />
+            <column name="minimum_label_el" type="varchar(2000)"  />
         </addColumn>
         <addColumn tableName="billing_subscription">
-            <column name="minimum_amount_el" type="varchar(2000)"  />           
-            <column name="minimum_label_el" type="varchar(2000)"  />           
+            <column name="minimum_amount_el" type="varchar(2000)"  />
+            <column name="minimum_label_el" type="varchar(2000)"  />
         </addColumn>
         <addColumn tableName="cat_offer_template">
-            <column name="minimum_amount_el" type="varchar(2000)"  />           
-            <column name="minimum_label_el" type="varchar(2000)"  />           
+            <column name="minimum_amount_el" type="varchar(2000)"  />
+            <column name="minimum_label_el" type="varchar(2000)"  />
         </addColumn>
 	</changeSet>
-	
+
 
     <changeSet id="#3353_2018_0410" author="AndriusKarpavicius">
         <dropColumn tableName="billing_invoice_agregate" columnName="disabled" />
@@ -806,34 +806,34 @@
         <dropColumn tableName="wf_transition" columnName="updater" />
 
     </changeSet>
-    
+
     <changeSet id="#3326_20180502" author="EdwardPLegaspi">
     	<addColumn tableName="dwh_report_extract">
     		<column name="result_type" type="varchar(10)"></column>
     	</addColumn>
     </changeSet>
-    
+
     <changeSet id="#3271_20180423" author="AbdelmounaimAkadid">
     	<addColumn tableName="billing_cycle">
-            <column name="invoice_type_el" type="varchar(2000)"  />           
+            <column name="invoice_type_el" type="varchar(2000)"  />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#3118_20180502" author="AbdelmounaimAkadid">
     	<addColumn tableName="cat_price_plan_matrix">
-            <column name="invoice_subcategory_el" type="varchar(2000)"  />           
+            <column name="invoice_subcategory_el" type="varchar(2000)"  />
         </addColumn>
         <addColumn tableName="billing_wallet_operation">
-            <column name="invoice_sub_category_id" type="bigint"  />           
+            <column name="invoice_sub_category_id" type="bigint"  />
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
 	</changeSet>
-	
+
 	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
 		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
 	</changeSet>
-	
+
     <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
        <addColumn tableName="ar_payment_history">
            <column name="customer_code" type="varchar(256)" />
@@ -843,65 +843,67 @@
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="postgresql">
 		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_quote_id</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS ${db.schema.adapted}account_entity_upper_code</sql> <!-- duplicate because of using upper - need to update in core -->
         <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
-        
+
         <sql>DROP INDEX IF EXISTS ${db.schema.adapted}rating_edr_status</sql>
         <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_subscription_upper_code</sql> <!-- duplicate because of using upper - need to update in core -->
         <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(UPPER(code))</sql>
-        
+
         <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_wallet_operation_status</sql>
         <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_agregate_category_inv_agg</sql>
         <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_billing_account_id</sql>
         <sql>CREATE INDEX billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS ${db.schema.adapted}medina_access_subscription_id</sql>
         <sql>CREATE INDEX medina_access_subscription_id ON  ${db.schema.adapted}medina_access(subscription_id)</sql>
 	</changeSet>
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="mysql">
-        
+		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+
         <sql>DROP INDEX IF EXISTS billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS account_entity_upper_code ON ${db.schema.adapted}account_entity</sql> <!-- duplicate because of using upper - need to update in core -->
         <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
-        
+
         <sql>DROP INDEX IF EXISTS rating_edr_status ON ${db.schema.adapted}rating_edr</sql>
         <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription</sql> <!-- duplicate because of using upper - need to update in core -->
         <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(UPPER(code))</sql>
-        
+
         <sql>DROP INDEX IF EXISTS billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation</sql>
         <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate</sql>
         <sql>CREATE INDEX billing_invoice_agregate_category_inv_agg ON  ${db.schema.adapted}billing_invoice_agregate(category_invoice_agregate)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice</sql>
         <sql>CREATE INDEX billing_invoice_billing_account_id ON  ${db.schema.adapted}billing_invoice(billing_account_id)</sql>
-        
+
         <sql>DROP INDEX IF EXISTS medina_access_subscription_id ON ${db.schema.adapted}medina_access</sql>
         <sql>CREATE INDEX medina_access_subscription_id ON ${db.schema.adapted}medina_access(subscription_id)</sql>
-	</changeSet>   
-	
+	</changeSet>
+
 	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
 		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
 	</changeSet>
-	
+
     <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
        <addColumn tableName="ar_payment_history">
            <column name="customer_code" type="varchar(256)" />
        </addColumn>
     </changeSet>
-    
+
     <changeSet id="#3368_20180424" author="EdwardPLegaspi">
 	    <createTable tableName="dwh_report_extract_execution">
 		    <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -926,11 +928,11 @@
 			<column name="status" type="boolean" />
 		</createTable>
 		<createSequence sequenceName="dwh_report_extract_execution_seq" />
-		
+
 		<addForeignKeyConstraint baseColumnNames="report_extract_id" baseTableName="dwh_report_extract_execution" constraintName="dwh_report_extract_execution_re_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dwh_report_extract" />
 	</changeSet>
-	
+
 	<changeSet id="#3368_20180424 - Mysql" author="EdwardPLegaspi" dbms="mysql">
 		<createTable tableName="dwh_report_extract_execution_seq">
 	        <column name="next_val" type="BIGINT">
@@ -939,14 +941,14 @@
 	    </createTable>
         <sql>insert into ${db.schema.adapted}dwh_report_extract_execution_seq values(1)</sql>
     </changeSet>
-    
+
     <changeSet id="#3327_20180517" author="EdwardPLegaspi">
     	<addColumn tableName="dwh_report_extract">
     		<column name="style" type="text"></column>
     		<column name="image_path" type="varchar(100)" />
     	</addColumn>
     </changeSet>
-    
+
      <changeSet id="#3406_20180516" author="AbdelmounaimAkadid">
      	<addColumn tableName="billing_rated_transaction">
            <column name="start_date" type="datetime" />
@@ -958,9 +960,9 @@
             <column name="exclude_inv_without_amount" type="${type.boolean}" />
         </addColumn>
     </changeSet>
-    
+
 	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
-	   <sql splitStatements="false" stripComments="false"><![CDATA[	
+	   <sql splitStatements="false" stripComments="false"><![CDATA[
 	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
 	         BEGIN
 	         	RETURN  translate($1,
@@ -974,23 +976,23 @@
     <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
     <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
      <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
-	    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+	    <sql splitStatements="false" stripComments="false"><![CDATA[
 			create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
 							returns varchar(2000)
-							begin				
+							begin
 								set @textvalue =  input_text;
 								set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
 								set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
 								set @count = length(@withaccents);
-								
+
 								while @count > 0 do
 								    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
 								    set @count = @count - 1;
-								end while;					
-								return @textvalue;				
+								end while;
+								return @textvalue;
 			end;
 		]]></sql>
-</changeSet>    
+</changeSet>
 
 	<changeSet id="#3232_20180529" author="EdwardLegaspi">
     	<createTable tableName="meveo_script_instance_cat">
@@ -1012,17 +1014,17 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
     	</createTable>
-    	
+
     	<createSequence sequenceName="meveo_script_instance_cat_seq" />
-    	
+
     	<addColumn tableName="meveo_script_instance">
     		<column name="script_instance_cat_id" type="bigint"></column>
     	</addColumn>
-    	
+
     	<addForeignKeyConstraint baseColumnNames="script_instance_cat_id" baseTableName="meveo_script_instance" constraintName="fk_meveo_script_instance-category" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance_cat" />
     </changeSet>
-    
+
     <changeSet id="#3232_20180529 Mysql" author="EdwardPLegaspi" dbms="mysql">
         <createTable tableName="meveo_script_instance_cat_seq">
             <column name="next_val" type="BIGINT">
@@ -1031,36 +1033,36 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}meveo_script_instance_cat_seq values(1)</sql>
     </changeSet>
- 
+
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
-    </changeSet> 
+    </changeSet>
 
     <changeSet id="#3206_20180531" author="Andrius Karpavicius">
         <sql> update ${db.schema.adapted}meveo_module_item set item_type='org.meveo.model.notification.ScriptNotification' where item_type='org.meveo.model.notification.Notification' </sql>
     </changeSet>
-    
+
     <changeSet author="SaidRamli" id="#3457_04062018">
         <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="ar_customer_account" />
         <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="ar_customer_account" />
         <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="ar_customer_account" />
-        
+
         <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_customer" />
         <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_customer" />
         <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_customer" />
-        
+
         <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_seller" />
         <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_seller" />
         <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_seller" />
-        
+
         <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="billing_billing_account" />
-        
+
         <modifyDataType columnName="phone" newDataType="varchar(50)" tableName="crm_provider_contact" />
         <modifyDataType columnName="mobile" newDataType="varchar(50)" tableName="crm_provider_contact" />
         <modifyDataType columnName="fax" newDataType="varchar(50)" tableName="crm_provider_contact" />
     </changeSet>
-    
+
     <changeSet id="#3290_04062018" author="anasseh">
         <addColumn tableName="billing_invoice_type">
             <column name="use_self_sequeunce" type="${type.boolean}" />
@@ -1077,7 +1079,14 @@
          <sql>update ${db.schema.adapted}billing_invoice_configuration set current_invoice_nb = (select max(max_id) from temp_to_delete);</sql>
          <dropTable tableName="temp_to_delete"/>
     </changeSet>
-    
+
+    <changeSet id="#3462_20180528" author="AbdelmounaimAkadid">
+     	<addColumn tableName="billing_billing_run">
+           <column name="uuid" type="varchar(60)" />
+           <column name="cf_values" type="text" />
+       </addColumn>
+    </changeSet>
+
     <changeSet id="#3289_20180612 - Service renewal" author="EdwardPLegaspi">
     	<addColumn tableName="cat_service_template">
     		<column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
@@ -1094,10 +1103,10 @@
 			<column name="renew_for_unit" type="varchar(5)" />
 			<column name="renew_for" type="INT4" />
     	</addColumn>
-    	
+
     	<addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="cat_service_template" constraintName="fk_st_auto_tr_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
-            
+
         <addColumn tableName="billing_service_instance">
     		<column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
 				<constraints nullable="false" />
@@ -1119,8 +1128,8 @@
 			<column name="notify_of_renewal_date" type="datetime" />
 			<column name="renewal_notified_date" type="datetime" />
     	</addColumn>
-    	
+
     	<addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_service_instance" constraintName="fk_si_auto_tr_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
     </changeSet>
-</databaseChangeLog> 
+</databaseChangeLog>

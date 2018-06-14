@@ -120,1032 +120,1044 @@
     PATH="/pages/admin/scriptInstances/scriptInstanceDetail.xhtml"
     TARGET="rules:#pages#admin#scriptInstances#scriptInstanceDetail.xhtml"
     TITLE="scriptInstanceDetail" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="scriptInstanceCategories::#pages#admin#scriptInstanceCategories#scriptInstanceCategories.xhtml"
+    NAME="output25"
+    PATH="/pages/admin/scriptInstanceCategories/scriptInstanceCategories.xhtml"
+    TARGET="rules:#pages#admin#scriptInstanceCategories#scriptInstanceCategories.xhtml"
+    TITLE="scriptInstanceCategories" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="scriptInstanceCategoryDetail::#pages#admin#scriptInstanceCategories#scriptInstanceCategoryDetail.xhtml"
+    NAME="output26"
+    PATH="/pages/admin/scriptInstanceCategories/scriptInstanceCategoryDetail.xhtml"
+    TARGET="rules:#pages#admin#scriptInstanceCategories#scriptInstanceCategoryDetail.xhtml"
+    TITLE="scriptInstanceCategoryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="timers::#pages#admin#job#ejbTimers.xhtml"
-    NAME="output25" PATH="/pages/admin/job/ejbTimers.xhtml"
+    NAME="output27" PATH="/pages/admin/job/ejbTimers.xhtml"
     TARGET="rules:#pages#admin#job#ejbTimers.xhtml" TITLE="timers" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="users::#pages#admin#meveoUsers#users.xhtml"
-    NAME="output26" PATH="/pages/admin/meveoUsers/users.xhtml"
+    NAME="output28" PATH="/pages/admin/meveoUsers/users.xhtml"
     TARGET="rules:#pages#admin#meveoUsers#users.xhtml" TITLE="users" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="userDetail::#pages#admin#meveoUsers#userDetail.xhtml"
-    NAME="output27" PATH="/pages/admin/meveoUsers/userDetail.xhtml"
+    NAME="output29" PATH="/pages/admin/meveoUsers/userDetail.xhtml"
     TARGET="rules:#pages#admin#meveoUsers#userDetail.xhtml"
     TITLE="userDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="roles::#pages#admin#userRoles#userRoles.xhtml" NAME="output28"
+    ID="roles::#pages#admin#userRoles#userRoles.xhtml" NAME="output30"
     PATH="/pages/admin/userRoles/userRoles.xhtml"
     TARGET="rules:#pages#admin#userRoles#userRoles.xhtml" TITLE="roles" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="roleDetail::#pages#admin#userRoles#userRoleDetail.xhtml"
-    NAME="output29" PATH="/pages/admin/userRoles/userRoleDetail.xhtml"
+    NAME="output31" PATH="/pages/admin/userRoles/userRoleDetail.xhtml"
     TARGET="rules:#pages#admin#userRoles#userRoleDetail.xhtml"
     TITLE="roleDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="medinaInputs::#pages#admin#medina#medinaInputs#medinaInputs.xhtml"
-    NAME="output30"
+    NAME="output32"
     PATH="/pages/admin/medina/medinaInputs/medinaInputs.xhtml"
     TARGET="rules:#pages#admin#medina#medinaInputs#medinaInputs.xhtml"
     TITLE="medinaInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="medinaInputDetail::#pages#admin#medina#medinaInputs#medinaInputDetail.xhtml"
-    NAME="output31"
+    NAME="output33"
     PATH="/pages/admin/medina/medinaInputs/medinaInputDetail.xhtml"
     TARGET="rules:#pages#admin#medina#medinaInputs#medinaInputDetail.xhtml"
     TITLE="medinaInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="vertinaInputs::#pages#admin#vertina#vertinaInputs#vertinaInputs.xhtml"
-    NAME="output32"
+    NAME="output34"
     PATH="/pages/admin/vertina/vertinaInputs/vertinaInputs.xhtml"
     TARGET="rules:#pages#admin#vertina#vertinaInputs#vertinaInputs.xhtml"
     TITLE="vertinaInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="vertinaInputDetail::#pages#admin#vertina#vertinaInputs#vertinaInputDetail.xhtml"
-    NAME="output33"
+    NAME="output35"
     PATH="/pages/admin/vertina/vertinaInputs/vertinaInputDetail.xhtml"
     TARGET="rules:#pages#admin#vertina#vertinaInputs#vertinaInputDetail.xhtml"
     TITLE="vertinaInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="oudayaInputs::#pages#admin#oudaya#oudayaInputs#oudayaInputs.xhtml"
-    NAME="output34"
+    NAME="output36"
     PATH="/pages/admin/oudaya/oudayaInputs/oudayaInputs.xhtml"
     TARGET="rules:#pages#admin#oudaya#oudayaInputs#oudayaInputs.xhtml"
     TITLE="oudayaInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="oudayaInputDetail::#pages#admin#oudaya#oudayaInputs#oudayaInputDetail.xhtml"
-    NAME="output35"
+    NAME="output37"
     PATH="/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml"
     TARGET="rules:#pages#admin#oudaya#oudayaInputs#oudayaInputDetail.xhtml"
     TITLE="oudayaInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="griegDunningInputs::#pages#admin#grieg#griegInputs#griegDunningInputs.xhtml"
-    NAME="output36"
+    NAME="output38"
     PATH="/pages/admin/grieg/griegInputs/griegDunningInputs.xhtml"
     TARGET="rules:#pages#admin#grieg#griegInputs#griegDunningInputs.xhtml"
     TITLE="griegDunningInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="griegDunningInputDetail::#pages#admin#grieg#griegInputs#griegDunningInputDetail.xhtml"
-    NAME="output37"
+    NAME="output39"
     PATH="/pages/admin/grieg/griegInputs/griegDunningInputDetail.xhtml"
     TARGET="rules:#pages#admin#grieg#griegInputs#griegDunningInputDetail.xhtml"
     TITLE="griegDunningInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="griegValidatedInputs::#pages#admin#grieg#griegInputs#griegValidatedInputs.xhtml"
-    NAME="output38"
+    NAME="output40"
     PATH="/pages/admin/grieg/griegInputs/griegValidatedInputs.xhtml"
     TARGET="rules:#pages#admin#grieg#griegInputs#griegValidatedInputs.xhtml"
     TITLE="griegValidatedInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="griegValidatedInputDetail::#pages#admin#grieg#griegInputs#griegValidatedInputDetail.xhtml"
-    NAME="output39"
+    NAME="output41"
     PATH="/pages/admin/grieg/griegInputs/griegValidatedInputDetail.xhtml"
     TARGET="rules:#pages#admin#grieg#griegInputs#griegValidatedInputDetail.xhtml"
     TITLE="griegValidatedInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="griegConverterInputs::#pages#admin#grieg#griegInputs#griegConverterInputs.xhtml"
-    NAME="output40"
+    NAME="output42"
     PATH="/pages/admin/grieg/griegInputs/griegConverterInputs.xhtml"
     TARGET="rules:#pages#admin#grieg#griegInputs#griegConverterInputs.xhtml"
     TITLE="griegConverterInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="griegConverterInputDetail::#pages#admin#grieg#griegInputs#griegConverterInputDetail.xhtml"
-    NAME="output41"
+    NAME="output43"
     PATH="/pages/admin/grieg/griegInputs/griegConverterInputDetail.xhtml"
     TARGET="rules:#pages#admin#grieg#griegInputs#griegConverterInputDetail.xhtml"
     TITLE="griegConverterInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="bayadInvoicingInputs::#pages#admin#bayad#bayadInputs#bayadInvoicingInputs.xhtml"
-    NAME="output42"
+    NAME="output44"
     PATH="/pages/admin/bayad/bayadInputs/bayadInvoicingInputs.xhtml"
     TARGET="rules:#pages#admin#bayad#bayadInputs#bayadInvoicingInputs.xhtml"
     TITLE="bayadInvoicingInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="bayadInvoicingInputDetail::#pages#admin#bayad#bayadInputs#bayadInvoicingInputDetail.xhtml"
-    NAME="output43"
+    NAME="output45"
     PATH="/pages/admin/bayad/bayadInputs/bayadInvoicingInputDetail.xhtml"
     TARGET="rules:#pages#admin#bayad#bayadInputs#bayadInvoicingInputDetail.xhtml"
     TITLE="bayadInvoicingInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="bayadDunningInputs::#pages#admin#bayad#bayadInputs#bayadDunningInputs.xhtml"
-    NAME="output44"
+    NAME="output46"
     PATH="/pages/admin/bayad/bayadInputs/bayadDunningInputs.xhtml"
     TARGET="rules:#pages#admin#bayad#bayadInputs#bayadDunningInputs.xhtml"
     TITLE="bayadDunningInputs" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="bayadDunningInputDetail::#pages#admin#bayad#bayadInputs#bayadDunningInputDetail.xhtml"
-    NAME="output45"
+    NAME="output47"
     PATH="/pages/admin/bayad/bayadInputs/bayadDunningInputDetail.xhtml"
     TARGET="rules:#pages#admin#bayad#bayadInputs#bayadDunningInputDetail.xhtml"
     TITLE="bayadDunningInputDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="oudayaConfigurationDetail::#pages#admin#oudaya#configuration#oudayaConfigurationDetail.xhtml"
-    NAME="output46"
+    NAME="output48"
     PATH="/pages/admin/oudaya/configuration/oudayaConfigurationDetail.xhtml"
     TARGET="rules:#pages#admin#oudaya#configuration#oudayaConfigurationDetail.xhtml"
     TITLE="oudayaConfigurationDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="oudayaConfigurations::#pages#admin#oudaya#configuration#oudayaConfigurations.xhtml"
-    NAME="output47"
+    NAME="output49"
     PATH="/pages/admin/oudaya/configuration/oudayaConfigurations.xhtml"
     TARGET="rules:#pages#admin#oudaya#configuration#oudayaConfigurations.xhtml"
     TITLE="oudayaConfigurations" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="medinaConfigurationDetail::#pages#admin#medina#configuration#medinaConfigurationDetail.xhtml"
-    NAME="output48"
+    NAME="output50"
     PATH="/pages/admin/medina/configuration/medinaConfigurationDetail.xhtml"
     TARGET="rules:#pages#admin#medina#configuration#medinaConfigurationDetail.xhtml"
     TITLE="medinaConfigurationDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="medinaConfigurations::#pages#admin#medina#configuration#medinaConfigurations.xhtml"
-    NAME="output49"
+    NAME="output51"
     PATH="/pages/admin/medina/configuration/medinaConfigurations.xhtml"
     TARGET="rules:#pages#admin#medina#configuration#medinaConfigurations.xhtml"
     TITLE="medinaConfigurations" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="vertinaConfigurationDetail::#pages#admin#vertina#configuration#vertinaConfigurationDetail.xhtml"
-    NAME="output50"
+    NAME="output52"
     PATH="/pages/admin/vertina/configuration/vertinaConfigurationDetail.xhtml"
     TARGET="rules:#pages#admin#vertina#configuration#vertinaConfigurationDetail.xhtml"
     TITLE="vertinaConfigurationDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="vertinaConfigurations::#pages#admin#vertina#configuration#vertinaConfigurations.xhtml"
-    NAME="output51"
+    NAME="output53"
     PATH="/pages/admin/vertina/configuration/vertinaConfigurations.xhtml"
     TARGET="rules:#pages#admin#vertina#configuration#vertinaConfigurations.xhtml"
     TITLE="vertinaConfigurations" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="medinaManagement::#pages#admin#medina#management#medinaManagement.xhtml"
-    NAME="output52"
+    NAME="output54"
     PATH="/pages/admin/medina/management/medinaManagement.xhtml"
     TARGET="rules:#pages#admin#medina#management#medinaManagement.xhtml"
     TITLE="medinaManagement" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="vertinaManagement::#pages#admin#vertina#management#vertinaManagement.xhtml"
-    NAME="output53"
+    NAME="output55"
     PATH="/pages/admin/vertina/management/vertinaManagement.xhtml"
     TARGET="rules:#pages#admin#vertina#management#vertinaManagement.xhtml"
     TITLE="vertinaManagement" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="taxes::#pages#admin#taxes#taxes.xhtml"
-    NAME="output54" PATH="/pages/admin/taxes/taxes.xhtml"
+    NAME="output56" PATH="/pages/admin/taxes/taxes.xhtml"
     TARGET="rules:#pages#admin#taxes#taxes.xhtml" TITLE="taxes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="taxDetail::#pages#admin#taxes#taxDetail.xhtml" NAME="output55"
+    ID="taxDetail::#pages#admin#taxes#taxDetail.xhtml" NAME="output57"
     PATH="/pages/admin/taxes/taxDetail.xhtml"
     TARGET="rules:#pages#admin#taxes#taxDetail.xhtml" TITLE="taxDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="titles::#pages#admin#title#titles.xhtml"
-    NAME="output56" PATH="/pages/admin/title/titles.xhtml"
+    NAME="output58" PATH="/pages/admin/title/titles.xhtml"
     TARGET="rules:#pages#admin#title#titles.xhtml" TITLE="titles" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="titleDetail::#pages#admin#title#titleDetail.xhtml"
-    NAME="output57" PATH="/pages/admin/title/titleDetail.xhtml"
+    NAME="output59" PATH="/pages/admin/title/titleDetail.xhtml"
     TARGET="rules:#pages#admin#title#titleDetail.xhtml"
     TITLE="titleDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="documents::#pages#admin#documents#documents.xhtml"
-    NAME="output58" PATH="/pages/admin/documents/documents.xhtml"
+    NAME="output60" PATH="/pages/admin/documents/documents.xhtml"
     TARGET="rules:#pages#admin#documents#documents.xhtml"
     TITLE="documents" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="accountImportHisto::#pages#admin#history#accountImportHistory.xhtml"
-    NAME="output59"
+    NAME="output61"
     PATH="/pages/admin/history/accountImportHistory.xhtml"
     TARGET="rules:#pages#admin#history#accountImportHistory.xhtml"
     TITLE="accountImportHisto" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customizedEntities::#pages#admin#customEntities#customizedEntities.xhtml"
-    NAME="output60"
+    NAME="output62"
     PATH="/pages/admin/customEntities/customizedEntities.xhtml"
     TARGET="rules:#pages#admin#customEntities#customizedEntities.xhtml"
     TITLE="customizedEntities" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customizedEntity::#pages#admin#customEntities#customizedEntityDetail.xhtml"
-    NAME="output61"
+    NAME="output63"
     PATH="/pages/admin/customEntities/customizedEntityDetail.xhtml"
     TARGET="rules:#pages#admin#customEntities#customizedEntityDetail.xhtml"
     TITLE="customizedEntity" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customEntities::#pages#admin#customEntities#customEntities.xhtml"
-    NAME="output62"
+    NAME="output64"
     PATH="/pages/admin/customEntities/customEntities.xhtml"
     TARGET="rules:#pages#admin#customEntities#customEntities.xhtml"
     TITLE="customEntities" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customEntity::#pages#admin#customEntities#customEntityDetail.xhtml"
-    NAME="output63"
+    NAME="output65"
     PATH="/pages/admin/customEntities/customEntityDetail.xhtml"
     TARGET="rules:#pages#admin#customEntities#customEntityDetail.xhtml"
     TITLE="customEntity" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customEntityInstanceDetail::#pages#admin#customEntities#customEntityDetail.xhtml"
-    NAME="output64"
+    NAME="output66"
     PATH="/pages/admin/customEntities/customEntityDetail.xhtml"
     TARGET="rules:#pages#admin#customEntities#customEntityDetail.xhtml"
     TITLE="customEntityInstanceDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="meveoModules::#pages#admin#module#modules.xhtml" NAME="output65"
+    ID="meveoModules::#pages#admin#module#modules.xhtml" NAME="output67"
     PATH="/pages/admin/module/modules.xhtml"
     TARGET="rules:#pages#admin#module#modules.xhtml"
     TITLE="meveoModules" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="meveoModuleDetail::#pages#admin#module#moduleDetail.xhtml"
-    NAME="output66" PATH="/pages/admin/module/moduleDetail.xhtml"
+    NAME="output68" PATH="/pages/admin/module/moduleDetail.xhtml"
     TARGET="rules:#pages#admin#module#moduleDetail.xhtml"
     TITLE="meveoModuleDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerImportHisto::#pages#admin#history#customerImportHistory.xhtml"
-    NAME="output67"
+    NAME="output69"
     PATH="/pages/admin/history/customerImportHistory.xhtml"
     TARGET="rules:#pages#admin#history#customerImportHistory.xhtml"
     TITLE="customerImportHisto" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="subscriptionImportHisto::#pages#admin#history#subscriptionImportHistory.xhtml"
-    NAME="output68"
+    NAME="output70"
     PATH="/pages/admin/history/subscriptionImportHistory.xhtml"
     TARGET="rules:#pages#admin#history#subscriptionImportHistory.xhtml"
     TITLE="subscriptionImportHisto" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="dunningHisto::#pages#admin#history#dunningHistories.xhtml"
-    NAME="output69" PATH="/pages/admin/history/dunningHistories.xhtml"
+    NAME="output71" PATH="/pages/admin/history/dunningHistories.xhtml"
     TARGET="rules:#pages#admin#history#dunningHistories.xhtml"
     TITLE="dunningHisto" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="crmRejectedFiles::#pages#admin#history#crmConnectorRejectedFiles.xhtml"
-    NAME="output70"
+    NAME="output72"
     PATH="/pages/admin/history/crmConnectorRejectedFiles.xhtml"
     TARGET="rules:#pages#admin#history#crmConnectorRejectedFiles.xhtml"
     TITLE="crmRejectedFiles" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="providers::#pages#admin#providers#providers.xhtml"
-    NAME="output71" PATH="/pages/admin/providers/providers.xhtml"
+    NAME="output73" PATH="/pages/admin/providers/providers.xhtml"
     TARGET="rules:#pages#admin#providers#providers.xhtml"
     TITLE="providers" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="providerDetail::#pages#admin#providers#providerDetail.xhtml"
-    NAME="output72" PATH="/pages/admin/providers/providerDetail.xhtml"
+    NAME="output74" PATH="/pages/admin/providers/providerDetail.xhtml"
     TARGET="rules:#pages#admin#providers#providerDetail.xhtml"
     TITLE="providerDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="providerSelfDetail::#pages#admin#providers#providerSelfDetail.xhtml?"
-    NAME="output73"
+    NAME="output75"
     PATH="/pages/admin/providers/providerSelfDetail.xhtml?"
     TARGET="rules:#pages#admin#providers#providerSelfDetail.xhtml?"
     TITLE="providerSelfDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="providerContacts::#pages#crm#providerContacts#providerContacts.xhtml"
-    NAME="output74"
+    NAME="output76"
     PATH="/pages/crm/providerContacts/providerContacts.xhtml"
     TARGET="rules:#pages#crm#providerContacts#providerContacts.xhtml"
     TITLE="providerContacts" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="providerContactDetail::#pages#crm#providerContacts#providerContactDetail.xhtml"
-    NAME="output75"
+    NAME="output77"
     PATH="/pages/crm/providerContacts/providerContactDetail.xhtml"
     TARGET="rules:#pages#crm#providerContacts#providerContactDetail.xhtml"
     TITLE="providerContactDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="emailTemplates::#pages#admin#communication#emailTemplates.xhtml"
-    NAME="output76"
+    NAME="output78"
     PATH="/pages/admin/communication/emailTemplates.xhtml"
     TARGET="rules:#pages#admin#communication#emailTemplates.xhtml"
     TITLE="emailTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="emailTemplateDetail::#pages#admin#communication#emailTemplateDetail.xhtml"
-    NAME="output77"
+    NAME="output79"
     PATH="/pages/admin/communication/emailTemplateDetail.xhtml"
     TARGET="rules:#pages#admin#communication#emailTemplateDetail.xhtml"
     TITLE="emailTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="export::#pages#admin#export#export.xhtml"
-    NAME="output78" PATH="/pages/admin/export/export.xhtml"
+    NAME="output80" PATH="/pages/admin/export/export.xhtml"
     TARGET="rules:#pages#admin#export#export.xhtml" TITLE="export" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="import::#pages#admin#export#import.xhtml"
-    NAME="output79" PATH="/pages/admin/export/import.xhtml"
+    NAME="output81" PATH="/pages/admin/export/import.xhtml"
     TARGET="rules:#pages#admin#export#import.xhtml" TITLE="import" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="terminationReasons::#pages#admin#terminationReason#terminationReasons.xhtml"
-    NAME="output80"
+    NAME="output82"
     PATH="/pages/admin/terminationReason/terminationReasons.xhtml"
     TARGET="rules:#pages#admin#terminationReason#terminationReasons.xhtml"
     TITLE="terminationReasons" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="terminationReasonDetail::#pages#admin#terminationReason#terminationReasonDetail.xhtml"
-    NAME="output81"
+    NAME="output83"
     PATH="/pages/admin/terminationReason/terminationReasonDetail.xhtml"
     TARGET="rules:#pages#admin#terminationReason#terminationReasonDetail.xhtml"
     TITLE="terminationReasonDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="countries::#pages#admin#countries#countries.xhtml"
-    NAME="output82" PATH="/pages/admin/countries/countries.xhtml"
+    NAME="output84" PATH="/pages/admin/countries/countries.xhtml"
     TARGET="rules:#pages#admin#countries#countries.xhtml"
     TITLE="countries" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="countryDetail::#pages#admin#countries#countryDetail.xhtml"
-    NAME="output83" PATH="/pages/admin/countries/countryDetail.xhtml"
+    NAME="output85" PATH="/pages/admin/countries/countryDetail.xhtml"
     TARGET="rules:#pages#admin#countries#countryDetail.xhtml"
     TITLE="countryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="languages::#pages#admin#languages#languages.xhtml"
-    NAME="output84" PATH="/pages/admin/languages/languages.xhtml"
+    NAME="output86" PATH="/pages/admin/languages/languages.xhtml"
     TARGET="rules:#pages#admin#languages#languages.xhtml"
     TITLE="languages" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="languageDetail::#pages#admin#languages#languageDetail.xhtml"
-    NAME="output85" PATH="/pages/admin/languages/languageDetail.xhtml"
+    NAME="output87" PATH="/pages/admin/languages/languageDetail.xhtml"
     TARGET="rules:#pages#admin#languages#languageDetail.xhtml"
     TITLE="languageDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceAdjustmentDetail::#pages#billing#invoicing#invoiceAdjustmentDetail.xhtml"
-    NAME="output86"
+    NAME="output88"
     PATH="/pages/billing/invoicing/invoiceAdjustmentDetail.xhtml"
     TARGET="rules:#pages#billing#invoicing#invoiceAdjustmentDetail.xhtml"
     TITLE="invoiceAdjustmentDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="billingAccountDetailFromInvoice::#pages#billing#billingAccounts#billingAccountDetail.xhtml"
-    NAME="output87"
+    NAME="output89"
     PATH="/pages/billing/billingAccounts/billingAccountDetail.xhtml"
     TARGET="rules:#pages#billing#billingAccounts#billingAccountDetail.xhtml"
     TITLE="billingAccountDetailFromInvoice" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoices::#pages#billing#invoices#invoices.xhtml"
-    NAME="output88" PATH="/pages/billing/invoices/invoices.xhtml"
+    NAME="output90" PATH="/pages/billing/invoices/invoices.xhtml"
     TARGET="rules:#pages#billing#invoices#invoices.xhtml"
     TITLE="invoices" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceDetail::#pages#billing#invoices#invoiceDetail.xhtml"
-    NAME="output89" PATH="/pages/billing/invoices/invoiceDetail.xhtml"
+    NAME="output91" PATH="/pages/billing/invoices/invoiceDetail.xhtml"
     TARGET="rules:#pages#billing#invoices#invoiceDetail.xhtml"
     TITLE="invoiceDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceAggregatedDetail::#pages#billing#invoices#createInvoiceDetail.xhtml"
-    NAME="output90"
+    NAME="output92"
     PATH="/pages/billing/invoices/createInvoiceDetail.xhtml"
     TARGET="rules:#pages#billing#invoices#createInvoiceDetail.xhtml"
     TITLE="invoiceAggregatedDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="detailedInvoiceDetail::#pages#billing#invoices#createInvoiceDetail.xhtml"
-    NAME="output91"
+    NAME="output93"
     PATH="/pages/billing/invoices/createInvoiceDetail.xhtml"
     TARGET="rules:#pages#billing#invoices#createInvoiceDetail.xhtml"
     TITLE="detailedInvoiceDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="wallets::#pages#billing#wallets#wallets.xhtml" NAME="output92"
+    ID="wallets::#pages#billing#wallets#wallets.xhtml" NAME="output94"
     PATH="/pages/billing/wallets/wallets.xhtml"
     TARGET="rules:#pages#billing#wallets#wallets.xhtml" TITLE="wallets" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="walletDetail::#pages#billing#wallets#walletDetail.xhtml"
-    NAME="output93" PATH="/pages/billing/wallets/walletDetail.xhtml"
+    NAME="output95" PATH="/pages/billing/wallets/walletDetail.xhtml"
     TARGET="rules:#pages#billing#wallets#walletDetail.xhtml"
     TITLE="walletDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceTasks::#pages#billing#invoiceTasks#invoiceTasks.xhtml"
-    NAME="output94"
+    NAME="output96"
     PATH="/pages/billing/invoiceTasks/invoiceTasks.xhtml"
     TARGET="rules:#pages#billing#invoiceTasks#invoiceTasks.xhtml"
     TITLE="invoiceTasks" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceTaskDetail::#pages#billing#invoiceTasks#invoiceTaskDetail.xhtml"
-    NAME="output95"
+    NAME="output97"
     PATH="/pages/billing/invoiceTasks/invoiceTaskDetail.xhtml"
     TARGET="rules:#pages#billing#invoiceTasks#invoiceTaskDetail.xhtml"
     TITLE="invoiceTaskDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="billingCycles::#pages#billing#billingCycles#billingCycles.xhtml"
-    NAME="output96"
+    NAME="output98"
     PATH="/pages/billing/billingCycles/billingCycles.xhtml"
     TARGET="rules:#pages#billing#billingCycles#billingCycles.xhtml"
     TITLE="billingCycles" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="billingCycleDetail::#pages#billing#billingCycles#billingCycleDetail.xhtml"
-    NAME="output97"
+    NAME="output99"
     PATH="/pages/billing/billingCycles/billingCycleDetail.xhtml"
     TARGET="rules:#pages#billing#billingCycles#billingCycleDetail.xhtml"
     TITLE="billingCycleDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="walletOperations::#pages#billing#walletOperations#walletOperations.xhtml"
-    NAME="output98"
+    NAME="output100"
     PATH="/pages/billing/walletOperations/walletOperations.xhtml"
     TARGET="rules:#pages#billing#walletOperations#walletOperations.xhtml"
     TITLE="walletOperations" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="walletOperationDetail::#pages#billing#walletOperations#walletOperationDetail.xhtml"
-    NAME="output99"
+    NAME="output101"
     PATH="/pages/billing/walletOperations/walletOperationDetail.xhtml"
     TARGET="rules:#pages#billing#walletOperations#walletOperationDetail.xhtml"
     TITLE="walletOperationDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="offerTemplateCategories::#pages#catalog#offerTemplateCategories#offerTemplateCategories.xhtml"
-    NAME="output100"
+    NAME="output102"
     PATH="/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml"
     TARGET="rules:#pages#catalog#offerTemplateCategories#offerTemplateCategories.xhtml"
     TITLE="offerTemplateCategories" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="offerTemplateCategoryDetail::#pages#catalog#offerTemplateCategories#offerTemplateCategories.xhtml"
-    NAME="output101"
+    NAME="output103"
     PATH="/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml"
     TARGET="rules:#pages#catalog#offerTemplateCategories#offerTemplateCategories.xhtml"
     TITLE="offerTemplateCategoryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="offerTemplates::#pages#catalog#offerTemplates#offerTemplates.xhtml"
-    NAME="output102"
+    NAME="output104"
     PATH="/pages/catalog/offerTemplates/offerTemplates.xhtml"
     TARGET="rules:#pages#catalog#offerTemplates#offerTemplates.xhtml"
     TITLE="offerTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="offerTemplateDetail::#pages#catalog#offerTemplates#offerTemplateDetail.xhtml"
-    NAME="output103"
+    NAME="output105"
     PATH="/pages/catalog/offerTemplates/offerTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#offerTemplates#offerTemplateDetail.xhtml"
     TITLE="offerTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usagePricePlanItems::#pages#catalog#usagePricePlanItem#usagePricePlanItems.xhtml"
-    NAME="output104"
+    NAME="output106"
     PATH="/pages/catalog/usagePricePlanItem/usagePricePlanItems.xhtml"
     TARGET="rules:#pages#catalog#usagePricePlanItem#usagePricePlanItems.xhtml"
     TITLE="usagePricePlanItems" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usagePricePlanItemDetail::#pages#catalog#usagePricePlanItem#usagePricePlanItemDetail.xhtml"
-    NAME="output105"
+    NAME="output107"
     PATH="/pages/catalog/usagePricePlanItem/usagePricePlanItemDetail.xhtml"
     TARGET="rules:#pages#catalog#usagePricePlanItem#usagePricePlanItemDetail.xhtml"
     TITLE="usagePricePlanItemDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usageDiscountPlanItems::#pages#catalog#usageDiscountPlanItem#usageDiscountPlanItems.xhtml"
-    NAME="output106"
+    NAME="output108"
     PATH="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItems.xhtml"
     TARGET="rules:#pages#catalog#usageDiscountPlanItem#usageDiscountPlanItems.xhtml"
     TITLE="usageDiscountPlanItems" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usageDiscountPlanItemDetail::#pages#catalog#usageDiscountPlanItem#usageDiscountPlanItemDetail.xhtml"
-    NAME="output107"
+    NAME="output109"
     PATH="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml"
     TARGET="rules:#pages#catalog#usageDiscountPlanItem#usageDiscountPlanItemDetail.xhtml"
     TITLE="usageDiscountPlanItemDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="priceCodes::#pages#catalog#priceCode#priceCodes.xhtml"
-    NAME="output108" PATH="/pages/catalog/priceCode/priceCodes.xhtml"
+    NAME="output110" PATH="/pages/catalog/priceCode/priceCodes.xhtml"
     TARGET="rules:#pages#catalog#priceCode#priceCodes.xhtml"
     TITLE="priceCodes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="priceCodeDetail::#pages#catalog#priceCode#priceCodeDetail.xhtml"
-    NAME="output109"
+    NAME="output111"
     PATH="/pages/catalog/priceCode/priceCodeDetail.xhtml"
     TARGET="rules:#pages#catalog#priceCode#priceCodeDetail.xhtml"
     TITLE="priceCodeDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceTemplates::#pages#catalog#serviceTemplates#serviceTemplates.xhtml"
-    NAME="output110"
+    NAME="output112"
     PATH="/pages/catalog/serviceTemplates/serviceTemplates.xhtml"
     TARGET="rules:#pages#catalog#serviceTemplates#serviceTemplates.xhtml"
     TITLE="serviceTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceUsageChargeTemplateDetail::#pages#catalog#serviceUsageChargeTemplates#serviceUsageChargeTemplateDetail.xhtml"
-    NAME="output111"
+    NAME="output113"
     PATH="/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#serviceUsageChargeTemplates#serviceUsageChargeTemplateDetail.xhtml"
     TITLE="serviceUsageChargeTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceUsageChargeTemplates::#pages#catalog#serviceUsageChargeTemplates#serviceUsageChargeTemplates.xhtml"
-    NAME="output112"
+    NAME="output114"
     PATH="/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplates.xhtml"
     TARGET="rules:#pages#catalog#serviceUsageChargeTemplates#serviceUsageChargeTemplates.xhtml"
     TITLE="serviceUsageChargeTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceTemplateDetail::#pages#catalog#serviceTemplates#serviceTemplateDetail.xhtml"
-    NAME="output113"
+    NAME="output115"
     PATH="/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#serviceTemplates#serviceTemplateDetail.xhtml"
     TITLE="serviceTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceParameterTemplates::#pages#catalog#serviceParameterTemplates#serviceParameterTemplates.xhtml"
-    NAME="output114"
+    NAME="output116"
     PATH="/pages/catalog/serviceParameterTemplates/serviceParameterTemplates.xhtml"
     TARGET="rules:#pages#catalog#serviceParameterTemplates#serviceParameterTemplates.xhtml"
     TITLE="serviceParameterTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceParameterTemplateDetail::#pages#catalog#serviceParameterTemplates#serviceParameterTemplateDetail.xhtml"
-    NAME="output115"
+    NAME="output117"
     PATH="/pages/catalog/serviceParameterTemplates/serviceParameterTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#serviceParameterTemplates#serviceParameterTemplateDetail.xhtml"
     TITLE="serviceParameterTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="chargeTemplates::#pages#catalog#chargeTemplates#chargeTemplates.xhtml"
-    NAME="output116"
+    NAME="output118"
     PATH="/pages/catalog/chargeTemplates/chargeTemplates.xhtml"
     TARGET="rules:#pages#catalog#chargeTemplates#chargeTemplates.xhtml"
     TITLE="chargeTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="oneShotChargeTemplates::#pages#catalog#oneShotChargeTemplates#oneShotChargeTemplates.xhtml"
-    NAME="output117"
+    NAME="output119"
     PATH="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.xhtml"
     TARGET="rules:#pages#catalog#oneShotChargeTemplates#oneShotChargeTemplates.xhtml"
     TITLE="oneShotChargeTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="oneShotChargeTemplateDetail::#pages#catalog#oneShotChargeTemplates#oneShotChargeTemplateDetail.xhtml"
-    NAME="output118"
+    NAME="output120"
     PATH="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#oneShotChargeTemplates#oneShotChargeTemplateDetail.xhtml"
     TITLE="oneShotChargeTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="recurringChargeTemplates::#pages#catalog#recurringChargeTemplates#recurringChargeTemplates.xhtml"
-    NAME="output119"
+    NAME="output121"
     PATH="/pages/catalog/recurringChargeTemplates/recurringChargeTemplates.xhtml"
     TARGET="rules:#pages#catalog#recurringChargeTemplates#recurringChargeTemplates.xhtml"
     TITLE="recurringChargeTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="recurringChargeTemplateDetail::#pages#catalog#recurringChargeTemplates#recurringChargeTemplateDetail.xhtml"
-    NAME="output120"
+    NAME="output122"
     PATH="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#recurringChargeTemplates#recurringChargeTemplateDetail.xhtml"
     TITLE="recurringChargeTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="triggeredEdrTemplates::#pages#catalog#triggeredEdrTemplates#triggeredEdrTemplates.xhtml"
-    NAME="output121"
+    NAME="output123"
     PATH="/pages/catalog/triggeredEdrTemplates/triggeredEdrTemplates.xhtml"
     TARGET="rules:#pages#catalog#triggeredEdrTemplates#triggeredEdrTemplates.xhtml"
     TITLE="triggeredEdrTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="triggeredEdrTemplateDetail::#pages#catalog#triggeredEdrTemplates#triggeredEdrTemplateDetail.xhtml"
-    NAME="output122"
+    NAME="output124"
     PATH="/pages/catalog/triggeredEdrTemplates/triggeredEdrTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#triggeredEdrTemplates#triggeredEdrTemplateDetail.xhtml"
     TITLE="triggeredEdrTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="calendars::#pages#catalog#calendars#calendars.xhtml"
-    NAME="output123" PATH="/pages/catalog/calendars/calendars.xhtml"
+    NAME="output125" PATH="/pages/catalog/calendars/calendars.xhtml"
     TARGET="rules:#pages#catalog#calendars#calendars.xhtml"
     TITLE="calendars" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="calendarDetail::#pages#catalog#calendars#calendarDetail.xhtml"
-    NAME="output124"
+    NAME="output126"
     PATH="/pages/catalog/calendars/calendarDetail.xhtml"
     TARGET="rules:#pages#catalog#calendars#calendarDetail.xhtml"
     TITLE="calendarDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="pricePlanMatrixes::#pages#catalog#pricePlanMatrixes#pricePlanMatrixes.xhtml"
-    NAME="output125"
+    NAME="output127"
     PATH="/pages/catalog/pricePlanMatrixes/pricePlanMatrixes.xhtml"
     TARGET="rules:#pages#catalog#pricePlanMatrixes#pricePlanMatrixes.xhtml"
     TITLE="pricePlanMatrixes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="pricePlanMatrixDetail::#pages#catalog#pricePlanMatrixes#pricePlanMatrixDetail.xhtml"
-    NAME="output126"
+    NAME="output128"
     PATH="/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml"
     TARGET="rules:#pages#catalog#pricePlanMatrixes#pricePlanMatrixDetail.xhtml"
     TITLE="pricePlanMatrixDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="discountPlanMatrixes::#pages#catalog#discountPlanMatrixes#discountPlanMatrixes.xhtml"
-    NAME="output127"
+    NAME="output129"
     PATH="/pages/catalog/discountPlanMatrixes/discountPlanMatrixes.xhtml"
     TARGET="rules:#pages#catalog#discountPlanMatrixes#discountPlanMatrixes.xhtml"
     TITLE="discountPlanMatrixes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="discountPlanMatrixDetail::#pages#catalog#discountPlanMatrixes#discountPlanMatrixDetail.xhtml"
-    NAME="output128"
+    NAME="output130"
     PATH="/pages/catalog/discountPlanMatrixes/discountPlanMatrixDetail.xhtml"
     TARGET="rules:#pages#catalog#discountPlanMatrixes#discountPlanMatrixDetail.xhtml"
     TITLE="discountPlanMatrixDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="discountPlans::#pages#catalog#discountPlans#discountPlans.xhtml"
-    NAME="output129"
+    NAME="output131"
     PATH="/pages/catalog/discountPlans/discountPlans.xhtml"
     TARGET="rules:#pages#catalog#discountPlans#discountPlans.xhtml"
     TITLE="discountPlans" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="discountPlanDetail::#pages#catalog#discountPlans#discountPlanDetail.xhtml"
-    NAME="output130"
+    NAME="output132"
     PATH="/pages/catalog/discountPlans/discountPlanDetail.xhtml"
     TARGET="rules:#pages#catalog#discountPlans#discountPlanDetail.xhtml"
     TITLE="discountPlanDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="discountPlanItems::#pages#catalog#discountPlanItems#discountPlanItems.xhtml"
-    NAME="output131"
+    NAME="output133"
     PATH="/pages/catalog/discountPlanItems/discountPlanItems.xhtml"
     TARGET="rules:#pages#catalog#discountPlanItems#discountPlanItems.xhtml"
     TITLE="discountPlanItems" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="discountPlanItemDetail::#pages#catalog#discountPlanItems#discountPlanItemDetail.xhtml"
-    NAME="output132"
+    NAME="output134"
     PATH="/pages/catalog/discountPlanItems/discountPlanItemDetail.xhtml"
     TARGET="rules:#pages#catalog#discountPlanItems#discountPlanItemDetail.xhtml"
     TITLE="discountPlanItemDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceCategories::#pages#catalog#invoiceCategories#invoiceCategories.xhtml"
-    NAME="output133"
+    NAME="output135"
     PATH="/pages/catalog/invoiceCategories/invoiceCategories.xhtml"
     TARGET="rules:#pages#catalog#invoiceCategories#invoiceCategories.xhtml"
     TITLE="invoiceCategories" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceTypes::#pages#billing#invoiceTypes#invoiceTypes.xhtml"
-    NAME="output134"
+    NAME="output136"
     PATH="/pages/billing/invoiceTypes/invoiceTypes.xhtml"
     TARGET="rules:#pages#billing#invoiceTypes#invoiceTypes.xhtml"
     TITLE="invoiceTypes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceCategoryDetail::#pages#catalog#invoiceCategories#invoiceCategoryDetail.xhtml"
-    NAME="output135"
+    NAME="output137"
     PATH="/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml"
     TARGET="rules:#pages#catalog#invoiceCategories#invoiceCategoryDetail.xhtml"
     TITLE="invoiceCategoryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceSubCategories::#pages#catalog#invoiceSubCategories#invoiceSubCategories.xhtml"
-    NAME="output136"
+    NAME="output138"
     PATH="/pages/catalog/invoiceSubCategories/invoiceSubCategories.xhtml"
     TARGET="rules:#pages#catalog#invoiceSubCategories#invoiceSubCategories.xhtml"
     TITLE="invoiceSubCategories" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="invoiceSubCategoryDetail::#pages#catalog#invoiceSubCategories#invoiceSubCategoryDetail.xhtml"
-    NAME="output137"
+    NAME="output139"
     PATH="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
     TARGET="rules:#pages#catalog#invoiceSubCategories#invoiceSubCategoryDetail.xhtml"
     TITLE="invoiceSubCategoryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usageChargeTemplates::#pages#catalog#usageChargeTemplates#usageChargeTemplates.xhtml"
-    NAME="output138"
+    NAME="output140"
     PATH="/pages/catalog/usageChargeTemplates/usageChargeTemplates.xhtml"
     TARGET="rules:#pages#catalog#usageChargeTemplates#usageChargeTemplates.xhtml"
     TITLE="usageChargeTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usageChargeTemplateDetail::#pages#catalog#usageChargeTemplates#usageChargeTemplateDetail.xhtml"
-    NAME="output139"
+    NAME="output141"
     PATH="/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#usageChargeTemplates#usageChargeTemplateDetail.xhtml"
     TITLE="usageChargeTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="walletTemplates::#pages#catalog#walletTemplates#walletTemplates.xhtml"
-    NAME="output140"
+    NAME="output142"
     PATH="/pages/catalog/walletTemplates/walletTemplates.xhtml"
     TARGET="rules:#pages#catalog#walletTemplates#walletTemplates.xhtml"
     TITLE="walletTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="walletTemplateDetail::#pages#catalog#walletTemplates#walletTemplateDetail.xhtml"
-    NAME="output141"
+    NAME="output143"
     PATH="/pages/catalog/walletTemplates/walletTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#walletTemplates#walletTemplateDetail.xhtml"
     TITLE="walletTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="counterTemplates::#pages#catalog#counterTemplates#counterTemplates.xhtml"
-    NAME="output142"
+    NAME="output144"
     PATH="/pages/catalog/counterTemplates/counterTemplates.xhtml"
     TARGET="rules:#pages#catalog#counterTemplates#counterTemplates.xhtml"
     TITLE="counterTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="counterTemplateDetail::#pages#catalog#counterTemplates#counterTemplateDetail.xhtml"
-    NAME="output143"
+    NAME="output145"
     PATH="/pages/catalog/counterTemplates/counterTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#counterTemplates#counterTemplateDetail.xhtml"
     TITLE="counterTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customers::#pages#crm#customers#customers.xhtml"
-    NAME="output144" PATH="/pages/crm/customers/customers.xhtml"
+    NAME="output146" PATH="/pages/crm/customers/customers.xhtml"
     TARGET="rules:#pages#crm#customers#customers.xhtml"
     TITLE="customers" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerDetail::#pages#crm#customers#customerDetail.xhtml"
-    NAME="output145" PATH="/pages/crm/customers/customerDetail.xhtml"
+    NAME="output147" PATH="/pages/crm/customers/customerDetail.xhtml"
     TARGET="rules:#pages#crm#customers#customerDetail.xhtml"
     TITLE="customerDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="addCustomerAccount::#pages#payments#customerAccounts#customerAccountDetail.xhtml"
-    NAME="output146"
+    NAME="output148"
     PATH="/pages/payments/customerAccounts/customerAccountDetail.xhtml"
     TARGET="rules:#pages#payments#customerAccounts#customerAccountDetail.xhtml"
     TITLE="addCustomerAccount" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerSearch::#pages#crm#customers#customerSearch.xhtml"
-    NAME="output147" PATH="/pages/crm/customers/customerSearch.xhtml"
+    NAME="output149" PATH="/pages/crm/customers/customerSearch.xhtml"
     TARGET="rules:#pages#crm#customers#customerSearch.xhtml"
     TITLE="customerSearch" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerAccounts::#pages#payments#customerAccounts#customerAccounts.xhtml"
-    NAME="output148"
+    NAME="output150"
     PATH="/pages/payments/customerAccounts/customerAccounts.xhtml"
     TARGET="rules:#pages#payments#customerAccounts#customerAccounts.xhtml"
     TITLE="customerAccounts" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerAccountDetail::#pages#payments#customerAccounts#customerAccountDetail.xhtml"
-    NAME="output149"
+    NAME="output151"
     PATH="/pages/payments/customerAccounts/customerAccountDetail.xhtml"
     TARGET="rules:#pages#payments#customerAccounts#customerAccountDetail.xhtml"
     TITLE="customerAccountDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerAccountDetailOperationsTab::#pages#payments#customerAccounts#customerAccountDetail.xhtml"
-    NAME="output150"
+    NAME="output152"
     PATH="/pages/payments/customerAccounts/customerAccountDetail.xhtml"
     TARGET="rules:#pages#payments#customerAccounts#customerAccountDetail.xhtml"
     TITLE="customerAccountDetailOperationsTab" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="crmAccounts::#pages#crm#crmAccounts#crmAccounts.xhtml"
-    NAME="output151" PATH="/pages/crm/crmAccounts/crmAccounts.xhtml"
+    NAME="output153" PATH="/pages/crm/crmAccounts/crmAccounts.xhtml"
     TARGET="rules:#pages#crm#crmAccounts#crmAccounts.xhtml"
     TITLE="crmAccounts" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="addBillingAccount::#pages#billing#billingAccounts#billingAccountDetail.xhtml"
-    NAME="output152"
+    NAME="output154"
     PATH="/pages/billing/billingAccounts/billingAccountDetail.xhtml"
     TARGET="rules:#pages#billing#billingAccounts#billingAccountDetail.xhtml"
     TITLE="addBillingAccount" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="addNewOperation::#pages#payments#accountOperations#selectOCCTemplate.xhtml"
-    NAME="output153"
+    NAME="output155"
     PATH="/pages/payments/accountOperations/selectOCCTemplate.xhtml"
     TARGET="rules:#pages#payments#accountOperations#selectOCCTemplate.xhtml"
     TITLE="addNewOperation" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="addNewUserAccountAction::#pages#billing#userAccounts#userAccountDetail.xhtml"
-    NAME="output154"
+    NAME="output156"
     PATH="/pages/billing/userAccounts/userAccountDetail.xhtml"
     TARGET="rules:#pages#billing#userAccounts#userAccountDetail.xhtml"
     TITLE="addNewUserAccountAction" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="addNewTransition::#pages#payments#dunning#wfTransitionDetail.xhtml"
-    NAME="output155"
+    NAME="output157"
     PATH="/pages/payments/dunning/wfTransitionDetail.xhtml"
     TARGET="rules:#pages#payments#dunning#wfTransitionDetail.xhtml"
     TITLE="addNewTransition" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="addNewActionItem::#pages#payments#dunning#actionPlanItemDetail.xhtml"
-    NAME="output156"
+    NAME="output158"
     PATH="/pages/payments/dunning/actionPlanItemDetail.xhtml"
     TARGET="rules:#pages#payments#dunning#actionPlanItemDetail.xhtml"
     TITLE="addNewActionItem" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="transferAccount::#pages#payments#customerAccounts#transferAccount.xhtml"
-    NAME="output157"
+    NAME="output159"
     PATH="/pages/payments/customerAccounts/transferAccount.xhtml"
     TARGET="rules:#pages#payments#customerAccounts#transferAccount.xhtml"
     TITLE="transferAccount" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="dunning_workflows::#pages#admin#workflow#workflows.xhtml"
-    NAME="output158" PATH="/pages/admin/workflow/workflows.xhtml"
+    NAME="output160" PATH="/pages/admin/workflow/workflows.xhtml"
     TARGET="rules:#pages#admin#workflow#workflows.xhtml"
     TITLE="dunning_workflows" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="workflows::#pages#admin#workflow#workflows.xhtml"
-    NAME="output159" PATH="/pages/admin/workflow/workflows.xhtml"
+    NAME="output161" PATH="/pages/admin/workflow/workflows.xhtml"
     TARGET="rules:#pages#admin#workflow#workflows.xhtml"
     TITLE="workflows" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="workflowHistory::#pages#admin#workflow#workflowHistories.xhtml"
-    NAME="output160"
+    NAME="output162"
     PATH="/pages/admin/workflow/workflowHistories.xhtml"
     TARGET="rules:#pages#admin#workflow#workflowHistories.xhtml"
     TITLE="workflowHistory" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="workflowHistoryDetail::#pages#admin#workflow#workflowHistoryDetail.xhtml"
-    NAME="output161"
+    NAME="output163"
     PATH="/pages/admin/workflow/workflowHistoryDetail.xhtml"
     TARGET="rules:#pages#admin#workflow#workflowHistoryDetail.xhtml"
     TITLE="workflowHistoryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="workflowDetail::#pages#admin#workflow#workflowDetail.xhtml"
-    NAME="output162" PATH="/pages/admin/workflow/workflowDetail.xhtml"
+    NAME="output164" PATH="/pages/admin/workflow/workflowDetail.xhtml"
     TARGET="rules:#pages#admin#workflow#workflowDetail.xhtml"
     TITLE="workflowDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="matchingCodes::#pages#payments#matchingCode#matchingCodes.xhtml"
-    NAME="output163"
+    NAME="output165"
     PATH="/pages/payments/matchingCode/matchingCodes.xhtml"
     TARGET="rules:#pages#payments#matchingCode#matchingCodes.xhtml"
     TITLE="matchingCodes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="matchingCodeDetail::#pages#payments#matchingCode#matchingCodeDetail.xhtml"
-    NAME="output164"
+    NAME="output166"
     PATH="/pages/payments/matchingCode/matchingCodeDetail.xhtml"
     TARGET="rules:#pages#payments#matchingCode#matchingCodeDetail.xhtml"
     TITLE="matchingCodeDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="ddrequestLots::#pages#payments#ddrequestLot#ddrequestLots.xhtml"
-    NAME="output165"
+    NAME="output167"
     PATH="/pages/payments/ddrequestLot/ddrequestLots.xhtml"
     TARGET="rules:#pages#payments#ddrequestLot#ddrequestLots.xhtml"
     TITLE="ddrequestLots" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="ddrequestLotDetail::#pages#payments#ddrequestLot#ddrequestLotDetail.xhtml"
-    NAME="output166"
+    NAME="output168"
     PATH="/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml"
     TARGET="rules:#pages#payments#ddrequestLot#ddrequestLotDetail.xhtml"
     TITLE="ddrequestLotDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="paymentGateways::#pages#payments#paymentGateways#paymentGateways.xhtml"
-    NAME="output167"
+    NAME="output169"
     PATH="/pages/payments/paymentGateways/paymentGateways.xhtml"
     TARGET="rules:#pages#payments#paymentGateways#paymentGateways.xhtml"
     TITLE="paymentGateways" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="paymentGatewayDetail::#pages#payments#paymentGateways#paymentGatewayDetail.xhtml"
-    NAME="output168"
+    NAME="output170"
     PATH="/pages/payments/paymentGateways/paymentGatewayDetail.xhtml"
     TARGET="rules:#pages#payments#paymentGateways#paymentGatewayDetail.xhtml"
     TITLE="paymentGatewayDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="ddrequestLotOps::#pages#payments#ddrequestLotOp#ddrequestLotOps.xhtml"
-    NAME="output169"
+    NAME="output171"
     PATH="/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml"
     TARGET="rules:#pages#payments#ddrequestLotOp#ddrequestLotOps.xhtml"
     TITLE="ddrequestLotOps" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="ddrequestLotOpDetail::#pages#payments#ddrequestLotOp#ddrequestLotOpDetail.xhtml"
-    NAME="output170"
+    NAME="output172"
     PATH="/pages/payments/ddrequestLotOp/ddrequestLotOpDetail.xhtml"
     TARGET="rules:#pages#payments#ddrequestLotOp#ddrequestLotOpDetail.xhtml"
     TITLE="ddrequestLotOpDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="launchDDRequestLotProcess::#pages#payments#ddrequestLot#launchDDRequestProcess.xhtml"
-    NAME="output171"
+    NAME="output173"
     PATH="/pages/payments/ddrequestLot/launchDDRequestProcess.xhtml"
     TARGET="rules:#pages#payments#ddrequestLot#launchDDRequestProcess.xhtml"
     TITLE="launchDDRequestLotProcess" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="accountOperations::#pages#payments#accountOperations#accountOperations.xhtml"
-    NAME="output172"
+    NAME="output174"
     PATH="/pages/payments/accountOperations/accountOperations.xhtml"
     TARGET="rules:#pages#payments#accountOperations#accountOperations.xhtml"
     TITLE="accountOperations" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="occTemplates::#pages#payments#occTemplates#occTemplates.xhtml"
-    NAME="output173"
+    NAME="output175"
     PATH="/pages/payments/occTemplates/occTemplates.xhtml"
     TARGET="rules:#pages#payments#occTemplates#occTemplates.xhtml"
     TITLE="occTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="occTemplateDetail::#pages#payments#occTemplates#occTemplateDetail.xhtml"
-    NAME="output174"
+    NAME="output176"
     PATH="/pages/payments/occTemplates/occTemplateDetail.xhtml"
     TARGET="rules:#pages#payments#occTemplates#occTemplateDetail.xhtml"
     TITLE="occTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="billingAccounts::#pages#billing#billingAccounts#billingAccounts.xhtml"
-    NAME="output175"
+    NAME="output177"
     PATH="/pages/billing/billingAccounts/billingAccounts.xhtml"
     TARGET="rules:#pages#billing#billingAccounts#billingAccounts.xhtml"
     TITLE="billingAccounts" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="billingAccountDetail::#pages#billing#billingAccounts#billingAccountDetail.xhtml"
-    NAME="output176"
+    NAME="output178"
     PATH="/pages/billing/billingAccounts/billingAccountDetail.xhtml"
     TARGET="rules:#pages#billing#billingAccounts#billingAccountDetail.xhtml"
     TITLE="billingAccountDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="subscriptions::#pages#billing#subscriptions#subscriptions.xhtml"
-    NAME="output177"
+    NAME="output179"
     PATH="/pages/billing/subscriptions/subscriptions.xhtml"
     TARGET="rules:#pages#billing#subscriptions#subscriptions.xhtml"
     TITLE="subscriptions" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="subscriptionDetail::#pages#billing#subscriptions#subscriptionDetail.xhtml"
-    NAME="output178"
+    NAME="output180"
     PATH="/pages/billing/subscriptions/subscriptionDetail.xhtml"
     TARGET="rules:#pages#billing#subscriptions#subscriptionDetail.xhtml"
     TITLE="subscriptionDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="subscriptionDetailSubscriptionTab::#pages#billing#subscriptions#subscriptionDetail.xhtml"
-    NAME="output179"
+    NAME="output181"
     PATH="/pages/billing/subscriptions/subscriptionDetail.xhtml"
     TARGET="rules:#pages#billing#subscriptions#subscriptionDetail.xhtml"
     TITLE="subscriptionDetailSubscriptionTab" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="subscriptionDetailWithNavigation::#pages#billing#subscriptions#subscriptionDetail.xhtml"
-    NAME="output180"
+    NAME="output182"
     PATH="/pages/billing/subscriptions/subscriptionDetail.xhtml"
     TARGET="rules:#pages#billing#subscriptions#subscriptionDetail.xhtml"
     TITLE="subscriptionDetailWithNavigation" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="userAccounts::#pages#billing#userAccounts#userAccounts.xhtml"
-    NAME="output181"
+    NAME="output183"
     PATH="/pages/billing/userAccounts/userAccounts.xhtml"
     TARGET="rules:#pages#billing#userAccounts#userAccounts.xhtml"
     TITLE="userAccounts" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="userAccountDetail::#pages#billing#userAccounts#userAccountDetail.xhtml"
-    NAME="output182"
+    NAME="output184"
     PATH="/pages/billing/userAccounts/userAccountDetail.xhtml"
     TARGET="rules:#pages#billing#userAccounts#userAccountDetail.xhtml"
     TITLE="userAccountDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="access::#pages#medina#access#access.xhtml"
-    NAME="output183" PATH="/pages/medina/access/access.xhtml"
+    NAME="output185" PATH="/pages/medina/access/access.xhtml"
     TARGET="rules:#pages#medina#access#access.xhtml" TITLE="access" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="accessDetail::#pages#medina#access#accessDetail.xhtml"
-    NAME="output184" PATH="/pages/medina/access/accessDetail.xhtml"
+    NAME="output186" PATH="/pages/medina/access/accessDetail.xhtml"
     TARGET="rules:#pages#medina#access#accessDetail.xhtml"
     TITLE="accessDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="accessDetailFromSubscription::#pages#medina#access#accessDetail.xhtml"
-    NAME="output185" PATH="/pages/medina/access/accessDetail.xhtml"
+    NAME="output187" PATH="/pages/medina/access/accessDetail.xhtml"
     TARGET="rules:#pages#medina#access#accessDetail.xhtml"
     TITLE="accessDetailFromSubscription" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="importedFiles::#pages#medina#importedFile#importedFiles.xhtml"
-    NAME="output186"
+    NAME="output188"
     PATH="/pages/medina/importedFile/importedFiles.xhtml"
     TARGET="rules:#pages#medina#importedFile#importedFiles.xhtml"
     TITLE="importedFiles" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="importedFileDetail::#pages#medina#importedFile#importedFileDetail.xhtml"
-    NAME="output187"
+    NAME="output189"
     PATH="/pages/medina/importedFile/importedFileDetail.xhtml"
     TARGET="rules:#pages#medina#importedFile#importedFileDetail.xhtml"
     TITLE="importedFileDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="addNewSubscription::#pages#billing#subscriptions#subscriptionDetail.xhtml"
-    NAME="output188"
+    NAME="output190"
     PATH="/pages/billing/subscriptions/subscriptionDetail.xhtml"
     TARGET="rules:#pages#billing#subscriptions#subscriptionDetail.xhtml"
     TITLE="addNewSubscription" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerCategorys::#pages#crm#customerCategories#customerCategories.xhtml"
-    NAME="output189"
+    NAME="output191"
     PATH="/pages/crm/customerCategories/customerCategories.xhtml"
     TARGET="rules:#pages#crm#customerCategories#customerCategories.xhtml"
     TITLE="customerCategorys" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerCategories::#pages#crm#customerCategories#customerCategories.xhtml"
-    NAME="output190"
+    NAME="output192"
     PATH="/pages/crm/customerCategories/customerCategories.xhtml"
     TARGET="rules:#pages#crm#customerCategories#customerCategories.xhtml"
     TITLE="customerCategories" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerCategoryDetail::#pages#crm#customerCategories#customerCategoryDetail.xhtml"
-    NAME="output191"
+    NAME="output193"
     PATH="/pages/crm/customerCategories/customerCategoryDetail.xhtml"
     TARGET="rules:#pages#crm#customerCategories#customerCategoryDetail.xhtml"
     TITLE="customerCategoryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerBrands::#pages#crm#customerBrands#customerBrands.xhtml"
-    NAME="output192"
+    NAME="output194"
     PATH="/pages/crm/customerBrands/customerBrands.xhtml"
     TARGET="rules:#pages#crm#customerBrands#customerBrands.xhtml"
     TITLE="customerBrands" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="customerBrandDetail::#pages#crm#customerBrands#customerBrandDetail.xhtml"
-    NAME="output193"
+    NAME="output195"
     PATH="/pages/crm/customerBrands/customerBrandDetail.xhtml"
     TARGET="rules:#pages#crm#customerBrands#customerBrandDetail.xhtml"
     TITLE="customerBrandDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceInstances::#pages#resource#serviceInstances#serviceInstances.xhtml"
-    NAME="output194"
+    NAME="output196"
     PATH="/pages/resource/serviceInstances/serviceInstances.xhtml"
     TARGET="rules:#pages#resource#serviceInstances#serviceInstances.xhtml"
     TITLE="serviceInstances" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceInstanceDetail::#pages#resource#serviceInstances#serviceInstanceDetail.xhtml"
-    NAME="output195"
+    NAME="output197"
     PATH="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
     TARGET="rules:#pages#resource#serviceInstances#serviceInstanceDetail.xhtml"
     TITLE="serviceInstanceDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceParameterInstances::#pages#resource#serviceParameterInstances#serviceParameterInstances.xhtml"
-    NAME="output196"
+    NAME="output198"
     PATH="/pages/resource/serviceParameterInstances/serviceParameterInstances.xhtml"
     TARGET="rules:#pages#resource#serviceParameterInstances#serviceParameterInstances.xhtml"
     TITLE="serviceParameterInstances" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="serviceParameterInstancesDetail::#pages#resource#serviceParameterInstances#serviceParameterInstanceDetail.xhtml"
-    NAME="output197"
+    NAME="output199"
     PATH="/pages/resource/serviceParameterInstances/serviceParameterInstanceDetail.xhtml"
     TARGET="rules:#pages#resource#serviceParameterInstances#serviceParameterInstanceDetail.xhtml"
     TITLE="serviceParameterInstancesDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usageTypes::#pages#rating#usageTypes#usageTypes.xhtml"
-    NAME="output198" PATH="/pages/rating/usageTypes/usageTypes.xhtml"
+    NAME="output200" PATH="/pages/rating/usageTypes/usageTypes.xhtml"
     TARGET="rules:#pages#rating#usageTypes#usageTypes.xhtml"
     TITLE="usageTypes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="usageTypeDetail::#pages#rating#usageTypes#usageTypeDetail.xhtml"
-    NAME="output199"
+    NAME="output201"
     PATH="/pages/rating/usageTypes/usageTypeDetail.xhtml"
     TARGET="rules:#pages#rating#usageTypes#usageTypeDetail.xhtml"
     TITLE="usageTypeDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="matrixes::#pages#rating#matrixes#matrixes.xhtml"
-    NAME="output200" PATH="/pages/rating/matrixes/matrixes.xhtml"
+    NAME="output202" PATH="/pages/rating/matrixes/matrixes.xhtml"
     TARGET="rules:#pages#rating#matrixes#matrixes.xhtml"
     TITLE="matrixes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="matrixDetail::#pages#rating#matrixes#matrixDetail.xhtml"
-    NAME="output201" PATH="/pages/rating/matrixes/matrixDetail.xhtml"
+    NAME="output203" PATH="/pages/rating/matrixes/matrixDetail.xhtml"
     TARGET="rules:#pages#rating#matrixes#matrixDetail.xhtml"
     TITLE="matrixDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="matrixEntries::#pages#rating#matrixEntries#matrixEntries.xhtml"
-    NAME="output202"
+    NAME="output204"
     PATH="/pages/rating/matrixEntries/matrixEntries.xhtml"
     TARGET="rules:#pages#rating#matrixEntries#matrixEntries.xhtml"
     TITLE="matrixEntries" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="matrixEntryDetail::#pages#rating#matrixEntries#matrixEntryDetail.xhtml"
-    NAME="output203"
+    NAME="output205"
     PATH="/pages/rating/matrixEntries/matrixEntryDetail.xhtml"
     TARGET="rules:#pages#rating#matrixEntries#matrixEntryDetail.xhtml"
     TITLE="matrixEntryDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="syncheseClients::#pages#crm#syntheseClients#billingAccounts.xhtml"
-    NAME="output204"
+    NAME="output206"
     PATH="/pages/crm/syntheseClients/billingAccounts.xhtml"
     TARGET="rules:#pages#crm#syntheseClients#billingAccounts.xhtml"
     TITLE="syncheseClients" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::1" SHAPE="32,10673,0,0" model-entity="JSFProcessGroup">
+ <PROCESS-ITEM NAME="rules::1" SHAPE="32,10769,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="measuredValueDetail::#pages#reporting#dwh#measuredValueDetail.xhtml"
@@ -1287,7 +1299,7 @@
     TITLE="auditLogDetail" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::2" SHAPE="32,13745,0,0" model-entity="JSFProcessGroup">
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,13841,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT ID="jobs::#pages#reporting#jobs#jobs.xhtml"
     NAME="output" PATH="/pages/reporting/jobs/jobs.xhtml"
@@ -1460,7 +1472,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#payments#accountOperations#accountOperationDetail.xhtml"
   PATH="/pages/payments/accountOperations/accountOperationDetail.xhtml"
-  SHAPE="832,6673,0,0" model-entity="JSFProcessGroup">
+  SHAPE="832,6737,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM
    ID="rules:#pages#payments#accountOperations#accountOperationDetail.xhtml:0"
    NAME="item"
@@ -1517,7 +1529,7 @@
     TITLE="subscriptions" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::3" SHAPE="32,16689,0,0" model-entity="JSFProcessGroup">
+ <PROCESS-ITEM NAME="rules::3" SHAPE="32,16785,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::3" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="businessAccountModels::#pages#crm#businessAccountModels#businessAccountModels.xhtml"
@@ -1533,7 +1545,7 @@
     TITLE="businessAccountModelDetail" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::4" SHAPE="32,16945,0,0" model-entity="JSFProcessGroup">
+ <PROCESS-ITEM NAME="rules::4" SHAPE="32,17041,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::4" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="creditCategories::#pages#admin#creditCategories#creditCategories.xhtml"
@@ -1543,7 +1555,7 @@
     TITLE="creditCategories" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::5" SHAPE="32,17057,0,0" model-entity="JSFProcessGroup">
+ <PROCESS-ITEM NAME="rules::5" SHAPE="32,17153,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::5" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="creditCategory::#pages#admin#creditCategories#creditCategoryDetail.xhtml"
@@ -1553,7 +1565,7 @@
     TITLE="creditCategory" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::6" SHAPE="32,7345,0,0" model-entity="JSFProcessGroup">
+ <PROCESS-ITEM NAME="rules::6" SHAPE="32,7409,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::6" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="filters::#pages#admin#filters#filters#filters.xhtml"
@@ -1650,112 +1662,115 @@
     PATH="/pages/finance/reportExtractHistories/reportExtractHistories.xhtml"
     TARGET="rules:#pages#finance#reportExtractHistories#reportExtractHistories.xhtml"
     TITLE="reportExtractHistories" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="indexing::#pages#index#index.xhtml"
+    NAME="output16" PATH="/pages/index/index.xhtml"
+    TARGET="rules:#pages#index#index.xhtml" TITLE="indexing" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="fullTextSearch::#pages#index#fullTextSearch.xhtml"
-    NAME="output16" PATH="/pages/index/fullTextSearch.xhtml"
+    NAME="output17" PATH="/pages/index/fullTextSearch.xhtml"
     TARGET="rules:#pages#index#fullTextSearch.xhtml"
     TITLE="fullTextSearch" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="orderDetail::#pages#order#orders#orderDetail.xhtml"
-    NAME="output17" PATH="/pages/order/orders/orderDetail.xhtml"
+    NAME="output18" PATH="/pages/order/orders/orderDetail.xhtml"
     TARGET="rules:#pages#order#orders#orderDetail.xhtml"
     TITLE="orderDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="orders::#pages#order#orders#orders.xhtml"
-    NAME="output18" PATH="/pages/order/orders/orders.xhtml"
+    NAME="output19" PATH="/pages/order/orders/orders.xhtml"
     TARGET="rules:#pages#order#orders#orders.xhtml" TITLE="orders" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="quoteDetail::#pages#quote#quotes#quoteDetail.xhtml"
-    NAME="output19" PATH="/pages/quote/quotes/quoteDetail.xhtml"
+    NAME="output20" PATH="/pages/quote/quotes/quoteDetail.xhtml"
     TARGET="rules:#pages#quote#quotes#quoteDetail.xhtml"
     TITLE="quoteDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT ID="quotes::#pages#quote#quotes#quotes.xhtml"
-    NAME="output20" PATH="/pages/quote/quotes/quotes.xhtml"
+    NAME="output21" PATH="/pages/quote/quotes/quotes.xhtml"
     TARGET="rules:#pages#quote#quotes#quotes.xhtml" TITLE="quotes" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="productTemplates::#pages#catalog#productTemplates#productTemplates.xhtml"
-    NAME="output21"
+    NAME="output22"
     PATH="/pages/catalog/productTemplates/productTemplates.xhtml"
     TARGET="rules:#pages#catalog#productTemplates#productTemplates.xhtml"
     TITLE="productTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="productTemplateDetail::#pages#catalog#productTemplates#productTemplateDetail.xhtml"
-    NAME="output22"
+    NAME="output23"
     PATH="/pages/catalog/productTemplates/productTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#productTemplates#productTemplateDetail.xhtml"
     TITLE="productTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="bundleTemplates::#pages#catalog#bundleTemplates#bundleTemplates.xhtml"
-    NAME="output23"
+    NAME="output24"
     PATH="/pages/catalog/bundleTemplates/bundleTemplates.xhtml"
     TARGET="rules:#pages#catalog#bundleTemplates#bundleTemplates.xhtml"
     TITLE="bundleTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="bundleTemplateDetail::#pages#catalog#bundleTemplates#bundleTemplateDetail.xhtml"
-    NAME="output24"
+    NAME="output25"
     PATH="/pages/catalog/bundleTemplates/bundleTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#bundleTemplates#bundleTemplateDetail.xhtml"
     TITLE="bundleTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="channels::#pages#catalog#channels#channels.xhtml"
-    NAME="output25" PATH="/pages/catalog/channels/channels.xhtml"
+    NAME="output26" PATH="/pages/catalog/channels/channels.xhtml"
     TARGET="rules:#pages#catalog#channels#channels.xhtml"
     TITLE="channels" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="channelDetail::#pages#catalog#channels#channelDetail.xhtml"
-    NAME="output26" PATH="/pages/catalog/channels/channelDetail.xhtml"
+    NAME="output27" PATH="/pages/catalog/channels/channelDetail.xhtml"
     TARGET="rules:#pages#catalog#channels#channelDetail.xhtml"
     TITLE="channelDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="digitalResources::#pages#catalog#digitalResources#digitalResources.xhtml"
-    NAME="output27"
+    NAME="output28"
     PATH="/pages/catalog/digitalResources/digitalResources.xhtml"
     TARGET="rules:#pages#catalog#digitalResources#digitalResources.xhtml"
     TITLE="digitalResources" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="digitalResourceDetail::#pages#catalog#digitalResources#digitalResourceDetail.xhtml"
-    NAME="output28"
+    NAME="output29"
     PATH="/pages/catalog/digitalResources/digitalResourceDetail.xhtml"
     TARGET="rules:#pages#catalog#digitalResources#digitalResourceDetail.xhtml"
     TITLE="digitalResourceDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="businessProductModels::#pages#catalog#businessProductModels#businessProductModels.xhtml"
-    NAME="output29"
+    NAME="output30"
     PATH="/pages/catalog/businessProductModels/businessProductModels.xhtml"
     TARGET="rules:#pages#catalog#businessProductModels#businessProductModels.xhtml"
     TITLE="businessProductModels" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="businessProductModelDetail::#pages#catalog#businessProductModels#businessProductModelDetail.xhtml"
-    NAME="output30"
+    NAME="output31"
     PATH="/pages/catalog/businessProductModels/businessProductModelDetail.xhtml"
     TARGET="rules:#pages#catalog#businessProductModels#businessProductModelDetail.xhtml"
     TITLE="businessProductModelDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="productChargeTemplates::#pages#catalog#productChargeTemplates#productChargeTemplates.xhtml"
-    NAME="output31"
+    NAME="output32"
     PATH="/pages/catalog/productChargeTemplates/productChargeTemplates.xhtml"
     TARGET="rules:#pages#catalog#productChargeTemplates#productChargeTemplates.xhtml"
     TITLE="productChargeTemplates" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="productChargeTemplateDetail::#pages#catalog#productChargeTemplates#productChargeTemplateDetail.xhtml"
-    NAME="output32"
+    NAME="output33"
     PATH="/pages/catalog/productChargeTemplates/productChargeTemplateDetail.xhtml"
     TARGET="rules:#pages#catalog#productChargeTemplates#productChargeTemplateDetail.xhtml"
     TITLE="productChargeTemplateDetail" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="userGroupHierarchy::#pages#admin#userGroupHierarchy#userGroupHierarchy.xhtml"
-    NAME="output33"
+    NAME="output34"
     PATH="/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml"
     TARGET="rules:#pages#admin#userGroupHierarchy#userGroupHierarchy.xhtml"
     TITLE="userGroupHierarchy" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="userHierarchyLevelDetail::#pages#admin#userGroupHierarchy#userGroupHierarchy.xhtml"
-    NAME="output34"
+    NAME="output35"
     PATH="/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml"
     TARGET="rules:#pages#admin#userGroupHierarchy#userGroupHierarchy.xhtml"
     TITLE="userHierarchyLevelDetail" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::7" SHAPE="32,6657,0,0" model-entity="JSFProcessGroup">
+ <PROCESS-ITEM NAME="rules::7" SHAPE="32,6721,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::7" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT ID="mm_home::#pages#mm_index.xhtml"
     NAME="output" PATH="/pages/mm_index.xhtml"
@@ -1861,9 +1876,9 @@
  <PROCESS-ITEM
   NAME="rules:#pages#notification#instantMessagingNotifications.xhtml"
   PATH="/pages/notification/instantMessagingNotifications.xhtml"
-  SHAPE="304,13537,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13633,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#sellers#sellers.xhtml"
-  PATH="/pages/admin/sellers/sellers.xhtml" SHAPE="304,10129,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/admin/sellers/sellers.xhtml" SHAPE="304,10225,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#calendars#calendars.xhtml"
   PATH="/pages/catalog/calendars/calendars.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -1877,17 +1892,17 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#tradingCountries#tradingCountries.xhtml"
   PATH="/pages/admin/tradingCountries/tradingCountries.xhtml"
-  SHAPE="304,9681,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,9777,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#tradingCurrencies#tradingCurrencyDetail.xhtml"
   PATH="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml"
-  SHAPE="304,9345,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,9441,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#customEntities#customEntities.xhtml"
   PATH="/pages/admin/customEntities/customEntities.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#offers#offerTemplates.xhtml"
-  PATH="/pages/catalog/offers/offerTemplates.xhtml" SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/catalog/offers/offerTemplates.xhtml" SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#invoiceSubCategories#invoiceSubCategories.xhtml"
   PATH="/pages/catalog/invoiceSubCategories/invoiceSubCategories.xhtml"
@@ -1903,9 +1918,9 @@
   PATH="/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#job#timerEntities.xhtml"
-  PATH="/pages/admin/job/timerEntities.xhtml" SHAPE="304,10353,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/admin/job/timerEntities.xhtml" SHAPE="304,10449,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#webHookDetail.xhtml"
-  PATH="/pages/notification/webHookDetail.xhtml" SHAPE="304,12753,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/notification/webHookDetail.xhtml" SHAPE="304,12849,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#history#customerImportHistory.xhtml"
   PATH="/pages/admin/history/customerImportHistory.xhtml"
@@ -1917,16 +1932,16 @@
  <PROCESS-ITEM
   NAME="rules:#pages#finance#reportExtracts#reportExtractDetail.xhtml"
   PATH="/pages/finance/reportExtracts/reportExtractDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#productTemplates#productTemplateDetail.xhtml"
   PATH="/pages/catalog/productTemplates/productTemplateDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#filters#filters#filters.xhtml"
   PATH="/pages/admin/filters/filters/filters.xhtml"
-  SHAPE="304,10577,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,10673,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#dwh#barChartDetail.xhtml"
-  PATH="/pages/reporting/dwh/barChartDetail.xhtml" SHAPE="304,11969,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/dwh/barChartDetail.xhtml" SHAPE="304,12065,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#oudaya#configuration#oudayaConfigurations.xhtml"
   PATH="/pages/admin/oudaya/configuration/oudayaConfigurations.xhtml"
@@ -1934,7 +1949,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#businessOfferModels#businessOfferModels.xhtml"
   PATH="/pages/catalog/businessOfferModels/businessOfferModels.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#terminationReason#terminationReasons.xhtml"
   PATH="/pages/admin/terminationReason/terminationReasons.xhtml"
@@ -1942,11 +1957,11 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#businessProductModels#businessProductModels.xhtml"
   PATH="/pages/catalog/businessProductModels/businessProductModels.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#products#productTemplates.xhtml"
   PATH="/pages/catalog/products/productTemplates.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#invoiceCategories#invoiceCategories.xhtml"
   PATH="/pages/catalog/invoiceCategories/invoiceCategories.xhtml"
@@ -1955,14 +1970,14 @@
   PATH="/pages/admin/workflow/workflows.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#order#workflows#workflowDefault.xhtml"
   PATH="/pages/order/workflows/workflowDefault.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#emailNotifications.xhtml"
   PATH="/pages/notification/emailNotifications.xhtml"
-  SHAPE="304,13089,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13185,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#title#titleDetail.xhtml"
   PATH="/pages/admin/title/titleDetail.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#notifications.xhtml"
-  PATH="/pages/notification/notifications.xhtml" SHAPE="304,12641,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/notification/notifications.xhtml" SHAPE="304,12737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#job#jobInstanceDetail.xhtml"
   PATH="/pages/admin/job/jobInstanceDetail.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -1976,7 +1991,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#multiLanguageField#multiLanguageFields.xhtml"
   PATH="/pages/admin/multiLanguageField/multiLanguageFields.xhtml"
-  SHAPE="304,10017,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,10113,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#crm#customers#customerDetail.xhtml"
   PATH="/pages/crm/customers/customerDetail.xhtml" SHAPE="1344,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#userRoles#userRoleDetail.xhtml"
@@ -1996,7 +2011,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#businessServiceModels#businessServiceModelDetail.xhtml"
   PATH="/pages/catalog/businessServiceModels/businessServiceModelDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#oudaya#oudayaInputs#oudayaInputDetail.xhtml"
   PATH="/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml"
@@ -2006,7 +2021,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#auditLogs#auditConfiguration.xhtml"
   PATH="/pages/admin/auditLogs/auditConfiguration.xhtml"
-  SHAPE="304,10689,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,10785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#crm#customerBrands#customerBrands.xhtml"
   PATH="/pages/crm/customerBrands/customerBrands.xhtml"
@@ -2016,23 +2031,23 @@
  <PROCESS-ITEM
   NAME="rules:#pages#resource#offerInstances#offerInstances.xhtml"
   PATH="/pages/resource/offerInstances/offerInstances.xhtml"
-  SHAPE="304,15137,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15233,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#auditLogs#auditLogs.xhtml"
-  PATH="/pages/admin/auditLogs/auditLogs.xhtml" SHAPE="304,10689,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/admin/auditLogs/auditLogs.xhtml" SHAPE="304,10785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#reporting#dwh#measurableQuantityDetail.xhtml"
   PATH="/pages/reporting/dwh/measurableQuantityDetail.xhtml"
-  SHAPE="304,11745,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,11841,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#reporting#reports#bordereauRemiseCheque.xhtml"
   PATH="/pages/reporting/reports/bordereauRemiseCheque.xhtml"
-  SHAPE="304,15025,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15121,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#serviceTemplates#serviceTemplates.xhtml"
   PATH="/pages/catalog/serviceTemplates/serviceTemplates.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#inboundRequests.xhtml"
-  PATH="/pages/notification/inboundRequests.xhtml" SHAPE="304,10689,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/notification/inboundRequests.xhtml" SHAPE="304,10785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#payments#ddrequestLot#ddrequestLotDetail.xhtml"
   PATH="/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml"
@@ -2048,7 +2063,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#paymentTerms#paymentTerms.xhtml"
   PATH="/pages/billing/paymentTerms/paymentTerms.xhtml"
-  SHAPE="304,13761,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13857,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#grieg#griegInputs#griegDunningInputs.xhtml"
   PATH="/pages/admin/grieg/griegInputs/griegDunningInputs.xhtml"
@@ -2064,11 +2079,11 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#ratedTransactions#ratedTransactionDetail.xhtml"
   PATH="/pages/billing/ratedTransactions/ratedTransactionDetail.xhtml"
-  SHAPE="304,16033,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,16129,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#productChargeTemplates#productChargeTemplates.xhtml"
   PATH="/pages/catalog/productChargeTemplates/productChargeTemplates.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#billing#invoiceTasks#invoiceTasks.xhtml"
   PATH="/pages/billing/invoiceTasks/invoiceTasks.xhtml"
@@ -2080,13 +2095,13 @@
  <PROCESS-ITEM
   NAME="rules:#pages#finance#revenueRecognitionRules#revenueRecognitionRules.xhtml"
   PATH="/pages/finance/revenueRecognitionRules/revenueRecognitionRules.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#productTemplates#productTemplates.xhtml"
   PATH="/pages/catalog/productTemplates/productTemplates.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#order#workflows#workflows.xhtml"
-  PATH="/pages/order/workflows/workflows.xhtml" SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/order/workflows/workflows.xhtml" SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#oneShotChargeTemplates#oneShotChargeTemplates.xhtml"
   PATH="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.xhtml"
@@ -2098,7 +2113,7 @@
   PATH="/pages/billing/subscriptions/subscriptions.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#offers#offerDetail.xhtml"
-  PATH="/pages/catalog/offers/offerDetail.xhtml" SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/catalog/offers/offerDetail.xhtml" SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#documents#documents.xhtml"
   PATH="/pages/admin/documents/documents.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -2116,17 +2131,17 @@
  <PROCESS-ITEM NAME="rules:#pages#admin#title#titles.xhtml"
   PATH="/pages/admin/title/titles.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#index#index.xhtml"
-  PATH="/pages/index/index.xhtml" SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/index/index.xhtml" SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#medina#management#medinaManagement.xhtml"
   PATH="/pages/admin/medina/management/medinaManagement.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#webHooks.xhtml"
-  PATH="/pages/notification/webHooks.xhtml" SHAPE="304,12865,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/notification/webHooks.xhtml" SHAPE="304,12961,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#billing#ratedTransactions#ratedTransactions.xhtml?edit=false"
   PATH="/pages/billing/ratedTransactions/ratedTransactions.xhtml?edit=false"
-  SHAPE="304,15921,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,16017,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#discountPlanMatrixes#discountPlanMatrixes.xhtml"
   PATH="/pages/catalog/discountPlanMatrixes/discountPlanMatrixes.xhtml"
@@ -2134,7 +2149,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#offerTemplateCategories#offerTemplateCategories.xhtml"
   PATH="/pages/catalog/offerTemplateCategories/offerTemplateCategories.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#discountPlanItems#discountPlanItems.xhtml"
   PATH="/pages/catalog/discountPlanItems/discountPlanItems.xhtml"
@@ -2142,7 +2157,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#invoicing#postInvoicingReports.xhtml?edit=false"
   PATH="/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false"
-  SHAPE="304,15697,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15793,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#medina#configuration#medinaConfigurationDetail.xhtml"
   PATH="/pages/admin/medina/configuration/medinaConfigurationDetail.xhtml"
@@ -2162,11 +2177,11 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#bundleTemplates#bundleTemplateDetail.xhtml"
   PATH="/pages/catalog/bundleTemplates/bundleTemplateDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#finance#revenueSchedules#revenueScheduleDetail.xhtml"
   PATH="/pages/finance/revenueSchedules/revenueScheduleDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#pricePlanMatrixes#pricePlanMatrixes.xhtml"
   PATH="/pages/catalog/pricePlanMatrixes/pricePlanMatrixes.xhtml"
@@ -2178,10 +2193,10 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#creditCategories#creditCategoryDetail.xhtml"
   PATH="/pages/admin/creditCategories/creditCategoryDetail.xhtml"
-  SHAPE="240,17073,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="240,17169,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#order#workflows#workflowDetail.xhtml"
   PATH="/pages/order/workflows/workflowDetail.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#priceCode#priceCodes.xhtml"
   PATH="/pages/catalog/priceCode/priceCodes.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -2205,7 +2220,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#digitalResources#digitalResources.xhtml"
   PATH="/pages/catalog/digitalResources/digitalResources.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#customEntities#customEntityDetail.xhtml"
   PATH="/pages/admin/customEntities/customEntityDetail.xhtml"
@@ -2219,7 +2234,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#tradingLanguages#tradingLanguages.xhtml"
   PATH="/pages/admin/tradingLanguages/tradingLanguages.xhtml"
-  SHAPE="304,9793,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,9889,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#job#jobInstances.xhtml"
   PATH="/pages/admin/job/jobInstances.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -2257,15 +2272,15 @@
  <PROCESS-ITEM
   NAME="rules:#pages#notification#notificationHistories.xhtml"
   PATH="/pages/notification/notificationHistories.xhtml"
-  SHAPE="304,13649,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13745,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#reporting#dwh#measuredValueDetail.xhtml"
   PATH="/pages/reporting/dwh/measuredValueDetail.xhtml"
-  SHAPE="304,10689,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,10785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#filters#filters#filterDetail.xhtml"
   PATH="/pages/admin/filters/filters/filterDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#billing#walletOperations#walletOperationDetail.xhtml"
   PATH="/pages/billing/walletOperations/walletOperationDetail.xhtml"
@@ -2273,7 +2288,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#notification#inboundRequestDetail.xhtml"
   PATH="/pages/notification/inboundRequestDetail.xhtml"
-  SHAPE="304,10689,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,10785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#discountPlanMatrixes#discountPlanMatrixDetail.xhtml"
   PATH="/pages/catalog/discountPlanMatrixes/discountPlanMatrixDetail.xhtml"
@@ -2287,7 +2302,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#meveoInstance#meveoInstances.xhtml"
   PATH="/pages/admin/meveoInstance/meveoInstances.xhtml"
-  SHAPE="304,13761,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13857,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#history#subscriptionImportHistory.xhtml"
   PATH="/pages/admin/history/subscriptionImportHistory.xhtml"
@@ -2307,7 +2322,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#filters#projectors#projectors.xhtml"
   PATH="/pages/admin/filters/projectors/projectors.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#crm#customerCategories#customerCategories.xhtml"
   PATH="/pages/crm/customerCategories/customerCategories.xhtml"
@@ -2315,7 +2330,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#resource#offerInstances#offerInstanceDetail.xhtml"
   PATH="/pages/resource/offerInstances/offerInstanceDetail.xhtml"
-  SHAPE="304,15249,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15345,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#discountPlanItems#discountPlanItemDetail.xhtml"
   PATH="/pages/catalog/discountPlanItems/discountPlanItemDetail.xhtml"
@@ -2361,17 +2376,17 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#businessProductModels#businessProductModelDetail.xhtml"
   PATH="/pages/catalog/businessProductModels/businessProductModelDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#products#bundleTemplateDetail.xhtml"
   PATH="/pages/catalog/products/bundleTemplateDetail.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#crm#customerCategories#customerCategoryDetail.xhtml"
   PATH="/pages/crm/customerCategories/customerCategoryDetail.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#currencies#currencies.xhtml"
-  PATH="/pages/admin/currencies/currencies.xhtml" SHAPE="304,9121,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/admin/currencies/currencies.xhtml" SHAPE="304,9217,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#providers#providerSelfDetail.xhtml?"
   PATH="/pages/admin/providers/providerSelfDetail.xhtml?"
@@ -2383,14 +2398,14 @@
  <PROCESS-ITEM
   NAME="rules:#pages#notification#emailNotificationDetail.xhtml"
   PATH="/pages/notification/emailNotificationDetail.xhtml"
-  SHAPE="304,12977,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13073,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#bayad#bayadInputs#bayadDunningInputs.xhtml"
   PATH="/pages/admin/bayad/bayadInputs/bayadDunningInputs.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#currencies#systemCurrency.xhtml"
   PATH="/pages/admin/currencies/systemCurrency.xhtml"
-  SHAPE="304,9009,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,9105,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#scriptInstances#scriptInstanceDetail.xhtml"
   PATH="/pages/admin/scriptInstances/scriptInstanceDetail.xhtml"
@@ -2410,7 +2425,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#invoicing#exceptionelInvoicing.xhtml?edit=true"
   PATH="/pages/billing/invoicing/exceptionelInvoicing.xhtml?edit=true"
-  SHAPE="304,15473,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15569,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#vertina#management#vertinaManagement.xhtml"
   PATH="/pages/admin/vertina/management/vertinaManagement.xhtml"
@@ -2424,7 +2439,7 @@
   PATH="/pages/payments/paymentGateways/paymentGatewayDetail.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#dwh#pieChartDetail.xhtml"
-  PATH="/pages/reporting/dwh/pieChartDetail.xhtml" SHAPE="304,12081,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/dwh/pieChartDetail.xhtml" SHAPE="304,12177,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#customEntities#customizedEntities.xhtml"
   PATH="/pages/admin/customEntities/customizedEntities.xhtml"
@@ -2436,26 +2451,26 @@
  <PROCESS-ITEM
   NAME="rules:#pages#crm#businessAccountModels#businessAccountModels.xhtml"
   PATH="/pages/crm/businessAccountModels/businessAccountModels.xhtml"
-  SHAPE="256,16705,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="256,16801,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#export#import.xhtml"
   PATH="/pages/admin/export/import.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#medina#timePlan#timePlan.xhtml"
-  PATH="/pages/medina/timePlan/timePlan.xhtml" SHAPE="304,16481,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/medina/timePlan/timePlan.xhtml" SHAPE="304,16577,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#jobTriggerDetail.xhtml"
   PATH="/pages/notification/jobTriggerDetail.xhtml"
-  SHAPE="304,13201,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13297,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#countries#countries.xhtml"
   PATH="/pages/admin/countries/countries.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#cache#cacheDetail.xhtml"
-  PATH="/pages/reporting/cache/cacheDetail.xhtml" SHAPE="304,10689,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/cache/cacheDetail.xhtml" SHAPE="304,10785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#products#products.xhtml"
-  PATH="/pages/catalog/products/products.xhtml" SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/catalog/products/products.xhtml" SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#index#fullTextSearch.xhtml"
-  PATH="/pages/index/fullTextSearch.xhtml" SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/index/fullTextSearch.xhtml" SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#rating#edr#edrDetail.xhtml"
-  PATH="/pages/rating/edr/edrDetail.xhtml" SHAPE="304,16257,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/rating/edr/edrDetail.xhtml" SHAPE="304,16353,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#quote#quotes#quoteDetail.xhtml"
-  PATH="/pages/quote/quotes/quoteDetail.xhtml" SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/quote/quotes/quoteDetail.xhtml" SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#export#export.xhtml"
   PATH="/pages/admin/export/export.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -2477,9 +2492,9 @@
  <PROCESS-ITEM
   NAME="rules:#pages#crm#businessAccountModels#businessAccountModelDetail.xhtml"
   PATH="/pages/crm/businessAccountModels/businessAccountModelDetail.xhtml"
-  SHAPE="256,16849,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="256,16945,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#mm_index.xhtml"
-  PATH="/pages/mm_index.xhtml" SHAPE="304,10465,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/mm_index.xhtml" SHAPE="304,10561,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#billing#invoices#invoiceDetail.xhtml"
   PATH="/pages/billing/invoices/invoiceDetail.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -2487,7 +2502,7 @@
   PATH="/pages/medina/importedFile/importedFiles.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#rating#edr#edrList.xhtml"
-  PATH="/pages/rating/edr/edrList.xhtml" SHAPE="304,16145,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/rating/edr/edrList.xhtml" SHAPE="304,16241,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#billing#invoiceTypes#invoiceTypes.xhtml"
   PATH="/pages/billing/invoiceTypes/invoiceTypes.xhtml"
@@ -2495,17 +2510,17 @@
  <PROCESS-ITEM
   NAME="rules:#pages#medina#numberingPlan#numberingPlan.xhtml"
   PATH="/pages/medina/numberingPlan/numberingPlan.xhtml"
-  SHAPE="304,16593,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,16689,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#finance#revenueRecognitionRules#revenueRecognitionRuleDetail.xhtml"
   PATH="/pages/finance/revenueRecognitionRules/revenueRecognitionRuleDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#usageChargeTemplates#usageChargeTemplateDetail.xhtml"
   PATH="/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#medina#zoningPlan#zoningPlan.xhtml"
-  PATH="/pages/medina/zoningPlan/zoningPlan.xhtml" SHAPE="304,16369,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/medina/zoningPlan/zoningPlan.xhtml" SHAPE="304,16465,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#workflow#workflowHistoryDetail.xhtml"
   PATH="/pages/admin/workflow/workflowHistoryDetail.xhtml"
@@ -2516,7 +2531,7 @@
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#currencies#currencyDetail.xhtml"
   PATH="/pages/admin/currencies/currencyDetail.xhtml"
-  SHAPE="304,9233,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,9329,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#meveoUsers#userDetail.xhtml"
   PATH="/pages/admin/meveoUsers/userDetail.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#providers#providerDetail.xhtml"
@@ -2534,36 +2549,36 @@
  <PROCESS-ITEM
   NAME="rules:#pages#medina#edrRatingPlan#edrRatingPlan.xhtml"
   PATH="/pages/medina/edrRatingPlan/edrRatingPlan.xhtml"
-  SHAPE="304,13761,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13857,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#offers#offers.xhtml"
-  PATH="/pages/catalog/offers/offers.xhtml" SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/catalog/offers/offers.xhtml" SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#products#productTemplateDetail.xhtml"
   PATH="/pages/catalog/products/productTemplateDetail.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#userRoles#userRoles.xhtml"
   PATH="/pages/admin/userRoles/userRoles.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#dwh#lineChartDetail.xhtml"
   PATH="/pages/reporting/dwh/lineChartDetail.xhtml"
-  SHAPE="304,12193,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,12289,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#productChargeTemplates#productChargeTemplateDetail.xhtml"
   PATH="/pages/catalog/productChargeTemplates/productChargeTemplateDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#rating#matrixEntries#matrixEntries.xhtml"
   PATH="/pages/rating/matrixEntries/matrixEntries.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#dwh#charts.xhtml"
-  PATH="/pages/reporting/dwh/charts.xhtml" SHAPE="304,12417,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/dwh/charts.xhtml" SHAPE="304,12513,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#digitalResources#digitalResourceDetail.xhtml"
   PATH="/pages/catalog/digitalResources/digitalResourceDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#jobs#jobDetail.xhtml"
-  PATH="/pages/reporting/jobs/jobDetail.xhtml" SHAPE="304,14577,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/jobs/jobDetail.xhtml" SHAPE="304,14673,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#order#orders#orders.xhtml"
-  PATH="/pages/order/orders/orders.xhtml" SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/order/orders/orders.xhtml" SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#medina#medinaInputs#medinaInputs.xhtml"
   PATH="/pages/admin/medina/medinaInputs/medinaInputs.xhtml"
@@ -2571,7 +2586,7 @@
  <PROCESS-ITEM NAME="rules:#pages#crm#customers#customerSearch.xhtml"
   PATH="/pages/crm/customers/customerSearch.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#about.xhtml" PATH="/about.xhtml"
-  SHAPE="304,8897,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,8993,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#discountPlans#discountPlans.xhtml"
   PATH="/pages/catalog/discountPlans/discountPlans.xhtml"
@@ -2579,19 +2594,19 @@
  <PROCESS-ITEM NAME="rules:#pages#admin#workflow#workflowDetail.xhtml"
   PATH="/pages/admin/workflow/workflowDetail.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#channels#channels.xhtml"
-  PATH="/pages/catalog/channels/channels.xhtml" SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/catalog/channels/channels.xhtml" SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#grieg#griegInputs#griegDunningInputDetail.xhtml"
   PATH="/pages/admin/grieg/griegInputs/griegDunningInputDetail.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#cache#caches.xhtml"
-  PATH="/pages/reporting/cache/caches.xhtml" SHAPE="304,10689,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/cache/caches.xhtml" SHAPE="304,10785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#payments#ddrequestLotOp#ddrequestLotOpDetail.xhtml"
   PATH="/pages/payments/ddrequestLotOp/ddrequestLotOpDetail.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#errors#404.xhtml" PATH="/errors/404.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#scriptInstances#scriptInstances.xhtml"
   PATH="/pages/admin/scriptInstances/scriptInstances.xhtml"
@@ -2599,7 +2614,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#finance#reportExtracts#reportExtracts.xhtml"
   PATH="/pages/finance/reportExtracts/reportExtracts.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#crm#customerBrands#customerBrandDetail.xhtml"
   PATH="/pages/crm/customerBrands/customerBrandDetail.xhtml"
@@ -2611,11 +2626,11 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#invoicing#billingRuns.xhtml?edit=false"
   PATH="/pages/billing/invoicing/billingRuns.xhtml?edit=false"
-  SHAPE="304,15809,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15905,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#reporting#dwh#measurableQuantities.xhtml"
   PATH="/pages/reporting/dwh/measurableQuantities.xhtml"
-  SHAPE="304,11857,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,11953,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#rating#matrixEntries#matrixEntryDetail.xhtml"
   PATH="/pages/rating/matrixEntries/matrixEntryDetail.xhtml"
@@ -2623,22 +2638,22 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#businessServiceModels#businessServiceModels.xhtml"
   PATH="/pages/catalog/businessServiceModels/businessServiceModels.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#sellers#sellerDetail.xhtml"
-  PATH="/pages/admin/sellers/sellerDetail.xhtml" SHAPE="304,10241,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/admin/sellers/sellerDetail.xhtml" SHAPE="304,10337,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#creditCategories#creditCategories.xhtml"
   PATH="/pages/admin/creditCategories/creditCategories.xhtml"
-  SHAPE="240,16961,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="240,17057,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#vertina#vertinaInputs#vertinaInputs.xhtml"
   PATH="/pages/admin/vertina/vertinaInputs/vertinaInputs.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#quote#quotes#quotes.xhtml"
-  PATH="/pages/quote/quotes/quotes.xhtml" SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/quote/quotes/quotes.xhtml" SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#reports#reportDetail.xhtml"
   PATH="/pages/reporting/reports/reportDetail.xhtml"
-  SHAPE="304,14913,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15009,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#payments#matchingCode#matchingCodes.xhtml"
   PATH="/pages/payments/matchingCode/matchingCodes.xhtml"
@@ -2646,13 +2661,13 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#accountingCodes#accountingCodes.xhtml"
   PATH="/pages/billing/accountingCodes/accountingCodes.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#properties#properties.xhtml"
-  PATH="/pages/admin/properties/properties.xhtml" SHAPE="304,8673,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/admin/properties/properties.xhtml" SHAPE="304,8769,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#businessOfferModels#businessOfferCreation.xhtml"
   PATH="/pages/catalog/businessOfferModels/businessOfferCreation.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#history#dunningHistories.xhtml"
   PATH="/pages/admin/history/dunningHistories.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -2666,10 +2681,10 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#invoicing#preInvoicingReports.xhtml?edit=false"
   PATH="/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false"
-  SHAPE="304,15585,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15681,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#notificationDetail.xhtml"
   PATH="/pages/notification/notificationDetail.xhtml"
-  SHAPE="304,12529,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,12625,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#discountPlans#discountPlanDetail.xhtml"
   PATH="/pages/catalog/discountPlans/discountPlanDetail.xhtml"
@@ -2677,7 +2692,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#bundleTemplates#bundleTemplates.xhtml"
   PATH="/pages/catalog/bundleTemplates/bundleTemplates.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#vertina#vertinaInputs#vertinaInputDetail.xhtml"
   PATH="/pages/admin/vertina/vertinaInputs/vertinaInputDetail.xhtml"
@@ -2701,26 +2716,26 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#userGroupHierarchy#userGroupHierarchy.xhtml"
   PATH="/pages/admin/userGroupHierarchy/userGroupHierarchy.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#tradingCurrencies#tradingCurrencies.xhtml"
   PATH="/pages/admin/tradingCurrencies/tradingCurrencies.xhtml"
-  SHAPE="304,9457,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,9553,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#notification#instantMessagingNotificationDetail.xhtml"
   PATH="/pages/notification/instantMessagingNotificationDetail.xhtml"
-  SHAPE="304,13425,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,13521,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#businessOfferModels#businessOfferModelDetail.xhtml"
   PATH="/pages/catalog/businessOfferModels/businessOfferModelDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#channels#channelDetail.xhtml"
   PATH="/pages/catalog/channels/channelDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#billing#accountingCodes#accountingCodeDetail.xhtml"
   PATH="/pages/billing/accountingCodes/accountingCodeDetail.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#calendars#calendarDetail.xhtml"
   PATH="/pages/catalog/calendars/calendarDetail.xhtml"
@@ -2729,7 +2744,7 @@
   PATH="/pages/billing/invoices/invoices.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#catalog#products#selectProduct.xhtml"
   PATH="/pages/catalog/products/selectProduct.xhtml"
-  SHAPE="304,6673,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#grieg#griegInputs#griegConverterInputDetail.xhtml"
   PATH="/pages/admin/grieg/griegInputs/griegConverterInputDetail.xhtml"
@@ -2740,7 +2755,7 @@
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#jobHistory#jobHistory.xhtml"
   PATH="/pages/reporting/jobHistory/jobHistory.xhtml"
-  SHAPE="304,14689,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,14785,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#customEntities#customizedEntityDetail.xhtml"
   PATH="/pages/admin/customEntities/customizedEntityDetail.xhtml"
@@ -2750,7 +2765,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#tradingLanguages#tradingLanguagesDetail.xhtml"
   PATH="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml"
-  SHAPE="304,9905,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,10001,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#job#timerEntityDetail.xhtml"
   PATH="/pages/admin/job/timerEntityDetail.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#languages#languages.xhtml"
@@ -2758,7 +2773,7 @@
  <PROCESS-ITEM NAME="rules:#pages#rating#matrixes#matrixes.xhtml"
   PATH="/pages/rating/matrixes/matrixes.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#files#files.xhtml"
-  PATH="/pages/admin/files/files.xhtml" SHAPE="304,8561,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/admin/files/files.xhtml" SHAPE="304,8657,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#catalog#triggeredEdrTemplates#triggeredEdrTemplates.xhtml"
   PATH="/pages/catalog/triggeredEdrTemplates/triggeredEdrTemplates.xhtml"
@@ -2766,31 +2781,31 @@
  <PROCESS-ITEM
   NAME="rules:#pages#admin#filters#projectors#projectorDetail.xhtml"
   PATH="/pages/admin/filters/projectors/projectorDetail.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#index.xhtml" PATH="/index.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#languages#languageDetail.xhtml"
   PATH="/pages/admin/languages/languageDetail.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#dwh#chartDetail.xhtml"
-  PATH="/pages/reporting/dwh/chartDetail.xhtml" SHAPE="304,12305,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/dwh/chartDetail.xhtml" SHAPE="304,12401,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#finance#revenueSchedules#revenueSchedules.xhtml"
   PATH="/pages/finance/revenueSchedules/revenueSchedules.xhtml"
-  SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#billing#billingCycles#billingCycleDetail.xhtml"
   PATH="/pages/billing/billingCycles/billingCycleDetail.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#order#orders#orderDetail.xhtml"
-  PATH="/pages/order/orders/orderDetail.xhtml" SHAPE="304,7361,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/order/orders/orderDetail.xhtml" SHAPE="304,7425,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#notification#jobTriggers.xhtml"
-  PATH="/pages/notification/jobTriggers.xhtml" SHAPE="304,13313,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/notification/jobTriggers.xhtml" SHAPE="304,13409,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#dwh#measuredValues.xhtml"
-  PATH="/pages/reporting/dwh/measuredValues.xhtml" SHAPE="304,11633,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/dwh/measuredValues.xhtml" SHAPE="304,11729,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#tradingCountries#tradingCountryDetail.xhtml"
   PATH="/pages/admin/tradingCountries/tradingCountryDetail.xhtml"
-  SHAPE="304,9569,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,9665,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#grieg#griegInputs#griegConverterInputs.xhtml"
   PATH="/pages/admin/grieg/griegInputs/griegConverterInputs.xhtml"
@@ -2806,7 +2821,7 @@
  <PROCESS-ITEM
   NAME="rules:#pages#billing#invoicing#recurringInvoicing.xhtml?edit=true"
   PATH="/pages/billing/invoicing/recurringInvoicing.xhtml?edit=true"
-  SHAPE="304,15361,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15457,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#admin#taxes#taxes.xhtml"
   PATH="/pages/admin/taxes/taxes.xhtml" SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
@@ -2814,21 +2829,29 @@
   PATH="/pages/billing/walletOperations/walletOperations.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#jobs#jobs.xhtml"
-  PATH="/pages/reporting/jobs/jobs.xhtml" SHAPE="304,13761,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/jobs/jobs.xhtml" SHAPE="304,13857,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#home.xhtml" PATH="/home.xhtml"
-  SHAPE="304,8785,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,8881,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#communication#emailTemplates.xhtml"
   PATH="/pages/admin/communication/emailTemplates.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#pages#reporting#reports#reports.xhtml"
-  PATH="/pages/reporting/reports/reports.xhtml" SHAPE="304,14801,0,0" model-entity="JSFProcessGroup"/>
+  PATH="/pages/reporting/reports/reports.xhtml" SHAPE="304,14897,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#pages#admin#medina#medinaInputs#medinaInputDetail.xhtml"
   PATH="/pages/admin/medina/medinaInputs/medinaInputDetail.xhtml"
   SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
+  NAME="rules:#pages#admin#scriptInstanceCategories#scriptInstanceCategories.xhtml"
+  PATH="/pages/admin/scriptInstanceCategories/scriptInstanceCategories.xhtml"
+  SHAPE="304,6737,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#pages#admin#scriptInstanceCategories#scriptInstanceCategoryDetail.xhtml"
+  PATH="/pages/admin/scriptInstanceCategories/scriptInstanceCategoryDetail.xhtml"
+  SHAPE="304,6849,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
   NAME="rules:#pages#finance#reportExtractHistories#reportExtractHistories.xhtml"
   PATH="/pages/finance/reportExtractHistories/reportExtractHistories.xhtml"
-  SHAPE="304,15617,0,0" model-entity="JSFProcessGroup"/>
+  SHAPE="304,15825,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>
