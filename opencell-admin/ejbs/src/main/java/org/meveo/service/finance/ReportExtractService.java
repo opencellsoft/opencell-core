@@ -214,16 +214,12 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             file.createNewFile();
             fileWriter = new FileWriter(file);
             fileWriter.write(template);
-            fileWriter.close();
+            
         } catch (Exception e) {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e1) {
-                }
-            }
             log.error("Cannot write report to file: {}", e.getMessage());
             throw new BusinessException("Cannot write report to file.");
+        } finally {
+            IOUtils.closeQuietly(fileWriter);
         }
     }
 
@@ -262,17 +258,11 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 fileWriter.write(System.lineSeparator());
                 line = new StringBuilder("");
             }
-            fileWriter.close();
-
         } catch (Exception e) {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e1) {
-                }
-            }
             log.error("Cannot write report to file: {}", e.getMessage());
             throw new BusinessException("Cannot write report to file.");
+        } finally  {
+            IOUtils.closeQuietly(fileWriter);
         }
     }
 
