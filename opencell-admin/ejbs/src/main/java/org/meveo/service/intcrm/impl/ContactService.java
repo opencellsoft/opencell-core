@@ -39,12 +39,16 @@ public class ContactService extends BusinessService<Contact> {
 
 	@Inject
 	private TitleService titleService;
+	
+	@Inject
+	private AddressBookService addressBookService;
 
 	@Inject
 	private Logger log;
 	
 	public void create(Contact contact) throws BusinessException {
 		super.create(contact);
+		addressBookService.addContact(null, contact);
 	}
 	
 	public Set<Contact> parseLinkedInFromText(String context) throws IOException, BusinessException {

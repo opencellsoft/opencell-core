@@ -27,7 +27,8 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 @Path("/contact")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })public interface ContactRs extends IBaseRs {
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public interface ContactRs extends IBaseRs {
 	@POST
     @Path("/")
     ActionStatus create(ContactDto postData);

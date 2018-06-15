@@ -89,7 +89,17 @@ public class Customer extends AccountEntity {
     @JoinColumn(name = "crm_additional_details_id")
     private AdditionalDetails additionalDetails;
     
-    public AdditionalDetails getAdditionalDetails() {
+    
+    
+    public AddressBook getAddressbook() {
+		return addressbook;
+	}
+
+	public void setAddressbook(AddressBook addressbook) {
+		this.addressbook = addressbook;
+	}
+
+	public AdditionalDetails getAdditionalDetails() {
 		return additionalDetails;
 	}
 

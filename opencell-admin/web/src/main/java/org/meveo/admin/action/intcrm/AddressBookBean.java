@@ -15,6 +15,11 @@ import org.slf4j.Logger;
 @Named
 @ViewScoped
 public class AddressBookBean extends CustomFieldBean<AddressBook>{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2622790680311785938L;
+
 	@Inject
 	AddressBookService addressBookService;
 
@@ -34,10 +39,6 @@ public class AddressBookBean extends CustomFieldBean<AddressBook>{
 	@Override
 	protected IPersistenceService<AddressBook> getPersistenceService() {
 		return addressBookService;
-	}
-	
-	public void currentUserHasAddressBook() {
-		log.debug("Current User : " + addressBookService.getCurrentUser());
 	}
 	
 }

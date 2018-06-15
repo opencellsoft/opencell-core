@@ -1,6 +1,7 @@
 package org.meveo.api.crm;
 
 import java.io.IOException;
+
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -24,7 +25,6 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
 import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
@@ -32,6 +32,7 @@ import org.meveo.model.shared.Title;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.primefaces.model.SortOrder;
+
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class ContactApi extends BaseApi {
