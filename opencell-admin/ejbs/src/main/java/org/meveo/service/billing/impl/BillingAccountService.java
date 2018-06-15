@@ -891,15 +891,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 BigDecimal diff = null;
                                 if(appProvider.isEntreprise()) {
                                     diff = subscriptionMinAmount.subtract(totalSubscriptionAmountWithoutTax);
-<<<<<<< HEAD
-                                    if(totalSubscriptionAmountWithoutTax != BigDecimal.ZERO) {
-                                        ratio = subscriptionAmountWithoutTax.divide(totalSubscriptionAmountWithoutTax, 2, RoundingMode.HALF_UP);
-                                    }
-                                } else {
-                                    diff = subscriptionMinAmount.subtract(totalSubscriptionAmountWithTax);
-                                    if(totalSubscriptionAmountWithTax != BigDecimal.ZERO) {
-                                        ratio = subscriptionAmountWithTax.divide(totalSubscriptionAmountWithTax, 2, RoundingMode.HALF_UP);
-=======
                                     if (totalSubscriptionAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
                                         ratio = subscriptionAmountWithoutTax.divide(totalSubscriptionAmountWithoutTax, 2, RoundingMode.HALF_UP);
                                     }
@@ -907,7 +898,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     diff = subscriptionMinAmount.subtract(totalSubscriptionAmountWithTax);
                                     if (totalSubscriptionAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
                                         ratio = subscriptionAmountWithTax.divide(totalSubscriptionAmountWithTax, 2, RoundingMode.HALF_UP);
->>>>>>> Payment_method_Issue_in_ES_search_result
                                     }
                                 }
 
@@ -985,15 +975,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 BigDecimal diff = null;
                 if(appProvider.isEntreprise()) {
                     diff = billingAccountMinAmount.subtract(totalBillingAccountAmountWithoutTax);
-<<<<<<< HEAD
-                    if(totalBillingAccountAmountWithoutTax != BigDecimal.ZERO) {
-                        ratio = billingAccountAmountWithoutTax.divide(totalBillingAccountAmountWithoutTax, 2, RoundingMode.HALF_UP);
-                    }
-                } else {
-                    diff = billingAccountMinAmount.subtract(totalBillingAccountAmountWithTax);
-                    if(totalBillingAccountAmountWithTax != BigDecimal.ZERO) {
-                        ratio = billingAccountAmountWithTax.divide(totalBillingAccountAmountWithTax, 2, RoundingMode.HALF_UP);
-=======
                     if (totalBillingAccountAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
                         ratio = billingAccountAmountWithoutTax.divide(totalBillingAccountAmountWithoutTax, 2, RoundingMode.HALF_UP);
                     }
@@ -1001,7 +982,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                     diff = billingAccountMinAmount.subtract(totalBillingAccountAmountWithTax);
                     if (totalBillingAccountAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
                         ratio = billingAccountAmountWithTax.divide(totalBillingAccountAmountWithTax, 2, RoundingMode.HALF_UP);
->>>>>>> Payment_method_Issue_in_ES_search_result
                     }
                 }
 
