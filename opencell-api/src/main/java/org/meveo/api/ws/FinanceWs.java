@@ -113,7 +113,7 @@ public interface FinanceWs extends IBaseWs {
     /**
      * Finds and returns a list of ReportExtract history for a given code.
      * 
-     * @param id report extract execution code
+     * @param code report extract execution code
      * @return list of report extract execution history
      */
     @WebMethod

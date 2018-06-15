@@ -23,6 +23,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.ReportExtractService;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Controller to manage detail view of {@link ReportExtract}.
@@ -123,11 +124,10 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
     }
 
     public StreamedContent getReportFile(ReportExtract entity) {
-        String filePath;
         InputStream stream = null;
 
         try {
-            filePath = reportExtractService.getReporFile(entity);
+            String filePath = reportExtractService.getReporFile(entity);
             stream = new FileInputStream(new File(filePath));
             String mimeType = "text/csv";
             if (!FilenameUtils.getExtension(filePath).equals("csv")) {
@@ -139,6 +139,8 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         } catch (BusinessException | FileNotFoundException e) {
             log.error("Failed loading repor file={}", e.getMessage());
             return null;
+        } finally {
+            IOUtils.closeQuietly(stream);   
         }
 
     }
