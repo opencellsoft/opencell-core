@@ -27,6 +27,10 @@
 		<hftl:formPanel formId="form3" edit="false"
 			label="#{messages['postInvoicingReport.title']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
+			
+			<p:tabView id="tabView" activeIndex="#{billingRunBean.activeTab}">
+                <p:tab title="#{messages['customer.tab.information']}">
+                
 					<hftl:formField
 						label="#{messages['postInvoicingReport.globalAmountHT']}"
 						field="postInvoicingReports" childField="globalAmount"
@@ -158,6 +162,10 @@
 					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 										
             </p:fieldset>
+
+			</p:tab>
+                <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
+            </p:tabView>
 
 		</hftl:formPanel>
 

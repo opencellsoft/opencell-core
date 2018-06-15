@@ -13,6 +13,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.finance.ReportExtractService;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class UnitReportExtractJobBean {
@@ -52,7 +54,7 @@ public class UnitReportExtractJobBean {
                 entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(endDate, paramBean.getDateFormat()));
             }
             
-            reportExtractService.runReport(entity);
+            reportExtractService.runReport(entity, null, ReportExtractExecutionOrigin.JOB);
 
             result.registerSucces();
 

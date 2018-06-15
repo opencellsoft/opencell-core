@@ -14,6 +14,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.job.Job;
 
@@ -31,6 +32,9 @@ public class SubscriptionStatusJob extends Job {
 
     @Inject
     private SubscriptionService subscriptionService;
+    
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
     
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -51,6 +55,21 @@ public class SubscriptionStatusJob extends Job {
             log.error("Failed to run subscription status job {}", jobInstance.getCode(), e);
             result.registerError(e.getMessage());
         }
+        
+        try {
+            List<Long> serviceIds = serviceInstanceService.getSubscriptionsToRenewOrNotify();
+            for (Long serviceId : serviceIds) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                    break;
+                }
+                subscriptionStatusJobBean.updateServiceInstanceStatus(result, serviceId);
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to run subscription status job {}", jobInstance.getCode(), e);
+            result.registerError(e.getMessage());
+        }        
+        
     }
 
     @Override

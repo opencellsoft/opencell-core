@@ -50,7 +50,9 @@ import org.slf4j.LoggerFactory;
  * File utilities class.
  * 
  * @author Donatas Remeika
+ * @author Edward P. Legaspi
  * 
+ * @lastModifiedVersion 5.1
  */
 public final class FileUtils {
 
@@ -619,5 +621,35 @@ public final class FileUtils {
         } catch (IOException ex) {
             throw ex;
         }
+    }
+    
+    /**
+     * Change the extension of a file to the given a new file extension.
+     * 
+     * @param filename Name of the file
+     * @param newExtension New extension
+     * @return Filename with renamed extension
+     */
+    public static String changeExtension(String filename, String newExtension) {
+        String name = filename.substring(0, filename.lastIndexOf('.'));
+        return name + newExtension;
+    }
+    
+    /**
+     * Encode a file to byte64 string.
+     * 
+     * @param file File
+     * @return byte string representation of the file
+     * @throws IOException
+     */
+    public static String encodeFileToBase64Binary(File file) throws IOException {
+        String encodedFile = null;
+        try (FileInputStream fileInputStreamReader = new FileInputStream(file)) {
+            byte[] bytes = new byte[(int) file.length()];
+            fileInputStreamReader.read(bytes);
+            encodedFile = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+        }
+
+        return encodedFile;
     }
 }
