@@ -207,7 +207,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         if (reaccumulateCFValues) {
 
             clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
-            cfValueAccumulator.accumulateCfValues(cft);
+            cfValueAccumulator.cftCreated(cft);
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -47,11 +48,11 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     // @Type(type = "json")
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
-    private CustomFieldValues cfValues;
+    protected CustomFieldValues cfValues;
 
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values_accum", columnDefinition = "text")
-    private CustomFieldValues cfAccumulatedValues;
+    protected CustomFieldValues cfAccumulatedValues;
 
     @Override
     public String getUuid() {

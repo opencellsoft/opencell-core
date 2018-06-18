@@ -85,6 +85,7 @@ public class TitleApi extends BaseApi {
         titleDto.setDescription(title.getDescription());
         titleDto.setIsCompany(title.getIsCompany());
         titleDto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(title.getDescriptionI18n()));
+
         return titleDto;
     }
 
