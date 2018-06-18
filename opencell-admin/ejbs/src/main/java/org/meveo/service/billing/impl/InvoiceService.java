@@ -1772,4 +1772,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
     }
+    
+	public List<String> listPdfInvoice(Customer cust) {
+		List<String> result = new ArrayList<>();
+		if (cust.getCustomerAccounts() != null && !cust.getCustomerAccounts().isEmpty()) {
+			for (CustomerAccount ca : cust.getCustomerAccounts()) {
+				if (ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
+					for (BillingAccount ba : ca.getBillingAccounts()) {
+						if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
+							for (Invoice inv : ba.getInvoices()) {
+								result.add(getFullPdfFilePath(inv, false));
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return result;
+	}
 }

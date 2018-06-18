@@ -141,6 +141,8 @@
                         <p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}" value="#{messages['customer.buttonAddCustomerAccount']}">
                             <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                         </p:button>
+                        <p:commandButton ajax="false" rendered="#{!entity.transient}" value="#{messages['action.export']}" action="#{customerBean.exportCustomerHierarchy()}">
+                        </p:commandButton>
                     </hf:formButtons>
                 </hftl:formPanel>
             </h:panelGroup>

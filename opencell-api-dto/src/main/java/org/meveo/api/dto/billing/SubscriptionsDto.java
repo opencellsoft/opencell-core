@@ -28,7 +28,7 @@ public class SubscriptionsDto implements Serializable {
      */
     public List<SubscriptionDto> getSubscription() {
         if (subscription == null) {
-            subscription = new ArrayList<SubscriptionDto>();
+            subscription = new ArrayList<>();
         }
 
         return subscription;
