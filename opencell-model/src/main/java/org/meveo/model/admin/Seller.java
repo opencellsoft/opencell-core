@@ -47,6 +47,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
@@ -239,5 +240,10 @@ public class Seller extends BusinessCFEntity {
         }
 
         return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
+    }
+    
+    public void setSellerCFField(String cfCode, Object value){
+        cfValues.getValuesByCode().put(cfCode, new ArrayList<>());
+        cfValues.getValuesByCode().get(cfCode).add(new CustomFieldValue(value));
     }
 }
