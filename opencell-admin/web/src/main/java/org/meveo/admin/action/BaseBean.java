@@ -19,7 +19,6 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.enterprise.context.Conversation;
 import javax.faces.context.ExternalContext;
@@ -669,7 +667,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
 
-                    String referencedBy = findReferencedByEntities(clazz, id);
+                    String referencedBy = getPersistenceService().findReferencedByEntities(clazz, id);
                     log.info("Delete was unsuccessful because entity is used by other entities {}", referencedBy);
 
                     if (referencedBy != null) {
@@ -1467,60 +1465,5 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void setUploadedFile(UploadedFile uploadedFile) {
         this.uploadedFile = uploadedFile;
     }
-
-    /**
-     * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
-     * 
-     * @param Entity class to reference
-     * @param id Entity ID
-     * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
-     *         customer
-     */
-    @SuppressWarnings("rawtypes")
-    private String findReferencedByEntities(Class<T> entityClass, Long id) {
-
-        T referencedEntity = getPersistenceService().getEntityManager().getReference(entityClass, id);
-
-        int totalMatched = 0;
-        String matchedEntityInfo = null;
-        Map<Class, List<Field>> classesAndFields = ReflectionUtils.getClassesAndFieldsOfType(entityClass);
-
-        for (Entry<Class, List<Field>> classFieldInfo : classesAndFields.entrySet()) {
-
-            boolean isBusinessEntity = BusinessEntity.class.isAssignableFrom(classFieldInfo.getKey());
-
-            String sql = "select " + (isBusinessEntity ? "code" : "id") + " from " + classFieldInfo.getKey().getName() + " where ";
-            boolean fieldAddedToSql = false;
-            for (Field field : classFieldInfo.getValue()) {
-                // For now lets ignore list type fields
-                if (field.getType() == entityClass) {
-                    sql = sql + (fieldAddedToSql ? " or " : " ") + field.getName() + "=:id";
-                    fieldAddedToSql = true;
-                }
-            }
-
-            if (fieldAddedToSql) {
-
-                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
-                if (!entitiesMatched.isEmpty()) {
-
-                    matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())
-                            + ": ";
-                    boolean first = true;
-                    for (Object entityIdOrCode : entitiesMatched) {
-                        matchedEntityInfo += (first ? "" : ", ") + entityIdOrCode;
-                        first = false;
-                    }
-
-                    totalMatched += entitiesMatched.size();
-                }
-            }
-
-            if (totalMatched > 10) {
-                break;
-            }
-        }
-
-        return matchedEntityInfo;
-    }
+    
 }
