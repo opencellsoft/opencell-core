@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -14,6 +16,8 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Title;
 import org.meveo.service.catalog.impl.TitleService;
 
@@ -85,6 +89,42 @@ public class TitleApi extends BaseApi {
         titleDto.setDescription(title.getDescription());
         titleDto.setIsCompany(title.getIsCompany());
         titleDto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(title.getDescriptionI18n()));
+
+        EntityManager em = titleService.getEntityManager();
+
+        TypedQuery<Seller> query = em.createQuery("Select e from Seller e order by id", Seller.class);
+        List<Seller> sellers = query.getResultList();
+
+        int i = 0;
+        for (Seller seller : sellers) {
+            seller.setDescription("me_" + i);
+            i++;
+            em.flush();
+        }
+
+        TypedQuery<CustomerAccount> query2 = em.createQuery("Select e from CustomerAccount e order by id", CustomerAccount.class);
+        List<CustomerAccount> cas = query2.getResultList();
+
+        i = 0;
+        for (CustomerAccount ca : cas) {
+            ca.setDescription("me_" + i);
+            i++;
+            em.flush();
+        }
+
+        for (Seller seller : sellers) {
+            seller.setSellerCFField("K", "me_" + i);
+            i++;
+            em.flush();
+        }
+
+        i = 0;
+        for (CustomerAccount ca : cas) {
+            ca.setCfValue("K", "ke_" + i);
+            i++;
+            em.flush();
+        }
+
         return titleDto;
     }
 

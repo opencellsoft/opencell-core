@@ -257,4 +257,34 @@ public interface ICustomFieldEntity {
      * @param cfValues Accumulated Custom field values holder
      */
     public void setCfAccumulatedValues(CustomFieldValues cfValues);
+
+    /**
+     * Get am accumulated value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a
+     * today will be returned
+     * 
+     * @param cfCode Custom field code
+     * @return Accumulated field value
+     */
+    public default Object getCfAccumulatedValue(String cfCode) {
+        CustomFieldValues cfValues = getCfAccumulatedValues();
+        if (cfValues != null) {
+            return cfValues.getValue(cfCode);
+        }
+        return null;
+    }
+
+    /**
+     * Get an accumulated value (not CF value entity) for a given custom field for a given date
+     * 
+     * @param cfCode Custom field code
+     * @param date Date
+     * @return Accumulated field value
+     */
+    public default Object getCfAccumulatedValue(String cfCode, Date date) {
+        CustomFieldValues cfValues = getCfAccumulatedValues();
+        if (cfValues != null) {
+            return cfValues.getValue(cfCode, date);
+        }
+        return null;
+    }
 }
