@@ -155,25 +155,14 @@ public class OrderBean extends CustomFieldBean<Order> {
         if (entity.getPaymentMethod() != null) {
             paymentMethodType = entity.getPaymentMethod().getPaymentType();
             paymentMethod = PersistenceUtils.initializeAndUnproxy(entity.getPaymentMethod());
-            // if (paymentMethodType == PaymentMethodEnum.CARD) {
-            // entity.setPaymentMethod(new CardPaymentMethod());
-            // } else if (paymentMethodType == PaymentMethodEnum.CHECK) {
-            // entity.setPaymentMethod(new CheckPaymentMethod());
-            // } else if (paymentMethodType == PaymentMethodEnum.TIP) {
-            // entity.setPaymentMethod(new TipPaymentMethod());
-            // } else if (paymentMethodType == PaymentMethodEnum.WIRETRANSFER) {
-            // entity.setPaymentMethod(new WirePaymentMethod());
-            // } else if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
-            // entity.setPaymentMethod(new DDPaymentMethod());
-            // }
-            //
-            // if (paymentMethodType == null) {
-            // entity.setPaymentMethod(null);
-            // } else {
-            // entity.getPaymentMethod().setPaymentType(paymentMethodType);
-            // }
-
+        } else {
+            // setting default value to CHECK ,in order to avoid PropertyNotFoundException and NPE during orderDetail rendering
+            // and also to remain with the displayed the selectOneMenu which is set to CHECK by default
+            paymentMethodType = PaymentMethodEnum.CHECK;
+            entity.setPaymentMethod(new CheckPaymentMethod());
+            this.entity.getPaymentMethod().updateAudit(currentUser);
         }
+
         return entity;
     }
 
