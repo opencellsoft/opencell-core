@@ -21,8 +21,9 @@ package org.meveo.model.mediation;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -46,7 +47,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
  * Access point linked to Subscription and Zone.
@@ -87,13 +87,10 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
-    @Column(name = "cf_values", columnDefinition = "text")
+    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
     private CustomFieldValues cfValues;
 
-    @Convert(converter = CustomFieldValuesConverter.class)
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
     private CustomFieldValues cfAccumulatedValues;
 
     /**

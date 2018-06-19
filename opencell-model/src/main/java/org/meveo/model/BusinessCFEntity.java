@@ -20,15 +20,14 @@ package org.meveo.model;
 
 import java.util.UUID;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
  * Represents a business entity that has custom field
@@ -45,14 +44,11 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
-    @Column(name = "cf_values", columnDefinition = "text")
-    protected CustomFieldValues cfValues;
+    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
+    private CustomFieldValues cfValues;
 
-    @Convert(converter = CustomFieldValuesConverter.class)
-    @Column(name = "cf_values_accum", columnDefinition = "text")
-    protected CustomFieldValues cfAccumulatedValues;
+    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
+    private CustomFieldValues cfAccumulatedValues;
 
     @Override
     public String getUuid() {

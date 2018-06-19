@@ -241,9 +241,4 @@ public class Seller extends BusinessCFEntity {
 
         return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
     }
-    
-    public void setSellerCFField(String cfCode, Object value){
-        cfValues.getValuesByCode().put(cfCode, new ArrayList<>());
-        cfValues.getValuesByCode().get(cfCode).add(new CustomFieldValue(value));
-    }
 }

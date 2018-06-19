@@ -13,6 +13,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Type;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.persistence.JacksonUtil;
@@ -34,6 +39,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
  * @author Andrius Karpavicius
  *
  */
+@Embeddable
 public class CustomFieldValues implements Serializable {
 
     private static final long serialVersionUID = -1733710622601844949L;
@@ -46,23 +52,36 @@ public class CustomFieldValues implements Serializable {
     /**
      * Custom field values (CF value entity) grouped by a custom field code.
      */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
     private Map<String, List<CustomFieldValue>> valuesByCode = new HashMap<>();
 
     /**
      * Tracks Custom fields (code) that were added, modified, or removed. Note, as value is transient - not stored in json, it will be lost after persistence or merge.
      */
+    @Transient
     private Set<String> dirtyCfValues = new HashSet<>();
 
     /**
      * Tracks Custom fields (code) periods that were added or removed. Same as dirtyCfValues minus the custom fields, which had change in value only. Note, as value is transient -
      * not stored in json, it will be lost after persistence or merge.
      */
+    @Transient
     private Set<String> dirtyCfPeriods = new HashSet<>();
 
     /**
      * Constructor
      */
     public CustomFieldValues() {
+    }
+
+    /**
+     * Instantiate custom field value holder with a given set of custom field values
+     * 
+     * @param values Custom field values as map with Custom field code as a key and list of CustomFieldValue entities as a value
+     */
+    public CustomFieldValues(Map<String, List<CustomFieldValue>> values) {
+        this.valuesByCode = values;
     }
 
     /**

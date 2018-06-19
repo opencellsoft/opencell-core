@@ -22,11 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -64,7 +65,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.InterBankTitle;
 
 /**
@@ -202,13 +202,10 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
-    @Column(name = "cf_values", columnDefinition = "text")
+    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
     private CustomFieldValues cfValues;
 
-    @Convert(converter = CustomFieldValuesConverter.class)
-    @Column(name = "cf_values_accum", columnDefinition = "text")
+    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
     private CustomFieldValues cfAccumulatedValues;
 
     public String getCode() {

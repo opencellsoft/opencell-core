@@ -40540,6 +40540,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay" id="252b0a99-b1d1-4bbb-be9c-fb79e832145b">
+        <con:settings/>
+        <con:config>
+          <delay>2000</delay>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="b103763c-8e30-4f64-976f-d590fe359418" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CF value accumulation" searchProperties="true">
@@ -44574,6 +44580,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay4" id="c5a4b474-9afd-4896-941f-909a5e721ca8">
+        <con:settings/>
+        <con:config>
+          <delay>2000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find customer account - AB change" id="802d205b-30b9-48f7-af10-b18179797b50">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -45638,6 +45650,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay3" id="b0842c73-4081-48dd-946b-618a6bab2146">
+        <con:settings/>
+        <con:config>
+          <delay>2000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find billing account - C change" id="7a4259f6-ef58-4aee-be57-ca13ff81f294">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -46473,6 +46491,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay1" id="86ad4515-84f2-4d1e-b619-3e522adac52c">
+        <con:settings/>
+        <con:config>
+          <delay>2000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find billing account - D change" id="28e15ce9-2f91-460c-beb8-20c5f81f87b0">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -46997,6 +47021,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="delay" name="Delay2" id="9b7fe24c-487a-41de-a110-12140219ec36">
+        <con:settings/>
+        <con:config>
+          <delay>2000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find billing account - C add" id="29b10d59-2bf9-4cd7-b2ff-9772080d9276">
@@ -47892,6 +47922,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="delay" name="Delay" id="f02f9755-d383-4f15-8bc7-c790b51ce3c3">
+        <con:settings/>
+        <con:config>
+          <delay>2000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find seller - EF change" id="e9a8874c-1fc6-4a31-84a7-f69bfb78c5dd">
@@ -48860,8 +48896,82 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeUserAccount>\r
-         <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA_SELLER_CH2</userAccountCode>\r
+         <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA</userAccountCode>\r
       </ws:removeUserAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete User account no CF" id="a43b0513-261a-4999-88c7-c6ecdce585dc">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomerAccount</con:operation>
+          <con:request name="Delete User account no CF" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeUserAccount>\r
+         <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA_NO_CF</userAccountCode>\r
+      </ws:removeUserAccount>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Billing account" id="f1354b0a-27ec-440d-a823-242934fb292b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomerAccount</con:operation>
+          <con:request name="Delete Billing account" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeBillingAccount>\r
+         <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA</billingAccountCode>\r
+      </ws:removeBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
@@ -48897,7 +49007,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:removeCustomerAccount>\r
-         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_DEF</customerAccountCode>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA</customerAccountCode>\r
       </ws:removeCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -48919,12 +49029,49 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Delete Seller" id="e8d8c820-d456-4322-bbbb-bff6cb28e6d2">
+      <con:testStep type="request" name="Delete Customer" id="88fe5358-8b7a-4828-88f2-07ff35d1fec8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomerAccount</con:operation>
+          <con:request name="Delete Customer" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomer>\r
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CUST</customerCode>\r
+      </ws:removeCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Seller no CF child 2" id="210593b9-cf45-469e-a517-af30aee307e7">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
           <con:operation>removeSeller</con:operation>
-          <con:request name="Delete Seller" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="2b4f4fe5-15fe-458d-b473-e35619868739">
+          <con:request name="Delete Seller no CF child 2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="2b4f4fe5-15fe-458d-b473-e35619868739">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -48934,7 +49081,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeSeller>         
-         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_DEF</sellerCode>
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH2</sellerCode>
       </ws:removeSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -48956,12 +49103,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Delete Seller child 2" id="210593b9-cf45-469e-a517-af30aee307e7">
+      <con:testStep type="request" name="Delete Seller no CF child 1" id="e8d8c820-d456-4322-bbbb-bff6cb28e6d2">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
           <con:operation>removeSeller</con:operation>
-          <con:request name="Delete Seller child 2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="2b4f4fe5-15fe-458d-b473-e35619868739">
+          <con:request name="Delete Seller no CF child 1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="2b4f4fe5-15fe-458d-b473-e35619868739">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -48971,7 +49118,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:removeSeller>         
-         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_DEF</sellerCode>
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH1</sellerCode>
       </ws:removeSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -49180,7 +49327,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="K9" description="K">\r
+         <customField code="K" description="K">\r
             <fieldType>STRING</fieldType>\r
             <appliesTo>SELLER</appliesTo>\r
             <storageType>SINGLE</storageType>\r
@@ -49459,8 +49606,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <languageCode>FRA</languageCode>\r
             <customFields>\r
                <customField code="K" description="K">\r
-                  <fieldType>STRING</fieldType>\r
-                  <stringValue>cookie</stringValue>\r
+                  <stringValue>cookies</stringValue>\r
                </customField>\r
             </customFields>\r
          </seller>\r
@@ -49566,7 +49712,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                 <path>//customerAccount/customFields/customField[@code="K"]</path>
                 <content><![CDATA[<customField code="K" description="K">
   <fieldType>STRING</fieldType>
-  <stringValue>present</stringValue>
+  <stringValue>cookies</stringValue>
 </customField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -49578,7 +49724,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                 <path>//customerAccount/customFields/inheritedCustomField[@code="K"]</path>
                 <content><![CDATA[<inheritedCustomField code="K" description="K">
   <fieldType>STRING</fieldType>
-  <stringValue>present</stringValue>
+  <stringValue>cookies</stringValue>
 </inheritedCustomField>]]></content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -49750,7 +49896,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>10</con:value>
+        <con:value>24</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -49762,11 +49908,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
@@ -49794,11 +49940,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03:00</con:value>
+      <con:value>+01:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03:00</con:value>
+      <con:value>+02:00</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

@@ -32,13 +32,15 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.meveo.model.persistence.CustomFieldJsonType;
 import org.meveo.model.persistence.JsonBinaryType;
 import org.meveo.model.persistence.JsonStringType;
 
 /**
  * Base class for all entity classes.
  */
-@TypeDefs({ @TypeDef(name = "json", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class) })
+@TypeDefs({ @TypeDef(name = "json", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
+        @TypeDef(name = "cfjson", typeClass = CustomFieldJsonType.class) })
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable, IEntity, IJPAVersionedEntity {
     private static final long serialVersionUID = 1L;
