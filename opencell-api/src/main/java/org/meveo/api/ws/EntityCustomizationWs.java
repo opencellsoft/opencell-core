@@ -27,88 +27,165 @@ public interface EntityCustomizationWs extends IBaseWs {
     // Custom entity templates
 
     @WebMethod
-    public ActionStatus createEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
+    ActionStatus createEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
 
     @WebMethod
-    public ActionStatus updateEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
+    ActionStatus updateEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
 
     @WebMethod
-    public CustomEntityTemplateResponseDto findEntityTemplate(@WebParam(name = "code") String code);
+    CustomEntityTemplateResponseDto findEntityTemplate(@WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus removeEntityTemplate(@WebParam(name = "code") String code);
+    ActionStatus removeEntityTemplate(@WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus createOrUpdateEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
+    ActionStatus createOrUpdateEntityTemplate(@WebParam(name = "customEntityTemplate") CustomEntityTemplateDto postData);
+
+    /**
+     * Enable a Custom entity template by its code
+     * 
+     * @param code Custom entity template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableEntityTemplate(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Custom entity template by its code
+     * 
+     * @param code Custom entity template code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableEntityTemplate(@WebParam(name = "code") String code);
 
     // Custom entity instances
 
     @WebMethod
-    public CustomEntityInstanceResponseDto findCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
+    CustomEntityInstanceResponseDto findCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus removeCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
+    ActionStatus removeCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
 
     @WebMethod
-    public ActionStatus createCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+    ActionStatus createCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
 
     @WebMethod
-    public ActionStatus updateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+    ActionStatus updateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
 
     @WebMethod
-    public ActionStatus createOrUpdateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+    ActionStatus createOrUpdateCustomEntityInstance(@WebParam(name = "customEntityInstance") CustomEntityInstanceDto dto);
+
+    /**
+     * Enable a Custom entity instance with a given code
+     * 
+     * @param cetCode The custom entity template's code
+     * @param code Custom entity instance code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
+
+    /**
+     * Disable a Custom entity instance with a given code
+     * 
+     * @param cetCode The custom entity template's code
+     * @param code Custom entity instance code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableCustomEntityInstance(@WebParam(name = "cetCode") String cetCode, @WebParam(name = "code") String code);
 
     // Custom fields
 
     @WebMethod
-    public ActionStatus createField(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+    ActionStatus createField(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 
     @WebMethod
-    public ActionStatus updateField(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+    ActionStatus updateField(@WebParam(name = "customField") CustomFieldTemplateDto postData);
 
     @WebMethod
-    public ActionStatus removeField(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
+    ActionStatus removeField(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
 
     @WebMethod
-    public GetCustomFieldTemplateReponseDto findField(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
+    GetCustomFieldTemplateReponseDto findField(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
 
     @WebMethod
-    public ActionStatus createOrUpdateField(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+    ActionStatus createOrUpdateField(@WebParam(name = "customField") CustomFieldTemplateDto postData);
+
+    /**
+     * Enable a Custom field template with a given code
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableField(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
+
+    /**
+     * Disable a Custom field template with a given code
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableField(@WebParam(name = "customFieldTemplateCode") String customFieldTemplateCode, @WebParam(name = "appliesTo") String appliesTo);
 
     // Entity actions
 
     @WebMethod
-    public ActionStatus createAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
+    ActionStatus createAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
 
     @WebMethod
-    public ActionStatus updateAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
+    ActionStatus updateAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
 
     @WebMethod
-    public ActionStatus removeAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
+    ActionStatus removeAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
 
     @WebMethod
-    public EntityCustomActionResponseDto findAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
+    EntityCustomActionResponseDto findAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
 
     @WebMethod
-    public ActionStatus createOrUpdateAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
+    ActionStatus createOrUpdateAction(@WebParam(name = "entityAction") EntityCustomActionDto dto);
+
+    /**
+     * Enable an Entity custom action with a given code
+     * 
+     * @param actionCode Action code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
+
+    /**
+     * Disable an Entity custom action with a given code
+     * 
+     * @param actionCode Action code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo);
 
     @WebMethod
-    public ActionStatus customizeEntity(@WebParam(name = "entityCustomization") EntityCustomizationDto dto);
+    ActionStatus customizeEntity(@WebParam(name = "entityCustomization") EntityCustomizationDto dto);
 
     @WebMethod
-    public EntityCustomizationResponseDto findEntityCustomizations(@WebParam(name = "customizedEntityClass") String customizedEntityClass);
+    EntityCustomizationResponseDto findEntityCustomizations(@WebParam(name = "customizedEntityClass") String customizedEntityClass);
 
     @WebMethod
-	BusinessEntityResponseDto listBusinessEntityForCFVByCode(@WebParam(name = "code") String code, @WebParam(name = "wildcode") String wildcode);
-    
-	@WebMethod
-	CustomEntityTemplatesResponseDto listEntityTemplates(@WebParam(name = "customEntityTemplateCode") String customEntityTemplateCode);
-	
-	@WebMethod
-	EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
+    BusinessEntityResponseDto listBusinessEntityForCFVByCode(@WebParam(name = "code") String code, @WebParam(name = "wildcode") String wildcode);
 
-	@WebMethod
-	ActionStatus executeAction(@WebParam(name = "actionCode") String actionCode,
-			@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
-	
+    @WebMethod
+    CustomEntityTemplatesResponseDto listEntityTemplates(@WebParam(name = "customEntityTemplateCode") String customEntityTemplateCode);
+
+    @WebMethod
+    EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
+
+    @WebMethod
+    ActionStatus executeAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
+
 }

@@ -48,15 +48,19 @@ public class XLSFile implements Serializable {
 	private File file;
 	private List<String[]> contexts;
 
+	/**
+	 * @param file xls file
+	 */
 	public XLSFile(File file) {
 		this.file = file;
 		contexts = new ArrayList<String[]>();
 	}
 
+	/**
+	 * @throws IOException input/output exception
+	 */
 	public void parse() throws IOException {
-		Workbook w;
-		try {
-			w = WorkbookFactory.create(new FileInputStream(file));
+		try (Workbook w = WorkbookFactory.create(new FileInputStream(file))) {
 			// Get the first sheet
 			Sheet sheet = w.getSheetAt(0);
 			// Loop over first 10 column and lines

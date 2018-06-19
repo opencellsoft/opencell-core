@@ -25,7 +25,6 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.AddressDto;
-import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
@@ -59,7 +58,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
@@ -72,8 +70,6 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
@@ -102,10 +98,8 @@ import org.meveo.util.MeveoParamBean;
  *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @lastModifiedVersion 5.1
  */
-
-@SuppressWarnings("deprecation")
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountHierarchyApi extends BaseApi {
@@ -166,7 +160,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
-
+    
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
@@ -251,10 +245,22 @@ public class AccountHierarchyApi extends BaseApi {
         currencyApi.findOrCreate(postData.getCurrencyCode());
         languageApi.findOrCreate(postData.getLanguageCode());
 
-        sellerDto.setCountryCode(postData.getCountryCode());
-        sellerDto.setCurrencyCode(postData.getCurrencyCode());
-        sellerDto.setLanguageCode(postData.getLanguageCode());
-        sellerApi.createOrUpdate(sellerDto);
+        boolean updateSeller = false;
+        if (!postData.getCountryCode().equals(sellerDto.getCountryCode())) {
+            sellerDto.setCountryCode(postData.getCountryCode());
+            updateSeller = true;
+        }
+        if (!postData.getCurrencyCode().equals(sellerDto.getCurrencyCode())) {
+            sellerDto.setCurrencyCode(postData.getCurrencyCode());
+            updateSeller = true;
+        }
+        if (!postData.getLanguageCode().equals(sellerDto.getLanguageCode())) {
+            sellerDto.setLanguageCode(postData.getLanguageCode());
+            updateSeller = true;
+        }
+        if (updateSeller) {
+            sellerApi.createOrUpdate(sellerDto);
+        }
 
         String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         if (postData.getUsePrefix() != null && !postData.getUsePrefix()) {
@@ -1629,8 +1635,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public void accountEntityToDto(AccountDto dto, AccountEntity account, CustomFieldInheritanceEnum inheritCF) {
-        dto.setCode(account.getCode());
-        dto.setDescription(account.getDescription());
+        dto.setAuditable(account);
         dto.setExternalRef1(account.getExternalRef1());
         dto.setExternalRef2(account.getExternalRef2());
         dto.setJobTitle(account.getJobTitle());
@@ -1640,8 +1645,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (account.getAddress() != null) {
             dto.setAddress(new AddressDto(account.getAddress()));
         }
-        dto.setCreated(account.getAuditable().getCreated());
-
+        
         BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
 
         if (businessAccountModel != null) {
@@ -1656,27 +1660,8 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF) {
-        CustomerDto dto = new CustomerDto();
+        CustomerDto dto = new CustomerDto(customer);
         accountEntityToDto(dto, customer, inheritCF);
-
-        dto.setVatNo(customer.getVatNo());
-        dto.setRegistrationNo(customer.getRegistrationNo());
-
-        if (customer.getCustomerCategory() != null) {
-            dto.setCustomerCategory(customer.getCustomerCategory().getCode());
-        }
-
-        if (customer.getCustomerBrand() != null) {
-            dto.setCustomerBrand(customer.getCustomerBrand().getCode());
-        }
-
-        if (customer.getSeller() != null) {
-            dto.setSeller(customer.getSeller().getCode());
-        }
-
-        if (customer.getContactInformation() != null) {
-            dto.setContactInformation(new ContactInformationDto(customer.getContactInformation()));
-        }
 
         if (!dto.isLoaded() && customer.getCustomerAccounts() != null) {
             dto.setCustomerAccounts(new CustomerAccountsDto());
@@ -1695,34 +1680,8 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF) {
-        CustomerAccountDto dto = new CustomerAccountDto();
-        accountEntityToDto(dto, ca, inheritCF);
-
-        if (ca.getCustomer() != null) {
-            dto.setCustomer(ca.getCustomer().getCode());
-        }
-
-        if (ca.getTradingCurrency() != null) {
-            dto.setCurrency(ca.getTradingCurrency().getCurrencyCode());
-        }
-
-        if (ca.getTradingLanguage() != null) {
-            dto.setLanguage(ca.getTradingLanguage().getLanguageCode());
-        }
-
-        dto.setStatus(ca.getStatus());
-        dto.setDateStatus(ca.getDateStatus());
-        try {
-            dto.setCreditCategory(ca.getCreditCategory().getCode());
-        } catch (NullPointerException ex) {
-        }
-        dto.setDunningLevel(ca.getDunningLevel());
-        dto.setDateStatus(ca.getDateStatus());
-        dto.setDateDunningLevel(ca.getDateDunningLevel());
-        if (ca.getContactInformation() != null) {
-            dto.setContactInformation(new ContactInformationDto(ca.getContactInformation()));
-        }
-        dto.setDueDateDelayEL(ca.getDueDateDelayEL());
+        CustomerAccountDto dto = new CustomerAccountDto(ca);
+        accountEntityToDto(dto, ca, inheritCF);        
 
         if (!dto.isLoaded() && ca.getBillingAccounts() != null) {
             dto.setBillingAccounts(new BillingAccountsDto());
@@ -1731,20 +1690,8 @@ public class AccountHierarchyApi extends BaseApi {
                 dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba, inheritCF));
             }
         }
-
-        if (ca.getPaymentMethods() != null && !ca.getPaymentMethods().isEmpty()) {
-            dto.setPaymentMethods(new ArrayList<>());
-            for (PaymentMethod paymentMethod : ca.getPaymentMethods()) {
-                dto.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
-            }
-
-            // Start compatibility with pre-4.6 versions
-            dto.setPaymentMethod(ca.getPaymentMethods().get(0).getPaymentType());
-            // End compatibility with pre-4.6 versions
-        }
-
-        dto.setExcludedFromPayment(ca.isExcludedFromPayment());
         dto.setLoaded(true);
+        
         return dto;
     }
 
@@ -1753,37 +1700,8 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF) {
-
-        BillingAccountDto dto = new BillingAccountDto();
+        BillingAccountDto dto = new BillingAccountDto(ba);
         accountEntityToDto(dto, ba, inheritCF);
-
-        if (ba.getCustomerAccount() != null) {
-            dto.setCustomerAccount(ba.getCustomerAccount().getCode());
-        }
-        BillingCycle billingCycle = ba.getBillingCycle();
-        if (billingCycle != null) {
-            dto.setBillingCycle(billingCycle.getCode());
-            dto.setInvoicingThreshold(billingCycle.getInvoicingThreshold());
-        }
-        if (ba.getTradingCountry() != null) {
-            dto.setCountry(ba.getTradingCountry().getCountryCode());
-        }
-        if (ba.getTradingLanguage() != null) {
-            dto.setLanguage(ba.getTradingLanguage().getLanguageCode());
-        }
-        dto.setNextInvoiceDate(ba.getNextInvoiceDate());
-        dto.setSubscriptionDate(ba.getSubscriptionDate());
-        dto.setTerminationDate(ba.getTerminationDate());
-        dto.setElectronicBilling(ba.getElectronicBilling());
-        dto.setStatus(ba.getStatus());
-        dto.setStatusDate(ba.getStatusDate());
-        dto.setPhone(ba.getPhone());
-        dto.setMinimumAmountEl(ba.getMinimumAmountEl());
-        dto.setMinimumLabelEl(ba.getMinimumLabelEl());
-        if (ba.getTerminationReason() != null) {
-            dto.setTerminationReason(ba.getTerminationReason().getCode());
-        }
-        dto.setEmail(ba.getEmail());
 
         if (!dto.isLoaded() && ba.getUsersAccounts() != null) {
             for (UserAccount userAccount : ba.getUsersAccounts()) {
@@ -1792,22 +1710,6 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         dto.setLoaded(true);
-
-        if (ba.getDiscountPlan() != null) {
-            dto.setDiscountPlan(ba.getDiscountPlan().getCode());
-        }
-
-        // Start compatibility with pre-4.6 versions
-
-        PaymentMethod paymentMethod = ba.getCustomerAccount().getPreferredPaymentMethod();
-        if (paymentMethod != null) {
-            dto.setPaymentMethod(paymentMethod.getPaymentType());
-            if (paymentMethod instanceof DDPaymentMethod) {
-                dto.setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
-            }
-        }
-
-        // End compatibility with pre-4.6 versions
         return dto;
 
     }
@@ -1817,31 +1719,10 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public UserAccountDto userAccountToDto(UserAccount ua, CustomFieldInheritanceEnum inheritCF) {
-
-        UserAccountDto dto = new UserAccountDto();
+        UserAccountDto dto = new UserAccountDto(ua);
         accountEntityToDto(dto, ua, inheritCF);
-
-        if (ua.getBillingAccount() != null) {
-            dto.setBillingAccount(ua.getBillingAccount().getCode());
-            dto.setBillingAccountDescription(ua.getBillingAccount().getDescription());
-
-            if (ua.getBillingAccount().getCustomerAccount() != null) {
-                dto.setCustomerAccount(ua.getBillingAccount().getCustomerAccount().getCode());
-                dto.setCustomerAccountDescription(ua.getBillingAccount().getCustomerAccount().getDescription());
-
-                if (ua.getBillingAccount().getCustomerAccount().getCustomer() != null) {
-                    dto.setCustomer(ua.getBillingAccount().getCustomerAccount().getCustomer().getCode());
-                    dto.setCustomerDescription(ua.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
-                }
-            }
-        }
-
-        dto.setSubscriptionDate(ua.getSubscriptionDate());
-        dto.setTerminationDate(ua.getTerminationDate());
-        dto.setStatus(ua.getStatus());
-        dto.setStatusDate(ua.getStatusDate());
+        
         dto.setLoaded(true);
-
         return dto;
     }
 

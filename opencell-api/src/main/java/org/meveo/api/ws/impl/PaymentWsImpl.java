@@ -14,7 +14,6 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -22,6 +21,7 @@ import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
@@ -35,7 +35,6 @@ import org.meveo.api.payment.PaymentGatewayApi;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-
 
 /**
  * The implementation for PaymentWs.
@@ -275,6 +274,33 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
+    public ActionStatus enablePaymentMethod(Long id) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentMethodApi.enableOrDisable(id, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disablePaymentMethod(Long id) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentMethodApi.enableOrDisable(id, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus createCreditCategory(CreditCategoryDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -432,6 +458,34 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         }
 
         return response;
+    }
+
+    @Override
+    public ActionStatus enablePaymentGateway(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disablePaymentGateway(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            paymentGatewayApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
     }
 
     @Override

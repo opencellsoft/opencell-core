@@ -10,7 +10,7 @@ import org.meveo.api.CountryApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CountryDto;
-import org.meveo.api.dto.response.GetCountryResponse;
+import org.meveo.api.dto.response.GetTradingCountryResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryRs;
 
@@ -18,7 +18,6 @@ import org.meveo.api.rest.CountryRs;
  * 
  * @author Edward P. Legaspi
  * 
- * @deprecated will be renammed to TradingCountryRsImpl
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -47,8 +46,8 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
     }
 
     @Override
-    public GetCountryResponse find(@QueryParam("countryCode") String countryCode) {
-        GetCountryResponse result = new GetCountryResponse();
+    public GetTradingCountryResponse find(@QueryParam("countryCode") String countryCode) {
+        GetTradingCountryResponse result = new GetTradingCountryResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
@@ -99,4 +98,29 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         return result;
     }
 
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            countryApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            countryApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

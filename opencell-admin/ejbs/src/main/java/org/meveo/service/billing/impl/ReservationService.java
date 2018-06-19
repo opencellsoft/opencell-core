@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Reservation;
@@ -267,6 +268,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setStatus(ReservationStatus.CANCELLED);
 	}
 
+    @JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void cancelPrepaidReservationInNewTransaction(Reservation reservation) throws BusinessException {
 		cancelPrepaidReservation(reservation);

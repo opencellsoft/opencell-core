@@ -41,7 +41,6 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.DatePeriod;
@@ -73,7 +72,8 @@ import org.primefaces.model.DualListModel;
  * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  * 
  */
 @Named
@@ -84,9 +84,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Inject
     private SubscriptionService subscriptionService;
-
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
@@ -264,6 +261,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     /**
      * delete all entities related to Offer( used only for Marketing Manager)
+     * 
+     * @param entity offer template entity 
      */
     @ActionMethod
     public void deleteCatalogHierarchy(OfferTemplate entity) {
@@ -370,6 +369,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
             List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
             // process the services
+            int itemIndex = 1;
             for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
                 ServiceTemplate st = ost.getServiceTemplate();
                 if (st.isSelected()) {
@@ -380,6 +380,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     serviceConfigurationDto.setDescription(st.getDescription());
                     serviceConfigurationDto.setMandatory(ost.isMandatory());
                     serviceConfigurationDto.setInstantiatedFromBSM(st.isInstantiatedFromBSM());
+                    serviceConfigurationDto.setItemIndex(itemIndex++);
                     servicesConfigurations.add(serviceConfigurationDto);
                     if (stCfValues != null) {
                         serviceConfigurationDto.setCfValues(stCfValues);
@@ -477,24 +478,29 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("saveOfferServiceTemplate getObjectId={}", getObjectId());
 
         try {
+            ServiceTemplate serviceTemplate = null;;
             if (offerServiceTemplate != null && offerServiceTemplate.getServiceTemplate() == null) {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 
-            offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+            if (offerServiceTemplate != null) {
+                serviceTemplate = offerServiceTemplate.getServiceTemplate();
+                offerServiceTemplate.setIncompatibleServices(serviceTemplateService.refreshOrRetrieve(incompatibleServices.getTarget()));
+            }
 
-            if (offerServiceTemplate.getId() != null) {
+            if (offerServiceTemplate != null && offerServiceTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.update.successful"));
 
             } else {
 
                 // Validate that such service was not added earlier
-                if (entity.containsServiceTemplate(offerServiceTemplate.getServiceTemplate())) {
-                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), offerServiceTemplate.getServiceTemplate().getDescriptionOrCode());
+                if (serviceTemplate != null && entity.containsServiceTemplate(serviceTemplate)) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsService"), serviceTemplate.getDescriptionOrCode());
                     return;
                 }
-
-                offerServiceTemplate.setOfferTemplate(entity);
+                if (offerServiceTemplate != null) {
+                    offerServiceTemplate.setOfferTemplate(entity);
+                }
                 entity.addOfferServiceTemplate(offerServiceTemplate);
                 messages.info(new BundleKey("messages", "offerTemplate.serviceTemplate.create.successful"));
             }
@@ -560,18 +566,21 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("saveOfferProductTemplate getObjectId={}", getObjectId());
 
         try {
+            ProductTemplate productTemplate = null;
             if (offerProductTemplate != null && offerProductTemplate.getProductTemplate() == null) {
                 messages.error(new BundleKey("messages", "save.unsuccessful"));
             }
 
-            if (offerProductTemplate.getId() != null) {
+            if (offerProductTemplate != null && offerProductTemplate.getId() != null) {
                 messages.info(new BundleKey("messages", "offerTemplate.productTemplate.update.successful"));
 
-            } else {
-
+            } 
+            
+            if (offerProductTemplate != null) {
+                productTemplate = offerProductTemplate.getProductTemplate();
                 // Validate that such service was not added earlier
-                if (entity.containsProductTemplate(offerProductTemplate.getProductTemplate())) {
-                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), offerProductTemplate.getProductTemplate().getDescriptionOrCode());
+                if (productTemplate != null && entity.containsProductTemplate(productTemplate)) {
+                    messages.error(new BundleKey("messages", "offerTemplate.alreadyContainsProduct"), productTemplate.getDescriptionOrCode());
                     return;
                 }
 
@@ -776,6 +785,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             for (BusinessServiceModel bsm : selectedBsms) {
                 OfferServiceTemplate ost = new OfferServiceTemplate();
                 ServiceTemplate stSource = bsm.getServiceTemplate();
+                stSource = serviceTemplateService.refreshOrRetrieve(stSource);
 
                 ServiceTemplate stTarget = new ServiceTemplate();
                 stTarget.setCode(stSource.getCode());

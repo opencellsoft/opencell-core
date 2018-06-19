@@ -87,8 +87,17 @@
 				<f:param name="backView"
 					value="#{backView}" />
 			</c:if>
+			<c:if test="${not empty backEntityId}">
+				<f:param name="backEntityId" value="#{backEntityId}" />
+			</c:if>
+			<c:if test="${not empty backTab}">
+				<f:param name="backTab" value="#{backTab}" />
+			</c:if>
+			<c:if test="${not empty backMainTab}">
+				<f:param name="backMainTab" value="#{backMainTab}" />
+ 			</c:if>
 		</p:button>
-
+		
 		<p:tooltip for="#{resultsId}editlink"
 			value="#{messages['commons.edit']}" showEffect="slide"
 			hideEffect="slide" />

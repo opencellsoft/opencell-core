@@ -21,6 +21,7 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
     @Inject
     private TimerEntityService timerEntityService;
 
+    @Override
     public TimerEntity create(TimerEntityDto timerEntityDto) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(timerEntityDto.getCode()) || StringUtils.isBlank(timerEntityDto.getHour()) || StringUtils.isBlank(timerEntityDto.getMinute())
                 || StringUtils.isBlank(timerEntityDto.getSecond()) || StringUtils.isBlank(timerEntityDto.getYear()) || StringUtils.isBlank(timerEntityDto.getMonth())
@@ -52,23 +53,21 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
 
         }
 
-        
-
         if (timerEntityService.findByCode(timerEntityDto.getCode()) != null) {
             throw new EntityAlreadyExistsException(TimerEntity.class, timerEntityDto.getCode());
         }
 
-        TimerEntity timerEntity = TimerEntityDto.fromDTO(timerEntityDto, null);
+        TimerEntity timerEntity = convertTimerEntityFromDTO(timerEntityDto, null);
 
         timerEntityService.create(timerEntity);
 
         return timerEntity;
     }
 
+    @Override
     public TimerEntity update(TimerEntityDto timerEntityDto) throws MeveoApiException, BusinessException {
 
         String timerEntityCode = timerEntityDto.getCode();
-        
 
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("Code");
@@ -80,25 +79,13 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
             throw new EntityDoesNotExistsException(TimerEntity.class, timerEntityCode);
         }
 
-        timerEntity = TimerEntityDto.fromDTO(timerEntityDto, timerEntity);
+        timerEntity = convertTimerEntityFromDTO(timerEntityDto, timerEntity);
 
         timerEntity = timerEntityService.update(timerEntity);
 
         return timerEntity;
     }
 
-    public TimerEntity createOrUpdate(TimerEntityDto timerEntityDto) throws MeveoApiException, BusinessException {
-
-        if (timerEntityService.findByCode(timerEntityDto.getCode()) == null) {
-            return create(timerEntityDto);
-        } else {
-            return update(timerEntityDto);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public TimerEntityDto find(String timerEntityCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         TimerEntityDto result = new TimerEntityDto();
@@ -114,17 +101,26 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
 
         return result;
     }
-    
-    public void remove(String timerEntityCode) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(timerEntityCode)) {
-            missingParameters.add("code");
-            handleMissingParameters();
-        }
-        TimerEntity timerEntity = timerEntityService.findByCode(timerEntityCode);
-        if (timerEntity == null) {
-            throw new EntityDoesNotExistsException(timerEntityCode.getClass(), timerEntityCode);
+
+    private TimerEntity convertTimerEntityFromDTO(TimerEntityDto dto, TimerEntity timerEntityToUpdate) {
+        TimerEntity timerEntity = timerEntityToUpdate;
+        if (timerEntityToUpdate == null) {
+            timerEntity = new TimerEntity();
+            if (dto.isDisabled() != null) {
+                timerEntity.setDisabled(dto.isDisabled());
+            }
         }
 
-        timerEntityService.remove(timerEntity);
+        timerEntity.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
+        timerEntity.setDescription(dto.getDescription());
+        timerEntity.setYear(dto.getYear());
+        timerEntity.setMonth(dto.getMonth());
+        timerEntity.setDayOfMonth(dto.getDayOfMonth());
+        timerEntity.setDayOfWeek(dto.getDayOfWeek());
+        timerEntity.setHour(dto.getHour());
+        timerEntity.setMinute(dto.getMinute());
+        timerEntity.setSecond(dto.getSecond());
+
+        return timerEntity;
     }
 }

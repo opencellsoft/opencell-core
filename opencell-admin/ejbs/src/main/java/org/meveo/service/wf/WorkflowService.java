@@ -252,7 +252,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                     List<WFAction> listWFAction = wfActionService.listByTransition(wfTransition);
                     for (WFAction wfAction : listWFAction) {
                         if (matchExpression(wfAction.getConditionEl(), entity)) {
-                            log.debug("Processing action: {} on entity {}", wfAction);
+                            log.debug("Processing action: {} on entity", wfAction);
                             Object actionResult = executeExpression(wfAction.getActionEl(), entity);
                             log.trace("Workflow action executed. Action {}, entity {}", wfAction, entity);
                             if (entity.equals(actionResult)) {

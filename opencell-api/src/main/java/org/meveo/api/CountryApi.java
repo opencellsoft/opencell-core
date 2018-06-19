@@ -8,6 +8,7 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Country;
@@ -24,7 +25,6 @@ import org.meveo.service.billing.impl.TradingCountryService;
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
  * 
- * @deprecated will be renammed to TradingCountryApi
  **/
 @Stateless
 public class CountryApi extends BaseApi {
@@ -51,10 +51,9 @@ public class CountryApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         // If countryCode exist in the trading country table ("billing_trading_country"), return error.
-        
+
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
         if (tradingCountry != null) {
             throw new EntityAlreadyExistsException(TradingCountry.class.getName(), tradingCountry.getCountryCode());
@@ -103,6 +102,10 @@ public class CountryApi extends BaseApi {
         tradingCountry.setCountry(country);
         tradingCountry.setActive(true);
         tradingCountry.setPrDescription(postData.getName());
+        if (postData.isDisabled() != null) {
+            tradingCountry.setDisabled(postData.isDisabled());
+        }
+
         tradingCountryService.create(tradingCountry);
 
         // If currencyCode exist in reference table ("adm_currency") and don't exist in the trading currency table, create the currency in the trading currency table
@@ -113,6 +116,9 @@ public class CountryApi extends BaseApi {
             tradingCurrency.setCurrency(currency);
             tradingCurrency.setCurrencyCode(postData.getCurrencyCode());
             tradingCurrency.setPrDescription(postData.getCurrencyCode());
+            if (postData.isDisabled() != null) {
+                tradingCurrency.setDisabled(postData.isDisabled());
+            }
             tradingCurrencyService.create(tradingCurrency);
         }
     }
@@ -121,17 +127,16 @@ public class CountryApi extends BaseApi {
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
         }
-        
+
         handleMissingParameters();
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
 
-        if (tradingCountry != null) {
-            Country country = countryService.findByCode(countryCode);
-            return new CountryDto(tradingCountry, country);
+        if (tradingCountry == null) {
+            throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
-
-        throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
+        Country country = countryService.findByCode(countryCode);
+        return new CountryDto(tradingCountry, country);
     }
 
     public void remove(String countryCode, String currencyCode) throws MeveoApiException, BusinessException {
@@ -141,16 +146,12 @@ public class CountryApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
-        if (tradingCountry != null) {
-            if (tradingCountry != null) {
-                tradingCountryService.remove(tradingCountry);
-            }
-        } else {
-        	throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
+        if (tradingCountry == null) {
+            throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
+        tradingCountryService.remove(tradingCountry);
     }
 
     public void update(CountryDto postData) throws MeveoApiException, BusinessException {
@@ -163,9 +164,7 @@ public class CountryApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
-        
         Currency currency = currencyService.findByCode(postData.getCurrencyCode());
         if (currency == null) {
             throw new EntityDoesNotExistsException(Currency.class, postData.getCurrencyCode());
@@ -204,6 +203,7 @@ public class CountryApi extends BaseApi {
             tradingCurrency.setCurrency(currency);
             tradingCurrency.setCurrencyCode(postData.getCurrencyCode());
             tradingCurrency.setPrDescription(postData.getCurrencyCode());
+
             tradingCurrencyService.create(tradingCurrency);
         }
     }
@@ -218,20 +218,49 @@ public class CountryApi extends BaseApi {
             update(postData);
         }
     }
+
     public void findOrCreate(String countryCode) throws EntityDoesNotExistsException, BusinessException {
-        if (StringUtils.isBlank(countryCode)){
+        if (StringUtils.isBlank(countryCode)) {
             return;
         }
-		TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
-		if (tradingCountry==null) {
-			Country country = countryService.findByCode(countryCode);
-			if (country==null) {
-				throw new EntityDoesNotExistsException(Country.class, countryCode);
-			}
-			tradingCountry = new TradingCountry();
-			tradingCountry.setCountry(country);
-			tradingCountry.setPrDescription(country.getDescription());
-			tradingCountryService.create(tradingCountry);
-		}
-	}
+        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+        if (tradingCountry == null) {
+            Country country = countryService.findByCode(countryCode);
+            if (country == null) {
+                throw new EntityDoesNotExistsException(Country.class, countryCode);
+            }
+            tradingCountry = new TradingCountry();
+            tradingCountry.setCountry(country);
+            tradingCountry.setPrDescription(country.getDescription());
+            tradingCountryService.create(tradingCountry);
+        }
+    }
+
+    /**
+     * Enable or disable Trading country
+     * 
+     * @param code Country code
+     * @param enable Should Trading country be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(code);
+        if (tradingCountry == null) {
+            throw new EntityDoesNotExistsException(TradingCountry.class, code);
+        }
+        if (enable) {
+            tradingCountryService.enable(tradingCountry);
+        } else {
+            tradingCountryService.disable(tradingCountry);
+        }
+    }
 }

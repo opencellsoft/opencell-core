@@ -74,4 +74,25 @@ public interface ScriptInstanceRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData);
+
+    /**
+     * Enable a Script instance with a given code
+     * 
+     * @param code Script instance code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Script instance with a given code
+     * 
+     * @param code Script instance code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
 }

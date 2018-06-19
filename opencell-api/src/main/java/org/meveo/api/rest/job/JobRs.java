@@ -15,6 +15,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
@@ -161,5 +162,14 @@ public interface JobRs extends IBaseRs {
     @GET
     @Path("/jobReport")
     JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("code") String code, @QueryParam("id") Long jobExecutionResultId);
+    
+    /**
+     * List job categories
+     * 
+     * @return object containing the list of job categories
+     */
+    @GET
+    @Path("/listCategories")
+    JobCategoriesResponseDto listCategories();
     
 }

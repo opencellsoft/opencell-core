@@ -9,12 +9,14 @@ import org.meveo.model.payments.CreditCardTypeEnum;
 
 /**
  * Card payment method.
+ * 
+ * Deprecated in v.4.8. Use PaymentMethodDto instead
  *
  * @author Andrius Karpavicius
  */
 @XmlRootElement(name = "CardPaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated // Use PaymentMthodDto
+@Deprecated
 public class CardPaymentMethodDto extends PaymentMethodDto {
 
     /** The Constant serialVersionUID. */
@@ -46,24 +48,12 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
     }
 
     /**
-     * Instantiates a new card payment method dto.
+     * Convert card payment method entity to DTO
      *
-     * @param paymentMethod the payment method
+     * @param paymentMethod Entity to convert
      */
     public CardPaymentMethodDto(CardPaymentMethod paymentMethod) {
         super(paymentMethod);
-        setCardNumber(paymentMethod.getHiddenCardNumber());
-        setCardType(paymentMethod.getCardType());
-        setMonthExpiration(paymentMethod.getMonthExpiration());
-        setOwner(paymentMethod.getOwner());
-        setTokenId(paymentMethod.getTokenId());
-        setYearExpiration(paymentMethod.getYearExpiration());
-        setInfo1(paymentMethod.getInfo1());
-        setInfo2(paymentMethod.getInfo2());
-        setInfo3(paymentMethod.getInfo3());
-        setInfo4(paymentMethod.getInfo4());
-        setInfo5(paymentMethod.getInfo5());
-        setUserId(paymentMethod.getUserId());
     }
 
     /**
@@ -92,6 +82,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setInfo4(paymentMethod.getInfo4());
         setInfo5(paymentMethod.getInfo5());
         setUserId(paymentMethod.getUserId());
+        setDisabled(paymentMethod.isDisabled());
     }
 
     /**

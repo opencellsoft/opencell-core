@@ -74,4 +74,21 @@ public interface AccountingWs extends IBaseWs {
     @WebMethod
     ActionStatus removeAccountingCode(@WebParam(name = "accountingCode") String accountingCode);
 
+    /**
+     * Enable an AccountingCode by its code
+     * 
+     * @param code Accounting code code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableAccountingCode(@WebParam(name = "code") String code);
+
+    /**
+     * Disable an AccountingCode by its code
+     * 
+     * @param code Accounting code code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableAccountingCode(@WebParam(name = "code") String code);
 }

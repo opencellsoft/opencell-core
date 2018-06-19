@@ -15,6 +15,7 @@ import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -35,6 +36,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -45,8 +47,10 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -90,6 +94,15 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private UserAccountApi userAccountApi;
 
     public void create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -245,8 +258,15 @@ public class BillingAccountApi extends AccountEntityApi {
             if (customerAccount == null) {
                 throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
             } else if (!billingAccount.getCustomerAccount().equals(customerAccount)) {
-                throw new InvalidParameterException(
-                    "Can not change the parent account. Billing account's current parent account (customer account) is " + billingAccount.getCustomerAccount().getCode());
+                // a safeguard to allow this only if all the WO/RT have been invoiced.
+                Long countNonTreatedWO = walletOperationService.countNonTreatedWOByBA(billingAccount);
+                if(countNonTreatedWO > 0) {
+                    throw new BusinessApiException("Can not change the parent account. Billing account have non treated WO");
+                }
+                Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByBA(billingAccount);
+                if(countNonInvoicedRT > 0) {
+                    throw new BusinessApiException("Can not change the parent account. Billing account have non invoiced RT");
+                }
             }
             billingAccount.setCustomerAccount(customerAccount);
         }
@@ -560,7 +580,7 @@ public class BillingAccountApi extends AccountEntityApi {
      * @param postData Billing account DTO
      * @param billingAccount Billing account to update if necessary
      * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private void createOrUpdatePaymentMethodInCA(BillingAccountDto postData, BillingAccount billingAccount) throws MeveoApiException, BusinessException {
 
@@ -633,4 +653,29 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
     }
+
+    /**
+     * Exports a json representation of the BillingAcount hierarchy. It include subscription, accountOperations and invoices.
+     * 
+     * @param ba the selected BillingAccount
+     * @return DTO representation of BillingAccount
+     */
+	public BillingAccountDto exportBillingAccountHierarchy(BillingAccount ba) {
+		BillingAccountDto result = new BillingAccountDto(ba);
+
+		if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
+			for (Invoice invoice : ba.getInvoices()) {
+				result.getInvoices().add(invoiceApi.invoiceToDto(invoice, true, false));
+			}
+		}
+
+		if (ba.getUsersAccounts() != null && !ba.getUsersAccounts().isEmpty()) {
+			for (UserAccount ua : ba.getUsersAccounts()) {
+				result.getUserAccounts().getUserAccount().add(userAccountApi.exportUserAccountHierarchy(ua));
+			}
+		}
+
+		return result;
+	}
+
 }

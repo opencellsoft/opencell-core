@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.ProductDto;
 
@@ -17,7 +17,7 @@ import org.meveo.api.dto.billing.ProductDto;
  */
 @XmlRootElement(name = "ApplyProductRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ApplyProductRequestDto extends BaseDto {
+public class ApplyProductRequestDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3910185882621015476L;

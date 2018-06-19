@@ -17,7 +17,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
@@ -25,6 +24,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -40,11 +40,15 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.ISearchable;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.Auditable;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -56,8 +60,6 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.meveo.util.EntityCustomizationUtils;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -99,15 +101,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     protected Provider appProvider;
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
@@ -120,6 +115,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * @return Number of items added
      */
     @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int populateIndex(String classname, int from, ReindexingStatistics statistics) {
 
@@ -175,17 +171,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         return found;
     }
 
-    public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
-        }
-
-        return emfForJobs;
+    private EntityManager getEntityManager() {
+        return emWrapper.getEntityManager();
     }
 
     /**
@@ -206,20 +193,20 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         String fieldNameTo = null;
         String fieldNameFrom = null;
 
-//        log.trace("Processing entity: {}", entity);
+        // log.trace("Processing entity: {}", entity);
 
         for (Entry<String, String> fieldInfo : fields.entrySet()) {
 
             fieldNameTo = fieldInfo.getKey();
             fieldNameFrom = fieldInfo.getValue();
 
-//            log.trace("Mapping {} to {}", fieldNameFrom, fieldNameTo);
+            // log.trace("Mapping {} to {}", fieldNameFrom, fieldNameTo);
 
             Object value = null;
             try {
                 // Obtain field value from entity
                 if (!fieldNameFrom.contains(".")) {
-//                    log.trace("Fetching value of property {}", fieldNameFrom);
+                    // log.trace("Fetching value of property {}", fieldNameFrom);
                     if (fieldNameFrom.endsWith("()")) {
                         value = MethodUtils.invokeMethod(entity, fieldNameFrom.substring(0, fieldNameFrom.length() - 2));
                     } else {
@@ -230,28 +217,36 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                         value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
                     }
 
-//                    log.trace("Value retrieved: {}", value);
+                    // log.trace("Value retrieved: {}", value);
                 } else {
                     String[] fieldNames = fieldNameFrom.split("\\.");
 
                     Object fieldValue = entity;
                     for (String fieldName : fieldNames) {
-//                        log.trace("Fetching value of property {}", fieldName);
-                        if (fieldName.endsWith("()")) {
-                            fieldValue = MethodUtils.invokeMethod(fieldValue, fieldName.substring(0, fieldName.length() - 2));
-                        } else {
-                            fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
-                        }
-//                        log.trace("Value retrieved: {}", fieldValue);
+                        // log.trace("Fetching value of property {}", fieldName);
                         if (fieldValue == null) {
                             break;
                         }
+                        if (fieldName.endsWith("()")) {
+                            // log.trace("Invoking method {}.{}", fieldValue.getClass().getSimpleName(), fieldName);
+                            fieldValue = MethodUtils.invokeMethod(fieldValue, true, fieldName.substring(0, fieldName.length() - 2), ArrayUtils.EMPTY_OBJECT_ARRAY, null);
+                        } else {
+                            // log.trace("Reading property {}.{}", fieldValue.getClass().getSimpleName(), fieldName);
+                            fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
+                        }
+
+                        if (fieldValue == null) {
+                            break;
+                        }
+
                         if (fieldValue instanceof HibernateProxy) {
+                            // log.trace("Fetching value through HibernateProxy {}.{}", fieldValue.getClass().getSimpleName(), fieldName);
                             fieldValue = ((HibernateProxy) fieldValue).getHibernateLazyInitializer().getImplementation();
                         }
+                        // log.trace("Value retrieved: {}", fieldValue);
                     }
                     value = fieldValue;
-//                    log.trace("Final value retrieved, {}: {}", fieldNameFrom, value);
+                    // log.trace("Final value retrieved, {}: {}", fieldNameFrom, value);
                 }
 
                 if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
@@ -321,6 +316,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 }
             }
         }
+
+        // log.trace("Returning jsonValueMap: {}", jsonValueMap);
         return jsonValueMap;
     }
 
@@ -334,11 +331,12 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     private Map<String, Object> convertObjectToFieldMap(Object valueToConvert) throws IllegalAccessException {
         Map<String, Object> fieldValueMap = new HashMap<>();
 
+        // log.trace("valueToConvert: {}", valueToConvert);
         List<Field> fields = new ArrayList<Field>();
         ReflectionUtils.getAllFields(fields, valueToConvert.getClass());
 
         for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers()) || !Auditable.class.isAssignableFrom(field.getType())) {
                 continue;
             }
 
@@ -354,6 +352,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 fieldValueMap.put(field.getName(), value);
             }
         }
+        // log.trace("fieldValueMap: {}", fieldValueMap);
         return fieldValueMap;
     }
 
@@ -424,6 +423,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * 
      * @throws BusinessException business exception.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 

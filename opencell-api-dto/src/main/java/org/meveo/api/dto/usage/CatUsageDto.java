@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class CatUsageDto.
@@ -18,7 +18,7 @@ import org.meveo.api.dto.BaseDto;
  */
 @XmlRootElement(name = "CatUsage")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CatUsageDto extends BaseDto {
+public class CatUsageDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

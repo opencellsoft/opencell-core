@@ -97,7 +97,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
      * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
      * it.
      * 
-     * @see org.meveo.admin.action.BaseBean
+     * @return A list of documents
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     // TODO @Begin(join = true)
@@ -153,20 +153,15 @@ public class CRMConnectorRejectedFileBean implements Serializable {
 
         File tmpFile = new File(tmpPath + File.separator + UUID.randomUUID().toString());
 
-        try {
-            FileOutputStream fout = new FileOutputStream(tmpFile);
-            CheckedOutputStream csum = new CheckedOutputStream(fout, new CRC32());
-            GZIPOutputStream out = new GZIPOutputStream(new BufferedOutputStream(csum));
-            InputStream in = new FileInputStream(new File(document.getAbsolutePath()));
+        try (FileOutputStream fout = new FileOutputStream(tmpFile);
+             CheckedOutputStream csum = new CheckedOutputStream(fout, new CRC32());
+             GZIPOutputStream out = new GZIPOutputStream(new BufferedOutputStream(csum));
+             InputStream in = new FileInputStream(new File(document.getAbsolutePath()));) {
+
             int sig = 0;
             byte[] buf = new byte[1024];
             while ((sig = in.read(buf, 0, 1024)) != -1)
                 out.write(buf, 0, sig);
-            in.close();
-            out.finish();
-            out.close();
-            csum.close();
-            fout.close();
             // /TODO FIX TO USE BOTH
             File createdFile = new File(document.getAbsolutePath() + ".gzip");
             if (createdFile.exists()) {
@@ -176,33 +171,36 @@ public class CRMConnectorRejectedFileBean implements Serializable {
         } catch (Exception e) {
             log.error("Error:#0, when compress file:#1", e, document.getAbsolutePath());
         }
+        
         list();
         log.info("end compress...");
         return null;
     }
 
+    /**
+     * @param document document to download
+     * @return null
+     */
     public String download(Document document) {
+        if (document == null) {
+            return null;
+        }
+        
         log.info("start to download...");
         File f = new File(document.getAbsolutePath());
-
-        try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
-            res.setContentType("application/force-download");
-            res.setContentLength(document.getSize().intValue());
-            res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename() + "\"");
-
-            OutputStream out = res.getOutputStream();
-            InputStream fin = new FileInputStream(f);
-
+        javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+        HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+        res.setContentType("application/force-download");
+        res.setContentLength(document.getSize().intValue());
+        res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename() + "\"");
+        try (OutputStream out = res.getOutputStream();
+            InputStream fin = new FileInputStream(f);) {
             byte[] buf = new byte[1024];
             int sig = 0;
             while ((sig = fin.read(buf, 0, 1024)) != -1) {
                 out.write(buf, 0, sig);
             }
-            fin.close();
             out.flush();
-            out.close();
             context.responseComplete();
             log.info("download over!");
         } catch (Exception e) {
@@ -273,10 +271,10 @@ public class CRMConnectorRejectedFileBean implements Serializable {
                 result = false;
             }
 
-            if (appProvider != null && !name.contains("_" + appProvider.getCode() + "_")) {
+            if (appProvider != null && name != null && !name.contains("_" + appProvider.getCode() + "_")) {
                 result = false;
             }
-            if (this.filename != null && !this.filename.equals("") && name.indexOf(filename) < 0) {
+            if (this.filename != null && !this.filename.equals("") && name != null && name.indexOf(filename) < 0) {
                 result = false;
             }
             if (this.fromDate != null) {

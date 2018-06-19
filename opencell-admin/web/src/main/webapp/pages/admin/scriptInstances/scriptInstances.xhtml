@@ -28,6 +28,7 @@
                 </h:link>
             </p:column>
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['scriptInstanceCategory']}" field="scriptInstanceCategory.code" />
             <hftl:column label="#{messages['scriptInstance.error']}" field="error" isMessage="true" width="10%"/>
             <p:column headerText="#{messages['enableEntity.active']}" width="10%">
                 <h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />

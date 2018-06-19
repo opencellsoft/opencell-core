@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -32,6 +33,7 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.primefaces.model.SortOrder;
 
+@Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class UserHierarchyLevelApi extends BaseApi {
 

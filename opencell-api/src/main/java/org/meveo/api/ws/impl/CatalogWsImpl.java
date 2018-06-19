@@ -36,7 +36,7 @@ import org.meveo.api.dto.catalog.BusinessProductModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
-import org.meveo.api.dto.catalog.DigitalResourcesDto;
+import org.meveo.api.dto.catalog.DigitalResourceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -50,7 +50,6 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
@@ -85,8 +84,13 @@ import org.meveo.api.ws.CatalogWs;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 
+/**
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
+ * @lastModifiedVersion 5.0
+ */
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
@@ -227,11 +231,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo) {
+    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
+            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, loadOfferServiceTemplate,
+                loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -766,7 +772,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessOfferModelCode);
+            moduleApi.remove(businessOfferModelCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -803,11 +809,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     @Override
     public MeveoModuleDtosResponse listBusinessOfferModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessOfferModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessOfferModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -828,7 +831,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus createServiceFromBSM(BsmServiceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -841,14 +844,14 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus createProductFromBPM(BpmProductDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             result.setMessage("" + businessOfferApi.instantiateBPM(postData));
-            
+
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1043,7 +1046,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessServiceModelCode);
+            moduleApi.remove(businessServiceModelCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1080,11 +1083,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     @Override
     public MeveoModuleDtosResponse listBusinessServiceModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessServiceModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1244,7 +1244,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public ActionStatus createOrUpdateDigitalResource(DigitalResourcesDto postData) {
+    public ActionStatus createOrUpdateDigitalResource(DigitalResourceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -1257,7 +1257,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public ActionStatus createDigitalResource(DigitalResourcesDto postData) {
+    public ActionStatus createDigitalResource(DigitalResourceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -1270,7 +1270,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public ActionStatus updateDigitalResource(DigitalResourcesDto postData) {
+    public ActionStatus updateDigitalResource(DigitalResourceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -1289,7 +1289,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         result.getActionStatus().setMessage("");
 
         try {
-            DigitalResourcesDto digitalResourcesDto = digitalResourceApi.find(code);
+            DigitalResourceDto digitalResourcesDto = digitalResourceApi.find(code);
             result.setDigitalResourcesDto(digitalResourcesDto);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1582,7 +1582,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessProductModelCode);
+            moduleApi.remove(businessProductModelCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1619,11 +1619,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     @Override
     public MeveoModuleDtosResponse listBusinessProductModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessProductModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessProductModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1631,7 +1628,473 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
         return result;
     }
-    
-    
-   
+
+    @Override
+    public ActionStatus enableCounterTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            counterTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableCounterTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            counterTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableRecurringChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            recurringChargeTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableRecurringChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            recurringChargeTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableOneShotChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            oneShotChargeTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableOneShotChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            oneShotChargeTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableUsageChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            usageChargeTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableUsageChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            usageChargeTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableServiceTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            serviceTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableServiceTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            serviceTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableOfferTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateApi.enableOrDisable(code, validFrom, validTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableOfferTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateApi.enableOrDisable(code, validFrom, validTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enablePricePlan(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            pricePlanApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disablePricePlan(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            pricePlanApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableBusinessOfferModel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableBusinessOfferModel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableBusinessServiceModel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableBusinessServiceModel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableBusinessProductModel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableBusinessProductModel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            moduleApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableDiscountPlan(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            discountPlanApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableDiscountPlan(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            discountPlanApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableOfferTemplateCategory(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateCategoryApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableOfferTemplateCategory(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateCategoryApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableDiscountPlanItem(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            discountPlanItemApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableDiscountPlanItem(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            discountPlanItemApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableProductTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            productTemplateApi.enableOrDisable(code, validFrom, validTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableProductTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            productTemplateApi.enableOrDisable(code, validFrom, validTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableDigitalResource(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            digitalResourceApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableDigitalResource(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            digitalResourceApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableProductChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            productChargeTemplateApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableProductChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            productChargeTemplateApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableBundleTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            bundleTemplateApi.enableOrDisable(code, validFrom, validTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableBundleTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            bundleTemplateApi.enableOrDisable(code, validFrom, validTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableChannel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            channelApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableChannel(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            channelApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
 }

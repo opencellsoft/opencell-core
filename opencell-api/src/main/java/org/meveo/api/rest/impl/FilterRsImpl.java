@@ -47,4 +47,30 @@ public class FilterRsImpl extends BaseRs implements FilterRs {
 
         return result;
     }
+
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            filterApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            filterApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

@@ -103,4 +103,29 @@ public class AccountingWsImpl extends BaseWs implements AccountingWs {
         return result;
     }
 
+    @Override
+    public ActionStatus enableAccountingCode(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            accountingCodeApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableAccountingCode(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            accountingCodeApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

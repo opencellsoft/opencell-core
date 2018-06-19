@@ -85,26 +85,52 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         }
         return chargeInstance;
     }
+    
+    public List<Long> findIdsByStatusAndSubscriptionCode(InstanceStatusEnum status, Date maxChargeDate, String subscriptionCode, boolean truncateToDay) {
+        List<Long> ids = new ArrayList<Long>();
+        try {
+            log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {} and subscriptionCode {} ", status, maxChargeDate, subscriptionCode);
+            QueryBuilder qb = queryIdsByStatus(status, maxChargeDate, truncateToDay);
+            qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+            ids = qb.getIdQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by status (status={}) and subscriptionCode {} . Result size found={}.", new Object[] { "RecurringChargeInstance", status, subscriptionCode, (ids != null ? ids.size() : "NULL") });
+        } catch (Exception e) {
+            log.error("findIdsByStatus error={} ", e.getMessage(), e);
+        }
+        return ids;
+    }
 
     public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate, boolean truncateToDay) {
         List<Long> ids = new ArrayList<Long>();
         try {
             log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {}", status, maxChargeDate);
-
-            QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
-            qb.addCriterionEnum("c.status", status);
-
-            if (truncateToDay) {
-                qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
-            } else {
-                qb.addCriterion("c.nextChargeDate", "<", maxChargeDate, false);
-            }
+            QueryBuilder qb = queryIdsByStatus(status, maxChargeDate, truncateToDay);
             ids = qb.getIdQuery(getEntityManager()).getResultList();
             log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] { "RecurringChargeInstance", status, (ids != null ? ids.size() : "NULL") });
         } catch (Exception e) {
             log.error("findIdsByStatus error={} ", e.getMessage(), e);
         }
         return ids;
+    }
+
+    /**
+     * Query ids by status.
+     *
+     * @param status the status
+     * @param maxChargeDate the max charge date
+     * @param truncateToDay the truncate to day
+     * @return the query builder
+     */
+    private QueryBuilder queryIdsByStatus(InstanceStatusEnum status, Date maxChargeDate, boolean truncateToDay) {
+        QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
+        qb.addCriterionEnum("c.status", status);
+
+        if (truncateToDay) {
+            qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
+        } else {
+            qb.addCriterion("c.nextChargeDate", "<", maxChargeDate, false);
+        }
+        return qb;
     }
 
     @SuppressWarnings("unchecked")
@@ -220,7 +246,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     public int applyRecurringCharge(Long chargeInstanceId, Date maxDate, boolean isStrictlyBeforeMaxDate) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
         int MaxRecurringRatingHistory = Integer.parseInt(paramBeanFactory.getInstance().getProperty("rating.recurringMaxRetry", "100"));
         int nbRating = 0;
 
@@ -276,8 +301,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 } else {
                     wos = walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, false);
                 }
-
-                log.debug("After applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 
                 log.debug("Recurring charge {} applied for {} - {}, produced {} wallet operations", activeRecurringChargeInstance.getId(),
                     activeRecurringChargeInstance.getChargeDate(), activeRecurringChargeInstance.getNextChargeDate(), wos.size());

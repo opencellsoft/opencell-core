@@ -45,6 +45,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
+    @Override
     public UsageChargeTemplate create(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -69,7 +70,9 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            chargeTemplate.setDisabled(postData.isDisabled());
+        }
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
@@ -130,6 +133,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         return chargeTemplate;
     }
 
+    @Override
     public UsageChargeTemplate update(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -154,7 +158,6 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
 
         chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
@@ -217,11 +220,6 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         return chargeTemplate;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public UsageChargeTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
@@ -241,29 +239,5 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
 
         return result;
-    }
-
-    public void remove(String code) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("usageChargeTemplateCode");
-            handleMissingParameters();
-        }
-
-        // check if code already exists
-        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, Arrays.asList("invoiceSubCategory"));
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
-        }
-
-        usageChargeTemplateService.remove(chargeTemplate);
-    }
-
-    public UsageChargeTemplate createOrUpdate(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-        if (usageChargeTemplateService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

@@ -270,7 +270,8 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
     }
 
     /**
-     * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions
+     * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions.
+     * @return rows size
      */
     public Integer size() {
         return rowCount;
@@ -295,10 +296,10 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
     }
 
     /**
-     * Get a value for full text search
+     * Get a value for full text search.
      * 
      * @param loadingFilters Datatable filters
-     * @return
+     * @return fullText search value
      */
     protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
         return (String) loadingFilters.get(ESBasedDataModel.FILTER_PE_FULL_TEXT);

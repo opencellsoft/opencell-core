@@ -39,6 +39,7 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
     @Inject
     private JobInstanceService jobInstanceService;
 
+    @Override
     public JobTrigger create(JobTriggerDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -94,12 +95,17 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
         notif.setCounterTemplate(counterTemplate);
         notif.setJobInstance(jobInstance);
         notif.setJobParams(postData.getJobParams());
+        if (postData.isDisabled() != null) {
+            notif.setDisabled(postData.isDisabled());
+        }
         jobTriggerService.create(notif);
 
         return notif;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -122,7 +128,8 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
 
         return result;
     }
-        
+
+    @Override
     public JobTrigger update(JobTriggerDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -183,30 +190,5 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
         notif = jobTriggerService.update(notif);
 
         return notif;
-    }
-
-    public void remove(String notificationCode) throws MeveoApiException, BusinessException {
-        if (!StringUtils.isBlank(notificationCode)) {
-            JobTrigger notif = jobTriggerService.findByCode(notificationCode);
-
-            if (notif == null) {
-                throw new EntityDoesNotExistsException(JobTrigger.class, notificationCode);
-            }
-
-            jobTriggerService.remove(notif);
-        } else {
-            missingParameters.add("code");
-
-            handleMissingParameters();
-        }
-    }
-
-    @Override
-    public JobTrigger createOrUpdate(JobTriggerDto postData) throws MeveoApiException, BusinessException {
-        if (jobTriggerService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

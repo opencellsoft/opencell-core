@@ -447,7 +447,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      * 
-     * @throws BusinessException
+     * @param id usage charge identifier
+     * @throws BusinessException General business exception
      */
 
     public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {

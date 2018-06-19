@@ -20,14 +20,15 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
-public class AccountOperationsGenerationJobBean {
+public class AccountOperationsGenerationJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
@@ -39,9 +40,6 @@ public class AccountOperationsGenerationJobBean {
     private AccOpGenerationAsync accOpGenerationAsync;
 
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -51,14 +49,15 @@ public class AccountOperationsGenerationJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         try {
 
-            List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null);
+            boolean excludeInvoicesWithoutAmount = jobInstance.getExcludeInvoicesWithoutAmount();
+            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, excludeInvoicesWithoutAmount);
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }

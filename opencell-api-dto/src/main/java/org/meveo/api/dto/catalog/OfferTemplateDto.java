@@ -50,7 +50,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     /** The minimum amount EL. */
     private String minimumAmountEl;
 
-    /** The minimum label EL. */    
+    /** The minimum label EL. */
     private String minimumLabelEl;
 
     /**
@@ -79,30 +79,10 @@ public class OfferTemplateDto extends ProductOfferingDto {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ProductOfferingDto#isDisabled()
-     */
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ProductOfferingDto#setDisabled(boolean)
-     */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
-   
     public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
-   
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
@@ -206,10 +186,10 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
         this.renewalRule = renewalRule;
     }
-    
+
     @Override
     public String toString() {
-        return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode="
+        return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + isDisabled() + ", bomCode="
                 + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields
                 + ", validFrom=" + validFrom + ", validTo=" + validTo + "]";
     }
@@ -218,7 +198,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
      * Gets minimum amount El.
      *
      * @return the minimum amount El
-     */    
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }

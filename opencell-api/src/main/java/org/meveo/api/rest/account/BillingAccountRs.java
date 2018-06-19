@@ -55,7 +55,8 @@ public interface BillingAccountRs extends IBaseRs {
     /**
      * Search for a billing account with a given code.
      * 
-     * @param billingAccountCode billing account code
+     * @param billingAccountCode Billing account code
+     * @param inheritCF Custom field inheritance type
      * @return Billing account
      */
     @GET

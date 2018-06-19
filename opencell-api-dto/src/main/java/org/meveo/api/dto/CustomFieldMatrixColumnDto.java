@@ -17,7 +17,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEn
  */
 @XmlRootElement(name = "CustomFieldMatrixColumn")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomFieldMatrixColumnDto extends BaseDto {
+public class CustomFieldMatrixColumnDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7343379732647377673L;

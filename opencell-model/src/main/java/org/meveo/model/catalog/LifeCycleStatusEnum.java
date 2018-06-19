@@ -105,13 +105,13 @@ public enum LifeCycleStatusEnum {
 	}
 
 	@SuppressWarnings("static-access")
-	public static Set<LifeCycleStatusEnum> transitionableStatues(LifeCycleStatusEnum LifeCycleStatusEnum) {
+	public static Set<LifeCycleStatusEnum> transitionableStatues(LifeCycleStatusEnum lifeCycleStatusEnum) {
 
-		if (LifeCycleStatusEnum == null) {
+		if (lifeCycleStatusEnum == null) {
 			return EnumSet.of(LifeCycleStatusEnum.IN_STUDY, LifeCycleStatusEnum.IN_DESIGN, LifeCycleStatusEnum.IN_TEST, LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED);
 		}
 
-		switch (LifeCycleStatusEnum) {
+		switch (lifeCycleStatusEnum) {
 		case IN_STUDY: {
 			return EnumSet.of(LifeCycleStatusEnum.IN_DESIGN);
 		}

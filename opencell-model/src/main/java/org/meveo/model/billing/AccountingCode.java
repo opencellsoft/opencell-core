@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
@@ -30,7 +30,7 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "billing_accounting_code")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_accounting_code_seq") })
-public class AccountingCode extends BusinessEntity {
+public class AccountingCode extends EnableBusinessEntity {
 
     private static final long serialVersionUID = -8962374797036999750L;
 

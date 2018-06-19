@@ -85,7 +85,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		// dimension4);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(mq.getCode(), fromDate, toDate, mq.getMeasurementPeriod(), mq);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		ChartSeries mvSeries = new ChartSeries();
 
 		mvSeries.setLabel(sdf.format(fromDate.getTime()));
@@ -174,7 +174,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			chartEntityModel.setChart((PieChart) chart);
 			result = (EM) chartEntityModel;
 		}
-		if (!empty) {
+		if (!empty && result != null) {
 			result.setDimension1List(mvService.getDimensionList(1, fromDate, toDate, mq));
 			result.setDimension2List(mvService.getDimensionList(2, fromDate, toDate, mq));
 			result.setDimension3List(mvService.getDimensionList(3, fromDate, toDate, mq));
@@ -503,7 +503,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 					+ "	LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id	LEFT JOIN account_entity ba ON ba.id= baa.id"
 					+ "	LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id LEFT JOIN account_entity ca ON ca.id= caa.id"
 					+ "	LEFT JOIN crm_customer custa ON custa.id= caa.customer_id LEFT JOIN account_entity cust ON cust.id= custa.id"
-					+ "	WHERE wo.disabled=FALSE	AND NOT(wo.end_date IS NULL)"
+					+ "	WHERE NOT(wo.end_date IS NULL)"
 					+ "	AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0 AND (wo.start_date <= '#{date}') AND (wo.end_date > '#{date}')");
 			mqService.create(mq);
 		}

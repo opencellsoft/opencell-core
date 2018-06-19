@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.MeasurableQuantity;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @XmlRootElement(name = "MeasurableQuantity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MeasurableQuantityDto extends BusinessDto {
+public class MeasurableQuantityDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2678416518718451635L;

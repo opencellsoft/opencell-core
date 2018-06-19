@@ -4,7 +4,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org"
+	xmlns:hftl="http://hftl.org"  
 	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
 	template="/layout/template.xhtml">
 
@@ -189,7 +189,7 @@
 						<hftl:formField label="#{messages['menu.terminationReason']}"
 							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
 							required="true"  edit="true"
-							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+							listBean="#{subscriptionTerminationReasonBean}" listElements="#{subscriptionTerminationReasonService.listReasons()}" />
 
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">                        
@@ -208,9 +208,17 @@
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1" id="hierarchyGroup">
-					<hf:hierarchyPanel
-						treeBean="#{customerTreeBean}"
-						entity="#{subscriptionBean.entity}" />
+	            <c:if test="#{subscriptionBean.entity.id != null}">
+						<hf:hierarchyPanel
+							treeBean="#{customerTreeBean}"
+							entity="#{subscriptionBean.entity}" />
+				</c:if>
+				<c:if test="#{subscriptionBean.entity.id == null}">
+						<hf:hierarchyPanel
+							treeBean="#{customerTreeBean}"
+							entity="#{subscriptionBean.entity.userAccount}" />
+				</c:if>
+				
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
 
@@ -406,7 +414,7 @@
                                                 <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="subscriptionRenewal" childField="extendAgreementPeriodToSubscribedTillDate" rendered="#{subscriptionBean.entity.subscriptionRenewal.autoRenew}"/>
                                                 
                                                 <hftl:formField label="#{messages['subscription.endOfTermAction']}" field="subscriptionRenewal" childField="endOfTermAction" required="true" listenerUpdate="subscriptionAndRenewalDates"/> 
-                                                <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="subscriptionRenewal" childField="terminationReason" required="true" rendered="#{subscriptionBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode" listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+                                                <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="subscriptionRenewal" childField="terminationReason" required="true" rendered="#{subscriptionBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode" listBean="#{subscriptionTerminationReasonBean}" listElements="#{subscriptionTerminationReasonService.listReasons()}" />
                                                 
                                             </h:panelGroup>
                                             <hftl:formField label="#{messages['subscription.endAgreementDate']}" field="endAgreementDate" />

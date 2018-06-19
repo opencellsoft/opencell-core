@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -28,7 +28,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @XmlRootElement(name = "CRMAccountHierarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CRMAccountHierarchyDto extends BaseDto {
+public class CRMAccountHierarchyDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8382992060653977244L;

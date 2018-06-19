@@ -47,9 +47,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
@@ -61,7 +60,7 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
  * Account Transaction.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  * 
  */
 @Entity
@@ -83,7 +82,7 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
         @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
                 + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
                 + " and pm.preferred is true and ao.unMatchingAmount <> 0") })
-public class AccountOperation extends EnableEntity implements ICustomFieldEntity, ISearchable {
+public class AccountOperation extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -149,10 +148,6 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Column(name = "occ_description", length = 255)
     @Size(max = 255)
     private String occDescription;
-
-    @Type(type = "numeric_boolean")
-    @Column(name = "excluded_from_dunning")
-    private boolean excludedFromDunning;
 
     @Column(name = "order_num")
     private String orderNumber;// order number, '|' will be used as seperator if many orders
@@ -333,14 +328,6 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
         return matchingAmounts;
     }
 
-    public boolean getExcludedFromDunning() {
-        return excludedFromDunning;
-    }
-
-    public void setExcludedFromDunning(boolean excludedFromDunning) {
-        this.excludedFromDunning = excludedFromDunning;
-    }
-
     @Override
     public String getUuid() {
         return uuid;
@@ -357,25 +344,14 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
         return oldUuid;
     }
 
+    @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
     }
 
+    @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
-    }
-
-    @Override
-    public CustomFieldValues getCfValuesNullSafe() {
-        if (cfValues == null) {
-            cfValues = new CustomFieldValues();
-        }
-        return cfValues;
-    }
-
-    @Override
-    public void clearCfValues() {
-        cfValues = null;
     }
 
     @Override

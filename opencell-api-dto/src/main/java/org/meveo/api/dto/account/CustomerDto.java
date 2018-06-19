@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.crm.Customer;
+
 /**
  * The Class CustomerDto.
  *
@@ -58,6 +60,34 @@ public class CustomerDto extends AccountDto {
     public CustomerDto() {
         super();
     }
+    
+    /**
+     * Instantiates a new customer dto.
+     * 
+     * @param e Customer entity
+     */
+	public CustomerDto(Customer e) {
+		super(e);
+
+		setVatNo(e.getVatNo());
+		setRegistrationNo(e.getRegistrationNo());
+
+		if (e.getCustomerCategory() != null) {
+			setCustomerCategory(e.getCustomerCategory().getCode());
+		}
+
+		if (e.getCustomerBrand() != null) {
+			setCustomerBrand(e.getCustomerBrand().getCode());
+		}
+
+		if (e.getSeller() != null) {
+			setSeller(e.getSeller().getCode());
+		}
+
+		if (e.getContactInformation() != null) {
+			setContactInformation(new ContactInformationDto(e.getContactInformation()));
+		}
+	}
 
     /**
      * Gets the customer category.

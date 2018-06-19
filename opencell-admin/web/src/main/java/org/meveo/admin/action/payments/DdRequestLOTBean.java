@@ -42,193 +42,176 @@ import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
- * Standard backing bean for {@link DDRequestLOT} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link DDRequestLOT} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link DDRequestLOT} service. Extends {@link PersistenceService}
-	 * .
-	 */
-	@Inject
-	private DDRequestLOTService ddrequestLOTService;
+    /**
+     * Injected @{link DDRequestLOT} service. Extends {@link PersistenceService} .
+     */
+    @Inject
+    private DDRequestLOTService ddrequestLOTService;
 
-	@Inject
-	private DDRequestLotOpService ddrequestLotOpService;
+    @Inject
+    private DDRequestLotOpService ddrequestLotOpService;
 
-	@Inject
-	private RecordedInvoiceService recordedInvoiceService;
+    @Inject
+    private RecordedInvoiceService recordedInvoiceService;
 
-	/**
-	 * startDueDate parameter for ddRequest batch
-	 */
-	private Date startDueDate;
-	/**
-	 * endDueDate parameter for ddRequest batch
-	 */
-	private Date endDueDate;
+    /**
+     * startDueDate parameter for ddRequest batch
+     */
+    private Date startDueDate;
+    /**
+     * endDueDate parameter for ddRequest batch
+     */
+    private Date endDueDate;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public DdRequestLOTBean() {
-		super(DDRequestLOT.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public DdRequestLOTBean() {
+        super(DDRequestLOT.class);
+    }
 
-	/**
-	 * Regenerate file from entity DDRequestLOT
-	 * 
-	 * @return
-	 */
-	public String generateFile() {
-		try {
-			DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
-			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.FILE);
-			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-			ddrequestLotOp.setFileFormat(entity.getFileFormat());
-			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp);
-			messages.info(new BundleKey("messages",
-					"ddrequestLot.generateFileSuccessful"));
-		} catch (Exception e) {
-			log.error("failed to generate file",e);
-			messages.error(new BundleKey("messages",
-					"ddrequestLot.generateFileFailed"));
-		}
+    /**
+     * Regenerate file from entity DDRequestLOT
+     * 
+     * @return NULL
+     */
+    public String generateFile() {
+        try {
+            DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
+            ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.FILE);
+            ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
+            ddrequestLotOp.setFileFormat(entity.getFileFormat());
+            ddrequestLotOp.setDdrequestLOT(entity);
+            ddrequestLotOpService.create(ddrequestLotOp);
+            messages.info(new BundleKey("messages", "ddrequestLot.generateFileSuccessful"));
+        } catch (Exception e) {
+            log.error("failed to generate file", e);
+            messages.error(new BundleKey("messages", "ddrequestLot.generateFileFailed"));
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Do payment for eatch invoice included in DDRequest File
-	 * 
-	 * @return
-	 */
-	public String doPayments() {
-		try {
-			DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
-			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.PAYMENT);
-			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-			ddrequestLotOp.setFileFormat(entity.getFileFormat());
-			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp);
-			messages.info(new BundleKey("messages",
-					"ddrequestLot.doPaymentsSuccessful"));
-		} catch (Exception e) {
-			log.error("error generated while creating payments ",e);
-			messages.info(new BundleKey("messages",
-					"ddrequestLot.doPaymentsFailed"));
-		}
+    /**
+     * Do payment for each invoice included in DDRequest File
+     * 
+     * @return NULL
+     */
+    public String doPayments() {
+        try {
+            DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
+            ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.PAYMENT);
+            ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
+            ddrequestLotOp.setFileFormat(entity.getFileFormat());
+            ddrequestLotOp.setDdrequestLOT(entity);
+            ddrequestLotOpService.create(ddrequestLotOp);
+            messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsSuccessful"));
+        } catch (Exception e) {
+            log.error("error generated while creating payments ", e);
+            messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsFailed"));
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Launch DDRequestLOT process
-	 * 
-	 * @return
-	 */
-	public String launchProcess() {
-		try {
-			DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
-			ddrequestLotOp.setFromDueDate(getStartDueDate());
-			ddrequestLotOp.setToDueDate(getEndDueDate());
-			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
-			ddrequestLotOpService.create(ddrequestLotOp);
-			messages.info(new BundleKey("messages",
-					"ddrequestLot.launchProcessSuccessful"));
-		} catch (Exception e) {
-			log.error("failed to launch process ",e);
-			messages.info(new BundleKey("messages",
-					"ddrequestLot.launchProcessFailed"));
-			messages.info(e.getMessage());
-		}
-		return null;
-	}
+    /**
+     * Launch DDRequestLOT process
+     * 
+     * @return NULL
+     */
+    public String launchProcess() {
+        try {
+            DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
+            ddrequestLotOp.setFromDueDate(getStartDueDate());
+            ddrequestLotOp.setToDueDate(getEndDueDate());
+            ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
+            ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
+            ddrequestLotOpService.create(ddrequestLotOp);
+            messages.info(new BundleKey("messages", "ddrequestLot.launchProcessSuccessful"));
+        } catch (Exception e) {
+            log.error("failed to launch process ", e);
+            messages.info(new BundleKey("messages", "ddrequestLot.launchProcessFailed"));
+            messages.info(e.getMessage());
+        }
+        return null;
+    }
 
-	@Override
-	public String getNewViewName() {
-		return "ddrequestLotDetail";
-	}
+    @Override
+    public String getNewViewName() {
+        return "ddrequestLotDetail";
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "ddrequestLots";
-	}
+    @Override
+    protected String getListViewName() {
+        return "ddrequestLots";
+    }
 
-	@Override
-	public String getEditViewName() {
-		return "ddrequestLotDetail";
-	}
+    @Override
+    public String getEditViewName() {
+        return "ddrequestLotDetail";
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<DDRequestLOT> getPersistenceService() {
-		return ddrequestLOTService;
-	}
+    @Override
+    protected IPersistenceService<DDRequestLOT> getPersistenceService() {
+        return ddrequestLOTService;
+    }
 
-	/**
-	 * @param startDueDate
-	 *            the startDueDate to set
-	 */
-	public void setStartDueDate(Date startDueDate) {
-		this.startDueDate = startDueDate;
-	}
+    /**
+     * @param startDueDate the startDueDate to set
+     */
+    public void setStartDueDate(Date startDueDate) {
+        this.startDueDate = startDueDate;
+    }
 
-	/**
-	 * @return the startDueDate
-	 */
-	public Date getStartDueDate() {
-		return startDueDate;
-	}
+    /**
+     * @return the startDueDate
+     */
+    public Date getStartDueDate() {
+        return startDueDate;
+    }
 
-	/**
-	 * @param endDueDate
-	 *            the endDueDate to set
-	 */
-	public void setEndDueDate(Date endDueDate) {
-		this.endDueDate = endDueDate;
-	}
+    /**
+     * @param endDueDate the endDueDate to set
+     */
+    public void setEndDueDate(Date endDueDate) {
+        this.endDueDate = endDueDate;
+    }
 
-	/**
-	 * @return the endDueDate
-	 */
-	public Date getEndDueDate() {
-		return endDueDate;
-	}
+    /**
+     * @return the endDueDate
+     */
+    public Date getEndDueDate() {
+        return endDueDate;
+    }
 
-	@Override
-	public String back() {
-		return "/pages/payments/ddrequestLot/ddrequestLots.xhtml";
-	}
+    @Override
+    public String back() {
+        return "/pages/payments/ddrequestLot/ddrequestLots.xhtml";
+    }
 
-	public PaginationDataModel<RecordedInvoice> getInvoices() {
-		PaginationDataModel<RecordedInvoice> invoices = new PaginationDataModel<RecordedInvoice>(
-				recordedInvoiceService);
-		Map<String, Object> filters2 = new HashMap<String, Object>();
-		filters2.put("ddRequestLOT", entity);
-		invoices.addFilters(filters2);
-		invoices.addFetchFields(getListFieldsToFetch());
-		invoices.forceRefresh();
-		return invoices;
-	}
+    public PaginationDataModel<RecordedInvoice> getInvoices() {
+        PaginationDataModel<RecordedInvoice> invoices = new PaginationDataModel<RecordedInvoice>(recordedInvoiceService);
+        Map<String, Object> filters2 = new HashMap<String, Object>();
+        filters2.put("ddRequestLOT", entity);
+        invoices.addFilters(filters2);
+        invoices.addFetchFields(getListFieldsToFetch());
+        invoices.forceRefresh();
+        return invoices;
+    }
 
-	public boolean canGenerateFile(){		
-		if(entity != null &&  !StringUtils.isBlank(entity.getFileName())){
-			return true;
-		}
-		return false;
-		
-	}
+    public boolean canGenerateFile() {
+        if (entity != null && !StringUtils.isBlank(entity.getFileName())) {
+            return true;
+        }
+        return false;
+    }
 }

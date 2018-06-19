@@ -27,7 +27,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     public ScriptInstanceReponseDto create(ScriptInstanceDto postData) {
         ScriptInstanceReponseDto result = new ScriptInstanceReponseDto();
         try {
-            result.setCompilationErrors(scriptInstanceApi.create(postData));
+            result.setCompilationErrors(scriptInstanceApi.createWithCompile(postData));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
@@ -41,7 +41,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     public ScriptInstanceReponseDto update(ScriptInstanceDto postData) {
         ScriptInstanceReponseDto result = new ScriptInstanceReponseDto();
         try {
-            result.setCompilationErrors(scriptInstanceApi.update(postData));
+            result.setCompilationErrors(scriptInstanceApi.updateWithCompile(postData));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
     public ActionStatus remove(String scriptInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            scriptInstanceApi.removeScriptInstance(scriptInstanceCode);
+            scriptInstanceApi.remove(scriptInstanceCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -88,4 +88,29 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
         return result;
     }
 
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            scriptInstanceApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            scriptInstanceApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

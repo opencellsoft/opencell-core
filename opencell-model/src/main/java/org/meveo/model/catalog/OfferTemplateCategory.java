@@ -21,8 +21,8 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ModuleItem;
@@ -40,7 +40,7 @@ import org.meveo.model.annotation.ImageType;
 @ExportIdentifier({ "code"})
 @Table(name = "cat_offer_template_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_offer_template_category_seq"), })
-public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory>, IImageUpload {
+public class OfferTemplateCategory extends EnableBusinessCFEntity implements Comparable<OfferTemplateCategory>, IImageUpload {
 
     private static final long serialVersionUID = -5088201294684394309L;
 
