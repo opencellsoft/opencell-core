@@ -65,7 +65,8 @@ import org.meveo.service.base.PersistenceService;
  * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Tien Lan PHUNG 
+ * @lastModifiedVersion 5.0.6
  * 
  */
 @Stateless
@@ -291,7 +292,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         for (Invoice invoice : invoices) {
 
-            if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
+            if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null && invoice.getPaymentMethodType() != null) {
                 switch (invoice.getPaymentMethodType()) {
                 case CHECK:
                     checkInvoicesNumber++;
