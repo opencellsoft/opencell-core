@@ -104,7 +104,7 @@
                                                         value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}"/>
                                                 <f:setPropertyActionListener
                                                         target="#{entityExportImportBean.dataModelToExport}"
-                                                        value="#{offerTemplateListBean.listFromBOM()}"/>
+                                                        value="#{offerTemplateListBean.listNotDisabledFromBOM()}"/>
                                                 <f:setPropertyActionListener
                                                         target="#{entityExportImportBean.selectedEntitiesToExport}"
                                                         value="#{offerTemplateListBean.selectedOfferTemplates}"/>
@@ -125,7 +125,7 @@
                             title="#{messages['marketingManager.catalog.view.detailed']}">
                         <h:form id="mainForm" styleClass="ui-fluid">
                             <p:dataGrid id="dataGrid"
-                                        value="#{offerTemplateListBean.listFromBOM()}" var="entity"
+                                        value="#{offerTemplateListBean.listNotDisabledFromBOM()}" var="entity"
                                         paginator="true" rows="10" columns="1" layout="grid"
                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                         lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
@@ -327,7 +327,7 @@
                            title="#{messages['marketingManager.catalog.view.condensed']}">
                         <hftl:dataList id="dataList"
                                        backingBean="#{offerTemplateListBean}"
-                                       dataModel="#{offerTemplateListBean.listFromBOM()}"
+                                       dataModel="#{offerTemplateListBean.listNotDisabledFromBOM()}"
                                        checkMany="false" exportToCsv="false" exportToXml="false"
                                        exportXlsxButton="false" sortOrder="DESCENDING"
                                        styleClass="DataListCenter">
