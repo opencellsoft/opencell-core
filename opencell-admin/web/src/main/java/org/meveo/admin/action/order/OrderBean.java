@@ -160,6 +160,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             // and also to remain with the displayed the selectOneMenu which is set to CHECK by default
             paymentMethodType = PaymentMethodEnum.CHECK;
             entity.setPaymentMethod(new CheckPaymentMethod());
+            this.entity.getPaymentMethod().updateAudit(currentUser);
         }
         return entity;
     }
