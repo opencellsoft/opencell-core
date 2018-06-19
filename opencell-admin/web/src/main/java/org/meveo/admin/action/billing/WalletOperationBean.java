@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -44,7 +44,7 @@ import org.primefaces.model.LazyDataModel;
 
 
 @Named
-@ViewScoped
+@ConversationScoped
 public class WalletOperationBean extends BaseBean<WalletOperation> {
 	private static final long serialVersionUID = 1L;
 

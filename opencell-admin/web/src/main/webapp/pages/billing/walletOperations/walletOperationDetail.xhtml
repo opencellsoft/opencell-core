@@ -21,7 +21,7 @@
 			</p:breadCrumb>
 		</h:form>
 
-        <hftl:formPanel edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" renderNewButton="false" showFormButtons="false">
+        <hftl:formPanel edit="false" label="#{messages['walletOperation.panel']}" backingBean="#{walletOperationBean}" showEditButton="false" showBackButton="true">
 
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
@@ -65,11 +65,9 @@
                     <h:outputText value=" #{walletOperationBean.entity.reratedWalletOperation.code}" />
                 </h:link>
             </hftl:decorateFormField>
-            <ui:param name="buttons" value="true">
-            <ui:define name="buttons">
-                <p:button id="back" value="#{messages['action.back']}" outcome="#{walletOperationBean.back()}" includeViewParams="true" />
-            </ui:define>
-			</ui:param>
+            
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons" />
         </hftl:formPanel>
     </ui:define>
 
