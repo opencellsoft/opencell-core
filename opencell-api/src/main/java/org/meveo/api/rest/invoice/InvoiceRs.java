@@ -74,7 +74,7 @@ public interface InvoiceRs extends IBaseRs {
     @Deprecated
     @GET
     @Path("/listInvoiceByCustomerAccount")
-    CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("includePdf") Boolean includePdf);
+    CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("returnPDF") Boolean returnPDF);
 
     /**
      * Launch all the invoicing process for a given billingAccount, that's mean.
