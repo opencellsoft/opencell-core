@@ -1129,9 +1129,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
 
         InvoiceSubCategory invoiceSubCategory = walletOperation.getInvoiceSubCategory();
-        if (invoiceSubCategory == null) {
-            invoiceSubCategory = walletOperation.getChargeInstance().getChargeTemplate().getInvoiceSubCategory();
-        }
 
         /*
          * if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
