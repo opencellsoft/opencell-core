@@ -52,11 +52,7 @@
 
         <h:form>
             <p:panel width="100">
-                <p:button id="backButton" value="#{messages['action.back']}" outcome="#{customEntityTemplateBean.back()}" includeViewParams="true">
-                    <c:if test="#{javax.enterprise.context.conversation.id != null}">
-                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                    </c:if>
-                </p:button>
+             <hf:formButtons backingBean="#{customEntityTemplateBean}" showEditButton="false" killConversationOnBack="false"/>
             </p:panel>
         </h:form>
     </ui:define>
