@@ -28,6 +28,10 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	
 	private Part file;
 	private String fileContent;
+	
+	private String code;
+	private Long id;
+	
 	  
 	public ContactBean() {
 		super(Contact.class);
@@ -41,13 +45,13 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	
 	public void findContactByCode() {
 		log.debug("Finding Contact");
-		Contact contact = contactService.findByCode("uhlrich@free.Fr");
+		Contact contact = contactService.findByCode(code);
 		if(contact == null) log.debug("Contact not found");
 	}
 	
 	public void findContactById() {
 		log.debug("Finding Contact");
-		Contact contact = contactService.findById((long) 3);
+		Contact contact = contactService.findById(id);
 		if(contact == null)
 			log.debug("Contact not found");
 		else {
@@ -81,6 +85,25 @@ public class ContactBean extends CustomFieldBean<Contact>{
 	 
 	  public void setFile(Part file) {
 	    this.file = file;
+	}
+	  
+	  
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override

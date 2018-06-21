@@ -675,11 +675,11 @@
 		<addUniqueConstraint columnNames="email" constraintName="com_contact_email" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact" />
 		
 		
-		<createTable tableName="crm_addressbook_contact">
-			<column name="address_book_id" type="bigint">
+		<createTable tableName="crm_addressbook_com_contact">
+			<column name="crm_address_book_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-			<column name="contact_id" type="bigint">
+			<column name="com_contact_id" type="bigint">
                 <constraints nullable="false" />
             </column>
 		</createTable>
@@ -688,7 +688,17 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_addressbook_pkey" />
             </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)"/>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
         </createTable>
         
         <createSequence sequenceName="crm_addressbook_seq" />
@@ -701,7 +711,6 @@
             <column name="name" type="varchar(50)"/>
             <column name="description" type="varchar(255)"/>
             <column name="type" type="varchar(50)"/>
-            <column name="crm_address_book_id" type="bigint"/>
         </createTable>
         
         <createSequence sequenceName="crm_contact_group_seq" />
@@ -711,7 +720,18 @@
             <column name="com_contact_id" type="bigint"/>
         </createTable>
         <addPrimaryKey columnNames="crm_contact_group_id, com_contact_id" constraintName="crm_contact_group_com_contact_pkey" tableName="crm_contact_group_com_contact" />
-
+		
+		<createTable tableName="crm_addressBook_crm_contact_group">
+            <column name="crm_address_book_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="crm_contact_group_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="crm_address_book_id, crm_contact_group_id" constraintName="crm_addressBook_crm_contact_group_pkey" tableName="crm_addressBook_crm_contact_group" />
+		
+		
         <createTable tableName="com_communication_entity">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_communication_entity_pkey" />

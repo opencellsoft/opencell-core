@@ -1,18 +1,22 @@
 package org.meveo.model.intcrm;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
@@ -26,9 +30,12 @@ import org.meveo.model.communication.contact.Contact;
 @Table(name = "crm_contact_group")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_contact_group_seq") })
-public class ContactGroup extends BaseEntity{
+public class ContactGroup extends BaseEntity {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1688451557730177945L;
 
-	
 	@Column(name = "name", length = 50)
 	@Size(max = 50)
 	private String name;
@@ -41,13 +48,15 @@ public class ContactGroup extends BaseEntity{
 	@Size(max = 50)
 	private String type;
     
-    @ManyToMany(mappedBy = "contactGroups", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Contact> contacts = new ArrayList<>();
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "crm_contact_group_id"), inverseJoinColumns = @JoinColumn(name = "com_contact_id"))
+    private Set<Contact> contacts = new HashSet<Contact>();
     
     @ManyToMany(mappedBy = "contactGroups", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Campaign> campaigns;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "crm_address_book_id")
     private AddressBook addressBook;
 
@@ -75,11 +84,11 @@ public class ContactGroup extends BaseEntity{
 		this.type = type;
 	}
 
-	public List<Contact> getContacts() {
+	public Set<Contact> getContacts() {
 		return contacts;
 	}
 
-	public void setContacts(List<Contact> contacts) {
+	public void setContacts(Set<Contact> contacts) {
 		this.contacts = contacts;
 	}
 

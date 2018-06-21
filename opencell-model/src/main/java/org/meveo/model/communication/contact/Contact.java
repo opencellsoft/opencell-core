@@ -18,8 +18,8 @@
  */
 package org.meveo.model.communication.contact;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -113,9 +113,6 @@ public class Contact extends AccountEntity {
 	@Column(name = "agreed_ua", columnDefinition = "tinyint default false")
 	private boolean agreedToUA;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "com_contact_id"), inverseJoinColumns = @JoinColumn(name = "crm_contact_group_id"))
-	private List<ContactGroup> contactGroups = new ArrayList<>();
 
 	@Embedded
 	private CommunicationPolicy contactPolicy;
@@ -123,9 +120,13 @@ public class Contact extends AccountEntity {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL)
 	private List<Message> messages;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_book_id")
 	private AddressBook addressBook;
+	
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "com_contact_id"), inverseJoinColumns = @JoinColumn(name = "crm_contact_group_id"))
+    private Set<ContactGroup> contactGroup;
 
 	public Contact() {
 		accountType = ACCOUNT_TYPE;
@@ -244,14 +245,6 @@ public class Contact extends AccountEntity {
 		this.agreedToUA = agreedToUA;
 	}
 
-	public List<ContactGroup> getContactGroups() {
-		return contactGroups;
-	}
-
-	public void setContactGroups(List<ContactGroup> contactGroups) {
-		this.contactGroups = contactGroups;
-	}
-
 	public CommunicationPolicy getContactPolicy() {
 		return contactPolicy;
 	}
@@ -275,4 +268,14 @@ public class Contact extends AccountEntity {
 	public void setAddressBook(AddressBook addressBook) {
 		this.addressBook = addressBook;
 	}
+
+	public Set<ContactGroup> getContactGroup() {
+		return contactGroup;
+	}
+
+	public void setContactGroup(Set<ContactGroup> contactGroup) {
+		this.contactGroup = contactGroup;
+	}
+	
+	
 }

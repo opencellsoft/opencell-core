@@ -35,6 +35,8 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.intcrm.AdditionalDetails;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -149,7 +151,11 @@ public class CustomerApi extends AccountEntityApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        
+        
+        customer.setAdditionalDetails(new AdditionalDetails());
+        customer.setAddressbook(new AddressBook(customer.getCode()));
+        
         customerService.create(customer);
 
         return customer;
@@ -260,8 +266,10 @@ public class CustomerApi extends AccountEntityApi {
             throw e;
         }
 
+        if(customer.getAdditionalDetails() == null) customer.setAdditionalDetails(new AdditionalDetails());
+        
         customer = customerService.update(customer);
-
+        
         return customer;
     }
 

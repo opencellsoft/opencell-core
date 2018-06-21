@@ -30,6 +30,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.AccountService;
+
 /**
  * Customer service implementation.
  * 
@@ -123,5 +124,15 @@ public class CustomerService extends AccountService<Customer> {
             return false;
         }
         return true;
+    }
+    
+    public Customer findByCompanyName(String companyName) {
+    	QueryBuilder qb = new QueryBuilder(Customer.class, "c");
+        qb.addCriterion("c.additionalDetails.companyName", "=", companyName, true);
+        try {
+            return (Customer) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

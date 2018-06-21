@@ -15,7 +15,12 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "crm_additional_details")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_additional_details_seq") })
-public class AdditionalDetails extends BaseEntity{
+public class AdditionalDetails extends BaseEntity {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2502533941498882545L;
+
 	@Column(name = "company_name", length = 50)
 	@Size(max = 50)
 	private String companyName;

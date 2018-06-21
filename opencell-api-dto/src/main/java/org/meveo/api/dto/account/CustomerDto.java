@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.crm.AdditionalDetailsDto;
+import org.meveo.api.dto.crm.AddressBookDto;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -29,6 +31,10 @@ public class CustomerDto extends AccountDto {
     /** The customer brand. */
     @XmlElement()
     private String customerBrand;
+
+    private AdditionalDetailsDto additionalDetails;
+    
+    private AddressBookDto addressBook;
 
     /** The seller. */
     @XmlElement(required = true)
@@ -124,7 +130,24 @@ public class CustomerDto extends AccountDto {
         this.customerBrand = customerBrand;
     }
 
-    /**
+    
+    public AdditionalDetailsDto getAdditionalDetails() {
+		return additionalDetails;
+	}
+
+	public void setAdditionalDetails(AdditionalDetailsDto additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
+
+	public AddressBookDto getAddressBook() {
+		return addressBook;
+	}
+
+	public void setAddressBook(AddressBookDto addressBook) {
+		this.addressBook = addressBook;
+	}
+
+	/**
      * Gets the customer accounts.
      *
      * @return the customer accounts

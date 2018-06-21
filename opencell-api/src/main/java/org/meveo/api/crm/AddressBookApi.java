@@ -7,6 +7,8 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.service.intcrm.impl.AddressBookService;
 
 
@@ -18,5 +20,9 @@ public class AddressBookApi  extends BaseApi {
 	
 	public void createAll() throws BusinessException {
 		addressBookService.createAll();
+	}
+	
+	public void addContact(String code, Contact contact) {
+		
 	}
 }

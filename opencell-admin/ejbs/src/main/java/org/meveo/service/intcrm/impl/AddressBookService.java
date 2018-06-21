@@ -1,8 +1,6 @@
 package org.meveo.service.intcrm.impl;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,11 +12,9 @@ import org.meveo.model.admin.User;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.intcrm.ContactGroup;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -45,43 +41,47 @@ public class AddressBookService extends BusinessService<AddressBook> {
         List<CustomerAccount> customerAccounts = customerAccountService.list();
         List<User> users = userService.list();
         
-        for(User u : users) {
-        	if(u.getAddressbook() == null) {
-        		AddressBook addressBook = new AddressBook(u.getUserName());
-        		u.setAddressbook(addressBook);
-        		userService.update(u);
-            	this.create(addressBook);
-        	}
-        }
-        
         
         for(Customer c : customers) {
         	if(c.getAddressbook() == null) {
         		AddressBook addressBook = new AddressBook(c.getCode());
+            	this.create(addressBook);
         		c.setAddressbook(addressBook);
         		customerService.update(c);
-            	this.create(addressBook);
         	}
         }
         
         for(CustomerAccount ca : customerAccounts) {
         	if(ca.getAddressbook() == null) {
         		AddressBook addressBook = new AddressBook(ca.getCode());
+            	this.create(addressBook);
         		ca.setAddressbook(addressBook);
         		customerAccountService.update(ca);
-            	this.create(addressBook);
         	}        
         }
+        
+
+        for(User u : users) {
+        	if(u.getAddressbook() == null) {
+        		AddressBook addressBook = new AddressBook(u.getUserName());
+            	this.create(addressBook);
+        		u.setAddressbook(addressBook);
+        		userService.update(u);
+        	}
+        }
+        
     }
 
     public AddressBook getCurrentUserAddressBook() throws BusinessException {
-    	String code = userService.findByUsername(currentUser.getUserName()).getUserName();
-    	AddressBook addressBook = findByCode(code);
-    	if (addressBook == null) {
-    		addressBook = new AddressBook(code);
+    	User user = userService.findByUsername(currentUser.getUserName());
+    	if(user.getAddressbook() == null) {
+    		AddressBook addressBook = new AddressBook(user.getUserName());
         	this.create(addressBook);
+    		user.setAddressbook(addressBook);
+    		userService.update(user);
+    		return addressBook;
     	}
-    	return addressBook;
+    	else return user.getAddressbook();
     }
     
     public void addContact(String code, Contact contact) throws BusinessException {

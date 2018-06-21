@@ -2,29 +2,20 @@ package org.meveo.service.intcrm.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CSVUtils;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.shared.Address;
@@ -41,15 +32,7 @@ public class ContactService extends BusinessService<Contact> {
 	private TitleService titleService;
 	
 	@Inject
-	private AddressBookService addressBookService;
-
-	@Inject
 	private Logger log;
-	
-	public void create(Contact contact) throws BusinessException {
-		super.create(contact);
-		addressBookService.addContact(null, contact);
-	}
 	
 	public Set<Contact> parseLinkedInFromText(String context) throws IOException, BusinessException {
 		log.debug(context);
@@ -138,23 +121,8 @@ public class ContactService extends BusinessService<Contact> {
 	}
 	
 	
-	public Contact findContactById(Long id) {
-		Contact contact = this.findById(id);
-		log.debug("Long id = " + id);
-		log.debug(contact.toString());
-		return contact;
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-    public List<Contact> getAllContacts() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        Query query = queryBuilder.getQuery(getEntityManager());
-        return query.getResultList();
-    }
-	
 	public void removeAllContacts() throws BusinessException {
-		List<Contact> contacts = getAllContacts();
+		List<Contact> contacts = list();
 		for(Contact c : contacts) {
 			log.debug("Removing : " + c.getName().toString());
 			super.remove(c);

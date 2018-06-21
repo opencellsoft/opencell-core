@@ -11,6 +11,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.account.AccountEntityApi;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.crm.ContactDto;
@@ -30,18 +31,26 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.primefaces.model.SortOrder;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class ContactApi extends BaseApi {
+public class ContactApi extends AccountEntityApi {
 
 	@Inject
 	ContactService contactService;
     
 	@Inject
 	TitleService titleService;
+	
+	@Inject
+	AddressBookService addressBookService;
+	
+	@Inject
+	CustomerService customerService;
 
 	public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
 	    if (StringUtils.isBlank(postData.getName().getFirstName())) {
@@ -61,68 +70,35 @@ public class ContactApi extends BaseApi {
         handleMissingParameters();
         
         Contact contact = new Contact();
+        populate(postData, contact);
         
-    	Title title = titleService.findByCode("MR");
-    	String firstName = postData.getName().getFirstName();
-    	String lastName = postData.getName().getLastName();
-        Name name = new Name(title, firstName, lastName);
-        contact.setName(name);
         
-        String company = postData.getCompany();
-        contact.setCompany(company);
+                
+        if(postData.getCode().length() == 0)
+        	contact.setCode(postData.getEmail());
+        else if (postData.getEmail().length() == 0)
+        	contact.setEmail(postData.getCode());
         
-        String description = postData.getDescription();
-        contact.setDescription(description);
-        
-        String mobile = postData.getMobile();
-        String phone = postData.getPhone();
-        contact.setMobile(mobile);
-        contact.setPhone(phone);
-        
-        String email = postData.getEmail();
-        String code = postData.getCode();
-        
-        if(code.length() == 0) code = email;
-        else if (email.length() == 0) email = code;
-        contact.setEmail(email);
-        contact.setCode(code);
-        
-        if(postData.getAddress() != null) {
-            Country country = new Country();
-            String address1 = postData.getAddress().getAddress1();
-            String address2 = postData.getAddress().getAddress2();
-            String address3 = postData.getAddress().getAddress3();
-            String zipCode = postData.getAddress().getZipCode();
-            String city = postData.getAddress().getCity();
-            String state = postData.getAddress().getState();
-            Address address = new Address(address1, address2, address3, zipCode, city , country, state);
-            contact.setAddress(address);
-        }
-        
-        String assistantName = postData.getAssistantName();
-        String assistantPhone = postData.getAssistantPhone();
-        contact.setAssistantName(assistantName);
-        contact.setAssistantPhone(assistantPhone);
-        
-        String position = postData.getPosition();
-        contact.setPosition(position);
-        
-        String socialIdentifier = postData.getSocialIdentifier();
-        String websiteUrl = postData.getWebsiteUrl();
-        contact.setSocialIdentifier(socialIdentifier);
-        contact.setWebsiteUrl(websiteUrl);
-        
-        Boolean isVip = postData.isVip();
-        Boolean isProspect = postData.isProspect();
-        Boolean agreedToUA = postData.isAgreedToUA();
-        contact.setVip(isVip);
-        contact.setProspect(isProspect);
-        contact.setAgreedToUA(agreedToUA);
-        
+        contact.setCompany(postData.getCompany());
+        contact.setDescription(postData.getDescription());
+        contact.setMobile(postData.getMobile());
+        contact.setPhone(postData.getPhone());
+        contact.setAssistantName(postData.getAssistantName());
+        contact.setAssistantPhone(postData.getAssistantPhone());
+        contact.setPosition(postData.getPosition());
+        contact.setSocialIdentifier(postData.getSocialIdentifier());
+        contact.setWebsiteUrl(postData.getWebsiteUrl());
+        contact.setVip(postData.isVip());
+        contact.setProspect(postData.isProspect());
+        contact.setAgreedToUA(postData.isAgreedToUA());
+	
         contactService.create(contact);
-        
+
+		addressBookService.addContact(null, contact);
+		
         return contact;
     }
+	
 	
 	public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(postData.getName().getFirstName())) {
@@ -149,54 +125,63 @@ public class ContactApi extends BaseApi {
         	throw new EntityDoesNotExistsException(Contact.class, code, "code");
         }
         
+        updateAccount(contact, postData);
         
-        if(postData.getAddress() != null) {
-            Country country = new Country();
-            String address1 = postData.getAddress().getAddress1();
-            String address2 = postData.getAddress().getAddress2();
-            String address3 = postData.getAddress().getAddress3();
-            String zipCode = postData.getAddress().getZipCode();
-            String city = postData.getAddress().getCity();
-            String state = postData.getAddress().getState();
-            Address address = new Address(address1, address2, address3, zipCode, city , country, state);
-            contact.setAddress(address);
+        if (!StringUtils.isBlank(postData.getCompany())) {
+        	contact.setCompany(postData.getCompany());
         }
         
+        if (!StringUtils.isBlank(postData.getCompany())) {
+        	contact.setCompany(postData.getCompany());
+        }
         
-        String assistantName = postData.getAssistantName();
-        String assistantPhone = postData.getAssistantPhone();
-        if (assistantName != null) contact.setAssistantName(assistantName);
-        if (assistantPhone != null) contact.setAssistantPhone(assistantPhone);
+        if (!StringUtils.isBlank(postData.getDescription())) {
+        	contact.setDescription(postData.getDescription());
+        }
         
-        String position = postData.getPosition();
-        if (position != null) contact.setPosition(position);
+        if (!StringUtils.isBlank(postData.getMobile())) {
+        	contact.setMobile(postData.getMobile());
+        }
         
+        if (!StringUtils.isBlank(postData.getPhone())) {
+        	contact.setPhone(postData.getPhone());
+        }
+        
+        if (!StringUtils.isBlank(postData.getAssistantName())) {
+        	contact.setAssistantName(postData.getAssistantName());
+        }
+        
+        if (!StringUtils.isBlank(postData.getAssistantPhone())) {
+        	contact.setAssistantPhone(postData.getAssistantPhone());
+        }
+        
+        if (!StringUtils.isBlank(postData.getPosition())) {
+        	contact.setPosition(postData.getPosition());
+        }
+        
+        if (!StringUtils.isBlank(postData.getSocialIdentifier())) {
+	        contact.setSocialIdentifier(postData.getSocialIdentifier());
+        }
+        
+        if (!StringUtils.isBlank(postData.getWebsiteUrl())) {
+	        contact.setWebsiteUrl(postData.getWebsiteUrl());
+        }
 
-        String company = postData.getCompany();
-        if (company != null) contact.setCompany(company);
         
-        String description = postData.getDescription();
-        if(description != null) contact.setDescription(description);
+        if (!StringUtils.isBlank(postData.isVip())) {
+	        contact.setVip(postData.isVip());
+        }
         
-        String mobile = postData.getMobile();
-        String phone = postData.getPhone();
-        if(mobile != null) contact.setMobile(mobile);
-        if(phone != null) contact.setPhone(phone);
+        if (!StringUtils.isBlank(postData.isProspect())) {
+	        contact.setProspect(postData.isProspect());
+        }
         
+        if (!StringUtils.isBlank(postData.isAgreedToUA())) {
+	        contact.setAgreedToUA(postData.isAgreedToUA());
+        }
         
-        String socialIdentifier = postData.getSocialIdentifier();
-        String websiteUrl = postData.getWebsiteUrl();
-        if (socialIdentifier != null) contact.setSocialIdentifier(socialIdentifier);
-        if (websiteUrl != null) contact.setWebsiteUrl(websiteUrl);
-        
-        Boolean isVip = postData.isVip();
-        Boolean isProspect = postData.isProspect();
-        Boolean agreedToUA = postData.isAgreedToUA();
-        if (isVip != null) contact.setVip(isVip);
-        if (isProspect != null) contact.setProspect(isProspect);
-        if (agreedToUA != null) contact.setAgreedToUA(agreedToUA);
-        
-        return contactService.update(contact);
+        contact =  contactService.update(contact);
+        return contact;
 	}
 	
 	public Contact createOrUpdate(ContactDto postData) throws MeveoApiException, BusinessException {
