@@ -1119,4 +1119,24 @@
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.invoice_sub_category_id=cat_charge_template.invoice_sub_category where billing_wallet_operation.invoice_sub_category_id is null</sql>
     </changeSet>
     
+    <changeSet id="#3513_20180621" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_service_template">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	<addColumn tableName="billing_subscription">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	<addColumn tableName="billing_service_instance">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	<addColumn tableName="cat_offer_template">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	
+    	<sql>update cat_service_template set initial_term_type='RECURRING';</sql>
+    	<sql>update billing_subscription set initial_term_type='RECURRING';</sql>
+    	<sql>update billing_service_instance set initial_term_type='RECURRING';</sql>
+    	<sql>update cat_offer_template set initial_term_type='RECURRING';</sql>
+    </changeSet>
+    
 </databaseChangeLog> 
