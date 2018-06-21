@@ -124,6 +124,7 @@ import org.xml.sax.SAXException;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
+ * 
  **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
