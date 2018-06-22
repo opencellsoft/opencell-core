@@ -430,7 +430,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Creates the agregates and invoice.
      *
      * @param billingAccountId billing account id
-     * @param billingRun billing run
      * @param ratedTransactionFilter rated transaction filter
      * @param orderNumber order number
      * @param invoiceDate date of invoice
@@ -450,7 +449,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Creates the agregates and invoice.
      *
      * @param billingAccountId billing account id
-     * @param billingRun billing run
      * @param ratedTransactionFilter rated transaction filter
      * @param orderNumber order number
      * @param invoiceDate date of invoice
