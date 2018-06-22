@@ -1169,7 +1169,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
      * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
      * 
-     * @param Entity class to reference
+     * @param entityClass Entity class to reference
      * @param id Entity ID
      * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
      *         customer
