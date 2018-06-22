@@ -36,6 +36,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -503,6 +504,21 @@ public class WalletApi extends BaseApi {
             walletOperation.setInvoicingDate(cal.nextCalendarDate(walletOperation.getOperationDate()));
         }
 
+        // Fill missing data
+        if (walletOperation.getInvoiceSubCategory() == null || walletOperation.getInputUnitDescription() == null || walletOperation.getRatingUnitDescription() == null) {
+            ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+            if (walletOperation.getInvoiceSubCategory() == null) {
+                walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
+            }
+            if (walletOperation.getInputUnitDescription() == null) {
+                walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
+
+            }
+            if (walletOperation.getRatingUnitDescription() == null) {
+                walletOperation.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
+            }
+        }
+
         walletOperationService.create(walletOperation);
 
     }
@@ -510,8 +526,9 @@ public class WalletApi extends BaseApi {
     public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         return this.findOperations(postData, pagingAndFiltering, Boolean.FALSE);
     }
-    
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering, Boolean includeRatedTransactions) throws MeveoApiException {
+
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering, Boolean includeRatedTransactions)
+            throws MeveoApiException {
 
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
@@ -534,7 +551,7 @@ public class WalletApi extends BaseApi {
             for (WalletOperation wo : walletOperations) {
                 WalletOperationDto woDto = new WalletOperationDto(wo);
                 if (includeRatedTransactions) {
-                    RatedTransaction rt =  this.ratedTransactionService.findByWalletOperationId(wo.getId());
+                    RatedTransaction rt = this.ratedTransactionService.findByWalletOperationId(wo.getId());
                     if (rt != null) {
                         woDto.setRatedTransaction(new WoRatedTransactionDto(rt));
                     }
