@@ -242,14 +242,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billingAccount Billing Account
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactionFilter Filter to use to filter rated transactions.
-     * @param orderNumber Order number used to retrieve rated transactions
      * @param firstTransactionDate First transaction date
      * @param lastTransactionDate Last transaction date
      * @throws BusinessException business exception
      */
-    public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, String orderNumber, Date firstTransactionDate,
+    public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, Date firstTransactionDate,
             Date lastTransactionDate) throws BusinessException {
-        appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, null, orderNumber, firstTransactionDate, lastTransactionDate, false, false);
+        appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, null, firstTransactionDate, lastTransactionDate, false, false);
     }
 
     /**
@@ -259,7 +258,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactionFilter Filter to use to filter rated transactions.
      * @param ratedTransactions A list of rated transactions - used in conjunction with isVirtual=true
-     * @param orderNumber Order number used to retrieve rated transactions
      * @param firstTransactionDate First transaction date
      * @param lastTransactionDate Last transaction date
      * @param isInvoiceAdjustment Is this invoice adjustment
@@ -268,7 +266,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @SuppressWarnings({ "unchecked", "unused" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions, String orderNumber,
+    public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
             Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {
 
         long startDate = System.currentTimeMillis();

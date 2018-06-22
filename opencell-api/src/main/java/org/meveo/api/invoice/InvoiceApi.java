@@ -510,10 +510,6 @@ public class InvoiceApi extends BaseApi {
             if (generateInvoiceRequestDto.getInvoicingDate() == null) {
                 missingParameters.add("invoicingDate");
             }
-            if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
-                    && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
-                missingParameters.add("lastTransactionDate or filter or orderNumber");
-            }
         }
 
         handleMissingParameters();
@@ -524,7 +520,7 @@ public class InvoiceApi extends BaseApi {
         } else if(BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
             entity = subscriptionService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
         } else if(BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-            entity = orderService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+            entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getTargetCode());
         }
 
         if (entity == null) {
