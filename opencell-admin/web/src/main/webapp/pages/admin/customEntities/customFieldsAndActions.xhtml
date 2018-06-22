@@ -452,7 +452,7 @@
                 </hftl:decorateFormField>
                 <ui:param name="buttons" value="true" />
                 <ui:define name="buttons">
-                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnSave="false"
+                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnBack="false"  killConversationOnSave="false"
                         showEditButton="false" showDeleteButton="false">
                         <p:remoteCommand action="#{customEntityTemplateBean.refreshFields}" name="refreshFields" update=":fieldsForm:fields" />
                         <p:commandButton value="#{messages['action.save']}" onclick="delayDisable(this);"
@@ -515,7 +515,7 @@
             </h:panelGrid>
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
-                <hf:formButtons backingBean="#{entityCustomActionBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnSave="false">
+                <hf:formButtons backingBean="#{entityCustomActionBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnBack="false" killConversationOnSave="false">
                     <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty entityCustomActionBean.entity.id and entityCustomActionBean.entity.active}"
                         actionListener="#{customEntityTemplateBean.refreshFields}" action="#{entityCustomActionBean.disable}" update="@form :fieldsForm:fields">
                         <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
