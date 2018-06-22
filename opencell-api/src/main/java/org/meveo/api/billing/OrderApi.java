@@ -932,6 +932,10 @@ public class OrderApi extends BaseApi {
             productOrder.getPaymentMethods().add(pmDto);
 
         }
+        
+        if(order.getBillingCycle() != null) {
+            productOrder.setBillingCycle(order.getBillingCycle().getCode());
+        }
 
         List<ProductOrderItem> productOrderItems = new ArrayList<>();
         productOrder.setOrderItem(productOrderItems);
