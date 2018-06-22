@@ -611,6 +611,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 } else {
                     throw new BusinessException(e.getMessage());
                 }
+            } else {
+                throw new BusinessException(e.getMessage());
             }
         }
         
