@@ -8,26 +8,25 @@ import org.meveo.audit.logging.core.AuditContext;
 
 import javax.ejb.Stateless;
 
-
 /**
  * @author Mounir Bahije
+ * @lastModifiedVersion 5.1
+ *
  */
 @Stateless
 public class AuditApi extends BaseApi {
 
+    /**
+     * Update audit logging
+     * 
+     * @param active
+     *
+     */
+    public void auditActive(Boolean active) {
 
-    public void auditActive(Boolean active)  throws MeveoApiException, BusinessException {
-
-        try {
-            final AuditConfiguration auditConfiguration = AuditContext.getInstance().getAuditConfiguration();
-            auditConfiguration.setEnabled(active);
-        } catch (Exception e) {
-            log.error("Failed to set Active boolean", e);
-            throw e;
-        }
+        final AuditConfiguration auditConfiguration = AuditContext.getInstance().getAuditConfiguration();
+        auditConfiguration.setEnabled(active);
 
     }
-
-
 
 }
