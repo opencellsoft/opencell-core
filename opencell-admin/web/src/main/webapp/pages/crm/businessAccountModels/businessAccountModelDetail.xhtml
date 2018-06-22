@@ -48,7 +48,7 @@
 
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
-                <hf:formButtons backingBean="#{businessAccountModelBean}" edit="true" showEditButton="#{!businessAccountModelBean.entity.downloaded}"
+                <hf:formButtons killConversationOnSave="false" killConversationOnBack="false" backingBean="#{businessAccountModelBean}" edit="true" showEditButton="#{!businessAccountModelBean.entity.downloaded}"
                     showEnableDisableButton="#{!businessAccountModelBean.entity.downloaded}" showDeleteButton="#{!businessAccountModelBean.entity.downloaded}" formId="moduleId"
                     useCustomIdParam="true">
 

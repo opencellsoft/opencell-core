@@ -247,7 +247,7 @@
                     <hftl:customFields backingBean="#{invoiceBean}" messagesId=":headerForm:messages" edit="true" />
                 </p:tabView>
                 
-                <hf:formButtons ajaxSubmit="true" backingBean="#{invoiceBean}" showBackButton="true" showEnableDisableButton="false" showDeleteButton="false" 
+                <hf:formButtons killConversationOnSave="false" killConversationOnBack="false" ajaxSubmit="true" backingBean="#{invoiceBean}" showBackButton="true" showEnableDisableButton="false" showDeleteButton="false" 
 					showEditButton="false" >
                     <p:commandButton value="#{messages['action.save']}" icon="ui-icon-check" action="#{invoiceBean.saveOrUpdate(false)}" update="@form" />
                 </hf:formButtons>

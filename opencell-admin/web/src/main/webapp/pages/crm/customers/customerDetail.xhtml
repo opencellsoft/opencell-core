@@ -27,16 +27,6 @@
             </p:breadCrumb>
         </h:form>
 		
-<!-- 		<hftl:entityPopup id="sellerParentPopup" -->
-<!-- 			header="#{messages['seller.title']}" backingBean="#{sellerBean}" -->
-<!-- 			searchField1Label="#{messages['BusinessEntity.code']}" -->
-<!-- 			searchField1="code" column1Label="#{messages['BusinessEntity.code']}" -->
-<!-- 			column1="code" selection="#{customerBean.entity.seller}" -->
-<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
-<!-- 			column2="description" -->
-<!-- 			updateField=":formCustomerPanel:formCustomer:tabView:parentSelectId"> -->
-<!-- 		</hftl:entityPopup> -->
-
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
 					<hf:hierarchyPanel
@@ -46,7 +36,7 @@
 			<h:panelGroup styleClass="col2">
             		<hftl:formPanel formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
-						showFormButtons="false" backingBean="#{customerBean}"
+						showFormButtons="true" backingBean="#{customerBean}"
 						useCustomIdParam="true">
 						<p:tabView id="tabView" activeIndex="#{customerBean.activeTab}">
 							<p:tab title="#{messages['customer.tab.account']}" id="tab0">
@@ -135,15 +125,18 @@
 						<hftl:customFields backingBean="#{customerBean}" messagesId=":formCustomer:messages" />
 								<hftl:displayWorkflowsHistory entity="#{customerBean.entity}" />
 						</p:tabView>
-
-                    <hf:formButtons columns="5" backingBean="#{customerBean}" edit="#{customerBean.edit}" ajaxSubmit="true"
-                        submitPartialProcess=":formCustomer:tabView" useCustomIdParam="true">
-                        <p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}" value="#{messages['customer.buttonAddCustomerAccount']}">
-                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                        </p:button>
-                        <p:commandButton ajax="false" rendered="#{!entity.transient}" value="#{messages['action.export']}" action="#{customerBean.exportCustomerHierarchy()}">
-                        </p:commandButton>
-                    </hf:formButtons>
+                                
+	 					 <ui:param name="buttons" value="true"/>
+	                     <ui:define name="buttons">                                
+	                        <h:panelGroup rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}">
+	                            <div class="action-buttons">                                                                                   
+			                        <p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}" value="#{messages['customer.buttonAddCustomerAccount']}">
+			                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+			                        </p:button>
+	                                <p:commandButton ajax="false" rendered="#{!entity.transient}" value="#{messages['action.export']}" action="#{customerBean.exportCustomerHierarchy()}"/>
+	                            </div>
+	                        </h:panelGroup>
+	                    </ui:define>
                 </hftl:formPanel>
             </h:panelGroup>
         </h:panelGroup>
