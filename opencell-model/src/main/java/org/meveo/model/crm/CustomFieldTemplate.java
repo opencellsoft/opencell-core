@@ -138,6 +138,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Type(type = "numeric_boolean")
     @Column(name = "inh_as_def_value")
     private boolean useInheritedAsDefaultValue;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "cf_protectable")
+    protected boolean protectable;
 
     /**
      * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
@@ -836,5 +840,19 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
 
         return valBuilder.toString();
+    }
+
+    /**
+     * @return the protectable
+     */
+    public boolean isProtectable() {
+        return protectable;
+    }
+
+    /**
+     * @param protectable the protectable to set
+     */
+    public void setProtectable(boolean protectable) {
+        this.protectable = protectable;
     }
 }

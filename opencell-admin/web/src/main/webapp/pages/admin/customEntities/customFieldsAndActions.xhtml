@@ -291,15 +291,20 @@
 
                     <h:panelGroup>
                         <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="30"
-                            listenerUpdate="listValuesField defaultValueField entityClazzField validations versioning storageType_enum matrixColumns childEntityFields"
+                            listenerUpdate="listValuesField defaultValueField entityClazzField validations versioning storageType_enum matrixColumns childEntityFields protectableField"
                             actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" allowEdit="false" />
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
                         <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="30"
                             listenerUpdate="@this defaultValueField mapKeyTypeField matrixColumns" actionListenerBean="#{customFieldTemplateBean}" allowEdit="false"
                             actionListenerMethod="updateDefaultValues" />
+						<h:panelGroup id="protectableField">
+						   <c:if test="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}">
+						   	 <hftl:formField label="#{messages['customFieldTemplate.protectable']}" field="protectable" isMessage="true" componentWidth="30" />
+						   </c:if>
+						</h:panelGroup>
 
-                        <h:panelGroup id="mapKeyTypeField">
+						<h:panelGroup id="mapKeyTypeField">
                             <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="30"
                                 listValues="#{CustomFieldMapKeyEnum.enumValuesForKey}" rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
                         </h:panelGroup>
