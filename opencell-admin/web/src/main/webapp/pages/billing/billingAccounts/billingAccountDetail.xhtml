@@ -91,7 +91,6 @@
 
 		</c:if>
 		
-
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
 					<hf:hierarchyPanel
@@ -482,9 +481,9 @@
 					<hftl:formField
 						label="#{messages['serviceInstance.terminationDate']}"
 						field="terminationDate" required="true" edit="true"  componentWidth="25"/>
-					<hftl:formField label="Motifs " field="terminationReason"
-						valueLabelField="descriptionOrCode" required="true"  edit="true"
-						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+					<hftl:formField label="Motifs "  
+						field="terminationReason"  valueLabelField="descriptionOrCode"
+						required="true" listBean="#{subscriptionTerminationReasonBean}" styleClass="clearLeft" />	
 					<!-- update=":#{p:component('formBillingAccountPanel')}" -->
 					<p:panel styleClass="action-buttons">
 						<p:commandButton action="#{billingAccountBean.terminateAccount()}"

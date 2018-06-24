@@ -201,7 +201,7 @@
                             required="true"
                             rendered="#{offerTemplateBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}"
                             valueLabelField="descriptionOrCode"
-                            listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+                            listBean="#{subscriptionTerminationReasonBean}" />
                     </h:panelGroup>
                 </h:panelGroup>
             </p:fieldset>
