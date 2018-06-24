@@ -6,59 +6,6 @@
 	xmlns:hftl="http://hftl.org"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
-	<p:tooltip for="userRoles">#{help['menu.userRoles']}</p:tooltip>
-	<p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
-	<p:tooltip for="tradingCurrencies">#{help['menu.tradingCurrencies']}</p:tooltip>
-	<p:tooltip for="tradingCountries">#{help['menu.tradingCountries']}</p:tooltip>
-	<p:tooltip for="countries">#{help['menu.countries']}</p:tooltip>
-	<p:tooltip for="currencies">#{help['menu.currencies']}</p:tooltip>
-	<p:tooltip for="languages">#{help['menu.languages']}</p:tooltip>
-	<p:tooltip for="calendars">#{help['menu.calendars']}</p:tooltip>
-	<p:tooltip for="billingCycles">#{help['menu.billingCycles']}</p:tooltip>
-	<p:tooltip for="taxes">#{help['menu.taxes']}</p:tooltip>
-	<p:tooltip for="invoiceCategories">#{help['menu.invoiceCategories']}</p:tooltip>
-	<p:tooltip for="invoiceSubCategories">#{help['menu.invoiceSubCategories']}</p:tooltip>
-	<p:tooltip for="invoiceTypes">#{help['menu.invoiceTypes']}</p:tooltip>
-	<p:tooltip for="providerContacts">#{help['menu.providerContacts']}</p:tooltip>
-	<p:tooltip for="customerBrands">#{help['menu.customerBrands']}</p:tooltip>
-	<p:tooltip for="customerCategories">#{help['menu.customerCategories']}</p:tooltip>
-	<p:tooltip for="creditCategories">#{help['menu.creditCategories']}</p:tooltip>
-	<p:tooltip for="sellers">#{help['menu.sellers']}</p:tooltip>
-	<p:tooltip for="emailTemplates">#{help['menu.emailTemplates']}</p:tooltip>
-	<p:tooltip for="occTemplates">#{help['menu.occTemplates']}</p:tooltip>
-	<p:tooltip for="offerTemplates">#{help['menu.offerTemplates']}</p:tooltip>
-	<p:tooltip for="offerTemplateCategories">#{help['menu.offerTemplateCategories']}</p:tooltip>
-	<p:tooltip for="serviceTemplates">#{help['menu.serviceTemplates']}</p:tooltip>
-	<p:tooltip for="recurringChargeTemplate">#{help['menu.recurringChargeTemplate']}</p:tooltip>
-	<p:tooltip for="oneShotChargeTemplates">#{help['menu.oneShotChargeTemplates']}</p:tooltip>
-	<p:tooltip for="usageChargeTemplates">#{help['menu.usageChargeTemplates']}</p:tooltip>
-	<p:tooltip for="pricePlanMatrixes">#{help['menu.pricePlanMatrixes']}</p:tooltip>
-	<p:tooltip for="walletOperations">#{help['menu.walletOperations']}</p:tooltip>
-	<p:tooltip for="walletTemplates">#{help['menu.wallets']}</p:tooltip>
-	<p:tooltip for="counterTemplates">#{help['menu.counterTemplates']}</p:tooltip>
-	<p:tooltip for="customerSearch">#{help['menu.customerSearch']}</p:tooltip>
-	<p:tooltip for="customers">#{help['menu.customers']}</p:tooltip>
-	<p:tooltip for="customerAccounts">#{help['menu.customerAccounts']}</p:tooltip>
-	<p:tooltip for="billingAccounts">#{help['menu.billingAccounts']}</p:tooltip>
-	<p:tooltip for="userAccounts">#{help['menu.userAccounts']}</p:tooltip>
-	<p:tooltip for="crmAccounts">#{help['menu.crmAccounts']}</p:tooltip>
-	<p:tooltip for="subscriptions">#{help['menu.subscriptions']}</p:tooltip>
-	<p:tooltip for="importedFiles">#{help['menu.importedFiles']}</p:tooltip>
-	<p:tooltip for="cache">#{help['menu.cacheInfo']}</p:tooltip>
-	<p:tooltip for="reindexES">#{help['menu.fullTextSearch.index']}</p:tooltip>
-    <p:tooltip for="ESSearch">#{help['menu.fullTextSearch.search']}</p:tooltip>
-
-	<p:tooltip for="orders">#{help['menu.orders']}</p:tooltip>
-    <p:tooltip for="quotes">#{help['menu.quotes']}</p:tooltip>
-	<c:set var="cetIndex" value="0" />
-	<c:forEach items="#{customEntityTemplateBean.listAll()}" var="cet">
-		<c:if test="#{currentUser.hasRole(cet.readPermission) }">
-			<p:tooltip for="cet_#{cetIndex}" value="#{cet.description}" />
-			<c:set var="cetIndex" value="#{cetIndex + 1}" />
-		</c:if>
-	</c:forEach>
-
 	<div class="Container">
 		<div class="Container5 NoIndent">
 			<h:link outcome="indexPage" styleClass="fa fw fa-home fa-3x"/>

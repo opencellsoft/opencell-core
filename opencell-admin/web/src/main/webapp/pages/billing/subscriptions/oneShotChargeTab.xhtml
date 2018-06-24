@@ -32,7 +32,6 @@
                             update=":subscriptionTab:oneShotChgDiv" icon="ui-icon-document">
                             <f:setPropertyActionListener value="true" target="#{subscriptionBean.showApplyOneShotForm}" />
                         </p:commandButton>
-                        <p:tooltip for="editOneShotChgInsLink" value="#{messages['commons.edit']}" rendered="#{subscriptionBean.canUserUpdateEntity()}" showEffect="slide" hideEffect="slide" />
                     </p:column>
                 </p:dataTable>
             </h:form>
@@ -71,7 +70,6 @@
                     <hftl:decorateFormField fieldId="chargeTemplateSelectId_text" label="#{messages['businessEntity.code']}" rendered="#{subscriptionBean.oneShotChargeInstance.transient}">
                         <p:inputText id="chargeTemplateSelectId_text" required="true" value="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.code}" disabled="true" />
                         <p:commandButton id="chargeTemplateSelectId_selectLink" onclick="PF('dlg_oneShotChargeTmpPopup').show()" icon="ui-icon-search" type="button" />
-                        <p:tooltip for="chargeTemplateSelectId_selectLink" value="#{messages['commons.search']}" />
                     </hftl:decorateFormField>
                 </h:panelGroup>
                 <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
@@ -83,7 +81,6 @@
                             <p:inputText id="chargeWalletSelectId_text" required="false" value="#{subscriptionBean.selectedWalletTemplateCode}" />
                             <p:commandButton id="chargeWalletSelectId_selectLink" disabled="#{subscriptionBean.oneShotChargeInstance.code eq null}" onclick="PF('dlg_popupWalletTemplates').show()"
                                 icon="ui-icon-search" type="button" />
-                            <p:tooltip for="chargeWalletSelectId_selectLink" value="#{messages['commons.search']}" />
                         </h:panelGroup>
                     </h:panelGroup>
                 </h:panelGroup>
@@ -107,7 +104,7 @@
                     <span style="height: 1px" />
                     <h:outputText value="#{messages['commons.noItems']}" rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
                     <h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
-                        <!-- 																			<h:outputText value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" /> -->
+                        <!--                                                                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" /> -->
                         <hftl:decorateFormField label="#{messages['chargeApplication.applicationDate']}">
                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].operationDate}" styleClass="field-value">
                                 <f:convertDateTime pattern="#{paramBean.dateFormat}" />

@@ -67,7 +67,7 @@
             </hftl:decorateFormField>
             
             <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true"
-                execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}" executeLabel="#{messages['action.execute']}" />
+                execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}" executeLabel="#{messages['action.execute']}" killConversationOnSave="false" killConversationOnBack="false" />
         </hftl:formPanel>
         <p:dataTable var="log" value="#{scriptInstanceBean.getLogs()}" rendered="#{!empty(scriptInstanceBean.getLogs())}">
             <p:column headerText="Logs">

@@ -1,38 +1,38 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
     xmlns:hftl="http://hftl.org"
-	template="/layout/template.xhtml">
+    template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
+    <ui:define name="metadata">
+        <f:metadata>
             <f:event type="preRenderView" listener="#{customerAccountBean.preRenderView}" />
             <f:viewParam name="objectId" value="#{customerAccountBean.objectId}" />
         </f:metadata>
-	</ui:define>
+    </ui:define>
 
-	<ui:define name="body">
-		<hftl:entityPopup id="customerAccountPopup"
-			header="#{messages['customerAccount.popup.header']}"
-			backingBean="#{customerAccountBean}"
-			searchField1Label="#{messages['customerAccount.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['customerAccount.name']}"
-			searchField2="name"
-			column1Label="#{messages['customerAccount.code']}" column1="code"
-			column2Label="#{messages['customerAccount.name']}" column2="name"
-			filtersMap="#{customerAccountBean.filters}"
-			selection="#{customerAccountBean.customerAccountTransfer}"
-			updateField=":transferAccountForm:accountTransferCode">
-			<!-- select link -->
-			<!-- <a:commandLink value="#{messages['commons.select']}"
-				reRender="transferAccountForm"
-				action="#{customerAccountBean.setCustomerAccountTransfer(entity)}"
-				oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
-			</a:commandLink> -->
-		</hftl:entityPopup>
+    <ui:define name="body">
+        <hftl:entityPopup id="customerAccountPopup"
+            header="#{messages['customerAccount.popup.header']}"
+            backingBean="#{customerAccountBean}"
+            searchField1Label="#{messages['customerAccount.code']}"
+            searchField1="code"
+            searchField2Label="#{messages['customerAccount.name']}"
+            searchField2="name"
+            column1Label="#{messages['customerAccount.code']}" column1="code"
+            column2Label="#{messages['customerAccount.name']}" column2="name"
+            filtersMap="#{customerAccountBean.filters}"
+            selection="#{customerAccountBean.customerAccountTransfer}"
+            updateField=":transferAccountForm:accountTransferCode">
+            <!-- select link -->
+            <!-- <a:commandLink value="#{messages['commons.select']}"
+                reRender="transferAccountForm"
+                action="#{customerAccountBean.setCustomerAccountTransfer(entity)}"
+                oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
+            </a:commandLink> -->
+        </hftl:entityPopup>
 
         <hftl:decorateFormPanel formId="transferAccountForm" label="#{messages['customerAccount.transferAccountTitle']}">
             <ui:define name="fields">        
@@ -44,7 +44,6 @@
 
                         <p:inputText id="accountTransferCode" value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}" required="true" disabled="true" size="30"></p:inputText>
                         <p:commandButton id="selectLink" onclick="PF('dlg_customerAccountPopup').show()" type="button" icon="ui-icon-search" />
-                        <p:tooltip for="selectLink" value="#{messages['commons.search']}"></p:tooltip>
                         <ui:insert />
                     </hftl:decorateFormField>
 

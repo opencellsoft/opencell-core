@@ -518,8 +518,6 @@
 																	oncomplete="PF('dlg_recurringChgPopup').show()"
 																	update=":recurringChgPanel" icon="ui-icon-document">
 																</p:commandButton>
-																<p:tooltip for="editRecurringChgInsLink"
-																	value="#{messages['commons.edit']}" />
 															</p:column>
 														</p:dataTable>
 													</h:form>
@@ -584,8 +582,6 @@
 																oncomplete="PF('dlg_usageChgPopup').show()"
 																update=":usageChgPanel" icon="ui-icon-document">
 															</p:commandButton>
-															<p:tooltip for="editUsageChgInsLink"
-																value="#{messages['commons.edit']}" />
 														</p:column>
 													</p:dataTable>
 												</h:form>
@@ -649,9 +645,6 @@
 																	<f:param name="subscriptionId"
 																		value="#{subscriptionBean.entity.id}" />
 																</p:commandButton>
-																<p:tooltip for="accessDeletelink"
-																	value="#{messages['commons.delete']}"
-																	showEffect="slide" hideEffect="slide" />
 															</p:column>
 														</p:dataTable>
 													</p:outputPanel>
@@ -877,4 +870,3 @@
 		
 	</ui:define>
 </ui:composition>
-
