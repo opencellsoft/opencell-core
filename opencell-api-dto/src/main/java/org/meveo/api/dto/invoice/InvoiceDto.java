@@ -124,8 +124,8 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public InvoiceDto() {
     }
-
-    /**
+    
+	/**
      * Gets the list invoice id to link.
      *
      * @return the listInvoiceIdToLink

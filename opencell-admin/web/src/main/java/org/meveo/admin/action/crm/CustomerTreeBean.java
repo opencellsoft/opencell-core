@@ -172,7 +172,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             return accountsHierarchy;
         }
 
-        if (entity.isTransient()) {
+        if (entity == null || entity.isTransient()) {
             return null;
         }
 

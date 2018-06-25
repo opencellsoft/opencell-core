@@ -58,6 +58,7 @@ public class PictureServlet extends HttpServlet {
     public static final String DEFAULT_OFFER_IMAGE = "offer_default.png";
     public static final String DEFAULT_SERVICE_IMAGE = "service_default.png";
     public static final String DEFAULT_PRODUCT_IMAGE = "product_default.png";
+    public static final String DEFAULT_REPORT_EXTRACT_IMAGE = "report_extract_default.png";
     private Map<String, byte[]> cachedDefaultImages = new HashMap<>();
 
     @Inject

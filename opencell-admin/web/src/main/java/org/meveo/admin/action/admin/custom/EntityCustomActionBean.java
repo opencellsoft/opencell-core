@@ -7,13 +7,17 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
-import org.meveo.admin.action.catalog.ScriptInstanceBean;
+import org.meveo.admin.action.script.ScriptInstanceBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.custom.EntityCustomActionService;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
+ */
 @Named
 @ViewScoped
 public class EntityCustomActionBean extends BaseBean<EntityCustomAction> {

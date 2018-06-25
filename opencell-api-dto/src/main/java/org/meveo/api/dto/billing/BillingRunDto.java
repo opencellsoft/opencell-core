@@ -16,6 +16,9 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 
 /**
  * The Class BillingRunDto.
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "BillingRun")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,6 +98,9 @@ public class BillingRunDto extends AuditableEntityDto {
 
     /** The selected billing accounts. */
     private String selectedBillingAccounts;
+    
+    /** Custom fields. */
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new billing run dto.
@@ -534,6 +540,24 @@ public class BillingRunDto extends AuditableEntityDto {
     public void setSelectedBillingAccounts(String selectedBillingAccounts) {
         this.selectedBillingAccounts = selectedBillingAccounts;
     }
+    
+    /**
+      * Gets the custom fields.
+      *
+      * @return the custom fields
+      */
+     public CustomFieldsDto getCustomFields() {
+         return customFields;
+     }
+    
+     /**
+      * Sets the custom fields.
+      *
+      * @param customFields the new custom fields
+      */
+     public void setCustomFields(CustomFieldsDto customFields) {
+         this.customFields = customFields;
+     }
 
     /**
      * Sets the from entity.

@@ -266,4 +266,6 @@ public interface IPersistenceService<E extends IEntity> {
 
     EntityManager getEntityManager();
 
+    String findReferencedByEntities(Class<E> clazz, Long id);
+    
 }

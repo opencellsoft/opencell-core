@@ -5,7 +5,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
- * Dto containing the request to find a list of rated transactions
+ * Dto containing the request criterion to find a list of rated transactions
  * @author Said Ramli
  */
 public class RatedTransactionListRequestDto extends BaseEntityDto {
@@ -31,7 +31,7 @@ public class RatedTransactionListRequestDto extends BaseEntityDto {
      * @param limit the limit
      * @param sortBy the sort by
      * @param sortOrder the sort order
-     * @param returnUserAccountCode2 
+     * @param returnUserAccountCode the return user account code
      */
     public RatedTransactionListRequestDto (String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, Boolean returnUserAccountCode) {
         this.pagingAndFiltering = new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder);

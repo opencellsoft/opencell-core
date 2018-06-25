@@ -961,8 +961,8 @@ public class InvoiceApi extends BaseApi {
         if (invoiceService.isInvoiceXmlExist(invoice)) {
             invoiceDto.setXmlFilename(invoice.getXmlFilename());
         }
-        
         invoiceDto.setNetToPay(invoice.getNetToPay());
+        invoiceDto.setReturnPdf(invoiceDto.getPdf() != null);
 
         return invoiceDto;
     }

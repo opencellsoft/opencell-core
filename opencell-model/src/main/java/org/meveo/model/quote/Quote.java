@@ -21,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -149,6 +150,9 @@ public class Quote extends BusinessCFEntity {
 
     @OneToOne(mappedBy = "quote", fetch = FetchType.LAZY)
     private Order order;
+    
+    @Transient
+    private boolean generatePdf = true;;
 
     public String getExternalId() {
         return externalId;
@@ -312,5 +316,13 @@ public class Quote extends BusinessCFEntity {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public boolean isGeneratePdf() {
+        return generatePdf;
+    }
+
+    public void setGeneratePdf(boolean generatePdf) {
+        this.generatePdf = generatePdf;
     }
 }

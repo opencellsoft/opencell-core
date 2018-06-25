@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Main script interface implementation
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -95,6 +96,12 @@ public abstract class Script implements ScriptInterface {
 
     }
 
+    /**
+     * Get Service class by its name
+     * 
+     * @param serviceInterfaceName A simple name of a service class (NOT a full classname). E.g. WorkflowService
+     * @return Service instance
+     */
     protected Object getServiceInterface(String serviceInterfaceName) {
         return EjbUtils.getServiceInterface(serviceInterfaceName);
     }

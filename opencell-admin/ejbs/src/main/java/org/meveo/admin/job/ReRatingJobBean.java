@@ -21,7 +21,7 @@ import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
-public class ReRatingJobBean implements Serializable {
+public class ReRatingJobBean extends BaseJobBean implements Serializable {
 
 	/**
 	 * 

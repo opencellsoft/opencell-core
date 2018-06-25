@@ -99,7 +99,7 @@
                                     <p:ajax update="paymentMethodDetail" listener="#{orderBean.changePaymentMethodType}" event="change" />
                                 </p:selectOneMenu>
 
-                                <h:panelGroup rendered="#{orderBean.paymentMethodType!=null}">
+                                <h:panelGroup rendered="#{orderBean.paymentMethodType!=null and orderBean.entity.paymentMethod != null}">
                                     <hftl:formField label="#{messages['paymentMethod.alias']}" field="paymentMethod" childField="alias" required="true" />
 
                                     <c:if test="#{orderBean.entity.paymentMethod.paymentType eq PaymentMethodEnum.CARD}">

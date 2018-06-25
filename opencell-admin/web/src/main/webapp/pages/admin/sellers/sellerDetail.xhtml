@@ -65,9 +65,9 @@
 							required="false" id="email" validateEmail="true" />
 
 						<hftl:formField label="#{messages['contactInformation.phone']}"
-							field="contactInformation" childField="phone" popup="false" />
+							field="contactInformation" childField="phone" maxlength="50" popup="false" />
 						<hftl:formField label="#{messages['contactInformation.mobile']}"
-							field="contactInformation" childField="mobile" popup="false" />
+							field="contactInformation" childField="mobile" maxlength="50" popup="false" />
 					</p:fieldset>
 					<p:fieldset legend="#{messages['commons.address']}">
 						<hftl:formField label="#{messages['address.address1']}"

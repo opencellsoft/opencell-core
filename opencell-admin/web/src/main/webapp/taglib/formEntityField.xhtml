@@ -24,20 +24,17 @@
                     </c:if>
                     <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_selectLink"
                         onclick="PF('dlg_#{popupId}').show()" icon="ui-icon-search" type="button" />
-                    <p:tooltip for="#{id}_selectLink" value="#{messages['commons.search']}" />
 
                     <c:if test="#{createEditPopup}">
                         <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled and fieldItem!=null}"
                             id="#{id}_viewEditLink" oncomplete="PF('#{createEditPopupId}').show()" icon="ui-icon-document"
                             actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" />
-                        <p:tooltip for="#{id}_viewEditLink" value="#{messages['commons.viewEdit']}" />
                         <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_addLink"
                             oncomplete="PF('#{createEditPopupId}').show()" icon="ui-icon-plus" actionListener="#{createEditPopupListenerBean[createEditPopupListenerNewMethod]}"
                             update="#{createEditPopupListenerUpdate}" />
-                        <p:tooltip for="#{id}_addLink" value="#{messages['commons.addNew']}" />
                     </c:if>
                     <p:commandButton immediate="true" rendered="#{showResetButton}" id="#{id}_resetLink" update="#{id}_entity" icon="ui-icon-close">
-                    	<f:setPropertyActionListener target="#{fieldItem}" value="#{null}"/>	
+                        <f:setPropertyActionListener target="#{fieldItem}" value="#{null}"/>    
                     </p:commandButton>
 
                 </c:if>
@@ -54,7 +51,6 @@
                         <c:if test="#{createEditPopup}">
                             <p:commandLink id="#{id}" value="#{fieldItem[valueLabelField]}" immediate="true" oncomplete="PF('#{createEditPopupId}').show()"
                                 actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" styleClass="field-value" />
-                            <p:tooltip for="#{id}" value="#{messages['commons.viewEdit']}" />
                         </c:if>
                     </c:if>
                 </c:if>

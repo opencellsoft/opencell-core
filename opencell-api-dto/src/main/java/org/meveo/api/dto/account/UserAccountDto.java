@@ -74,9 +74,29 @@ public class UserAccountDto extends AccountDto {
      * 
      * @param e UserAccount entity
      */
-    public UserAccountDto(UserAccount e) {
-        super(e);
-    }
+	public UserAccountDto(UserAccount e) {
+		super(e);
+
+		if (e.getBillingAccount() != null) {
+			setBillingAccount(e.getBillingAccount().getCode());
+			setBillingAccountDescription(e.getBillingAccount().getDescription());
+
+			if (e.getBillingAccount().getCustomerAccount() != null) {
+				setCustomerAccount(e.getBillingAccount().getCustomerAccount().getCode());
+				setCustomerAccountDescription(e.getBillingAccount().getCustomerAccount().getDescription());
+
+				if (e.getBillingAccount().getCustomerAccount().getCustomer() != null) {
+					setCustomer(e.getBillingAccount().getCustomerAccount().getCustomer().getCode());
+					setCustomerDescription(e.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
+				}
+			}
+		}
+
+		setSubscriptionDate(e.getSubscriptionDate());
+		setTerminationDate(e.getTerminationDate());
+		setStatus(e.getStatus());
+		setStatusDate(e.getStatusDate());
+	}
 
     /**
      * Gets the billing account.

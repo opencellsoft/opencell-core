@@ -36,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
-import org.meveo.admin.action.catalog.ScriptInstanceBean;
+import org.meveo.admin.action.script.ScriptInstanceBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -63,7 +63,8 @@ import org.primefaces.model.TreeNode;
  * Meveo module bean
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
  */
 
 public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<T> {
