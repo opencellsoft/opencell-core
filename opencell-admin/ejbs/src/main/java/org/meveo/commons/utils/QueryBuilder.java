@@ -63,7 +63,7 @@ public class QueryBuilder {
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
-    
+
     private Class<?> clazz;
 
     public enum QueryLikeStyleEnum {
@@ -318,14 +318,16 @@ public class QueryBuilder {
         Object nvalue = value;
 
         if (caseInsensitive && (value instanceof String)) {
-            sql.append("lower(" + field + ")");
+            sql.append("fn_unaccent(lower(" + field + "))");
+        } else if ((value instanceof String)) {
+            sql.append("fn_unaccent(" + field + ")");
         } else {
             sql.append(field);
         }
         sql.append(operator + ":" + param);
 
         if (caseInsensitive && (value instanceof String)) {
-            nvalue = ((String) value).toLowerCase();
+            nvalue = (StringUtils.enleverAccent((String) value)).toLowerCase();
         }
 
         return addSqlCriterion(sql.toString(), param, nvalue);
@@ -499,9 +501,9 @@ public class QueryBuilder {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        
+
         Date start = c.getTime();
-        
+
         c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
@@ -526,7 +528,7 @@ public class QueryBuilder {
         calFrom.set(Calendar.MINUTE, 0);
         calFrom.set(Calendar.SECOND, 0);
         calFrom.set(Calendar.MILLISECOND, 0);
-        
+
         Date start = calFrom.getTime();
 
         String startDateParameterName = "start" + field.replace(".", "");
@@ -549,7 +551,7 @@ public class QueryBuilder {
         calTo.set(Calendar.MINUTE, 0);
         calTo.set(Calendar.SECOND, 0);
         calTo.set(Calendar.MILLISECOND, 0);
-        
+
         Date end = calTo.getTime();
 
         String endDateParameterName = "end" + field.replace(".", "");
@@ -579,12 +581,12 @@ public class QueryBuilder {
         Date start = cal.getTime();
         cal.set(year, month, date, 23, 59, 59);
         Date end = cal.getTime();
-        
+
         String startDateParameterName = "start" + startField.replace(".", "");
         String endDateParameterName = "end" + endField.replace(".", "");
-        
-        return addSqlCriterion("(" +startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
-                .addSqlCriterion("(" +endField + "<=:" + endDateParameterName  + " OR " + endField + " IS NULL )", endDateParameterName, end);
+
+        return addSqlCriterion("(" + startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
+            .addSqlCriterion("(" + endField + "<=:" + endDateParameterName + " OR " + endField + " IS NULL )", endDateParameterName, end);
     }
 
     /**
@@ -602,7 +604,7 @@ public class QueryBuilder {
         } else {
             q.append(" ORDER BY " + orderColumn);
         }
-        
+
         if (ascending) {
             q.append(" ASC ");
         } else {
