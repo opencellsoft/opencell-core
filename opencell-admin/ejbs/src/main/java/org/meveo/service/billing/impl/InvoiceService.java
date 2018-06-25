@@ -462,10 +462,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         mapBillingAccountRT.get(rt.getBillingAccount()).add(rt);
                     }
                 } 
-                
-                if (billingCycle == null) {
-                    throw new BusinessException("Cant find the billing cycle");
-                }
             }
             
             if (mapBillingAccountRT.isEmpty()) {
@@ -478,6 +474,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 List<RatedTransaction> ratedTransactions = entryBaTr.getValue();
                 
                 Map<InvoiceType, List<RatedTransaction>> mapInvTypeRT = new HashMap<InvoiceType, List<RatedTransaction>>();
+                
+                if (billingCycle == null) {
+                    billingCycle = billingAccount.getBillingCycle();
+                }
+                if (billingCycle == null) {
+                    throw new BusinessException("Cant find the billing cycle");
+                }
                 
                 billingCycle = billingCycleService.refreshOrRetrieve(billingCycle);
                 ScriptInstance scriptInstance = billingCycle.getScriptInstance();
@@ -1556,7 +1559,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if (lastTransactionDate == null) {
-            lastTransactionDate = new Date(999999999);
+            lastTransactionDate = new Date();
         }
         
         if (entity.getBillingRun() != null && (entity.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)

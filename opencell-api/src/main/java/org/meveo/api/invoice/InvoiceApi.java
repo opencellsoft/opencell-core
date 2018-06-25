@@ -524,7 +524,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         if (entity == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getTargetCode());
+            throw new EntityDoesNotExistsException(IBillableEntity.class, generateInvoiceRequestDto.getTargetCode());
         }
 
         Filter ratedTransactionFilter = null;
