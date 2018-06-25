@@ -962,7 +962,7 @@
 				$$ LANGUAGE plpgsql;
 			]]></sql>
 		</changeSet>
-	
+	<!--  
 	    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
 	    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
 	     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
@@ -982,7 +982,8 @@
 									return @textvalue;				
 				end;
 			]]></sql>
-	</changeSet>    
+	</changeSet>
+	-->   
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
