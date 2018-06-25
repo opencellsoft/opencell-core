@@ -1113,4 +1113,10 @@
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.invoice_sub_category_id=cat_charge_template.invoice_sub_category where billing_wallet_operation.invoice_sub_category_id is null</sql>
     </changeSet>
     
+    <changeSet id="#3291_20180620" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_invoice">
+    		<column name="due_balance" type="numeric(23, 12)"></column>
+    	</addColumn>
+    </changeSet>    
+    
 </databaseChangeLog> 

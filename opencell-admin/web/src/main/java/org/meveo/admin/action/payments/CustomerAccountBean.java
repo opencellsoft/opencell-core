@@ -93,7 +93,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private PaymentMethodEnum newPaymentMethodType = PaymentMethodEnum.CARD;
     private PaymentMethod selectedPaymentMethod;
-    private boolean bicRequired = true;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
