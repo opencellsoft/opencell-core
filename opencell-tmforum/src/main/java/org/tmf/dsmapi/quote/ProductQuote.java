@@ -102,6 +102,10 @@ public class ProductQuote implements Serializable {
     protected List<ServiceLevelAgreement> agreement;
     protected List<QuoteProductOfferingPrice> quoteProductOfferingPrice;
     protected List<ProductQuoteItem> quoteItem;
+    /**
+     * By default we do not generate the pdf as it cost CPU usage
+     */
+    private boolean generatePdf = true;
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -632,5 +636,13 @@ public class ProductQuote implements Serializable {
      */
     public void setInvoices(List<GenerateInvoiceResultDto> invoices) {
         this.invoices = invoices;
+    }
+
+    public boolean isGeneratePdf() {
+        return generatePdf;
+    }
+
+    public void setGeneratePdf(boolean generatePdf) {
+        this.generatePdf = generatePdf;
     }
 }
