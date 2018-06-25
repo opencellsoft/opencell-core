@@ -691,17 +691,7 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
-    </changeSet>
-    
-    <changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="postgresql">
-		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}ar_account_operation_index</sql>
-        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
-	</changeSet>
-	
-	<changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="mysql">
-		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
-        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
-	</changeSet>   
+    </changeSet>  
 	
 	<changeSet id="#3019_20180312" author="AbdelmounaimAkadid">
     	<addColumn tableName="billing_billing_account">
@@ -1110,4 +1100,17 @@
     	<addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_service_instance" constraintName="fk_si_auto_tr_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
     </changeSet>
+    
+    <changeSet id="#3519_20180620_P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_wallet_operation set input_unit_description=cat_charge_template.input_unit_description from ${db.schema.adapted}cat_charge_template, ${db.schema.adapted}billing_charge_instance where billing_wallet_operation.charge_instance_id=billing_charge_instance.id and billing_charge_instance.charge_template_id=cat_charge_template.id and  billing_wallet_operation.input_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set rating_unit_description=cat_charge_template.rating_unit_description from ${db.schema.adapted}cat_charge_template, ${db.schema.adapted}billing_charge_instance where billing_wallet_operation.charge_instance_id=billing_charge_instance.id and billing_charge_instance.charge_template_id=cat_charge_template.id and  billing_wallet_operation.rating_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set invoice_sub_category_id=cat_charge_template.invoice_sub_category from ${db.schema.adapted}cat_charge_template, ${db.schema.adapted}billing_charge_instance where billing_wallet_operation.charge_instance_id=billing_charge_instance.id and billing_charge_instance.charge_template_id=cat_charge_template.id and  billing_wallet_operation.invoice_sub_category_id is null</sql>   
+    </changeSet>
+    
+    <changeSet id="#3519_20180620_M" author="AndriusKarpavicius" dbms="mysql">    
+        <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.input_unit_description=cat_charge_template.input_unit_description where billing_wallet_operation.input_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.rating_unit_description=cat_charge_template.rating_unit_description where billing_wallet_operation.rating_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.invoice_sub_category_id=cat_charge_template.invoice_sub_category where billing_wallet_operation.invoice_sub_category_id is null</sql>
+    </changeSet>
+    
 </databaseChangeLog> 

@@ -38,7 +38,6 @@
                 <c:forEach items="#{wfTransitionBean.selectedRules}" var="rule" varStatus="loopStatus">
                     <p:panel id="transitionRulePanel#{loopStatus.index}" styleClass="clearLeft">
                         <hftl:decorateFormField fieldId="decisionRuleOperationPanel#{loopStatus.index}" label="" componentWidth="10">
-                            <p:tooltip for="decisionRuleOperationPanel#{loopStatus.index}" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
                             <p:commandButton id="decisionRuleOperationPanel#{loopStatus.index}" style="margin-top: 15px;"
                                 action="#{wfTransitionBean.deleteWfDecisionRule(loopStatus.index)}" icon="ui-icon-trash" process="decisionRuleOperationPanel#{loopStatus.index}"
                                 ajaxSubmit="true" partialSubmit="true" update=":formDunningPlanTransition:decisionRulesPanel" />
@@ -124,7 +123,6 @@
                 </c:forEach>
             </p:panel>
             <p:panel styleClass="clearLeft" style="border-bottom: solid">
-                <p:tooltip for="addCriteriaBtn" value="#{messages['mmTransition.addCriteria']}" showEffect="slide" hideEffect="slide" />
                 <p:commandButton id="addCriteriaBtn" action="#{wfTransitionBean.addNewRule()}" process="@this,decisionRulesPanel" value="#{messages['mmTransition.addCriteria']}"
                     ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus" update=":formDunningPlanTransition:decisionRulesPanel :formDunningPlanTransition:messages" />
                 <p:defaultCommand target="addCriteriaBtn" />

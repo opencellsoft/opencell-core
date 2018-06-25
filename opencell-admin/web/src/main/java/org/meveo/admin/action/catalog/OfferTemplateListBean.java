@@ -146,6 +146,11 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 	        this.activeOfferTemplateCategories = offerTemplateCategoryService.listActive();
 	    }
         return activeOfferTemplateCategories;
+	}
+	
+	public LazyDataModel<OfferTemplate> listNotDisabledFromBOM() {
+        filters.put("disabled", false);
+        return listFromBOM();
     }
 
 	public List<OfferTemplate> getSelectedOfferTemplates() {

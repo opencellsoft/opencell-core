@@ -86,6 +86,7 @@ import com.lapis.jsfexporter.csv.CSVExportOptions;
  * There is at least one backing bean per entity class. Majority of pages distinguish between detail and list views and have two backing beans, with view and conversation scopes.
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
@@ -685,7 +686,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
 
-                    String referencedBy = findReferencedByEntities(clazz, id);
+                    String referencedBy = getPersistenceService().findReferencedByEntities(clazz, id);
                     log.info("Delete was unsuccessful because entity is used by other entities {}", referencedBy);
 
                     if (referencedBy != null) {

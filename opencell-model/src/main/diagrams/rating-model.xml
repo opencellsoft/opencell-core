@@ -2,9 +2,9 @@
 	<entity>
 		<entity-name>org.meveo.model.BusinessEntity</entity-name>
 		<entity-width>120</entity-width>
-		<entity-height>110</entity-height>
-		<entity-X-Coordinate>408</entity-X-Coordinate>
-		<entity-Y-Coordinate>43</entity-Y-Coordinate>
+		<entity-height>130</entity-height>
+		<entity-X-Coordinate>520</entity-X-Coordinate>
+		<entity-Y-Coordinate>140</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>
@@ -13,7 +13,7 @@
 	<entity>
 		<entity-name>org.meveo.model.catalog.PricePlanMatrix</entity-name>
 		<entity-width>198</entity-width>
-		<entity-height>568</entity-height>
+		<entity-height>688</entity-height>
 		<entity-X-Coordinate>80</entity-X-Coordinate>
 		<entity-Y-Coordinate>43</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
@@ -25,8 +25,8 @@
 		<entity-name>org.meveo.model.catalog.DiscountPlan</entity-name>
 		<entity-width>151</entity-width>
 		<entity-height>128</entity-height>
-		<entity-X-Coordinate>392</entity-X-Coordinate>
-		<entity-Y-Coordinate>220</entity-Y-Coordinate>
+		<entity-X-Coordinate>408</entity-X-Coordinate>
+		<entity-Y-Coordinate>353</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>
@@ -35,9 +35,20 @@
 	<entity>
 		<entity-name>org.meveo.model.catalog.DiscountPlanItem</entity-name>
 		<entity-width>151</entity-width>
-		<entity-height>208</entity-height>
-		<entity-X-Coordinate>392</entity-X-Coordinate>
-		<entity-Y-Coordinate>414</entity-Y-Coordinate>
+		<entity-height>228</entity-height>
+		<entity-X-Coordinate>408</entity-X-Coordinate>
+		<entity-Y-Coordinate>547</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.BusinessCFEntity</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>90</entity-height>
+		<entity-X-Coordinate>320</entity-X-Coordinate>
+		<entity-Y-Coordinate>110</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>
