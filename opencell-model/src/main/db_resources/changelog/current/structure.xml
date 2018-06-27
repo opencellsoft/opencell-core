@@ -1296,5 +1296,20 @@
 			<column name="rum_current_sequence_nb" type="bigint" />
      	</addColumn>
      </changeSet>
+     
+     <changeSet id="#3455_26062018" author="SaidRamli">
+        <addColumn tableName="billing_subscription">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_service_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_offer_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="billing_service_instance">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

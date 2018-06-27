@@ -293,6 +293,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         
         if (!isVirtual) {
             create(serviceInstance);
+        } else {
+            serviceInstance.updateSubscribedTillAndRenewalNotifyDates();
         }
 
         subscription.getServiceInstances().add(serviceInstance);
