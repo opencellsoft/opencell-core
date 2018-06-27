@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.bi.Job;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -57,6 +58,7 @@ public class JobService extends PersistenceService<Job> {
 		return query.getResultList();
 	}
 
+    @JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@SuppressWarnings("unchecked")
 	public Map<String, Integer> getJobSchedulerInfo(int jobRepositoryId) {
@@ -94,6 +96,7 @@ public class JobService extends PersistenceService<Job> {
 		return valuesMap;
 	}
 
+    @JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@SuppressWarnings({ "rawtypes" })
 	public Job getJobInfo(String jobName) {

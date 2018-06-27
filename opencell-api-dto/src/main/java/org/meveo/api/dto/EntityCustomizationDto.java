@@ -24,7 +24,7 @@ import org.meveo.model.crm.custom.EntityCustomAction;
 
 @XmlRootElement(name = "EntityCustomization")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EntityCustomizationDto extends BaseDto {
+public class EntityCustomizationDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5242092476533516746L;

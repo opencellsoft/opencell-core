@@ -103,7 +103,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleProductTemplateDto.setQuantity(bundleProductTemplate.getQuantity());
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
-                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
+                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false, true));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }
@@ -395,7 +395,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         Long totalCount = bundleTemplateService.count(paginationConfig);
 
         GetListBundleTemplateResponseDto result = new GetListBundleTemplateResponseDto();
-        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {

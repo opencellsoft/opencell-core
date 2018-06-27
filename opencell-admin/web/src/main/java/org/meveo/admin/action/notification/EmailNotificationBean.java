@@ -50,10 +50,6 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
     @Inject
     private EmailNotificationService emailNotificationService;
 
-    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @Inject
     CounterTemplateService counterTemplateService;
 

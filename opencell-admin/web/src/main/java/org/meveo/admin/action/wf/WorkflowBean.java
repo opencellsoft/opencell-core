@@ -268,9 +268,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
         List<String> classNames = new ArrayList<String>();
         for (Class<?> clazz : allWFType) {
             if (!"org.meveo.service.script.wf.WFTypeScript".equals(clazz.getName())) {
-                if (StringUtils.isBlank(query)) {
-                    classNames.add(clazz.getName());
-                } else if (clazz.getName().toLowerCase().contains(query.toLowerCase())) {
+                if (StringUtils.isBlank(query) || clazz.getName().toLowerCase().contains(query.toLowerCase())) {
                     classNames.add(clazz.getName());
                 }
             }

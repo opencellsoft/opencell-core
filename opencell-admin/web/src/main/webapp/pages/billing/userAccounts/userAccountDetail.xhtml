@@ -133,7 +133,7 @@
                                         <hftl:formField label="#{messages['accountEntity.externalRef1']}" field="externalRef1" validateUnique="false" newLine="true" />
                                         <hftl:formField label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
 
-                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
+                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false"
                                             listBean="#{titleBean}" listenerUpdate=":parentTab:userAccountFormId:userAccountTab:userNamePanel" styleClass="clearLeft" />
 
                                         <h:panelGroup id="userNamePanel" layout="block">
@@ -163,9 +163,7 @@
                                         <hftl:formField label="#{messages['address.address3']}" field="address" childField="address3" />
                                         <hftl:formField label="#{messages['address.zipCode']}" field="address" childField="zipCode" newLine="true" />
                                         <hftl:formField label="#{messages['address.city']}" field="address" childField="city"/>
-                                        <hftl:formField label="#{messages['address.country']}" field="address" childField="country" />
-<!--                                         <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="true" field="address" childField="country" -->
-<!--                                             valueLabelField="description" valueField="countryCode" listBean="#{countryBean}" /> -->
+                                   <hftl:formField id="countryPanel" label="#{messages['address.country']}" field="address" childField="country" valueLabelField="description" valueField="countryCode" listBean="#{countryBean}" />
                                     </p:fieldset>
                                 </p:tab>
 
@@ -357,8 +355,14 @@
             <hftl:formPanel id="termPanel" edit="true" backingBean="#{userAccountBean}" styleClass="formPanel" formId="termFrm" showFormButtons="false" useCustomIdParam="true">
                 <hftl:formField label="#{messages['serviceInstance.code']}" field="code" size="50" edit="false" componentWidth="25" />
                 <hftl:formField label="#{messages['serviceInstance.terminationDate']}" field="terminationDate" required="true" edit="true" componentWidth="25" />
-                <hftl:formField label="Motifs " field="terminationReason" valueLabelField="descriptionOrCode" required="true" edit="true"
-                    listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+                                                
+				<hftl:formField
+					label="Motifs " 
+					field="terminationReason" 
+					valueLabelField="descriptionOrCode"
+					required="true"
+					listBean="#{subscriptionTerminationReasonBean}" 
+					styleClass="clearLeft" />
 
                 <ui:param name="buttons" value="true" />
                 <ui:define name="buttons">

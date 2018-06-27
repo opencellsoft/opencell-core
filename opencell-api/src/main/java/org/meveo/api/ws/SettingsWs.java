@@ -887,7 +887,7 @@ public interface SettingsWs extends IBaseWs {
     UserHierarchyLevelsDto listUserHierarchyLevels(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     /**
-     * Set configuration (stored in meveo-admin.properties file) property
+     * Set configuration (stored in opencell-admin.properties file) property
      * 
      * @param property Property key
      * @param value Value to set

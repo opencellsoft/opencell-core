@@ -1,24 +1,24 @@
 package org.meveo.api;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BusinessDto;
-import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.module.ModulePropertyFlagLoader;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.jobs.TimerEntity;
 
 /**
  * An interface of CRUD API service class
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
  * 
  * @param <E> Entity class
  * @param <T> Dto class
  */
-public interface ApiService<E extends BusinessEntity, T extends BusinessDto> {
+public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDto> {
 
     /**
      * Find entity identified by code.
@@ -27,11 +27,23 @@ public interface ApiService<E extends BusinessEntity, T extends BusinessDto> {
      * 
      * @return A DTO of entity
      * @throws EntityDoesNotExistsException Entity was not found
+     * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
+     */
+    T find(String code) throws MeveoApiException;
+    
+    /**
+     * Find entity identified by code.
+     * 
+     * @param code Entity code
+     * @param modulePropertyFlagLoader list of boolean fields that when set loads a certain field
+     * 
+     * @return A DTO of entity
+     * @throws EntityDoesNotExistsException Entity was not found
      * @throws InvalidParameterException Some search parameter is incorrect
      * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
-    T find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException;
+    T find(String code, ModulePropertyFlagLoader modulePropertyFlagLoader) throws MeveoApiException;
 
     /**
      * Find entity identified by code. Return null if not found

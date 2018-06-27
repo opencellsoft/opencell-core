@@ -284,6 +284,7 @@
 		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
 		<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
 		<p:menuitem id="reportExtracts" outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
+		<p:menuitem id="reportExtractHistories" outcome="reportExtractHistories" value="#{messages['menu.reportExtractHistories']}" />
 	</p:submenu>
 
 	<p:submenu id="reporting" label="#{messages['menu.reporting']}"
@@ -343,8 +344,12 @@
 			value="#{messages['menu.meveoModules']}" />
 		<p:menuitem id="customizedEntities" outcome="customizedEntities"
 			value="#{messages['menu.customizedEntities']}" />
-		<p:menuitem id="scriptInstances" outcome="scriptInstances"
-			value="#{messages['menu.scriptInstances']}" />
+			
+		<p:submenu id="script" label="#{messages['menu.script']}">
+			<p:menuitem id="scriptInstanceCategories" outcome="scriptInstanceCategories" value="#{messages['menu.scriptInstanceCategory']}" />
+			<p:menuitem id="scriptInstances" outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
+		</p:submenu>
+			
 		<p:menuitem id="filters" outcome="filters"
 			value="#{messages['menu.filters']}" />
 		<p:submenu id="workflows" label="#{messages['menu.workflow']}"

@@ -89,16 +89,31 @@
 <!-- 				updateField=":parentTab:formId:childTab:trLanguageSelectId"> -->
 <!-- 			</hftl:entityPopup> -->
 
+				<hftl:entityPopup id="billingCyclePopup"
+					header="#{messages['billingCycle.popup.header']}"
+					backingBean="#{billingCycleBean}"
+					searchField1Label="#{messages['businessEntity.code']}"
+					searchField1="code"
+					searchField2Label="#{messages['businessEntity.description']}"
+					searchField2="description"
+					column1Label="#{messages['businessEntity.code']}" column1="code"
+					column2Label="#{messages['businessEntity.description']}"
+					column2="description"
+					selection="#{billingAccountBean.entity.billingCycle}"
+					dataModel="#{billingCycleBean.listBillingAccountBillingCycle()}"
+					updateField=":parentTab:formId:childTab:billingCycleSelectId :parentTab:formId:childTab:billingCycleSelectId_text">
+				</hftl:entityPopup>
+
 		</c:if>
 		
-
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
 					<hf:hierarchyPanel
 						treeBean="#{customerTreeBean}"
 						entity="#{billingAccountBean.entity}" />
             </h:panelGroup>
-			<h:panelGroup styleClass="col2">
+			<h:panelGroup styleClass="col2"> 
+			        <p:messages id="global_ba_messages" autoUpdate="true"/>
 					<p:tabView id="parentTab" styleClass="tab-parent" activeIndex="#{billingAccountBean.activeMainTab}">
 						<p:tab title="#{messages['billingAccount.tab.account']}">
                         <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":parentTab:formId:childTab"
@@ -119,18 +134,16 @@
 														label="#{messages['accountEntity.primaryContact']}"
 														field="primaryContact" valueLabelField="code" 
 														listBean="#{providerContactBean}" />
-													<hftl:formField label="#{messages['contactInformation.phone']}" field="phone" />
+													<hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="phone" />
                                         
 													<hftl:formField
 														label="#{messages['businessEntity.description']}"
 														id="description" field="description" useConverter="false"
 														size="70" />
 												
-													<hftl:formField id="cycleSelectId"
-														label="#{messages['billingAccount.billingCycle']}"
-														field="billingCycle" valueLabelField="code" required="true" listBean="#{billingCycleBean}"/>
-<!-- 														popup="true" popupId="billingCyclePopup" /> -->
-													
+													<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
+                            							popupId="billingCyclePopup" />	
+														
 													<hftl:formField
 														label="#{messages['discountPlan.title']}"
 														listBean="#{discountPlanBean}" field="discountPlan"
@@ -214,7 +227,7 @@
 
                                                 
                                                 
-                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
+                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false"
                                         listBean="#{titleBean}" listenerUpdate=":parentTab:formId:childTab:userNamePanel" styleClass="clearLeft"/>
 
                                     <h:panelGroup id="userNamePanel" layout="block">
@@ -398,7 +411,7 @@
 										field="terminationDate" />
 							</hftl:formPanel>
 
-							<span class="note">#{messages['message.billing.expandBillingForInvoiceAdjustment']}</span>
+							<span class="Blue">#{messages['message.billing.expandBillingForInvoiceAdjustment']}</span>
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
 								resultsId="i_results"
@@ -426,14 +439,22 @@
 										value="#{messages[entity.billingRun.status.label]}" />
 								</p:column>
 								<hftl:column label="#{messages['invoice.invoiceType']}"
-									field="invoiceType.code"  />
-                            <hftl:actionsColumn renderViewLink="true" editView="/pages/billing/invoices/invoiceDetail.xhtml" renderEditLink="false" renderDeleteLink="false">
-                                <h:commandLink action="#{invoiceBean.downloadPdfInvoice(entity.id)}" rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
-                                    <h:graphicImage value="/img/pdf.gif" style="border:0; margin-top:2px" />
-                                </h:commandLink>
-                            </hftl:actionsColumn>
+										field="invoiceType.code"  />
 
-                            <p:rowExpansion>
+							<hftl:actionsColumn renderViewLink="true"
+								editView="/pages/billing/invoices/invoiceDetail.xhtml"
+								renderEditLink="false" renderDeleteLink="false"
+								backView="backToBaFromInvoice" backEntityId="#{billingAccountBean.objectId}" 
+								backTab="0" backMainTab="2">
+								<h:commandLink
+									action="#{invoiceBean.downloadPdfInvoice(entity.id)}"
+									rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
+									<h:graphicImage value="/img/pdf.gif"
+										style="border:0; margin-top:2px" />
+								</h:commandLink>
+							</hftl:actionsColumn>
+
+							<p:rowExpansion>
 									<p:dataTable
 										value="#{invoiceBean.getLinkedInvoices(entity)}"
 										var="obj" reflow="false" styleClass="invoice-adjustment-table">
@@ -473,9 +494,9 @@
 					<hftl:formField
 						label="#{messages['serviceInstance.terminationDate']}"
 						field="terminationDate" required="true" edit="true"  componentWidth="25"/>
-					<hftl:formField label="Motifs " field="terminationReason"
-						valueLabelField="descriptionOrCode" required="true"  edit="true"
-						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+					<hftl:formField label="Motifs "  
+						field="terminationReason"  valueLabelField="descriptionOrCode"
+						required="true" listBean="#{subscriptionTerminationReasonBean}" styleClass="clearLeft" />	
 					<!-- update=":#{p:component('formBillingAccountPanel')}" -->
 					<p:panel styleClass="action-buttons">
 						<p:commandButton action="#{billingAccountBean.terminateAccount()}"

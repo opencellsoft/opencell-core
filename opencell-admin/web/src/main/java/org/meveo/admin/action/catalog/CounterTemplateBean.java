@@ -102,7 +102,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
                     } else if (!level.endsWith("%")) {
                         dblLevel = Double.parseDouble(level);
-                        if (entity.getCeiling() != null && entity.getCeiling().compareTo(new BigDecimal(dblLevel)) < 0) {
+                        if (entity.getCeiling() != null && entity.getCeiling().compareTo(BigDecimal.valueOf(dblLevel)) < 0) {
                             FacesContext.getCurrentInstance().validationFailed();
                             messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels.higherNumbers"));
                             return null;

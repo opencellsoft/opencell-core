@@ -30,6 +30,8 @@ import org.meveo.api.rest.IBaseRs;
  * Web service for managing {@link org.meveo.model.billing.Invoice}.
  * 
  * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Path("/invoice")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -49,7 +51,7 @@ public interface InvoiceRs extends IBaseRs {
     @GET
     @Path("/")
     public GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType,
-            @QueryParam("includeTransactions") boolean includeTransactions);
+            @QueryParam("includeTransactions") boolean includeTransactions, @QueryParam("includePdf") Boolean includePdf,  @QueryParam("includeXml") Boolean includeXml);
 
     /**
      * Create invoice. Invoice number depends on invoice type
@@ -72,7 +74,7 @@ public interface InvoiceRs extends IBaseRs {
     @Deprecated
     @GET
     @Path("/listInvoiceByCustomerAccount")
-    CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
+    CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("returnPdf") Boolean returnPdf);
 
     /**
      * Launch all the invoicing process for a given billingAccount, that's mean.

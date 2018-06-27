@@ -57,11 +57,13 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF) {
+    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
+            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate,
+                loadServiceChargeTemplate, loadProductChargeTemplate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

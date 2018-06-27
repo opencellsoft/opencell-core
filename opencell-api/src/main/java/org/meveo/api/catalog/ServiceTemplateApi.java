@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
 import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
@@ -90,6 +91,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     @Inject
     private BusinessServiceModelService businessServiceModelService;
+    
+    @Inject
+    private SubscriptionApi subscriptionApi;
 
     private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
 
@@ -260,6 +264,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
+        serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
 
         if (postData.isDisabled() != null) {
             serviceTemplate.setDisabled(postData.isDisabled());
@@ -319,7 +324,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
-
+        serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
+        
         Calendar invoicingCalendar = null;
         if (postData.getInvoicingCalendar() != null) {
             invoicingCalendar = calendarService.findByCode(postData.getInvoicingCalendar());
@@ -395,7 +401,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
         }
-        ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, entityToDtoConverter.getCustomFieldsDTO(serviceTemplate, inheritCF));
+        ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, entityToDtoConverter.getCustomFieldsDTO(serviceTemplate, inheritCF), true);
         return result;
     }
 

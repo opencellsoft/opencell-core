@@ -5,9 +5,9 @@ import java.lang.reflect.TypeVariable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.module.ModulePropertyFlagLoader;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.BusinessEntity;
@@ -17,11 +17,12 @@ import org.meveo.service.base.BusinessService;
  * Base API service for CRUD operations on entity
  * 
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
  * 
  * @param <E> Entity class
  * @param <T> Dto class
  */
-public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessDto> extends BaseApi implements ApiService<E, T> {
+public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEntityDto> extends BaseApi implements ApiService<E, T> {
 
     /**
      * Persistence service corresponding to a entity that API implementation corresponds to
@@ -59,7 +60,7 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessDt
     }
 
     @Override
-    public T findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+    public T findIgnoreNotFound(String code) throws MeveoApiException {
         try {
             return find(code);
         } catch (EntityDoesNotExistsException e) {
@@ -118,5 +119,15 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessDt
         }
 
         ps.remove(entity);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public T find(String code, ModulePropertyFlagLoader modulePropertyFlagLoader) throws MeveoApiException {
+        throw new UnsupportedOperationException();
     }
 }

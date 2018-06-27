@@ -36,6 +36,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
@@ -85,7 +86,9 @@ import com.lapis.jsfexporter.csv.CSVExportOptions;
  * There is at least one backing bean per entity class. Majority of pages distinguish between detail and list views and have two backing beans, with view and conversation scopes.
  * 
  * @author Andrius Karpavicius
- * @lastModifiedVersion 5.0
+ * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
@@ -153,6 +156,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private String backView;
 
     private String backViewSave;
+    
+    /** The back entity id. */
+    @Inject
+    @Param()
+    private String backEntityId;
+
+    /** The back tab. */
+    @Inject
+    @Param()
+    private String backTab;
+    
+    /** The back main tab. */
+    @Inject
+    @Param()
+    private String backMainTab;
 
     /**
      * Object identifier to load
@@ -195,6 +213,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected ParamBeanFactory paramBeanFactory;
 
     private UploadedFile uploadedFile;
+    
+    private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
 
     /**
      * Constructor
@@ -389,6 +409,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // return objectId == null ? outcome : (outcome + "&" + objectName + "=" + objectId + "&cid=" + conversation.getId());
         return outcome;
     }
+    
+    /**
+     * Check whether entity code is updated or not.
+     * 
+     * @return boolean that indicate if entity code is updated
+     */
+    private boolean isUpdatedEntityCode() {
+        BusinessEntity persistedBusinessEntity = (BusinessEntity) getPersistenceService().findById(getObjectId());
+        BusinessEntity businessEntity = (BusinessEntity) entity;
+        return !persistedBusinessEntity.getCode().equalsIgnoreCase(businessEntity.getCode());
+    }
 
     /**
      * Save entity to DB and redirect to a next view. A message will be displayed in GUI upon saving.
@@ -401,6 +432,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
+        
+        if(!entity.isTransient()) {
+            boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
+            if ((entity instanceof BusinessEntity)) {
+                if(!currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) && !allowEntityCodeUpdate && isUpdatedEntityCode()) {
+                    messages.error(new BundleKey("messages", "error.superadminpermission.required"));
+                    return null;
+                }
+            }
+        }
 
         entity = saveOrUpdate(entity);
 
@@ -495,6 +536,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public String getViewAfterSave() {
         return getListViewName();
+    }
+    
+    /**
+     * Returns translation value for i18n map field, else the value itself
+     * 
+     * @author akadid abdelmounaim 
+     * @lastModifiedVersion 5.0
+     */
+    public String getTranslation(Object fieldValue) {
+        if(fieldValue instanceof Map<?, ?>) {
+            String lang = FacesContext.getCurrentInstance().getViewRoot().getLocale().getISO3Language().toUpperCase();
+            Map<String, String> translationMap = (Map<String, String>) fieldValue;
+            return translationMap.get(lang);
+        }
+        return (String) fieldValue;
     }
 
     /**
@@ -630,7 +686,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
 
-                    String referencedBy = findReferencedByEntities(clazz, id);
+                    String referencedBy = getPersistenceService().findReferencedByEntities(clazz, id);
                     log.info("Delete was unsuccessful because entity is used by other entities {}", referencedBy);
 
                     if (referencedBy != null) {
@@ -861,16 +917,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 @Override
                 protected IPersistenceService<T> getPersistenceServiceImpl() {
-
                     return getPersistenceService();
                 }
-
+                
                 @Override
                 protected Map<String, Object> getSearchCriteria() {
-
-                    // Omit empty or null values
+                    return getSearchCriteria(null);
+                }
+                
+                @Override
+                protected Map<String, Object> getSearchCriteria(Map<String, Object> customFilters) {
+                 // Omit empty or null values
                     Map<String, Object> cleanFilters = new HashMap<String, Object>();
 
+                    cleanupFilters(filters, cleanFilters);
+                    cleanupFilters(MapUtils.emptyIfNull(customFilters), cleanFilters);
+                    
+                    return BaseBean.this.supplementSearchCriteria(cleanFilters);
+                }
+
+                private void cleanupFilters(final Map<String, Object> filters, Map<String, Object> cleanFilters) {
                     for (Map.Entry<String, Object> filterEntry : filters.entrySet()) {
                         if (filterEntry.getValue() == null) {
                             continue;
@@ -882,8 +948,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                         }
                         cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                     }
-
-                    return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
                 @Override
@@ -1475,5 +1539,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         }
 
         return matchedEntityInfo;
+    }
+
+    /**
+     * @return the backEntityId
+     */
+    public String getBackEntityId() {
+        return backEntityId;
+    }
+
+    /**
+     * @return the backTab
+     */
+    public String getBackTab() {
+        return backTab;
+    }
+
+    /**
+     * @return the backMainTab
+     */
+    public String getBackMainTab() {
+        return backMainTab;
     }
 }

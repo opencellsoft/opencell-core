@@ -107,9 +107,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     @Inject
     private AccessService accessService;
     
-    @Inject
-    private Logger log;
-
     private TreeNode accountsHierarchy;
 
     private Long selectedEntityId;
@@ -175,7 +172,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             return accountsHierarchy;
         }
 
-        if (entity.isTransient()) {
+        if (entity == null || entity.isTransient()) {
             return null;
         }
 

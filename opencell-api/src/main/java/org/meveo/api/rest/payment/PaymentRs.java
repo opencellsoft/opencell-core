@@ -33,7 +33,8 @@ import org.meveo.api.rest.IBaseRs;
  * The Interface PaymentRs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 
 @Path("/payment")
@@ -43,14 +44,25 @@ import org.meveo.api.rest.IBaseRs;
 public interface PaymentRs extends IBaseRs {
 
     /**
-     * Creates automated payment. It also process if a payment is matching or not
+     * Creates automated payment. It also process if a payment is matching or not Deprecated and replaced by "reatePayment" using /payment path
      * 
      * @param postData Payment's data
      * @return payment action status
      */
     @POST
     @Path("/create")
+    @Deprecated
     public PaymentActionStatus create(PaymentDto postData);
+
+    /**
+     * Creates automated payment. It also process if a payment is matching or not
+     * 
+     * @param postData Payment's data
+     * @return payment action status
+     */
+    @POST
+    @Path("/")
+    public PaymentActionStatus createPayment(PaymentDto postData);
 
     /**
      * Returns a list of account operations along with the balance of a customer.

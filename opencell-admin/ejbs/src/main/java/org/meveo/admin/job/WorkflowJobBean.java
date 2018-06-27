@@ -23,13 +23,12 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.wf.Workflow;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.wf.WorkflowService;
 import org.slf4j.Logger;
 
 @Stateless
-public class WorkflowJobBean {
+public class WorkflowJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
@@ -42,9 +41,6 @@ public class WorkflowJobBean {
 
     @Inject
     private WorkflowAsync workflowAsync;
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     @CurrentUser
@@ -62,13 +58,13 @@ public class WorkflowJobBean {
             String filterCode = null;
             String workflowCode = null;
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "wfJob_waitingMillis$");
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "wfJob_nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "wfJob_waitingMillis$");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                filterCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_filter")).getCode();
-                workflowCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "wfJob_workflow")).getCode();
+                filterCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "wfJob_filter")).getCode();
+                workflowCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "wfJob_workflow")).getCode();
             } catch (Exception e) {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
                 log.error("error:", e);

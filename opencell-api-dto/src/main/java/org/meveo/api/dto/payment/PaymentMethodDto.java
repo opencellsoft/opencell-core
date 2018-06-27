@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.commons.utils.StringUtils;
@@ -32,7 +32,7 @@ import org.meveo.security.MeveoUser;
  */
 @XmlRootElement(name = "PaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentMethodDto extends BaseDto implements IEnableDto {
+public class PaymentMethodDto extends BaseEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4815935377652350103L;
@@ -287,13 +287,15 @@ public class PaymentMethodDto extends BaseDto implements IEnableDto {
         default:
             break;
         }
-        pmEntity.setInfo1(getInfo1());
-        pmEntity.setInfo2(getInfo2());
-        pmEntity.setInfo3(getInfo3());
-        pmEntity.setInfo4(getInfo4());
-        pmEntity.setInfo5(getInfo5());
-        pmEntity.setUserId(getUserId());
-        pmEntity.updateAudit(currentUser);
+        if (pmEntity != null) {
+            pmEntity.setInfo1(getInfo1());
+            pmEntity.setInfo2(getInfo2());
+            pmEntity.setInfo3(getInfo3());
+            pmEntity.setInfo4(getInfo4());
+            pmEntity.setInfo5(getInfo5());
+            pmEntity.setUserId(getUserId());
+            pmEntity.updateAudit(currentUser);
+        }
         return pmEntity;
     }
 

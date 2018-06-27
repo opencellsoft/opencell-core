@@ -168,6 +168,16 @@
                                                     <p:column headerText="#{messages['ratedTransaction.param3']}">
                                                         <h:outputText value="#{rated.parameter3}" />
                                                     </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.startDate']}">
+                                                        <h:outputText value="#{rated.startDate}">
+                                                        	<f:convertDateTime pattern="#{datePattern}" />
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['ratedTransaction.endDate']}">
+                                                        <h:outputText value="#{rated.endDate}">
+                                                        	<f:convertDateTime pattern="#{datePattern}" />
+                                                        </h:outputText>
+                                                    </p:column>
                                                     <p:column headerText="#{messages['order.number']}">
 														<h:outputText value="#{rated.orderNumber}" />
 													</p:column>
@@ -237,7 +247,7 @@
                     <hftl:customFields backingBean="#{invoiceBean}" messagesId=":headerForm:messages" edit="true" />
                 </p:tabView>
                 
-                <hf:formButtons ajaxSubmit="true" backingBean="#{invoiceBean}" showBackButton="true" showEnableDisableButton="false" showDeleteButton="false" 
+                <hf:formButtons killConversationOnSave="false" killConversationOnBack="false" ajaxSubmit="true" backingBean="#{invoiceBean}" showBackButton="true" showEnableDisableButton="false" showDeleteButton="false" 
 					showEditButton="false" >
                     <p:commandButton value="#{messages['action.save']}" icon="ui-icon-check" action="#{invoiceBean.saveOrUpdate(false)}" update="@form" />
                 </hf:formButtons>

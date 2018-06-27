@@ -161,10 +161,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -196,7 +192,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
-        log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
+        log.debug("Creating xml for invoice id={} number={}.", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
 
         String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider, "PROV_CUSTOM_INV_XML_SCRIPT_CODE");
 
@@ -208,8 +204,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             methodContext.put("XMLInvoiceCreator", this);
             if (script == null) {
                 log.debug("script is null");
+            } else {
+                script.execute(methodContext);
             }
-            script.execute(methodContext);
+            
             return (File) methodContext.get(Script.RESULT_VALUE);
         }
 
@@ -286,7 +284,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @lastModifiedVersion 5.0
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
-        long startDate = System.currentTimeMillis();
+
         Long id = invoice.getId();
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();
@@ -314,7 +312,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         boolean hasInvoiceAgregates = !invoiceAgregates.isEmpty();
         BillingRun billingRun = invoice.getBillingRun();
 
-        log.debug("Creating xml for invoice id={} number={}. {}", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
+        log.debug("Creating xml for invoice id={} number={}.", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
@@ -483,6 +481,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         String billingExternalRef2 = billingAccount.getExternalRef2();
         String billingExternalRef1 = billingAccount.getExternalRef1();
+        String jobTitleBA = billingAccount.getJobTitle();
         Element billingAccountTag = doc.createElement("billingAccount");
         if (billingCycle == null) {
             billingCycle = billingAccount.getBillingCycle();
@@ -496,6 +495,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
+        billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
+
 
         if (invoiceConfiguration != null && invoiceConfiguration.getDisplayBillingCycle() != null && invoiceConfiguration.getDisplayBillingCycle()) {
             if (billingCycle == null) {
@@ -630,8 +631,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             invoiceTag.appendChild(ordersTag);
         }
 
-        log.debug("Before  doc:" + (System.currentTimeMillis() - startDate));
-
         return doc;
 
     }
@@ -681,7 +680,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             String code = userAccount.getCode();
             userAccountTag.setAttribute("code", code != null ? code : "");
-            String jobTitle = userAccount.getCode();
+            String jobTitle = userAccount.getJobTitle();
             userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             String description = userAccount.getDescription();
             userAccountTag.setAttribute("description", description != null ? description : "");
@@ -709,12 +708,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @return list of service instance
      */
     private List<ServiceInstance> addSubscriptions(UserAccount userAccount, Document doc, Element userAccountTag, Element invoiceTag, List<Subscription> subscriptions) {
-        long startDate = System.currentTimeMillis();
+
         List<ServiceInstance> allServiceInstances = new ArrayList<>();
         ParamBean paramBean = paramBeanFactory.getInstance();
         // List<Subscription> subscriptions = userAccountService.listByUserAccount(userAccount);//userAccount.getSubscriptions();//
         if (subscriptions != null && subscriptions.size() > 0) {
-            log.info(" :" + (System.currentTimeMillis() - startDate));
             String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
             String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
 
@@ -1269,7 +1267,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag, Element parent, boolean generateSubCat, boolean enterprise,
             boolean isVirtual, List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAgregates, List<ServiceInstance> allServiceInstances,
             List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
-        long startDate = System.currentTimeMillis();
+
         ParamBean paramBean = paramBeanFactory.getInstance();
 
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
@@ -1577,14 +1575,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                     }
                                 }
 
-                                log.debug("Before serviceInstance:" + (System.currentTimeMillis() - startDate));
-
                                 if (serviceInstance != null) {
                                     addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
                                 }
-
-                                log.debug("After serviceInstance:" + (System.currentTimeMillis() - startDate));
-
                             }
                         }
                         subCategory.appendChild(line);

@@ -40,6 +40,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -67,21 +68,36 @@ import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
+/**
+ * The Class BillingAccountService.
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
 
+    /** The user account service. */
     @Inject
     private UserAccountService userAccountService;
 
+    /** The billing run service. */
     @EJB
     private BillingRunService billingRunService;
 
+    /** The rated transaction service. */
     @Inject
     private RatedTransactionService ratedTransactionService;
 
+    /** The invoice sub category service. */
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
+    /**
+     * Inits the billing account.
+     *
+     * @param billingAccount the billing account
+     */
     public void initBillingAccount(BillingAccount billingAccount) {
         billingAccount.setStatus(AccountStatusEnum.ACTIVE);
         if (billingAccount.getSubscriptionDate() == null) {
@@ -93,6 +109,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         }
     }
 
+    /**
+     * Creates the billing account.
+     *
+     * @param billingAccount the billing account
+     * @throws BusinessException the business exception
+     */
     public void createBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
         billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -107,16 +129,41 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         create(billingAccount);
     }
 
+    /**
+     * Update electronic billing.
+     *
+     * @param billingAccount the billing account
+     * @param electronicBilling the electronic billing
+     * @return the billing account
+     * @throws BusinessException the business exception
+     */
     public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling) throws BusinessException {
         billingAccount.setElectronicBilling(electronicBilling);
         return update(billingAccount);
     }
 
+    /**
+     * Update billing account discount.
+     *
+     * @param billingAccount the billing account
+     * @param ratedDiscount the rated discount
+     * @return the billing account
+     * @throws BusinessException the business exception
+     */
     public BillingAccount updateBillingAccountDiscount(BillingAccount billingAccount, BigDecimal ratedDiscount) throws BusinessException {
         billingAccount.setDiscountRate(ratedDiscount);
         return update(billingAccount);
     }
 
+    /**
+     * Billing account termination.
+     *
+     * @param billingAccount the billing account
+     * @param terminationDate the termination date
+     * @param terminationReason the termination reason
+     * @return the billing account
+     * @throws BusinessException the business exception
+     */
     @MeveoAudit
     public BillingAccount billingAccountTermination(BillingAccount billingAccount, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
         if (terminationDate == null) {
@@ -133,6 +180,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return update(billingAccount);
     }
 
+    /**
+     * Billing account cancellation.
+     *
+     * @param billingAccount the billing account
+     * @param terminationDate the termination date
+     * @return the billing account
+     * @throws BusinessException the business exception
+     */
     @MeveoAudit
     public BillingAccount billingAccountCancellation(BillingAccount billingAccount, Date terminationDate) throws BusinessException {
         if (terminationDate == null) {
@@ -147,6 +202,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return update(billingAccount);
     }
 
+    /**
+     * Billing account reactivation.
+     *
+     * @param billingAccount the billing account
+     * @param activationDate the activation date
+     * @return the billing account
+     * @throws BusinessException the business exception
+     */
     @MeveoAudit
     public BillingAccount billingAccountReactivation(BillingAccount billingAccount, Date activationDate) throws BusinessException {
         if (activationDate == null) {
@@ -160,6 +223,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return update(billingAccount);
     }
 
+    /**
+     * Close billing account.
+     *
+     * @param billingAccount the billing account
+     * @return the billing account
+     * @throws BusinessException the business exception
+     */
     @MeveoAudit
     public BillingAccount closeBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
@@ -175,6 +245,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return update(billingAccount);
     }
 
+    /**
+     * Invoice list.
+     *
+     * @param billingAccount the billing account
+     * @return the list
+     * @throws BusinessException the business exception
+     */
     public List<Invoice> invoiceList(BillingAccount billingAccount) throws BusinessException {
         List<Invoice> invoices = billingAccount.getInvoices();
         Collections.sort(invoices, new Comparator<Invoice>() {
@@ -186,6 +263,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return invoices;
     }
 
+    /**
+     * Invoice detail.
+     *
+     * @param invoiceReference the invoice reference
+     * @return the invoice
+     */
     public Invoice InvoiceDetail(String invoiceReference) {
         try {
             QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
@@ -197,11 +280,26 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return null;
     }
 
+    /**
+     * Invoice sub category detail.
+     *
+     * @param invoiceReference the invoice reference
+     * @param invoiceSubCategoryCode the invoice sub category code
+     * @return the invoice sub category
+     */
     public InvoiceSubCategory invoiceSubCategoryDetail(String invoiceReference, String invoiceSubCategoryCode) {
         // TODO : need to be more clarified
         return null;
     }
 
+    /**
+     * Find billing accounts.
+     *
+     * @param billingCycle the billing cycle
+     * @param startdate the startdate
+     * @param endDate the end date
+     * @return the list
+     */
     @SuppressWarnings("unchecked")
     public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
@@ -224,6 +322,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return null;
     }
 
+    /**
+     * Find billing account ids.
+     *
+     * @param billingCycle the billing cycle
+     * @param startdate the startdate
+     * @param endDate the end date
+     * @return the list
+     */
     public List<Long> findBillingAccountIds(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
@@ -234,7 +340,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
 
             if (endDate != null) {
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
             }
 
             return qb.getIdQuery(getEntityManager()).getResultList();
@@ -245,6 +351,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return null;
     }
 
+    /**
+     * Update billing account total amounts.
+     *
+     * @param billingAccountId the billing account id
+     * @param billingRun the billing run
+     * @return true, if successful
+     * @throws BusinessException the business exception
+     */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) throws BusinessException {
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
@@ -298,6 +413,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return sumAmountWithouttax;
     }
 
+    /**
+     * List by customer account.
+     *
+     * @param customerAccount the customer account
+     * @return the list
+     */
     @SuppressWarnings("unchecked")
     public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {
         QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
@@ -312,8 +433,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
-     * Determine if billing account is exonerated from taxes - check either a flag or EL expressions in customer's customerCategory
-     * 
+     * Determine if billing account is exonerated from taxes - check either a flag or EL expressions in customer's customerCategory.
+     *
      * @param ba The BillingAccount
      * @return True if billing account is exonerated from taxes
      */
@@ -359,8 +480,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Construct el context.
+     *
      * @param expression EL expression
-     * @param billingAccount billingAccount
+     * @param ba the ba
      * @return userMap userMap
      */
     private Map<Object, Object> constructElContext(String expression, BillingAccount ba) {
@@ -384,6 +507,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Construct el context.
+     *
      * @param expression EL expression
      * @param subscription subscription
      * @return userMap userMap
@@ -418,6 +543,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Construct el context.
+     *
      * @param expression EL expression
      * @param serviceInstance serviceInstance
      * @return userMap userMap
@@ -456,6 +583,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Evaluate double expression.
+     *
      * @param expression EL expression
      * @param ba billing account
      * @return evaluated expression
@@ -479,6 +608,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Evaluate double expression.
+     *
      * @param expression EL expression
      * @param serviceInstance serviceInstance
      * @return evaluated expression
@@ -502,6 +633,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Evaluate double expression.
+     *
      * @param expression EL expression
      * @param subscription subscription
      * @return evaluated expression
@@ -525,6 +658,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Evaluate string expression.
+     *
      * @param expression EL expression
      * @param ba billing account
      * @return evaluated expression
@@ -548,6 +683,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Evaluate string expression.
+     *
      * @param expression EL expression
      * @param subscription subscription
      * @return evaluated expression
@@ -571,6 +708,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
+     * Evaluate string expression.
+     *
      * @param expression EL expression
      * @param serviceInstance serviceInstance
      * @return evaluated expression
@@ -594,12 +733,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
-     * Create min amounts rated transactions
-     * 
+     * Create min amounts rated transactions.
+     *
      * @param billingAccount The billing account
      * @param lastTransactionDate Last transaction date
-     * @throws BusinessException General business exception
      * @return Invoice amount
+     * @throws BusinessException General business exception
      */
     public BigDecimal createMinAmountsRT(BillingAccount billingAccount, Date lastTransactionDate) throws BusinessException {
 
@@ -735,7 +874,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     InvoiceSubCategory invoiceSubCategory = entry.getKey();
 
                                     String serviceMinAmountEL = StringUtils.isBlank(serviceInstance.getMinimumAmountEl())
-                                            ? serviceInstance.getServiceTemplate().getMinimumAmountEl() : serviceInstance.getMinimumAmountEl();
+                                            ? serviceInstance.getServiceTemplate().getMinimumAmountEl()
+                                            : serviceInstance.getMinimumAmountEl();
                                     String serviceMinLabelEL = StringUtils.isBlank(serviceInstance.getMinimumLabelEl()) ? serviceInstance.getServiceTemplate().getMinimumLabelEl()
                                             : serviceInstance.getMinimumLabelEl();
                                     if (!StringUtils.isBlank(serviceMinAmountEL)) {
@@ -747,13 +887,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                         BigDecimal diff = null;
                                         if (appProvider.isEntreprise()) {
                                             diff = serviceMinAmount.subtract(totalServiceAmountWithoutTax);
-                                            if (totalServiceAmountWithoutTax != BigDecimal.ZERO) {
+                                            if (totalServiceAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
                                                 ratio = serviceAmountWithoutTax.divide(totalServiceAmountWithoutTax, 2, RoundingMode.HALF_UP);
+                                            } else {
+                                                ratio = BigDecimal.ONE;
                                             }
                                         } else {
                                             diff = serviceMinAmount.subtract(totalServiceAmountWithTax);
-                                            if (totalServiceAmountWithTax != BigDecimal.ZERO) {
+                                            if (totalServiceAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
                                                 ratio = serviceAmountWithTax.divide(totalServiceAmountWithTax, 2, RoundingMode.HALF_UP);
+                                            } else {
+                                                ratio = BigDecimal.ONE;
                                             }
                                         }
 
@@ -770,7 +914,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                             BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                                                     : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                                             BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
+                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
+                                                    : rtMinAmount;
                                             BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                             BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                             BigDecimal amountWithTax = unitAmountWithTax;
@@ -779,7 +924,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                             RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax,
                                                 BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
                                                 invoiceSubCategory, "", "", "", "", null, "", "", null, "NO_OFFER", null,
-                                                RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel);
+                                                RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel, null, null);
                                             ratedTransactionService.create(ratedTransaction);
 
                                             serviceAmountWithoutTax = serviceAmountWithoutTax.add(amountWithoutTax);
@@ -831,13 +976,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 BigDecimal diff = null;
                                 if (appProvider.isEntreprise()) {
                                     diff = subscriptionMinAmount.subtract(totalSubscriptionAmountWithoutTax);
-                                    if (totalSubscriptionAmountWithoutTax != BigDecimal.ZERO) {
+                                    if (totalSubscriptionAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
                                         ratio = subscriptionAmountWithoutTax.divide(totalSubscriptionAmountWithoutTax, 2, RoundingMode.HALF_UP);
+                                    } else {
+                                        ratio = BigDecimal.ONE;
                                     }
                                 } else {
                                     diff = subscriptionMinAmount.subtract(totalSubscriptionAmountWithTax);
-                                    if (totalSubscriptionAmountWithTax != BigDecimal.ZERO) {
+                                    if (totalSubscriptionAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
                                         ratio = subscriptionAmountWithTax.divide(totalSubscriptionAmountWithTax, 2, RoundingMode.HALF_UP);
+                                    } else {
+                                        ratio = BigDecimal.ONE;
                                     }
                                 }
 
@@ -855,7 +1004,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                                             : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                                     BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
+                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
+                                            : rtMinAmount;
                                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                     BigDecimal amountWithTax = unitAmountWithTax;
@@ -864,7 +1014,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax,
                                         BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "",
                                         "", "", "", null, "", "", null, "NO_OFFER", null,
-                                        RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), subscriptionMinLabel);
+                                        RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), subscriptionMinLabel, null, null);
                                     ratedTransactionService.create(ratedTransaction);
 
                                     subscriptionAmountWithoutTax = subscriptionAmountWithoutTax.add(amountWithoutTax);
@@ -915,13 +1065,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 BigDecimal diff = null;
                 if (appProvider.isEntreprise()) {
                     diff = billingAccountMinAmount.subtract(totalBillingAccountAmountWithoutTax);
-                    if (totalBillingAccountAmountWithoutTax != BigDecimal.ZERO) {
+                    if (totalBillingAccountAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
                         ratio = billingAccountAmountWithoutTax.divide(totalBillingAccountAmountWithoutTax, 2, RoundingMode.HALF_UP);
+                    } else {
+                        ratio = BigDecimal.ONE;
                     }
                 } else {
                     diff = billingAccountMinAmount.subtract(totalBillingAccountAmountWithTax);
-                    if (totalBillingAccountAmountWithTax != BigDecimal.ZERO) {
+                    if (totalBillingAccountAmountWithTax.compareTo(BigDecimal.ZERO) != 0) {
                         ratio = billingAccountAmountWithTax.divide(totalBillingAccountAmountWithTax, 2, RoundingMode.HALF_UP);
+                    } else {
+                        ratio = BigDecimal.ONE;
                     }
                 }
 
@@ -939,7 +1093,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                     BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                             : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                     BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
+                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
+                            : rtMinAmount;
                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
                     BigDecimal amountWithTax = unitAmountWithTax;
@@ -947,7 +1102,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
                     RatedTransaction ratedTransaction = new RatedTransaction(null, minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, BigDecimal.ONE,
                         amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null, "", "", null,
-                        "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), billingAccountMinLabel);
+                        "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), billingAccountMinLabel, null, null);
                     ratedTransactionService.create(ratedTransaction);
 
                     billingAccountAmountWithoutTax = billingAccountAmountWithoutTax.add(amountWithoutTax);
@@ -961,4 +1116,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return totalInvoiceAmountWithoutTax;
     }
 
+    /**
+     * Find billing accounts by billing run.
+     *
+     * @param billingRunId Billing run id
+     * @return A list of billing account identifiers
+     */
+    public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
+        return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+    }
 }

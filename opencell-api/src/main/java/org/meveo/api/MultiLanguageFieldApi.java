@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -39,6 +40,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
  * @lastModifiedVersion 5.0
  *
  */
+@Stateless
 public class MultiLanguageFieldApi extends BaseApi {
 
     @Inject

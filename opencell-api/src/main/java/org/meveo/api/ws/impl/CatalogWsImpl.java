@@ -50,7 +50,6 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
@@ -85,8 +84,13 @@ import org.meveo.api.ws.CatalogWs;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 
+/**
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
+ * @lastModifiedVersion 5.0
+ */
 @WebService(serviceName = "CatalogWs", endpointInterface = "org.meveo.api.ws.CatalogWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class CatalogWsImpl extends BaseWs implements CatalogWs {
@@ -227,11 +231,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo) {
+    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
+            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, loadOfferServiceTemplate,
+                loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -803,11 +809,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     @Override
     public MeveoModuleDtosResponse listBusinessOfferModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessOfferModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessOfferModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1080,11 +1083,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     @Override
     public MeveoModuleDtosResponse listBusinessServiceModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessServiceModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1619,11 +1619,8 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     @Override
     public MeveoModuleDtosResponse listBusinessProductModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessProductModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessProductModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

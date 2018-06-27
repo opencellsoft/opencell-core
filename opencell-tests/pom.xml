@@ -11,6 +11,10 @@
 			<id>eviwarePluginRepository</id>
 			<url>http://www.soapui.org/repository/maven2/</url>
 		</pluginRepository>
+		<pluginRepository>
+			<id>jacocoPluginRepository</id>
+			<url>https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin</url>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<properties>
@@ -42,38 +46,78 @@
 				<groupId>com.smartbear.soapui</groupId>
 				<artifactId>soapui-maven-plugin</artifactId>
 				<version>5.3.0</version>
-				<configuration>
-					<projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
-					<outputFolder>${basedir}/target/surefire-reports/</outputFolder>
-					<junitReport>true</junitReport>
-					<exportwAll>true</exportwAll>
-					<printReport>true</printReport>
-					<testFailIgnore>true</testFailIgnore>
-					<soapuiProperties>
-						<property>
-							<name>opencell.url</name>
-							<value>${opencell.url}</value>
-						</property>
-					</soapuiProperties>
-					<projectProperties>
-						<value>opencell.url=${opencell.url}</value>
-						<value>opencell.url2=${opencell.url2}</value>
-						<value>elasticSearchUrl=${elasticSearchUrl}</value>
-						<value>ingenico.SecretApiKey=${ingenico.SecretApiKey}</value>
-						<value>ingenico.ApiKeyId=${ingenico.ApiKeyId}</value>
-						<value>ingenico.merchantId=${ingenico.merchantId}</value>
-						<value>slimPay.secretKey=${slimPay.secretKey}</value>
-						<value>slimPay.userId=${slimPay.userId}</value>
-						<value>adminUsername=${adminUsername}</value>
-						<value>adminPassword=${adminPassword}</value>
-						<value>superUsername=${superUsername}</value>
-						<value>superPassword=${superPassword}</value>
-						<value>provider=${provider}</value>
-						<value>provider_description=${provider_description}</value>
-					</projectProperties>
-				</configuration>
+				 <configuration>
+                            <outputFolder>${basedir}/target/surefire-reports/</outputFolder>
+							<junitReport>true</junitReport>
+							<exportwAll>true</exportwAll>
+							<printReport>true</printReport>
+							<testFailIgnore>true</testFailIgnore>
+							<soapuiProperties>
+								<property>
+									<name>opencell.url</name>
+									<value>${opencell.url}</value>
+								</property>
+							</soapuiProperties>
+							<projectProperties>
+								<value>opencell.url=${opencell.url}</value>
+								<value>opencell.url2=${opencell.url2}</value>
+								<value>elasticSearchUrl=${elasticSearchUrl}</value>
+								<value>ingenico.SecretApiKey=${ingenico.SecretApiKey}</value>
+								<value>ingenico.ApiKeyId=${ingenico.ApiKeyId}</value>
+								<value>ingenico.merchantId=${ingenico.merchantId}</value>
+								<value>slimPay.secretKey=${slimPay.secretKey}</value>
+								<value>slimPay.userId=${slimPay.userId}</value>
+								<value>adminUsername=${adminUsername}</value>
+								<value>adminPassword=${adminPassword}</value>
+								<value>superUsername=${superUsername}</value>
+								<value>superPassword=${superPassword}</value>
+								<value>provider=${provider}</value>
+								<value>provider_description=${provider_description}</value>
+							</projectProperties>
+                        </configuration>
+				<executions>
+                    <execution>
+                    	<id>fullCRUD</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${basedir}/api/soapui/Full-Ws-CRUD-Test-Entities.xml</projectFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>TMForum</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${basedir}/api/soapui/Jax-Rs_TMForum.xml</projectFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>Mediation</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${basedir}/api/soapui/Jax-Ws_Mediation.xml</projectFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                    	<id>CFs</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${basedir}/api/soapui/Jax-Ws_CFs.xml</projectFile>
+                        </configuration>
+                    </execution>
+                </executions>
 				<dependencies>
-
 					<dependency>
 						<groupId>com.jgoodies</groupId>
 						<artifactId>forms</artifactId>
@@ -135,6 +179,34 @@
 					<!-- <targetDirectory>${project.build.directory}/reports</targetDirectory> -->
 				</configuration>
 			</plugin>
+		    <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.9</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+						    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+						     <propertyName>surefireArgLine</propertyName>
+						</configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-code-coverage-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                         <configuration>
+				          <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+				          <outputDirectory>${basedir}/target/jacoco-reports</outputDirectory>
+				        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -152,6 +224,9 @@
 					<showSuccess>true</showSuccess>
 					<aggregate>true</aggregate>
 					<linkXRef>false</linkXRef>
+					<argLine>${surefireArgLine}</argLine>
+					 <forkCount>1</forkCount>
+        			<reuseForks>true</reuseForks>
 				</configuration>
 			</plugin>
 		</plugins>

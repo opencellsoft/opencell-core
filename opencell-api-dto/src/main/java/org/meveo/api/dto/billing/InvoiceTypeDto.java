@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -23,7 +23,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
  */
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceTypeDto extends BusinessDto {
+public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

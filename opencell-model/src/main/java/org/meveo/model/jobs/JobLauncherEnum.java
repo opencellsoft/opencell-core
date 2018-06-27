@@ -18,41 +18,55 @@
  */
 package org.meveo.model.jobs;
 
-
+/**
+ * Ways of initiating a job
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 public enum JobLauncherEnum {
-	
-        TIMER(1, "jobLauncherEnum.timer"),
-	    GUI(2, "jobLauncherEnum.gui"),
-	    TRIGER(3, "jobLauncherEnum.trigger");
-	    
-	    private Integer id;
-	    private String label;
-	    
-		private JobLauncherEnum(Integer id, String label) {
-	        this.id = id;
-	        this.label = label;
-	    }
 
-	    public String getLabel() {
-	        return label;
-	    }
+    /**
+     * Launched by a scheduler timer
+     */
+    TIMER(1, "jobLauncherEnum.timer"),
+    /**
+     * Launched from GUI
+     */
+    GUI(2, "jobLauncherEnum.gui"),
+    /**
+     * Launched by a notification trigger
+     */
+    TRIGER(3, "jobLauncherEnum.trigger");
 
-	    public Integer getId() {
-	        return id;
-	    }
+    private Integer id;
+    private String label;
 
-	    public static JobLauncherEnum getValue(Integer id) {
-	        if (id != null) {
-	            for (JobLauncherEnum status : values()) {
-	                if (id.equals(status.getId())) {
-	                    return status;
-	                }
-	            }
-	        }
-	        return null;
-	    }
+    private JobLauncherEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
+    }
 
-	    public String toString() {
-	        return label.toString();
-	    }
-	}
+    public String getLabel() {
+        return label;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public static JobLauncherEnum getValue(Integer id) {
+        if (id != null) {
+            for (JobLauncherEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
+
+    public String toString() {
+        return label.toString();
+    }
+}

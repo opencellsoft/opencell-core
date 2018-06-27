@@ -8,6 +8,7 @@ import org.meveo.service.script.Script;
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
+ * @lastModifiedVersion 5.1
  **/
 public class ReportExtractScript extends Script {
 
@@ -16,5 +17,7 @@ public class ReportExtractScript extends Script {
     public static final String DIR = "DIR";
     public static final String FILENAME = "FILENAME";
     public static final String REPORTS_DIR = "reports";
+    public static final String ERROR_MESSAGE = "ERROR_MESSAGE";
+    public static final String LINE_COUNT = "LINE_COUNT";
 
 }

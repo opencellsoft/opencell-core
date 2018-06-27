@@ -1,6 +1,5 @@
 package org.meveo.api.finance;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,23 +7,35 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ReportExtractExecutionException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.finance.ReportExtractDto;
+import org.meveo.api.dto.finance.ReportExtractExecutionResultDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.finance.ReportExtractExecutionResultsResponseDto;
+import org.meveo.api.dto.response.finance.ReportExtractsResponseDto;
 import org.meveo.api.dto.response.finance.RunReportExtractDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
+import org.meveo.model.finance.ReportExtractExecutionResult;
+import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.finance.ReportExtractExecutionResultService;
 import org.meveo.service.finance.ReportExtractService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
  * @since 5.0
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDto> {
@@ -34,6 +45,9 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
 
     @Inject
     private ReportExtractService reportExtractService;
+
+    @Inject
+    private ReportExtractExecutionResultService reportExtractExecutionResultService;
 
     @Override
     public ReportExtract create(ReportExtractDto postData) throws MeveoApiException, BusinessException {
@@ -50,6 +64,9 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
 
         if (reportExtractService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(ReportExtract.class, postData.getCode());
+        }
+        if (StringUtils.isBlank(postData.getReportExtractResultType())) {
+            postData.setReportExtractResultType(ReportExtractResultTypeEnum.CSV);
         }
 
         ReportExtract reportExtract = convertReportExtractFromDto(postData, null);
@@ -74,16 +91,37 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         if (reportExtract == null) {
             throw new EntityDoesNotExistsException(ReportExtract.class, postData.getCode());
         }
+        if (StringUtils.isBlank(postData.getReportExtractResultType())) {
+            postData.setReportExtractResultType(ReportExtractResultTypeEnum.CSV);
+        }
 
-        reportExtract = convertReportExtractFromDto(postData, reportExtract);
+        convertReportExtractFromDto(postData, reportExtract);
         reportExtract = reportExtractService.update(reportExtract);
         return reportExtract;
     }
 
-    public List<ReportExtractDto> list() {
-        List<ReportExtract> reportExtracts = reportExtractService.list();
-        return (reportExtracts == null || reportExtracts.isEmpty()) ? new ArrayList<>() : reportExtracts.stream().map(p -> new ReportExtractDto(p)).collect(Collectors.toList());
-    }
+	public ReportExtractsResponseDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+		if (pagingAndFiltering == null) {
+			pagingAndFiltering = new PagingAndFiltering();
+		}
+
+		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null,
+				pagingAndFiltering, ReportExtractExecutionResult.class);
+		Long totalCount = reportExtractService.count(paginationConfig);
+		ReportExtractsResponseDto result = new ReportExtractsResponseDto();
+
+		result.setPaging(pagingAndFiltering);
+		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		if (totalCount > 0) {
+			List<ReportExtract> reportExtractExecutionResults = reportExtractService.list(paginationConfig);
+			for (ReportExtract e : reportExtractExecutionResults) {
+				result.getReportExtracts().add(new ReportExtractDto(e));
+			}
+		}
+
+		return result;
+	}
 
     @Override
     public ReportExtractDto find(String code) throws EntityDoesNotExistsException {
@@ -113,6 +151,7 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         reportExtract.setParams(dto.getParams());
         reportExtract.setStartDate(dto.getStartDate());
         reportExtract.setScriptType(dto.getScriptType());
+        reportExtract.setReportExtractResultType(dto.getReportExtractResultType());
         if (dto.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
             ScriptInstance scriptInstance = scriptInstanceService.findByCode(dto.getScriptInstanceCode());
             if (scriptInstance == null) {
@@ -128,8 +167,54 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         return reportExtract;
     }
 
-    public void runReportExtract(RunReportExtractDto postData) throws BusinessException {
+    public void runReportExtract(RunReportExtractDto postData) throws BusinessException, EntityDoesNotExistsException, ReportExtractExecutionException {
         ReportExtract reportExtract = reportExtractService.findByCode(postData.getCode());
-        reportExtractService.runReport(reportExtract, postData.getParams());
+        if (reportExtract == null) {
+            throw new EntityDoesNotExistsException(ReportExtract.class, postData.getCode());
+        }
+        reportExtractService.runReport(reportExtract, postData.getParams(), ReportExtractExecutionOrigin.API);
+    }
+
+    public ReportExtractExecutionResultsResponseDto listReportExtractRunHistory(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, ReportExtractExecutionResult.class);
+        Long totalCount = reportExtractExecutionResultService.count(paginationConfig);
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<ReportExtractExecutionResult> reportExtractExecutionResults = reportExtractExecutionResultService.list(paginationConfig);
+            for (ReportExtractExecutionResult e : reportExtractExecutionResults) {
+                result.getReportExtractExecutionResults().add(new ReportExtractExecutionResultDto(e));
+            }
+        }
+
+        return result;
+    }
+
+    public ReportExtractExecutionResultDto findReportExtractHistory(Long id) {
+        ReportExtractExecutionResultDto result = new ReportExtractExecutionResultDto();
+        ReportExtractExecutionResult entity = reportExtractExecutionResultService.findById(id);
+        if (entity != null) {
+            result = new ReportExtractExecutionResultDto(entity);
+        }
+
+        return result;
+    }
+
+    public ReportExtractExecutionResultsResponseDto listReportExtractRunHistoryByRECode(String code) {
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        ReportExtract re = reportExtractService.findByCode(code);
+        if (re != null && re.getExecutionResults() != null) {
+            result.setReportExtractExecutionResults(re.getExecutionResults().stream().map(p -> new ReportExtractExecutionResultDto(p)).collect(Collectors.toList()));
+        }
+
+        return result;
     }
 }

@@ -40,6 +40,7 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.primefaces.model.SortOrder;
 
 /**
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  *
@@ -79,7 +80,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
     private ProductTemplateDto convertProductTemplateToDto(ProductTemplate productTemplate) {
 
-        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false);
+        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false, true);
         processProductChargeTemplateToDto(productTemplate, productTemplateDto);
         return productTemplateDto;
     }
@@ -340,7 +341,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         Long totalCount = productTemplateService.count(paginationConfig);
 
         GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
-        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {

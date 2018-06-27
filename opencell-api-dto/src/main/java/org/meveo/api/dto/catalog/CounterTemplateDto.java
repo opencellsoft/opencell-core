@@ -201,9 +201,8 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof CounterTemplateDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+
+        if (obj == null || !(obj instanceof CounterTemplateDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 

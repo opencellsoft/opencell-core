@@ -1,7 +1,5 @@
 package org.meveo.api.rest.module.impl;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -19,7 +17,7 @@ import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
- * 
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -67,11 +65,8 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     @Override
     public MeveoModuleDtosResponse list() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(null);
-            result.setModules(dtos);
+            result = moduleApi.list(null);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

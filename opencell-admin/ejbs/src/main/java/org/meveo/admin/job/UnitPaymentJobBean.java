@@ -10,8 +10,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -38,6 +40,7 @@ public class UnitPaymentJobBean {
     @Inject
     private PaymentService paymentService;
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway,
             PaymentMethodEnum paymentMethodType) {
@@ -51,21 +54,24 @@ public class UnitPaymentJobBean {
             List<Long> listAOids = new ArrayList<>();
             listAOids.add(aoId);
             PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+            CustomerAccount customerAccount = accountOperation.getCustomerAccount();
+            BigDecimal unMatchingAmount = accountOperation.getUnMatchingAmount();
+            BigDecimal oneHundred = new BigDecimal("100");
             if (operationCategory == OperationCategoryEnum.CREDIT) {
                 if (paymentMethodType == PaymentMethodEnum.CARD) {
-                    doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
-                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                    doPaymentResponseDto = paymentService.payByCardToken(customerAccount,
+                        unMatchingAmount.multiply(oneHundred).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 } else {
-                   doPaymentResponseDto = paymentService.payByMandat(accountOperation.getCustomerAccount(),
-                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                   doPaymentResponseDto = paymentService.payByMandat(customerAccount,
+                        unMatchingAmount.multiply(oneHundred).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 }
             } else {
                 if (paymentMethodType == PaymentMethodEnum.CARD) {
-                    doPaymentResponseDto = paymentService.refundByCardToken(accountOperation.getCustomerAccount(),
-                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                    doPaymentResponseDto = paymentService.refundByCardToken(customerAccount,
+                        unMatchingAmount.multiply(oneHundred).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 } else {
-                    doPaymentResponseDto = paymentService.refundByMandat(accountOperation.getCustomerAccount(),
-                       accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                    doPaymentResponseDto = paymentService.refundByMandat(customerAccount,
+                       unMatchingAmount.multiply(oneHundred).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 }
             }
             if (PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {

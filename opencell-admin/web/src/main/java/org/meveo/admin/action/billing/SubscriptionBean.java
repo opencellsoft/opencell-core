@@ -41,6 +41,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -141,9 +142,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -181,7 +179,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
     private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
     private EntityListDataModelPF<ProductInstance> productInstances = null;
-
+    
     public SubscriptionBean() {
         super(Subscription.class);
     }
@@ -254,7 +252,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
         log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
     }
+    
+    public BillingCycle getBillingCycle() {
+        return entity.getBillingCycle();
+    }
 
+    public void setBillingCycle(BillingCycle billingCycle) {
+        if (billingCycle != null) {
+            entity.setBillingCycle(billingCycle);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -500,11 +508,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
                 ServiceInstance serviceInstance = new ServiceInstance();
                 serviceInstance.setCode(serviceTemplate.getCode());
-                if (!StringUtils.isBlank(descriptionOverride)) {
-                    serviceInstance.setDescription(descriptionOverride);
-                } else {
-                    serviceInstance.setDescription(descriptionOverride);
-                }
+                serviceInstance.setDescription(descriptionOverride);
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription((Subscription) entity);
                 if (entity.getSubscriptionDate() != null) {
@@ -539,12 +543,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
+    /**
+     * actives services.
+     */
     public void activateService() {
         log.debug("activateService...");
         try {
-            log.debug("activateService id={} checked", selectedServiceInstance.getId());
             if (selectedServiceInstance != null) {
-
+                log.debug("activateService id={} checked", selectedServiceInstance.getId());
                 if (selectedServiceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                     messages.info(new BundleKey("messages", "error.activation.terminatedService"));
                     return;

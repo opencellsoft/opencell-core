@@ -19,6 +19,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -205,9 +207,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException {
         OfferTemplate offer = serviceInstance.getSubscription().getOffer();
         if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
-            throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
+            throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
-        log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+        
+        if (offer != null && serviceInstance != null) {
+            log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+
+        }
         return true;
     }
 
@@ -278,6 +284,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
 
+        serviceInstance.setServiceRenewal(serviceTemplate.getServiceRenewal());
+        
         if (!isVirtual) {
             create(serviceInstance);
         }
@@ -337,6 +345,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Activate a service, the subscription charges can be applied or not.
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * v5.0 add control over WO creation if service suspended and reactivated
      * 
      * @param serviceInstance service instance
      * @param applySubscriptionCharges true/false
@@ -390,7 +399,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         // apply subscription charges
-        if (applySubscriptionCharges) {
+        if (applySubscriptionCharges && !serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
@@ -541,7 +550,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
                 if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
                     log.debug("Applying the termination charge {}", oneShotChargeInstance.getId());
+                    
+                    // #3174 Setting termination informations which will be also reachable from within the "rating scripts"
                     oneShotChargeInstance.setChargeDate(terminationDate);
+                    oneShotChargeInstance.getTerminationServiceInstance().setSubscriptionTerminationReason(terminationReason);
+                    
                     oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity(), orderNumber);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
                 } else {
@@ -695,11 +708,20 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             return null;
         }
     }
+    
+    @Override
+    public void create(ServiceInstance entity) throws BusinessException {
+    	entity.updateSubscribedTillAndRenewalNotifyDates();
+    	
+    	super.create(entity);
+    }
 
     @Override
     public ServiceInstance update(ServiceInstance entity) throws BusinessException {
 
         boolean quantityChanged = entity.isQuantityChanged();
+        
+        entity.updateSubscribedTillAndRenewalNotifyDates();
 
         entity = super.update(entity);
         // update quantity in charges
@@ -774,5 +796,26 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         return serviceInstances;
+    }
+
+    /**
+     * Get a list of service ids that are about to expire or have expired already
+     * 
+     * @return A list of service ids
+     */
+    public List<Long> getSubscriptionsToRenewOrNotify() {
+		List<Long> ids = getEntityManager().createNamedQuery("ServiceInstance.getExpired", Long.class) //
+				.setParameter("date", new Date()) //
+				.setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
+				.setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+				.getResultList();
+		
+		ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
+				.setParameter("date", new Date()) //
+				.setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
+				.setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+				.getResultList());
+
+        return ids;
     }
 }

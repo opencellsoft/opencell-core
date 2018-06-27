@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
+ * @author Said Ramli
  * @lastModifiedVersion 5.0.1
  */
 @Named
@@ -867,17 +868,15 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         try {
 
+            action = entityActionScriptService.retrieveIfNotManaged(action);
+            
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
-
             Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
-
-            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
-                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
 
             } else {
                 messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
@@ -917,9 +916,6 @@ public class CustomFieldDataEntryBean implements Serializable {
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
-
-            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
-                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
 
             } else {
                 messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
@@ -1080,7 +1076,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Save child entity record
+     * Save child entity record.
      * 
      * @param mainEntityValueHolder Main entity custom field value holder
      * @param mainEntityCfv Main entity's custom field value containing child entities
@@ -1095,7 +1091,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         // check that CEI code is unique
         CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(cei.getCetCode(), cei.getCode());
-        if ((cei.isTransient() && ceiSameCode != null) || (!cei.isTransient() && cei.getId().longValue() != ceiSameCode.getId().longValue())) {
+        if ((cei.isTransient() && ceiSameCode != null) || (!cei.isTransient() && ceiSameCode != null && cei.getId().longValue() != ceiSameCode.getId().longValue())) {
             messages.error(new BundleKey("messages", "commons.uniqueField.code"));
             FacesContext.getCurrentInstance().validationFailed();
             return;
@@ -1123,7 +1119,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Prepare to edit child entity
+     * Prepare to edit child entity.
      * 
      * @param mainEntityValueHolder Main entity custom field value holder
      * @param selectedChildEntity Child entity custom field value holder

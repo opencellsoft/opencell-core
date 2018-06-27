@@ -63,12 +63,13 @@ public class InvoiceCatSubCatModel {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(entity == null)
+		if (entity == null) {
 			return false;
+		}
 		InvoiceCatSubCatModel temp = (InvoiceCatSubCatModel) obj;
-		if (temp.getType() == CATEGORY) {
+		if (temp != null && temp.getType() == CATEGORY) {
 			return ((InvoiceCategory) temp.getEntity()).getCode().equals(entity.getCode());
-		} else if (temp.getType() == SUB_CATEGORY) {
+		} else if (temp != null && temp.getType() == SUB_CATEGORY) {
 			return ((InvoiceSubCategory) temp.getEntity()).getCode().equals(entity.getCode());
 		}
 

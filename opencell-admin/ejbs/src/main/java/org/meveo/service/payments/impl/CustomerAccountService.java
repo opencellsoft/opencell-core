@@ -57,9 +57,9 @@ import org.meveo.util.ApplicationProvider;
 /**
  * Customer Account service implementation.
  * 
- *  @author Edward P. Legaspi
- *  @author anasseh
- *  @lastModifiedVersion 5.0
+ * @author Edward P. Legaspi
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class CustomerAccountService extends AccountService<CustomerAccount> {
@@ -75,14 +75,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
-
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     /**
      * @param id id of customer to be checking
@@ -109,8 +101,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return failedImports;
     }
 
-    private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isDue, Date to, boolean activeDunningExclusion,
-            MatchingStatusEnum... status) throws Exception {
+    private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isDue, Date to, MatchingStatusEnum... status)
+            throws Exception {
 
         BigDecimal balance = null;
         QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
@@ -119,9 +111,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             queryBuilder.addCriterion("dueDate", "<=", to, false);
         } else {
             queryBuilder.addCriterion("transactionDate", "<=", to, false);
-        }
-        if (activeDunningExclusion) {
-            queryBuilder.addBooleanCriterion("excludedFromDunning", false);
         }
         queryBuilder.addCriterionEntity("customerAccount", customerAccount);
         if (status.length == 1) {
@@ -139,9 +128,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return balance;
     }
 
-    private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue, boolean dunningExclusion, MatchingStatusEnum... status) throws BusinessException {
-        log.trace("start computeBalance customerAccount:{}, toDate:{}, isDue:{}, dunningExclusion:{}", (customerAccount == null ? "null" : customerAccount.getCode()), to, isDue,
-            dunningExclusion);
+    private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+        log.trace("start computeBalance customerAccount:{}, toDate:{}, isDue:{}", (customerAccount == null ? "null" : customerAccount.getCode()), to, isDue);
         if (customerAccount == null) {
             log.warn("Error when customerAccount is null!");
             throw new BusinessException("customerAccount is null");
@@ -152,8 +140,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         BigDecimal balance = null, balanceDebit = null, balanceCredit = null;
         try {
-            balanceDebit = computeOccAmount(customerAccount, OperationCategoryEnum.DEBIT, isDue, to, dunningExclusion, status);
-            balanceCredit = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion, status);
+            balanceDebit = computeOccAmount(customerAccount, OperationCategoryEnum.DEBIT, isDue, to, status);
+            balanceCredit = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, status);
             if (balanceDebit == null) {
                 balanceDebit = BigDecimal.ZERO;
             }
@@ -174,7 +162,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     public BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+        return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
 
     /**
@@ -191,7 +179,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     public BigDecimal customerAccountBalanceDueWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P);
+        return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
     public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
@@ -201,12 +189,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     public BigDecimal customerAccountBalance(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, false, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+        return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
 
     public BigDecimal customerAccountBalanceExigible(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceExigible  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+        return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
 
     }
 
@@ -217,7 +205,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     public BigDecimal customerAccountBalanceExigibleWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceExigibleWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
+        return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
     /**
@@ -311,6 +299,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     }
 
     /**
+     * Transfer amount from a customer account to an other.
+     * 
      * @param fromCustomerAccountId customer account id
      * @param fromCustomerAccountCode customer account code
      * @param toCustomerAccountId customer account of transfer's destination
@@ -331,6 +321,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     }
 
     /**
+     * Update Credit Category for a customer account.
      * @param id id of customer account
      * @param code code of customer account
      * @param creditCategory credit category
@@ -527,13 +518,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     @SuppressWarnings("unchecked")
     public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
-        long startDate = System.currentTimeMillis();
+
         Query query = this.getEntityManager()
             .createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
         query.setParameter("id", billingAccount.getId());
         try {
             List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
-            log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
             return resultList;
 
         } catch (NoResultException e) {
@@ -542,11 +532,26 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
     }
-
+    
+    /**
+     *  Compute  credit balnce.
+     *  
+     * @param customerAccount the customer account 
+     * @param isDue if true will compare with the due date else operationn date
+     * @param to include AOs until this date
+     * @param dunningExclusion if true the litigation AOs will not be included
+     * @return Calculated balnce
+     * @throws BusinessException Business Exception
+     */
     public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to, boolean dunningExclusion) throws BusinessException {
         BigDecimal result = new BigDecimal(0);
         try {
-            result = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+            if (dunningExclusion) {
+                result = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, MatchingStatusEnum.O, MatchingStatusEnum.P);
+            } else {
+                result = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+            }
+
             result = result == null ? new BigDecimal(0) : result;
             ParamBean param = paramBeanFactory.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
@@ -554,7 +559,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             result = result.multiply(new BigDecimal(balanceFlag));
 
         } catch (Exception e) {
-            throw new BusinessException("Internal error");
+            log.error("Error on computeCreditBalance:", e);
+            throw new BusinessException(e.getMessage());
         }
 
         return result;

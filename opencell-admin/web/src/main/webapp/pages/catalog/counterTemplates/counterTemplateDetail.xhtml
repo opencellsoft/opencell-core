@@ -8,26 +8,25 @@
     </ui:define>
 
     <ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem outcome="counterTemplates"
-					value="#{messages['menu.counterTemplates']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['counterTemplate']}"
-					disabled="true" rendered="#{counterTemplateBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['counterTemplate']} #{messages['commons.configuration']} - #{counterTemplateBean.entity.code}"
-					disabled="true" rendered="#{!counterTemplateBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="counterTemplates"
+                    value="#{messages['menu.counterTemplates']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['counterTemplate']}"
+                    disabled="true" rendered="#{counterTemplateBean.entity.transient}" />
+                <p:menuitem
+                    value="#{messages['counterTemplate']} #{messages['commons.configuration']} - #{counterTemplateBean.entity.code}"
+                    disabled="true" rendered="#{!counterTemplateBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:formPanel id="formPanel" formId="counterTemplatId" label="#{messages['menu.counterTemplates']}" backingBean="#{counterTemplateBean}" showEnableDisableButton="true">
+        <hftl:formPanel id="formPanel" formId="counterTemplatId" label="#{messages['menu.counterTemplates']}" backingBean="#{counterTemplateBean}" showEnableDisableButton="true">
 
             <h:panelGrid columns="3" cellpadding="5">
                 <h:outputLink id="exprEl" value="#">
                     <h:outputText value="#{messages['counterTemplate.elExpressionVariables']}" />
                 </h:outputLink>
-                <p:tooltip for="exprEl" value="#{messages['counterTemplate.elExpressionUsed']}" />
             </h:panelGrid>
 
             <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
