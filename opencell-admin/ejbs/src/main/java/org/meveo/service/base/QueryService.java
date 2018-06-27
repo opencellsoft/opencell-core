@@ -13,6 +13,14 @@ import org.hibernate.Session;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 
+/**
+ * Service that allows HQL queries to be called directly.
+ *
+ * @author Tony Alejandro
+ * @version %I%, %G%
+ * @since 5.1
+ * @lastModifiedVersion 5.1
+ */
 @Stateless
 public class QueryService {
 

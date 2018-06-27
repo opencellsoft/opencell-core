@@ -15,6 +15,14 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.QueryRs;
 
+/**
+ * Allows HQL queries to be called directly.
+ *
+ * @author Tony Alejandro
+ * @version %I%, %G%
+ * @since 5.1
+ * @lastModifiedVersion 5.1
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class QueryRsImpl extends BaseRs implements QueryRs {
@@ -23,7 +31,7 @@ public class QueryRsImpl extends BaseRs implements QueryRs {
     private QueryApi queryApi;
 
     /**
-     * List roles matching a given criteria.
+     * THIS IS A TEMPORARY API FOR DYNAMIC PORTAL USE ONLY.  IT MAY BE REMOVED AT ANY TIME.
      *
      * @param params Contains all query parameters passed. Will be parsed for the following parameters:<br />
      *        query - Search criteria. An HQL query that retrieves the list of entities. It only allows HQL queries<br />
@@ -33,7 +41,7 @@ public class QueryRsImpl extends BaseRs implements QueryRs {
      *        fields - comma delimited fields. allows nested field names.<br />
      *        offset - Pagination - from record number<br />
      *        limit - Pagination - number of records to retrieve<br />
-     *        sortBy - Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.<br />
+     *        orderBy - Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.<br />
      *        sortOrder - Sorting - sort order.<br />
      *
      *        all other parameters will be used as query parameters to the HQL
@@ -53,20 +61,20 @@ public class QueryRsImpl extends BaseRs implements QueryRs {
             String fields = parameters.getFirst("fields");
             String offset = parameters.getFirst("offset");
             String limit = parameters.getFirst("limit");
-            String sortBy = parameters.getFirst("sortBy");
+            String orderBy = parameters.getFirst("orderBy");
             String sortOrder = parameters.getFirst("sortOrder");
 
             Map<String, Object> queryParams = new HashMap<>();
 
             parameters.keySet().forEach((key) -> {
-                if (!"query".equals(key) && !"alias".equals(key) && !"fields".equals(key) && !"offset".equals(key) && !"limit".equals(key) && !"sortBy".equals(key)
+                if (!"query".equals(key) && !"alias".equals(key) && !"fields".equals(key) && !"offset".equals(key) && !"limit".equals(key) && !"orderBy".equals(key)
                         && !"sortOrder".equals(key)) {
                     queryParams.put(key, parameters.getFirst(key));
                 }
             });
 
             try {
-                response = queryApi.list(query, alias, fields, queryParams, offset, limit, sortBy, sortOrder);
+                response = queryApi.list(query, alias, fields, queryParams, offset, limit, orderBy, sortOrder);
             } catch (MeveoApiException e) {
                 processException(e, response.getActionStatus());
             }

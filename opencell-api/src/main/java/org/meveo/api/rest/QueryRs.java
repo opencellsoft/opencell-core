@@ -24,7 +24,7 @@ import org.meveo.api.dto.response.QueryResponse;
 public interface QueryRs {
 
     /**
-     * List roles matching a given criteria.
+     * THIS IS A TEMPORARY API FOR DYNAMIC PORTAL USE ONLY.  IT MAY BE REMOVED AT ANY TIME.
      *
      * @param params Contains all query parameters passed. Will be parsed for the following parameters:<br />
      *        query - Search criteria. An HQL query that retrieves the list of entities. It only allows HQL queries<br />
@@ -34,7 +34,7 @@ public interface QueryRs {
      *        fields - comma delimited fields. allows nested field names.<br />
      *        offset - Pagination - from record number<br />
      *        limit - Pagination - number of records to retrieve<br />
-     *        sortBy - Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.<br />
+     *        orderBy - Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.<br />
      *        sortOrder - Sorting - sort order.<br />
      *
      *        all other parameters will be used as query parameters to the HQL
