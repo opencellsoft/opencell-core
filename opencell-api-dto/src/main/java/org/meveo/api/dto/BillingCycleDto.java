@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.BillingCycle;
-
+import org.meveo.model.billing.BillingCycleTypeEnum;
 
 /**
  * The Class BillingCycleDto.
@@ -61,6 +61,10 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /** The billing cycle type. */
+    @XmlElement
+    private BillingCycleTypeEnum type;
 
     /**
      * Instantiates a new billing cycle dto.
@@ -87,6 +91,7 @@ public class BillingCycleDto extends BusinessEntityDto {
             invoiceDateProductionDelay = billingCycleEntity.getInvoiceDateProductionDelay();
             transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
             invoicingThreshold = billingCycleEntity.getInvoicingThreshold();
+            type = billingCycleEntity.getType();
 
             if (billingCycleEntity.getInvoiceType() != null) {
                 invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
@@ -305,6 +310,24 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
+    }
+    
+    /**
+     * Gets the billing cycle type.
+     *
+     * @return the billing cycle type
+     */
+    public BillingCycleTypeEnum getType() {
+        return type;
+    }
+
+    /**
+     * Sets the billing cycle type.
+     *
+     * @param type the billing cycle type
+     */
+    public void setType(BillingCycleTypeEnum type) {
+        this.type = type;
     }
 
 }

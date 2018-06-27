@@ -104,6 +104,10 @@ public class SubscriptionDto extends BusinessEntityDto {
 
     /** The renewal rule. */
     private SubscriptionRenewalDto renewalRule;
+    
+    /** The billing cycle. */
+    @XmlElement(required = true)
+    private String billingCycle;
 
     /**
      * Instantiates a new subscription dto.
@@ -125,17 +129,17 @@ public class SubscriptionDto extends BusinessEntityDto {
         setOrderNumber(e.getOrderNumber());
 
         if (e.getUserAccount() != null) {
-        	setUserAccount(e.getUserAccount().getCode());
+            setUserAccount(e.getUserAccount().getCode());
         }
 
         if (e.getOffer() != null) {
-        	setOfferTemplate(e.getOffer().getCode());
+            setOfferTemplate(e.getOffer().getCode());
         }
         
         setSubscriptionDate(e.getSubscriptionDate());
         setTerminationDate(e.getTerminationDate());
         if (e.getSubscriptionTerminationReason() != null) {
-        	setTerminationReason(e.getSubscriptionTerminationReason().getCode());
+            setTerminationReason(e.getSubscriptionTerminationReason().getCode());
         }
         setEndAgreementDate(e.getEndAgreementDate());
         setSubscribedTillDate(e.getSubscribedTillDate());
@@ -502,6 +506,24 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
+    }
+    
+    /**
+     * Gets the billing cycle.
+     *
+     * @return the billing cycle
+     */
+    public String getBillingCycle() {
+        return billingCycle;
+    }
+
+    /**
+     * Sets the billing cycle.
+     *
+     * @param billingCycle the new billing cycle
+     */
+    public void setBillingCycle(String billingCycle) {
+        this.billingCycle = billingCycle;
     }
 
     @Override

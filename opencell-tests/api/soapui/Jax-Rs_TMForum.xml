@@ -20222,6 +20222,54 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create BillingCycle with order type" id="ac4426cb-78db-4708-82fd-f7da68e67132">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createBillingCycle</con:operation>
+          <con:request name="Create BillingCycle with order type" id="106fb7fe-2a26-4916-8ed2-8b532cd2ff24">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingCycle>
+         <billingCycle code="${#Project#baseEntityPrefix}_BC_ORDER" description="${#Project#entityPrefix}_BC_ORDER">
+            <dueDateDelay>1</dueDateDelay>
+            <calendar>MONTHLY</calendar>
+            <invoiceDateDelay>1</invoiceDateDelay>
+            <billingTemplateName>1</billingTemplateName>
+            <type>ORDER</type>
+         </billingCycle>
+      </ws:createBillingCycle>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6b7d21ee-49b9-491a-a3b8-c44030316b28"/>
+            <con:assertion type="Simple Contains" id="2eeea003-f524-482c-a2af-947b6ce76760" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="f3993aae-300d-4399-8800-6b8cc77fea4b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data setup - Create account hierarchy" searchProperties="true">
@@ -20978,6 +21026,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08:00",
    "dueDateDelayEL" : "#{order.orderDate.date}",
+   "billingCycle" : "${#Project#baseEntityPrefix}_BC_ORDER",
    "orderItem":[
       {      	
          "id":"01",
@@ -21237,7 +21286,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>a77fb313-08f1-4efb-9789-237e41d5ea27</con:value>
+              <con:value>ae1f8d73-30e1-4c6b-9975-b624ce129442</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -22799,6 +22848,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#opencell.url}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="JsonPath Match" id="6fcc965b-32fa-476f-bf61-f6c4cd6e71c2" name="JsonPath Match">
+              <con:configuration>
+                <path>$[0].billingCycle</path>
+                <content>${#Project#baseEntityPrefix}_BC_ORDER</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -25308,7 +25366,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="72650309-4b16-481d-8dd0-bdf4c8fc4e92" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="e7e6fa33-b386-4dd6-84b7-e15ae86e95b2" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -26454,7 +26512,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="a3c356c9-cd30-48b6-b348-5b146bb5f3f6" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="a2a0d9db-faca-4e5d-9aed-888af4eec810" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -27506,7 +27564,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="153bdd75-26a1-45b8-acde-45d4020e181e" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="80294867-5c35-4605-af74-0467820290d6" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -29968,7 +30026,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>34</con:value>
+        <con:value>39</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -30289,7 +30347,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>6c1b42fb-23b1-4f5d-8992-3d528fe6f556</orderNumber>
+            <orderNumber>6510f069-fe2a-461e-b75b-301d4c975e52</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30466,7 +30524,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>6c1b42fb-23b1-4f5d-8992-3d528fe6f556</orderNumber>
+            <orderNumber>6510f069-fe2a-461e-b75b-301d4c975e52</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30657,7 +30715,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>6c1b42fb-23b1-4f5d-8992-3d528fe6f556</orderNumber>
+            <orderNumber>6510f069-fe2a-461e-b75b-301d4c975e52</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30898,7 +30956,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>c0923de7-070b-46f2-8d67-c7c340f7bc64</orderNumber>
+            <orderNumber>ad85a3de-349c-43f3-9ab0-7be72b2bb3c1</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31113,7 +31171,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>3cced747-eb3e-4101-b753-733919d35e7c</orderNumber>
+            <orderNumber>1f4248cf-ba57-483e-9962-4cfa99bf0581</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31317,7 +31375,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>83663c43-d209-403d-8a03-4eb6b5a04d87</orderNumber>
+            <orderNumber>41e2b1a1-3b86-4701-a987-6d8693f773f2</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31428,7 +31486,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>38</con:value>
+        <con:value>43</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -32162,7 +32220,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>22db46d2-f2a0-4333-8e19-c2c052c0b3f1</con:value>
+              <con:value>070c900b-c7af-42ef-9c71-e21894676574</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -32465,15 +32523,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>10c56788-ecde-4bac-89f9-d18e7ca18dae</con:value>
+        <con:value>68a492a0-7bb6-468d-aa03-7e4917d503d6</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>ea0bed01-b0c5-4ce7-be92-03f22c437c4f</con:value>
+        <con:value>9830792b-58b6-47ac-8a5a-583febbb2efa</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>17</con:value>
+        <con:value>22</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
