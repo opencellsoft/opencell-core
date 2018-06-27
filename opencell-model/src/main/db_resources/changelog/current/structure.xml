@@ -962,7 +962,6 @@
 			$$ LANGUAGE plpgsql;
 		]]></sql>
 	</changeSet>
-
     <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
     <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
      <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
