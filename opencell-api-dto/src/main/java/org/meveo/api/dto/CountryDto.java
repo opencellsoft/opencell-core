@@ -17,7 +17,7 @@ import org.meveo.model.billing.TradingCountry;
  */
 @XmlRootElement(name = "Country")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryDto extends BaseDto implements IEnableDto {
+public class CountryDto extends AuditableEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4175660113940481232L;
@@ -63,6 +63,7 @@ public class CountryDto extends BaseDto implements IEnableDto {
      * @param country the Country enntity
      */
     public CountryDto(Country country) {
+        super(country);
         countryCode = country.getCountryCode();
         name = country.getDescription();
         currencyCode = country.getCurrency().getCurrencyCode();

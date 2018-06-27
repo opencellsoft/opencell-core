@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -23,7 +23,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 @Deprecated
 @XmlRootElement(name = "Invoice4_2")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Invoice4_2Dto extends BaseDto {
+public class Invoice4_2Dto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1072382628068718580L;

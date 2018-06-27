@@ -85,7 +85,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		// dimension4);
 		List<MeasuredValue> mvs = mvService.getByDateAndPeriod(mq.getCode(), fromDate, toDate, mq.getMeasurementPeriod(), mq);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		ChartSeries mvSeries = new ChartSeries();
 
 		mvSeries.setLabel(sdf.format(fromDate.getTime()));
@@ -174,7 +174,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			chartEntityModel.setChart((PieChart) chart);
 			result = (EM) chartEntityModel;
 		}
-		if (!empty) {
+		if (!empty && result != null) {
 			result.setDimension1List(mvService.getDimensionList(1, fromDate, toDate, mq));
 			result.setDimension2List(mvService.getDimensionList(2, fromDate, toDate, mq));
 			result.setDimension3List(mvService.getDimensionList(3, fromDate, toDate, mq));

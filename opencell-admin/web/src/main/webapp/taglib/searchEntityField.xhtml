@@ -14,7 +14,6 @@
             <h:panelGroup>
                 <p:inputText id="#{id}" value="#{backingBean.filters[field][valueLabelField]}" size="#{size}" disabled="true" />
                 <p:commandButton id="#{id}_selectLink" onclick="PF('dlg_#{popupId}').show()" icon="ui-icon-search" type="button" />
-                <p:tooltip for="#{id}_selectLink" value="#{messages['commons.search']}" />
                 <p:commandButton immediate="true" rendered="#{showResetButton}" id="#{id}_resetLink" update="#{id}" icon="ui-icon-close">
                     <f:setPropertyActionListener target="#{backingBean.filters[field]}" value="#{null}" />
                 </p:commandButton>

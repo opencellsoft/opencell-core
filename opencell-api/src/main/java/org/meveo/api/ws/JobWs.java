@@ -8,6 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
@@ -97,5 +98,13 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name = "code") String code, @WebParam(name = "jobExecutionResultId") Long jobExecutionResultId);
+    
+    /**
+     * List job categories
+     * 
+     * @return object containing the list of job categories
+     */
+    @WebMethod
+    JobCategoriesResponseDto listCategories();
 
 }

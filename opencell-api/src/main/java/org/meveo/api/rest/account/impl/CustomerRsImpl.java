@@ -255,4 +255,17 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         return result;
     }
 
+	@Override
+	public ActionStatus exportCustomerHierarchy(String customerCode) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.exportCustomerHierarchy(customerCode, httpServletResponse);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
 }

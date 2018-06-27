@@ -7,14 +7,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class InvoiceTypesDto.
  */
 @XmlRootElement(name = "InvoiceTypes")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceTypesDto extends BaseDto {
+public class InvoiceTypesDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

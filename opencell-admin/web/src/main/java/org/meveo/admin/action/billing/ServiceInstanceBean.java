@@ -203,4 +203,11 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         return outcome;
     }
+    
+    /**
+     * Update subscribedTillDate field in service
+     */
+    public void updateSubscribedTillDate() {
+        entity.updateSubscribedTillAndRenewalNotifyDates();
+    }
 }

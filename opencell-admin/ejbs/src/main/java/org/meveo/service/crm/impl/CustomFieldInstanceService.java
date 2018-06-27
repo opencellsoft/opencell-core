@@ -27,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.CFEndPeriodEvent;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ICustomFieldEntity;
@@ -39,11 +41,10 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,8 @@ import org.w3c.dom.Element;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  * 
  */
 @Stateless
@@ -71,12 +73,8 @@ public class CustomFieldInstanceService extends BaseService {
     private ProviderService providerService;
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     @Inject
     private Conversation conversation;
@@ -201,6 +199,20 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
+     * Gets the run time CF value.
+     *
+     * @param entity the entity
+     * @param cfCode the cf code
+     * @return the run time CF value
+     */
+    private Object getRunTimeCFValue(ICustomFieldEntity entity, String cfCode) {
+        if (entity instanceof JobInstance) {
+            return ((JobInstance) entity).getParamValue(cfCode);  
+        }
+        return null;
+    }
+
+    /**
      * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value.
      *
      * @param entity Entity
@@ -209,13 +221,18 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Custom field value
      */
     public Object getCFValue(ICustomFieldEntity entity, String cfCode, boolean instantiateDefaultValue) {
-
+        
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
         if (cft == null) {
             // log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
 
+        Object runTimeCFValue = this.getRunTimeCFValue(entity, cfCode);
+        if (runTimeCFValue != null) {
+            return runTimeCFValue;
+        }
+        
         if (cft.isVersionable()) {
             log.warn("Trying to access a versionable custom field {}/{} value with no provided date. Current date will be used", entity.getClass().getSimpleName(), cfCode);
             return getCFValue(entity, cfCode, new Date(), instantiateDefaultValue);
@@ -268,6 +285,12 @@ public class CustomFieldInstanceService extends BaseService {
             // log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
+        
+        Object runTimeCFValue = this.getRunTimeCFValue(entity, cfCode);
+        if (runTimeCFValue != null) {
+            return runTimeCFValue;
+        }
+        
         if (!cft.isVersionable()) {
             return getCFValue(entity, cfCode, instantiateDefaultValue);
         }
@@ -2316,16 +2339,7 @@ public class CustomFieldInstanceService extends BaseService {
         }
     }
 
-    public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
-        }
-
-        return emfForJobs;
+    private EntityManager getEntityManager() {
+        return emWrapper.getEntityManager();
     }
 }

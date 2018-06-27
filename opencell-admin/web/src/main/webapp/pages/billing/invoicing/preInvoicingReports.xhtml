@@ -25,6 +25,9 @@
 			label="#{messages['preInvoicingReport.title']}"
 			backingBean="#{billingRunBean}" showFormButtons="false">
 
+			<p:tabView id="tabView" activeIndex="#{billingRunBean.activeTab}">
+                <p:tab title="#{messages['customer.tab.information']}">
+ 
 				<hftl:formField
 					label="#{messages['billingAccount.billingCycle']}"
 					field="preInvoicingReports" childField="billingCycleCode"
@@ -121,6 +124,10 @@
 					childField="creditDebitCardBillableBAAmountHT" displayOneLine="true" />
 						
             </p:fieldset>
+            
+            </p:tab>
+                <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
+            </p:tabView>
 
 		</hftl:formPanel>
 

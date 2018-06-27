@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -69,6 +70,9 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
     /** The minimum label El. */   
     private String minimumLabelEl;
+    
+    /** The renewal rule. */
+    private SubscriptionRenewalDto renewalRule;
 
     /**
      * Instantiates a new service template dto.
@@ -431,4 +435,12 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
+
+	public SubscriptionRenewalDto getRenewalRule() {
+		return renewalRule;
+	}
+
+	public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
+		this.renewalRule = renewalRule;
+	}
 }

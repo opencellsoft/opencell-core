@@ -23,7 +23,7 @@ import org.meveo.model.security.Role;
  */
 @XmlRootElement(name = "Role")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoleDto extends BaseDto {
+public class RoleDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

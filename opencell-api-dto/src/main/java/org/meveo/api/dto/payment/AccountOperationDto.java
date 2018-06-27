@@ -1,14 +1,18 @@
 package org.meveo.api.dto.payment;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 
@@ -20,7 +24,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
  */
 @XmlRootElement(name = "AccountOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AccountOperationDto extends BaseDto {
+public class AccountOperationDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4329241417200680028L;
@@ -118,7 +122,62 @@ public class AccountOperationDto extends BaseDto {
     /** The custom fields. */
     private CustomFieldsDto customFields;
 
-    /**
+	public AccountOperationDto() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public AccountOperationDto(AccountOperation ao) {
+		this(ao, null);
+	}
+
+    public AccountOperationDto(AccountOperation accountOp, CustomFieldsDto customFieldsDto) {
+    	setId(accountOp.getId());
+    	setDueDate(accountOp.getDueDate());
+    	setType(accountOp.getType());
+    	setTransactionDate(accountOp.getTransactionDate());
+    	setTransactionCategory(accountOp.getTransactionCategory());
+    	setReference(accountOp.getReference());
+    	if(accountOp.getAccountingCode() != null) {
+    		setAccountingCode(accountOp.getAccountingCode().getCode());
+    		setAccountCode(accountOp.getAccountingCode().getCode());
+    	}
+    	setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
+    	setAmount(accountOp.getAmount());
+    	setMatchingAmount(accountOp.getMatchingAmount());
+    	setUnMatchingAmount(accountOp.getUnMatchingAmount());
+    	setMatchingStatus(accountOp.getMatchingStatus());
+    	setOccCode(accountOp.getOccCode());
+    	setOccDescription(accountOp.getOccDescription());
+    	setBankLot(accountOp.getBankLot());
+    	setBankReference(accountOp.getBankReference());
+    	setDepositDate(accountOp.getDepositDate());
+    	setBankCollectionDate(accountOp.getBankCollectionDate());
+    	setTaxAmount(accountOp.getTaxAmount());
+    	setAmountWithoutTax(accountOp.getAmountWithoutTax());
+    	setOrderNumber(accountOp.getOrderNumber());
+    	setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null );
+    	setExcludedFromDunning(accountOp.getMatchingStatus() == MatchingStatusEnum.I);
+    	List<MatchingAmount> tempMatchingAmounts = accountOp.getMatchingAmounts();
+    	if (tempMatchingAmounts != null && !tempMatchingAmounts.isEmpty()) {
+    		MatchingAmountDto matchingAmountDto = null;
+    		MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
+    		matchingAmountsDto.setMatchingAmount(new ArrayList<>());
+    		for (MatchingAmount tempMatchingAmount : tempMatchingAmounts) {
+    			matchingAmountDto = new MatchingAmountDto();
+    			matchingAmountDto.setAuditable(tempMatchingAmount);
+    			if (tempMatchingAmount.getMatchingCode() != null) {
+    				matchingAmountDto.setMatchingCode(tempMatchingAmount.getMatchingCode().getCode());
+    			}
+    			matchingAmountDto.setMatchingAmount(tempMatchingAmount.getMatchingAmount());
+    			matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
+    		}
+    		setMatchingAmounts(matchingAmountsDto);
+    	}
+    	
+    	setCustomFields(customFieldsDto);
+	}
+
+	/**
      * Gets the custom fields.
      *
      * @return the customFields

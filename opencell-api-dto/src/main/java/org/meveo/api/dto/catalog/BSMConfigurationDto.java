@@ -30,7 +30,7 @@ public class BSMConfigurationDto implements Serializable {
      */
     @XmlElement(name = "service")
     private ServiceConfigurationDto serviceConfiguration;
-
+    
     /**
      * Gets the code.
      *

@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "CreditLimit")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CreditLimitDto extends BaseDto {
+public class CreditLimitDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 7319728721914566412L;

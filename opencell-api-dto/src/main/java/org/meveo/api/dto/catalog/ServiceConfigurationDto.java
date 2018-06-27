@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * The Class ServiceConfigurationDto.
  *
  * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "ServiceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,6 +52,10 @@ public class ServiceConfigurationDto implements Serializable {
     @XmlTransient
     @JsonIgnore
     private Map<String, List<CustomFieldValue>> cfValues;
+    
+    @XmlTransient
+    @JsonIgnore
+    private Integer itemIndex;
 
     /** The mandatory. */
     private boolean mandatory;
@@ -63,6 +69,12 @@ public class ServiceConfigurationDto implements Serializable {
      * Use when matching service template in bsm vs offer.
      */
     private boolean match = false;
+    
+    /** The image base64 encoding string. */
+    private String imageBase64;
+    
+    /** The image path. */
+    private String imagePath;
 
     /**
      * Gets the code.
@@ -189,6 +201,56 @@ public class ServiceConfigurationDto implements Serializable {
      */
     public void setCfValues(Map<String, List<CustomFieldValue>> cfValues) {
         this.cfValues = cfValues;
+    }
+    
+    /**
+     * Gets the image Base64 encoding string.
+     *
+     * @return the image Base64 encoding string
+     */
+    public String getImageBase64() {
+        return imageBase64;
+    }
+    
+    /**
+     * Sets the image Base64 encoding string.
+     *
+     * @param imageBase64 the image Base64 encoding string
+     */
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+    
+    /**
+     * Gets the image path.
+     *
+     * @return the image path
+     */
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    /**
+     * Sets the image path.
+     *
+     * @param imagePath the new image path
+     */
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    /**
+     * @return the itemIndex
+     */
+    public Integer getItemIndex() {
+        return itemIndex;
+    }
+
+    /**
+     * @param itemIndex the itemIndex to set
+     */
+    public void setItemIndex(Integer itemIndex) {
+        this.itemIndex = itemIndex;
     }
 
     @Override

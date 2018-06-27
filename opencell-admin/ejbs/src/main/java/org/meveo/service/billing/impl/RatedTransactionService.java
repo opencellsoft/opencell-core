@@ -44,6 +44,7 @@ import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -74,6 +75,12 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+/**
+ * RatedTransactionService : A class for Rated transaction persistence services 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ * 
+ */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
@@ -273,11 +280,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException BusinessException
      */
     @SuppressWarnings({ "unchecked", "unused" })
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions, String orderNumber,
             Date firstTransactionDate, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
         boolean entreprise = appProvider.isEntreprise();
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
@@ -313,7 +320,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-        log.debug("After userAccounts:" + (System.currentTimeMillis() - startDate));
 
         for (UserAccount userAccount : userAccounts) {
             WalletInstance wallet = userAccount.getWallet();
@@ -597,8 +603,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
             }
 
-            log.info("Bedore  catInvoiceAgregateMap.entrySet():" + (System.currentTimeMillis() - startDate));
-
             for (Map.Entry<Long, CategoryInvoiceAgregate> cat : catInvoiceAgregateMap.entrySet()) {
                 CategoryInvoiceAgregate categoryInvoiceAgregate = cat.getValue();
                 invoice.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP));
@@ -642,9 +646,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         
-
-        log.debug("Before  isVirtual: {}", (System.currentTimeMillis() - startDate));
-
         BigDecimal discountAmountWithoutTax = BigDecimal.ZERO;
         BigDecimal discountAmountTax = BigDecimal.ZERO;
         BigDecimal discountAmountWithTax = BigDecimal.ZERO;
@@ -655,7 +656,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             discountAmountWithoutTax = (BigDecimal) object[0];
             discountAmountTax = (BigDecimal) object[1];
             discountAmountWithTax = (BigDecimal) object[2];
-            log.debug("After  invoiceAgregateService {}", (System.currentTimeMillis() - startDate));
 
         } else {
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -754,7 +754,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return list of rated transaction.
      */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
-        long startDate = System.currentTimeMillis();
+
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
         qb.addCriterionEntity("c.wallet", wallet);
         qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
@@ -770,7 +770,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
 
-        log.debug("getRatedTransactions time: " + (System.currentTimeMillis() - startDate));
 
         return ratedTransactions;
 
@@ -782,7 +781,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(Invoice invoice) {
 
-        long startDate = System.currentTimeMillis();
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
         qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
         qb.addCriterionEntity("c.invoice", invoice);
@@ -795,7 +793,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
 
-        log.debug("getRatedTransactions time: " + (System.currentTimeMillis() - startDate));
 
         return ratedTransactions;
 
@@ -808,7 +805,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return list of rated transactions.
      */
     public List<RatedTransaction> getRatedTransactions(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
-        long startDate = System.currentTimeMillis();
+
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
         qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.BILLED);
         qb.addCriterionEntity("c.wallet", wallet);
@@ -819,7 +816,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
 
-        log.info("getRatedTransactions time: " + (System.currentTimeMillis() - startDate));
 
         return ratedTransactions;
 
@@ -1139,9 +1135,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
 
         InvoiceSubCategory invoiceSubCategory = walletOperation.getInvoiceSubCategory();
-        if (invoiceSubCategory == null) {
-            invoiceSubCategory = walletOperation.getChargeInstance().getChargeTemplate().getInvoiceSubCategory();
-        }
 
         /*
          * if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()
@@ -1252,6 +1245,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByUA").setParameter("userAccount", userAccount).getSingleResult();
         } catch (NoResultException e) {
             log.warn("failed to countNotInvoiced RT by UA", e);
+            return null;
+        }
+    }
+
+    /**
+     * Find the rated transaction by wallet operation id.
+     *
+     * @param walletOperationId the wallet operation id
+     * @return the rated transaction
+     */
+    public RatedTransaction findByWalletOperationId(Long walletOperationId) {
+        try {
+            QueryBuilder qb = new QueryBuilder(getEntityClass(), "rt");
+            qb.addCriterion("rt.walletOperationId", "=", walletOperationId, false);
+            return (RatedTransaction) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("No Rated transaction foud for this walletOperationId {} ", walletOperationId);
             return null;
         }
     }

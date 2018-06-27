@@ -45,7 +45,7 @@ import org.meveo.model.security.Role;
  */
 @XmlRootElement(name = "User")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserDto extends BaseDto {
+public class UserDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6633504145323452803L;
@@ -117,6 +117,7 @@ public class UserDto extends BaseDto {
      * @param includeSecuredEntities the include secured entities
      */
     public UserDto(User user, boolean includeSecuredEntities) {
+    	super(user);
         if (user.getName() != null) {
             firstName = user.getName().getFirstName();
             lastName = user.getName().getLastName();

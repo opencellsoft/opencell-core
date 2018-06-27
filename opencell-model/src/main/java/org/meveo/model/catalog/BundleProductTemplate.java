@@ -123,14 +123,14 @@ public class BundleProductTemplate implements IEntity {
         ProductTemplate thatProductTemplate = other.getProductTemplate();
         if (productTemplate == null && thatProductTemplate != null) {
             return false;
-        } else if (!productTemplate.equals(thatProductTemplate)) {
+        } else if (productTemplate != null && !productTemplate.equals(thatProductTemplate)) {
             return false;
         }
 
         BundleTemplate thatBundleTemplate = other.getBundleTemplate();
         if (bundleTemplate == null && thatBundleTemplate != null) {
             return false;
-        } else if (!bundleTemplate.equals(thatBundleTemplate)) {
+        } else if (bundleTemplate != null && !bundleTemplate.equals(thatBundleTemplate)) {
             return false;
         }
 

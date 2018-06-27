@@ -83,9 +83,6 @@ public class PaymentApi extends BaseApi {
     @Inject
     private PaymentHistoryService paymentHistoryService;
 
-    @Inject
-    private AccountOperationApi accountOperationApi;
-
     /**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
@@ -363,7 +360,7 @@ public class PaymentApi extends BaseApi {
         if (paymentOrRefund.getMatchingAmounts() != null && !paymentOrRefund.getMatchingAmounts().isEmpty()) {
             for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
                 if (ma.getAccountOperation().getTransactionCategory() != paymentOrRefund.getTransactionCategory()) {
-                    result.add(accountOperationApi.accountOperationToDto(ma.getAccountOperation()));
+                    result.add(new AccountOperationDto(ma.getAccountOperation(), entityToDtoConverter.getCustomFieldsDTO(ma.getAccountOperation(), true)));
                 }
             }
         }
@@ -377,6 +374,7 @@ public class PaymentApi extends BaseApi {
      */
     public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {
         PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
+        paymentHistoryDto.setAuditable(paymentHistory);
         paymentHistoryDto.setCustomerAccountCode(paymentHistory.getCustomerAccountCode());
         paymentHistoryDto.setCustomerAccountName(paymentHistory.getCustomerAccountName());
         paymentHistoryDto.setSellerCode(paymentHistory.getSellerCode());
@@ -392,8 +390,8 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setPaymentGatewayCode(paymentHistory.getPaymentGatewayCode());
         paymentHistoryDto.setPaymentMethodName(paymentHistory.getPaymentMethodName());
         paymentHistoryDto.setPaymentMethodType(paymentHistory.getPaymentMethodType());
-        paymentHistoryDto.setRefund(accountOperationApi.accountOperationToDto(paymentHistory.getRefund()));
-        paymentHistoryDto.setPayment(accountOperationApi.accountOperationToDto(paymentHistory.getPayment()));
+        paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), true)));
+        paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), true)));
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
         paymentHistoryDto.setStatus(paymentHistory.getStatus());        
         paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());

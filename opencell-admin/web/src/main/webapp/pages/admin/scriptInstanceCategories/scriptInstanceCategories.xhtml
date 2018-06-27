@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{scriptInstanceCategoryListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="scriptInstanceCategories" value="#{messages['menu.scriptInstanceCategory']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel columns="3" label="#{messages['scriptInstanceCategory.search']}" backingBean="#{scriptInstanceCategoryListBean}">
+			<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['scriptInstanceCategory']}" backingBean="#{scriptInstanceCategoryListBean}" sortBy="code">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			
+			<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

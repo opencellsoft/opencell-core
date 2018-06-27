@@ -18,7 +18,7 @@ import org.meveo.model.crm.Provider;
  */
 @XmlRootElement(name = "Provider")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProviderDto extends BaseDto {
+public class ProviderDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5599223889050605880L;
@@ -111,6 +111,7 @@ public class ProviderDto extends BaseDto {
      * @param loadProviderData the load provider data
      */
     public ProviderDto(Provider provider, CustomFieldsDto customFieldInstances, boolean loadProviderData) {
+        super(provider);
         code = provider.getCode();
 
         if (loadProviderData) {

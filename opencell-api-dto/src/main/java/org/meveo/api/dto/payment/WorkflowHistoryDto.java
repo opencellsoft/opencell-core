@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.model.wf.WorkflowHistoryAction;
 
@@ -39,7 +39,7 @@ import org.meveo.model.wf.WorkflowHistoryAction;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WorkflowHistoryDto extends BaseDto {
+public class WorkflowHistoryDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8309866046667741458L;
@@ -76,6 +76,7 @@ public class WorkflowHistoryDto extends BaseDto {
      * @param workflowHistory the workflow history entity
      */
     public WorkflowHistoryDto(WorkflowHistory workflowHistory) {
+        super(workflowHistory);
         this.actionDate = workflowHistory.getActionDate();
         this.workflowCode = workflowHistory.getWorkflow() == null ? null : workflowHistory.getWorkflow().getCode();
         this.entityInstanceCode = workflowHistory.getEntityInstanceCode();

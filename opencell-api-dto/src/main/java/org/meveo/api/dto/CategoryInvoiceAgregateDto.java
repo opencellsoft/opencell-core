@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "CategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CategoryInvoiceAgregateDto extends BaseDto {
+public class CategoryInvoiceAgregateDto extends BaseEntityDto {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6165612614574594919L;

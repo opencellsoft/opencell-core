@@ -109,8 +109,10 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
 
             MeveoModuleDtosResponse resultDto = response.readEntity(MeveoModuleDtosResponse.class);
             log.debug("response {}", resultDto);
-            if (resultDto == null || ActionStatusEnum.SUCCESS != resultDto.getActionStatus().getStatus()) {
+            if (resultDto != null &&  ActionStatusEnum.SUCCESS != resultDto.getActionStatus().getStatus()) {
                 throw new BusinessException("Code " + resultDto.getActionStatus().getErrorCode() + ", info " + resultDto.getActionStatus().getMessage());
+            } else if (resultDto == null) {
+                throw new BusinessException("Result is null ");
             }
             result = resultDto.getModules();
             if (result != null) {
@@ -150,8 +152,10 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
             log.debug("response {}", actionStatus);
-            if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+            if (actionStatus != null &&  ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                 throw new BusinessException("Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+            } else if (actionStatus == null) {
+                throw new BusinessException("Action status is null");
             }
         } catch (Exception e) {
             log.error("Error when export module {} to {}. Reason {}", module.getCode(), meveoInstance.getCode(),

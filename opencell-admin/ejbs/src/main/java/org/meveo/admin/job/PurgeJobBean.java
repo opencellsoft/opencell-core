@@ -15,12 +15,11 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
-public class PurgeJobBean implements Serializable {
+public class PurgeJobBean extends BaseJobBean implements Serializable {
 
     private static final long serialVersionUID = 2226065462536318643L;
 
@@ -31,9 +30,6 @@ public class PurgeJobBean implements Serializable {
     private JobExecutionService jobExecutionService;
 
     @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
     protected Logger log;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -42,8 +38,8 @@ public class PurgeJobBean implements Serializable {
 
         try {
             // Purge job execution history
-            String jobname = (String) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_jobName");
-            Long nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays");
+            String jobname = (String) this.getParamOrCFValue(jobInstance, "PurgeJob_jobExecHistory_jobName");
+            Long nbDays = (Long) this.getParamOrCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays");
             if (jobname != null || nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date);
@@ -59,7 +55,7 @@ public class PurgeJobBean implements Serializable {
             }
 
             // Purge counter periods
-            nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays");
+            nbDays = (Long) this.getParamOrCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays");
             if (nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date);
