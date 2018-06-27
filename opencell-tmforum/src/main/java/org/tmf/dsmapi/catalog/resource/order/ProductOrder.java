@@ -65,6 +65,9 @@ public class ProductOrder implements Serializable {
     private List<PaymentMethodDto> paymentMethods;
 
     private String dueDateDelayEL;
+    
+    /** The billing cycle. */
+    private String billingCycle;
 
     public String getId() {
         return id;
@@ -217,4 +220,13 @@ public class ProductOrder implements Serializable {
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
     }
+
+    public String getBillingCycle() {
+        return billingCycle;
+    }
+
+    public void setBillingCycle(String billingCycle) {
+        this.billingCycle = billingCycle;
+    }
+
 }

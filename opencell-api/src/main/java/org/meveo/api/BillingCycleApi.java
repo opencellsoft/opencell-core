@@ -85,7 +85,8 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
-
+        billingCycle.setType(postData.getType());
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
@@ -154,6 +155,8 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
+        billingCycle.setType(postData.getType());
+
 	   // populate customFields
 	    try {
 	        populateCustomFields(postData.getCustomFields(), billingCycle, true, true);

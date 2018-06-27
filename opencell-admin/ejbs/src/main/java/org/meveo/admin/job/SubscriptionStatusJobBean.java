@@ -134,8 +134,7 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				}
 
 				// Fire "soon to renew" notification
-			} else if (serviceInstance.isFireRenewalNotice()
-					&& serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+			} else if (serviceInstance.isFireRenewalNotice() && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 				serviceInstance.setRenewalNotifiedDate(new Date());
 				serviceInstance = serviceInstanceService.update(serviceInstance);
 				serviceEndOfTermEventProducer.fire(serviceInstance);
@@ -144,8 +143,7 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 			result.registerSucces();
 		} catch (Exception e) {
 			log.error("Failed to process status of serviceInstance with id={}. {}", serviceId, e.getMessage());
-			result.registerError(
-					"Failed to process status of serviceInstance with id=" + serviceId + ". " + e.getMessage());
+			result.registerError("Failed to process status of serviceInstance with id=" + serviceId + ". " + e.getMessage());
 		}
 	}
 }

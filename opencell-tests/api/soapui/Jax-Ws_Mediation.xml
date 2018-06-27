@@ -7722,8 +7722,8 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
             <con:assertion type="XPath Match" id="41003589-c0a6-45ed-9b9a-da81d8c5c219" name="XPath Match">
               <con:configuration>
                 <path>//customer/@description</path>
-                <content>Line1-1;Line1-2;Line1-3 Line2-1;Line2-2;Line2-3 Line3-1;Line3-2;Line3-3</content>
-                <allowWildcards>false</allowWildcards>
+                <content>*Line1-1;Line1-2;Line1-3 Line2-1;Line2-2;Line2-3 Line3-1;Line3-2;Line3-3</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
