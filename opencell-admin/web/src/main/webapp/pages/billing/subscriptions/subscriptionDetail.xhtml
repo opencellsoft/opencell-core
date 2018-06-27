@@ -216,11 +216,11 @@
 							treeBean="#{customerTreeBean}"
 							entity="#{subscriptionBean.entity}" />
 				</c:if>
-<!-- 				<c:if test="#{subscriptionBean.entity.id == null}"> -->
-<!-- 						<hf:hierarchyPanel -->
-<!-- 							treeBean="#{customerTreeBean}" -->
-<!-- 							entity="#{subscriptionBean.entity.userAccount}" /> -->
-<!-- 				</c:if> -->
+				<c:if test="#{subscriptionBean.entity.id == null}">
+						<hf:hierarchyPanel
+							treeBean="#{customerTreeBean}"
+							entity="#{subscriptionBean.entity.userAccount}" />
+				</c:if>
 				
             </h:panelGroup>
 			<h:panelGroup styleClass="col2">
