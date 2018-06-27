@@ -36,6 +36,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RatingStatus;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -425,10 +426,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             
             walletOperationService.initializeAndApplyFirstRecuringCharge(recurringChargeInstance);
 
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
+            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
                 serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
             
-            log.debug("Rated {} missing periods during service activation for recurring charge instance {}", nbRating, recurringChargeInstance.getId());
+            log.debug("Rated {} missing periods during service activation for recurring charge instance {}", ratingStatus.getNbRating(), recurringChargeInstance.getId());
         }
         
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
