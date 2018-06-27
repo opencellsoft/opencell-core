@@ -1695,7 +1695,7 @@ public class SubscriptionApi extends BaseApi {
         // Recurring charges : 
         List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode, false);
         for (Long chargeId : activeRecurringChargeIds) {
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate);
+            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate).getNbRating();
             result.addResult(chargeId, nbRating);
         }
         return result;
