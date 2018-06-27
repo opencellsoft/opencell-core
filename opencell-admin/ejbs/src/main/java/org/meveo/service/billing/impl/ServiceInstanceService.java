@@ -344,6 +344,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Activate a service, the subscription charges can be applied or not.
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * v5.0 add control over WO creation if service suspended and reactivated
      * 
      * @param serviceInstance service instance
      * @param applySubscriptionCharges true/false
@@ -397,7 +398,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         // apply subscription charges
-        if (applySubscriptionCharges) {
+        if (applySubscriptionCharges && !serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
