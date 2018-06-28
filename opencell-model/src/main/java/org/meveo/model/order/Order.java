@@ -29,6 +29,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
@@ -154,6 +155,10 @@ public class Order extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_cycle")
+    private BillingCycle billingCycle;
 
     public String getExternalId() {
         return externalId;
@@ -338,5 +343,13 @@ public class Order extends BusinessCFEntity {
 
     public void setQuote(Quote quote) {
         this.quote = quote;
+    }
+    
+    public BillingCycle getBillingCycle() {
+        return billingCycle;
+    }
+
+    public void setBillingCycle(BillingCycle billingCycle) {
+        this.billingCycle = billingCycle;
     }
 }

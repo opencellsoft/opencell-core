@@ -36,6 +36,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RatingStatus;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -344,6 +345,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Activate a service, the subscription charges can be applied or not.
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * v5.0 add control over WO creation if service suspended and reactivated
      * 
      * @param serviceInstance service instance
      * @param applySubscriptionCharges true/false
@@ -397,7 +399,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         // apply subscription charges
-        if (applySubscriptionCharges) {
+        if (applySubscriptionCharges && !serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
@@ -424,10 +426,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             
             walletOperationService.initializeAndApplyFirstRecuringCharge(recurringChargeInstance);
 
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
+            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
                 serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
             
-            log.debug("Rated {} missing periods during service activation for recurring charge instance {}", nbRating, recurringChargeInstance.getId());
+            log.debug("Rated {} missing periods during service activation for recurring charge instance {}", ratingStatus.getNbRating(), recurringChargeInstance.getId());
         }
         
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
