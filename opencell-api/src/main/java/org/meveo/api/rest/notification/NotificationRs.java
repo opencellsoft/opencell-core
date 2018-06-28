@@ -19,6 +19,8 @@ import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
+ * REST service for managing Notification object.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/notification")
