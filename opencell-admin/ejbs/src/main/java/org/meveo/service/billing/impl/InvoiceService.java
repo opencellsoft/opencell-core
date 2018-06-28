@@ -485,8 +485,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 billingCycle = billingCycleService.refreshOrRetrieve(billingCycle);
                 ScriptInstance scriptInstance = billingCycle.getScriptInstance();
                 if (scriptInstance != null) {
+                    InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(billingCycle.getInvoiceType());
                     log.debug("start to execute script instance for billingCycle {}", billingCycle);
-                    mapInvTypeRT = executeBCScript(billingRun, billingCycle.getInvoiceType(), ratedTransactions, entity, scriptInstance.getCode());
+                    mapInvTypeRT = executeBCScript(billingRun, invoiceType, ratedTransactions, entity, scriptInstance.getCode());
                 } else {
                     InvoiceType invoiceType = null;
                     if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
