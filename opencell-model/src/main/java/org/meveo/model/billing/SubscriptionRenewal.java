@@ -18,7 +18,7 @@ import org.hibernate.annotations.Type;
  * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedDate 5.1
+ * @lastModifiedVersion 5.1
  */
 @Embeddable
 public class SubscriptionRenewal implements Serializable {
