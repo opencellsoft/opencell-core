@@ -3,8 +3,6 @@ package org.meveo.api.crm;
 import java.io.IOException;
 
 import java.util.List;
-import java.util.Set;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -24,15 +22,20 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.primefaces.model.SortOrder;
@@ -44,7 +47,6 @@ public class ContactApi extends AccountEntityApi {
 	@Inject
 	ContactService contactService;
 	
-	
 	@Inject
 	SellerService sellerService;
 
@@ -55,10 +57,16 @@ public class ContactApi extends AccountEntityApi {
 	AddressBookService addressBookService;
 	
 	@Inject
+	AdditionalDetailsService additionalDetailsService;
+	
+	@Inject
 	CustomerService customerService;
 	
 	@Inject
 	CustomerBrandService customerBrandService;
+	
+	@Inject
+	CustomerCategoryService customerCategoryService;
 
 
 	public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
@@ -102,26 +110,39 @@ public class ContactApi extends AccountEntityApi {
 		contact.setProspect(postData.isProspect());
 		contact.setAgreedToUA(postData.isAgreedToUA());
 		
-//		Customer customer = customerService.findByCompanyName(postData.getCompany());
-//		if(customer != null) {
-//			contact.setAddressBook(customer.getAddressbook());
-//		}
-//		else {
-//			customer = new Customer();
-//			customer.setCustomerBrand(customerBrandService.findByCode("DEFAULT"));
-//			customer.setSeller(sellerService.findByCode("MAIN_SELLER"));
-//			customer.setCode(contact.getCode());
-//			customer.setName(contact.getName());
-//			customer.setAddress(contact.getAddress());
+		Customer customer = customerService.findByCompanyName(postData.getCompany());
+		if(customer != null) {
+			contact.setAddressBook(customer.getAddressbook());
+		}
+		else {
+			customer = new Customer();
+			CustomerBrand customerBrand = customerBrandService.findByCode("DEFAULT");
+			Seller seller = sellerService.findByCode("MAIN_SELLER");
+			CustomerCategory customerCategory = customerCategoryService.findByCode("PROSPECT");
+			
+			customer.setCustomerBrand(customerBrand);
+			customer.setSeller(seller);
+			customer.setCustomerCategory(customerCategory);
+			
+			customer.setCode(contact.getCode());
+			customer.setName(contact.getName());
+			customer.setAddress(contact.getAddress());
 
+	        
+	        AdditionalDetails additionalDetails = new AdditionalDetails();
+	        additionalDetails.setCompanyName(contact.getCompany());
+	        additionalDetails.setPosition(contact.getPosition());
+	        additionalDetailsService.create(additionalDetails);
+	        
 	        AddressBook addressBook = new AddressBook(contact.getCode());
 	        addressBookService.create(addressBook);
-//	        customer.setAddressbook(addressBook);
-			contact.setAddressBook(addressBook);
 	        
-//			customerService.create(customer);
+	        customer.setAdditionalDetails(additionalDetails);
+	        customer.setAddressbook(addressBook);	        
+			customerService.create(customer);
 			
-//		}
+			contact.setAddressBook(addressBook);
+		}
 			
 		contactService.create(contact);
 
