@@ -1111,5 +1111,29 @@
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.rating_unit_description=cat_charge_template.rating_unit_description where billing_wallet_operation.rating_unit_description is null</sql>
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.invoice_sub_category_id=cat_charge_template.invoice_sub_category where billing_wallet_operation.invoice_sub_category_id is null</sql>
     </changeSet>
-    
+  
+     <changeSet id="#3272_20180217" author="anasseh">     
+        <addColumn tableName="billing_invoice_cat">
+            <column name="occ_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_cat">
+            <column name="occ_templ_negative_id" type="bigint" />
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="occ_template_id" baseTableName="billing_invoice_cat" constraintName="fk_occ_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+        <addForeignKeyConstraint baseColumnNames="occ_templ_negative_id" baseTableName="billing_invoice_cat" constraintName="fk_occ_neg_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />            
+     </changeSet>
+     <changeSet id="#3272_20180217_2" author="anasseh">     
+        <addColumn tableName="ar_account_operation">
+            <column name="recorded_invoice_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="cat_inv_agregate_id" type="bigint" />
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="recorded_invoice_id" baseTableName="ar_account_operation" constraintName="fk_inv_aos" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+        <addForeignKeyConstraint baseColumnNames="cat_inv_agregate_id" baseTableName="ar_account_operation" constraintName="fk_inv_cat_agregate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />            
+     </changeSet>     
 </databaseChangeLog> 
