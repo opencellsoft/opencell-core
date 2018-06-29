@@ -208,6 +208,7 @@ public class DefaultObserver {
                 NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, (String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
 
                 if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
+                    histo.setInboundRequest((InboundRequest) entityOrEvent);
                     ((InboundRequest) entityOrEvent).add(histo);
                 }
 

@@ -6,12 +6,12 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.notification.NotificationDto;
-import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
+import org.meveo.api.dto.notification.ScriptNotificationDto;
+import org.meveo.api.dto.response.notification.GetScriptNotificationResponseDto;
 import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
 import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.notification.NotificationApi;
+import org.meveo.api.notification.ScriptNotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.NotificationRs;
 
@@ -23,14 +23,14 @@ import org.meveo.api.rest.notification.NotificationRs;
 public class NotificationRsImpl extends BaseRs implements NotificationRs {
 
     @Inject
-    private NotificationApi notificationApi;
+    private ScriptNotificationApi scriptNotificationApi;
 
     @Override
-    public ActionStatus create(NotificationDto postData) {
+    public ActionStatus create(ScriptNotificationDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.create(postData);
+            scriptNotificationApi.create(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -39,11 +39,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
     }
 
     @Override
-    public ActionStatus update(NotificationDto postData) {
+    public ActionStatus update(ScriptNotificationDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.update(postData);
+            scriptNotificationApi.update(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -52,11 +52,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
     }
 
     @Override
-    public GetNotificationResponseDto find(String notificationCode) {
-        GetNotificationResponseDto result = new GetNotificationResponseDto();
+    public GetScriptNotificationResponseDto find(String notificationCode) {
+        GetScriptNotificationResponseDto result = new GetScriptNotificationResponseDto();
 
         try {
-            result.setNotificationDto(notificationApi.find(notificationCode));
+            result.setNotificationDto(scriptNotificationApi.find(notificationCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -69,7 +69,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.remove(notificationCode);
+            scriptNotificationApi.remove(notificationCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -82,7 +82,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
         try {
-            result.setNotificationHistories(notificationApi.listNotificationHistory());
+            result.setNotificationHistories(scriptNotificationApi.listNotificationHistory());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -95,7 +95,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
         try {
-            result.setInboundRequests(notificationApi.listInboundRequest());
+            result.setInboundRequests(scriptNotificationApi.listInboundRequest());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -104,11 +104,11 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
     }
 
     @Override
-    public ActionStatus createOrUpdate(NotificationDto postData) {
+    public ActionStatus createOrUpdate(ScriptNotificationDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.createOrUpdate(postData);
+            scriptNotificationApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -121,7 +121,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            notificationApi.enableOrDisable(code, true);
+            scriptNotificationApi.enableOrDisable(code, true);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -134,7 +134,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            notificationApi.enableOrDisable(code, false);
+            scriptNotificationApi.enableOrDisable(code, false);
         } catch (Exception e) {
             processException(e, result);
         }

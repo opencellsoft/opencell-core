@@ -16,9 +16,9 @@
         <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
         <hftl:searchPanel label="#{messages['menu.notificationHistories']}" columns="2" backingBean="#{notificationHistoryBean}" renderNewButton="false">
-            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="entityClassName" autocompleteBean="#{notificationBean}"
+            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="entityClassName" autocompleteBean="#{scriptNotificationBean}"
                 autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
-            <hftl:searchField label="#{messages['entity.notification']}" field="notification.code" valueLabelField="descriptionOrCode" listBean="#{genericNotificationBean}" />
+            <hftl:searchField label="#{messages['entity.notification']}" field="notification" valueLabelField="descriptionAndCode" listBean="#{genericNotificationBean}" />
             <hftl:searchField label="#{messages['commons.status']}" field="status" />
             <hftl:searchField label="#{messages['commons.date']}" field="auditable" childField="updated" />
         </hftl:searchPanel>

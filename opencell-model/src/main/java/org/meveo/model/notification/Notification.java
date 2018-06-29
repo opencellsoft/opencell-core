@@ -1,7 +1,6 @@
 package org.meveo.model.notification;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -18,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
@@ -82,9 +80,6 @@ public class Notification extends EnableBusinessEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notification_params")
     private Map<String, String> params = new HashMap<String, String>();
-
-    @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE)
-    protected List<NotificationHistory> notificationHistories;
 
     /**
      * The lower number, the higher the priority is
@@ -165,14 +160,6 @@ public class Notification extends EnableBusinessEntity {
         return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, scriptInstance=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
             classNameFilter, eventTypeFilter, elFilter, scriptInstance != null ? scriptInstance.getId() : null, counterTemplate != null ? counterTemplate.getId() : null,
             counterInstance != null ? counterInstance.getId() : null);
-    }
-
-    public List<NotificationHistory> getNotificationHistories() {
-        return notificationHistories;
-    }
-
-    public void setNotificationHistories(List<NotificationHistory> notificationHistories) {
-        this.notificationHistories = notificationHistories;
     }
 
     public int getPriority() {

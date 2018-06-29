@@ -18,13 +18,18 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingCycleTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -69,4 +74,42 @@ public class BillingCycleBean extends CustomFieldBean<BillingCycle> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+	
+	
+    public List<BillingCycle> listSubscriptionBillingCycle() {
+        List<BillingCycle> billingCycleSource = billingCycleService.list();
+        List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
+
+        for (BillingCycle billingCycle : billingCycleSource) {
+            if(BillingCycleTypeEnum.SUBSCRIPTION.equals(billingCycle.getType())) {
+                billingCycleTarget.add(billingCycle);
+            }
+        }
+        return billingCycleTarget;
+    }
+    
+    public List<BillingCycle> listOrderBillingCycle() {
+        List<BillingCycle> billingCycleSource = billingCycleService.list();
+        List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
+
+        for (BillingCycle billingCycle : billingCycleSource) {
+            if(BillingCycleTypeEnum.ORDER.equals(billingCycle.getType())) {
+                billingCycleTarget.add(billingCycle);
+            }
+        }
+        return billingCycleTarget;
+    }
+    
+    public List<BillingCycle> listBillingAccountBillingCycle() {
+        List<BillingCycle> billingCycleSource = billingCycleService.list();
+        List<BillingCycle> billingCycleTarget = new ArrayList<BillingCycle>();
+
+        for (BillingCycle billingCycle : billingCycleSource) {
+            if(BillingCycleTypeEnum.BILLINGACCOUNT.equals(billingCycle.getType()) || StringUtils.isBlank(billingCycle.getType())) {
+                billingCycleTarget.add(billingCycle);
+            }
+        }
+        return billingCycleTarget;
+    }
+	
 }
