@@ -7,7 +7,6 @@ import java.util.Set;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.communication.Campaign;
 import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
 public class ContactGroupDto extends BaseEntityDto {
@@ -25,9 +24,9 @@ public class ContactGroupDto extends BaseEntityDto {
     
     private List<ContactDto> contact;
     
-    private List<Campaign> campaigns;
+    private List<CampaignDto> campaign;
 
-    private AddressBook addressBook;
+//    private AddressBookDto addressBook;
 
     
 	public ContactGroupDto() {
@@ -38,8 +37,8 @@ public class ContactGroupDto extends BaseEntityDto {
 		name = contactGroups.getName();
 		description = contactGroups.getDescription();
 		type = contactGroups.getType();
-		campaigns = contactGroups.getCampaigns();
-		addressBook = contactGroups.getAddressBook();
+		
+//		addressBook = new AddressBookDto(contactGroups.getAddressBook());
 		
 		Set<Contact> contacts = contactGroups.getContacts();
 		
@@ -49,7 +48,18 @@ public class ContactGroupDto extends BaseEntityDto {
 				ContactDto cd = new ContactDto(c);
 				contactDtos.add(cd);
 			}
-			this.setContact(contactDtos);
+			contact = contactDtos;
+		}
+		
+		Set<Campaign> campaigns = contactGroups.getCampaigns();
+		
+		if(campaigns != null) {
+			List<CampaignDto> campaignDtos = new ArrayList<CampaignDto>();
+			for(Campaign c : campaigns) {
+				CampaignDto cd = new CampaignDto(c);
+				campaignDtos.add(cd);
+			}
+			campaign = campaignDtos;
 		}
 	}
 
@@ -85,20 +95,22 @@ public class ContactGroupDto extends BaseEntityDto {
 		this.contact = contact;
 	}
 
-	public List<Campaign> getCampaigns() {
-		return campaigns;
+
+	public List<CampaignDto> getCampaign() {
+		return campaign;
 	}
 
-	public void setCampaigns(List<Campaign> campaigns) {
-		this.campaigns = campaigns;
+	public void setCampaign(List<CampaignDto> campaign) {
+		this.campaign = campaign;
 	}
 
-	public AddressBook getAddressBook() {
-		return addressBook;
-	}
+//	public AddressBookDto getAddressBook() {
+//		return addressBook;
+//	}
+//
+//	public void setAddressBook(AddressBookDto addressBook) {
+//		this.addressBook = addressBook;
+//	}
 
-	public void setAddressBook(AddressBook addressBook) {
-		this.addressBook = addressBook;
-	}
 	
 }

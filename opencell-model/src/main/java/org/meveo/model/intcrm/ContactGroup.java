@@ -1,7 +1,6 @@
 package org.meveo.model.intcrm;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -49,15 +48,16 @@ public class ContactGroup extends BaseEntity {
 	private String type;
     
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "crm_contact_group_id"), inverseJoinColumns = @JoinColumn(name = "com_contact_id"))
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "contact_group_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
     private Set<Contact> contacts = new HashSet<Contact>();
     
-    @ManyToMany(mappedBy = "contactGroups", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Campaign> campaigns;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "com_campaign_crm_contact_group", joinColumns = @JoinColumn(name = "contact_group_id"), inverseJoinColumns = @JoinColumn(name = "campaign_id"))
+    private Set<Campaign> campaigns;
     
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "crm_address_book_id")
+    @JoinColumn(name = "address_book_id")
     private AddressBook addressBook;
 
 	public String getName() {
@@ -92,15 +92,15 @@ public class ContactGroup extends BaseEntity {
 		this.contacts = contacts;
 	}
 
-	public List<Campaign> getCampaigns() {
+    public Set<Campaign> getCampaigns() {
 		return campaigns;
 	}
 
-	public void setCampaigns(List<Campaign> campaigns) {
+	public void setCampaigns(Set<Campaign> campaigns) {
 		this.campaigns = campaigns;
 	}
 
-    /**
+	/**
      * @return the addressBook
      */
     public AddressBook getAddressBook() {

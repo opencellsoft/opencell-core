@@ -42,6 +42,8 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.intcrm.impl.AdditionalDetailsService;
+import org.meveo.service.intcrm.impl.AddressBookService;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -56,6 +58,12 @@ public class CustomerApi extends AccountEntityApi {
     @Inject
     private CustomerService customerService;
 
+    @Inject
+    private AddressBookService addressBookService;
+    
+    @Inject
+    private AdditionalDetailsService additionalDetailsService;
+    
     @Inject
     private CustomerCategoryService customerCategoryService;
 
@@ -152,9 +160,19 @@ public class CustomerApi extends AccountEntityApi {
             throw e;
         }
         
+        AddressBook addressBook = new AddressBook(customer.getCode());
+        addressBookService.create(addressBook);
         
-        customer.setAdditionalDetails(new AdditionalDetails());
-        customer.setAddressbook(new AddressBook(customer.getCode()));
+        AdditionalDetails additionalDetails = new AdditionalDetails();
+        if(postData.getAdditionalDetails() != null) {
+            additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
+            additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
+        }
+        additionalDetailsService.create(additionalDetails);
+        
+        
+        customer.setAdditionalDetails(additionalDetails);
+        customer.setAddressbook(addressBook);
         
         customerService.create(customer);
 
@@ -266,7 +284,14 @@ public class CustomerApi extends AccountEntityApi {
             throw e;
         }
 
-        if(customer.getAdditionalDetails() == null) customer.setAdditionalDetails(new AdditionalDetails());
+        
+        if(customer.getAddressbook() == null) {
+        	AddressBook addressBook = new AddressBook(customer.getCode());
+            addressBookService.create(addressBook);
+            customer.setAddressbook(addressBook);
+        }
+        
+        // Add AdditionalDetails here
         
         customer = customerService.update(customer);
         
@@ -633,4 +658,8 @@ public class CustomerApi extends AccountEntityApi {
             update(existedCustomerDto);
         }
     }
+
+	public CustomerDto findByCompany(String companyName) {
+		return new CustomerDto(customerService.findByCompanyName(companyName));
+	}
 }

@@ -95,7 +95,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
     private String userName;
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "crm_addressbook_id")
+    @JoinColumn(name = "crm_address_book_id")
     private AddressBook addressbook;
     
     @Column(name = "email", length = 100)

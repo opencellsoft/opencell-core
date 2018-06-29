@@ -255,4 +255,17 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         return result;
     }
 
+	@Override
+	public GetCustomerResponseDto find(String companyName) {
+		GetCustomerResponseDto result = new GetCustomerResponseDto();
+
+        try {
+            result.setCustomer(customerApi.findByCompany(companyName));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
+
 }

@@ -58,7 +58,7 @@ public class Customer extends AccountEntity {
 
 
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "crm_addressbook_id")
+    @JoinColumn(name = "address_book_id")
     private AddressBook addressbook;
     
     @ManyToOne(fetch=FetchType.LAZY)
@@ -86,7 +86,7 @@ public class Customer extends AccountEntity {
     private String registrationNo;
     
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "crm_additional_details_id")
+    @JoinColumn(name = "additional_details_id")
     private AdditionalDetails additionalDetails;
     
     

@@ -65,7 +65,12 @@ public interface CustomerRs extends IBaseRs {
     @GET
     @Path("/")
     GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
-
+    
+    
+    @GET
+    @Path("/byCompany")
+    GetCustomerResponseDto find(@QueryParam("companyName") String companyName);
+    
     /**
      * Remove customer with a given code
      *

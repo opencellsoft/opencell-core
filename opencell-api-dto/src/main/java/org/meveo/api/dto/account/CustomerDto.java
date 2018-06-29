@@ -32,9 +32,9 @@ public class CustomerDto extends AccountDto {
     @XmlElement()
     private String customerBrand;
 
-    private AdditionalDetailsDto additionalDetails;
-    
-    private AddressBookDto addressBook;
+//    private AdditionalDetailsDto additionalDetails;
+//    
+//    private AddressBookDto addressBook;
 
     /** The seller. */
     @XmlElement(required = true)
@@ -59,7 +59,11 @@ public class CustomerDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
-
+    
+    private AdditionalDetailsDto additionalDetails = new AdditionalDetailsDto();
+    
+    private AddressBookDto addressBook = new AddressBookDto();
+    
     /**
      * Instantiates a new customer dto.
      */
@@ -129,23 +133,23 @@ public class CustomerDto extends AccountDto {
     public void setCustomerBrand(String customerBrand) {
         this.customerBrand = customerBrand;
     }
-
-    
-    public AdditionalDetailsDto getAdditionalDetails() {
-		return additionalDetails;
-	}
-
-	public void setAdditionalDetails(AdditionalDetailsDto additionalDetails) {
-		this.additionalDetails = additionalDetails;
-	}
-
-	public AddressBookDto getAddressBook() {
-		return addressBook;
-	}
-
-	public void setAddressBook(AddressBookDto addressBook) {
-		this.addressBook = addressBook;
-	}
+//
+//    
+//    public AdditionalDetailsDto getAdditionalDetails() {
+//		return additionalDetails;
+//	}
+//
+//	public void setAdditionalDetails(AdditionalDetailsDto additionalDetails) {
+//		this.additionalDetails = additionalDetails;
+//	}
+//
+//	public AddressBookDto getAddressBook() {
+//		return addressBook;
+//	}
+//
+//	public void setAddressBook(AddressBookDto addressBook) {
+//		this.addressBook = addressBook;
+//	}
 
 	/**
      * Gets the customer accounts.
@@ -254,8 +258,24 @@ public class CustomerDto extends AccountDto {
     public void setVatNo(String vatNo) {
         this.vatNo = vatNo;
     }
+   
+    public AdditionalDetailsDto getAdditionalDetails() {
+		return additionalDetails;
+	}
 
-    @Override
+	public void setAdditionalDetails(AdditionalDetailsDto additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
+
+	public AddressBookDto getAddressBook() {
+		return addressBook;
+	}
+
+	public void setAddressBook(AddressBookDto addressBook) {
+		this.addressBook = addressBook;
+	}
+
+	@Override
     public String toString() {
         return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
                 + ", mandateDate=" + mandateDate + ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts + "]";

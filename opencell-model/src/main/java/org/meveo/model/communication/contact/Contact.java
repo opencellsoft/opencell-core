@@ -120,12 +120,12 @@ public class Contact extends AccountEntity {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL)
 	private List<Message> messages;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_book_id")
 	private AddressBook addressBook;
 	
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "com_contact_id"), inverseJoinColumns = @JoinColumn(name = "crm_contact_group_id"))
+    @JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "contact_group_id"))
     private Set<ContactGroup> contactGroup;
 
 	public Contact() {

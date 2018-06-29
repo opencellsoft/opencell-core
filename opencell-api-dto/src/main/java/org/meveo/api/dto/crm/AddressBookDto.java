@@ -37,7 +37,7 @@ public class AddressBookDto extends BusinessEntityDto  {
 				ContactGroupDto cgd = new ContactGroupDto(cg);
 				contactGroupDtos.add(cgd);
 			}
-			this.setContactGroup(contactGroupDtos);
+			contactGroup = contactGroupDtos;
 		}
 		
 		Set<Contact> contacts = addressBook.getContacts();
@@ -48,7 +48,7 @@ public class AddressBookDto extends BusinessEntityDto  {
 				ContactDto cd = new ContactDto(c);
 				contactDtos.add(cd);
 			}
-			this.setContact(contactDtos);
+			contact = contactDtos;
 		}
 	}
 

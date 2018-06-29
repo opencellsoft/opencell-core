@@ -67,7 +67,7 @@ public class CustomerAccount extends AccountEntity {
 	private static final long serialVersionUID = 1L;
 
 	@OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "crm_addressbook_id")
+	@JoinColumn(name = "crm_address_book_id")
 	private AddressBook addressbook;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

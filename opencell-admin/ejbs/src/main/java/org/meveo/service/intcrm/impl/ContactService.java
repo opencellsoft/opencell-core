@@ -30,25 +30,29 @@ public class ContactService extends BusinessService<Contact> {
 
 	@Inject
 	private TitleService titleService;
-	
+
+	@Inject
+	private AddressBookService addressBookService;
+
 	@Inject
 	private Logger log;
-	
+
 	public Set<Contact> parseLinkedInFromText(String context) throws IOException, BusinessException {
 		log.debug(context);
 		Set<Contact> contacts = new HashSet<Contact>();
-		
+
 		try (BufferedReader br = new BufferedReader(new StringReader(context))) {
-		
+
 			String available;
-        	boolean headerLine = true;
-        	Title title = titleService.findByCode("MR");
-			while((available = br.readLine()) != null) {
-				if(headerLine)headerLine = false;
+			boolean headerLine = true;
+			Title title = titleService.findByCode("MR");
+			while ((available = br.readLine()) != null) {
+				if (headerLine)
+					headerLine = false;
 				else {
 					List<String> line = CSVUtils.parseLine(available);
 					Contact c = new Contact();
-					
+
 					String firstName = line.get(0);
 					String lastName = line.get(1);
 					String strAddress = line.get(2);
@@ -56,14 +60,14 @@ public class ContactService extends BusinessService<Contact> {
 					String code = line.get(3);
 					String company = line.get(4);
 					String position = line.get(5);
-					//Date connectedOn = new Date(line.get(6));
+					// Date connectedOn = new Date(line.get(6));
 					String websiteUrl = line.get(7);
 					String instantMessengers = line.get(8);
 					String importedBy = this.currentUser.getFullName();
-					List<Message> messages= new ArrayList<Message>();
+					List<Message> messages = new ArrayList<Message>();
 					Message message = new Message();
 					messages.add(message);
-					
+
 					c.setName(new Name(title, firstName, lastName));
 					c.setEmail(email);
 					c.setCode(code);
@@ -72,63 +76,62 @@ public class ContactService extends BusinessService<Contact> {
 					c.setWebsiteUrl(websiteUrl);
 					c.setSocialIdentifier(instantMessengers);
 					c.setImportedBy(importedBy);
-					Address address = new Address(strAddress,"","","", "", null , "");
+					Address address = new Address(strAddress, "", "", "", "", null, "");
 					c.setAddress(address);
 					c.setAgreedToUA(false);
 					c.setMessages(messages);
-					
+
 					contacts.add(c);
 				}
 			}
 		}
-        
+
 		return this.create(contacts);
 	}
-	
+
 	public Set<Contact> create(Set<Contact> contacts) {
 		Set<Contact> failedToPersistContacts = new HashSet<Contact>();
 
-		for(Contact c : contacts) {
+		for (Contact c : contacts) {
 			try {
 				this.create(c);
+				addressBookService.addContact(null, c);
 			} catch (BusinessException e) {
 				log.debug("Failed to save contact : " + c.toString());
 				failedToPersistContacts.add(c);
 			}
 		}
-		
+
 		return failedToPersistContacts;
 	}
-	
+
 	public Set<Contact> parseLinkedInFile(File file) {
 		String csvPath;
 		Set<Contact> contacts = null;
-		if(file==null) {
+		if (file == null) {
 			csvPath = System.getProperty("jboss.server.temp.dir") + "\\Connections.csv";
 			file = new File(csvPath);
 		}
-		
+
 		log.debug(file.getPath());
-		
+
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
-			contacts = parseLinkedInFromText(new String(encoded,  Charset.defaultCharset()));
+			contacts = parseLinkedInFromText(new String(encoded, Charset.defaultCharset()));
 		} catch (IOException | BusinessException e) {
 			log.error("Failed parsing file={}", e.getMessage());
 		}
-		
+
 		return contacts;
 	}
-	
-	
+
 	public void removeAllContacts() throws BusinessException {
 		List<Contact> contacts = list();
-		for(Contact c : contacts) {
+		for (Contact c : contacts) {
 			log.debug("Removing : " + c.getName().toString());
 			super.remove(c);
-			
+
 		}
 	}
 
-	
 }

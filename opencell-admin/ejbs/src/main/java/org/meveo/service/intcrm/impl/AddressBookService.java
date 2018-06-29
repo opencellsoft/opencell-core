@@ -25,6 +25,9 @@ public class AddressBookService extends BusinessService<AddressBook> {
 	private UserService userService;
 	
 	@Inject
+	private ContactService contactService;
+	
+	@Inject
 	private CustomerService customerService;
 	
 	@Inject
@@ -94,8 +97,9 @@ public class AddressBookService extends BusinessService<AddressBook> {
     	else {
     		 addressBook = getCurrentUserAddressBook();
     	}
-    	addressBook.getContacts().add(contact);
-    	this.update(addressBook);
+    	contact.setAddressBook(addressBook);
+    	
+		contactService.update(contact);
     }
     
     public void addContacts(String code, Set<Contact> contacts) throws BusinessException {
@@ -107,7 +111,9 @@ public class AddressBookService extends BusinessService<AddressBook> {
     	}else {
 	   		 addressBook = getCurrentUserAddressBook();
 	   	}
-    	addressBook.getContacts().addAll(contacts);
-	   	this.update(addressBook);
+    	Set<Contact> cs = addressBook.getContacts();
+    	cs.addAll(contacts);
+	   	addressBook.setContacts(cs);
+    	this.update(addressBook);
     }
 }

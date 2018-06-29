@@ -8,7 +8,6 @@ import org.meveo.api.dto.account.AccountDto;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.intcrm.ContactGroup;
 
 public class ContactDto extends AccountDto {
@@ -45,9 +44,9 @@ public class ContactDto extends AccountDto {
 
 	private CommunicationPolicy contactPolicy;
 
-	private List<Message> messages;
+//	private List<Message> messages;
 	
-	private AddressBook addressBook;
+//	private AddressBookDto addressBook;
 	
     private List<ContactGroupDto> contactGroup = new ArrayList<ContactGroupDto>();
 
@@ -57,22 +56,23 @@ public class ContactDto extends AccountDto {
 	
 	public ContactDto(Contact contact) {
 		super(contact);
-		this.setEmail(contact.getEmail());
-		this.setAssistantName(contact.getAssistantName());
-		this.setAssistantPhone(contact.getAssistantPhone());
-		this.setPosition(contact.getPosition());
-		this.setCompany(contact.getCompany());
-		this.setPhone(contact.getPhone());
-		this.setMobile(contact.getMobile());
-		this.setWebsiteUrl(contact.getWebsiteUrl());
-		this.setImportedBy(contact.getImportedBy());
-		this.setImportedFrom(contact.getImportedFrom());
-		this.setSocialIdentifier(contact.getSocialIdentifier());
-		this.setVip(contact.isVip());
-		this.setProspect(contact.isProspect());
-		this.setAgreedToUA(contact.isAgreedToUA());
-		this.setMessages(contact.getMessages());
-		this.setAddressBook(contact.getAddressBook());
+		email = contact.getEmail();
+		assistantName = contact.getAssistantName();
+		assistantPhone = contact.getAssistantPhone();
+		position = contact.getPosition();
+		company = contact.getCompany();
+		phone = contact.getPhone();
+		mobile = contact.getMobile();
+		websiteUrl = contact.getWebsiteUrl();
+		importedBy = contact.getImportedBy();
+		importedFrom = contact.getImportedFrom();
+		socialIdentifier = contact.getSocialIdentifier();
+		isVip = contact.isVip();
+		isProspect = contact.isProspect();
+		agreedToUA = contact.isAgreedToUA();
+//		messages = contact.getMessages();
+		
+//		addressBook = new AddressBookDto(contact.getAddressBook());
 		
 		Set<ContactGroup> contactGroups = contact.getContactGroup();
 		
@@ -202,13 +202,13 @@ public class ContactDto extends AccountDto {
 		this.contactPolicy = contactPolicy;
 	}
 
-	public List<Message> getMessages() {
-		return messages;
-	}
-
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
-	}
+//	public List<Message> getMessages() {
+//		return messages;
+//	}
+//
+//	public void setMessages(List<Message> messages) {
+//		this.messages = messages;
+//	}
 
 	public String getSocialIdentifier() {
 		return socialIdentifier;
@@ -218,13 +218,13 @@ public class ContactDto extends AccountDto {
 		this.socialIdentifier = socialIdentifier;
 	}
 
-	public AddressBook getAddressBook() {
-		return addressBook;
-	}
-
-	public void setAddressBook(AddressBook addressBook) {
-		this.addressBook = addressBook;
-	}
+//	public AddressBookDto getAddressBook() {
+//		return addressBook;
+//	}
+//
+//	public void setAddressBook(AddressBookDto addressBook) {
+//		this.addressBook = addressBook;
+//	}
 
 	public List<ContactGroupDto> getContactGroup() {
 		return contactGroup;

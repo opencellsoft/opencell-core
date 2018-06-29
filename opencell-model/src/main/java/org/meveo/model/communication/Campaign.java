@@ -20,6 +20,7 @@ package org.meveo.model.communication;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,8 +54,8 @@ public class Campaign extends BusinessEntity {
 	private static final long serialVersionUID = -5865150907978275819L;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JoinTable(name = "com_campaign_crm_group", joinColumns = @JoinColumn(name = "com_campaign_id"), inverseJoinColumns = @JoinColumn(name = "crm_group_id"))
-    private List<ContactGroup> contactGroups;
+	@JoinTable(name = "com_campaign_crm_contact_group", joinColumns = @JoinColumn(name = "campaign_id"), inverseJoinColumns = @JoinColumn(name = "contact_group_id"))
+    private Set<ContactGroup> contactGroups;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "schedule_date")
@@ -94,11 +95,12 @@ public class Campaign extends BusinessEntity {
 	@OneToMany(mappedBy = "campaign")
 	private List<Message> messages;
 	
-	public List<ContactGroup> getContactGroups() {
+
+	public Set<ContactGroup> getContactGroups() {
 		return contactGroups;
 	}
 
-	public void setContactGroups(List<ContactGroup> contactGroups) {
+	public void setContactGroups(Set<ContactGroup> contactGroups) {
 		this.contactGroups = contactGroups;
 	}
 
