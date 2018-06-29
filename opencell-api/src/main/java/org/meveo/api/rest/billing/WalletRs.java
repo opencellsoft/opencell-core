@@ -204,4 +204,10 @@ public interface WalletRs extends IBaseRs {
     @POST
     @Path("/template/createOrUpdate")
     ActionStatus createOrUpdateWalletTemplate(WalletTemplateDto postData);
+    
+    @GET
+    @Path("/walletOperations")
+    @Produces("text/plain")
+    String walletOperations(@QueryParam("Anumber") String Anumber, @QueryParam("startDate") String startDate, @QueryParam("endDate") String endDate, @QueryParam("aggregated") String aggregated);
+    
 }

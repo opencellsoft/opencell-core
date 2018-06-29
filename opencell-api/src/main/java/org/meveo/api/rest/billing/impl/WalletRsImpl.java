@@ -1,9 +1,16 @@
 package org.meveo.api.rest.billing.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.billing.WalletApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -19,6 +26,10 @@ import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.WalletRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.WalletOperationService;
 
 /**
  * @author Edward P. Legaspi
@@ -29,6 +40,9 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
 
     @Inject
     private WalletApi walletApi;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
 
     @Override
     public ActionStatus currentBalance(WalletBalanceDto postData) {
@@ -236,5 +250,99 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         }
 
         return result;
+    }
+
+    @Override
+    public String walletOperations(String AnumberParam, String startDateParam, String endDateParam, String aggregated) {
+        
+        if (AnumberParam == null) {
+            return "Parameter Anumber is required";
+        }
+        
+        String aNumber = AnumberParam;
+        Date startDate, endDate;
+        try {
+            startDate = parseDate(startDateParam);
+            endDate = parseDate(endDateParam);
+        } catch (BusinessException e) {
+            return "Date parsing problem";
+        }
+       
+        boolean isAggregated = "true".equals(aggregated);
+
+        Map<String, Object> queryParams = new HashMap<String, Object>();
+        queryParams.put("parameter7IN", aNumber);
+        CsvBuilder csvBuilder = new CsvBuilder(";", false);
+        if (isAggregated) {
+            String query = "select wo.edr.parameter7,wo.chargeInstance.chargeTemplate.invoiceSubCategory.code, sum(wo.inputQuantity),sum(wo.amountWithoutTax),sum(wo.amountWithTax) from WalletOperation wo "
+                    + "where wo.edr.parameter7 =:parameter7IN  ";
+            if (startDate != null) {
+                queryParams.put("startDate", startDate);
+                query += "and wo.operationDate >=:startDate ";
+            }
+            if (endDate != null) {
+                queryParams.put("endDate", endDate);
+                query += "and wo.operationDate <:endDate ";
+            }
+            query += "group by wo.edr.parameter7,wo.chargeInstance.chargeTemplate.invoiceSubCategory.code";
+            List<Object[]> results = (List<Object[]>) walletOperationService.executeSelectQuery(query, queryParams);
+            String[] header = { "A Number", "Call category", "CDR quantity", "Total amount without taxes", "Total amount with taxes" };
+            csvBuilder.appendValues(header).startNewLine();
+            for (Object[] row : results) {
+                csvBuilder.appendValue((String) row[0]);
+                csvBuilder.appendValue((String) row[1]);
+                csvBuilder.appendValue(round((BigDecimal) row[2]));
+                csvBuilder.appendValue(round((BigDecimal) row[3]));
+                csvBuilder.appendValue(round((BigDecimal) row[4]));
+                csvBuilder.startNewLine();
+            }
+            
+            return csvBuilder.toString();
+        } else {
+            String query = "select wo from WalletOperation wo where wo.edr.parameter7 =:parameter7IN  ";
+            if (startDate != null) {
+                queryParams.put("startDate", startDate);
+                query += "and wo.operationDate >=:startDate ";
+            }
+            if (endDate != null) {
+                queryParams.put("endDate", endDate);
+                query += "and wo.operationDate <:endDate ";
+            }
+            List<WalletOperation> results = (List<WalletOperation>) walletOperationService.executeSelectQuery(query, queryParams);
+            String[] header = { "A Number", "B Number", "Country code", "Start date", "Start time", "Billing volume/quantity", "CDR quantity", "Amount without taxes",
+                    "Amount with taxes", "Call category" };
+            csvBuilder.appendValues(header).startNewLine();
+            for (WalletOperation wo : results) {
+                csvBuilder.appendValue(wo.getEdr().getParameter7());
+                csvBuilder.appendValue(wo.getEdr().getExtraParameter());
+                csvBuilder.appendValue(wo.getEdr().getParameter8());
+                csvBuilder.appendValue(DateUtils.formatDateWithPattern(wo.getOperationDate(), "yyyy-MM-dd"));
+                csvBuilder.appendValue(DateUtils.formatDateWithPattern(wo.getOperationDate(), "HH:mm:ss"));
+                csvBuilder.appendValue(round(wo.getInputQuantity()));
+                csvBuilder.appendValue(round(wo.getInputQuantity()));
+                csvBuilder.appendValue(round(wo.getAmountWithoutTax()));
+                csvBuilder.appendValue(round(wo.getAmountWithTax()));
+                csvBuilder.appendValue(wo.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getCode());
+                csvBuilder.startNewLine();
+            }
+            
+            return csvBuilder.toString();
+        }
+    }
+    
+    private Date parseDate(String dateString) throws BusinessException {
+        Date date = null;
+        if (dateString != null) {
+            date = DateUtils.guessDate(dateString, "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd");
+            if (date == null || date.getTime() == 1) {
+                throw new BusinessException("Invalid date format, please use yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd");
+            }
+        }
+        return date;
+    }
+
+    private String round(BigDecimal amount) {
+        amount = amount.setScale(2);
+        return amount.toPlainString();
     }
 }
