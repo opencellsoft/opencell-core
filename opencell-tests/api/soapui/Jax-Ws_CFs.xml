@@ -10132,7 +10132,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="f3ad376a-43bb-4a13-9b26-692b82856714" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge counter periods: period end date older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge periods with end date older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>19</longValue>
                   </customField>]]></token>
@@ -10142,7 +10142,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="6297569b-77e3-452c-94d1-888f3f69e8af" name="Contains 2">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Purge job execution history: job name">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Job name">
                      <fieldType>STRING</fieldType>
                      <stringValue>KUKU</stringValue>
                   </customField>]]></token>
@@ -10152,7 +10152,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3d7e54ff-929a-49cb-89f1-970f4064076a" name="Contains 3">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge job execution history: older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge history older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>15</longValue>
                   </customField>]]></token>
@@ -11107,7 +11107,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="f3ad376a-43bb-4a13-9b26-692b82856714" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge counter periods: period end date older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge periods with end date older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>191</longValue>
                   </customField>]]></token>
@@ -11117,7 +11117,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="6297569b-77e3-452c-94d1-888f3f69e8af" name="Contains 2">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Purge job execution history: job name">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Job name">
                      <fieldType>STRING</fieldType>
                      <stringValue>MUMU</stringValue>
                   </customField>]]></token>
@@ -11127,7 +11127,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3d7e54ff-929a-49cb-89f1-970f4064076a" name="Contains 3">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge job execution history: older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge history older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>151</longValue>
                   </customField>]]></token>
@@ -34331,7 +34331,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>32</con:value>
+        <con:value>34</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36962,7 +36962,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>72</con:value>
+        <con:value>74</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38517,7 +38517,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>39</con:value>
+        <con:value>41</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39740,7 +39740,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>35</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
