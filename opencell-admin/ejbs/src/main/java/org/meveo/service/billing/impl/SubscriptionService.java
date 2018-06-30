@@ -43,6 +43,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
@@ -67,6 +68,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Inject
     private OrderHistoryService orderHistoryService;
 
+    @Inject
+    private OfferTemplateService offerTemplateService;
+    
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
@@ -76,11 +80,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
         super.create(subscription);
 
         // execute subscription script
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.subscribe(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode());
+                offerModelScriptService.subscribe(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode());
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
     }
@@ -118,11 +123,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
             suspensionDate = new Date();
         }
 
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.suspendSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), suspensionDate);
+                offerModelScriptService.suspendSubscription(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode(), suspensionDate);
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
 
@@ -173,11 +179,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
             accessService.enable(access);
         }
 
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.reactivateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), reactivationDate);
+                offerModelScriptService.reactivateSubscription(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode(), reactivationDate);
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
 
@@ -235,8 +242,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
 
         // execute termination script
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
-            offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
+            offerModelScriptService.terminateSubscription(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
         }
 
         return subscription;

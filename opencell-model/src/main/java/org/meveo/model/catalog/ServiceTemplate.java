@@ -53,7 +53,7 @@ import org.meveo.model.billing.SubscriptionRenewal;
  * This represents a service that is part of an offer. It contains charges of different types.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedDate 5.1
+ * @lastModifiedVersion 5.1
  */
 @Entity
 @ModuleItem
