@@ -221,7 +221,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             userMap.put("invoice", invoice);
         }
         if (expression.indexOf("br") >= 0) {
-            userMap.put("ua", billingRun);
+            userMap.put("br", billingRun);
         }
         if (expression.indexOf("ba") >= 0) {
             userMap.put("ba", billingAccount);
