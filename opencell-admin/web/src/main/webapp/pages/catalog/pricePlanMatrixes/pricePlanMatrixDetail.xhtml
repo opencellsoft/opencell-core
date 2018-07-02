@@ -172,7 +172,7 @@
 							field="endRatingDate" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.criteria1Value']}"
-							field="criteria1Value" />
+							field="criteria1Value" newLine="true" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.criteria2Value']}"
 							field="criteria2Value" />
@@ -180,26 +180,34 @@
 							label="#{messages['pricePlanMatrix.criteria3Value']}"
 							field="criteria3Value" />
 						<hftl:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
-							field="criteriaEL" textArea="true" rows="1" maxlength="2000" />
+							field="criteriaEL" textArea="true" rows="1" maxlength="2000" newLine="true"/>
+                        <hftl:formField label="#{messages['pricePlanMatrix.criteriaELSpark']}"
+                            field="criteriaELSpark" textArea="true" rows="1" maxlength="2000" />
 
                         <hftl:formField label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" required="true" newLine="true"
                             rendered="#{appProvider.entreprise}" />
-                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithoutTax']} EL" field="amountWithoutTaxEL" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithoutTaxEL']}" field="amountWithoutTaxEL" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" newLine="true" />                        
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithoutTaxELSpark']}" field="amountWithoutTaxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
                         <hftl:formField label="#{messages['pricePlanMatrix.amountWithTax']}" newLine="true" field="amountWithTax" converter="bigDecimal4DigitsConverter"
                             rendered="#{!appProvider.entreprise}" required="true" />
-                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithTax']} EL" field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithTaxEl']}" field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" newLine="true"/>
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithTaxElSpark']}" field="amountWithTaxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
                         
-                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithoutTax']} EL" field="minimumAmountWithoutTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
-                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithTax']} EL" field="minimumAmountWithTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithoutTaxEL']}" field="minimumAmountWithoutTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithoutTaxELSpark']}" field="minimumAmountWithoutTaxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithTaxEL']}" field="minimumAmountWithTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithTaxELSpark']}" field="minimumAmountWithTaxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
 
                     <hftl:formField id="scriptSelectId"
     							label="#{messages['pricePlanMatrix.scriptCode']}"
     							field="scriptInstance" valueLabelField="code" required="false"
     							popup="true" popupId="pricePlanMatScriptPopup" showResetButton="true" /> 
 					
-                     <hftl:formField label="#{messages['pricePlanMatrix.woDescriptionEL']}" field="woDescriptionEL" textArea="true" rows="1" maxlength="2000" />
                      <hftl:formField label="#{messages['pricePlanMatrix.invoiceSubCategoryEL']}" field="invoiceSubCategoryEL" textArea="true" rows="1" maxlength="2000" />
                     
+                     <hftl:formField label="#{messages['pricePlanMatrix.woDescriptionEL']}" field="woDescriptionEL" textArea="true" rows="1" maxlength="2000" newLine="true"/>
+                     <hftl:formField label="#{messages['pricePlanMatrix.woDescriptionELSpark']}" field="woDescriptionELSpark" textArea="true" rows="1" maxlength="2000" />
+                     
 					</p:tab>
 					
 					<hftl:customFields backingBean="#{pricePlanMatrixBean}"

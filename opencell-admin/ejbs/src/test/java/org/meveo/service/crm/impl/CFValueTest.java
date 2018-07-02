@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -24,12 +25,12 @@ public class CFValueTest {
         mapValue.put("12345", "A12345");
         mapValue.put("123456", "A123456");
 
-        Assert.assertEquals("A123456", CustomFieldInstanceService.matchClosestValue(mapValue, "123456789784"));
-        Assert.assertEquals("A123456", CustomFieldInstanceService.matchClosestValue(mapValue, "123456"));
-        Assert.assertEquals("A1234", CustomFieldInstanceService.matchClosestValue(mapValue, "1234"));
-        Assert.assertEquals("A1", CustomFieldInstanceService.matchClosestValue(mapValue, "1"));
-        Assert.assertNull(CustomFieldInstanceService.matchClosestValue(mapValue, "012345"));
-        Assert.assertNull(CustomFieldInstanceService.matchClosestValue(mapValue, null));
+        Assert.assertEquals("A123456", ICustomFieldEntity.matchClosestValue(mapValue, "123456789784"));
+        Assert.assertEquals("A123456", ICustomFieldEntity.matchClosestValue(mapValue, "123456"));
+        Assert.assertEquals("A1234", ICustomFieldEntity.matchClosestValue(mapValue, "1234"));
+        Assert.assertEquals("A1", ICustomFieldEntity.matchClosestValue(mapValue, "1"));
+        Assert.assertNull(ICustomFieldEntity.matchClosestValue(mapValue, "012345"));
+        Assert.assertNull(ICustomFieldEntity.matchClosestValue(mapValue, null));
     }
 
     @Test

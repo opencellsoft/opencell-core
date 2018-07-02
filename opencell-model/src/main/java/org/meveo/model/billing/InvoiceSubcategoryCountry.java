@@ -80,6 +80,10 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
     @Size(max = 2000)
     private String taxCodeEL;
 
+    @Column(name = "tax_code_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String taxCodeELSpark;
+
     @Column(name = "start_validity_date")
     @Temporal(TemporalType.DATE)
     private Date startValidityDate;
@@ -132,12 +136,32 @@ public class InvoiceSubcategoryCountry extends AuditableEntity {
         this.tax = tax;
     }
 
+    /**
+     * @return Expression to determine tax code
+     */
     public String getTaxCodeEL() {
         return taxCodeEL;
     }
 
+    /**
+     * @param taxCodeEL Expression to determine tax code
+     */
     public void setTaxCodeEL(String taxCodeEL) {
         this.taxCodeEL = taxCodeEL;
+    }
+
+    /**
+     * @return Expression to determine tax code - for Spark
+     */
+    public String getTaxCodeELSpark() {
+        return taxCodeELSpark;
+    }
+
+    /**
+     * @param taxCodeELSpark Expression to determine tax code - for Spark
+     */
+    public void setTaxCodeELSpark(String taxCodeELSpark) {
+        this.taxCodeELSpark = taxCodeELSpark;
     }
 
     public String getFilterEL() {

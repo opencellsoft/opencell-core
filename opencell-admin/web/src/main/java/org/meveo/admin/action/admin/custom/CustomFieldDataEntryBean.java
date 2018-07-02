@@ -22,6 +22,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -42,6 +43,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValueHolder;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -242,7 +244,9 @@ public class CustomFieldDataEntryBean implements Serializable {
         // if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
         // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, offering to review it in GUI before saving it.
         if (customFieldTemplates != null && customFieldTemplates.size() > 0 && ((ICustomFieldEntity) entity).getCfValues() != null) {
-            cfValuesByCode = ((ICustomFieldEntity) entity).getCfValues().getValuesByCode(); // TODO need to close the values
+            CustomFieldValues customFieldValues = SerializationUtils.clone(((ICustomFieldEntity) entity).getCfValues()); // need to clone the value, to be able to track if value
+                                                                                                                         // changes
+            cfValuesByCode = customFieldValues.getValuesByCode();
         }
         cfValuesByCode = prepareCFIForGUI(customFieldTemplates, cfValuesByCode, entity);
         CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfValuesByCode, entity);
@@ -264,7 +268,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         CustomFieldValueHolder entityFieldsValues = fieldsValues.get(entity.getUuid());
 
-        // Populate new value defaults formap, list and matrix fields
+        // Populate new value defaults for map, list and matrix fields
         entityFieldsValues.populateNewValueDefaults(customFieldTemplates.values(), null);
 
         // Populate new value defaults for simple fields
@@ -869,7 +873,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         try {
 
             action = entityActionScriptService.retrieveIfNotManaged(action);
-            
+
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
             Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
@@ -943,20 +947,15 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
         String uuid = entity.getUuid();
-        return saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
-    }
-
-    public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity)
-            throws BusinessException {
-        return saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
+        return saveCustomFieldsToEntity(entity, uuid, false, isNewEntity, false);
     }
 
     /**
      * Save custom fields for a given entity.
      * 
      * @param entity Entity, the fields relate to
-     * @param uuid Unique uid of field value holder
-     * @param duplicateCFI duplicateCFI
+     * @param uuid Unique uuid of field value holder
+     * @param duplicateCFI Should custom field value be duplicated.
      * @param isNewEntity Is it a new entity
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
      *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
@@ -1033,7 +1032,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             if (newValuesByCode.isEmpty()) {
                 entity.clearCfValues();
             } else {
-                entity.getCfValuesNullSafe().setValuesByCode(newValuesByCode);
+                entity.getCfValuesNullSafe().setValues(newValuesByCode);
             }
         }
 

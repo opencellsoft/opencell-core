@@ -123,6 +123,10 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Size(max = 2000)
     private String criteriaEL;
 
+    @Column(name = "criteria_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String criteriaELSpark;
+
     @Column(name = "amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithoutTax;
@@ -135,9 +139,17 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Size(max = 2000)
     private String amountWithoutTaxEL;
 
+    @Column(name = "amount_without_tax_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String amountWithoutTaxELSpark;
+
     @Column(name = "amount_with_tax_el", length = 2000)
     @Size(max = 2000)
     private String amountWithTaxEL;
+
+    @Column(name = "amount_with_tax_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String amountWithTaxELSpark;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
@@ -176,6 +188,10 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Size(max = 2000)
     private String woDescriptionEL;
 
+    @Column(name = "wo_description_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String woDescriptionELSpark;
+
     /**
      * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
      */
@@ -183,14 +199,29 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Size(max = 2000)
     private String ratingEL;
 
+    /**
+     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     */
+    @Column(name = "rating_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String ratingELSpark;
+
     @Column(name = "minimum_amount_without_tax_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountWithoutTaxEl;
 
+    @Column(name = "minimum_amount_without_tax_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountWithoutTaxELSpark;
+
     @Column(name = "minimum_amount_with_tax_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountWithTaxEl;
-    
+
+    @Column(name = "minimum_amount_with_tax_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountWithTaxELSpark;
+
     @Column(name = "invoice_subcategory_el", length = 2000)
     @Size(max = 2000)
     private String invoiceSubCategoryEL;
@@ -299,12 +330,32 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.criteria3Value = criteria3Value;
     }
 
+    /**
+     * @return Expression to determine if Price plan applies
+     */
     public String getCriteriaEL() {
         return criteriaEL;
     }
 
+    /**
+     * @param criteriaEL Expression to determine if Price plan applies
+     */
     public void setCriteriaEL(String criteriaEL) {
         this.criteriaEL = criteriaEL;
+    }
+
+    /**
+     * @return Expression to determine if Price plan applies - for Spark
+     */
+    public String getCriteriaELSpark() {
+        return criteriaELSpark;
+    }
+
+    /**
+     * @param criteriaELSpark Expression to determine if Price plan applies - for Spark
+     */
+    public void setCriteriaELSpark(String criteriaELSpark) {
+        this.criteriaELSpark = criteriaELSpark;
     }
 
     public BigDecimal getAmountWithoutTax() {
@@ -323,20 +374,60 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.amountWithTax = amountWithTax;
     }
 
+    /**
+     * @return Expression to calculate the amount without tax
+     */
     public String getAmountWithoutTaxEL() {
         return amountWithoutTaxEL;
     }
 
+    /**
+     * @param amountWithoutTaxEL Expression to calculate the amount without tax
+     */
     public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
         this.amountWithoutTaxEL = amountWithoutTaxEL;
     }
 
+    /**
+     * @return Expression to calculate the amount without tax - for Spark
+     */
+    public String getAmountWithoutTaxELSpark() {
+        return amountWithoutTaxELSpark;
+    }
+
+    /**
+     * @param amountWithoutTaxELSpark Expression to calculate the amount without tax - for Spark
+     */
+    public void setAmountWithoutTaxELSpark(String amountWithoutTaxELSpark) {
+        this.amountWithoutTaxELSpark = amountWithoutTaxELSpark;
+    }
+
+    /**
+     * @return Expression to calculate the amount with tax
+     */
     public String getAmountWithTaxEL() {
         return amountWithTaxEL;
     }
 
+    /**
+     * @param amountWithTaxEL Expression to calculate the amount with tax
+     */
     public void setAmountWithTaxEL(String amountWithTaxEL) {
         this.amountWithTaxEL = amountWithTaxEL;
+    }
+
+    /**
+     * @return Expression to calculate the amount with tax - for Spark
+     */
+    public String getAmountWithTaxELSpark() {
+        return amountWithTaxELSpark;
+    }
+
+    /**
+     * @param amountWithTaxELSpark Expression to calculate the amount with tax - for Spark
+     */
+    public void setAmountWithTaxELSpark(String amountWithTaxELSpark) {
+        this.amountWithTaxELSpark = amountWithTaxELSpark;
     }
 
     public TradingCurrency getTradingCurrency() {
@@ -542,36 +633,116 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         return descriptionI18n;
     }
 
+    /**
+     * @return Expression to determine Wallet operation description
+     */
     public String getWoDescriptionEL() {
         return woDescriptionEL;
     }
 
+    /**
+     * @param woDescriptionEL Expression to determine Wallet operation description
+     */
     public void setWoDescriptionEL(String woDescriptionEL) {
         this.woDescriptionEL = woDescriptionEL;
     }
 
+    /**
+     * @return Expression to determine Wallet operation description - for Spark
+     */
+    public String getWoDescriptionELSpark() {
+        return woDescriptionELSpark;
+    }
+
+    /**
+     * @param woDescriptionELSpark Expression to determine Wallet operation description - for Spark
+     */
+    public void setWoDescriptionELSpark(String woDescriptionELSpark) {
+        this.woDescriptionELSpark = woDescriptionELSpark;
+    }
+
+    /**
+     * @return Expression to calculate price without tax
+     */
     public String getRatingEL() {
         return ratingEL;
     }
 
+    /**
+     * @param ratingEL Expression to calculate price without tax
+     */
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
     }
 
+    /**
+     * @return Expression to calculate price without tax - for Spark
+     */
+    public String getRatingELSpark() {
+        return ratingELSpark;
+    }
+
+    /**
+     * @param ratingELSpark Expression to calculate price without tax - for Spark
+     */
+    public void setRatingELSpark(String ratingELSpark) {
+        this.ratingELSpark = ratingELSpark;
+    }
+
+    /**
+     * @return Expression to calculate minimum amount without tax
+     */
     public String getMinimumAmountWithoutTaxEl() {
         return minimumAmountWithoutTaxEl;
     }
 
+    /**
+     * @param minimumAmountWithoutTaxEl Expression to calculate minimum amount without tax
+     */
     public void setMinimumAmountWithoutTaxEl(String minimumAmountWithoutTaxEl) {
         this.minimumAmountWithoutTaxEl = minimumAmountWithoutTaxEl;
     }
 
+    /**
+     * @return Expression to calculate minimum amount without tax - for Spark
+     */
+    public String getMinimumAmountWithoutTaxELSpark() {
+        return minimumAmountWithoutTaxELSpark;
+    }
+
+    /**
+     * @param minimumAmountWithoutTaxELSpark Expression to calculate minimum amount without tax - for Spark
+     */
+    public void setMinimumAmountWithoutTaxELSpark(String minimumAmountWithoutTaxELSpark) {
+        this.minimumAmountWithoutTaxELSpark = minimumAmountWithoutTaxELSpark;
+    }
+
+    /**
+     * @return Expression to calculate minimum amount with tax
+     */
     public String getMinimumAmountWithTaxEl() {
         return minimumAmountWithTaxEl;
     }
 
+    /**
+     * @param minimumAmountWithTaxEl Expression to calculate minimum amount with tax
+     */
     public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
         this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
+    }
+
+    /**
+     * @return Expression to calculate minimum amount with tax - for Spark
+     */
+    public String getMinimumAmountWithTaxELSpark() {
+        return minimumAmountWithTaxELSpark;
+    }
+
+    /**
+     * @param minimumAmountWithTaxELSpark Expression to calculate minimum amount with taxL - for Spark
+     */
+    public void setMinimumAmountWithTaxELSpark(String minimumAmountWithTaxELSpark) {
+        this.minimumAmountWithTaxELSpark = minimumAmountWithTaxELSpark;
     }
 
     public String getInvoiceSubCategoryEL() {
@@ -581,6 +752,5 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     public void setInvoiceSubCategoryEL(String invoiceSubCategoryEL) {
         this.invoiceSubCategoryEL = invoiceSubCategoryEL;
     }
- 
 
 }

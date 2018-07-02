@@ -820,7 +820,6 @@ public class UsageRatingService implements Serializable {
         if (expression == null) {
             return null;
         }
-        String result = null;
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
         userMap.put("op", walletOperation);
@@ -835,12 +834,7 @@ public class UsageRatingService implements Serializable {
             }
         }
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
-        }
+        String result = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         return result;
     }
 
@@ -852,7 +846,7 @@ public class UsageRatingService implements Serializable {
      * @throws BusinessException business exception
      */
     private Double evaluateDoubleExpression(String expression, EDR edr, WalletOperation walletOperation) throws BusinessException {
-        Double result = null;
+        
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
         userMap.put("op", walletOperation);
@@ -867,13 +861,7 @@ public class UsageRatingService implements Serializable {
             }
         }
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
-        try {
-            result = (Double) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
-        }
-
+        Double result = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
         return result;
     }
 }

@@ -158,9 +158,9 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
 
         if (bomParams.getOfferCfValue() != null) {
-            newOfferTemplate.getCfValuesNullSafe().setValuesByCode(bomParams.getOfferCfValue());
-        } else {
-            newOfferTemplate.setCfValues(bomOffer.getCfValues());
+            newOfferTemplate.getCfValuesNullSafe().setValues(bomParams.getOfferCfValue());
+        } else if (bomOffer.getCfValues() != null) {
+            newOfferTemplate.getCfValuesNullSafe().setValues(bomOffer.getCfValues().getValuesByCode());
         }
 
         offerTemplateService.create(newOfferTemplate);

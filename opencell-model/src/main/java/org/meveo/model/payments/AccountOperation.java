@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -48,6 +46,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -157,10 +156,12 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
     @Column(name = "bank_lot", length = 255)

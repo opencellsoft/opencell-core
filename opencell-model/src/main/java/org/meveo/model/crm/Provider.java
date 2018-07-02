@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -202,10 +200,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
     public String getCode() {

@@ -54,6 +54,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -113,10 +114,12 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
     @Transient

@@ -965,7 +965,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         if (amount != null && !BigDecimal.ZERO.equals(amount)) {
             if (discountPlanItem.getDiscountPercentEl() != null) {
-                discountPercent = getDecimalExpression(discountPlanItem.getDiscountPercentEl(), userAccount, wallet, invoice, amount);
+                discountPercent = evaluateDiscountPercentExpression(discountPlanItem.getDiscountPercentEl(), userAccount, wallet, invoice, amount);
                 log.debug("for discountPlan " + discountPlanItem.getCode() + " percentEL ->" + discountPercent + " on amount=" + amount);
             }
             BigDecimal discountAmountWithoutTax = amount.multiply(discountPercent.divide(HUNDRED)).negate();
@@ -1041,24 +1041,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return amount
      * @throws BusinessException business exception
      */
-    private BigDecimal getDecimalExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal) throws BusinessException {
-        BigDecimal result = null;
+    private BigDecimal evaluateDiscountPercentExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("ca", userAccount.getBillingAccount().getCustomerAccount());
         userMap.put("ba", userAccount.getBillingAccount());
         userMap.put("iv", invoice);
+        userMap.put("invoice", invoice);
         userMap.put("wa", wallet);
         userMap.put("amount", subCatTotal);
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
-        try {
-            result = (BigDecimal) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to bigDecimal but " + res);
-        }
+       
+        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
         return result;
     }
 

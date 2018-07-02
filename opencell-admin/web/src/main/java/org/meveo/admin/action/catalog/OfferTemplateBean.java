@@ -373,7 +373,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
                 ServiceTemplate st = ost.getServiceTemplate();
                 if (st.isSelected()) {
-                    Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true);
+                    Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true, false);
 
                     ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
                     serviceConfigurationDto.setCode(st.getCode());

@@ -27,7 +27,6 @@ import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -353,6 +352,7 @@ public class CfValueAccumulator {
      */
     public void entityUpdated(ICustomFieldEntity entity, Set<String> cfsWithValueChanged, Set<String> cfsWithPeriodsChanged) {
 
+        log.trace("Entity {} has CF values changed {}, periods changed {} ", entity, cfsWithValueChanged, cfsWithPeriodsChanged);
         if (cfsWithValueChanged == null || cfsWithValueChanged.isEmpty()) {
             return;
         }
@@ -652,23 +652,15 @@ public class CfValueAccumulator {
                 if (Provider.class.equals(cfValueAccumulatorPath.getClazz())) {
 
                     entity.getCfAccumulatedValues().appendCfValues(cfCode, appProvider.getCfValues(), sourceForCFValue);
-                    
-                    // Query query = entityManager.createQuery("select e.cfValues.valuesByCode from Provider e where id=:id").setParameter("id", appProvider.getId());
-                    // Map<String, List<CustomFieldValue>> cfValuesFromParent = (Map<String, List<CustomFieldValue>>) query.getSingleResult();
-                    // if (cfValuesFromParent != null) {
-                    // entity.getCfAccumulatedValues().appendCfValues(cfCode, new CustomFieldValues(cfValuesFromParent), sourceForCFValue);
-                    // }
+
                 } else {
                     Query query = entityManager
-                        .createQuery(
-                            "select e." + cfValueAccumulatorPath.getPath() + ".cfAccumulatedValues.valuesByCode from " + entityClass.getSimpleName() + " e where e=:entity")
+                        .createQuery("select e." + cfValueAccumulatorPath.getPath() + ".cfAccumulatedValues from " + entityClass.getSimpleName() + " e where e=:entity")
                         .setParameter("entity", entity);
                     try {
-                        Map<String, List<CustomFieldValue>> cfValuesFromParent = (Map<String, List<CustomFieldValue>>) query.getSingleResult();
+                        CustomFieldValues cfValuesFromParent = (CustomFieldValues) query.getSingleResult();
                         if (cfValuesFromParent != null) {
-                            entity.getCfAccumulatedValues().appendCfValues(cfCode, new CustomFieldValues(cfValuesFromParent), sourceForCFValue);
-                            // CustomFieldValues cfValuesFromParent = (CustomFieldValues) query.getSingleResult();
-                            // entity.getCfAccumulatedValues().appendCfValues(cfCode, cfValuesFromParent, sourceForCFValue);
+                            entity.getCfAccumulatedValues().appendCfValues(cfCode, cfValuesFromParent, sourceForCFValue);
                         }
 
                     } catch (NoResultException e) {

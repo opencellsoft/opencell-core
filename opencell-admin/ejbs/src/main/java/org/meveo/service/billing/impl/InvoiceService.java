@@ -539,12 +539,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             Integer delay = billingCycle.getDueDateDelay();
             if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
-                delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
+                delay = evaluateDueDelayExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
             } else {
                 if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
-                    delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, order);
+                    delay = evaluateDueDelayExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, order);
                 } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-                    delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, order);
+                    delay = evaluateDueDelayExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, order);
                 }
             }
 
@@ -958,9 +958,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public String evaluatePrefixElExpression(String prefix, Invoice invoice) throws BusinessException {
-        String result = null;
+
         if (StringUtils.isBlank(prefix)) {
-            return result;
+            return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         if (prefix.indexOf("entity") >= 0) {
@@ -970,12 +970,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             userMap.put("invoice", invoice);
         }
 
-        Object res = ValueExpressionWrapper.evaluateExpression(prefix, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + prefix + " do not evaluate to String but " + res);
-        }
+        String result = ValueExpressionWrapper.evaluateExpression(prefix, userMap, String.class);
+        
         return result;
     }
 
@@ -1219,13 +1215,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             contextMap.put("invoice", invoice);
 
             try {
-                Object value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
-
-                if (value == null) {
-                } else if (value instanceof String) {
-                    xmlFileName = (String) value;
-                } else {
-                    xmlFileName = value.toString();
+                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                if (value != null) {
+                    xmlFileName =  value;
                 }
             } catch (BusinessException e) {
                 // Ignore exceptions here - a default XML filename will be used instead. Error is logged in EL evaluation
@@ -1297,13 +1289,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             contextMap.put("invoice", invoice);
 
             try {
-                Object value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
 
-                if (value == null) {
-                } else if (value instanceof String) {
-                    pdfFileName = (String) value;
-                } else {
-                    pdfFileName = value.toString();
+                if (value != null) {
+                    pdfFileName =  value;
                 }
             } catch (BusinessException e) {
                 // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
@@ -1661,7 +1650,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return result of evaluation
      * @throws BusinessException business exception.
      */
-    public Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
+    public Integer evaluateDueDelayExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
         Integer result = null;
         if (StringUtils.isBlank(expression)) {
             return result;
@@ -1700,13 +1689,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             contextMap.put("invoice", invoice);
 
             try {
-                Object value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
 
-                if (value == null) {
-                } else if (value instanceof String) {
-                    billingTemplateName = (String) value;
-                } else {
-                    billingTemplateName = value.toString();
+                if (value != null) {
+                    billingTemplateName = value;
                 }
             } catch (BusinessException e) {
                 // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
@@ -1725,12 +1711,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             contextMap.put("br", billingRun);
 
             try {
-                Object value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
-                if (value == null) {
-                } else if (value instanceof String) {
+                String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+                if (value != null) {
                     invoiceTypeCode = (String) value;
-                } else {
-                    invoiceTypeCode = value.toString();
                 }
             } catch (BusinessException e) {
                 // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation

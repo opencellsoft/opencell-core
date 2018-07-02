@@ -24,8 +24,8 @@ public class TriggeredEdrApi extends BaseApi {
 
     @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
-    
-    @Inject 
+
+    @Inject
     private MeveoInstanceService meveoInstanceService;
 
     public void create(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -38,19 +38,26 @@ public class TriggeredEdrApi extends BaseApi {
             edrTemplate.setCode(postData.getCode());
             edrTemplate.setDescription(postData.getDescription());
             edrTemplate.setSubscriptionEl(postData.getSubscriptionEl());
-            if(postData.getMeveoInstanceCode()!=null){
-            	MeveoInstance meveoInstance=meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
-            	if (meveoInstance == null) {
+            edrTemplate.setSubscriptionElSpark(postData.getSubscriptionElSpark());
+            if (postData.getMeveoInstanceCode() != null) {
+                MeveoInstance meveoInstance = meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
+                if (meveoInstance == null) {
                     throw new EntityDoesNotExistsException(MeveoInstance.class, postData.getMeveoInstanceCode());
                 }
-            	edrTemplate.setMeveoInstance(meveoInstance);
+                edrTemplate.setMeveoInstance(meveoInstance);
             }
             edrTemplate.setConditionEl(postData.getConditionEl());
+            edrTemplate.setConditionElSpark(postData.getConditionElSpark());
             edrTemplate.setQuantityEl(postData.getQuantityEl());
+            edrTemplate.setQuantityElSpark(postData.getQuantityElSpark());
             edrTemplate.setParam1El(postData.getParam1El());
+            edrTemplate.setParam1ElSpark(postData.getParam1ElSpark());
             edrTemplate.setParam2El(postData.getParam2El());
+            edrTemplate.setParam2ElSpark(postData.getParam2ElSpark());
             edrTemplate.setParam3El(postData.getParam3El());
+            edrTemplate.setParam3ElSpark(postData.getParam3ElSpark());
             edrTemplate.setParam4El(postData.getParam4El());
+            edrTemplate.setParam4ElSpark(postData.getParam4ElSpark());
 
             triggeredEDRTemplateService.create(edrTemplate);
         } else {
@@ -74,20 +81,27 @@ public class TriggeredEdrApi extends BaseApi {
 
             edrTemplate.setDescription(postData.getDescription());
             edrTemplate.setSubscriptionEl(postData.getSubscriptionEl());
-            if(postData.getMeveoInstanceCode()!=null){
-            	MeveoInstance meveoInstance=meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
-            	if (meveoInstance == null) {
+            edrTemplate.setSubscriptionElSpark(postData.getSubscriptionElSpark());
+            if (postData.getMeveoInstanceCode() != null) {
+                MeveoInstance meveoInstance = meveoInstanceService.findByCode(postData.getMeveoInstanceCode());
+                if (meveoInstance == null) {
                     throw new EntityDoesNotExistsException(MeveoInstance.class, postData.getMeveoInstanceCode());
                 }
-            	edrTemplate.setMeveoInstance(meveoInstance);
+                edrTemplate.setMeveoInstance(meveoInstance);
             }
-            edrTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+            edrTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
             edrTemplate.setConditionEl(postData.getConditionEl());
+            edrTemplate.setConditionElSpark(postData.getConditionElSpark());
             edrTemplate.setQuantityEl(postData.getQuantityEl());
+            edrTemplate.setQuantityElSpark(postData.getQuantityElSpark());
             edrTemplate.setParam1El(postData.getParam1El());
+            edrTemplate.setParam1ElSpark(postData.getParam1ElSpark());
             edrTemplate.setParam2El(postData.getParam2El());
+            edrTemplate.setParam2ElSpark(postData.getParam2ElSpark());
             edrTemplate.setParam3El(postData.getParam3El());
+            edrTemplate.setParam3ElSpark(postData.getParam3ElSpark());
             edrTemplate.setParam4El(postData.getParam4El());
+            edrTemplate.setParam4ElSpark(postData.getParam4ElSpark());
 
             triggeredEDRTemplateService.update(edrTemplate);
         } else {
@@ -132,7 +146,7 @@ public class TriggeredEdrApi extends BaseApi {
         return edrTemplateDto;
     }
 
-    public void createOrUpdate(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {    	
+    public void createOrUpdate(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
         if (triggeredEDRTemplateService.findByCode(postData.getCode()) == null) {
             create(postData);
         } else {

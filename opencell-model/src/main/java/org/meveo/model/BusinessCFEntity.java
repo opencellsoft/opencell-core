@@ -20,13 +20,12 @@ package org.meveo.model;
 
 import java.util.UUID;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
@@ -44,10 +43,12 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
     @Override

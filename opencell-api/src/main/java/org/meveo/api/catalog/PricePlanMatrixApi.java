@@ -170,18 +170,25 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
         pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
         pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+        pricePlanMatrix.setAmountWithoutTaxELSpark(postData.getAmountWithoutTaxELSpark());
         pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
+        pricePlanMatrix.setAmountWithTaxELSpark(postData.getAmountWithTaxELSpark());
         pricePlanMatrix.setPriority(postData.getPriority());
         pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
         pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrix.setCriteriaELSpark(postData.getCriteriaELSpark());
         pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
+        pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
         pricePlanMatrix.setRatingEL(postData.getRatingEL());
+        pricePlanMatrix.setRatingELSpark(postData.getRatingELSpark());
         pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
+        pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
+        pricePlanMatrix.setMinimumAmountWithTaxELSpark(postData.getMinimumAmountWithTaxELSpark());
 
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
@@ -300,17 +307,24 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setAmountWithoutTax(postData.getAmountWithoutTax());
         pricePlanMatrix.setAmountWithTax(postData.getAmountWithTax());
         pricePlanMatrix.setAmountWithoutTaxEL(postData.getAmountWithoutTaxEL());
+        pricePlanMatrix.setAmountWithoutTaxELSpark(postData.getAmountWithoutTaxELSpark());
         pricePlanMatrix.setAmountWithTaxEL(postData.getAmountWithTaxEL());
+        pricePlanMatrix.setAmountWithTaxELSpark(postData.getAmountWithTaxELSpark());
         pricePlanMatrix.setPriority(postData.getPriority());
         pricePlanMatrix.setCriteria1Value(postData.getCriteria1());
         pricePlanMatrix.setCriteria2Value(postData.getCriteria2());
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrix.setCriteriaELSpark(postData.getCriteriaELSpark());
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
+        pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
         pricePlanMatrix.setRatingEL(postData.getRatingEL());
+        pricePlanMatrix.setRatingELSpark(postData.getRatingELSpark());
         pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
+        pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
+        pricePlanMatrix.setMinimumAmountWithTaxELSpark(postData.getMinimumAmountWithTaxELSpark());
 
         if (postData.getLanguageDescriptions() != null) {
             pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), pricePlanMatrix.getDescriptionI18n()));

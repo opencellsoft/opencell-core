@@ -3,6 +3,7 @@ package org.meveo.model;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
@@ -174,6 +175,45 @@ public interface ICustomFieldEntity {
     }
 
     /**
+     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param cfCode Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public default Object getCFValueByClosestMatch(String cfCode, String keyToMatch) {
+        CustomFieldValues cfValues = getCfValues();
+        if (cfValues != null) {
+            Object valueMatched = cfValues.getValueByClosestMatch(cfCode, keyToMatch);
+            return valueMatched;
+        }
+        return null;
+    }
+
+    /**
+     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is
+     * performed by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param cfCode Custom field code
+     * @param date Date to check for
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public default Object getCFValueByClosestMatch(String cfCode, Date date, String keyToMatch) {
+        CustomFieldValues cfValues = getCfValues();
+        if (cfValues != null) {
+            Object valueMatched = cfValues.getValueByClosestMatch(cfCode, date, keyToMatch);
+            return valueMatched;
+        }
+        return null;
+    }
+
+    /**
      * Remove custom field values
      * 
      * @param cfCode Custom field code
@@ -259,7 +299,7 @@ public interface ICustomFieldEntity {
     public void setCfAccumulatedValues(CustomFieldValues cfValues);
 
     /**
-     * Get am accumulated value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a
+     * Get an accumulated value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a
      * today will be returned
      * 
      * @param cfCode Custom field code
@@ -285,6 +325,75 @@ public interface ICustomFieldEntity {
         if (cfValues != null) {
             return cfValues.getValue(cfCode, date);
         }
+        return null;
+    }
+
+    /**
+     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param cfCode Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public default Object getCFAccumulatedValueByClosestMatch(String cfCode, String keyToMatch) {
+        CustomFieldValues cfValues = getCfAccumulatedValues();
+        if (cfValues != null) {
+            Object valueMatched = cfValues.getValueByClosestMatch(cfCode, keyToMatch);
+            return valueMatched;
+        }
+        return null;
+    }
+
+    /**
+     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is
+     * performed by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param cfCode Custom field code
+     * @param date Date to check for
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public default Object getCFAccumulatedValueByClosestMatch(String cfCode, Date date, String keyToMatch) {
+        CustomFieldValues cfValues = getCfAccumulatedValues();
+        if (cfValues != null) {
+            Object valueMatched = cfValues.getValueByClosestMatch(cfCode, date, keyToMatch);
+            return valueMatched;
+        }
+        return null;
+    }
+
+    /**
+     * Match as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then reducing one by one symbol untill a
+     * match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     *
+     * @param value Value to inspect
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    @SuppressWarnings("unchecked")
+    public static Object matchClosestValue(Object value, String keyToMatch) {
+        if (value == null || !(value instanceof Map) || StringUtils.isEmpty(keyToMatch)) {
+            return null;
+        }
+        // Logger log = LoggerFactory.getLogger(ICustomFieldEntity.class);
+        Object valueFound = null;
+        Map<String, Object> mapValue = (Map<String, Object>) value;
+        // log.trace("matchClosestValue keyToMatch: {} in {}", keyToMatch, mapValue);
+        for (int i = keyToMatch.length(); i > 0; i--) {
+            valueFound = mapValue.get(keyToMatch.substring(0, i));
+            if (valueFound != null) {
+                // log.trace("matchClosestValue found value: {} for key: {}", valueFound, keyToMatch.substring(0, i));
+                return valueFound;
+            }
+        }
+
         return null;
     }
 }

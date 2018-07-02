@@ -204,7 +204,7 @@ public class CustomFieldInstanceService extends BaseService {
      */
     private Object getRunTimeCFValue(ICustomFieldEntity entity, String cfCode) {
         if (entity instanceof JobInstance) {
-            return ((JobInstance) entity).getParamValue(cfCode);  
+            return ((JobInstance) entity).getParamValue(cfCode);
         }
         return null;
     }
@@ -218,7 +218,7 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Custom field value
      */
     public Object getCFValue(ICustomFieldEntity entity, String cfCode, boolean instantiateDefaultValue) {
-        
+
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
         if (cft == null) {
             // log.trace("No CFT found {}/{}", entity, code);
@@ -229,7 +229,7 @@ public class CustomFieldInstanceService extends BaseService {
         if (runTimeCFValue != null) {
             return runTimeCFValue;
         }
-        
+
         if (cft.isVersionable()) {
             log.warn("Trying to access a versionable custom field {}/{} value with no provided date. Current date will be used", entity.getClass().getSimpleName(), cfCode);
             return getCFValue(entity, cfCode, new Date(), instantiateDefaultValue);
@@ -282,12 +282,12 @@ public class CustomFieldInstanceService extends BaseService {
             // log.trace("No CFT found {}/{}", entity, code);
             return null;
         }
-        
+
         Object runTimeCFValue = this.getRunTimeCFValue(entity, cfCode);
         if (runTimeCFValue != null) {
             return runTimeCFValue;
         }
-        
+
         if (!cft.isVersionable()) {
             return getCFValue(entity, cfCode, instantiateDefaultValue);
         }
@@ -1385,9 +1385,7 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        Object value = entity.getCfValues().getValue(cfCode);
-        Object valueMatched = CustomFieldInstanceService.matchClosestValue(value, keyToMatch);
-
+        Object valueMatched = entity.getCFValueByClosestMatch(cfCode, keyToMatch);
         log.trace("Found closest match value {} for keyToMatch={}", valueMatched, keyToMatch);
 
         // Need to check if it is a multi-value type value and convert it to a map
@@ -1424,9 +1422,7 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        Object value = entity.getCfValues().getValue(cfCode, date);
-
-        Object valueMatched = CustomFieldInstanceService.matchClosestValue(value, keyToMatch);
+        Object valueMatched = entity.getCFValueByClosestMatch(cfCode, date, keyToMatch);
         log.trace("Found closest match value {} for period {} and keyToMatch={}", valueMatched, date, keyToMatch);
 
         // Need to check if it is a multi-value type value and convert it to a map
@@ -1674,36 +1670,6 @@ public class CustomFieldInstanceService extends BaseService {
         log.trace("Found matrix value match {} for period {} and numberToMatch={}", valueMatched, date, numberToMatch);
         return valueMatched;
 
-    }
-
-    /**
-     * Match as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then reducing one by one symbol untill a
-     * match is found.
-     * 
-     * TODO can be an issue with lower/upper case mismatch
-     *
-     * @param value Value to inspect
-     * @param keyToMatch Key to match
-     * @return Map value that closely matches map key
-     */
-    @SuppressWarnings("unchecked")
-    public static Object matchClosestValue(Object value, String keyToMatch) {
-        if (value == null || !(value instanceof Map) || StringUtils.isEmpty(keyToMatch)) {
-            return null;
-        }
-        Logger log = LoggerFactory.getLogger(CustomFieldInstanceService.class);
-        Object valueFound = null;
-        Map<String, Object> mapValue = (Map<String, Object>) value;
-        log.trace("matchClosestValue keyToMatch: {} in {}", keyToMatch, mapValue);
-        for (int i = keyToMatch.length(); i > 0; i--) {
-            valueFound = mapValue.get(keyToMatch.substring(0, i));
-            if (valueFound != null) {
-                log.trace("matchClosestValue found value: {} for key: {}", valueFound, keyToMatch.substring(0, i));
-                return valueFound;
-            }
-        }
-
-        return null;
     }
 
     /**

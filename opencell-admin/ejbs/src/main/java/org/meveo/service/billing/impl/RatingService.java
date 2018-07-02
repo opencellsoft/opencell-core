@@ -456,7 +456,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             if (appProvider.isEntreprise()) {
                 unitPriceWithoutTax = pricePlan.getAmountWithoutTax();
                 if (pricePlan.getAmountWithoutTaxEL() != null) {
-                    unitPriceWithoutTax = getExpressionValue(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
+                    unitPriceWithoutTax = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
                         bareWalletOperation.getChargeInstance().getUserAccount(), unitPriceWithoutTax);
                     if (unitPriceWithoutTax == null) {
                         throw new BusinessException("Cant get price from EL:" + pricePlan.getAmountWithoutTaxEL());
@@ -466,7 +466,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             } else {
                 unitPriceWithTax = pricePlan.getAmountWithTax();
                 if (pricePlan.getAmountWithTaxEL() != null) {
-                    unitPriceWithTax = getExpressionValue(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
+                    unitPriceWithTax = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
                         unitPriceWithoutTax);
                     if (unitPriceWithTax == null) {
                         throw new BusinessException("Cant get price from EL:" + pricePlan.getAmountWithTaxEL());
@@ -521,7 +521,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     if (StringUtils.isBlank(pricePlan.getAmountWithoutTaxEL())) {
                         bareWalletOperation.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
                     } else {
-                        BigDecimal oldPriceWithoutTax = getExpressionValue(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
+                        BigDecimal oldPriceWithoutTax = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
                             bareWalletOperation.getChargeInstance().getUserAccount(), oldAmountWithoutTax);
                         if (oldPriceWithoutTax != null) {
                             oldPriceWithoutTax = oldPriceWithoutTax.multiply(bareWalletOperation.getQuantity());
@@ -539,7 +539,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     if (StringUtils.isBlank(pricePlan.getAmountWithTaxEL())) {
                         bareWalletOperation.setRawAmountWithTax(oldAmountWithTax);
                     } else {
-                        BigDecimal oldPriceWithTax = getExpressionValue(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation,
+                        BigDecimal oldPriceWithTax = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation,
                             bareWalletOperation.getChargeInstance().getUserAccount(), oldAmountWithTax);
                         if (oldPriceWithTax != null) {
                             oldPriceWithTax = oldPriceWithTax.multiply(bareWalletOperation.getQuantity());
@@ -860,7 +860,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     if (appProvider.isEntreprise()) {
                         unitAmountWithoutTax = priceplan.getAmountWithoutTax();
                         if (priceplan.getAmountWithoutTaxEL() != null) {
-                            unitAmountWithoutTax = getExpressionValue(priceplan.getAmountWithoutTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
+                            unitAmountWithoutTax = evaluateAmountExpression(priceplan.getAmountWithoutTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
                             if (unitAmountWithoutTax == null) {
                                 throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithoutTaxEL());
                             }
@@ -869,7 +869,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     } else {
                         unitAmountWithTax = priceplan.getAmountWithTax();
                         if (priceplan.getAmountWithTaxEL() != null) {
-                            unitAmountWithTax = getExpressionValue(priceplan.getAmountWithTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
+                            unitAmountWithTax = evaluateAmountExpression(priceplan.getAmountWithTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
                             if (unitAmountWithTax == null) {
                                 throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithTaxEL());
                             }
@@ -928,7 +928,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param amount amount used in EL
      * @return evaluated value from expression.
      */
-    private BigDecimal getExpressionValue(String expression, PricePlanMatrix priceplan, WalletOperation walletOperation, UserAccount ua, BigDecimal amount) {
+    private BigDecimal evaluateAmountExpression(String expression, PricePlanMatrix priceplan, WalletOperation walletOperation, UserAccount ua, BigDecimal amount) {
         BigDecimal result = null;
         if (StringUtils.isBlank(expression)) {
             return result;
@@ -1059,9 +1059,10 @@ public class RatingService extends BusinessService<WalletOperation> {
                 userMap.put("pp", priceplan);
             }
         }
-        if (expression.indexOf("charge") >= 0) {
+        if (expression.indexOf("charge") >= 0 || expression.indexOf("chargeTemplate") >= 0) {
             ChargeTemplate charge = chargeInstance.getChargeTemplate();
             userMap.put("charge", charge);
+            userMap.put("chargeTemplate", charge);
         }
         if (expression.indexOf("serviceInstance") >= 0) {
             ServiceInstance service = null;

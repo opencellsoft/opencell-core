@@ -1455,16 +1455,16 @@ public class SubscriptionApi extends BaseApi {
         String delayEL = billingCycle.getDueDateDelayEL();
         DueDateDelayEnum delayOrigin = DueDateDelayEnum.BC;
         if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
-            delay = invoiceService.evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
+            delay = invoiceService.evaluateDueDelayExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
             delayEL = order.getDueDateDelayEL();
             delayOrigin = DueDateDelayEnum.ORDER;
         } else {
             if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
-                delay = invoiceService.evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, null);
+                delay = invoiceService.evaluateDueDelayExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, null);
                 delayEL = billingAccount.getCustomerAccount().getDueDateDelayEL();
                 delayOrigin = DueDateDelayEnum.CA;
             } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-                delay = invoiceService.evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, null);
+                delay = invoiceService.evaluateDueDelayExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, null);
                 delayEL = billingCycle.getDueDateDelayEL();
                 delayOrigin = DueDateDelayEnum.ORDER;
             }

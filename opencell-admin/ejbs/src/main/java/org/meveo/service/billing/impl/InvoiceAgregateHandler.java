@@ -358,9 +358,9 @@ public class InvoiceAgregateHandler {
 	 * @throws BusinessException business exception
 	 */
 	public boolean matchInvoicesubcatCountryExpression(String expression, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
-		Boolean result = true;
+		
 		if (StringUtils.isBlank(expression)) {
-			return result;
+			return true;
 		}
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 
@@ -372,14 +372,10 @@ public class InvoiceAgregateHandler {
 		}
 		if (expression.indexOf("iv") >= 0) {
 			userMap.put("iv", invoice);
+			userMap.put("invoice", invoice);
 
 		}
-		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
-		try {
-			result = (Boolean) res;
-		} catch (Exception e) {
-			throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
-		}
+		boolean result = ValueExpressionWrapper.evaluateToBoolean(expression, userMap);
 		return result;
 	}
 

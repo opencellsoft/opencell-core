@@ -36,6 +36,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
 
+/**
+ * Usage charge template
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Table(name = "cat_usage_charge_template")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -79,6 +84,10 @@ public class UsageChargeTemplate extends ChargeTemplate {
     @Column(name = "filter_expression", length = 2000)
     @Size(max = 2000)
     private String filterExpression = null;
+
+    @Column(name = "filter_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String filterExpressionSpark = null;
 
     /**
      * The lower number, the higher the priority is
@@ -124,18 +133,44 @@ public class UsageChargeTemplate extends ChargeTemplate {
         this.filterParam4 = filterParam4;
     }
 
+    /**
+     * @return Expression to determine if charge applies
+     */
     public String getFilterExpression() {
         return filterExpression;
     }
 
+    /**
+     * @param filterExpression Expression to determine if charge applies
+     */
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
     }
 
+    /**
+     * @return Expression to determine if charge applies - for Spark
+     */
+    public String getFilterExpressionSpark() {
+        return filterExpressionSpark;
+    }
+
+    /**
+     * @param filterExpressionSpark Expression to determine if charge applies - for Spark
+     */
+    public void setFilterExpressionSpark(String filterExpressionSpark) {
+        this.filterExpressionSpark = filterExpressionSpark;
+    }
+
+    /**
+     * @return Charge priority. The lower number, the higher the priority is.
+     */
     public int getPriority() {
         return priority;
     }
 
+    /**
+     * @param priority Charge priority. The lower number, the higher the priority is.
+     */
     public void setPriority(int priority) {
         this.priority = priority;
     }

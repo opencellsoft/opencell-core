@@ -359,7 +359,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * 
      * @param entity entity to get infos
      * @param code code of entity
-     * @param numberToMatch jey to match.
+     * @param numberToMatch Key to match.
      * @return cf value
      */
     public static Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {

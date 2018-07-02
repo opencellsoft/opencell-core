@@ -414,6 +414,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
         }
 
+        Set<String> dirtyCfValues = null;
+        Set<String> dirtyCfPeriods = null;
+        if (entity instanceof ICustomFieldEntity) {
+            CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
+            if (cfValues != null) {
+                dirtyCfValues = cfValues.getDirtyCfValues();
+                dirtyCfPeriods = cfValues.getDirtyCfPeriods();
+            }
+        }
+
         entity = getEntityManager().merge(entity);
 
         // Update entity in Elastic Search. ICustomFieldEntity is updated
@@ -424,10 +434,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
-        if (entity instanceof ICustomFieldEntity) {
+        if (entity instanceof ICustomFieldEntity && dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
             CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
-            cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, cfValues != null ? cfValues.getDirtyCfValues() : null,
-                cfValues != null ? cfValues.getDirtyCfPeriods() : null);
+            cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, dirtyCfValues, dirtyCfPeriods);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
@@ -737,8 +746,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>likeCriterias. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will
      * be used. In either case case insensative matching is used. Applies to String type fields.</li>
      * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
-     * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case
-     * String type fields.</li>
+     * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case String type fields.</li>
      * <li>ne. Not equal.
      * </ul>
      * 
@@ -836,7 +844,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
 
-                      // Value which is a list should be in field value 
+                        // Value which is a list should be in field value
                     } else if ("listInList".equals(condition)) {
                         this.addListInListCreterion(queryBuilder, filterValue, fieldName);
                         // Value is in field value (list)
@@ -992,7 +1000,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         // Just like wildcardOr but ignoring case :
                     } else if (SEARCH_WILDCARD_OR_IGNORE_CAS.equals(condition)) {
                         queryBuilder.startOrClause();
-                        for (String field : fields) {  // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
+                        for (String field : fields) { // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
                             queryBuilder.addSql("lower(a." + field + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
                         }
                         queryBuilder.endOrClause();
@@ -1086,6 +1094,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
+     * 
      * @param queryBuilder
      * @param filterValue
      * @param fieldName
@@ -1093,8 +1102,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     private void addListInListCreterion(QueryBuilder queryBuilder, Object filterValue, String fieldName) {
         String paramName = queryBuilder.convertFieldToParam(fieldName);
         if (filterValue.getClass().isArray()) {
-            Object [] values = (Object []) filterValue;
-            IntStream.range(0, values.length).forEach(idx -> queryBuilder.addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
+            Object[] values = (Object[]) filterValue;
+            IntStream.range(0, values.length)
+                .forEach(idx -> queryBuilder.addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
         }
     }
 
@@ -1160,7 +1170,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return aliasToValueMapList;
     }
-    
+
     /**
      * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
      * 

@@ -28,7 +28,6 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -45,13 +44,13 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
@@ -167,11 +166,15 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
 
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
-    
-    @Convert(converter = CustomFieldValuesConverter.class)
+
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
-    
+
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
@@ -431,7 +434,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         }
         rejectedBillingAccounts.add(rejectedBillingAccount);
     }
-    
+
     @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
@@ -440,6 +443,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override
@@ -463,7 +476,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
     public int hashCode() {
         return 961 + (("BR" + (id == null ? "" : id)).hashCode());

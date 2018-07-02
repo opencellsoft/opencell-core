@@ -362,30 +362,29 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return qb.find(getEntityManager());
     }
 
-    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
-        int rounding = appProvider.getRounding() == null ? 3 : appProvider.getRounding();
-        BigDecimal result = null;
+    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
+
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf("charge") >= 0) {
-            userMap.put("charge", charge);
+        if (expression.indexOf("charge") >= 0 || expression.indexOf("ci") >= 0) {
+            userMap.put("charge", chargeInstance);
+            userMap.put("ci", chargeInstance);
         }
-        if (expression.indexOf("service") >= 0) {
+        if (expression.indexOf("service") >= 0 || expression.indexOf("serviceInstance") >= 0) {
             userMap.put("service", serviceInstance);
+            userMap.put("serviceInstance", serviceInstance);
         }
         if (expression.indexOf("sub") >= 0) {
             userMap.put("sub", subscription);
         }
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
-        try {
-            result = (BigDecimal) res;
-            result = result.setScale(rounding, RoundingMode.HALF_UP);
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
-        }
+        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+        
+        int rounding = appProvider.getRounding() == null ? 3 : appProvider.getRounding();        
+        result = result.setScale(rounding, RoundingMode.HALF_UP);
+       
         return result;
     }
 

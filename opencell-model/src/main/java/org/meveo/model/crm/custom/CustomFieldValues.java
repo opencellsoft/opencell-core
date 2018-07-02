@@ -13,12 +13,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.persistence.JacksonUtil;
 import org.slf4j.Logger;
@@ -27,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +38,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
  * @author Andrius Karpavicius
  *
  */
-@Embeddable
+@JsonIgnoreProperties({ "dirtyCfValues", "dirtyCfPeriods" })
 public class CustomFieldValues implements Serializable {
 
     private static final long serialVersionUID = -1733710622601844949L;
@@ -52,8 +51,6 @@ public class CustomFieldValues implements Serializable {
     /**
      * Custom field values (CF value entity) grouped by a custom field code.
      */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
     private Map<String, List<CustomFieldValue>> valuesByCode = new HashMap<>();
 
     /**
@@ -102,11 +99,21 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Set custom field values as is. Not responsible for validity of what is being set. Only a check is made to mark new versionable custom field value periods as new.
+     * Set custom field values as is. Just a regular setter for bean's valuesByCode field. Do not use this method, as it does not track changes to CF field values. Use setValues()
+     * instead.
      * 
      * @param newValuesByCode values by code
      */
     public void setValuesByCode(Map<String, List<CustomFieldValue>> newValuesByCode) {
+        this.valuesByCode = newValuesByCode;
+    }
+
+    /**
+     * Set custom field values as is. Not responsible for validity of what is being set. Only a check is made to mark new versionable custom field value periods as new.
+     * 
+     * @param newValuesByCode values by code
+     */
+    public void setValues(Map<String, List<CustomFieldValue>> newValuesByCode) {
         if (newValuesByCode == null || newValuesByCode.isEmpty()) {
             clearValues();
             return;
@@ -316,6 +323,9 @@ public class CustomFieldValues implements Serializable {
      * @return A list of CF value entities
      */
     private List<CustomFieldValue> getCfValues(String cfCode) {
+        if (valuesByCode==null){
+            return null;
+        }
         return valuesByCode.get(cfCode);
     }
 
@@ -347,6 +357,38 @@ public class CustomFieldValues implements Serializable {
             return cfValue.getValue();
         }
         return null;
+    }
+
+    /**
+     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param cfCode Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getValueByClosestMatch(String cfCode, String keyToMatch) {
+        Object value = getValue(cfCode);
+        Object valueMatched = ICustomFieldEntity.matchClosestValue(value, keyToMatch);
+        return valueMatched;
+    }
+
+    /**
+     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is
+     * performed by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     * 
+     * @param cfCode Custom field code
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    public Object getValueByClosestMatch(String cfCode, Date date, String keyToMatch) {
+        Object value = getValue(cfCode, date);
+        Object valueMatched = ICustomFieldEntity.matchClosestValue(value, keyToMatch);
+        return valueMatched;
     }
 
     /**
@@ -876,5 +918,10 @@ public class CustomFieldValues implements Serializable {
      */
     public Set<String> getDirtyCfPeriods() {
         return dirtyCfPeriods;
+    }
+
+    @Override
+    public String toString() {
+        return asJson();
     }
 }

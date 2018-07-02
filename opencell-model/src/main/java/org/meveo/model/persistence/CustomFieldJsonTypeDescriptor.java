@@ -9,6 +9,9 @@ import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.MutableMutabilityPlan;
 import org.hibernate.usertype.DynamicParameterizedType;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -36,30 +39,69 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Object
 
     @Override
     public boolean areEqual(Object one, Object another) {
+
+//        Logger log = LoggerFactory.getLogger(getClass());
+//        log.error("CF json compare {}", one);
+//        log.error("CF json compare to {}", another);
+
         if (one == another) {
             return true;
+            // } else if (one == null || another == null) {
+            // return false;
         }
-        if (one == null || another == null) {
+
+        String json = one != null ? one.toString() : null;
+        String json2 = another != null ? another.toString() : null;
+
+        if (json == null && json2 == null) {
+            return true;
+        } else if (json == null || json2 == null) {
             return false;
+        } else {
+            return json.equals(json2);
         }
-        return JacksonUtil.toJsonNode(JacksonUtil.toString(one)).equals(JacksonUtil.toJsonNode(JacksonUtil.toString(another)));
     }
 
     @Override
     public String toString(Object value) {
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.error("AKK Json converter to string");
-        return JacksonUtil.toString(value);
+
+        if (value == null) {
+            return null;
+        }
+
+        if (value instanceof CustomFieldValues) {
+            return ((CustomFieldValues) value).asJson();
+
+        } else {
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("Value of type {} can not be converted to CustomFieldValues type. Value: {}", value.getClass().getSimpleName(), value);
+
+            throw new RuntimeException(
+                "cfjson field type is for customFieldValues field only. Value of type " + value.getClass().getSimpleName() + " can not be converted to CustomFieldValues type");
+        }
+
     }
 
     @Override
     public Object fromString(String string) {
 
+        if (string == null) {
+            return null;
+        }
+
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.error("AKK Json converter from string");
 
-        return JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
+        Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
         });
+
+        // if (cfValues == null || cfValues.isEmpty()) {
+        // return null;
+        // } else {
+        return new CustomFieldValues(cfValues);
+        // }
     }
 
     @SuppressWarnings({ "unchecked" })

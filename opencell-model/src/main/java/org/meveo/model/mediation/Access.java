@@ -21,8 +21,6 @@ package org.meveo.model.mediation;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,6 +38,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -87,10 +86,12 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 
-    @AttributeOverrides({ @AttributeOverride(name = "valuesByCode", column = @Column(name = "cf_values_accum", columnDefinition = "text")) })
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
     /**

@@ -61,7 +61,6 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
@@ -453,13 +452,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         }
 
         if (!StringUtils.isBlank(customerCategory.getExonerationTaxEl())) {
-
-            Map<Object, Object> userMap = new HashMap<Object, Object>();
-            if (customerCategory.getExonerationTaxEl().indexOf("ba.") > -1) {
-                userMap.put("ba", ba);
-            }
-
-            isExonerated = ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(customerCategory.getExonerationTaxEl(), userMap);
+            isExonerated = ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(customerCategory.getExonerationTaxEl(), "ba", ba);
         }
         return isExonerated;
     }
@@ -480,181 +473,83 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
-     * Construct el context.
+     * Construct EL context of variables
      *
      * @param expression EL expression
-     * @param ba the ba
-     * @return userMap userMap
+     * @param ba Billing account
+     * @param subscription Subscription
+     * @param serviceInstance Service instance
+     * @return Context of variable
      */
-    private Map<Object, Object> constructElContext(String expression, BillingAccount ba) {
+    private Map<Object, Object> constructElContext(String expression, BillingAccount ba, Subscription subscription, ServiceInstance serviceInstance) {
 
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", ba);
-        }
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", ba.getCustomerAccount());
-        }
-        if (expression.indexOf("c") >= 0) {
-            userMap.put("c", ba.getCustomerAccount().getCustomer());
-        }
-        if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
-        }
-
-        return userMap;
-    }
-
-    /**
-     * Construct el context.
-     *
-     * @param expression EL expression
-     * @param subscription subscription
-     * @return userMap userMap
-     */
-    private Map<Object, Object> constructElContext(String expression, Subscription subscription) {
-
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        UserAccount userAccount = subscription.getUserAccount();
-        BillingAccount billingAccount = userAccount.getBillingAccount();
-
-        if (expression.indexOf("offer") >= 0) {
-            OfferTemplate offer = subscription.getOffer();
-            userMap.put("offer", offer);
-        }
-        if (expression.indexOf("ua") >= 0) {
-            userMap.put("ua", userAccount);
-        }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
-        }
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
-        }
-        if (expression.indexOf("c") >= 0) {
-            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
-        }
-        if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
-        }
-
-        return userMap;
-    }
-
-    /**
-     * Construct el context.
-     *
-     * @param expression EL expression
-     * @param serviceInstance serviceInstance
-     * @return userMap userMap
-     */
-    private Map<Object, Object> constructElContext(String expression, ServiceInstance serviceInstance) {
-
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        Subscription subscription = serviceInstance.getSubscription();
-        UserAccount userAccount = subscription.getUserAccount();
-        BillingAccount billingAccount = userAccount.getBillingAccount();
+        Map<Object, Object> contextMap = new HashMap<Object, Object>();
 
         if (expression.indexOf("serviceInstance") >= 0) {
-            userMap.put("serviceInstance", serviceInstance);
+            contextMap.put("serviceInstance", serviceInstance);
+        }
+
+        if (expression.indexOf("sub") >= 0) {
+            if (subscription == null) {
+                subscription = serviceInstance.getSubscription();
+            }
+            contextMap.put("sub", subscription);
         }
         if (expression.indexOf("offer") >= 0) {
-            OfferTemplate offer = serviceInstance.getSubscription().getOffer();
-            userMap.put("offer", offer);
+            if (subscription == null) {
+                subscription = serviceInstance.getSubscription();
+            }
+            contextMap.put("offer", subscription.getOffer());
         }
-        if (expression.indexOf("ua") >= 0) {
-            userMap.put("ua", userAccount);
-        }
+
         if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+            if (ba == null) {
+                ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+            }
+
+            contextMap.put("ba", ba);
         }
+
         if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
+
+            if (ba == null) {
+                ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+            }
+            contextMap.put("ca", ba.getCustomerAccount());
         }
+
         if (expression.indexOf("c") >= 0) {
-            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
+            if (ba == null) {
+                ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+            }
+            contextMap.put("c", ba.getCustomerAccount().getCustomer());
         }
+
         if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
+            contextMap.put("prov", appProvider);
         }
 
-        return userMap;
+        return contextMap;
     }
 
     /**
-     * Evaluate double expression.
+     * Evaluate double expression. Either ba, subscription or service instance must be specified.
      *
      * @param expression EL expression
-     * @param ba billing account
-     * @return evaluated expression
-     * @throws BusinessException business exception
-     */
-    public Double evaluateDoubleExpression(String expression, BillingAccount ba) throws BusinessException {
-        Double result = null;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-
-        Map<Object, Object> userMap = constructElContext(expression, ba);
-
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
-        try {
-            result = (Double) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
-        }
-        return result;
-    }
-
-    /**
-     * Evaluate double expression.
-     *
-     * @param expression EL expression
+     * @param ba Billing account
+     * @param subscription Subscription
      * @param serviceInstance serviceInstance
      * @return evaluated expression
      * @throws BusinessException business exception
      */
-    private Double evaluateDoubleExpression(String expression, ServiceInstance serviceInstance) throws BusinessException {
-        Double result = null;
+    private BigDecimal evaluateMinAmountExpression(String expression, BillingAccount ba, Subscription subscription, ServiceInstance serviceInstance) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, serviceInstance);
+        Map<Object, Object> userMap = constructElContext(expression, ba, subscription, serviceInstance);
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
-        try {
-            result = (Double) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
-        }
-        return result;
-    }
-
-    /**
-     * Evaluate double expression.
-     *
-     * @param expression EL expression
-     * @param subscription subscription
-     * @return evaluated expression
-     * @throws BusinessException business exception
-     */
-    private Double evaluateDoubleExpression(String expression, Subscription subscription) throws BusinessException {
-        Double result = null;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-
-        Map<Object, Object> userMap = constructElContext(expression, subscription);
-
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
-        try {
-            result = (Double) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
-        }
-        return result;
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
     }
 
     /**
@@ -665,71 +560,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @return evaluated expression
      * @throws BusinessException business exception
      */
-    public String evaluateStringExpression(String expression, BillingAccount ba) throws BusinessException {
-        String result = null;
+    private String evaluateMinAmountLabelExpression(String expression, BillingAccount ba, Subscription subscription, ServiceInstance serviceInstance) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, ba);
+        Map<Object, Object> userMap = constructElContext(expression, ba, subscription, serviceInstance);
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
-        }
-        return result;
-    }
-
-    /**
-     * Evaluate string expression.
-     *
-     * @param expression EL expression
-     * @param subscription subscription
-     * @return evaluated expression
-     * @throws BusinessException business exception
-     */
-    private String evaluateStringExpression(String expression, Subscription subscription) throws BusinessException {
-        String result = null;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-
-        Map<Object, Object> userMap = constructElContext(expression, subscription);
-
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
-        }
-        return result;
-    }
-
-    /**
-     * Evaluate string expression.
-     *
-     * @param expression EL expression
-     * @param serviceInstance serviceInstance
-     * @return evaluated expression
-     * @throws BusinessException business exception
-     */
-    private String evaluateStringExpression(String expression, ServiceInstance serviceInstance) throws BusinessException {
-        String result = null;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-
-        Map<Object, Object> userMap = constructElContext(expression, serviceInstance);
-
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
-        }
-        return result;
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
 
     /**
@@ -874,14 +712,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     InvoiceSubCategory invoiceSubCategory = entry.getKey();
 
                                     String serviceMinAmountEL = StringUtils.isBlank(serviceInstance.getMinimumAmountEl())
-                                            ? serviceInstance.getServiceTemplate().getMinimumAmountEl()
-                                            : serviceInstance.getMinimumAmountEl();
+                                            ? serviceInstance.getServiceTemplate().getMinimumAmountEl() : serviceInstance.getMinimumAmountEl();
                                     String serviceMinLabelEL = StringUtils.isBlank(serviceInstance.getMinimumLabelEl()) ? serviceInstance.getServiceTemplate().getMinimumLabelEl()
                                             : serviceInstance.getMinimumLabelEl();
                                     if (!StringUtils.isBlank(serviceMinAmountEL)) {
 
-                                        BigDecimal serviceMinAmount = new BigDecimal(evaluateDoubleExpression(serviceMinAmountEL, serviceInstance));
-                                        String serviceMinLabel = evaluateStringExpression(serviceMinLabelEL, serviceInstance);
+                                        BigDecimal serviceMinAmount = evaluateMinAmountExpression(serviceMinAmountEL, null, null, serviceInstance);
+                                        String serviceMinLabel = evaluateMinAmountLabelExpression(serviceMinLabelEL, null, null, serviceInstance);
 
                                         BigDecimal ratio = BigDecimal.ZERO;
                                         BigDecimal diff = null;
@@ -914,8 +751,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                             BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                                                     : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                                             BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
-                                                    : rtMinAmount;
+                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                                             BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                             BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                             BigDecimal amountWithTax = unitAmountWithTax;
@@ -969,8 +805,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     : subscription.getMinimumLabelEl();
 
                             if (!StringUtils.isBlank(subscriptionMinAmountEL)) {
-                                BigDecimal subscriptionMinAmount = new BigDecimal(evaluateDoubleExpression(subscriptionMinAmountEL, subscription));
-                                String subscriptionMinLabel = evaluateStringExpression(subscriptionMinLabelEL, subscription);
+                                BigDecimal subscriptionMinAmount = evaluateMinAmountExpression(subscriptionMinAmountEL, null, subscription, null);
+                                String subscriptionMinLabel = evaluateMinAmountLabelExpression(subscriptionMinLabelEL, null, subscription, null);
 
                                 BigDecimal ratio = BigDecimal.ZERO;
                                 BigDecimal diff = null;
@@ -1004,8 +840,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                                             : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                                     BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
-                                            : rtMinAmount;
+                                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                     BigDecimal amountWithTax = unitAmountWithTax;
@@ -1058,8 +893,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             InvoiceSubCategory invoiceSubCategory = entry.getKey();
 
             if (!StringUtils.isBlank(billingAccount.getMinimumAmountEl()) && billingAccountAmountWithoutTax != null && billingAccountAmountWithoutTax != BigDecimal.ZERO) {
-                BigDecimal billingAccountMinAmount = new BigDecimal(evaluateDoubleExpression(billingAccount.getMinimumAmountEl(), billingAccount));
-                String billingAccountMinLabel = evaluateStringExpression(billingAccount.getMinimumLabelEl(), billingAccount);
+                BigDecimal billingAccountMinAmount = evaluateMinAmountExpression(billingAccount.getMinimumAmountEl(), billingAccount, null, null);
+                String billingAccountMinLabel = evaluateMinAmountLabelExpression(billingAccount.getMinimumLabelEl(), billingAccount, null, null);
 
                 BigDecimal ratio = BigDecimal.ZERO;
                 BigDecimal diff = null;
@@ -1093,8 +928,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                     BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                             : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                     BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
-                            : rtMinAmount;
+                            ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                     BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                     BigDecimal amountWithoutTax = unitAmountWithoutTax;
                     BigDecimal amountWithTax = unitAmountWithTax;
