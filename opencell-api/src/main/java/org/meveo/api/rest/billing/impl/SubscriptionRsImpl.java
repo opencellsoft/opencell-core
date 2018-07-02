@@ -151,15 +151,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
     @Override
     public SubscriptionsListResponseDto listGet(String userAccountCode, Boolean mergedCF, String query, String fields, Integer offset, Integer limit, String sortBy,
-        SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
+            SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
 
         SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
-        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(userAccountCode != null ? "userAccount.code:" + userAccountCode : query, "inheritedCF", offset, limit,
-            sortBy, sortOrder);
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(userAccountCode != null ? "userAccount.code:" + userAccountCode : query, null, offset, limit, sortBy,
+            sortOrder);
 
         try {
-            return subscriptionApi.list(mergedCF, pagingAndFiltering);
+            if(inheritCF != null) {
+                return subscriptionApi.list(pagingAndFiltering, inheritCF);
+            } else {
+                return subscriptionApi.list(mergedCF, pagingAndFiltering);
+            }
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
