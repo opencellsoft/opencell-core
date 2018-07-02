@@ -483,7 +483,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         } else {
             lastTransactionDate = billingRun.getLastTransactionDate();
-            invoiceDate = billingRun.getInvoiceDate();
+			if (billingRun.getInvoiceDate() != null) {
+				invoiceDate = billingRun.getInvoiceDate();
+			} else {
+				invoiceDate = new Date();
+			}
         }
 
         lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
