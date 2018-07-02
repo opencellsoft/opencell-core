@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -31,9 +31,13 @@
                     <hftl:formField label="#{messages['provider.enterprise']}" field="entreprise" id="enterprise" />
 
                     <hftl:formField label="#{messages['provider.rounding']}" field="rounding" id="rounding" newLine="true" />
+                    <hftl:formField label="#{messages['provider.rounding.mode']}" field="roundingMode" id="roundingMode"  />
+                    
+                    <hftl:formField label="#{messages['provider.invoice.rounding']}" field="invoiceRounding" maxValue="4" id="invoiceRounding"  />
+                    <hftl:formField label="#{messages['provider.invoice.rounding.mode']}" field="invoiceRoundingMode" id="invoiceRoundingMode"  />
 
                     <hftl:formField label="#{messages['provider.prepaidReservationExpirationDelayinMillisec']}" field="prepaidReservationExpirationDelayinMillisec"
-                        id="prepaidReservationExpirationDelayinMillisec" />
+                        id="prepaidReservationExpirationDelayinMillisec" newLine="true" />
 
                     <!-- <hftl:formField label="#{messages['provider.amountValidation']}"
                                 field="amountValidation" id="amountValidation"/> -->

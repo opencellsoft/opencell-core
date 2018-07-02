@@ -16,6 +16,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.meveo.commons.utils.NumberUtils.round;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -35,7 +37,6 @@ import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -64,6 +65,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -74,7 +76,6 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.slf4j.Logger;
 
 /**
  * Service class for WalletOperation entity
@@ -1280,9 +1281,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                     remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
                     BigDecimal newOpAmountWithTax = balance;
                     BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
-                    if (appProvider.getRounding() != null && appProvider.getRounding() > 0) {
-                        newOpAmountWithoutTax = NumberUtils.round(newOpAmountWithoutTax, appProvider.getRounding());
-                        newOpAmountWithTax = NumberUtils.round(newOpAmountWithTax, appProvider.getRounding());
+                    Integer invoiceRounding = appProvider.getInvoiceRounding();
+                    if (invoiceRounding != null && invoiceRounding  > 0) {
+                        RoundingModeEnum invoiceRoundingMode = appProvider.getRoundingMode();
+                        newOpAmountWithoutTax = round(newOpAmountWithoutTax, invoiceRounding, invoiceRoundingMode);
+                        newOpAmountWithTax = round(newOpAmountWithTax, invoiceRounding, invoiceRoundingMode);
                     }
                     BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
                     BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);

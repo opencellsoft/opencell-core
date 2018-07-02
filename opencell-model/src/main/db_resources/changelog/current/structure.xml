@@ -1110,4 +1110,13 @@
     	<addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_service_instance" constraintName="fk_si_auto_tr_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
     </changeSet>
+    
+    <changeSet id="#3036_19062018" author="SaidRamli">
+        <addColumn tableName="crm_provider">
+            <column name="rounding_mode" type="varchar(50)" />
+            <column name="invoice_rounding" defaultValueNumeric="2"  type="int4"  />
+            <column name="invoice_rounding_mode" type="varchar(50)" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 
