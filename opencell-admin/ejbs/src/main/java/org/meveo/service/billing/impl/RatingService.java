@@ -79,7 +79,7 @@ import org.meveo.service.script.ScriptInterface;
  * {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0.1
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
@@ -459,7 +459,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     unitPriceWithoutTax = getExpressionValue(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
                         bareWalletOperation.getChargeInstance().getUserAccount(), unitPriceWithoutTax);
                     if (unitPriceWithoutTax == null) {
-                        throw new BusinessException("Cant get price from EL:" + pricePlan.getAmountWithoutTaxEL());
+                        throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + pricePlan.getAmountWithoutTaxEL());
                     }
                 }
 
@@ -469,7 +469,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     unitPriceWithTax = getExpressionValue(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
                         unitPriceWithoutTax);
                     if (unitPriceWithTax == null) {
-                        throw new BusinessException("Cant get price from EL:" + pricePlan.getAmountWithTaxEL());
+                        throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + pricePlan.getAmountWithTaxEL());
                     }
                 }
             }
@@ -863,7 +863,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                         if (priceplan.getAmountWithoutTaxEL() != null) {
                             unitAmountWithoutTax = getExpressionValue(priceplan.getAmountWithoutTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
                             if (unitAmountWithoutTax == null) {
-                                throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithoutTaxEL());
+                                throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithoutTaxEL());
                             }
                         }
 
@@ -872,7 +872,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                         if (priceplan.getAmountWithTaxEL() != null) {
                             unitAmountWithTax = getExpressionValue(priceplan.getAmountWithTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
                             if (unitAmountWithTax == null) {
-                                throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithTaxEL());
+                                throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithTaxEL());
                             }
                         }
                     }

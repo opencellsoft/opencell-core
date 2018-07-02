@@ -1164,4 +1164,7 @@
         <sql> update ${db.schema.adapted}meveo_module_item set item_type='org.meveo.model.notification.ScriptNotification' where item_type='org.meveo.model.notification.Notification' </sql>
     </changeSet>
     
+    <changeSet id="#3064_20180328" author="anasseh">
+        <modifyDataType tableName="rating_edr" columnName="reject_reason" newDataType="text" />        
+    </changeSet> 
 </databaseChangeLog>
