@@ -297,6 +297,9 @@ public class CurrentUserProvider {
 
             for (Role role : user.getRoles()) {
                 additionalRoles.add(role.getName());
+                for (Role subRole : role.getRoles()) {
+                    additionalRoles.add(subRole.getName());
+                }
             }
 
             return additionalRoles;

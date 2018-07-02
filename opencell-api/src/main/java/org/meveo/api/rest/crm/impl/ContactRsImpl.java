@@ -110,7 +110,7 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	public ActionStatus importLinkedInFromText(String context) {
 
 		ActionStatus result = new ActionStatus();
-
+		
 		try {
 			contactApi.importLinkedInFromText(context);
 		} catch (Exception e) {

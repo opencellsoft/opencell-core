@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -40922,7 +40922,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_ADMIN Reseller 1" id="9bb0cda1-dcdf-4cef-b8b0-a94ce880aeaa">
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 1" id="9bb0cda1-dcdf-4cef-b8b0-a94ce880aeaa" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41030,7 +41030,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 1" id="e296deb3-84d8-48ff-83be-e6d6981577bb">
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 1" id="e296deb3-84d8-48ff-83be-e6d6981577bb" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41289,7 +41289,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_ADMIN Reseller 2" id="283f8109-611c-4466-911a-a102a73fd0a2">
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 2" id="283f8109-611c-4466-911a-a102a73fd0a2" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41397,7 +41397,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 2" id="38f178cc-c83f-476a-8d3a-0a7b4e1eaf8a">
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 2" id="38f178cc-c83f-476a-8d3a-0a7b4e1eaf8a" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>

@@ -274,7 +274,12 @@ public class RatingService extends BusinessService<WalletOperation> {
         walletOperation.setEndDate(endDate);
         // walletOperation.setOfferCode(offerTemplate.getCode()); Offer code is set in walletOperation.setOfferTemplate
         walletOperation.setOfferTemplate(offerTemplate);
-        walletOperation.setInvoiceSubCategory(invoiceSubCategory);
+        
+        if (invoiceSubCategory!=null){        
+            walletOperation.setInvoiceSubCategory(invoiceSubCategory);
+        } else {
+            walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
+        }
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
         if (chargeInstance != null) {
             walletOperation.setSeller(chargeInstance.getSeller());

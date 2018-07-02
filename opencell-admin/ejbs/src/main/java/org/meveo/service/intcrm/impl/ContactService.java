@@ -16,13 +16,23 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CSVUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.intcrm.AdditionalDetails;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.CustomerBrandService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -36,6 +46,22 @@ public class ContactService extends BusinessService<Contact> {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private CustomerService customerService;
+	
+	@Inject
+	private SellerService sellerService;
+	
+	@Inject
+	private CustomerBrandService customerBrandService;
+	
+	@Inject
+	private CustomerCategoryService customerCategoryService;
+
+	@Inject
+	private AdditionalDetailsService additionalDetailsService;
+	
 
 	public Set<Contact> parseLinkedInFromText(String context) throws IOException, BusinessException {
 		log.debug(context);
@@ -94,8 +120,40 @@ public class ContactService extends BusinessService<Contact> {
 
 		for (Contact c : contacts) {
 			try {
+				Customer customer = customerService.findByCompanyName(c.getCompany());
+				if(customer != null) {
+					c.setAddressBook(customer.getAddressbook());
+				}
+				else {
+					customer = new Customer();
+					CustomerBrand customerBrand = customerBrandService.findByCode("DEFAULT");
+					Seller seller = sellerService.findByCode("MAIN_SELLER");
+					CustomerCategory customerCategory = customerCategoryService.findByCode("PROSPECT");
+					
+					customer.setCustomerBrand(customerBrand);
+					customer.setSeller(seller);
+					customer.setCustomerCategory(customerCategory);
+					
+					customer.setCode(c.getCode());
+					customer.setName(c.getName());
+					customer.setAddress(c.getAddress());
+
+			        
+			        AdditionalDetails additionalDetails = new AdditionalDetails();
+			        additionalDetails.setCompanyName(c.getCompany());
+			        additionalDetails.setPosition(c.getPosition());
+			        additionalDetailsService.create(additionalDetails);
+			        
+			        AddressBook addressBook = new AddressBook(c.getCode());
+			        addressBookService.create(addressBook);
+			        
+			        customer.setAdditionalDetails(additionalDetails);
+			        customer.setAddressbook(addressBook);	        
+					customerService.create(customer);
+					
+					c.setAddressBook(addressBook);
+				}
 				this.create(c);
-				addressBookService.addContact(null, c);
 			} catch (BusinessException e) {
 				log.debug("Failed to save contact : " + c.toString());
 				failedToPersistContacts.add(c);

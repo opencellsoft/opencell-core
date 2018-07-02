@@ -16,14 +16,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.notification;
+package org.meveo.model.billing;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+public enum BillingCycleTypeEnum {
+    
+    BILLINGACCOUNT(1, "billingCycleType.billingaccount"), 
+    SUBSCRIPTION(2, "billingCycleType.subscription"), 
+    ORDER(3,"billingCycleType.order");
+   
 
-@Named
-@ConversationScoped
-public class NotificationListBean extends NotificationBean {
+	private Integer id;
+	private String label;
+ 
+	
+	private BillingCycleTypeEnum(Integer id, String label) {
+		this.id = id;
+		this.label = label;
+	}
 
-    private static final long serialVersionUID = -3037867704912788045L;
+	public String getLabel() {
+		return label;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public String toString() {
+		return name();
+	}
+
 }

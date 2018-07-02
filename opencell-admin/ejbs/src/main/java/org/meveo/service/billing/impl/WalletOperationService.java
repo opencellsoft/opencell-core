@@ -1322,6 +1322,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         // case of scheduled operation (for revenue recognition)
         UserAccount userAccount = chargeInstance.getUserAccount();
 
+        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+        if (chargeTemplate != null) {
+            if (op.getInputUnitDescription() == null) {
+                op.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
+            }
+            if (op.getRatingUnitDescription() == null) {
+                op.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
+            }
+            if (op.getInvoiceSubCategory() == null) {
+                op.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
+            }
+        }
+        
         if (chargeInstanceId == null) {
             op.setWallet(userAccount.getWallet());
             log.debug("chargeWalletOperation is create schedule on wallet {}", op.getWallet());

@@ -10,30 +10,30 @@
 
     <ui:define name="body">
 
-        <!-- 		<hftl:entityPopup id="invSubCatCountryPopup" -->
-        <!-- 			header="#{messages['tradingCountry.popup.header']}" -->
-        <!-- 			updateField=":tabView:formTax:countrySelectedId" -->
-        <!-- 			selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tradingCountry}" -->
-        <!-- 			backingBean="#{tradingCountryBean}" -->
-        <!-- 			searchField1Label="#{messages['businessEntity.code']}" -->
-        <!-- 			searchField1="country.countryCode" -->
-        <!-- 			column1Label="#{messages['businessEntity.code']}" -->
-        <!-- 			column1="countryCode" -->
-        <!-- 			column2Label="#{messages['businessEntity.description']}" -->
-        <!-- 			column2="prDescription" /> -->
+        <!--        <hftl:entityPopup id="invSubCatCountryPopup" -->
+        <!--            header="#{messages['tradingCountry.popup.header']}" -->
+        <!--            updateField=":tabView:formTax:countrySelectedId" -->
+        <!--            selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tradingCountry}" -->
+        <!--            backingBean="#{tradingCountryBean}" -->
+        <!--            searchField1Label="#{messages['businessEntity.code']}" -->
+        <!--            searchField1="country.countryCode" -->
+        <!--            column1Label="#{messages['businessEntity.code']}" -->
+        <!--            column1="countryCode" -->
+        <!--            column2Label="#{messages['businessEntity.description']}" -->
+        <!--            column2="prDescription" /> -->
 
-        <!-- 		<hftl:entityPopup id="searchInvoiceCategoryPopup" -->
-        <!-- 			header="#{messages['invoiceCategory.panel']}" -->
-        <!-- 			updateField=":tabView:formPanel:formId:categorySelectId" -->
-        <!-- 			selection="#{invoiceSubCategoryBean.entity.invoiceCategory}" -->
-        <!-- 			backingBean="#{invoiceCategoryBean}" -->
-        <!-- 			searchField1Label="#{messages['invoiceCategory.code']}" -->
-        <!-- 			searchField1="code" -->
-        <!-- 			searchField2Label="#{messages['invoiceCategory.description']}" -->
-        <!-- 			searchField2="description" -->
-        <!-- 			column1Label="#{messages['invoiceCategory.code']}" column1="code" -->
-        <!-- 			column2Label="#{messages['invoiceCategory.description']}" -->
-        <!-- 			column2="description" /> -->
+        <!--        <hftl:entityPopup id="searchInvoiceCategoryPopup" -->
+        <!--            header="#{messages['invoiceCategory.panel']}" -->
+        <!--            updateField=":tabView:formPanel:formId:categorySelectId" -->
+        <!--            selection="#{invoiceSubCategoryBean.entity.invoiceCategory}" -->
+        <!--            backingBean="#{invoiceCategoryBean}" -->
+        <!--            searchField1Label="#{messages['invoiceCategory.code']}" -->
+        <!--            searchField1="code" -->
+        <!--            searchField2Label="#{messages['invoiceCategory.description']}" -->
+        <!--            searchField2="description" -->
+        <!--            column1Label="#{messages['invoiceCategory.code']}" column1="code" -->
+        <!--            column2Label="#{messages['invoiceCategory.description']}" -->
+        <!--            column2="description" /> -->
 
         <hftl:entityPopup id="invSubCatCountTaxPopup" header="#{messages['tax.panel']}" backingBean="#{taxBean}" updateField=":tabView:formTax:taxSelectedId"
             selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tax}" searchField1Label="#{messages['tax.code']}" searchField1="code" searchField2Label="#{messages['tax.description']}"
@@ -56,7 +56,7 @@
 
                         <hftl:formField id="categorySelectId" label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory" valueLabelField="code" required="true"
                             listBean="#{invoiceCategoryBean}" />
-                        <!-- 							popup="true" popupId="searchInvoiceCategoryPopup" /> -->
+                        <!--                            popup="true" popupId="searchInvoiceCategoryPopup" /> -->
 
                         <hftl:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false" />
 
@@ -101,11 +101,8 @@
                                     <h:outputText value="#{messages['commons.actions']}" />
                                 </f:facet>
 
-                                <p:tooltip for="editSubCategoryCountryLink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
                                 <p:commandButton id="editSubCategoryCountryLink" update=":tabView:formTax" action="#{invoiceSubCategoryBean.editInvoiceSubcategoryCountry(entity)}"
                                     icon="ui-icon-document" />
-                                <p:tooltip for="editSubCategoryCountrydeletelink" value="#{messages['commons.delete']}" showEffect="slide" rendered="#{invoiceSubCategoryBean.canUserUpdateEntity()}"
-                                    hideEffect="slide" />
                                 <p:commandButton id="editSubCategoryCountrydeletelink" action="#{invoiceSubCategoryBean.deleteInvoiceSubcategoryCountry(entity)}"
                                     rendered="#{invoiceSubCategoryBean.canUserUpdateEntity()}" icon="ui-icon-trash" update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax" />
                             </p:column>
@@ -146,9 +143,9 @@
 
 
                                 <!-- <p:button id="buttonBack" value="#{messages['action.back']}"
-											outcome="#{invoiceSubCategoryBean.back()}"
-											includeViewParams="true">
-											</p:button> -->
+                                            outcome="#{invoiceSubCategoryBean.back()}"
+                                            includeViewParams="true">
+                                            </p:button> -->
                                 <p:commandButton id="buttonBack" value="#{messages['action.back']}" action="#{invoiceSubCategoryBean.setActiveTab(0)}" update=":tabView" immediate="true"></p:commandButton>
                             </ui:define>
                         </hftl:formPanel>

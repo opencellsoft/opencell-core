@@ -647,7 +647,7 @@
             </column>
             <column name="version" type="int4" />
             <column name="company_name" type="varchar(50)"/>
-            <column name="position" type="varchar(50)"/>
+            <column name="position" type="varchar(100)"/>
             <column name="instant_messengers" type="varchar(2000)"/>
         </createTable>
         <createSequence sequenceName="crm_additional_details_seq" />
@@ -1170,7 +1170,6 @@
 				$$ LANGUAGE plpgsql;
 			]]></sql>
 		</changeSet>
-	
 	    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
 	    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
 	     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
@@ -1190,7 +1189,7 @@
 									return @textvalue;				
 				end;
 			]]></sql>
-	</changeSet>    
+	</changeSet>
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
@@ -1308,4 +1307,53 @@
     	<addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_service_instance" constraintName="fk_si_auto_tr_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
     </changeSet>
-</databaseChangeLog> 
+    
+    <changeSet id="#3519_20180620_P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_wallet_operation set input_unit_description=cat_charge_template.input_unit_description from ${db.schema.adapted}cat_charge_template, ${db.schema.adapted}billing_charge_instance where billing_wallet_operation.charge_instance_id=billing_charge_instance.id and billing_charge_instance.charge_template_id=cat_charge_template.id and  billing_wallet_operation.input_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set rating_unit_description=cat_charge_template.rating_unit_description from ${db.schema.adapted}cat_charge_template, ${db.schema.adapted}billing_charge_instance where billing_wallet_operation.charge_instance_id=billing_charge_instance.id and billing_charge_instance.charge_template_id=cat_charge_template.id and  billing_wallet_operation.rating_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set invoice_sub_category_id=cat_charge_template.invoice_sub_category from ${db.schema.adapted}cat_charge_template, ${db.schema.adapted}billing_charge_instance where billing_wallet_operation.charge_instance_id=billing_charge_instance.id and billing_charge_instance.charge_template_id=cat_charge_template.id and  billing_wallet_operation.invoice_sub_category_id is null</sql>   
+    </changeSet>
+    
+    <changeSet id="#3519_20180620_M" author="AndriusKarpavicius" dbms="mysql">    
+        <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.input_unit_description=cat_charge_template.input_unit_description where billing_wallet_operation.input_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.rating_unit_description=cat_charge_template.rating_unit_description where billing_wallet_operation.rating_unit_description is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.invoice_sub_category_id=cat_charge_template.invoice_sub_category where billing_wallet_operation.invoice_sub_category_id is null</sql>
+    </changeSet>
+    
+    <changeSet id="#3513_20180621" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_service_template">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	<addColumn tableName="billing_subscription">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	<addColumn tableName="billing_service_instance">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	<addColumn tableName="cat_offer_template">
+    		<column name="initial_term_type" type="varchar(20)"></column>
+    	</addColumn>
+    	
+    	<sql>update cat_service_template set initial_term_type='RECURRING';</sql>
+    	<sql>update billing_subscription set initial_term_type='RECURRING';</sql>
+    	<sql>update billing_service_instance set initial_term_type='RECURRING';</sql>
+    	<sql>update cat_offer_template set initial_term_type='RECURRING';</sql>
+    </changeSet>
+    
+    <changeSet id="#3460_20180521" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_cycle">
+           <column name="billing_cycle_type" type="varchar(256)" />
+       	</addColumn>
+     	<addColumn tableName="billing_subscription">
+           <column name="billing_cycle" type="bigint" />
+       	</addColumn>
+       	<addColumn tableName="ord_order">
+           <column name="billing_cycle" type="bigint" />
+       	</addColumn>
+    </changeSet>
+    
+    <changeSet id="#3206_20180531" author="Andrius Karpavicius">
+        <sql> update ${db.schema.adapted}meveo_module_item set item_type='org.meveo.model.notification.ScriptNotification' where item_type='org.meveo.model.notification.Notification' </sql>
+    </changeSet>
+    
+</databaseChangeLog>

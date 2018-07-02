@@ -41,6 +41,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -54,6 +55,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -178,7 +180,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
     private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
     private EntityListDataModelPF<ProductInstance> productInstances = null;
-
+    
     public SubscriptionBean() {
         super(Subscription.class);
     }
@@ -251,7 +253,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
         log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
     }
+    
+    public BillingCycle getBillingCycle() {
+        return entity.getBillingCycle();
+    }
 
+    public void setBillingCycle(BillingCycle billingCycle) {
+        if (billingCycle != null) {
+            entity.setBillingCycle(billingCycle);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -260,6 +272,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        entity.setOffer(offerTemplateService.refreshOrRetrieve(entity.getOffer()));
+        entity.setUserAccount(userAccountService.refreshOrRetrieve(entity.getUserAccount()));
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 

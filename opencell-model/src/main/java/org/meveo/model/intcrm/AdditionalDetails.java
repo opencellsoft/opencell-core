@@ -26,7 +26,7 @@ public class AdditionalDetails extends BaseEntity {
 	private String companyName;
 	
 	@Column(name = "position", length = 50)
-	@Size(max = 50)
+	@Size(max = 100)
 	private String position;
 		
 	@Column(name = "instant_messengers", length = 2000)

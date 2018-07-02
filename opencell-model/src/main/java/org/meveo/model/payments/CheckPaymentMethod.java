@@ -52,6 +52,6 @@ public class CheckPaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "CheckPaymentMethod [alias=" + alias + ", preferred=" + preferred + "]";
+        return "CheckPaymentMethod [alias= " + getAlias() + ", preferred=" + preferred + "]";
     }
 }

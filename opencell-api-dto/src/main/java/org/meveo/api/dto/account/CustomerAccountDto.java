@@ -1,6 +1,7 @@
 	package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +11,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -106,7 +109,9 @@ public class CustomerAccountDto extends AccountDto {
     /**
      * Use for GET / LIST only.
      */
-    private BillingAccountsDto billingAccounts;
+    private BillingAccountsDto billingAccounts = new BillingAccountsDto();
+    
+    private List<AccountOperationDto> accountOperations;
 
     /**
      * Instantiates a new customer account dto.
@@ -120,9 +125,47 @@ public class CustomerAccountDto extends AccountDto {
      * 
      * @param e CustomerAccount entity
      */
-    public CustomerAccountDto(CustomerAccount e) {
-        super(e);
-    }
+	public CustomerAccountDto(CustomerAccount e) {
+		super(e);
+
+		if (e.getCustomer() != null) {
+			setCustomer(e.getCustomer().getCode());
+		}
+
+		if (e.getTradingCurrency() != null) {
+			setCurrency(e.getTradingCurrency().getCurrencyCode());
+		}
+
+		if (e.getTradingLanguage() != null) {
+			setLanguage(e.getTradingLanguage().getLanguageCode());
+		}
+
+		setStatus(e.getStatus());
+		setDateStatus(e.getDateStatus());
+		try {
+			setCreditCategory(e.getCreditCategory().getCode());
+		} catch (NullPointerException ex) {
+		}
+		setDunningLevel(e.getDunningLevel());
+		setDateStatus(e.getDateStatus());
+		setDateDunningLevel(e.getDateDunningLevel());
+		if (e.getContactInformation() != null) {
+			setContactInformation(new ContactInformationDto(e.getContactInformation()));
+		}
+		setDueDateDelayEL(e.getDueDateDelayEL());
+		setExcludedFromPayment(e.isExcludedFromPayment());
+
+		if (e.getPaymentMethods() != null && !e.getPaymentMethods().isEmpty()) {
+			setPaymentMethods(new ArrayList<>());
+			for (PaymentMethod pm : e.getPaymentMethods()) {
+				getPaymentMethods().add(new PaymentMethodDto(pm));
+			}
+
+			// Start compatibility with pre-4.6 versions
+			setPaymentMethod(e.getPaymentMethods().get(0).getPaymentType());
+			// End compatibility with pre-4.6 versions
+		}
+	}
 
     /**
      * Gets the customer.
@@ -507,5 +550,16 @@ public class CustomerAccountDto extends AccountDto {
         return "CustomerAccountDto [code=" + code + ", customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory="
                 + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel="
                 + dunningLevel + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
-    }    
+    }
+
+	public List<AccountOperationDto> getAccountOperations() {
+		if (accountOperations == null) {
+			accountOperations = new ArrayList<>();
+		}
+		return accountOperations;
+	}
+
+	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
+		this.accountOperations = accountOperations;
+	}    
 }

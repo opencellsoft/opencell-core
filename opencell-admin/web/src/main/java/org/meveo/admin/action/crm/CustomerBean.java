@@ -21,11 +21,13 @@ package org.meveo.admin.action.crm;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.account.CustomerApi;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -51,6 +53,9 @@ public class CustomerBean extends AccountBean<Customer> {
 
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private CustomerApi customerApi;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -105,4 +110,19 @@ public class CustomerBean extends AccountBean<Customer> {
     protected String getDefaultSort() {
         return "code";
     }
+    
+    /**
+	 * Exports an account hierarchy given a specific customer selected in the GUI.
+	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
+	 * as a zipped file along with the pdf invoices.
+	 * 
+	 * @throws Exception when zipping fail
+	 */
+    @ActionMethod
+	public void exportCustomerHierarchy() throws Exception {
+		javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		customerApi.exportCustomerHierarchy(entity.getCode(), response);
+        context.responseComplete();
+	}
 }

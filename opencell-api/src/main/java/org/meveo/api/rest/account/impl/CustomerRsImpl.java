@@ -256,8 +256,21 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
 	@Override
-	public GetCustomerResponseDto find(String companyName) {
-		GetCustomerResponseDto result = new GetCustomerResponseDto();
+	public ActionStatus exportCustomerHierarchy(String customerCode) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.exportCustomerHierarchy(customerCode, httpServletResponse);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+	
+	@Override
+    public GetCustomerResponseDto find(String companyName) {
+        GetCustomerResponseDto result = new GetCustomerResponseDto();
 
         try {
             result.setCustomer(customerApi.findByCompany(companyName));
@@ -266,6 +279,5 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         }
 
         return result;
-	}
-
+    }
 }

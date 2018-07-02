@@ -1211,6 +1211,7 @@
       <ws:createAccountingCode/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/createAccountingCode"/>
       </con:call>
     </con:operation>
@@ -1226,6 +1227,7 @@
       <ws:createOrUpdateAccountingCode/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/createOrUpdateAccountingCode"/>
       </con:call>
     </con:operation>
@@ -1241,6 +1243,7 @@
       <ws:findAccountingCode/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/findAccountingCode"/>
       </con:call>
     </con:operation>
@@ -1256,6 +1259,7 @@
       <ws:index/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/index"/>
       </con:call>
     </con:operation>
@@ -1271,6 +1275,7 @@
       <ws:listAccountingCode/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/listAccountingCode"/>
       </con:call>
     </con:operation>
@@ -1286,6 +1291,7 @@
       <ws:removeAccountingCode/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/removeAccountingCode"/>
       </con:call>
     </con:operation>
@@ -1301,6 +1307,7 @@
       <ws:updateAccountingCode/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/updateAccountingCode"/>
       </con:call>
     </con:operation>
@@ -5427,7 +5434,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DATE_SINGLE_V" description="SELLER_DATE_SINGLE_V field" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
                      <fieldType>DATE</fieldType>
-                     <dateValue>2013-02-01T00:00:00${#Project#timezone2}</dateValue>
+                     <dateValue>2013-02-01T00:00:00${#Project#timezone}</dateValue>
                   </customField>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -7050,7 +7057,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 3" id="83b25b71-d057-40de-a114-b2e972e9033f">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" description="SELLER_DOUBLE_LIST_VC field" valuePeriodStartDate="2015-10-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-11-01T00:00:00${#Project#timezone2}">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_DOUBLE_LIST_VC" description="SELLER_DOUBLE_LIST_VC field" valuePeriodStartDate="2015-10-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-11-01T00:00:00${#Project#timezone}">
                      <fieldType>DOUBLE</fieldType>
                      <listValue>
                         <value>
@@ -8852,7 +8859,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 3" id="78a7cfb2-5f5e-48f0-9cd1-1fbed698469f">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" description="UA_DOUBLE_SINGLE_V field" valuePeriodStartDate="2015-11-04T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-11-30T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_UA_DOUBLE_SINGLE_V" description="UA_DOUBLE_SINGLE_V field" valuePeriodStartDate="2015-11-04T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-11-30T00:00:00${#Project#timezone}" valuePeriodPriority="3">
                      <fieldType>DOUBLE</fieldType>
                      <doubleValue>126.27</doubleValue>
                   </customField>]]></token>
@@ -10125,7 +10132,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="f3ad376a-43bb-4a13-9b26-692b82856714" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge counter periods: period end date older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge periods with end date older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>19</longValue>
                   </customField>]]></token>
@@ -10135,7 +10142,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="6297569b-77e3-452c-94d1-888f3f69e8af" name="Contains 2">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Purge job execution history: job name">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Job name">
                      <fieldType>STRING</fieldType>
                      <stringValue>KUKU</stringValue>
                   </customField>]]></token>
@@ -10145,7 +10152,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3d7e54ff-929a-49cb-89f1-970f4064076a" name="Contains 3">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge job execution history: older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge history older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>15</longValue>
                   </customField>]]></token>
@@ -11100,7 +11107,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="f3ad376a-43bb-4a13-9b26-692b82856714" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge counter periods: period end date older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_counterPeriod_nbDays" description="Purge periods with end date older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>191</longValue>
                   </customField>]]></token>
@@ -11110,7 +11117,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="6297569b-77e3-452c-94d1-888f3f69e8af" name="Contains 2">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Purge job execution history: job name">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_jobName" description="Job name">
                      <fieldType>STRING</fieldType>
                      <stringValue>MUMU</stringValue>
                   </customField>]]></token>
@@ -11120,7 +11127,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3d7e54ff-929a-49cb-89f1-970f4064076a" name="Contains 3">
               <con:configuration>
-                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge job execution history: older then (in days)">
+                <token><![CDATA[<customField code="PurgeJob_jobExecHistory_nbDays" description="Purge history older than (in days) *">
                      <fieldType>LONG</fieldType>
                      <longValue>151</longValue>
                   </customField>]]></token>
@@ -12864,7 +12871,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="342ecf78-6b58-468a-95a9-697720aa6b65" name="Contains 5">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" description="SERVICE_INSTANCE_DATE_SINGLE_V field" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" description="SERVICE_INSTANCE_DATE_SINGLE_V field" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                            <fieldType>DATE</fieldType>
                            <dateValue>2015-09-24T00:00:00${#Project#timezone2}</dateValue>
                         </customField>]]></token>
@@ -12876,7 +12883,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_NV" description="SERVICE_INSTANCE_DATE_SINGLE_NV field">
                            <fieldType>DATE</fieldType>
-                           <dateValue>2015-12-24T00:00:00${#Project#timezone2}</dateValue>
+                           <dateValue>2015-12-24T00:00:00${#Project#timezone}</dateValue>
                         </customField>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -34324,7 +34331,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>26</con:value>
+        <con:value>34</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36955,7 +36962,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>66</con:value>
+        <con:value>74</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38510,7 +38517,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>33</con:value>
+        <con:value>41</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39733,7 +39740,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>27</con:value>
+        <con:value>35</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

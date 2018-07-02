@@ -2,7 +2,6 @@ package org.meveo.service.finance;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,15 +14,15 @@ import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.FileUtils;
 import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.admin.util.ModuleUtil;
+import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
-import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.finance.ReportExtractExecutionResult;
+import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
@@ -214,16 +213,12 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             file.createNewFile();
             fileWriter = new FileWriter(file);
             fileWriter.write(template);
-            fileWriter.close();
+            
         } catch (Exception e) {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e1) {
-                }
-            }
             log.error("Cannot write report to file: {}", e.getMessage());
             throw new BusinessException("Cannot write report to file.");
+        } finally {
+            IOUtils.closeQuietly(fileWriter);
         }
     }
 
@@ -262,17 +257,11 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 fileWriter.write(System.lineSeparator());
                 line = new StringBuilder("");
             }
-            fileWriter.close();
-
         } catch (Exception e) {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e1) {
-                }
-            }
             log.error("Cannot write report to file: {}", e.getMessage());
             throw new BusinessException("Cannot write report to file.");
+        } finally  {
+            IOUtils.closeQuietly(fileWriter);
         }
     }
 

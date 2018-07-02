@@ -9,9 +9,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.notification.InboundRequestDto;
 import org.meveo.api.dto.notification.InboundRequestsDto;
-import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.NotificationHistoriesDto;
 import org.meveo.api.dto.notification.NotificationHistoryDto;
+import org.meveo.api.dto.notification.ScriptNotificationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -27,19 +27,20 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InboundRequestService;
 import org.meveo.service.notification.NotificationHistoryService;
-import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.ScriptNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
+ * @author Andrius Karpavicius
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0
  **/
 @Stateless
-public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> {
+public class ScriptNotificationApi extends BaseCrudApi<ScriptNotification, ScriptNotificationDto> {
 
     @Inject
-    private NotificationService notificationService;
+    private ScriptNotificationService scriptNotificationService;
 
     @Inject
     private CounterTemplateService counterTemplateService;
@@ -54,7 +55,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     private InboundRequestService inboundRequestService;
 
     @Override
-    public Notification create(NotificationDto postData) throws MeveoApiException, BusinessException {
+    public ScriptNotification create(ScriptNotificationDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -70,7 +71,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
 
         handleMissingParametersAndValidate(postData);
 
-        if (notificationService.findByCode(postData.getCode()) != null) {
+        if (scriptNotificationService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Notification.class, postData.getCode());
         }
         ScriptInstance scriptInstance = null;
@@ -110,7 +111,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
             notif.setDisabled(postData.isDisabled());
         }
 
-        notificationService.create(notif);
+        scriptNotificationService.create(notif);
 
         return notif;
     }
@@ -121,17 +122,17 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
-    public NotificationDto find(String notificationCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
-        NotificationDto result = new NotificationDto();
+    public ScriptNotificationDto find(String notificationCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
+        ScriptNotificationDto result = new ScriptNotificationDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            ScriptNotification notif = notificationService.findByCode(notificationCode);
+            ScriptNotification notif = scriptNotificationService.findByCode(notificationCode);
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(Notification.class, notificationCode);
             }
 
-            result = new NotificationDto(notif);
+            result = new ScriptNotificationDto(notif);
         } else {
             missingParameters.add("code");
 
@@ -142,7 +143,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     }
 
     @Override
-    public Notification update(NotificationDto postData) throws MeveoApiException, BusinessException {
+    public ScriptNotification update(ScriptNotificationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -159,7 +160,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
 
         handleMissingParametersAndValidate(postData);
 
-        ScriptNotification notif = notificationService.findByCode(postData.getCode());
+        ScriptNotification notif = scriptNotificationService.findByCode(postData.getCode());
         if (notif == null) {
             throw new EntityDoesNotExistsException(Notification.class, postData.getCode());
         }
@@ -193,7 +194,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setParams(postData.getScriptParams());
         notif.setPriority(postData.getPriority());
 
-        notif = notificationService.update(notif);
+        notif = scriptNotificationService.update(notif);
 
         return notif;
     }

@@ -115,7 +115,8 @@ public class DDPaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "DDPaymentMethod [bankCoordinates=" + bankCoordinates + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + "]";
+        return "DDPaymentMethod [ alias = " + getAlias() + ", account_owner = " + bankCoordinates.getAccountOwner() + ",  bank_name = " + bankCoordinates.getBankName() + ","
+                + " bic = " + bankCoordinates.getBic() + ", iban = " + bankCoordinates.getIban() + ",  mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + "]";
     }
 
 }

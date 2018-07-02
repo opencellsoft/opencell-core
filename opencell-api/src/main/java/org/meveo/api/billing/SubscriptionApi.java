@@ -78,6 +78,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -155,6 +156,9 @@ public class SubscriptionApi extends BaseApi {
     
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -206,6 +210,14 @@ public class SubscriptionApi extends BaseApi {
         subscription.setDescription(postData.getDescription());
         subscription.setUserAccount(userAccount);
         subscription.setOffer(offerTemplate);
+        
+        if(!StringUtils.isBlank(postData.getBillingCycle())) {
+            BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+            }
+            subscription.setBillingCycle(billingCycle);
+        }
 
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -291,9 +303,16 @@ public class SubscriptionApi extends BaseApi {
             }
             subscription.setOffer(offerTemplate);
         }
+        
+        if(!StringUtils.isBlank(postData.getBillingCycle())) {
+            BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+            }
+            subscription.setBillingCycle(billingCycle);
+        }
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -1002,25 +1021,6 @@ public class SubscriptionApi extends BaseApi {
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
         SubscriptionDto dto = new SubscriptionDto(subscription);
-        dto.setStatus(subscription.getStatus());
-        dto.setStatusDate(subscription.getStatusDate());
-        dto.setOrderNumber(subscription.getOrderNumber());
-
-        if (subscription.getUserAccount() != null) {
-            dto.setUserAccount(subscription.getUserAccount().getCode());
-        }
-
-        if (subscription.getOffer() != null) {
-            dto.setOfferTemplate(subscription.getOffer().getCode());
-        }
-
-        dto.setSubscriptionDate(subscription.getSubscriptionDate());
-        dto.setTerminationDate(subscription.getTerminationDate());
-        if (subscription.getSubscriptionTerminationReason() != null) {
-            dto.setTerminationReason(subscription.getSubscriptionTerminationReason().getCode());
-        }
-        dto.setEndAgreementDate(subscription.getEndAgreementDate());
-
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {
                 CustomFieldsDto customFieldsDTO = null;
@@ -1032,12 +1032,6 @@ public class SubscriptionApi extends BaseApi {
         }
 
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription, inheritCF));
-        dto.setSubscribedTillDate(subscription.getSubscribedTillDate());
-        dto.setRenewed(subscription.isRenewed());
-        dto.setRenewalNotifiedDate(subscription.getRenewalNotifiedDate());
-
-        dto.setRenewalRule(new SubscriptionRenewalDto(subscription.getSubscriptionRenewal()));
-
         if (subscription.getServiceInstances() != null) {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
                 ServiceInstanceDto serviceInstanceDto = null;
@@ -1055,7 +1049,6 @@ public class SubscriptionApi extends BaseApi {
                 customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
 
                 dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
-
             }
         }
 
@@ -1702,7 +1695,7 @@ public class SubscriptionApi extends BaseApi {
         // Recurring charges : 
         List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode, false);
         for (Long chargeId : activeRecurringChargeIds) {
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate);
+            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate).getNbRating();
             result.addResult(chargeId, nbRating);
         }
         return result;

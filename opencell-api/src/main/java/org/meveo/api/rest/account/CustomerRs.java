@@ -228,4 +228,12 @@ public interface CustomerRs extends IBaseRs {
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CustomerDto postData);
 
+    /**
+	 * Exports an account hierarchy given a specific customer selected in the GUI.
+	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
+	 * as a zipped file along with the pdf invoices.
+	 */
+    @GET
+    @Path("/exportCustomerHierarchy")
+    ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
 }

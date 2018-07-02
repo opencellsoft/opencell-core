@@ -166,6 +166,10 @@ public class Subscription extends BusinessCFEntity {
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_cycle")
+    private BillingCycle billingCycle;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -358,6 +362,14 @@ public class Subscription extends BusinessCFEntity {
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
+    
+    public BillingCycle getBillingCycle() {
+        return billingCycle;
+    }
+
+    public void setBillingCycle(BillingCycle billingCycle) {
+        this.billingCycle = billingCycle;
+    }
 
     /**
      * Check if renewal notice should be fired for a current date
@@ -388,32 +400,34 @@ public class Subscription extends BusinessCFEntity {
     /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
      */
-    public void updateSubscribedTillAndRenewalNotifyDates() {
-        if (isRenewed()) {
-            return;
-        }
-        if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
-            if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
-                getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-            }
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(getSubscriptionDate());
-            calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
-            setSubscribedTillDate(calendar.getTime());
+	public void updateSubscribedTillAndRenewalNotifyDates() {
+		if (isRenewed()) {
+			return;
+		}
+		if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+			if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
+				if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
+					getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+				}
+				Calendar calendar = new GregorianCalendar();
+				calendar.setTime(getSubscriptionDate());
+				calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
+				setSubscribedTillDate(calendar.getTime());
 
-        } else {
-            setSubscribedTillDate(null);
-        }
+			} else {
+				setSubscribedTillDate(null);
+			}
+		}
 
-        if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(getSubscribedTillDate());
-            calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
-            setNotifyOfRenewalDate(calendar.getTime());
-        } else {
-            setNotifyOfRenewalDate(null);
-        }
-    }   
+		if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(getSubscribedTillDate());
+			calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
+			setNotifyOfRenewalDate(calendar.getTime());
+		} else {
+			setNotifyOfRenewalDate(null);
+		}
+	} 
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
