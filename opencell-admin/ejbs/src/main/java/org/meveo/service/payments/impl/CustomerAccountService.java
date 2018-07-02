@@ -34,14 +34,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
+
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
@@ -52,7 +51,6 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
-import org.meveo.util.ApplicationProvider;
 
 /**
  * Customer Account service implementation.
@@ -564,5 +562,37 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
         return result;
+    }
+    
+    /**
+     * Return list customerAccount ids for payment.
+     * 
+     * @param paymentMethodEnum payment method.
+     * @return list of customerAccount ids.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> getCAidsForPayment(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+        try {
+            return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForPayment").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("dueDateIN", dueDate).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Return list customerAccount ids for refund.
+     * 
+     * @param paymentMethodEnum payment method.
+     * @return list of customerAccount ids.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> getCAidsForRefund(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+        try {
+            return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForRefund").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("dueDateIN", dueDate).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

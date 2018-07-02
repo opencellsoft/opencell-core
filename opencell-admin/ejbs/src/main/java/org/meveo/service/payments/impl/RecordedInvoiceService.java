@@ -48,6 +48,7 @@ import org.meveo.model.payments.RecordedInvoiceCatAgregate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
@@ -189,9 +190,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      * @throws BusinessException business exception.
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
-        if (isRecordedInvoiceExist(invoice.getInvoiceNumber())) {
-            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
-        }
 
         List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
         List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<RecordedInvoiceCatAgregate>();
@@ -199,7 +197,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         BigDecimal amountWithoutTaxForRecordedIncoice = invoice.getAmountWithoutTax();
         BigDecimal amountWithTaxForRecordedIncoice = invoice.getAmountWithTax();
         BigDecimal amountTaxForRecordedIncoice = invoice.getAmountTax();
-        
+
         for (CategoryInvoiceAgregate catAgregate : cats) {
             if (catAgregate.getInvoiceCategory().getOccTemplate() != null) {
                 BigDecimal tax = BigDecimal.ZERO, ttc = BigDecimal.ZERO;
@@ -210,37 +208,41 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(catAgregate.getAmountWithoutTax(), ttc, tax, null, invoice,
                     catAgregate.getInvoiceCategory().getOccTemplate(), false);
                 listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
-                amountWithoutTaxForRecordedIncoice = amountWithoutTaxForRecordedIncoice.subtract(catAgregate.getAmountWithoutTax()) ;
-                amountWithTaxForRecordedIncoice = amountWithTaxForRecordedIncoice.subtract(ttc) ;
-                amountTaxForRecordedIncoice = amountTaxForRecordedIncoice.subtract(tax) ;
+                amountWithoutTaxForRecordedIncoice = amountWithoutTaxForRecordedIncoice.subtract(catAgregate.getAmountWithoutTax());
+                amountWithTaxForRecordedIncoice = amountWithTaxForRecordedIncoice.subtract(ttc);
+                amountTaxForRecordedIncoice = amountTaxForRecordedIncoice.subtract(tax);
             }
         }
 
-        RecordedInvoice recordedInvoice = createRecordedInvoice(amountWithoutTaxForRecordedIncoice, amountWithTaxForRecordedIncoice, amountTaxForRecordedIncoice, invoice.getNetToPay(), invoice,
-            invoice.getInvoiceType().getOccTemplate(), true);
+        RecordedInvoice recordedInvoice = createRecordedInvoice(amountWithoutTaxForRecordedIncoice, amountWithTaxForRecordedIncoice, amountTaxForRecordedIncoice,
+            invoice.getNetToPay(), invoice, invoice.getInvoiceType().getOccTemplate(), true);
         create(recordedInvoice);
 
         for (RecordedInvoiceCatAgregate recordedInvoiceCatAgregate : listRecordedInvoiceCatAgregate) {
             recordedInvoiceCatAgregate.setRecordedInvoice(recordedInvoice);
             create(recordedInvoiceCatAgregate);
         }
+        invoice.setRecordedInvoice(recordedInvoice);
     }
 
-    private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice ii,
+    private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
             OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
+
+        if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber())) {
+            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
+        }
 
         CustomerAccount customerAccount = null;
         T recordedInvoice = null;
-        BillingAccount billingAccount = ii.getBillingAccount();
+        BillingAccount billingAccount = invoice.getBillingAccount();
 
         if (isRecordedIvoince) {
             recordedInvoice = (T) new RecordedInvoice();
-            recordedInvoice.setReference(ii.getInvoiceNumber());
             recordedInvoice.setNetToPay(netToPay);
 
             List<String> orderNums = new ArrayList<String>();
-            if (ii.getOrders() != null) {
-                for (Order order : ii.getOrders()) {
+            if (invoice.getOrders() != null) {
+                for (Order order : invoice.getOrders()) {
                     if (order != null) {
                         orderNums.add(order.getOrderNumber());
                     }
@@ -250,11 +252,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         } else {
             recordedInvoice = (T) new RecordedInvoiceCatAgregate();
         }
-
-        if (isRecordedInvoiceExist(ii.getInvoiceNumber())) {
-            throw new InvoiceExistException("Invoice id " + ii.getId() + " already exist");
-        }
-
+        recordedInvoice.setReference((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber());
         try {
             customerAccount = billingAccount.getCustomerAccount();
             recordedInvoice.setCustomerAccount(customerAccount);
@@ -293,15 +291,15 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         recordedInvoice.setTaxAmount(amountTax);
 
         try {
-            recordedInvoice.setDueDate(DateUtils.setTimeToZero(ii.getDueDate()));
+            recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
         } catch (Exception e) {
             log.error("error with due date ", e);
             throw new ImportInvoiceException("Error on DueDate");
         }
 
         try {
-            recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(ii.getInvoiceDate()));
-            recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(ii.getInvoiceDate()));
+            recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
+            recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
         } catch (Exception e) {
             log.error("error with invoice date", e);
             throw new ImportInvoiceException("Error on invoiceDate");
