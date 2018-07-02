@@ -214,10 +214,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Object invoiceObject = q.getSingleResult();
             return (Invoice) invoiceObject;
         } catch (NoResultException e) {
-            log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
+            log.info("Invoice with invoice number {} was not found. Returning null.", invoiceNumber);
             return null;
         } catch (NonUniqueResultException e) {
-            log.info("Multiple invoices with invoice number #0 was found. Returning null.", invoiceNumber);
+            log.info("Multiple invoices with invoice number {} was found. Returning null.", invoiceNumber);
             return null;
         } catch (Exception e) {
             return null;
@@ -464,7 +464,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice createAgregatesAndInvoice(Long billingAccountId, Long billingRunId, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
 
-        long startDate = System.currentTimeMillis();
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
             billingAccountId, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
 
@@ -548,14 +547,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
 
-            Date dueDate = invoiceDate;
+            Date dueDate;
             if (delay != null) {
                 dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
             } else {
                 throw new BusinessException("Due date delay is null");
             }
             invoice.setDueDate(dueDate);
-
+            
+            // compute dueBalance
+            int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+			BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), new Date());
+			BigDecimal totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(billingAccount.getCustomerAccount());
+			invoice.setDueBalance(balanceDue.add(totalInvoiceBalance));
+			invoice.setDueBalance(invoice.getDueBalance().setScale(rounding, RoundingMode.HALF_UP));
+            
             ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, orderNumber, firstTransactionDate, lastTransactionDate);
             log.debug("appended aggregates");
 
@@ -604,10 +610,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             invoice.assignTemporaryInvoiceNumber();
-
-            long endDate = System.currentTimeMillis();
-            log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
-                    + (endDate - startDate));
 
         } catch (Exception e) {
             log.error("Error for BA {}", billingAccount.getCode(), e);
