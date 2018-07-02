@@ -16,6 +16,8 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.notification.InboundRequestService;
+import org.meveo.service.notification.NotificationHistoryService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -28,9 +30,15 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
 
     @Inject
     private JobExecutionService jobExecutionService;
+    
+    @Inject
+    private InboundRequestService inboundRequestService;
 
     @Inject
-    protected Logger log;
+    private NotificationHistoryService notificationHistoryService;
+
+    @Inject
+    private Logger log;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -45,7 +53,7 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                 long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date);
                 if (nbItemsToProcess > 0) {
                     result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                    int nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date);
+                    long nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date);
                     result.setNbItemsCorrectlyProcessed(nbSuccess);
                     result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
@@ -66,6 +74,39 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                     result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + " counter periods");
+                    }
+                }
+            }
+            
+            // Purge notification history
+            String notificationCode = (String) this.getParamOrCFValue(jobInstance, "PurgeJob_notificationHistory_notifCode");
+            nbDays = (Long) this.getParamOrCFValue(jobInstance, "PurgeJob_notificationHistory_nbDays");
+            if (nbDays != null) {
+                Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
+                long nbItemsToProcess = notificationHistoryService.countHistoryToDelete(notificationCode, date);
+                if (nbItemsToProcess > 0) {
+                    result.addNbItemsToProcess(nbItemsToProcess);
+                    long nbSuccess = notificationHistoryService.deleteHistory(notificationCode, date);
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    if (nbSuccess > 0) {
+                        result.addReport("Purged " + nbSuccess + (notificationCode != null ? " " + notificationCode : "") + " notification history records");
+                    }
+                }
+            }
+
+            // Purge inbound requests
+            nbDays = (Long) this.getParamOrCFValue(jobInstance, "PurgeJob_inboundRequests_nbDays");
+            if (nbDays != null) {
+                Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
+                long nbItemsToProcess = inboundRequestService.countRequestsToDelete(date);
+                if (nbItemsToProcess > 0) {
+                    result.addNbItemsToProcess(nbItemsToProcess);
+                    long nbSuccess = inboundRequestService.deleteRequests(date);
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    if (nbSuccess > 0) {
+                        result.addReport("Purged " + nbSuccess + " inbound request records");
                     }
                 }
             }

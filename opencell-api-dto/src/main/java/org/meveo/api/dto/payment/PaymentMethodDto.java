@@ -314,9 +314,11 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto {
             paymentMethod.setAlias(getAlias());
         }
         
+
         if (paymentMethod != null && isDisabled() != null ) {
             paymentMethod.setDisabled(isDisabled());
         }
+
 
         switch (getPaymentMethodType()) {
 

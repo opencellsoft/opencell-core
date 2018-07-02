@@ -125,6 +125,22 @@
 			selection="#{subscriptionBean.recurringChargeInstance.chargeTemplate}"
 			updateField=":recurringChgForm1:RCchargeTemplateSelectId :recurringChgForm1:RCchargeTemplateSelectId_text recurringChgForm1:description_txt">
 		</hftl:entityPopup>
+		
+		<hftl:entityPopup id="billingCyclePopup"
+			header="#{messages['billingCycle.popup.header']}"
+			backingBean="#{billingCycleBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{subscriptionBean.entity.billingCycle}"
+			dataModel="#{billingCycleBean.listSubscriptionBillingCycle()}"
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId :subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId_text">
+		</hftl:entityPopup>
+		
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -375,6 +391,7 @@
 								<p:tabView id="informationTab" styleClass="tab-child"
 									activeIndex="#{subscriptionBean.activeTab}">
 									<p:tab title="#{messages['subscription.panel']}">
+									
 										<!--Creation window fields-->
 										<hftl:formField id="userSelectId"
 											label="#{messages['subscription.userAccount']}"
@@ -387,7 +404,7 @@
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>
 										
-										<hftl:formField label="#{messages['offerTemplate.minimumLabel']} EL" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"  />  
+										<hftl:formField label="#{messages['offerTemplate.minimumLabel']} EL" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="30"  />  
 					                    <c:choose> 
 						                    <c:when test="${appProvider.entreprise}">
 										        <c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithoutTax']} EL" />
@@ -396,7 +413,10 @@
 										    	<c:set var="minimumAmountLabel" value="#{messages['offerTemplate.minimumAmountWithTax']} EL" />
 										    </c:otherwise>
 										</c:choose>
-										<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" /> 		
+										<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="30" /> 		
+										
+										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
+                            				popupId="billingCyclePopup" />
 										
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"

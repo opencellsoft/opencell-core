@@ -691,7 +691,17 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
-    </changeSet>  
+    </changeSet>
+    
+    <changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="postgresql">
+		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}ar_account_operation_index</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+	</changeSet>
+	
+	<changeSet id="perf_computeOccAmount_20180412" author="Wassim" dbms="mysql">
+		<sql>DROP INDEX IF EXISTS ar_account_operation_index ON ${db.schema.adapted}ar_account_operation</sql>
+        <sql>CREATE INDEX ar_account_operation_index ON ${db.schema.adapted}ar_account_operation(customer_account_id)</sql>
+	</changeSet>   
 	
 	<changeSet id="#3019_20180312" author="AbdelmounaimAkadid">
     	<addColumn tableName="billing_billing_account">
@@ -863,13 +873,13 @@
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
         
         <sql>DROP INDEX IF EXISTS account_entity_upper_code ON ${db.schema.adapted}account_entity</sql> <!-- duplicate because of using upper - need to update in core -->
-        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(code)</sql>
+        <sql>CREATE INDEX account_entity_upper_code ON ${db.schema.adapted}account_entity(UPPER(code))</sql>
         
         <sql>DROP INDEX IF EXISTS rating_edr_status ON ${db.schema.adapted}rating_edr</sql>
         <sql>CREATE INDEX rating_edr_status ON ${db.schema.adapted}rating_edr(status)</sql>
         
         <sql>DROP INDEX IF EXISTS billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription</sql> <!-- duplicate because of using upper - need to update in core -->
-        <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(code)</sql>
+        <sql>CREATE INDEX billing_subscription_upper_code ON ${db.schema.adapted}billing_subscription(UPPER(code))</sql>
         
         <sql>DROP INDEX IF EXISTS billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation</sql>
         <sql>CREATE INDEX billing_wallet_operation_status ON ${db.schema.adapted}billing_wallet_operation(status)</sql>
@@ -1132,4 +1142,20 @@
     	<sql>update cat_offer_template set initial_term_type='RECURRING';</sql>
     </changeSet>
     
-</databaseChangeLog> 
+    <changeSet id="#3460_20180521" author="AbdelmounaimAkadid">
+    	<addColumn tableName="billing_cycle">
+           <column name="billing_cycle_type" type="varchar(256)" />
+       	</addColumn>
+     	<addColumn tableName="billing_subscription">
+           <column name="billing_cycle" type="bigint" />
+       	</addColumn>
+       	<addColumn tableName="ord_order">
+           <column name="billing_cycle" type="bigint" />
+       	</addColumn>
+    </changeSet>
+    
+    <changeSet id="#3206_20180531" author="Andrius Karpavicius">
+        <sql> update ${db.schema.adapted}meveo_module_item set item_type='org.meveo.model.notification.ScriptNotification' where item_type='org.meveo.model.notification.Notification' </sql>
+    </changeSet>
+    
+</databaseChangeLog>
