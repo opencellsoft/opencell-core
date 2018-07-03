@@ -118,6 +118,12 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /**
+     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount.
+     * Due balance is a "future" dueBalance (the due balance at the invoice due date).
+     */
+    private BigDecimal dueBalance;
 
     /**
      * Instantiates a new invoice dto.
@@ -588,4 +594,12 @@ public class InvoiceDto extends AuditableEntityDto {
     public void setXml(String xml) {
         this.xml = xml;
     }
+
+	public BigDecimal getDueBalance() {
+		return dueBalance;
+	}
+
+	public void setDueBalance(BigDecimal dueBalance) {
+		this.dueBalance = dueBalance;
+	}
 }

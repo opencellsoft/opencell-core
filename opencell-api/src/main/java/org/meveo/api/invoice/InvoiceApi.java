@@ -798,7 +798,7 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions)
-            throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
+            throws MeveoApiException, BusinessException {
        return this.find(id, invoiceNumber, invoiceTypeCode, includeTransactions, false, false);
     }
     
@@ -816,13 +816,15 @@ public class InvoiceApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, boolean includePdf, boolean includeXml)
-            throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
+            throws MeveoApiException, BusinessException {
         Invoice invoice = find(id, invoiceNumber, invoiceTypeCode);
         if (invoice == null) {
-            if (id != null)
+            if (id != null) {
                 throw new EntityDoesNotExistsException(Invoice.class, id);
-            else
-                throw new EntityDoesNotExistsException(Invoice.class, "invoiceNumber", invoiceNumber, "invoiceType", invoiceTypeCode);
+                
+            } else {
+                throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceType");
+            }
         }
         return invoiceToDto(invoice, includeTransactions, includePdf, includeXml);
     }
@@ -864,6 +866,7 @@ public class InvoiceApi extends BaseApi {
         invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
         invoiceDto.setPaymentMethod(invoice.getPaymentMethodType());
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
+        invoiceDto.setDueBalance(invoice.getDueBalance());
 
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof SubCategoryInvoiceAgregate || invoiceAgregate instanceof TaxInvoiceAgregate) {

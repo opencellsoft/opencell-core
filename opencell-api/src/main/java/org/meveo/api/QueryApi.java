@@ -115,8 +115,8 @@ public class QueryApi extends BaseApi {
             sortBy = entityFields.split(",")[0].trim();
         }
 
-        sortOrder = sortOrder != null ? sortOrder.toLowerCase() : null;
-        sortOrder = ("asc".equals(sortOrder) || "desc".equals(sortOrder)) ? sortOrder : null;
+        sortOrder = sortOrder != null ? sortOrder.toUpperCase() : null;
+        sortOrder = "DESCENDING".equals(sortOrder) ? "DESC" : "ASC";
 
         String json = "";
         try {
@@ -141,7 +141,7 @@ public class QueryApi extends BaseApi {
         paging.setOffset(start);
         paging.setLimit(maxRows);
         paging.setSortBy(sortBy);
-        paging.setSortOrder("desc".equalsIgnoreCase(sortOrder) ? PagingAndFiltering.SortOrder.DESCENDING : PagingAndFiltering.SortOrder.ASCENDING);
+        paging.setSortOrder("DESC".equalsIgnoreCase(sortOrder) ? PagingAndFiltering.SortOrder.DESCENDING : PagingAndFiltering.SortOrder.ASCENDING);
 
         response.setActionStatus(status);
         response.setPaging(paging);
