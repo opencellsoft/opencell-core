@@ -3,8 +3,11 @@ package org.meveo.service.finance;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.event.qualifier.Created;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.finance.ReportExtractExecutionResult;
 import org.meveo.service.base.PersistenceService;
@@ -20,6 +23,10 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ReportExtractExecutionResultService extends PersistenceService<ReportExtractExecutionResult> {
 
+	@Inject
+	@Created
+	protected Event<ReportExtractExecutionResult> reportExtractExecutionResultEventProducer;
+
 	/**
 	 * Creates and commits a new ReportExtractExecutionResult in a new transaction.
 	 */
@@ -27,6 +34,9 @@ public class ReportExtractExecutionResultService extends PersistenceService<Repo
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createInNewTransaction(ReportExtractExecutionResult reportExtractExecutionResult) throws BusinessException {
 		create(reportExtractExecutionResult);
+
+		// fire a notification
+		reportExtractExecutionResultEventProducer.fire(reportExtractExecutionResult);
 	}
 
 }
