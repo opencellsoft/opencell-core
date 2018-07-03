@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.model.communication.CommunicationPolicy;
-import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.intcrm.ContactGroup;
 

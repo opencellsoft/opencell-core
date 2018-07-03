@@ -13,13 +13,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.UserDto;
-import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.crm.ContactDto;
-import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.dto.response.crm.GetContactResponseDto;
 import org.meveo.api.rest.IBaseRs;

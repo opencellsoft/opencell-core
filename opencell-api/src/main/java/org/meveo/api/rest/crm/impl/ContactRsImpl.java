@@ -6,18 +6,14 @@ import javax.ws.rs.PathParam;
 import org.meveo.api.crm.ContactApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.dto.response.crm.GetContactResponseDto;
 import org.meveo.api.rest.crm.ContactRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.service.intcrm.impl.ContactService;
 
 public class ContactRsImpl extends BaseRs implements ContactRs {
 
