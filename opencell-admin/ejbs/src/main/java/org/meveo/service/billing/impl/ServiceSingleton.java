@@ -111,9 +111,15 @@ public class ServiceSingleton {
                 sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
                 invoiceType = invoiceTypeService.update(invoiceType);
             } else {
+                Sequence sequenceGlobal = new Sequence();
+                sequenceGlobal.setPrefixEL(sequence.getPrefixEL());
+                sequenceGlobal.setSequenceSize(sequence.getSequenceSize());               
+                
                 previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
-                sequence.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
+                sequenceGlobal.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
+                sequenceGlobal.setPreviousInvoiceNb(previousInvoiceNb);
                 invoiceTypeService.setCurrentGlobalInvoiceBb(previousInvoiceNb + incrementBy);
+                return sequenceGlobal;
             }
         }
 

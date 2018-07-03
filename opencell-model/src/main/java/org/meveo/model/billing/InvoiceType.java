@@ -85,7 +85,7 @@ public class InvoiceType extends BusinessEntity {
     
     @Type(type = "numeric_boolean")
     @Column(name = "use_self_sequeunce")
-    private boolean useSelfSequeunce = false;
+    private boolean useSelfSequeunce = true;
 
     /**
      * An EL expression to customize invoice PDF file name.
