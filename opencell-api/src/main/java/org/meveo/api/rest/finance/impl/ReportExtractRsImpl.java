@@ -125,13 +125,13 @@ public class ReportExtractRsImpl extends BaseRs implements ReportExtractRs {
 	}
 
     @Override
-    public ActionStatus runReport(RunReportExtractDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public ReportExtractExecutionResultResponseDto runReport(RunReportExtractDto postData) {
+    	ReportExtractExecutionResultResponseDto result = new ReportExtractExecutionResultResponseDto();
 
         try {
-            reportExtractApi.runReportExtract(postData);
+        	result.setReportExtractExecutionResult(reportExtractApi.runReportExtract(postData));
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;
