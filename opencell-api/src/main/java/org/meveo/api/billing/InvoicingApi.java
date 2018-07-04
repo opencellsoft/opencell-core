@@ -188,7 +188,7 @@ public class InvoicingApi extends BaseApi {
         }
 
         billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
-        billingRunService.cancelAsync(billingRun);
+        billingRunService.cancelAsync(billingRun.getId());
     }
 
 }

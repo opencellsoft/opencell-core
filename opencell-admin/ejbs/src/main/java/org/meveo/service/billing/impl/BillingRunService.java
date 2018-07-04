@@ -367,18 +367,39 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void cleanCancelBillingRun(BillingRun billingRun) throws BusinessException {
-        getEntityManager().merge(billingRun);
+    public void cleanCancelBillingRun(Long billingRunId) throws BusinessException {
+
+        BillingRun billingRun = findById(billingRunId);
+        int count = 10;
+        // We will wait until we get a billingRun instance with status Cancelling
+        while (billingRun != null && count > 0 && !billingRun.getStatus().equals(BillingRunStatusEnum.CANCELLING)) {
+            try {
+                Thread.sleep((10 - count) * 1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            refresh(billingRun);
+            log.info("BillingRun {} has status {}. COUNT:{}.", billingRunId, billingRun.getStatus(), count);
+            count--;
+        }
+        if (billingRun == null) {
+            throw new BusinessException("Cannot instantiate a billingRun instance with id :" + billingRunId);
+        }
+        if (!billingRun.getStatus().equals(BillingRunStatusEnum.CANCELLING)) {
+            log.info("BillingRun {} has status {}.", billingRunId, billingRun.getStatus());
+            throw new BusinessException("BillingRun instance status " + billingRun.getStatus() + " with id :" + billingRunId);
+        }
+
         cleanBillingRun(billingRun);
         cancel(billingRun);
     }
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Future<String> cancelAsync(BillingRun billingRun) {
+    public Future<String> cancelAsync(Long billingRunId) {
         try {
-            getEntityManager().detach(billingRun);
-            cleanCancelBillingRun(billingRun);
+            cleanCancelBillingRun(billingRunId);
         } catch (BusinessException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
