@@ -48,7 +48,7 @@ public class InvoicingApi extends BaseApi {
 
         String allowManyInvoicing = paramBean.getProperty("billingRun.allowManyInvoicing", "true");
         boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-        
+
         if (billingRunService.isActiveBillingRunsExist() && !isAllowed) {
             throw new BusinessApiException("error.invoicing.alreadyLunched");
         }
@@ -138,8 +138,7 @@ public class InvoicingApi extends BaseApi {
         return billingRunEntity;
     }
 
-    public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException,
-            BusinessException {
+    public PreInvoicingReportsDTO getPreInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException {
         if (billingRunId == null || billingRunId.longValue() == 0) {
             missingParameters.add("billingRunId");
             handleMissingParameters();
@@ -152,8 +151,8 @@ public class InvoicingApi extends BaseApi {
         return preInvoicingReportsDTO;
     }
 
-    public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId) throws MissingParameterException, BusinessApiException,
-            EntityDoesNotExistsException, BusinessException {
+    public PostInvoicingReportsDTO getPostInvoicingReport(Long billingRunId)
+            throws MissingParameterException, BusinessApiException, EntityDoesNotExistsException, BusinessException {
         if (billingRunId == null || billingRunId.longValue() == 0) {
             missingParameters.add("billingRunId");
             handleMissingParameters();
@@ -172,7 +171,7 @@ public class InvoicingApi extends BaseApi {
             handleMissingParameters();
         }
         billingRunService.forceValidate(billingRunId);
-       
+
     }
 
     public void cancelBillingRun(Long billingRunId) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException {
@@ -180,15 +179,16 @@ public class InvoicingApi extends BaseApi {
             missingParameters.add("billingRunId");
             handleMissingParameters();
         }
-    	BillingRun billingRun = getBillingRun(billingRunId);
+        BillingRun billingRun = getBillingRun(billingRunId);
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a POSTVALIDATED billingRun");
         }
         if (BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a VALIDATED billingRun");
         }
-        billingRunService.cancel(billingRun);
-        billingRunService.cleanBillingRun(billingRun);
+
+        billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
+        billingRunService.cancelAsync(billingRun);
     }
 
 }
