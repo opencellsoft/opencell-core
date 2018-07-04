@@ -364,7 +364,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         reloadOperation = null;
     }
 
-    public String getBalance(WalletInstance wallet) {
+    public String getCachedOpenBalance(WalletInstance wallet) {
 
         String result = null;
         BigDecimal balance = walletService.getWalletBalance(wallet.getId());
@@ -374,7 +374,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public String getReservedBalance(WalletInstance wallet) {
+    public String getCachedReservedBalance(WalletInstance wallet) {
         String result = null;
         BigDecimal balance = walletService.getWalletReservedBalance(wallet.getId());
         if (balance != null) {
@@ -383,78 +383,78 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public String getOpenBalanceWithoutTax(Date startDate, Date endDate) throws BusinessException {
+    public String getOpenBalanceWithoutTax(WalletInstance wallet) throws BusinessException {
         String result = null;
-        BigDecimal balance = getOpenBalance(startDate, endDate).getAmountWithoutTax();
+        BigDecimal balance = getOpenBalance(wallet).getAmountWithoutTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getOpenBalanceWithTax(Date startDate, Date endDate) throws BusinessException {
+    public String getOpenBalanceWithTax(WalletInstance wallet) throws BusinessException {
 
         String result = null;
-        BigDecimal balance = getOpenBalance(startDate, endDate).getAmountWithTax();
+        BigDecimal balance = getOpenBalance(wallet).getAmountWithTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getReservedBalanceWithoutTax(Date startDate, Date endDate) throws BusinessException {
+    public String getReservedBalanceWithoutTax(WalletInstance wallet) throws BusinessException {
         String result = null;
-        BigDecimal balance = getReservedBalance(startDate, endDate).getAmountWithoutTax();
+        BigDecimal balance = getReservedBalance(wallet).getAmountWithoutTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getReservedBalanceWithTax(Date startDate, Date endDate) throws BusinessException {
+    public String getReservedBalanceWithTax(WalletInstance wallet) throws BusinessException {
         String result = null;
-        BigDecimal balance = getReservedBalance(startDate, endDate).getAmountWithTax();
+        BigDecimal balance = getReservedBalance(wallet).getAmountWithTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getCurrentBalanceWithoutTax(Date startDate, Date endDate) throws BusinessException {
+    public String getCurrentBalanceWithoutTax(WalletInstance wallet) throws BusinessException {
         String result = null;
-        BigDecimal balance = getCurrentBalance(startDate, endDate).getAmountWithoutTax();
+        BigDecimal balance = getCurrentBalance(wallet).getAmountWithoutTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getCurrentBalanceWithTax(Date startDate, Date endDate) throws BusinessException {
+    public String getCurrentBalanceWithTax(WalletInstance wallet) throws BusinessException {
         String result = null;
-        BigDecimal balance = getCurrentBalance(startDate, endDate).getAmountWithTax();
+        BigDecimal balance = getCurrentBalance(wallet).getAmountWithTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    private Amounts getCurrentBalance(Date startDate, Date endDate) {
+    private Amounts getCurrentBalance(WalletInstance wallet) {
         if (currentBalance == null) {
-            currentBalance = walletReservationService.getCurrentBalance(null, null, null, null, entity, startDate, endDate);
+            currentBalance = walletReservationService.getCurrentBalance(null, null, null, null, entity, null, null, wallet.getId());
         }
         return currentBalance;
     }
 
-    private Amounts getReservedBalance(Date startDate, Date endDate) {
+    private Amounts getReservedBalance(WalletInstance wallet) {
         if (reservedBalance == null) {
-            reservedBalance = walletReservationService.getReservedBalance(null, null, null, null, entity, startDate, endDate);
+            reservedBalance = walletReservationService.getReservedBalance(null, null, null, null, entity, null, null, wallet.getId());
         }
         return reservedBalance;
     }
 
-    private Amounts getOpenBalance(Date startDate, Date endDate) {
+    private Amounts getOpenBalance(WalletInstance wallet) {
         if (openBalance == null) {
-            openBalance = walletReservationService.getOpenBalance(null, null, null, null, entity, startDate, endDate);
+            openBalance = walletReservationService.getOpenBalance(null, null, null, null, entity, null, null, wallet.getId());
         }
         return openBalance;
     }

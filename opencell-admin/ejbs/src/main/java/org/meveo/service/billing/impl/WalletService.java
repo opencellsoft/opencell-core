@@ -19,9 +19,11 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -30,10 +32,11 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
@@ -153,7 +156,14 @@ public class WalletService extends PersistenceService<WalletInstance> {
             return balance != null ? balance : BigDecimal.ZERO;
 
         } else {
-            return calculateWalletBalance(walletInstanceId);
+            try {
+                Object[] balances = (Object[]) getEntityManager().createNamedQuery("WalletOperation.getBalancesForWalletInstance").setParameter("walletId", walletInstanceId)
+                    .getSingleResult();
+                return (BigDecimal) balances[0];
+
+            } catch (NoResultException e) {
+                return BigDecimal.ZERO;
+            }
         }
     }
 
@@ -178,25 +188,32 @@ public class WalletService extends PersistenceService<WalletInstance> {
             return balance != null ? balance : BigDecimal.ZERO;
 
         } else {
-            return calculateWalletReservedBalance(walletInstanceId);
+
+            try {
+                Object[] balances = (Object[]) getEntityManager().createNamedQuery("WalletOperation.getBalancesForWalletInstance").setParameter("walletId", walletInstanceId)
+                    .getSingleResult();
+                return (BigDecimal) balances[1];
+
+            } catch (NoResultException e) {
+                return BigDecimal.ZERO;
+            }
         }
     }
 
     /**
-     * Get a total cached reserved balance for a given list of wallet ids
+     * Get reserved balances for a list of wallet ids.
      * 
      * @param walletIds A list of Wallet ids
-     * @return Total cached reserved balance amount
+     * @return A map of SORTED balances with wallet id as a key
      */
-    public BigDecimal getWalletReservedBalance(List<Long> walletIds) {
+    public Map<Long, BigDecimal> getWalletReservedBalances(Collection<Long> walletIds) {
 
-        BigDecimal totalBalance = getWalletReservedBalance(walletIds.get(0));
-        if (walletIds.size() > 1) {
-            for (int i = 1; i < walletIds.size(); i++) {
-                totalBalance = totalBalance.add(getWalletReservedBalance(walletIds.get(i)));
-            }
+        Map<Long, BigDecimal> balances = new HashMap<>();
+        for (Long walletId : walletIds) {
+            balances.put(walletId, getWalletReservedBalance(walletId));
         }
-        return totalBalance;
+
+        return ListUtils.sortMapByValue(balances);
     }
 
     /**
@@ -205,18 +222,27 @@ public class WalletService extends PersistenceService<WalletInstance> {
      * @param walletInstanceId Wallet instance id
      * @return Wallet balance amount
      */
-    public BigDecimal calculateWalletBalance(Long walletInstanceId) {
-        return getEntityManager().createNamedQuery("WalletOperation.getBalance", BigDecimal.class).setParameter("walletId", walletInstanceId).getSingleResult();
+    public BigDecimal[] calculateWalletBalances(Long walletInstanceId) {
+        try {
+            Object[] balances = (Object[]) getEntityManager().createNamedQuery("WalletOperation.getBalancesForWalletInstance").setParameter("walletId", walletInstanceId)
+                .getSingleResult();
+            return new BigDecimal[] { (BigDecimal) balances[0], (BigDecimal) balances[1] };
+
+        } catch (NoResultException e) {
+            return new BigDecimal[] { BigDecimal.ZERO, BigDecimal.ZERO };
+        }
     }
 
     /**
-     * Calculate reserved balance amount for a given wallet instance by summing wallet operations in DB
+     * Get Open and reserved balances for prepaid wallets
      * 
-     * @param walletInstanceId Wallet instance id
-     * @return Wallet's reserved balance amount
+     * @return A list of Open and reserved balances in the following array format: walletId, open balance, reserved balance
      */
-    public BigDecimal calculateWalletReservedBalance(Long walletInstanceId) {
-        return getEntityManager().createNamedQuery("WalletOperation.getReservedBalance", BigDecimal.class).setParameter("walletId", walletInstanceId).getSingleResult();
+    @SuppressWarnings("unchecked")
+    public List<Object[]> getOpenAndReservedBalancesForCache() {
+        List<Object[]> resultList = getEntityManager().createNamedQuery("WalletOperation.getBalancesForCache").getResultList();
+
+        return resultList;
     }
 
     @SuppressWarnings("unchecked")
@@ -227,40 +253,35 @@ public class WalletService extends PersistenceService<WalletInstance> {
     }
 
     /**
-     * Get a list of PREPAID wallets (ids) associated to a given usage charge instance. Wallets are looked up in cache or retrieved from DB.
+     * Get a list of PREPAID wallets (ids) associated to a given charge instance. Wallets are looked up in cache or retrieved from DB.
      * 
-     * @param usageChargeInstance Usage charge instance
-     * @return A list of prepaid wallets ids
+     * @param chargeInstance Charge instance
+     * @return A Map of prepaid wallets ids and their balance rejection limits
      */
-    public List<Long> getWalletIds(UsageChargeInstance usageChargeInstance) {
-
-        // Commented out as check is done in a calling method already
-        // if (!usageChargeInstance.getPrepaid()) {
-        // return null;
-        // }
+    public Map<Long, BigDecimal> getWalletIds(ChargeInstance chargeInstance) {
 
         if (usePrepaidBalanceCache) {
 
-            List<Long> walletIds = walletCacheContainerProvider.getWalletIds(usageChargeInstance.getId());
+            Map<Long, BigDecimal> walletLimits = walletCacheContainerProvider.getWalletIdAndLimits(chargeInstance.getId());
 
             // Populate cache if record does not exist in cache
-            if (walletIds == null) {
-                walletIds = walletCacheContainerProvider.addUsageChargeInstance(usageChargeInstance);
+            if (walletLimits == null) {
+                walletLimits = walletCacheContainerProvider.addChargeInstance(chargeInstance);
             }
 
-            return walletIds;
+            return walletLimits;
 
         } else {
 
-            List<Long> walletIds = new ArrayList<>();
+            Map<Long, BigDecimal> walletLimits = new HashMap<>();
 
-            for (WalletInstance wallet : usageChargeInstance.getWalletInstances()) {
-                if (!walletIds.contains(wallet.getId()) && wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                    walletIds.add(wallet.getId());
+            for (WalletInstance wallet : chargeInstance.getWalletInstances()) {
+                if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                    walletLimits.put(wallet.getId(), wallet.getRejectLevel());
                 }
             }
 
-            return walletIds;
+            return walletLimits;
         }
     }
 }

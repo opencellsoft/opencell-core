@@ -41,6 +41,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
@@ -68,6 +70,7 @@ import org.slf4j.LoggerFactory;
         @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({ @NamedQuery(name = "ChargeInstance.listPrepaid", query = "SELECT c FROM ChargeInstance c where c.prepaid=true and  c.status='ACTIVE'") })
 public class ChargeInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -151,6 +154,9 @@ public class ChargeInstance extends BusinessEntity {
     @JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
     @OrderColumn(name = "INDX")
     protected List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
+
+    @Transient
+    private List<WalletInstance> prepaidWalletInstances;
 
     @Transient
     protected List<WalletOperation> sortedWalletOperations;
@@ -390,4 +396,22 @@ public class ChargeInstance extends BusinessEntity {
         this.orderNumber = orderNumber;
     }
 
+    /**
+     * Get a list of prepaid wallet instances
+     * 
+     * @return A list of prepaid wallet instances associated to a charge
+     */
+    public List<WalletInstance> getPrepaidWalletInstances() {
+
+        if (prepaidWalletInstances == null) {
+            prepaidWalletInstances = new ArrayList<>();
+
+            for (WalletInstance wallet : getWalletInstances()) {
+                if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                    prepaidWalletInstances.add(wallet);
+                }
+            }
+        }
+        return prepaidWalletInstances;
+    }
 }

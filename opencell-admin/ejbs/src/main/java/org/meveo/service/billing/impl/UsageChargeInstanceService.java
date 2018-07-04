@@ -100,7 +100,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
         usageChargeInstance = update(usageChargeInstance);
 
         if (usageChargeInstance.getPrepaid()) {
-            walletCacheContainerProvider.addUsageChargeInstance(usageChargeInstance);
+            walletCacheContainerProvider.addChargeInstance(usageChargeInstance);
         }
         return usageChargeInstance;
     }
@@ -144,14 +144,4 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
         return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageChargesBySubscriptionId", UsageChargeInstance.class)
             .setParameter("subscriptionId", subscriptionId).getResultList();
     }
-
-    /**
-     * Get a list of prepaid and active usage charge instances to populate a cache
-     * 
-     * @return A list of prepaid and active usage charge instances
-     */
-    public List<UsageChargeInstance> getPrepaidUsageChargeInstancesForCache() {
-        return getEntityManager().createNamedQuery("UsageChargeInstance.listPrepaid", UsageChargeInstance.class).getResultList();
-    }
-
 }

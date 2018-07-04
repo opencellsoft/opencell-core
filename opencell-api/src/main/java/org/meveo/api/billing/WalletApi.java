@@ -158,7 +158,7 @@ public class WalletApi extends BaseApi {
         }
 
         return new AmountsDto(walletReservationService.getCurrentBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
-            calculateParameters.getEndDate()));
+            calculateParameters.getEndDate(), null));
     }
 
     /**
@@ -221,7 +221,7 @@ public class WalletApi extends BaseApi {
         }
 
         return new AmountsDto(walletReservationService.getReservedBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
-            calculateParameters.getEndDate()));
+            calculateParameters.getEndDate(), null));
     }
 
     /**
@@ -284,7 +284,7 @@ public class WalletApi extends BaseApi {
         }
 
         return new AmountsDto(walletReservationService.getOpenBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
-            calculateParameters.getEndDate()));
+            calculateParameters.getEndDate(), null));
     }
 
     public Long createReservation(WalletReservationDto walletReservation) throws MeveoApiException, BusinessException {
@@ -573,6 +573,7 @@ public class WalletApi extends BaseApi {
         wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
         wt.setFastRatingLevel(postData.getFastRatingLevel());
         wt.setLowBalanceLevel(postData.getLowBalanceLevel());
+        wt.setRejectLevel(postData.getRejectLevel());
 
         walletTemplateService.create(wt);
 
@@ -601,6 +602,7 @@ public class WalletApi extends BaseApi {
         wt.setConsumptionAlertSet(postData.isConsumptionAlertSet());
         wt.setFastRatingLevel(postData.getFastRatingLevel());
         wt.setLowBalanceLevel(postData.getLowBalanceLevel());
+        wt.setRejectLevel(postData.getRejectLevel());
 
         walletTemplateService.update(wt);
     }

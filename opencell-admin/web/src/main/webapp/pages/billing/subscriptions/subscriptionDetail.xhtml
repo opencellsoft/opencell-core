@@ -706,6 +706,7 @@
 
                     <hftl:formField label="#{messages['chargeInstance.chargeDate']}" field="chargeDate" edit="false" newLine="true" />
                     <hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="descriptionOrCode" edit="false" />
+                    <!-- <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" valueLabelField="descriptionOrCode" edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}"/>  -->
                     <hftl:formField rendered="#{!appProvider.entreprise}" label="#{messages['chargeInstance.amountWithTax']}" field="amountWithTax" newLine="true" />
                     <hftl:formField label="#{messages['chargeInstance.amountWithoutTax']}" field="amountWithoutTax" newLine="true" rendered="#{appProvider.entreprise}" />
 

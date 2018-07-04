@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -131,4 +133,12 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
         return null;
     }
 
+    /**
+     * Get a list of prepaid and active usage charge instances to populate a cache
+     * 
+     * @return A list of prepaid and active usage charge instances
+     */
+    public List<ChargeInstance> getPrepaidChargeInstancesForCache() {
+        return getEntityManager().createNamedQuery("ChargeInstance.listPrepaid", ChargeInstance.class).getResultList();
+    }
 }

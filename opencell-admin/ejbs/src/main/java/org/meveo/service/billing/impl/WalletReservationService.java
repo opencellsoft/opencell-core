@@ -69,12 +69,13 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date for balance calculation
      * @param endDate End date for balance calculation
+     * @param waletId Wallet identifier
      * @return A current balance
      */
     public Amounts getCurrentBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate) {
+            Date endDate, Long walletId) {
 
-        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.CURRENT);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, walletId, BalanceTypeEnum.CURRENT);
     }
 
     /**
@@ -87,12 +88,13 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date for balance calculation
      * @param endDate End date for balance calculation
+     * @param waletId Wallet identifier
      * @return A reserved balance
      */
     public Amounts getReservedBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate) {
+            Date endDate, Long walletId) {
 
-        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.RESERVED);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, walletId, BalanceTypeEnum.RESERVED);
     }
 
     /**
@@ -105,12 +107,13 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date for balance calculation
      * @param endDate End date for balance calculation
+     * @param waletId Wallet identifier
      * @return An open balance
      */
     public Amounts getOpenBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate) {
+            Date endDate, Long walletId) {
 
-        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.OPEN);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, walletId, BalanceTypeEnum.OPEN);
     }
 
     public void updateReservationStatus(Long reservationId, WalletOperationStatusEnum status) {
@@ -147,7 +150,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
         startDate = cal.previousCalendarDate(subscriptionDate);
         endDate = cal.nextCalendarDate(subscriptionDate);
 
-        BigDecimal ratedAmount = getCurrentBalance(seller, null, null, null, userAccount, startDate, endDate).getAmount(isWithTax);
+        BigDecimal ratedAmount = getCurrentBalance(seller, null, null, null, userAccount, startDate, endDate, null).getAmount(isWithTax);
 
         return ratedAmount;
     }
@@ -191,12 +194,12 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date
      * @param endDate End date
-     * @param amountWithTax Amount with tax
+     * @param waletId Wallet identifier
      * @param mode Balance type
      * @return balance amount.
      */
     private Amounts getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate, BalanceTypeEnum mode) {
+            Date endDate, Long walletId, BalanceTypeEnum mode) {
 
         Amounts result = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO);
 
@@ -225,14 +228,18 @@ public class WalletReservationService extends PersistenceService<WalletReservati
                 strQuery.append("AND r.operationDate<:endDate ");
             }
             if (mode == BalanceTypeEnum.CURRENT) {
-                strQuery.append("AND (r.status=:open OR r.status=:reserved) ");
+                strQuery.append("AND (r.status='OPEN' OR r.status='RESERVED' OR r.status='TREATED') ");
             } else if (mode == BalanceTypeEnum.RESERVED) {
-                strQuery.append("AND (r.status=:reserved) ");
+                strQuery.append("AND r.status='RESERVED' ");
             } else if (mode == BalanceTypeEnum.OPEN) {
-                strQuery.append("AND (r.status=:open) ");
+                strQuery.append("AND (r.status='OPEN' OR r.status='TREATED')  ");
+            }
+            if (walletId != null) {
+                strQuery.append("AND r.wallet.id=:walletId ");
+            } else {
+                strQuery.append("AND r.wallet.walletTemplate.walletType='PREPAID'");
             }
 
-            // + "AND (r.status=:open OR r.status=:treated) "
             switch (level) {
             case BILLING_ACCOUNT:
                 strQuery.append("AND r.wallet.userAccount.billingAccount=:billingAccount ");
@@ -257,13 +264,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
             TypedQuery<Amounts> query = getEntityManager().createQuery(strQuery.toString(), Amounts.class);
 
-            if (mode == BalanceTypeEnum.CURRENT) {
-                query.setParameter("open", WalletOperationStatusEnum.OPEN);
-                query.setParameter("reserved", WalletOperationStatusEnum.RESERVED);
-            } else if (mode == BalanceTypeEnum.RESERVED) {
-                query.setParameter("reserved", WalletOperationStatusEnum.RESERVED);
-            } else if (mode == BalanceTypeEnum.OPEN) {
-                query.setParameter("open", WalletOperationStatusEnum.OPEN);
+            if (walletId != null) {
+                query.setParameter("walletId", walletId);
             }
             if (startDate != null) {
                 query.setParameter("startDate", startDate);

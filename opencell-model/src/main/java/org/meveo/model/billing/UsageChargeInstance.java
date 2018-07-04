@@ -42,7 +42,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 @Table(name = "billing_usage_charge_inst")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_usage_charge_inst_seq"), })
-@NamedQueries({ @NamedQuery(name = "UsageChargeInstance.listPrepaid", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true and  c.status='ACTIVE'"),
+@NamedQueries({
         @NamedQuery(name = "UsageChargeInstance.getActiveUsageChargesBySubscriptionId", query = "SELECT c FROM UsageChargeInstance c join fetch c.serviceInstance si where c.status='ACTIVE' and c.subscription.id=:subscriptionId order by c.priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class UsageChargeInstance extends ChargeInstance {
