@@ -464,8 +464,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice createAgregatesAndInvoice(Long billingAccountId, Long billingRunId, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
 
-        log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
-            billingAccountId, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
+        log.debug("createAgregatesAndInvoice billingAccountId={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
+            billingAccountId, billingRunId, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
 
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
