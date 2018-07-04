@@ -1875,25 +1875,34 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     // String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription() == null ? "" : subCatInvoiceAgregate.getDescription();
 
                     String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
-                    if (
-                            subCatInvoiceAgregate.getInvoice() != null  &&
-                                    subCatInvoiceAgregate.getInvoice().getBillingAccount()  != null  &&
-                                    subCatInvoiceAgregate.getInvoice().getBillingAccount().getTradingLanguage()  != null  &&
-                                    subCatInvoiceAgregate.getInvoice().getBillingAccount().getTradingLanguage().getLanguageCode() != null
-                            )
-                    {
-                        String languageCode = subCatInvoiceAgregate.getInvoice().getBillingAccount().getTradingLanguage().getLanguageCode();
-                        if ( (invoiceSubCat != null) &&
-                                (invoiceSubCat.getDescriptionI18nNullSafe() != null) &&
-                                !(StringUtils.isBlank(invoiceSubCat.getDescriptionI18nNullSafe().get(languageCode)))) {
-                            // get label description by language code
-                            invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18nNullSafe().get(languageCode);
+                    Invoice invoice = subCatInvoiceAgregate.getInvoice();
+                    if (invoice != null) {
+                        BillingAccount billingAccount = invoice.getBillingAccount();
+                        if (billingAccount != null) {
+                            TradingLanguage tradingLanguage = billingAccount.getTradingLanguage();
+                            if (tradingLanguage != null
+                                    && tradingLanguage.getLanguageCode() != null) {
+                                String languageCode = tradingLanguage.getLanguageCode();
+                                
+                                if (invoiceSubCat != null) {
+                                    Map<String, String> descriptionI18nNullSafe = invoiceSubCat.getDescriptionI18nNullSafe();
+                                    if (descriptionI18nNullSafe != null &&
+                                    !(StringUtils.isBlank(descriptionI18nNullSafe.get(languageCode)))) {
+                                        // get label description by language code
+                                        invoiceSubCategoryLabel = descriptionI18nNullSafe.get(languageCode);
+                                    }
+                                }
+                            }
                         }
                     }
 
                     subCategories.appendChild(subCategory);
                     subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
-                    subCategory.setAttribute("code", invoiceSubCat.getCode());
+                    String code = "";
+                    if (invoiceSubCat != null) {
+                        code = invoiceSubCat.getCode();
+                    }
+                    subCategory.setAttribute("code", code);
                     String taxesCode = "";
                     String taxesPercent = "";
                     String sep = "";
