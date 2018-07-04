@@ -36,7 +36,7 @@ public class QueryService {
      * Execute a native select query
      *
      * @param query HQL query to execute
-     * @param alias alias name for the main entity that was used in the query.<br />
+     * @param alias alias name for the main entity that was used in the query.<br>
      *         e.g. if the query is "FROM Customer cust", then the alias should be "cust"
      * @param fields comma delimited fields. allows nested field names.
      * @param params Parameters to pass into the query
@@ -71,7 +71,7 @@ public class QueryService {
      * Execute a native select query
      *
      * @param query HQL query to execute
-     * @param alias alias name for the main entity that was used in the query.<br />
+     * @param alias alias name for the main entity that was used in the query.<br>
      *        e.g. if the query is "FROM Customer cust", then the alias should be "cust"
      * @param fields comma delimited fields. allows nested field names.
      * @param params Parameters to pass into the query
