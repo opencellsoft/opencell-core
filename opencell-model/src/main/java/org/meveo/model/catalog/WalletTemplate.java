@@ -25,6 +25,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -48,6 +50,8 @@ import org.meveo.model.billing.BillingWalletTypeEnum;
 @Table(name = "cat_wallet_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_wallet_template_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "WalletTemplate.listPrepaidBySubscription", query = "select distinct wi.walletTemplate from ChargeInstance ci JOIN ci.walletInstances wi where wi.walletTemplate.walletType='PREPAID' and ci.subscription=:subscription order by wi.walletTemplate.code") })
 public class WalletTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

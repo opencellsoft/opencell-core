@@ -111,6 +111,7 @@ public class WalletInstance extends BusinessEntity {
             this.code = walletTemplate.getCode();
             this.description = walletTemplate.getDescription();
             this.lowBalanceLevel = walletTemplate.getLowBalanceLevel();
+            this.rejectLevel = walletTemplate.getRejectLevel();
         } else {
             this.code = null;
             this.description = null;

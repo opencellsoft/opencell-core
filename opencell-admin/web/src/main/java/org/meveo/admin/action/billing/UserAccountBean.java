@@ -116,11 +116,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private WalletOperation reloadOperation;
     private String selectedWalletCode;
 
-    private Amounts currentBalance;
+    private Map<Long, Amounts> currentBalance = new HashMap<>();
 
-    private Amounts reservedBalance;
+    private Map<Long, Amounts> reservedBalance = new HashMap<>();
 
-    private Amounts openBalance;
+    private Map<Long, Amounts> openBalance = new HashMap<>();
 
     // Retrieved wallet operations to improve GUI performance for Ajax request
     private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
@@ -369,7 +369,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         String result = null;
         BigDecimal balance = walletService.getWalletBalance(wallet.getId());
         if (balance != null) {
-            result = balance.toPlainString();
+            result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
@@ -378,7 +378,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         String result = null;
         BigDecimal balance = walletService.getWalletReservedBalance(wallet.getId());
         if (balance != null) {
-            result = balance.toPlainString();
+            result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
@@ -439,24 +439,24 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     }
 
     private Amounts getCurrentBalance(WalletInstance wallet) {
-        if (currentBalance == null) {
-            currentBalance = walletReservationService.getCurrentBalance(null, null, null, null, entity, null, null, wallet.getId());
+        if (!currentBalance.containsKey(wallet.getId())) {
+            currentBalance.put(wallet.getId(), walletReservationService.getCurrentBalance(null, null, null, null, entity, null, null, wallet.getId(), null));
         }
-        return currentBalance;
+        return currentBalance.get(wallet.getId());
     }
 
     private Amounts getReservedBalance(WalletInstance wallet) {
-        if (reservedBalance == null) {
-            reservedBalance = walletReservationService.getReservedBalance(null, null, null, null, entity, null, null, wallet.getId());
+        if (!reservedBalance.containsKey(wallet.getId())) {
+            reservedBalance.put(wallet.getId(), walletReservationService.getReservedBalance(null, null, null, null, entity, null, null, wallet.getId(), null));
         }
-        return reservedBalance;
+        return reservedBalance.get(wallet.getId());
     }
 
     private Amounts getOpenBalance(WalletInstance wallet) {
-        if (openBalance == null) {
-            openBalance = walletReservationService.getOpenBalance(null, null, null, null, entity, null, null, wallet.getId());
+        if (!openBalance.containsKey(wallet.getId())) {
+            openBalance.put(wallet.getId(), walletReservationService.getOpenBalance(null, null, null, null, entity, null, null, wallet.getId(), null));
         }
-        return openBalance;
+        return openBalance.get(wallet.getId());
     }
 
     public List<SelectItem> getWalletOperationStatusList() {

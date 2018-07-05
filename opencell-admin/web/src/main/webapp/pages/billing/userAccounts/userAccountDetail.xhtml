@@ -223,10 +223,14 @@
                                         <h:outputText value="#{wallet.value.description}" />
                                     </hftl:decorateFormField>
                                     <hftl:decorateFormField label="#{messages['walletTemplate.lowBalanceLevel']}">
-                                        <h:outputText value="#{wallet.value.lowBalanceLevel}" />
+                                        <h:outputText value="#{wallet.value.lowBalanceLevel}">
+                                            <f:converter converterId="bigDecimal2DigitsConverter" />
+                                        </h:outputText>
                                     </hftl:decorateFormField>
                                     <hftl:decorateFormField label="#{messages['walletTemplate.rejectLevel']}">
-                                        <h:outputText value="#{wallet.value.rejectLevel}" />
+                                        <h:outputText value="#{wallet.value.rejectLevel}">
+                                            <f:converter converterId="bigDecimal2DigitsConverter" />
+                                        </h:outputText>
                                     </hftl:decorateFormField>
                                     <hftl:decorateFormField label="#{messages['chargeTemplate.type']}">
                                         <h:outputText value="#{wallet.value.walletTemplate.walletType}" />

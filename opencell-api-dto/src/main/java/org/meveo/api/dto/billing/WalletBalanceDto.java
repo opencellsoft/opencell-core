@@ -45,8 +45,11 @@ public class WalletBalanceDto extends BaseDto {
     /** Date period to calculate balance: to. */
     private Date endDate;
 
+    /** Wallet template code. */
+    private String walletCode;
+
     /**
-     * What amount to calculate - amount with tax if value is TRUE, amount witout tax if value is FALSE. Not used since v. 5.0.1. Wallet API returns both amounts
+     * What amount to calculate - amount with tax if value is TRUE, amount without tax if value is FALSE. Not used since v. 5.0.1. Wallet API returns both amounts
      */
     @Deprecated
     private Boolean amountWithTax;
@@ -193,5 +196,19 @@ public class WalletBalanceDto extends BaseDto {
      */
     public void setAmountWithTax(Boolean amountWithTax) {
         this.amountWithTax = amountWithTax;
+    }
+
+    /**
+     * @return Wallet template code
+     */
+    public String getWalletCode() {
+        return walletCode;
+    }
+
+    /**
+     * @param walletCode Wallet template code
+     */
+    public void setWalletCode(String walletCode) {
+        this.walletCode = walletCode;
     }
 }

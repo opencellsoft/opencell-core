@@ -157,8 +157,15 @@ public class WalletApi extends BaseApi {
             }
         }
 
+        if (!StringUtils.isBlank(calculateParameters.getWalletCode())) {
+            WalletTemplate walletTemplate = walletTemplateService.findByCode(calculateParameters.getWalletCode());
+            if (walletTemplate == null) {
+                throw new EntityDoesNotExistsException(WalletTemplate.class, calculateParameters.getWalletCode());
+            }
+        }
+
         return new AmountsDto(walletReservationService.getCurrentBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
-            calculateParameters.getEndDate(), null));
+            calculateParameters.getEndDate(), null, calculateParameters.getWalletCode()));
     }
 
     /**
@@ -220,8 +227,15 @@ public class WalletApi extends BaseApi {
             }
         }
 
+        if (!StringUtils.isBlank(calculateParameters.getWalletCode())) {
+            WalletTemplate walletTemplate = walletTemplateService.findByCode(calculateParameters.getWalletCode());
+            if (walletTemplate == null) {
+                throw new EntityDoesNotExistsException(WalletTemplate.class, calculateParameters.getWalletCode());
+            }
+        }
+
         return new AmountsDto(walletReservationService.getReservedBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
-            calculateParameters.getEndDate(), null));
+            calculateParameters.getEndDate(), null, calculateParameters.getWalletCode()));
     }
 
     /**
@@ -283,8 +297,15 @@ public class WalletApi extends BaseApi {
             }
         }
 
+        if (!StringUtils.isBlank(calculateParameters.getWalletCode())) {
+            WalletTemplate walletTemplate = walletTemplateService.findByCode(calculateParameters.getWalletCode());
+            if (walletTemplate == null) {
+                throw new EntityDoesNotExistsException(WalletTemplate.class, calculateParameters.getWalletCode());
+            }
+        }
+
         return new AmountsDto(walletReservationService.getOpenBalance(seller, customer, customerAccount, billingAccount, userAccount, calculateParameters.getStartDate(),
-            calculateParameters.getEndDate(), null));
+            calculateParameters.getEndDate(), null, calculateParameters.getWalletCode()));
     }
 
     public Long createReservation(WalletReservationDto walletReservation) throws MeveoApiException, BusinessException {
@@ -452,7 +473,7 @@ public class WalletApi extends BaseApi {
             }
 
         } else {
-            chargeInstance = chargeInstanceService.findByCodeAndSubscription(postData.getChargeInstance(), subscription);
+            chargeInstance = chargeInstanceService.findByCodeAndSubscription(postData.getChargeInstance(), subscription, null);
             if (chargeInstance == null) {
                 throw new EntityDoesNotExistsException(ChargeInstance.class, postData.getChargeInstance());
             }

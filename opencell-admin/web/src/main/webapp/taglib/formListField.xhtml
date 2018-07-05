@@ -9,6 +9,7 @@
         style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
         inputWidth="#{inputWidth}">
 
+
         <!--  As a list of values -->
         <c:if test="#{listType == 'simpleList'}">
             <p:dataTable id="#{id}" resizableColumns="true" value="#{fieldItem}" var="listElement" rowIndexVar="rowIndex">
@@ -166,7 +167,7 @@
 
             </c:if>
 			
-            <c:if test="#{!edit}">dd
+            <c:if test="#{!edit}">
                 <h:panelGroup id="#{id}" styleClass="field-value">
 					<ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
 						<c:if test="#{not empty(valueLabelField2)}">

@@ -56,7 +56,6 @@ import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
@@ -71,6 +70,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -89,6 +89,7 @@ import org.primefaces.component.datatable.DataTable;
  */
 @Named
 @ViewScoped
+@SuppressWarnings("javadoc")
 public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     private static final long serialVersionUID = 1L;
@@ -144,6 +145,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    @Inject
+    private WalletTemplateService walletTemplateService;
+
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -161,6 +165,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private boolean showApplyOneShotForm = false;
 
     private String selectedWalletTemplateCode;
+
+    private List<WalletTemplate> prepaidWalletTemplates;
 
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
@@ -277,7 +283,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
             return null;
         }
-        
+
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -295,6 +301,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         selectedWalletTemplateCode = null;
     }
 
+    
     public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
         this.oneShotChargeInstance = oneShotChargeInstanceService.refreshOrRetrieve(oneShotChargeIns);
         selectedWalletTemplate = new WalletTemplate();
@@ -821,38 +828,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
-    public List<WalletTemplate> findBySubscriptionChargeTemplate() {
-        if (oneShotChargeInstance == null || oneShotChargeInstance.getChargeTemplate() == null) {
-            return null;
+    public List<WalletTemplate> findWalletTemplatesForOneShot() {
+
+        if (prepaidWalletTemplates == null) {
+            prepaidWalletTemplates = walletTemplateService.findBySubscription(entity);
         }
 
-        List<WalletTemplate> result = new ArrayList<WalletTemplate>();
-
-        OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
-
-        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService
-            .findBySubscriptionChargeTemplate(oneShotChargeTemplate);
-
-        if (serviceChargeTemplateSubscriptions != null) {
-            for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
-                if (serviceChargeTemplateSubscription.getWalletTemplates() != null) {
-                    for (WalletTemplate walletTemplate : serviceChargeTemplateSubscription.getWalletTemplates()) {
-                        if (!result.contains(walletTemplate)) {
-                            log.debug("adding wallet={}", walletTemplate);
-                            result.add(walletTemplate);
-                        }
-                    }
-                }
-            }
-        } else {
-            // get principal
-            if (entity.getUserAccount() != null) {
-                log.debug("adding postpaid wallet={}", entity.getUserAccount().getWallet().getWalletTemplate());
-                result.add(entity.getUserAccount().getWallet().getWalletTemplate());
-            }
-        }
-
-        return result;
+        return prepaidWalletTemplates;
     }
 
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
@@ -912,6 +894,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         recurringChargeInstances = null;
         usageChargeInstances = null;
         productChargeInstances = null;
+        prepaidWalletTemplates = null;
     }
 
     public boolean filterByDate(Object value, Object filter, Locale locale) throws ParseException {
