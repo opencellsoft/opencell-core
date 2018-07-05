@@ -103,7 +103,7 @@ public class ServiceSingleton {
         if (currentNbFromCF != null) {
             sequence.setCurrentInvoiceNb(currentNbFromCF);
         } else {
-            if (invoiceType.isUseSelfSequeunce()) {
+            if (invoiceType.isUseSelfSequence()) {
                 if (sequence.getCurrentInvoiceNb() == null) {
                     sequence.setCurrentInvoiceNb(0L);
                 }

@@ -65,8 +65,8 @@ public class InvoiceTypeDto extends BusinessDto {
     /** The billing template name EL. */
     private String billingTemplateNameEL;
     
-    /** The use Self Sequeunce . */
-    private boolean useSelfSequeunce = true;
+    /** The use Self Sequence . */
+    private boolean useSelfSequence = true;
 
     /**
      * Instantiates a new invoice type dto.
@@ -99,7 +99,7 @@ public class InvoiceTypeDto extends BusinessDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
-        this.useSelfSequeunce = invoiceType.isUseSelfSequeunce();
+        this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
 
     /**
@@ -285,23 +285,23 @@ public class InvoiceTypeDto extends BusinessDto {
     
     
     /**
-     * @return the useSelfSequeunce
+     * @return the useSelfSequence
      */
-    public boolean isUseSelfSequeunce() {
-        return useSelfSequeunce;
+    public boolean isUseSelfSequence() {
+        return useSelfSequence;
     }
 
     /**
-     * @param useSelfSequeunce the useSelfSequeunce to set
+     * @param useSelfSequence the useSelfSequence to set
      */
-    public void setUseSelfSequeunce(boolean useSelfSequeunce) {
-        this.useSelfSequeunce = useSelfSequeunce;
+    public void setUseSelfSequence(boolean useSelfSequence) {
+        this.useSelfSequence = useSelfSequence;
     }
 
     @Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
                 + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" +
-                matchingAuto +", useSelfSequeunce=" + useSelfSequeunce+"]";
+                matchingAuto +", useSelfSequence=" + useSelfSequence+"]";
     }
 }

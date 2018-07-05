@@ -943,9 +943,9 @@
     
     <changeSet id="#3290_04062018" author="anasseh">
         <addColumn tableName="billing_invoice_type">
-            <column name="use_self_sequeunce" type="${type.boolean}" />
+            <column name="use_self_sequence" type="${type.boolean}" />
         </addColumn>
-         <sql>update ${db.schema.adapted}billing_invoice_type set use_self_sequeunce = 0 </sql>
+         <sql>update ${db.schema.adapted}billing_invoice_type set use_self_sequence = 0 </sql>
          <addColumn tableName="billing_invoice_configuration">
             <column name="current_invoice_nb" type="bigint" />
         </addColumn>

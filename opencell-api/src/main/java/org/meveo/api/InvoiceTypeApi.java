@@ -106,7 +106,7 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setOccTemplateNegative(occTemplateNegative);
         invoiceType.setAppliesTo(invoiceTypesToApplies);
         invoiceType.setSequence(postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto());
-        invoiceType.setUseSelfSequeunce(postData.isUseSelfSequeunce());
+        invoiceType.setUseSelfSequence(postData.isUseSelfSequence());
         if (postData.getSellerSequences() != null) {
             for (Entry<String, SequenceDto> entry : postData.getSellerSequences().entrySet()) {
                 Seller seller = sellerService.findByCode(entry.getKey());
@@ -235,7 +235,7 @@ public class InvoiceTypeApi extends BaseApi {
             invoiceType.setXmlFilenameEL(invoiceTypeDto.getXmlFilenameEL());
         }
         
-        invoiceType.setUseSelfSequeunce(invoiceTypeDto.isUseSelfSequeunce());
+        invoiceType.setUseSelfSequence(invoiceTypeDto.isUseSelfSequence());
         invoiceTypeService.update(invoiceType);
         return result;
     }
