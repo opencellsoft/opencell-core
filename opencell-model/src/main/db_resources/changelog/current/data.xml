@@ -2847,4 +2847,1212 @@ ORDER BY
         </insert>
     </changeSet>
 
+	<changeSet id="#3328_20180705" author="EdwardPLegaspi">
+		<insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-3"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="FULL_HIERARCHY"/>
+            <column name="description" value="Full hierarchy export"/>
+            <column name="category" value="customer"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="hierarchy-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="FULL_HIERARCHY_UUID"></column>
+            <column name="sql_query">
+select s.code AS "Seller code"
+	, s.description AS "Seller description"
+	, coalesce(ce.code, '') AS "Customer code"
+	, coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"
+	, coalesce(cae.code, '') AS "Customer Account code"
+	, coalesce(replace(cae.description, ',', ' '), '') AS "Customer Account description"
+	, coalesce(bae.code, '') AS "Billing Account code"
+	, coalesce(replace(bae.description, ',', ' '), '') AS "Billing Account description"
+	, coalesce(uae.code, '') AS "User Account code"
+	, coalesce(replace(uae.description, ',', ' '), '') AS "User Account description"
+	, coalesce(su.code, '') AS "Subscription code"
+	, coalesce(replace(su.description, ',', ' '), '') AS "Subscription description"
+	, coalesce(ap.acces_user_id, '') AS "Access Point id"  from  crm_seller s left
+OUTER JOIN crm_customer c  on c.seller_id = s.id left
+OUTER JOIN account_entity ce  on c.id = ce.id left
+OUTER JOIN ar_customer_account ca  on ca.customer_id = c.id left
+OUTER JOIN account_entity cae  on ca.id = cae.id left
+OUTER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id left
+OUTER JOIN account_entity bae  on ba.id = bae.id left
+OUTER JOIN billing_user_account ua  on ua.billing_account_id = ba.id left
+OUTER JOIN account_entity uae  on ua.id = uae.id left
+OUTER JOIN billing_subscription su  on su.user_account_id = ua.id left
+OUTER JOIN medina_access ap  on ap.subscription_id = su.id 
+where s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' 
+|| :SEARCH_CRITERION || '%'  or ce.code ilike '%' || :SEARCH_CRITERION 
+|| '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' 
+|| :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION 
+|| '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' 
+|| :SEARCH_CRITERION || '%'  or uae.code ilike '%' || :SEARCH_CRITERION 
+|| '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  or su.code ilike '%' 
+|| :SEARCH_CRITERION || '%'  or su.description ilike '%' || :SEARCH_CRITERION 
+|| '%'  or ap.acces_user_id ilike '%' || :SEARCH_CRITERION || '%'  
+order by s.code
+	,ce.code
+	,cae.code
+	,bae.code
+	,uae.code
+	,su.code
+	,ap.acces_user_id 
+			</column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-3"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-4"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="CUSTOMERS_PER_SELLER"/>
+            <column name="description" value="Customers per seller"/>
+            <column name="category" value="customer"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="customers_per_seller-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="CUSTOMERS_PER_SELLER_UUID"></column>
+            <column name="sql_query">
+select s.code AS "Seller code"
+	, s.description AS "Seller description"
+	, coalesce(ce.code, '') AS "Customer code"
+	, coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"  from  crm_seller s left
+OUTER JOIN crm_customer c  on c.seller_id = s.id left
+OUTER JOIN account_entity ce  on c.id = ce.id where(  s.code ilike '%' || :SEARCH_CRITERION 
+|| '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' 
+|| :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+and (  s.code ilike '%' || :SELLER || '%'  or s.description ilike '%' || :SELLER || '%'  )  
+order by s.code
+	,ce.code 
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-4"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-4"></column>
+            <column name="params_key" value="SELLER"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+		<!-- Invoiced -->
+		<insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-5"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICED_GLOBAL"/>
+            <column name="description" value="Total invoiced amount per month for interval (ex: last 12 months = -12 month)"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoiced_global-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICED_GLOBAL_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+	, it.code AS "Invoice type code"
+	, it.description AS "Invoice type description"
+	, trim(to_char(sum(i.amount_without_tax), '9999999990.00')) AS "Amount without tax"
+	, trim(to_char(sum(i.amount_with_tax), '9999999990.00')) AS "Amount with tax"  from billing_invoice i inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+group by date_trunc('month', i.invoice_date)
+	, it.code
+	, it.description order by date_trunc('month', i.invoice_date) DESC
+	, it.code DESC
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-5"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-6"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICED_BA_HIERARCHY"/>
+            <column name="description" value="Invoiced per Billing Account with hierarchy per month for interval, global filter"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoiced_per_billing_account_hierarchy-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICED_BA_HIERARCHY_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+	, s.code AS "Seller code"
+	, s.description AS "Seller description"
+	, ce.code AS "Customer code"
+	, ce.description AS "Customer description"
+	, cae.code AS "Customer Account code"
+	, cae.description AS "Customer Account description"
+	, bae.code AS "Billing Account code"
+	, bae.description AS "Billing Account description"
+	, it.code AS "Invoice type code"
+	, it.description AS "Invoice type description"
+	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s inner
+INNER JOIN crm_customer c  on c.seller_id = s.id inner
+INNER JOIN account_entity ce  on c.id = ce.id inner
+INNER JOIN ar_customer_account ca  on ca.customer_id = c.id inner
+INNER JOIN account_entity cae  on ca.id = cae.id inner
+INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id inner
+INNER JOIN account_entity bae  on ba.id = bae.id inner
+INNER JOIN billing_invoice i  on i.billing_account_id = ba.id inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  )  group by date_trunc('month', i.invoice_date)
+	, it.code
+	, it.description
+	, s.code
+	, s.description
+	, ce.code
+	, ce.description
+	, cae.code
+	, cae.description
+	, bae.code
+	, bae.description order by date_trunc('month', i.invoice_date) DESC
+	, it.code DESC
+	, s.code
+	, ce.code
+	, cae.code
+	, bae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-6"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-6"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-7"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICED_BA"/>
+            <column name="description" value="Invoiced per Billing Account per month for interval, global filter"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoiced_per_billing_account-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICED_BA_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+	, bae.code AS "Billing Account code"
+	, bae.description AS "Billing Account description"
+	, it.code AS "Invoice type code"
+	, it.description AS "Invoice type description"
+	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s inner
+INNER JOIN crm_customer c  on c.seller_id = s.id inner
+INNER JOIN ar_customer_account ca  on ca.customer_id = c.id inner
+INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id inner
+INNER JOIN account_entity bae  on ba.id = bae.id inner
+INNER JOIN billing_invoice i  on i.billing_account_id = ba.id inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, it.code
+	, it.description
+	, bae.code
+	, bae.description order by date_trunc('month', i.invoice_date) DESC
+	, it.code DESC
+	, bae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-7"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-7"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-8"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICED_CA"/>
+            <column name="description" value="Invoiced per Customer Account per month for interval, global filter"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoiced_per_customer_account-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICED_CA_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+	, cae.code AS "Customer Account code"
+	, cae.description AS "Customer Account description"
+	, it.code AS "Invoice type code"
+	, it.description AS "Invoice type description"
+	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s inner
+INNER JOIN crm_customer c  on c.seller_id = s.id inner
+INNER JOIN ar_customer_account ca  on ca.customer_id = c.id inner
+INNER JOIN account_entity cae  on ca.id = cae.id inner
+INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id inner
+INNER JOIN billing_invoice i  on i.billing_account_id = ba.id inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, it.code
+	, it.description
+	, cae.code
+	, cae.description order by date_trunc('month', i.invoice_date) DESC
+	, it.code DESC
+	, cae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-8"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-8"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-9"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICED_C"/>
+            <column name="description" value="Invoiced per Customer per month for interval, global filter"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoiced_per_customer-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICED_C_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+	, ce.code AS "Customer code"
+	, ce.description AS "Customer description"
+	, it.code AS "Invoice type code"
+	, it.description AS "Invoice type description"
+	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s inner
+INNER JOIN crm_customer c  on c.seller_id = s.id inner
+INNER JOIN account_entity ce  on c.id = ce.id inner
+INNER JOIN ar_customer_account ca  on ca.customer_id = c.id inner
+INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id inner
+INNER JOIN billing_invoice i  on i.billing_account_id = ba.id inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, it.code
+	, it.description
+	, ce.code
+	, ce.description order by date_trunc('month', i.invoice_date) DESC
+	, it.code DESC
+	, ce.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-9"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-9"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-10"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICED_S"/>
+            <column name="description" value="Invoiced per Seller per month for interval, global filter"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoiced_per_seller-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICED_S_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS  Month 
+	, s.code AS  Seller code 
+	, s.description AS  Seller description 
+	, it.code AS  Invoice type code 
+	, it.description AS  Invoice type description 
+	, to_char(sum(i.amount_without_tax), '9999999990.00') AS  Amount without tax 
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS  Amount with tax   from crm_seller s inner
+INNER JOIN crm_customer c  on c.seller_id = s.id inner
+INNER JOIN ar_customer_account ca  on ca.customer_id = c.id inner
+INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id inner
+INNER JOIN billing_invoice i  on i.billing_account_id = ba.id inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, it.code
+	, it.description
+	, s.code
+	, s.description order by date_trunc('month', i.invoice_date) DESC
+	, it.code DESC
+	, s.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-10"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-10"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-11"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICED_OF"/>
+            <column name="description" value="Invoiced per Offer per month for interval, global filter"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoiced_per_offer-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICED_OF_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+	, of.code AS "Offer code"
+	, of.description AS "Offer description"
+	, it.code AS "Invoice type code"
+	, it.description AS "Invoice type description"
+	, to_char(sum(rt.amount_without_tax), '9999999990.00') AS "Amount without tax"
+	, to_char(sum(rt.amount_with_tax), '9999999990.00') AS "Amount with tax"  from cat_offer_template of inner
+INNER JOIN billing_wallet_operation wo  on wo.offer_code = OF.code inner
+INNER JOIN billing_rated_transaction rt  on rt.wallet_operation_id = wo.id inner
+INNER JOIN billing_invoice i  on i.id = rt.invoice_id inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, it.code
+	, it.description
+	, of.code
+	, of.description order by date_trunc('month', i.invoice_date) DESC
+	, it.code DESC
+	, of.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-11"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-11"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+		<!-- Recorded Invoice -->
+		<insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-12"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="RECORDED_GLOBAL"/>
+            <column name="description" value="Recorded invoices per month for interval, global filter"/>
+            <column name="category" value="recorded"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="recorded_global-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="RECORDED_GLOBAL_UUID"></column>
+            <column name="sql_query">
+SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount DEBIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'CREDIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount CREDIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE - ao.amount
+				END), '99999999990.00') AS "Balance"
+FROM ar_account_operation ao
+WHERE ao.invoice_date IS NOT NULL
+	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+GROUP BY date_trunc('month', ao.invoice_date)
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-12"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-13"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="RECORDED_BA_HIERARCHY"/>
+            <column name="description" value="Recorded per Billing Account with Hierarchy per month for interval, global filter"/>
+            <column name="category" value="recorded"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="recorded_per_billing_account_hierarchy-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="RECORDED_BA_HIERARCHY_UUID"></column>
+            <column name="sql_query">
+SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+	,s.code AS "Seller code"
+	,s.description AS "Seller description"
+	,ce.code AS "Customer code"
+	,ce.description AS "Customer description"
+	,cae.code AS "Customer Account code"
+	,cae.description AS "Customer Account description"
+	,bae.code AS "Billing Account code"
+	,bae.description AS "Billing Account description"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount DEBIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'CREDIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount CREDIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE - ao.amount
+				END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+INNER JOIN crm_customer c ON c.seller_id = s.id
+INNER JOIN account_entity ce ON c.id = ce.id
+INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+INNER JOIN account_entity cae ON ca.id = cae.id
+INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
+INNER JOIN account_entity bae ON ba.id = bae.id
+INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
+INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+	AND ao.reference = i.invoice_number
+	AND ao.invoice_date = i.invoice_date
+	AND ao.amount = abs(i.amount_with_tax)
+WHERE ao.invoice_date IS NOT NULL
+	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+	AND (
+		s.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR s.description ilike '%' || :SEARCH_CRITERION || '%'
+		OR ce.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR ce.description ilike '%' || :SEARCH_CRITERION || '%'
+		OR cae.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR cae.description ilike '%' || :SEARCH_CRITERION || '%'
+		OR bae.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR bae.description ilike '%' || :SEARCH_CRITERION || '%'
+		)
+GROUP BY date_trunc('month', ao.invoice_date)
+	,s.code
+	,s.description
+	,ce.code
+	,ce.description
+	,cae.code
+	,cae.description
+	,bae.code
+	,bae.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+	,s.code
+	,ce.code
+	,cae.code
+	,bae.code
+            </column>
+        </insert>
+        
+         <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-13"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-13"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-14"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="RECORDED_BA"/>
+            <column name="description" value="Recorded per Billing Account per month for interval, global filter"/>
+            <column name="category" value="recorded"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="recorded_per_billing_account-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="RECORDED_BA_UUID"></column>
+            <column name="sql_query">
+SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+	,bae.code AS "Billing Account code"
+	,bae.description AS "Billing Account description"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount DEBIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'CREDIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount CREDIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE - ao.amount
+				END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+INNER JOIN crm_customer c ON c.seller_id = s.id
+INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
+INNER JOIN account_entity bae ON ba.id = bae.id
+INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
+INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+	AND ao.reference = i.invoice_number
+	AND ao.invoice_date = i.invoice_date
+	AND ao.amount = abs(i.amount_with_tax)
+WHERE ao.invoice_date IS NOT NULL
+	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+	AND (
+		bae.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR bae.description ilike '%' || :SEARCH_CRITERION || '%'
+		)
+GROUP BY date_trunc('month', ao.invoice_date)
+	,bae.code
+	,bae.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+	,bae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-14"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-14"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-15"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="RECORDED_CA"/>
+            <column name="description" value="Recorded per Customer Account per month for interval, global filter"/>
+            <column name="category" value="recorded"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="recorded_per_customer_account-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="RECORDED_CA_UUID"></column>
+            <column name="sql_query">
+SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+	,cae.code AS "Customer Account code"
+	,cae.description AS "Customer Account description"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount DEBIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'CREDIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount CREDIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE - ao.amount
+				END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+INNER JOIN crm_customer c ON c.seller_id = s.id
+INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+INNER JOIN account_entity cae ON ca.id = cae.id
+INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+WHERE ao.invoice_date IS NOT NULL
+	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+	AND (
+		cae.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR cae.description ilike '%' || :SEARCH_CRITERION || '%'
+		)
+GROUP BY date_trunc('month', ao.invoice_date)
+	,cae.code
+	,cae.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+	,cae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-15"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-15"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-16"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="RECORDED_C"/>
+            <column name="description" value="Recorded per Customer per month for interval, global filter"/>
+            <column name="category" value="recorded"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="recorded_per_customer-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="RECORDED_C_UUID"></column>
+            <column name="sql_query">
+SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+	,ce.code AS "Customer code"
+	,ce.description AS "Customer description"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount DEBIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'CREDIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount CREDIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE - ao.amount
+				END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+INNER JOIN crm_customer c ON c.seller_id = s.id
+INNER JOIN account_entity ce ON c.id = ce.id
+INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+WHERE ao.invoice_date IS NOT NULL
+	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+	AND (
+		ce.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR ce.description ilike '%' || :SEARCH_CRITERION || '%'
+		)
+GROUP BY date_trunc('month', ao.invoice_date)
+	,ce.code
+	,ce.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+	,ce.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-16"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-16"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-17"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="RECORDED_S"/>
+            <column name="description" value="Recorded per Seller per month for interval, global filter"/>
+            <column name="category" value="recorded"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="recorded_per_seller-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="RECORDED_S_UUID"></column>
+            <column name="sql_query">
+SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(date_trunc('month', ao.invoice_date), ' YYYY') AS "Month"
+	,s.code AS "Seller code"
+	,s.description AS "Seller description"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount DEBIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'CREDIT'
+					THEN ao.amount
+				ELSE 0
+				END), '99999999990.00') AS "Amount CREDIT"
+	,to_char(sum(CASE 
+				WHEN ao.transaction_category = 'DEBIT'
+					THEN ao.amount
+				ELSE - ao.amount
+				END), '99999999990.00') AS "Balance"
+FROM crm_seller s
+INNER JOIN crm_customer c ON c.seller_id = s.id
+INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
+INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+WHERE ao.invoice_date IS NOT NULL
+	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+	AND (
+		s.code ilike '%' || :SEARCH_CRITERION || '%'
+		OR s.description ilike '%' || :SEARCH_CRITERION || '%'
+		)
+GROUP BY date_trunc('month', ao.invoice_date)
+	,s.code
+	,s.description
+ORDER BY date_trunc('month', ao.invoice_date) DESC
+	,s.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-17"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-17"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+
+		<!-- UnBilled -->
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-18"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="UNBILLED_UA_HIERARCHY"/>
+            <column name="description" value="Unbilled per User Account with Hierarchy, global filter"/>
+            <column name="category" value="unbilled"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="unbilled_per_user_account_hierarchy-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="UNBILLED_UA_HIERARCHY_UUID"></column>
+            <column name="sql_query">
+select s.code AS "Seller code"
+	, s.description AS "Seller description"
+	, ce.code AS "Customer code"
+	, ce.description AS "Customer description"
+	, cae.code AS "Customer Account code"
+	, cae.description AS "Customer Account description"
+	, bae.code AS "Billing Account code"
+	, bae.description AS "Billing Account description"
+	, uae.code AS "User Account code"
+	, uae.description AS "User Account description"
+	, count(DISTINCT wo.id) AS "Transaction count"
+	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo inner
+INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id inner
+INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id inner
+INNER JOIN account_entity uae  on ua.id = uae.id inner
+INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id inner
+INNER JOIN account_entity bae  on ba.id = bae.id inner
+INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id inner
+INNER JOIN account_entity cae  on ca.id = cae.id inner
+INNER JOIN crm_customer c  on c.id = ca.customer_id inner
+INNER JOIN account_entity ce  on c.id = ce.id inner
+INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  or uae.code ilike '%' || :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by s.code
+	, s.description
+	, ce.code
+	, ce.description
+	, cae.code
+	, cae.description
+	, bae.code
+	, bae.description
+	, uae.code
+	, uae.description order by s.code
+	, ce.code
+	, cae.code
+	, bae.code
+	, uae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-18"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-19"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="UNBILLED_UA"/>
+            <column name="description" value="Unbilled per User Account, global filter"/>
+            <column name="category" value="unbilled"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="unbilled_per_user_account-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="UNBILLED_UA_UUID"></column>
+            <column name="sql_query">
+select uae.code AS "User Account code"
+	, uae.description AS "User Account description"
+	, count(DISTINCT wo.id) AS "Transaction count"
+	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo inner
+INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id inner
+INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id inner
+INNER JOIN account_entity uae  on ua.id = uae.id inner
+INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id inner
+INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id inner
+INNER JOIN crm_customer c  on c.id = ca.customer_id inner
+INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   and EXISTS (   select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id   and rt.STATUS = 'OPEN'   )  )  )  and(  uae.code ilike '%' || :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by uae.code
+	, uae.description order by uae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-19"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-20"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="UNBILLED_BA"/>
+            <column name="description" value="Unbilled per Billing Account, global filter"/>
+            <column name="category" value="unbilled"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="unbilled_per_billing_account-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="UNBILLED_BA_UUID"></column>
+            <column name="sql_query">
+select bae.code AS "Billing Account code"
+	, bae.description AS "Billing Account description"
+	, count(DISTINCT wo.id) AS "Transaction count"
+	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo inner
+INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id inner
+INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id inner
+INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id inner
+INNER JOIN account_entity bae  on ba.id = bae.id inner
+INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id inner
+INNER JOIN crm_customer c  on c.id = ca.customer_id inner
+INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  and(  bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by bae.code
+	, bae.description order by bae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-20"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-21"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="UNBILLED_CA"/>
+            <column name="description" value="Unbilled per Customer Account, global filter"/>
+            <column name="category" value="unbilled"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="unbilled_per_customer_account-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="UNBILLED_CA_UUID"></column>
+            <column name="sql_query">
+select cae.code AS "Customer Account code"
+	, cae.description AS "Customer Account description"
+	, count(DISTINCT wo.id) AS "Transaction count"
+	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo inner
+INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id inner
+INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id inner
+INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id inner
+INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id inner
+INNER JOIN account_entity cae  on ca.id = cae.id inner
+INNER JOIN crm_customer c  on c.id = ca.customer_id inner
+INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  and(  cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by cae.code
+	, cae.description order by cae.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-21"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-22"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="UNBILLED_C"/>
+            <column name="description" value="Unbilled per Customer, global filter"/>
+            <column name="category" value="unbilled"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="unbilled_per_customer-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="UNBILLED_C_UUID"></column>
+            <column name="sql_query">
+select ce.code AS "Customer code"
+	, ce.description AS "Customer description"
+	, count(DISTINCT wo.id) AS "Transaction count"
+	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo inner
+INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id inner
+INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id inner
+INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id inner
+INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id inner
+INNER JOIN crm_customer c  on c.id = ca.customer_id inner
+INNER JOIN account_entity ce  on c.id = ce.id inner
+INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   and EXISTS (   select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id   and rt.STATUS = 'OPEN'   )  )  )  and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by ce.code
+	, ce.description order by ce.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-22"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-23"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="UNBILLED_S"/>
+            <column name="description" value="Unbilled per Seller, global filter"/>
+            <column name="category" value="unbilled"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="unbilled_per_seller-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="UNBILLED_S_UUID"></column>
+            <column name="sql_query">
+select s.code AS "Seller code"
+	, s.description AS "Seller description"
+	, count(DISTINCT wo.id) AS "Transaction count"
+	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo inner
+INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id inner
+INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id inner
+INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id inner
+INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id inner
+INNER JOIN crm_customer c  on c.id = ca.customer_id inner
+INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by s.code
+	, s.description order by s.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-23"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-24"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="UNBILLED_OF"/>
+            <column name="description" value="Unbilled per Offer, global filter"/>
+            <column name="category" value="unbilled"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="unbilled_per_offer-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="UNBILLED_OF_UUID"></column>
+            <column name="sql_query">
+select of.code AS "Offer code"
+	, of.description AS "Offer description"
+	, count(DISTINCT wo.id) AS "Transaction count"
+	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  cat_offer_template of inner
+INNER JOIN billing_wallet_operation wo  on wo.offer_code = OF.code where  (  wo.STATUS = 'OPEN'  or ( wo.STATUS = 'TREATED' and EXISTS ( select 1  from billing_rated_transaction rt  where rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' )  )  )  and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by of.code
+	, of.description order by of.code
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-24"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+		<!-- MISC -->
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-25"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="INVOICES"/>
+            <column name="description" value="Invoices per month"/>
+            <column name="category" value="invoiced"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="invoices-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="INVOICES_UUID"></column>
+            <column name="sql_query">
+select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(date_trunc('month', i.invoice_date), ' YYYY') AS "Month"
+	, to_char(i.invoice_date, 'YYYY-MM-DD') AS "Invoice date"
+	, i.invoice_number AS "Invoice number"
+	, to_char(i.amount_without_tax, '9999999990.00') AS "Amount without tax"
+	, to_char(i.amount_with_tax, '9999999990.00') AS "Amount with tax"
+	, it.code AS "Invoice type code"
+	, it.description AS "Invoice type description"
+	, s.code AS "Seller code"
+	, s.description AS "Seller description"
+	, ce.code AS "Customer code"
+	, ce.description AS "Customer description"
+	, cae.code AS "Customer Account code"
+	, cae.description AS "Customer Account description"
+	, bae.code AS "Billing Account code"
+	, bae.description AS "Billing Account description"  from crm_seller s inner
+INNER JOIN crm_customer c  on c.seller_id = s.id inner
+INNER JOIN account_entity ce  on c.id = ce.id inner
+INNER JOIN ar_customer_account ca  on ca.customer_id = c.id inner
+INNER JOIN account_entity cae  on ca.id = cae.id inner
+INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id inner
+INNER JOIN account_entity bae  on ba.id = bae.id inner
+INNER JOIN billing_invoice i  on i.billing_account_id = ba.id inner
+INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  order by date_trunc('month', i.invoice_date) DESC
+	, i.invoice_date DESC
+	, it.code
+	, i.invoice_number
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-25"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-25"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract">
+            <column name="id" valueNumeric="-26"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="code" value="EDR"/>
+            <column name="description" value="EDR by status, global filter"/>
+            <column name="category" value="edr"></column>
+            <column name="script_type" value="SQL"></column>
+            <column name="filename_format" value="edr_by_status-[yyyyMMdd].csv"></column>
+            <column name="result_type" value="CSV"></column>
+            <column name="uuid" value="EDR_UUID"></column>
+            <column name="sql_query">
+SELECT  edr.id AS "Id"
+	, edr.STATUS AS "Status"
+	, edr.reject_reason AS "Rejection reason"
+	, edr.access_code AS "Access code"
+	, su.code AS "Subscription code"
+	, of.code AS "Offer code"
+	, edr.event_date AS "Event date"
+	, edr.origin_batch AS "Origin batch"
+	, edr.origin_record AS "Origin record"
+	, edr.quantity AS "Quantity"
+	, edr.parameter_1 AS "Param S1"
+	, edr.parameter_2 AS "Param S2"
+	, edr.parameter_3 AS "Param S3"
+	, edr.parameter_4 AS "Param S4"
+	, edr.parameter_5 AS "Param S5"
+	, edr.parameter_6 AS "Param S6"
+	, edr.parameter_7 AS "Param S7"
+	, edr.parameter_8 AS "Param S8"
+	, edr.parameter_9 AS "Param S9"
+	, edr.date_parameter_1 AS "Param D1"
+	, edr.date_parameter_2 AS "Param D2"
+	, edr.date_parameter_3 AS "Param D3"
+	, edr.date_parameter_4 AS "Param D4"
+	, edr.date_parameter_5 AS "Param D5"
+	, edr.decimal_parameter_1 AS "Param N1"
+	, edr.decimal_parameter_2 AS "Param N2"
+	, edr.decimal_parameter_3 AS "Param N3"
+	, edr.decimal_parameter_4 AS "Param N4"
+	, edr.decimal_parameter_5 AS "Param N5"  from rating_edr edr inner
+INNER JOIN billing_subscription su  on su.id = edr.subscription_id inner
+INNER JOIN cat_offer_template of  on OF.id = su.offer_id where edr.event_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and edr.STATUS ilike '%' || :EDR_STATUS || '%'  and(  su.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.code ilike '%' || :SEARCH_CRITERION || '%'  or edr.access_code ilike '%' || :SEARCH_CRITERION || '%'  or edr.reject_reason ilike '%' || :SEARCH_CRITERION || '%'  or edr.origin_batch ilike '%' || :SEARCH_CRITERION || '%'  or edr.origin_record ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_1 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_2 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_3 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_4 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_5 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_6 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_7 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_8 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_9 ilike '%' || :SEARCH_CRITERION || '%' 
+		 )  order by edr.STATUS
+	, edr.id DESC
+            </column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-26"></column>
+            <column name="params_key" value="SEARCH_CRITERION"></column>
+            <column name="params" value="%"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-26"></column>
+            <column name="params_key" value="MONTH_INTERVAL"></column>
+            <column name="params" value="12"></column>
+        </insert>
+        
+        <insert tableName="dwh_report_extract_params">
+            <column name="reportextract_id" value="-26"></column>
+            <column name="params_key" value="EDR_STATUS"></column>
+            <column name="params" value="%"></column>
+        </insert>
+	</changeSet>
+
 </databaseChangeLog>
