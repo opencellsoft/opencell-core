@@ -157,7 +157,7 @@ public class SubscriptionApi extends BaseApi {
      * @param postData The subscription dto
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
-     * 
+     *
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -243,7 +243,7 @@ public class SubscriptionApi extends BaseApi {
      * @param postData subscription Dto
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
-     * 
+     *
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -906,9 +906,8 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
     public SubscriptionsListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
-        boolean inherit = pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("inheritedCF");
         boolean merge = mergedCF != null && mergedCF;
-        return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(inherit, merge));
+        return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
     }
 
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
