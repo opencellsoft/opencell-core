@@ -22,7 +22,6 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -294,12 +293,12 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
             oldValue = balanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
             newValue = oldValue.add(op.getAmountWithTax());
 
-            log.debug("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel());
+            log.debug("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{} rejectLevel: {}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel(), op.getWallet().getRejectLevel());
 
             balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, newValue);
 
             if (op.getWallet().getLowBalanceLevel() != null) {
-                if (op.getWallet().getLowBalanceLevel().compareTo(newValue) >= 0 && op.getWallet().getLowBalanceLevel().compareTo(oldValue) < 0) {
+                if (op.getWallet().getLowBalanceLevel().compareTo(newValue) <= 0 && op.getWallet().getLowBalanceLevel().compareTo(oldValue) > 0) {
                     lowBalanceEventProducer.fire(op.getWallet());
                 }
             }

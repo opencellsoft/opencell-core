@@ -435,7 +435,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+        log.debug("start of create {}", entity.getClass().getSimpleName());
 
         if (entity instanceof ISearchable) {
             validateCode((ISearchable) entity);
