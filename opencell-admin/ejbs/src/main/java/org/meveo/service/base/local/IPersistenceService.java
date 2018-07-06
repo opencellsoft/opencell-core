@@ -230,4 +230,6 @@ public interface IPersistenceService<E extends IEntity> {
     public EntityManager getEntityManager();
 
     public Set<E> refreshOrRetrieve(Set<E> entities);
+    
+	void remove(Class parentClass, Object parentId);
 }

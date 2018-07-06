@@ -87,6 +87,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+    
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
 
     public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
         log.debug("start generatePreInvoicingReports.......");
@@ -409,7 +412,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void cleanBillingRun(BillingRun billingRun) {
+    public void cleanBillingRun(BillingRun billingRun) throws BusinessException {
         long start = System.currentTimeMillis();
         Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
                 + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
@@ -419,14 +422,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         log.info("> cleanBillingRun >> Update rated transaction > {}", System.currentTimeMillis() - start);
 
-        Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        Query queryAgregate = getEntityManager().createQuery("SELECT id from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryAgregate.setParameter("billingRun", billingRun);
 
-        List<InvoiceAgregate> invoiceAgregates = (List<InvoiceAgregate>) queryAgregate.getResultList();
+        List<Long> invoiceAgregates = (List<Long>) queryAgregate.getResultList();
         log.info("> cleanBillingRun >> Collect Invoice Aggregates > {}", System.currentTimeMillis() - start);
 
-        for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-            getEntityManager().remove(invoiceAgregate);
+        invoiceAgregateService.setInvoiceToNull(invoiceAgregates);
+        for (Long invoiceAgregate : invoiceAgregates) {
+            remove(InvoiceAgregate.class, invoiceAgregate);
         }
         log.info("> cleanBillingRun >> Invoice Aggregated will be Removed  > {}", System.currentTimeMillis() - start);
         getEntityManager().flush();
