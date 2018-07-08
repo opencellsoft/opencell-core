@@ -428,8 +428,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<Long> invoiceAgregates = (List<Long>) queryAgregate.getResultList();
         log.info("> cleanBillingRun >> Collect Invoice Aggregates > {}", System.currentTimeMillis() - start);
 
-        invoiceAgregateService.setInvoiceToNull(invoiceAgregates);
         for (Long invoiceAgregate : invoiceAgregates) {
+        	invoiceAgregateService.setInvoiceToNull(invoiceAgregate);
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
         log.info("> cleanBillingRun >> Invoice Aggregated will be Removed  > {}", System.currentTimeMillis() - start);

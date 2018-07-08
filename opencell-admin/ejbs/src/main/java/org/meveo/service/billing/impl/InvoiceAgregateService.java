@@ -102,4 +102,12 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
          query.executeUpdate();
 	}
 	
+	public void setInvoiceToNull(Long id) {
+		 String stringQuery = "UPDATE InvoiceAgregate SET invoice=null WHERE id=:id";
+
+        Query query = getEntityManager().createQuery(stringQuery);
+        query.setParameter("id", id);
+        query.executeUpdate();
+	}
+	
 }
