@@ -76,7 +76,7 @@ import org.primefaces.model.SortOrder;
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.1 
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -526,15 +526,17 @@ public class InvoiceApi extends BaseApi {
                 generateInvoiceRequestDto.setGenerateAO(Boolean.FALSE);
             }
         }
-
+        
         boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
                 || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-        Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),
-            generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft, produceXml, producePdf, generateAO);
-
+        
+        Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
+        this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+        invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+        
         GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
         if (isDraft) {
             invoiceService.cancelInvoice(invoice);
@@ -542,7 +544,7 @@ public class InvoiceApi extends BaseApi {
 
         return generateInvoiceResultDto;
     }
-
+    
     public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf) throws BusinessException {
         GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto();
         dto.setInvoiceId(invoice.getId());
