@@ -1167,4 +1167,21 @@
     <changeSet id="#3064_20180328" author="anasseh">
         <modifyDataType tableName="rating_edr" columnName="reject_reason" newDataType="text" />        
     </changeSet> 
+    
+    <changeSet id="#3290_04062018" author="anasseh">
+        <addColumn tableName="billing_invoice_type">
+            <column name="use_self_sequence" type="${type.boolean}" />
+        </addColumn>
+         <sql>update ${db.schema.adapted}billing_invoice_type set use_self_sequence = 0 </sql>
+         <addColumn tableName="billing_invoice_configuration">
+            <column name="current_invoice_nb" type="bigint" />
+        </addColumn>
+       <createTable tableName="temp_to_delete">
+            <column name="max_id" type="bigint" />
+        </createTable>
+         <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_invoice_type)); </sql>
+         <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_seq_invtyp_sell)); </sql>
+         <sql>update ${db.schema.adapted}billing_invoice_configuration set current_invoice_nb = (select max(max_id) from temp_to_delete);</sql>
+         <dropTable tableName="temp_to_delete"/>
+    </changeSet>    
 </databaseChangeLog>

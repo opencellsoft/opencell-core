@@ -105,13 +105,25 @@ public class ServiceSingleton {
         if (currentNbFromCF != null) {
             sequence.setCurrentInvoiceNb(currentNbFromCF);
         } else {
-            if (sequence.getCurrentInvoiceNb() == null) {
-                sequence.setCurrentInvoiceNb(0L);
+            if (invoiceType.isUseSelfSequence()) {
+                if (sequence.getCurrentInvoiceNb() == null) {
+                    sequence.setCurrentInvoiceNb(0L);
+                }
+                previousInvoiceNb = sequence.getCurrentInvoiceNb();
+                sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
+                invoiceType = invoiceTypeService.update(invoiceType);
+            } else {
+                Sequence sequenceGlobal = new Sequence();
+                sequenceGlobal.setPrefixEL(sequence.getPrefixEL());
+                sequenceGlobal.setSequenceSize(sequence.getSequenceSize());               
+                
+                previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
+                sequenceGlobal.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
+                sequenceGlobal.setPreviousInvoiceNb(previousInvoiceNb);
+                invoiceTypeService.setCurrentGlobalInvoiceBb(previousInvoiceNb + incrementBy);
+                return sequenceGlobal;
             }
-            previousInvoiceNb = sequence.getCurrentInvoiceNb();
-            sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
         }
-        invoiceType = invoiceTypeService.update(invoiceType);
 
         // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
