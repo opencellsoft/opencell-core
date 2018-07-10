@@ -2,7 +2,14 @@ package org.meveo.model.crm;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
@@ -108,11 +115,6 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
             name = "crm_custom_field_tmpl_val_pos",
             joinColumns = { @JoinColumn(name = "customfieldtemplate_id") }
     )
-    @AttributeOverrides({
-            @AttributeOverride(name = "key", column = @Column(name = "key", nullable = false, length = 50)),
-            @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 255)),
-            @AttributeOverride(name = "gui_position", column = @Column(name = "gui_position", nullable = false, length = 50))
-    })
     private List<OrderedValue> listOrderedValues = new ArrayList<OrderedValue>();
 
 

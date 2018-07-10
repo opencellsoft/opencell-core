@@ -36,22 +36,24 @@ public class OrderedValue implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-
+    @Column(name = "gui_position", nullable = false, length = 50)
     @Size(max = 50)
-    protected String gui_position;
+    protected String guiPosition;
 
+    @Column(name = "key", nullable = false, length = 50)
     @Size(max = 50)
     protected String key;
 
+    @Column(name = "label", nullable = false, length = 255)
     @Size(max = 255)
     protected String label;
 
-    public String getGui_position() {
-        return gui_position;
+    public String getGuiPosition() {
+        return guiPosition;
     }
 
-    public void setGui_position(String gui_position) {
-        this.gui_position = gui_position;
+    public void setGuiPosition(String guiPosition) {
+        this.guiPosition = guiPosition;
     }
 
     public String getKey() {

@@ -196,7 +196,7 @@ public abstract class UpdateMapTypeFieldBean<T extends IEntity> extends BaseBean
                     OrderedValue orderedValue = new OrderedValue();
                     orderedValue.setKey(valueInfo.get("key"));
                     orderedValue.setLabel(valueInfo.get("value") == null ? "" : valueInfo.get("value"));
-                    orderedValue.setGui_position(String.valueOf(index));
+                    orderedValue.setGuiPosition(String.valueOf(index));
                     entityField.add(index, orderedValue);
                     index++;
                 }
