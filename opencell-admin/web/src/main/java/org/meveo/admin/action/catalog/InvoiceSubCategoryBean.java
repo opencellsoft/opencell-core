@@ -25,14 +25,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.shared.DateUtils;
@@ -83,7 +81,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     }
 
     public String saveInvoiceSubCategoryCountry() {
-        log.info("saveOneShotChargeIns getObjectId={}", getObjectId());
+        log.info("saveInvoiceSubCategoryCountry getObjectId={}", getObjectId());
 
         try {
             if (invoiceSubcategoryCountry != null) {
@@ -92,6 +90,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 
                 if (invoiceSubcategoryCountry.getId() != null) {
                     invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
+                    entity = invoiceSubCategoryService.refreshOrRetrieve(entity);
                     messages.info(new BundleKey("messages", "update.successful"));
                 } else {
                     invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
@@ -147,7 +146,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     }
 
     public void editInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-        this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
+        this.invoiceSubcategoryCountry = invoiceSubCategoryCountryService.refreshOrRetrieve(invoiceSubcategoryCountry);
     }
 
     /**
