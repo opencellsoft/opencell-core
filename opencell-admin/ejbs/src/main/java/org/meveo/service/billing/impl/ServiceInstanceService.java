@@ -823,4 +823,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return ids;
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<ServiceInstance> findBySubscription(Subscription s) {
+		QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "si");
+		qb.addCriterionEntity("subscription", s);
+
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
 }
