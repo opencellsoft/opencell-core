@@ -50,6 +50,7 @@ import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.service.ServiceModelScriptService;
@@ -106,6 +107,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private OrderHistoryService orderHistoryService;
+    
+    @Inject
+    private  RecurringChargeTemplateService recurringChargeTemplateService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -517,7 +521,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
             Date storedNextChargeDate = recurringChargeInstance.getNextChargeDate();
 
-            if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null && !recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
+            boolean isApplyInAdvance = (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()  == null) ? false : recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance();
+            if(!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
+                isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), serviceInstance, recurringChargeInstance.getRecurringChargeTemplate()); 
+            }
+            if (!isApplyInAdvance) {
                 nextChargeDate = recurringChargeInstance.getChargeDate();
             }
 
