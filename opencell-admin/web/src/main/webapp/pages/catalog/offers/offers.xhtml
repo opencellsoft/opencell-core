@@ -295,7 +295,7 @@
                                                     paginatorAlwaysVisible="false"
                                                     value="#{entity.offerProductTemplates}"
                                                     var="opt" type="ordered"
-                                                    rendered="#{entity.offerProductTemplates!=null}">
+                                                    rendered="#{entity.offerProductTemplates!=null and !entity.offerProductTemplates.isEmpty()}">
                                             <div class="ui-g ui-g-nopad">
 	                                            <div class="ui-g-1">
 	                                            	<p:graphicImage value="#{defaultImageStreamer.image}"
