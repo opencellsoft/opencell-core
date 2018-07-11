@@ -94,4 +94,30 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		}
 	}
 	
+	/**
+	 * Sets invoice to null of the given list of InvoiceAggregate id.
+	 * 
+	 * @param ids list of InvoiceAggregate ids
+	 */
+	public void setInvoiceToNull(List<Long> ids) {
+		 String stringQuery = "UPDATE InvoiceAgregate SET invoice=null WHERE id IN (:ids)";
+
+        Query query = getEntityManager().createQuery(stringQuery);
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+	}
+	
+	/**
+	 * Sets invoice to null of the InvoiceAggregate with the given id.
+	 * 
+	 * @param id InvoiceAggregate ids
+	 */
+	public void setInvoiceToNull(Long id) {
+		 String stringQuery = "UPDATE InvoiceAgregate SET invoice=null WHERE id=:id";
+
+       Query query = getEntityManager().createQuery(stringQuery);
+       query.setParameter("id", id);
+       query.executeUpdate();
+	}
+	
 }

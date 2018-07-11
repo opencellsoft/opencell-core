@@ -55,7 +55,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -1042,4 +1041,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
         updateSubscribedTillDate();
     }
+    
+    public boolean isServiceInstancesEmpty() {
+		if (entity.isTransient()) {
+			return true;
+		}
+		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
+		return (si == null || si.isEmpty()) ? true : false;
+	}
 }
