@@ -106,7 +106,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
-
+    
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)

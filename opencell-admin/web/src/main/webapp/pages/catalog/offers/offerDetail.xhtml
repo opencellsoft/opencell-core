@@ -372,7 +372,16 @@
                                 </p:inplace>
                                 <h:outputText value=" #{ost.serviceTemplate.description}"
                                     rendered="#{!offerTemplateBean.edit}"></h:outputText>
-                            </p:panel>
+
+								<hftl:formLanguageFields entity="${ost.serviceTemplate}"
+									componentWidth="100" field="longDescription" multiLang="false"
+									idSufix="ost#{loopStatus.index}"
+									label="#{messages['offerTemplate.longDescription']}" />
+								<hftl:formField label="#{messages['commons.image']}"
+									entity="${ost.serviceTemplate}" required="false"
+									field="imagePath" id="ost#{loopStatus.index}_image"
+									pictureGroupName="service" />
+							</p:panel>
 
                             <p:panel id="serviceCf_panel_#{loopStatus.index}">
                                <c:if test="#{(!offerTemplateBean.instantiatedFromBom and !offerTemplateBean.newVersionFlag and ost.serviceTemplate.selected) or 
