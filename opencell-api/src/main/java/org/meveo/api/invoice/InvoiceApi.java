@@ -1,8 +1,10 @@
 package org.meveo.api.invoice;
 
+import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
+import static org.meveo.commons.utils.NumberUtils.round;
+
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,6 +58,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -339,10 +342,13 @@ public class InvoiceApi extends BaseApi {
         for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
             invoiceAgregateService.create(entry.getValue());
         }
-
-        invoice.setAmountWithoutTax(invoiceAmountWithoutTax);
-        invoice.setAmountTax(invoiceAmountTax);
-        invoice.setAmountWithTax(invoiceAmountWithTax);
+        
+        int invoiceRounding = appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding();
+        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
+        
+        invoice.setAmountWithoutTax( round(invoiceAmountWithoutTax, invoiceRounding, invoiceRoundingMode) );
+        invoice.setAmountTax( round(invoiceAmountTax, invoiceRounding, invoiceRoundingMode) );
+        invoice.setAmountWithTax( round(invoiceAmountWithTax, invoiceRounding, invoiceRoundingMode) );
 
         BigDecimal netToPay = invoice.getAmountWithTax();
         if (!appProvider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
@@ -351,7 +357,7 @@ public class InvoiceApi extends BaseApi {
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = invoice.getAmountWithTax().add(balance);
+            netToPay = invoice.getAmountWithTax().add( round(balance, invoiceRounding, invoiceRoundingMode) );
         }
         invoice.setNetToPay(netToPay);
 
@@ -839,7 +845,7 @@ public class InvoiceApi extends BaseApi {
      */
     private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
         Integer rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
-        BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, RoundingMode.HALF_UP));
+        BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, getRoundingMode(appProvider.getRoundingMode())));
         return ttc;
     }
 

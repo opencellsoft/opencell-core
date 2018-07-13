@@ -35,6 +35,7 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
+import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -55,6 +56,11 @@ import org.meveo.model.notification.Notification;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
+/**
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
@@ -381,7 +387,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
         try {
             result = (BigDecimal) res;
-            result = result.setScale(rounding, RoundingMode.HALF_UP);
+            result = result.setScale(rounding, getRoundingMode(appProvider.getRoundingMode()));
         } catch (Exception e) {
             throw new BusinessException("Expression " + expression + " do not evaluate to BigDecimal but " + res);
         }

@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 public class InvoiceCategoryDTO
 {
   private String description;
@@ -13,6 +18,27 @@ public class InvoiceCategoryDTO
   private BigDecimal amountWithoutTax = BigDecimal.ZERO;
   private BigDecimal amountWithTax = BigDecimal.ZERO;
   LinkedHashMap<String, InvoiceSubCategoryDTO> invoiceSubCategoryDTOMap = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
+  
+  private int rounding;
+  private RoundingMode roundingMode;
+  
+  /**
+   * Instantiates a new invoice category DTO with rounding & roundingMode config values.
+   *
+   * @param rounding the rounding
+   * @param roundingMode the rounding mode
+   */
+  public InvoiceCategoryDTO(Integer rounding, RoundingMode roundingMode) {
+      this.rounding = rounding != null ? rounding : 2;
+      this.roundingMode = roundingMode != null ? roundingMode : RoundingMode.HALF_UP;
+  }
+  
+  /**
+   * Instantiates a new invoice category DTO with default rounding & roundingMode values.
+   */
+  public InvoiceCategoryDTO() {
+      this(2, RoundingMode.HALF_UP);
+  }
   
   public String getDescription()
   {
@@ -36,7 +62,7 @@ public class InvoiceCategoryDTO
   
   public BigDecimal getAmountWithoutTax()
   {
-    return this.amountWithoutTax.setScale(2, RoundingMode.HALF_UP);
+    return this.amountWithoutTax.setScale(this.rounding, this.roundingMode);
   }
   
   public void setAmountWithoutTax(BigDecimal amountWithoutTax)

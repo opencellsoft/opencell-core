@@ -1228,4 +1228,12 @@
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />            
      </changeSet>     
 
+     <changeSet id="#3036_19062018" author="SaidRamli">
+        <addColumn tableName="crm_provider">
+            <column name="rounding_mode" type="varchar(50)" />
+            <column name="invoice_rounding" defaultValueNumeric="2"  type="int4"  />
+            <column name="invoice_rounding_mode" type="varchar(50)" />
+        </addColumn>
+     </changeSet>
+    
 </databaseChangeLog> 
