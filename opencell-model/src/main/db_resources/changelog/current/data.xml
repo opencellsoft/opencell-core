@@ -2846,5 +2846,63 @@ ORDER BY
             <column name="description" value="Report Extract"/>
         </insert>
     </changeSet>
+    
+    <changeSet author="SaidRamli" id="#3540_12072018">
+	        <sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'AutorisationIBAN_RequiredFields' , 'PROVIDER' ,  'Required PDF Fields' ,  'STRING' ,  'LIST' , 
+			 'tab:PDF Contract config:3;fieldGroup:AutorisationIBAN:3;field:0' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'Contract_BarCodeFields' , 'PROVIDER' ,  'Barcode fields' ,  'STRING' ,  'LIST' , 
+			 'tab:PDF Contract config:3;fieldGroup:Contract:1;field:1' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'Contract_TemplatePath' , 'PROVIDER' ,  'Template path for pdf file' ,  'STRING' ,  'SINGLE' , 
+			 'tab:PDF Contract config:3;fieldGroup:Contract:1;field:2' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'AutorisationIBAN_BarCodeFields' , 'PROVIDER' ,  'Barcode fields' ,  'STRING' ,  'LIST' , 
+			 'tab:PDF Contract config:3;fieldGroup:AutorisationIBAN:3;field:1' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'AutorisationIBAN_TemplatePath' , 'PROVIDER' ,  'Template path for pdf file' ,  'STRING' ,  'SINGLE' , 
+			 'tab:PDF Contract config:3;fieldGroup:AutorisationIBAN:3;field:2' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'WelcomeLettre_RequiredFields' , 'PROVIDER' ,  'Required PDF Fields' ,  'STRING' ,  'LIST' , 
+			 'tab:PDF Contract config:3;fieldGroup:WelcomeLettre:2;field:0' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'WelcomeLettre_BarCodeFields' , 'PROVIDER' ,  'Barcode fields' ,  'STRING' ,  'LIST' , 
+			 'tab:PDF Contract config:3;fieldGroup:WelcomeLettre:2;field:1' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'WelcomeLettre_TemplatePath' , 'PROVIDER' ,  'Template path for pdf file' ,  'STRING' ,  'SINGLE' , 
+			 'tab:PDF Contract config:3;fieldGroup:WelcomeLettre:2;field:2' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'contarctNamePrefix' , 'PROVIDER' ,  'Prefix of the generated file name' ,  'STRING' ,  'SINGLE' , 
+			 'tab:PDF Contract config:3;fieldGroup:Common:0;field:0' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'contractDestinationDir' , 'PROVIDER' ,  'The directory where the file will be created' ,  'STRING' ,  'SINGLE' , 
+			 'tab:PDF Contract config:3;fieldGroup:Common:0;field:1' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 
+			 'Contract_RequiredFields' , 'PROVIDER' ,  'Required PDF Fields' ,  'STRING' ,  'LIST' , 
+			 'tab:PDF Contract config:3;fieldGroup:Contract:1;field:0' , '50' , now())
+			</sql>
+	 </changeSet>
 
 </databaseChangeLog>
