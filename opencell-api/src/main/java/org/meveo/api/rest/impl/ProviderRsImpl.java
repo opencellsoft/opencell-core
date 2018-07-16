@@ -42,7 +42,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
     }
 
     @Override
-    public GetProviderResponse find(String providerCode) {
+    public GetProviderResponse find() {
         GetProviderResponse result = new GetProviderResponse();
 
         try {

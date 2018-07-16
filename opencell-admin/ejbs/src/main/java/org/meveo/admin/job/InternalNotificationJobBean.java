@@ -12,20 +12,21 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -50,8 +51,8 @@ public class InternalNotificationJobBean {
     SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:hh");
 
     @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager em;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     /** The manager. */
     @Inject
@@ -59,7 +60,7 @@ public class InternalNotificationJobBean {
 
     /** The notification service. */
     @Inject
-    private NotificationService notificationService;
+    private GenericNotificationService notificationService;
 
     /** The script instance service. */
     @Inject
@@ -73,6 +74,7 @@ public class InternalNotificationJobBean {
      * @param result the result
      */
     @SuppressWarnings("rawtypes")
+    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result) {
@@ -92,7 +94,7 @@ public class InternalNotificationJobBean {
             String queryStr = filterCode.replaceAll("#\\{date\\}", df.format(new Date()));
             queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(new Date()));
             log.debug("execute query:{}", queryStr);
-            Query query = em.createNativeQuery(queryStr);
+            Query query = emWrapper.getEntityManager().createNativeQuery(queryStr);
             @SuppressWarnings("unchecked")
             List<Object> results = query.getResultList();
             result.setNbItemsToProcess(results.size());

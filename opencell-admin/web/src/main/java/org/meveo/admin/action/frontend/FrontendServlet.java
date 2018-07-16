@@ -286,12 +286,9 @@ public class FrontendServlet extends HttpServlet {
         // Send requested file (part(s)) to client ------------------------------------------------
 
         // Prepare streams.
-        RandomAccessFile input = null;
         OutputStream output = null;
 
-        try {
-            // Open streams.
-            input = new RandomAccessFile(file, "r");
+        try (RandomAccessFile input = new RandomAccessFile(file, "r")) {
             output = response.getOutputStream();
 
             if (ranges.isEmpty() || ranges.get(0) == full) {
@@ -360,7 +357,6 @@ public class FrontendServlet extends HttpServlet {
         } finally {
             // Gently close streams.
             close(output);
-            close(input);
         }
     }
 

@@ -33,35 +33,35 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description"
 			selection="#{billingRunBean.billingCycle}"
-			updateField=":formId">
+			updateField=":formId :formId:tabView:billingCycleId :formId:tabView:billingCycleId_text">
 
 		</hftl:entityPopup>
 
-		<hftl:formPanel edit="true"
-			label="#{messages['billingRun.panel']}"
-			backingBean="#{billingRunBean}" showFormButtons="false">
-			<hftl:formField id="billingCycleId"
-				label="#{messages['billingRun.billingCycle']}" field="billingCycle"
-				valueLabelField="code" required="true" popup="true"
-				popupId="billingCyclePopup" />
-			<hftl:formField label="#{messages['billingRun.type']}"
-				field="processType" required="true" noSelectionLabel="false"
-				disabled="false" />
-			<hftl:formField label="#{messages['billingRun.startDate']}"
-				field="startDate" />
-			<hftl:formField label="#{messages['billingRun.endDate']}"
-				field="endDate" />
-			<hftl:formField id="invoiceDateId" label="#{messages['billingRun.invoiceDate']}"
-				field="invoiceDate" />
-			<hftl:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
-				field="lastTransactionDate" />
-
-            <ui:param name="buttons" value="true"/>
-            <ui:define name="buttons">
-    			<p:commandButton action="#{billingRunBean.launchRecurringInvoicing}"
-    				rendered="#{billingRunBean.canUserUpdateEntity()}"
-    				value="#{messages['button.launchInvoicing']}" update=":formId " />
-            </ui:define>
+		<hftl:formPanel edit="true" formId="formId" label="#{messages['billingRun.panel']}" backingBean="#{billingRunBean}" showFormButtons="false" submitPartialProcess=":formId:tabView">
+            <p:tabView id="tabView" activeIndex="#{billingRunBean.activeTab}">
+                <p:tab title="#{messages['customer.tab.information']}">
+                    <hftl:formField id="billingCycleId"
+						label="#{messages['billingRun.billingCycle']}" field="billingCycle"
+						valueLabelField="code" required="true" popup="true"
+						popupId="billingCyclePopup" />
+					<hftl:formField label="#{messages['billingRun.type']}"
+						field="processType" required="true" noSelectionLabel="false"
+						disabled="false" />
+					<hftl:formField label="#{messages['billingRun.startDate']}"
+						field="startDate" />
+					<hftl:formField label="#{messages['billingRun.endDate']}"
+						field="endDate" />
+					<hftl:formField id="invoiceDateId" label="#{messages['billingRun.invoiceDate']}"
+						field="invoiceDate" />
+					<hftl:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
+						field="lastTransactionDate" />
+					
+                </p:tab>
+                <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
+            </p:tabView>
+            	<p:commandButton style="margin-top: 20px;" action="#{billingRunBean.launchRecurringInvoicing}"
+		    				rendered="#{billingRunBean.canUserUpdateEntity()}"
+		    				value="#{messages['button.launchInvoicing']}" update=":formId " />
 		</hftl:formPanel>
 
 	</ui:define>

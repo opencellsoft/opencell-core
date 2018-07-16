@@ -21,6 +21,7 @@ package org.meveo.service.base;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,15 +30,21 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Query;
 
 import org.hibernate.SQLQuery;
@@ -49,18 +56,19 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEnable;
 import org.meveo.model.IEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
@@ -73,35 +81,57 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
  * 
  * @author Edward P. Legaspi
+ * @author Andrius Karpavicius
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  * 
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
 
+    /**
+     * Entity list search parameter name - parameter's value contains entity class
+     */
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
+    /**
+     * Entity list search parameter value - parameter's value is null
+     */
     public static String SEARCH_IS_NULL = "IS_NULL";
+    /**
+     * Entity list search parameter value - parameter's value is not null
+     */
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
+    /**
+     * Entity list search parameter criteria - wildcard Or
+     */
     public static String SEARCH_WILDCARD_OR = "wildcardOr";
+    /**
+     * Entity list search parameter name - parameter's value contains sql statement
+     */
     public static String SEARCH_SQL = "SQL";
+    /**
+     * Entity list search parameter criteria - just like wildcardOr but Ignoring case
+     */
+    public static String SEARCH_WILDCARD_OR_IGNORE_CAS = "wildcardOrIgnoreCase";
+    /**
+     * Entity list search parameter name - parameter's value contains filter name
+     */
     public static String SEARCH_FILTER = "$FILTER";
+
+    /**
+     * Entity list search parameter name - parameter's value contains filter parameters
+     */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
     @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager emfForJobs;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     @Inject
     private ElasticClient elasticClient;
@@ -134,7 +164,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
-
+    
     /**
      * Constructor.
      */
@@ -160,6 +190,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entityClass;
     }
 
+    /**
+     * Update entity in DB without firing any notification events nor publishing data to Elastic Search
+     * 
+     * @param entity Entity to update in DB
+     * @return Updated entity
+     * @throws BusinessException General business exception
+     */
     public E updateNoCheck(E entity) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
@@ -255,9 +292,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Override
     public E disable(E entity) throws BusinessException {
-        if (entity instanceof EnableEntity && ((EnableEntity) entity).isActive()) {
+        if (entity instanceof IEnable && ((IEnable) entity).isActive()) {
             log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-            ((EnableEntity) entity).setDisabled(true);
+            ((IEnable) entity).setDisabled(true);
             if (entity instanceof IAuditable) {
                 ((IAuditable) entity).updateAudit(currentUser);
             }
@@ -284,9 +321,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Override
     public E enable(E entity) throws BusinessException {
-        if (entity instanceof EnableEntity && ((EnableEntity) entity).isDisabled()) {
+        if (entity instanceof IEnable && ((IEnable) entity).isDisabled()) {
             log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-            ((EnableEntity) entity).setDisabled(false);
+            ((IEnable) entity).setDisabled(false);
             if (entity instanceof IAuditable) {
                 ((IAuditable) entity).updateAudit(currentUser);
             }
@@ -329,8 +366,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 }
             }
         }
-
-        log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
+        
+        if (entity != null) {
+            log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
+        }
     }
 
     /**
@@ -395,9 +434,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(ISearchable entity) throws BusinessException {
-       // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-         //   throw new BusinessException("Invalid characters found in entity code.");
-       // }
+        // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+        // throw new BusinessException("Invalid characters found in entity code.");
+        // }
 
         return true;
     }
@@ -407,7 +446,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+        log.debug("start of entity={}", entity.getClass().getSimpleName());
 
         if (entity instanceof ISearchable) {
             validateCode((ISearchable) entity);
@@ -415,6 +454,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
+        }
+
+        getEntityManager().persist(entity);
+
+        // Add entity to Elastic Search
+        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
+            // flush first to allow child entities to be lazy loaded
+            // getEntityManager().flush();
+            // getEntityManager().refresh(entity);
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
@@ -425,13 +474,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
-        }
-
-        getEntityManager().persist(entity);
-
-        // Add entity to Elastic Search
-        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
@@ -447,11 +489,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return list(true);
     }
 
+    /**
+     * List entities, optionally filtering by its enable/disable status
+     * 
+     * @param active True to retrieve enabled entities only, False to retrieve disabled entities only. Do not provide any value to retrieve all entities.
+     * @return A list of entities
+     */
     @SuppressWarnings("unchecked")
     public List<E> list(Boolean active) {
         final Class<? extends E> entityClass = getEntityClass();
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (active != null && EnableEntity.class.isAssignableFrom(entityClass)) {
+        if (active != null && IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
         }
         Query query = queryBuilder.getQuery(getEntityManager());
@@ -468,7 +516,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public List<E> findByCodeLike(String wildcode) {
         final Class<? extends E> entityClass = getEntityClass();
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (EnableEntity.class.isAssignableFrom(entityClass)) {
+        if (IEnable.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", false);
         }
         queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
@@ -687,6 +735,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>likeCriterias. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will
      * be used. In either case case insensative matching is used. Applies to String type fields.</li>
      * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
+     * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case
      * String type fields.</li>
      * <li>ne. Not equal.
      * </ul>
@@ -785,7 +834,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
 
-                        // Value is in field value (list)
+                      // Value which is a list should be in field value 
+                    } else if ("listInList".equals(condition)) {
+                        this.addListInListCreterion(queryBuilder, filterValue, fieldName);
+                     // Value is in field value (list)
                     } else if ("list".equals(condition)) {
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
                         queryBuilder.addSqlCriterion(":" + paramName + " in elements(a." + fieldName + ")", paramName, filterValue);
@@ -935,6 +987,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         }
                         queryBuilder.endOrClause();
 
+                        // Just like wildcardOr but ignoring case :
+                    } else if (SEARCH_WILDCARD_OR_IGNORE_CAS.equals(condition)) {
+                        queryBuilder.startOrClause();
+                        for (String field : fields) {  // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
+                            queryBuilder.addSql("lower(a." + field + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
+                        }
+                        queryBuilder.endOrClause();
+
                         // Search by additional Sql clause with specified parameters
                     } else if (SEARCH_SQL.equals(key)) {
                         if (filterValue.getClass().isArray()) {
@@ -1022,6 +1082,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return queryBuilder;
     }
 
+    /**
+     * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
+     * @param queryBuilder
+     * @param filterValue
+     * @param fieldName
+     */
+    private void addListInListCreterion(QueryBuilder queryBuilder, Object filterValue, String fieldName) {
+        String paramName = queryBuilder.convertFieldToParam(fieldName);
+        if (filterValue.getClass().isArray()) {
+            Object [] values = (Object []) filterValue;
+            IntStream.range(0, values.length).forEach(idx -> queryBuilder.addSqlCriterion(":" + paramName + idx + " in elements(a." + fieldName + ")", paramName + idx, values[idx]));
+        }
+    }
+
     protected boolean isConversationScoped() {
         if (conversation != null) {
             try {
@@ -1034,12 +1108,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return false;
     }
 
-    public void updateAudit(E e) {
-        if (e instanceof IAuditable) {
-            ((IAuditable) e).updateAudit(currentUser);
+    /**
+     * Update last modified information (created/updated date and username)
+     * 
+     * @param entity Entity to update
+     */
+    public void updateAudit(E entity) {
+        if (entity instanceof IAuditable) {
+            ((IAuditable) entity).updateAudit(currentUser);
         }
     }
 
+    /**
+     * Flush data to DB. NOTE: unlike the name suggest, no transaction commit is done
+     */
     public void commit() {
         getEntityManager().flush();
     }
@@ -1060,19 +1142,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return q.getResultList();
     }
 
+    @Override
     public EntityManager getEntityManager() {
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                return em;
-            } catch (Exception e) {
-                return emfForJobs;
-            }
-        }
-
-        return emfForJobs;
+        return emWrapper.getEntityManager();
     }
-    
+
+    /**
+     * Execute a native select query
+     * 
+     * @param query Sql query to execute
+     * @param params Parameters to pass
+     * @return A map of values retrieved
+     */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
         Session session = getEntityManager().unwrap(Session.class);
@@ -1088,5 +1169,137 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         List<Map<String, Object>> aliasToValueMapList = q.list();
 
         return aliasToValueMapList;
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void remove(Class parentClass, Object parentId) {
+		Field idField = getIdField(parentClass);
+		if (idField != null) {
+			List<Field> oneToManyFields = getOneToManyFields(parentClass);
+			for (Field field : oneToManyFields) {
+				Class childClass = getFirstActualTypeArgument(field);
+				if (childClass != null) {
+					Field manyToOneField = getManyToOneField(childClass, parentClass);
+					Field childClassIdField = getIdField(childClass);
+					if (manyToOneField != null && childClassIdField != null) {
+						List<Long> childIds = getEntityManager().createQuery(String.format("select c.%s from %s c where c.%s.%s = :pid", childClassIdField.getName(),
+								childClass.getSimpleName(), manyToOneField.getName(), idField.getName())).setParameter("pid", parentId).getResultList();
+						for (Long childId : childIds) {
+							getEntityManager().createQuery(String.format("delete from %s c where c.%s = :id", childClass.getSimpleName(), childClassIdField.getName()))
+									.setParameter("id", childId).executeUpdate();
+						}
+					}
+				}
+			}
+			getEntityManager().createQuery(String.format("delete from %s e where e.%s = :id", parentClass.getSimpleName(), idField.getName())).setParameter("id", parentId)
+					.executeUpdate();
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Class getFirstActualTypeArgument(Field field) {
+		Type genericType = field.getGenericType();
+		if (genericType instanceof ParameterizedType) {
+			ParameterizedType parameterizedType = (ParameterizedType) genericType;
+			Type[] typeArguments = parameterizedType.getActualTypeArguments();
+			if (typeArguments.length > 0) {
+				return (Class<?>) typeArguments[0];
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Field getManyToOneField(Class clazz, Class parentClass) {
+		Field[] declaredFields = clazz.getDeclaredFields();
+		for (Field field : declaredFields) {
+			if (field.isAnnotationPresent(ManyToOne.class)) {
+				Class<?> type = field.getType();
+				if (parentClass.equals(type)) {
+					return field;
+				}
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Field getIdField(Class clazz) {
+		Field[] declaredFields = clazz.getDeclaredFields();
+		for (Field field : declaredFields) {
+			if (field.isAnnotationPresent(Id.class)) {
+				return field;
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private List<Field> getOneToManyFields(Class clazz) {
+		List<Field> fields = new LinkedList<>();
+		Field[] declaredFields = clazz.getDeclaredFields();
+		for (Field field : declaredFields) {
+			if (field.isAnnotationPresent(OneToMany.class)) {
+				fields.add(field);
+			}
+		}
+		return fields;
+	}
+    
+    /**
+     * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
+     * 
+     * @param entityClass Entity class to reference
+     * @param id Entity ID
+     * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
+     *         customer
+     */
+    @SuppressWarnings("rawtypes")
+    public String findReferencedByEntities(Class<E> entityClass, Long id) {
+
+        E referencedEntity = getEntityManager().getReference(entityClass, id);
+
+        int totalMatched = 0;
+        String matchedEntityInfo = null;
+        Map<Class, List<Field>> classesAndFields = ReflectionUtils.getClassesAndFieldsOfType(entityClass);
+
+        for (Entry<Class, List<Field>> classFieldInfo : classesAndFields.entrySet()) {
+
+            boolean isBusinessEntity = BusinessEntity.class.isAssignableFrom(classFieldInfo.getKey());
+
+            String sql = "select " + (isBusinessEntity ? "code" : "id") + " from " + classFieldInfo.getKey().getName() + " where ";
+            boolean fieldAddedToSql = false;
+            for (Field field : classFieldInfo.getValue()) {
+                // For now lets ignore list type fields
+                if (field.getType() == entityClass) {
+                    sql = sql + (fieldAddedToSql ? " or " : " ") + field.getName() + "=:id";
+                    fieldAddedToSql = true;
+                }
+            }
+
+            if (fieldAddedToSql) {
+
+                List entitiesMatched = getEntityManager().createQuery(sql).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
+                if (!entitiesMatched.isEmpty()) {
+
+                    matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())
+                            + ": ";
+                    boolean first = true;
+                    for (Object entityIdOrCode : entitiesMatched) {
+                        matchedEntityInfo += (first ? "" : ", ") + entityIdOrCode;
+                        first = false;
+                    }
+
+                    totalMatched += entitiesMatched.size();
+                }
+            }
+
+            if (totalMatched > 10) {
+                break;
+            }
+        }
+
+        return matchedEntityInfo;
     }
 }

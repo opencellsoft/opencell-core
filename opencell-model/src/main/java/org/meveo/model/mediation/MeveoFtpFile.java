@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.NotifiableEntity;
 
 /**
@@ -13,7 +13,7 @@ import org.meveo.model.NotifiableEntity;
  *
  */
 @NotifiableEntity
-public class MeveoFtpFile extends EnableEntity implements Serializable{
+public class MeveoFtpFile extends AuditableEntity implements Serializable{
 
 	private static final long serialVersionUID = -6610759225502996091L;
 	

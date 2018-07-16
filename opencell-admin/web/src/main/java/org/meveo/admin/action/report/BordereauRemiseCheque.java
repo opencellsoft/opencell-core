@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessEntityException;
@@ -144,6 +145,11 @@ public class BordereauRemiseCheque {
         return ds;
     }
 
+    /**
+     * @param occCodes array of account operation codes
+     * @return generated data file csv
+     * @throws BusinessEntityException business exception.
+     */
     public File generateDataFile(String[] occCodes) throws BusinessEntityException {
 
         List<AccountOperation> records = new ArrayList<AccountOperation>();
@@ -151,9 +157,10 @@ public class BordereauRemiseCheque {
             records.addAll(accountOperationService.getAccountOperations(this.date, occCode));
         }
         Iterator<AccountOperation> itr = records.iterator();
+        FileWriter writer = null;
         try {
             File temp = File.createTempFile("bordereauRemiseChequeDS", ".csv");
-            FileWriter writer = new FileWriter(temp);
+            writer = new FileWriter(temp);
             writer.append("customerAccountId;title;name;firstname;amount");
             writer.append('\n');
             if (records.size() == 0) {
@@ -172,10 +179,11 @@ public class BordereauRemiseCheque {
                 writer.append('\n');
             }
             writer.flush();
-            writer.close();
             return temp;
         } catch (IOException e) {
             log.error("failed to generate data file", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
         return null;
     }

@@ -26,6 +26,11 @@ import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
+/**
+ * Provides methods to deal with currently authenticated user
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
 public class CurrentUserProvider {
 
@@ -292,6 +297,9 @@ public class CurrentUserProvider {
 
             for (Role role : user.getRoles()) {
                 additionalRoles.add(role.getName());
+                for (Role subRole : role.getRoles()) {
+                    additionalRoles.add(subRole.getName());
+                }
             }
 
             return additionalRoles;

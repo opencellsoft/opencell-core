@@ -44,6 +44,9 @@ public interface TemplateMessage extends MessageBuilder {
      * 
      * Any expressions of the form "{0}, {1} ... {N}" found in the template will be interpolated; numbers reference the index of
      * any given parameters, and can be used more than once per template.
+     * 
+     * @param summary Template summary
+     * @return Template message
      */
     public TemplateMessage text(final String summary);
 
@@ -51,6 +54,9 @@ public interface TemplateMessage extends MessageBuilder {
      * Set the detail text for this message.
      * Any expressions of the form "{0}, {1} ... {N}" found in the template will be interpolated; numbers reference the index of
      * any given parameters, and can be used more than once per template.
+     * 
+     * @param detail Template detail
+     * @return Template message
      */
     public TemplateMessage detail(final String detail);
 
@@ -58,6 +64,9 @@ public interface TemplateMessage extends MessageBuilder {
      * Set the parameters for this builder's template.
      * 
      * Parameters may be referenced by index in the template, using expressions of the form "{0}, {1} ... {N}"
+     * 
+     * @param summaryParams Builder's template parameters
+     * @return Template message
      */
     public TemplateMessage textParams(final Object... summaryParams);
 
@@ -65,17 +74,26 @@ public interface TemplateMessage extends MessageBuilder {
      * Set the parameters for detail text of this builder's template.
      * 
      * Parameters may be referenced by index in the template, using expressions of the form "{0}, {1} ... {N}"
+     * 
+     * @param detailParams Builder's template detail parameters
+     * @return Template message
      */
     public TemplateMessage detailParams(final Object... detailParams);
 
     /**
      * Set the targets for this message. If supported by the consuming view-layer, these targets may control where/how the
      * message is displayed to the user.
+     * 
+     * @param targets Message targets for this message
+     * @return Template message
      */
     public TemplateMessage targets(final String targets);
 
     /**
      * Set the severity, level of importance of this message.
+     * 
+     * @param severity The level of importance of this message
+     * @return Template message
      */
     public TemplateMessage severity(final Severity severity);
 

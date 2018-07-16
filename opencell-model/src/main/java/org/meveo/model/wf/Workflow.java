@@ -36,79 +36,79 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "wf_workflow", uniqueConstraints = @UniqueConstraint(columnNames = {"code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_workflow_seq"), })
-public class Workflow extends BusinessEntity {
+@ExportIdentifier({ "code" })
+@Table(name = "wf_workflow", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "wf_workflow_seq"), })
+public class Workflow extends EnableBusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "wf_type", length = 255)
-	@NotNull
+    @Column(name = "wf_type", length = 255)
+    @NotNull
     @Size(max = 255)
-	String wfType = null;
-	
-	@OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
+    String wfType = null;
+
+    @OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE })
     @OrderBy("priority ASC")
-	private List<WFTransition> transitions = new ArrayList<WFTransition>();
-	
-	
-	@Type(type="numeric_boolean")
+    private List<WFTransition> transitions = new ArrayList<WFTransition>();
+
+    @Type(type = "numeric_boolean")
     @Column(name = "enable_hostory")
-	private boolean enableHistory;
+    private boolean enableHistory;
 
-	/**
-	 * @return the wfType
-	 */
-	public String getWfType() {
-		return wfType;
-	}
+    /**
+     * @return the wfType
+     */
+    public String getWfType() {
+        return wfType;
+    }
 
-	/**
-	 * @param wfType the wfType to set
-	 */
-	public void setWfType(String wfType) {
-		this.wfType = wfType;
-	}
+    /**
+     * @param wfType the wfType to set
+     */
+    public void setWfType(String wfType) {
+        this.wfType = wfType;
+    }
 
-	/**
-	 * @return the transitions
-	 */
-	public List<WFTransition> getTransitions() {
-		return transitions;
-	}
+    /**
+     * @return the transitions
+     */
+    public List<WFTransition> getTransitions() {
+        return transitions;
+    }
 
-	/**
-	 * @param transitions the transitions to set
-	 */
-	public void setTransitions(List<WFTransition> transitions) {
-		this.transitions = transitions;
-	}
+    /**
+     * @param transitions the transitions to set
+     */
+    public void setTransitions(List<WFTransition> transitions) {
+        this.transitions = transitions;
+    }
 
-	/**
-	 * @return the enbaleHistory
-	 */
-	public boolean isEnableHistory() {
-		return enableHistory;
-	}
+    /**
+     * @return the enbaleHistory
+     */
+    public boolean isEnableHistory() {
+        return enableHistory;
+    }
 
-	/**
-	 * @param enbaleHistory the enbaleHistory to set
-	 */
-	public void setEnableHistory(boolean enbaleHistory) {
-		this.enableHistory = enbaleHistory;
-	}
-		
-	@Override
-	public String toString() {
-		return "Workflow [code=" + code + ", description=" + description + "]";
-	}
+    /**
+     * @param enbaleHistory the enbaleHistory to set
+     */
+    public void setEnableHistory(boolean enbaleHistory) {
+        this.enableHistory = enbaleHistory;
+    }
+
+    @Override
+    public String toString() {
+        return "Workflow [code=" + code + ", description=" + description + "]";
+    }
 
 }

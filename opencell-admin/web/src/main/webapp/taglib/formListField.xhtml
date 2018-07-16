@@ -32,7 +32,6 @@
                     </c:forEach>
                     <c:if test="#{deleteButton and edit}">
                         <p:column>
-                            <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
                             <h:commandLink id="deletelink" action="#{backingBean.delete(listElement.id)}"
                                 onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
                                 <h:graphicImage value="/img/delete.gif" style="border:0" />
@@ -54,7 +53,6 @@
                     </p:column>
                     <c:if test="#{deleteButton and edit}">
                         <p:column width="10%">
-                            <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
                             <p:commandButton id="deletelink" action="#{backingBean.deleteItemFromCollection(fieldItem, rowIndex)}" partialSubmit="true" icon="ui-icon-trash"
                                 process="@this #{id}" update="#{id}">
                             </p:commandButton>
@@ -104,7 +102,7 @@
 <!--                     </c:if> -->
 <!--                 </p:dataList> -->
 <!--             </c:if> -->
-			<!--  Only read mode supported for now -->
+            <!--  Only read mode supported for now -->
             <c:if test="#{!edit}">
                 <h:panelGroup id="#{id}" styleClass="field-value">
                     <ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
@@ -133,51 +131,51 @@
                 
                 <c:if test="#{not empty(valueLabelField2)}">
                     <p:selectCheckboxMenu required="#{required}" id="#{id}" value="#{fieldItem}" filter="true" filterMatchMode="startsWith">
-                    	<f:attribute name="collectionType" value="java.util.ArrayList" />
-						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}" />
-						<hftl:objectConverter />
-						<p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
-						<p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
-					</p:selectCheckboxMenu>
+                        <f:attribute name="collectionType" value="java.util.ArrayList" />
+                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}" />
+                        <hftl:objectConverter />
+                        <p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
+                        <p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
+                    </p:selectCheckboxMenu>
                 </c:if>
                 <c:if test="#{empty(valueLabelField2)}">
-					<p:selectCheckboxMenu required="#{required}" id="#{id}" value="#{fieldItem}" filter="true" filterMatchMode="startsWith">
-					 	<f:attribute name="collectionType" value="java.util.ArrayList" />
-						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
-						<hftl:objectConverter />
-						<p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
-						<p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
-					</p:selectCheckboxMenu>
-				</c:if>
-				
-				<p:panel id="#{id}_selectedItemPanel" >
-					<h:panelGroup styleClass="field-value">
-						<ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
-							<c:if test="#{not empty(valueLabelField2)}">
-	                            #{elem[valueLabelField]} #{elem[valueLabelField2]}
-	                    	</c:if>
-							<c:if test="#{empty(valueLabelField2)}">
-								#{elem[valueLabelField]}
-	                    	</c:if>
-							<h:outputText value="#{!loop.last ? ', ' : ''}" />
-						</ui:repeat>
-					</h:panelGroup>
-				</p:panel>
+                    <p:selectCheckboxMenu required="#{required}" id="#{id}" value="#{fieldItem}" filter="true" filterMatchMode="startsWith">
+                        <f:attribute name="collectionType" value="java.util.ArrayList" />
+                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
+                        <hftl:objectConverter />
+                        <p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
+                        <p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
+                    </p:selectCheckboxMenu>
+                </c:if>
+                
+                <p:panel id="#{id}_selectedItemPanel" >
+                    <h:panelGroup styleClass="field-value">
+                        <ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
+                            <c:if test="#{not empty(valueLabelField2)}">
+                                #{elem[valueLabelField]} #{elem[valueLabelField2]}
+                            </c:if>
+                            <c:if test="#{empty(valueLabelField2)}">
+                                #{elem[valueLabelField]}
+                            </c:if>
+                            <h:outputText value="#{!loop.last ? ', ' : ''}" />
+                        </ui:repeat>
+                    </h:panelGroup>
+                </p:panel>
 
             </c:if>
-			
+            
             <c:if test="#{!edit}">
                 <h:panelGroup id="#{id}" styleClass="field-value">
-					<ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
-						<c:if test="#{not empty(valueLabelField2)}">
+                    <ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
+                        <c:if test="#{not empty(valueLabelField2)}">
                             #{elem[valueLabelField]} #{elem[valueLabelField2]}
-                    	</c:if>
-						<c:if test="#{empty(valueLabelField2)}">
-							#{elem[valueLabelField]}
-                    	</c:if>
-						<h:outputText value="#{!loop.last ? ', ' : ''}" />
-					</ui:repeat>
-				</h:panelGroup>
+                        </c:if>
+                        <c:if test="#{empty(valueLabelField2)}">
+                            #{elem[valueLabelField]}
+                        </c:if>
+                        <h:outputText value="#{!loop.last ? ', ' : ''}" />
+                    </ui:repeat>
+                </h:panelGroup>
             </c:if>
         </c:if>
 

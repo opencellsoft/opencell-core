@@ -5,13 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -31,7 +32,8 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "adm_inbound_request", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_inbound_request_seq"), })
-@Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({ @NamedQuery(name = "InboundRequest.countRequestsToPurgeByDate", query = "select count(*) FROM InboundRequest ir WHERE ir.auditable.created<=:date"),
+        @NamedQuery(name = "InboundRequest.getRequestsToPurgeByDate", query = "select ir from InboundRequest ir WHERE ir.auditable.created<=:date") })
 public class InboundRequest extends BusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
@@ -137,9 +139,9 @@ public class InboundRequest extends BusinessEntity {
     // Response
 
     /**
-     * Notifications fired as result of inbound request
+     * Notifications fired as result of inbound request. There should be only one (at most few) notification fired, so cascade=Remove is fine
      */
-    @OneToMany(mappedBy = "inboundRequest")
+    @OneToMany(mappedBy = "inboundRequest", cascade = CascadeType.REMOVE)
     private List<NotificationHistory> notificationHistories = new ArrayList<NotificationHistory>();
 
     /**

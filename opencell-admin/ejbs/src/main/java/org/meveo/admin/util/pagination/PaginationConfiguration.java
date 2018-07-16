@@ -26,7 +26,7 @@ import org.primefaces.model.SortOrder;
 
 /**
  * @author Andrius
- *
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  */
 public class PaginationConfiguration implements Serializable {
 
@@ -156,5 +156,9 @@ public class PaginationConfiguration implements Serializable {
     public String toString() {
         return String.format("PaginationConfiguration [firstRow=%s, numberOfRows=%s, fullTextFilter=%s, filters=%s, sortOrdering=%s, fetchFields=%s, sortField=%s, ordering=%s]",
             firstRow, numberOfRows, fullTextFilter, filters, sortOrdering, fetchFields, sortField, ordering);
+    }
+
+    public void setFilters(Map<String, Object> filters) {
+        this.filters = filters;
     }
 }

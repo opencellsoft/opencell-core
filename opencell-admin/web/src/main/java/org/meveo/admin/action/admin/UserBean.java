@@ -109,10 +109,6 @@ public class UserBean extends CustomFieldBean<User> {
     @Named
     private SellerBean sellerBean;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private DualListModel<Role> rolesDM;
 
     private TreeNode userGroupRootNode;
@@ -132,7 +128,7 @@ public class UserBean extends CustomFieldBean<User> {
     private BusinessEntity selectedEntity;
     private BaseBean<?> selectedAccountBean;
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
     private boolean autoUnzipped;
 
@@ -249,6 +245,8 @@ public class UserBean extends CustomFieldBean<User> {
 
     /**
      * Standard method for custom component with listType="pickList".
+     * 
+     * @return DualListModel of Role
      */
     public DualListModel<Role> getDualListModel() {
         if (rolesDM == null) {
@@ -555,24 +553,20 @@ public class UserBean extends CustomFieldBean<User> {
         }
     }
 
+    /**
+     * @param fileName file name
+     * @param in input stream
+     */
     public void copyFile(String fileName, InputStream in) {
-        try {
-
-            // write the inputStream to a FileOutputStream
-            String filePath = getFilePath(fileName);
-            OutputStream out = new FileOutputStream(new File(filePath));
-
+        String filePath = getFilePath(fileName);
+        try (OutputStream out = new FileOutputStream(new File(filePath));) {
             int read = 0;
             byte[] bytes = new byte[1024];
 
             while ((read = in.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
             }
-
-            in.close();
             out.flush();
-            out.close();
-
             log.debug("New file created!");
             buildFileList();
         } catch (IOException e) {
@@ -682,7 +676,7 @@ public class UserBean extends CustomFieldBean<User> {
     /**
      * This will add the selected business entity to the user's securedEntities list.
      * 
-     * @param event
+     * @param event Faces select event
      * @throws BusinessException General business exception
      */
     @ActionMethod

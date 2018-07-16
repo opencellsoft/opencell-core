@@ -2,9 +2,9 @@ package org.meveo.api.dto.finance;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.RevenueRecognitionDelayUnitEnum;
@@ -17,18 +17,9 @@ import org.meveo.model.scripts.RevenueRecognitionEventEnum;
  */
 @XmlRootElement(name = "RevenueRecognitionRule")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RevenueRecognitionRuleDto {
+public class RevenueRecognitionRuleDto extends EnableBusinessDto {
 
-    /** The code. */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /** The description. */
-    @XmlAttribute
-    private String description;
-
-    /** The disabled. */
-    private boolean disabled = false;
+    private static final long serialVersionUID = 6795287686998653729L;
 
     /** The start delay. */
     private Integer startDelay;
@@ -59,13 +50,13 @@ public class RevenueRecognitionRuleDto {
     }
 
     /**
-     * Instantiates a new revenue recognition rule dto.
+     * Convert revenue recognition rule entity to DTO
      *
-     * @param revenueRecognitionRule the RevenueRecognitionRule entity
+     * @param revenueRecognitionRule Entity to convert
      */
     public RevenueRecognitionRuleDto(RevenueRecognitionRule revenueRecognitionRule) {
-        code = revenueRecognitionRule.getCode();
-        description = revenueRecognitionRule.getDescription();
+        super(revenueRecognitionRule);
+
         startDelay = revenueRecognitionRule.getStartDelay();
         startUnit = revenueRecognitionRule.getStartUnit();
         startEvent = revenueRecognitionRule.getStartEvent();
@@ -74,60 +65,6 @@ public class RevenueRecognitionRuleDto {
         stopEvent = revenueRecognitionRule.getStopEvent();
 
         this.setScript(new ScriptInstanceDto(revenueRecognitionRule.getScript()));
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Checks if is disabled.
-     *
-     * @return true, if is disabled
-     */
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    /**
-     * Sets the disabled.
-     *
-     * @param disabled the new disabled
-     */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
     }
 
     /**
@@ -238,7 +175,6 @@ public class RevenueRecognitionRuleDto {
         this.stopEvent = stopEvent;
     }
 
-
     /**
      * Gets the script.
      *
@@ -256,11 +192,11 @@ public class RevenueRecognitionRuleDto {
     public void setScript(ScriptInstanceDto script) {
         this.script = script;
     }
-    
+
     @Override
     public String toString() {
         return String.format(
             "RevenueRecognitionRuleDto [code=%s, description=%s, disabled=%s, startDelay=%s, startUnit=%s, startEvent=%s, stopDelay=%s, stopUnit=%s, stopEvent=%s, script=%s]",
-            code, description, disabled, startDelay, startUnit, startEvent, stopDelay, stopUnit, stopEvent, script);
+            code, description, isDisabled(), startDelay, startUnit, startEvent, stopDelay, stopUnit, stopEvent, script);
     }
 }

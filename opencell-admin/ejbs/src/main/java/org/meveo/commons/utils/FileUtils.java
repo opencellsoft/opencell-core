@@ -50,7 +50,9 @@ import org.slf4j.LoggerFactory;
  * File utilities class.
  * 
  * @author Donatas Remeika
+ * @author Edward P. Legaspi
  * 
+ * @lastModifiedVersion 5.1
  */
 public final class FileUtils {
 
@@ -363,28 +365,27 @@ public final class FileUtils {
      * @param filesToAdd list of files to add
      */
     public static void createZipArchive(String zipFilename, String... filesToAdd) {
-        int BUFFER = 2048;
-        try {
-            BufferedInputStream origin = null;
-            FileOutputStream dest = new FileOutputStream(zipFilename);
-            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-            byte data[] = new byte[BUFFER];
+        final int BUFFER = 2048;
+        try (FileOutputStream dest = new FileOutputStream(zipFilename);
+             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest))) {
+            byte[] data = new byte[BUFFER];
             for (int i = 0; i < filesToAdd.length; i++) {
-                FileInputStream fi = new FileInputStream(filesToAdd[i]);
-                origin = new BufferedInputStream(fi, BUFFER);
-                ZipEntry entry = new ZipEntry(new File(filesToAdd[i]).getName());
-                out.putNextEntry(entry);
-                int count;
-                while ((count = origin.read(data, 0, BUFFER)) != -1) {
-                    out.write(data, 0, count);
+                try (FileInputStream fi = new FileInputStream(filesToAdd[i]);
+                    BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
+                    ZipEntry entry = new ZipEntry(new File(filesToAdd[i]).getName());
+                    out.putNextEntry(entry);
+                    int count;
+                    while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                        out.write(data, 0, count);
+                    }
+                    FileUtils.closeStream(origin);
+                } catch (Exception ex) {
+                    logger.error("Error while working with zip archive", ex);
                 }
-                FileUtils.closeStream(origin);
             }
             FileUtils.closeStream(out);
         } catch (Exception e) {
             logger.error("Error while creating zip archive", e);
-        } finally {
-
         }
     }
 
@@ -440,8 +441,6 @@ public final class FileUtils {
     public static void unzipFile(String folder, InputStream in) throws Exception {
         ZipInputStream zis = null;
         BufferedInputStream bis = null;
-        OutputStream fos = null;
-        BufferedOutputStream bos = null;
         CheckedInputStream cis = null;
         try {
             cis = new CheckedInputStream(in, new CRC32());
@@ -460,20 +459,21 @@ public final class FileUtils {
                 if (!fileout.exists()) {
                     (new File(fileout.getParent())).mkdirs();
                 }
-                fos = new FileOutputStream(fileout);
-                bos = new BufferedOutputStream(fos);
-                int b = -1;
-                while ((b = bis.read()) != -1) {
-                    bos.write(b);
+                try (OutputStream fos = new FileOutputStream(fileout);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                    int b = -1;
+                    while ((b = bis.read()) != -1) {
+                        bos.write(b);
+                    }
+                    bos.flush();
+                    fos.flush();
+                } catch (Exception ex) {
+                    throw ex;
                 }
-                bos.flush();
-                fos.flush();
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         } finally {
-            IOUtils.closeQuietly(bos);
-            IOUtils.closeQuietly(fos);
             IOUtils.closeQuietly(bis);
             IOUtils.closeQuietly(zis);
             IOUtils.closeQuietly(cis);
@@ -514,7 +514,7 @@ public final class FileUtils {
         }
     }
 
-    private static void addToZipFile(File source, ZipOutputStream zos, String basedir) throws Exception {
+    public static void addToZipFile(File source, ZipOutputStream zos, String basedir) throws Exception {
 
         if (!source.exists()) {
             return;
@@ -527,7 +527,7 @@ public final class FileUtils {
         }
     }
 
-    private static void addFileToZip(File source, ZipOutputStream zos, String basedir) throws Exception {
+    public static void addFileToZip(File source, ZipOutputStream zos, String basedir) throws Exception {
         if (!source.exists()) {
             return;
         }
@@ -551,8 +551,18 @@ public final class FileUtils {
 
         }
     }
+    
+    public static void addZipEntry(ZipOutputStream zipOut, FileInputStream fis, ZipEntry zipEntry) throws IOException {
+    	zipOut.putNextEntry(zipEntry);
+		final byte[] bytes = new byte[1024];
+		int length;
+		while ((length = fis.read(bytes)) >= 0) {
+			zipOut.write(bytes, 0, length);
+		}
+		zipOut.closeEntry();
+    }
 
-    private static void addDirectoryToZip(File source, ZipOutputStream zos, String basedir) throws Exception {
+    public static void addDirectoryToZip(File source, ZipOutputStream zos, String basedir) throws Exception {
         if (!source.exists()) {
             return;
         }
@@ -569,6 +579,12 @@ public final class FileUtils {
         }
     }
 
+    /**
+     * @param relativeRoot relative root path
+     * @param dir2zip directory to be zipped
+     * @param zos zip output stream
+     * @throws IOException inpu/ouput exception.
+     */
     public static void addDirToArchive(String relativeRoot, String dir2zip, ZipOutputStream zos) throws IOException {
         File zipDir = new File(dir2zip);
         String[] dirList = zipDir.list();
@@ -582,38 +598,68 @@ public final class FileUtils {
                 addDirToArchive(relativeRoot, filePath, zos);
                 continue;
             }
-
-            FileInputStream fis = new FileInputStream(f);
-            String relativePath = Paths.get(relativeRoot).relativize(f.toPath()).toString();
-            ZipEntry anEntry = new ZipEntry(relativePath);
-            zos.putNextEntry(anEntry);
-
-            while ((bytesIn = fis.read(readBuffer)) != -1) {
-                zos.write(readBuffer, 0, bytesIn);
+            try (FileInputStream fis = new FileInputStream(f)) {
+                String relativePath = Paths.get(relativeRoot).relativize(f.toPath()).toString();
+                ZipEntry anEntry = new ZipEntry(relativePath);
+                zos.putNextEntry(anEntry);
+    
+                while ((bytesIn = fis.read(readBuffer)) != -1) {
+                    zos.write(readBuffer, 0, bytesIn);
+                }
+            } catch (IOException ex) {
+                throw ex;
             }
-
-            fis.close();
         }
     }
 
+    /**
+     * @param file file to be archived
+     * @throws IOException input/ouput exception
+     */
     public static void archiveFile(File file) throws IOException {
         byte[] buffer = new byte[1024];
-
+        try (
         FileOutputStream fos = new FileOutputStream(file.getParent() + File.separator + FilenameUtils.removeExtension(file.getName()) + ".zip");
         ZipOutputStream zos = new ZipOutputStream(fos);
+        FileInputStream in = new FileInputStream(file)) {
         ZipEntry ze = new ZipEntry(file.getName());
         zos.putNextEntry(ze);
-        FileInputStream in = new FileInputStream(file);
-
         int len;
         while ((len = in.read(buffer)) > 0) {
             zos.write(buffer, 0, len);
         }
+        } catch (IOException ex) {
+            throw ex;
+        }
+    }
+    
+    /**
+     * Change the extension of a file to the given a new file extension.
+     * 
+     * @param filename Name of the file
+     * @param newExtension New extension
+     * @return Filename with renamed extension
+     */
+    public static String changeExtension(String filename, String newExtension) {
+        String name = filename.substring(0, filename.lastIndexOf('.'));
+        return name + newExtension;
+    }
+    
+    /**
+     * Encode a file to byte64 string.
+     * 
+     * @param file File
+     * @return byte string representation of the file
+     * @throws IOException
+     */
+    public static String encodeFileToBase64Binary(File file) throws IOException {
+        String encodedFile = null;
+        try (FileInputStream fileInputStreamReader = new FileInputStream(file)) {
+            byte[] bytes = new byte[(int) file.length()];
+            fileInputStreamReader.read(bytes);
+            encodedFile = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+        }
 
-        in.close();
-        zos.closeEntry();
-
-        // remember close it
-        zos.close();
+        return encodedFile;
     }
 }

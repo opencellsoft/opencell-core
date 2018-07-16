@@ -82,6 +82,10 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_self_sequence")
+    private boolean useSelfSequence = true;
 
     /**
      * An EL expression to customize invoice PDF file name.
@@ -202,4 +206,20 @@ public class InvoiceType extends BusinessEntity {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
+
+    /**
+     * @return the useSelfSequence
+     */
+    public boolean isUseSelfSequence() {
+        return useSelfSequence;
+    }
+
+    /**
+     * @param useSelfSequence the useSelfSequence to set
+     */
+    public void setUseSelfSequence(boolean useSelfSequence) {
+        this.useSelfSequence = useSelfSequence;
+    }
+    
+    
 }

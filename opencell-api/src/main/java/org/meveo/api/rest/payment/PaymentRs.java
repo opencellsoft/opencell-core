@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -32,7 +33,8 @@ import org.meveo.api.rest.IBaseRs;
  * The Interface PaymentRs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 
 @Path("/payment")
@@ -42,14 +44,25 @@ import org.meveo.api.rest.IBaseRs;
 public interface PaymentRs extends IBaseRs {
 
     /**
-     * Creates automated payment. It also process if a payment is matching or not
+     * Creates automated payment. It also process if a payment is matching or not Deprecated and replaced by "reatePayment" using /payment path
      * 
      * @param postData Payment's data
      * @return payment action status
      */
     @POST
     @Path("/create")
+    @Deprecated
     public PaymentActionStatus create(PaymentDto postData);
+
+    /**
+     * Creates automated payment. It also process if a payment is matching or not
+     * 
+     * @param postData Payment's data
+     * @return payment action status
+     */
+    @POST
+    @Path("/")
+    public PaymentActionStatus createPayment(PaymentDto postData);
 
     /**
      * Returns a list of account operations along with the balance of a customer.
@@ -186,6 +199,26 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentMethod")
     public PaymentMethodTokenDto findPaymentMethod(@QueryParam("id") Long id);
 
+    /**
+     * Enable a Payment method with a given id
+     * 
+     * @param id Payment method id
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentMethod/{id}/enable")
+    ActionStatus enablePaymentMethod(@PathParam("id") Long id);
+
+    /**
+     * Disable a Payment method with a given id
+     * 
+     * @param id Payment method id
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentMethod/{id}/disable")
+    ActionStatus disablePaymentMethod(@PathParam("id") Long id);
+
     /************************************************************************************************/
     /**** Payment Gateways ****/
     /************************************************************************************************/
@@ -264,7 +297,27 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Path("/paymentGateway/createOrUpdate")
     public PaymentGatewayResponseDto createOrUpdatePaymentGateway(PaymentGatewayDto paymentGateway);
-    
+
+    /**
+     * Enable a Payment gateway with a given code
+     * 
+     * @param code Payment gateway code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentGateway/{code}/enable")
+    ActionStatus enablePaymentGateway(@PathParam("code") String code);
+
+    /**
+     * Disable a Payment gateway with a given code
+     * 
+     * @param code Payment gateway code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentGateway/{code}/disable")
+    ActionStatus disablePaymentGateway(@PathParam("code") String code);
+
     /**
      * List Payment matching a given criteria.
      * 
@@ -278,8 +331,8 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/history/list")
-    PaymentHistoriesDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-            @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    PaymentHistoriesDto listPaymentHistoryGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List invoices matching a given criteria.
@@ -289,6 +342,6 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/history/list")
-    PaymentHistoriesDto listPost(PagingAndFiltering pagingAndFiltering);
+    PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering);
 
 }

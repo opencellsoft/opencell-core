@@ -8,6 +8,15 @@
     </ui:define>
 
     <ui:define name="body">
+        <hftl:entityPopup id="searchOccTemplatePopup" header="#{messages['invoiceType.occTemplate']}" updateField=":invoiceCatFormId:tabView:occTemplateSelectedId :invoiceCatFormId:tabView:occTemplateSelectedId_text"
+            selection="#{invoiceCategoryBean.entity.occTemplate}" backingBean="#{occTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchOccTemplateNegativePopup" header="#{messages['invoiceType.occTemplate']}"
+            updateField=":invoiceCatFormId:tabView:occTemplateNegativeSelectedId :invoiceCatFormId:tabView:occTemplateNegativeSelectedId_text" selection="#{invoiceCategoryBean.entity.occTemplateNegative}"
+            backingBean="#{occTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>    
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -31,6 +40,10 @@
 						deleteButton="false" />	 -->
                     <hftl:formLanguageFields  field="description" />
                     <!-- <hftl:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+            <hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" showResetButton="true" popup="true" popupId="searchOccTemplatePopup"
+               />
+            <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code" popup="true"
+                popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false" />                    
                 </p:tab>
 
                 <hftl:customFields backingBean="#{invoiceCategoryBean}" messagesId=":invoiceCatFormId:messages" />

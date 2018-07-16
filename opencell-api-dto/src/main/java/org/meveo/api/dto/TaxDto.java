@@ -18,7 +18,7 @@ import org.meveo.model.billing.Tax;
  **/
 @XmlRootElement(name = "Tax")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaxDto extends BusinessDto {
+public class TaxDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5184602572648722134L;

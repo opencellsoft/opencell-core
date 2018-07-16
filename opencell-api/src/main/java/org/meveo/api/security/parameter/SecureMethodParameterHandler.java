@@ -48,6 +48,9 @@ public class SecureMethodParameterHandler {
 	@SuppressWarnings("unchecked")
 	public <T> T getParameterValue(SecureMethodParameter parameter, Object[] values, Class<T> resultClass) throws MeveoApiException {
 		SecureMethodParameterParser<?> parser = getParser(parameter);
+		if (parser == null) {
+		    return null;
+		}
 		Object parameterValue = parser.getParameterValue(parameter, values);
 		return (T) parameterValue;
 	}

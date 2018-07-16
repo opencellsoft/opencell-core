@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.IEntity;
@@ -61,7 +62,8 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
 
         // Do a regular search
         if (fullTextSearchValue == null) {
-            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(), null, getListFieldsToFetchImpl(), sortField, sortOrder);
+            
+            PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(loadingFilters), null, getListFieldsToFetchImpl(), sortField, sortOrder);
 
             setRowCount(countRecords(paginationConfig));
 
@@ -241,11 +243,25 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
      * Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt;
      * Criteria name consist of [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
      * attribute name.
+     *
+     * @param filters the filters
+     * @return the search criteria
+     */
+    protected  Map<String, Object> getSearchCriteria(Map<String, Object> filters) {
+        return getSearchCriteria();
+    }
+    
+
+    /**
+     * Get search criteria for data searching.&lt;br/&gt;
+     * Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt;
+     * Criteria name consist of [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
+     * attribute name.
      * 
      * @return Map of search criteria
      */
     protected abstract Map<String, Object> getSearchCriteria();
-
+    
     /**
      * Method that returns concrete PersistenceService. That service is then used for operations on concrete entities (eg. save, delete etc).
      * 
@@ -254,9 +270,9 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
     protected abstract IPersistenceService<T> getPersistenceServiceImpl();
 
     /**
-     * Get default sort
+     * Get default sort.
      * 
-     * @return
+     * @return default sort implementation
      */
     protected String getDefaultSortImpl() {
         return "";
@@ -268,23 +284,27 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
 
     /**
      * Override this method if you need to fetch any fields when selecting list of entities in data table. Return list of field names that has to be fetched.
+     * 
+     * @return List of fields to fetch
      */
     protected List<String> getListFieldsToFetchImpl() {
         return null;
     }
 
     /**
-     * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions
+     * A method to mock List/Set/Collection size property, so it is easy to be used in EL expressions.
+     * 
+     * @return Size of rows
      */
     public Integer size() {
         return rowCount;
     }
 
     /**
-     * Get a value for full text search
+     * Get a value for full text search.
      * 
      * @param loadingFilters Datatable filters
-     * @return
+     * @return fullText search value
      */
     protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
         if (loadingFilters != null) {

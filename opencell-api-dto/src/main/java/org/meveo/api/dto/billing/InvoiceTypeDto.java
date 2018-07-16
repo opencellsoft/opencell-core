@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -23,7 +23,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
  */
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceTypeDto extends BusinessDto {
+public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -65,6 +65,9 @@ public class InvoiceTypeDto extends BusinessDto {
     /** The billing template name EL. */
     private String billingTemplateNameEL;
 
+    /** The use Self Sequence . */
+    private boolean useSelfSequence = true;
+
     /**
      * Instantiates a new invoice type dto.
      */
@@ -96,6 +99,7 @@ public class InvoiceTypeDto extends BusinessDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
+        this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
 
     /**
@@ -277,11 +281,25 @@ public class InvoiceTypeDto extends BusinessDto {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
-    
+
+    /**
+     * @return the useSelfSequence
+     */
+    public boolean isUseSelfSequence() {
+        return useSelfSequence;
+    }
+
+    /**
+     * @param useSelfSequence the useSelfSequence to set
+     */
+    public void setUseSelfSequence(boolean useSelfSequence) {
+        this.useSelfSequence = useSelfSequence;
+    }
+
     @Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
                 + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
-                + "]";
+                + ", useSelfSequence=" + useSelfSequence + "]";
     }
 }

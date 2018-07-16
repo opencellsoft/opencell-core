@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "SubscriptionWithCreditLimit")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubscriptionWithCreditLimitDto extends BaseDto {
+public class SubscriptionWithCreditLimitDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6700315102709912658L;

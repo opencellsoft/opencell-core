@@ -56,16 +56,11 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 	}
 
 	public Map<String, String> getNotificationTypes() {
-		Map<String, String> types = new HashMap<String, String>();
+		Map<String, String> types = new HashMap<>();
 
-		types.put(WebHook.class.getName(),
-				resourceMessages.getString("entity.notification.notificationType." + WebHook.class.getName()));
-		types.put(EmailNotification.class.getName(),
-				resourceMessages.getString("entity.notification.notificationType." + EmailNotification.class.getName()));
-		types.put(
-				InstantMessagingNotification.class.getName(),
-				resourceMessages.getString("entity.notification.notificationType."
-						+ InstantMessagingNotification.class.getName()));
+		types.put(WebHook.class.getName(), resourceMessages.getString("entity.notification.notificationType." + WebHook.class.getName()));
+        types.put(EmailNotification.class.getName(), resourceMessages.getString("entity.notification.notificationType." + EmailNotification.class.getName()));
+        types.put(InstantMessagingNotification.class.getName(), resourceMessages.getString("entity.notification.notificationType." + InstantMessagingNotification.class.getName()));
 
 		return types;
 	}
@@ -73,6 +68,7 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 	/**
 	 * DataModel for primefaces lazy loading datatable component.
 	 * 
+	 * @param notificationId Notification identifier
 	 * @return LazyDataModel implementation.
 	 */
 	public LazyDataModel<NotificationHistory> getLazyDataModel(Long notificationId) {
@@ -96,9 +92,7 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 		csv.startNewLine();
 		for (NotificationHistory notificationHistory : (!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():notificationHistoryService.list()) {
             csv.appendValue(DateUtils.formatDateWithPattern(notificationHistory.getAuditable().getUpdated(), "dd/MM/yyyy"));
-			csv.appendValue(notificationHistory.getInboundRequest() != null ? notificationHistory
-					.getInboundRequest().getCode() : notificationHistory
-					.getEntityClassName());
+			csv.appendValue(notificationHistory.getInboundRequest() != null ? notificationHistory.getInboundRequest().getCode() : notificationHistory.getEntityClassName());
 			csv.appendValue(notificationHistory.getNotification().getCode());
 			csv.appendValue(notificationHistory.getNbRetry() + "");
 			csv.appendValue(notificationHistory.getStatus() + "");
@@ -107,8 +101,7 @@ public class NotificationHistoryBean extends BaseBean<NotificationHistory> {
 			csv.appendValue(notificationHistory.getSerializedEntity());
 			csv.startNewLine();
 		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString()
-				.getBytes());
+		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
 		csv.download(inputStream, "NotificationHistories.csv");
 	}
 

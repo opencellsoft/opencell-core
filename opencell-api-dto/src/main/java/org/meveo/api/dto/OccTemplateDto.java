@@ -16,7 +16,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
  */
 @XmlRootElement(name = "OCCTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OccTemplateDto extends BusinessDto {
+public class OccTemplateDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2587489734648000805L;

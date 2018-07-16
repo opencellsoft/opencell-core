@@ -28,13 +28,13 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "ar_matching_amount")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_matching_amount_seq"), })
-public class MatchingAmount extends EnableEntity {
+public class MatchingAmount extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 

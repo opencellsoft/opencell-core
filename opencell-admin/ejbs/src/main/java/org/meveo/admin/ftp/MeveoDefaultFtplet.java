@@ -90,7 +90,6 @@ public class MeveoDefaultFtplet extends DefaultFtplet {
 			User user = session.getUser();
 			file.setAction(action);
 			org.meveo.model.admin.User meveoUser = userService.findByUsername(user.getName());
-			file.setDisabled(false);
 			log.debug("trace ftp file {}", file);
 			return file;
 		}

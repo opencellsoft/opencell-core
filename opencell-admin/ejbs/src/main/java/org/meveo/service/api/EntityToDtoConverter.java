@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -15,6 +16,7 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -32,39 +34,72 @@ import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+/**
+ * The Class EntityToDtoConverter.
+ * 
+ * @lastModifiedVersion 5.0.2
+ */
 @Stateless
 public class EntityToDtoConverter {
 
+    /** The logger. */
     @Inject
     private Logger logger;
 
+    /** The custom field template service. */
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
+    /** The custom entity instance service. */
     @Inject
     private CustomEntityInstanceService customEntityInstanceService;
 
+    /** The custom field instance service. */
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
+    /** The app provider. */
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
+    /**
+     * Gets the custom fields DTO.
+     *
+     * @param entity the entity
+     * @return the custom fields DTO
+     */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity) {
         return getCustomFieldsDTO(entity, false);
     }
 
+    /**
+     * Gets the custom fields DTO.
+     *
+     * @param entity the entity
+     * @param includeInheritedCF the include inherited CF
+     * @return the custom fields DTO
+     */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
         return getCustomFieldsDTO(entity, includeInheritedCF, false);
     }
 
+    /**
+     * Gets the custom fields DTO.
+     *
+     * @param entity the entity
+     * @param includeInheritedCF the include inherited CF
+     * @param mergeMapValues the merge map values
+     * @return the custom fields DTO
+     */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF, boolean mergeMapValues) {
         Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues() != null ? entity.getCfValues().getValuesByCode() : new HashMap<>();
         return getCustomFieldsDTO(entity, cfValuesByCode, includeInheritedCF, mergeMapValues);
     }
 
     /**
+     * Gets the custom fields DTO.
+     *
      * @param entity entity
      * @param cfValuesByCode List of custom field values by code
      * @param includeInheritedCF If true, also returns the inherited cfs
@@ -82,11 +117,26 @@ public class EntityToDtoConverter {
         return getCustomFieldsDTO(entity, cfValuesByCode, CustomFieldInheritanceEnum.getInheritCF(includeInheritedCF, mergeMapValues));
     }
 
+    /**
+     * Gets the custom fields DTO.
+     *
+     * @param entity the entity
+     * @param inheritCF the inherit CF
+     * @return the custom fields DTO
+     */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, CustomFieldInheritanceEnum inheritCF) {
         Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues() != null ? entity.getCfValues().getValuesByCode() : new HashMap<>();
         return getCustomFieldsDTO(entity, cfValuesByCode, inheritCF);
     }
 
+    /**
+     * Gets the custom fields DTO.
+     *
+     * @param entity the entity
+     * @param cfValues the cf values
+     * @param inheritCF the inherit CF
+     * @return the custom fields DTO
+     */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValues, CustomFieldInheritanceEnum inheritCF) {
 
         CustomFieldsDto currentEntityCFs = new CustomFieldsDto();
@@ -152,6 +202,12 @@ public class EntityToDtoConverter {
         return currentEntityCFs.isEmpty() ? null : currentEntityCFs;
     }
 
+    /**
+     * Merge map values.
+     *
+     * @param source the source
+     * @param destination the destination
+     */
     private void mergeMapValues(List<CustomFieldDto> source, List<CustomFieldDto> destination) {
         for (CustomFieldDto sourceCF : source) {
             // logger.trace("Source custom field: {}", sourceCF);
@@ -184,11 +240,23 @@ public class EntityToDtoConverter {
         }
     }
 
+    /**
+     * Custom field to DTO.
+     *
+     * @param cfCode the cf code
+     * @param value the value
+     * @param isChildEntityTypeField the is child entity type field
+     * @param cft the cft
+     * @return the custom field dto
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public CustomFieldDto customFieldToDTO(String cfCode, Object value, boolean isChildEntityTypeField) {
+    public CustomFieldDto customFieldToDTO(String cfCode, Object value, boolean isChildEntityTypeField, CustomFieldTemplate cft) {
 
         CustomFieldDto dto = new CustomFieldDto();
         dto.setCode(cfCode);
+        dto.setDescription(cft.getDescription());
+        dto.setFieldType(cft.getFieldType());
+        dto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cft.getDescriptionI18n()));
         if (value instanceof String) {
             dto.setStringValue((String) value);
         } else if (value instanceof Date) {
@@ -208,13 +276,24 @@ public class EntityToDtoConverter {
         return dto;
     }
 
+    /**
+     * Custom field to DTO.
+     *
+     * @param cfCode the cf code
+     * @param cfValue the cf value
+     * @param cft the cft
+     * @return the custom field dto
+     */
     @SuppressWarnings("unchecked")
     private CustomFieldDto customFieldToDTO(String cfCode, CustomFieldValue cfValue, CustomFieldTemplate cft) {
 
         boolean isChildEntityTypeField = cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY;
 
-        CustomFieldDto dto = customFieldToDTO(cfCode, cfValue.getValue(), isChildEntityTypeField);
+        CustomFieldDto dto = customFieldToDTO(cfCode, cfValue.getValue(), isChildEntityTypeField, cft);
         dto.setCode(cfCode);
+        dto.setDescription(cft.getDescription());
+        dto.setFieldType(cft.getFieldType());
+        dto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cft.getDescriptionI18n()));
         if (cfValue.getPeriod() != null) {
             dto.setValuePeriodStartDate(cfValue.getPeriod().getFrom());
             dto.setValuePeriodEndDate(cfValue.getPeriod().getTo());
@@ -243,6 +322,13 @@ public class EntityToDtoConverter {
         return dto;
     }
 
+    /**
+     * Custom field value to DTO.
+     *
+     * @param listValue the list value
+     * @param isChildEntityTypeField the is child entity type field
+     * @return the list
+     */
     private List<CustomFieldValueDto> customFieldValueToDTO(@SuppressWarnings("rawtypes") List listValue, boolean isChildEntityTypeField) {
 
         if (listValue == null) {
@@ -260,7 +346,7 @@ public class EntityToDtoConverter {
                         continue;
                     }
 
-                    dto.setValue(CustomEntityInstanceDto.toDTO(cei, getCustomFieldsDTO(cei)));
+                    dto.setValue(new CustomEntityInstanceDto(cei, getCustomFieldsDTO(cei)));
 
                 } else {
                     dto.setValue(new EntityReferenceDto((EntityReferenceWrapper) listItem));
@@ -273,6 +359,12 @@ public class EntityToDtoConverter {
         return dtos;
     }
 
+    /**
+     * Custom field value to DTO.
+     *
+     * @param mapValue the map value
+     * @return the linked hash map
+     */
     private LinkedHashMap<String, CustomFieldValueDto> customFieldValueToDTO(Map<String, Object> mapValue) {
         if (mapValue == null || mapValue.entrySet().size() == 0) {
             return null;

@@ -90,6 +90,9 @@ public class RecordedInvoice extends AccountOperation {
 
     @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
+    
+    @OneToMany(mappedBy = "recordedInvoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates = new ArrayList<RecordedInvoiceCatAgregate>();
 
     public Date getProductionDate() {
         return productionDate;
@@ -194,6 +197,20 @@ public class RecordedInvoice extends AccountOperation {
     }
     
     
+
+    /**
+     * @return the recordedInvoiceCatAgregates
+     */
+    public List<RecordedInvoiceCatAgregate> getRecordedInvoiceCatAgregates() {
+        return recordedInvoiceCatAgregates;
+    }
+
+    /**
+     * @param recordedInvoiceCatAgregates the recordedInvoiceCatAgregates to set
+     */
+    public void setRecordedInvoiceCatAgregates(List<RecordedInvoiceCatAgregate> recordedInvoiceCatAgregates) {
+        this.recordedInvoiceCatAgregates = recordedInvoiceCatAgregates;
+    }
 
     @Transient
     public DDRequestItem getPayedDDRequestItem() {

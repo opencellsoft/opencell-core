@@ -13,8 +13,8 @@ import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -254,5 +254,18 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
         return result;
     }
+
+	@Override
+	public ActionStatus exportCustomerHierarchy(String customerCode) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.exportCustomerHierarchy(customerCode, httpServletResponse);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
 
 }

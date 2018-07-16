@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 
@@ -21,7 +21,7 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
  */
 @XmlRootElement(name = "Notification")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NotificationDto extends BusinessDto {
+public abstract class NotificationDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3931479706274647165L;
@@ -30,26 +30,32 @@ public class NotificationDto extends BusinessDto {
     @XmlElement(required = true)
     private String classNameFilter;
 
-    /** Valid values: CREATED, UPDATED, REMOVED, TERMINATED, DISABLED, PROCESSED, REJECTED, REJECTED_CDR, LOGGED_IN, INBOUND_REQ, ENABLED. */
+    /**
+     * Valid values: CREATED, UPDATED, REMOVED, TERMINATED, DISABLED, PROCESSED, REJECTED, REJECTED_CDR, LOGGED_IN, INBOUND_REQ, ENABLED
+     */
     @XmlElement(required = true)
     private NotificationEventTypeEnum eventTypeFilter;
 
     /** The el filter. */
     private String elFilter;
-    
+
     /** The script instance code. */
     private String scriptInstanceCode;
-    
+
     /** The script params. */
     private Map<String, String> scriptParams = new HashMap<String, String>();
-    
+
     /** The counter template. */
     private String counterTemplate;
-    
+
     /** The priority. */
     private int priority;
-    
-    /** The active. */
+
+    /**
+     * Is Notification active. A negative of Disabled. Deprecated in 5.0.1. Use Disabled field instead.
+     * 
+     */
+    @Deprecated
     private Boolean active = null;
 
     /**
@@ -60,11 +66,9 @@ public class NotificationDto extends BusinessDto {
     }
 
     /**
-     * v5.0: add active field
+     * Convert Notifictaion entity to DTO
      * 
-     * @author akadid abdelmounaim
-     * @param notification the Notification entity
-     * @lastModifiedVersion 5.0
+     * @param notification Entity to convert
      */
     public NotificationDto(Notification notification) {
         super(notification);
@@ -80,7 +84,6 @@ public class NotificationDto extends BusinessDto {
         }
         priority = notification.getPriority();
         active = notification.isActive();
-        // scriptParams = e.getParams();
     }
 
     /**
@@ -212,6 +215,7 @@ public class NotificationDto extends BusinessDto {
     /**
      * Getter for active state.
      *
+     * 
      * @author akadid abdelmounaim
      * @return isActive
      * @lastModifiedVersion 5.0
@@ -224,6 +228,7 @@ public class NotificationDto extends BusinessDto {
      * Setter for active state.
      *
      * @author akadid abdelmounaim
+     * 
      * @param active active state
      * @lastModifiedVersion 5.0
      */

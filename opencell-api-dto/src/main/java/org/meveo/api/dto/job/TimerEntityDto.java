@@ -5,8 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.jobs.TimerEntity;
 
 /**
@@ -16,7 +15,7 @@ import org.meveo.model.jobs.TimerEntity;
  */
 @XmlRootElement(name = "TimerEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TimerEntityDto extends BusinessDto {
+public class TimerEntityDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5166093858617578774L;
@@ -56,9 +55,9 @@ public class TimerEntityDto extends BusinessDto {
     }
 
     /**
-     * Instantiates a new timer entity dto.
+     * Convert a timer entity to DTO
      *
-     * @param timerEntity the timer entity
+     * @param timerEntity Entity to convert
      */
     public TimerEntityDto(TimerEntity timerEntity) {
         super(timerEntity);
@@ -70,32 +69,6 @@ public class TimerEntityDto extends BusinessDto {
         this.hour = timerEntity.getHour();
         this.minute = timerEntity.getMinute();
         this.second = timerEntity.getSecond();
-    }
-
-    /**
-     * From DTO.
-     *
-     * @param dto the dto
-     * @param timerEntityToUpdate the timer entity to update
-     * @return the timer entity
-     */
-    public static TimerEntity fromDTO(TimerEntityDto dto, TimerEntity timerEntityToUpdate) {
-        TimerEntity timerEntity = new TimerEntity();
-        if (timerEntityToUpdate != null) {
-            timerEntity = timerEntityToUpdate;
-        }
-
-        timerEntity.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
-        timerEntity.setDescription(dto.getDescription());
-        timerEntity.setYear(dto.getYear());
-        timerEntity.setMonth(dto.getMonth());
-        timerEntity.setDayOfMonth(dto.getDayOfMonth());
-        timerEntity.setDayOfWeek(dto.getDayOfWeek());
-        timerEntity.setHour(dto.getHour());
-        timerEntity.setMinute(dto.getMinute());
-        timerEntity.setSecond(dto.getSecond());
-
-        return timerEntity;
     }
 
     /**
@@ -230,9 +203,8 @@ public class TimerEntityDto extends BusinessDto {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof TimerEntityDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        
+        if (obj == null || !(obj instanceof TimerEntityDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 
@@ -247,7 +219,7 @@ public class TimerEntityDto extends BusinessDto {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "TimerEntityDto [code=" + getCode() + ", description=" + getDescription() + ", hour=" + hour + ", minute=" + minute + ", second=" + second + ", year=" + year

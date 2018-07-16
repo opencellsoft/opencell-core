@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
@@ -21,7 +21,7 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  */
 @XmlRootElement(name = "DDRequestLotOp")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DDRequestLotOpDto extends BaseDto {
+public class DDRequestLotOpDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6185045412352889135L;
@@ -60,6 +60,7 @@ public class DDRequestLotOpDto extends BaseDto {
      * @param ddrequestLotOp the DDRequestLotOp entity
      */
     public DDRequestLotOpDto(DDRequestLotOp ddrequestLotOp) {
+        super(ddrequestLotOp);
         this.fromDueDate = ddrequestLotOp.getFromDueDate();
         this.toDueDate = ddrequestLotOp.getToDueDate();
         this.ddrequestOp = ddrequestLotOp.getDdrequestOp();

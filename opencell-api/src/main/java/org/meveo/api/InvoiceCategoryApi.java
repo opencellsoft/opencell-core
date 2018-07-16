@@ -12,10 +12,14 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
+import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
  * @author Edward P. Legaspi
+ * 
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class InvoiceCategoryApi extends BaseApi {
@@ -23,6 +27,9 @@ public class InvoiceCategoryApi extends BaseApi {
     @Inject
     private InvoiceCategoryService invoiceCategoryService;
 
+    /** The occ template service. */
+    @Inject
+    private OCCTemplateService occTemplateService;
 
     public void create(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -36,9 +43,27 @@ public class InvoiceCategoryApi extends BaseApi {
             throw new EntityAlreadyExistsException(InvoiceCategory.class, postData.getCode());
         }
 
+        OCCTemplate occTemplate = null;
+        if (!StringUtils.isBlank(postData.getOccTemplateCode())) {
+            occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
+            if (occTemplate == null) {
+                throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
+            }
+        }
+
+        OCCTemplate occTemplateNegative = null;
+        if (!StringUtils.isBlank(postData.getOccTemplateNegativeCode())) {
+            occTemplateNegative = occTemplateService.findByCode(postData.getOccTemplateNegativeCode());
+            if (occTemplateNegative == null) {
+                throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateNegativeCode());
+            }
+        }
+
         InvoiceCategory invoiceCategory = new InvoiceCategory();
         invoiceCategory.setCode(postData.getCode());
         invoiceCategory.setDescription(postData.getDescription());
+        invoiceCategory.setOccTemplate(occTemplate);
+        invoiceCategory.setOccTemplateNegative(occTemplateNegative);
 
         // populate customFields
         try {
@@ -77,6 +102,24 @@ public class InvoiceCategoryApi extends BaseApi {
             invoiceCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), invoiceCategory.getDescriptionI18n()));
         }
 
+        OCCTemplate occTemplate = null;
+        if (!StringUtils.isBlank(postData.getOccTemplateCode())) {
+            occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
+            if (occTemplate == null) {
+                throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
+            }
+            invoiceCategory.setOccTemplate(occTemplate);
+        }
+
+        OCCTemplate occTemplateNegative = null;
+        if (!StringUtils.isBlank(postData.getOccTemplateNegativeCode())) {
+            occTemplateNegative = occTemplateService.findByCode(postData.getOccTemplateNegativeCode());
+            if (occTemplateNegative == null) {
+                throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateNegativeCode());
+            }
+            invoiceCategory.setOccTemplateNegative(occTemplateNegative);
+        }
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceCategory, false, true);

@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
@@ -45,22 +46,19 @@ import org.slf4j.Logger;
 @Named
 public class AccountingJournal extends FileProducer implements Reporting {
     @Inject
-    protected Logger log;
-
-    @Inject
     private DWHAccountOperationService accountOperationService;
 
     private String separator;
 
     private String templateFilename;
-    public Map<String, Object> parameters = new HashMap<String, Object>();
-
+    
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     public void generateJournalFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        FileWriter writer = null;
         try {
             File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {
@@ -70,7 +68,7 @@ public class AccountingJournal extends FileProducer implements Reporting {
                 sb.append(".csv");
                 file = new File(sb.toString());
             }
-            FileWriter writer = new FileWriter(file);
+            writer = new FileWriter(file);
             writer.append("Date G.L.;Code operation;Libele operation;No de client;Ste;CG;CA;DA;CR;IC;GP;Debit;Credit");
             writer.append('\n');
             List<DWHAccountOperation> records = accountOperationService.getAccountingJournalRecords(startDate, endDate);
@@ -126,7 +124,6 @@ public class AccountingJournal extends FileProducer implements Reporting {
             // then write invoices
 
             writer.flush();
-            writer.close();
             if (outputFormat == OutputFormatEnum.PDF) {
                 parameters.put("startDate", startDate);
                 parameters.put("endDate", endDate);
@@ -136,6 +133,8 @@ public class AccountingJournal extends FileProducer implements Reporting {
             }
         } catch (IOException e) {
             log.error("failed to generate journal file ", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
     }
 

@@ -56,9 +56,6 @@ import org.slf4j.Logger;
 @Named
 public class AccountingDetail extends FileProducer implements Reporting {
     @Inject
-    protected Logger log;
-
-    @Inject
     private CustomerAccountService customerAccountService;
 
     @Inject
@@ -71,7 +68,6 @@ public class AccountingDetail extends FileProducer implements Reporting {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    public Map<String, Object> parameters = new HashMap<String, Object>();
     public HashMap<CacheKeyStr, BigDecimal> balances = new HashMap<CacheKeyStr, BigDecimal>();
     public HashMap<CacheKeyStr, String> customerNames = new HashMap<CacheKeyStr, String>();
 
@@ -81,6 +77,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
     private ParamBeanFactory paramBeanFactory;
 
     public void generateAccountingDetailFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        FileWriter writer = null;
         try {
             File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {
@@ -90,7 +87,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
                 sb.append(".csv");
                 file = new File(sb.toString());
             }
-            FileWriter writer = new FileWriter(file);
+            writer = new FileWriter(file);
             writer.append("N° compte client;Nom du compte client;Code operation;Référence comptable;Date de l'opération;Date d'exigibilité;Débit;Credit;Solde client");
             writer.append('\n');
             List<DWHAccountOperation> list = accountOperationTransformationService.getAccountingDetailRecords(new Date());
@@ -144,7 +141,6 @@ public class AccountingDetail extends FileProducer implements Reporting {
             writer.append('\n');
 
             writer.flush();
-            writer.close();
             if (outputFormat == OutputFormatEnum.PDF) {
                 parameters.put("startDate", startDate);
                 parameters.put("endDate", endDate);
@@ -157,6 +153,14 @@ public class AccountingDetail extends FileProducer implements Reporting {
             }
         } catch (IOException e) {
             log.error("failed to generate accounting detail File", e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception ex) {
+                    log.error("failed to close writer.", ex);
+                }
+            }
         }
 
     }

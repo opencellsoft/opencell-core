@@ -93,7 +93,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private PaymentMethodEnum newPaymentMethodType = PaymentMethodEnum.CARD;
     private PaymentMethod selectedPaymentMethod;
-    private boolean bicRequired = true;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -202,7 +201,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     }
 
     /**
-     * Compute balance exigible without litigation
+     * Compute balance exigible without litigation.
      * 
      * @return exigible balance without litigation
      * @throws BusinessException General business exception
@@ -210,12 +209,15 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        } else
+        } else {
             return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity, new Date());
+        }
     }
 
     /**
-     * is current customerAccount active
+     * Is current customerAccount active.
+     * 
+     * @return State of customer account : active / not active
      */
     public boolean isActiveAccount() {
         if (entity != null && entity.getId() != null) {
@@ -225,9 +227,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     }
 
     /**
-     * Close customerAccount
+     * Close customerAccount.
      * 
-     * @return
+     * @return Edit view
      */
     public String closeCustomerAccount() {
         log.info("closeAccount customerAccountId:" + entity.getId());

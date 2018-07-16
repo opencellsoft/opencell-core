@@ -58,7 +58,7 @@ public interface ServiceTemplateRs extends IBaseRs {
     @Path("/")
     @GET
     GetServiceTemplateResponseDto find(@QueryParam("serviceTemplateCode") String serviceTemplateCode,
-        @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove service template with a given code.
@@ -80,4 +80,23 @@ public interface ServiceTemplateRs extends IBaseRs {
     @POST
     ActionStatus createOrUpdate(ServiceTemplateDto postData);
 
+    /**
+     * Enable a Service template with a given code
+     * 
+     * @param code Service template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Service template with a given code
+     * 
+     * @param code Service template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

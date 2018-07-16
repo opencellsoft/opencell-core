@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -140,7 +141,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     /**
      * Method, that is invoked in billing account screen. This method returns invoices associated with current Billing Account.
      * 
-     * @return Data model
+     * @param ba Billing account
+     * @return Data model of Invoice
      */
     public LazyDataModel<Invoice> getBillingAccountInvoices(BillingAccount ba) {
         if (ba.getCode() == null) {
@@ -161,7 +163,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     /**
      * Method, that is invoked in billing run screen. This method returns invoices associated with current Billing Run.
      * 
-     * @return Data model
+     * @param br Billing run
+     * @return Data model of invoice
      */
     public LazyDataModel<Invoice> getBillingRunInvoices(BillingRun br) {
         if (br == null) {
@@ -292,6 +295,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "invoice.jasperNotFound"));
         } catch (Exception e) {
             log.error("failed to generate PDF ", e);
+            messages.error(new BundleKey("messages", "invoice.pdfGenerationError"));
         }
     }
 
@@ -328,6 +332,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         } catch (Exception e) {
             log.error("failed to generate xml invoice", e);
+            messages.error(new BundleKey("messages", "invoice.xmlGenerationError"));
         }
 
     }
@@ -513,9 +518,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     /**
-     * Detail invoice adjustments.
+     * Detail invoice adjustments without tax.
+     * 
+     * @return Total of invoice adjustment detail unit amount without tax
      */
-
     public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithoutTax() {
         BigDecimal total = new BigDecimal(0);
         if (entity != null && uiRatedTransactions != null) {
@@ -529,6 +535,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return total;
     }
 
+    /**
+     * Detail invoice adjustments with tax.
+     * 
+     * @return Total of invoice adjustment detail unit amount with tax
+     */
     public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithTax() {
         BigDecimal total = new BigDecimal(0);
         if (entity != null && uiRatedTransactions != null) {
@@ -679,6 +690,15 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
 
         return detailedInvoiceAdjustment;
+    }
+    
+    /**
+     * Checks if list of selectedEntities is empty to disable or not the exclude button
+     *
+     * @return true, if is exclude ba disabled
+     */
+    public boolean isExcludeBaDisabled() {
+        return CollectionUtils.isEmpty(this.getSelectedEntities());
     }
 
     public Boolean getDetailedParam() {

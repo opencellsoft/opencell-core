@@ -17,20 +17,14 @@ import org.meveo.model.crm.custom.EntityCustomAction;
  */
 @XmlRootElement(name = "EntityCustomAction")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EntityCustomActionDto extends BaseDto {
+public class EntityCustomActionDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -2916923287316823939L;
 
-    /** Code. */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /** Description. */
-    @XmlAttribute()
-    private String description;
-
-    /** Entity action applies to. */
+    /**
+     * Entity action applies to
+     */
     @XmlAttribute(required = false)
     protected String appliesTo;
 
@@ -72,8 +66,7 @@ public class EntityCustomActionDto extends BaseDto {
      * @param action the action
      */
     public EntityCustomActionDto(EntityCustomAction action) {
-        this.code = action.getCode();
-        this.description = action.getDescription();
+        super(action);
 
         this.appliesTo = action.getAppliesTo();
         this.applicableOnEl = action.getApplicableOnEl();
@@ -82,42 +75,6 @@ public class EntityCustomActionDto extends BaseDto {
         this.guiPosition = action.getGuiPosition();
 
         this.setScript(new ScriptInstanceDto(action.getScript()));
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**

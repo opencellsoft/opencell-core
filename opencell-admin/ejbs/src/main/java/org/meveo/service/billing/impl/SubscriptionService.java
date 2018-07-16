@@ -18,6 +18,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
@@ -62,10 +64,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private AccessService accessService;
-    
+
     @Inject
     private OrderHistoryService orderHistoryService;
 
+    @Inject
+    private OfferTemplateService offerTemplateService;
+    
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
@@ -75,11 +80,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
         super.create(subscription);
 
         // execute subscription script
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.subscribe(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode());
+                offerModelScriptService.subscribe(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode());
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
     }
@@ -117,11 +123,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
             suspensionDate = new Date();
         }
 
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.suspendSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), suspensionDate);
+                offerModelScriptService.suspendSubscription(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode(), suspensionDate);
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
 
@@ -172,25 +179,27 @@ public class SubscriptionService extends BusinessService<Subscription> {
             accessService.enable(access);
         }
 
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
             try {
-                offerModelScriptService.reactivateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), reactivationDate);
+                offerModelScriptService.reactivateSubscription(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode(), reactivationDate);
             } catch (BusinessException e) {
-                log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
+                log.error("Failed to execute a script {}", offerTemplate.getBusinessOfferModel().getScript().getCode(), e);
             }
         }
 
         return subscription;
     }
-    
+
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber) throws BusinessException {
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+            throws BusinessException {
         return terminateSubscription(subscription, terminationDate, terminationReason, orderNumber, null, null);
     }
 
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
-            throws BusinessException {
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
+            Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
 
         if (terminationReason == null) {
             throw new BusinessException("terminationReason is null");
@@ -202,8 +211,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @MeveoAudit
     private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
-            throws BusinessException {
+            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
@@ -216,7 +224,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 } else {
                     serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, null);
                 }
-                
+
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
@@ -232,10 +240,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
             access.setEndDate(terminationDate);
             accessService.update(access);
         }
-        
+
         // execute termination script
-        if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
-            offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
+        OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
+        if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
+            offerModelScriptService.terminateSubscription(subscription, offerTemplate.getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
         }
 
         return subscription;
@@ -281,8 +290,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
 
-        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date()).getResultList();
-        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date()).getResultList());
+        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date())
+            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList();
+        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date())
+            .setParameter("statuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED)).getResultList());
 
         return ids;
     }

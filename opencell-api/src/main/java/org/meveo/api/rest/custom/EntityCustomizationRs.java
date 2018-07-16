@@ -89,20 +89,38 @@ public interface EntityCustomizationRs extends IBaseRs {
      * @return
      */
     @POST
-    @Path("/cet/createOrUpdate")
+    @Path("/entity/createOrUpdate")
     public ActionStatus createOrUpdateEntityTemplate(CustomEntityTemplateDto dto);
-    
-    
+
     /**
-     * To be sure the compatibility of above method we will create a new one.
-     * Define new or update existing custom entity template definition
+     * To be sure the compatibility of above method we will create a new one. Define new or update existing custom entity template definition
      * 
      * @param dto
      * @return
      */
     @POST
-    @Path("/entity/createOrUpdate")
+    @Path("/cet/createOrUpdate")
     public ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto);
+
+    /**
+     * Enable a Custom entity template with a given code
+     * 
+     * @param code Custom entity template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/entity/{code}/enable")
+    ActionStatus enableEntityTemplate(@PathParam("code") String code);
+
+    /**
+     * Disable a Custom entity template with a given code
+     * 
+     * @param code Custom entity template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/entity/{code}/disable")
+    ActionStatus disableEntityTemplate(@PathParam("code") String code);
 
     /**
      * Customize a standard Meveo entity definition by adding fields and/or custom actions
@@ -174,6 +192,28 @@ public interface EntityCustomizationRs extends IBaseRs {
     public ActionStatus createOrUpdateField(CustomFieldTemplateDto postData);
 
     /**
+     * Enable a Custom field template with a given code
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @POST
+    @Path("/field/{customFieldTemplateCode}/{appliesTo}/enable")
+    ActionStatus enableField(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
+
+    /**
+     * Disable a Custom field template with a given code
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @POST
+    @Path("/field/{customFieldTemplateCode}/{appliesTo}/disable")
+    ActionStatus disableField(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
+
+    /**
      * Define a new entity action
      * 
      * @param postData
@@ -225,41 +265,61 @@ public interface EntityCustomizationRs extends IBaseRs {
     @Path("/action/createOrUpdate")
     public ActionStatus createOrUpdateAction(EntityCustomActionDto dto);
 
-	/**
-	 * Returns a List of BusinessEntities given a CustomFieldTemplate code. The
-	 * CustomFieldTemplate is pulled from the database and entityClass is use in
-	 * query. For example entity class is of type OfferTemplate, then it will
-	 * return a list of OfferTemplates.
-	 * 
-	 * @param code
-	 *            - CFT code
-	 * @param wildcode
-	 *            - code filter
-	 * @return
-	 */
-	@GET
-	@Path("/listBusinessEntityForCFVByCode/")
-	BusinessEntityResponseDto listBusinessEntityForCFVByCode(@QueryParam("code") String code,
-			@QueryParam("wildcode") String wildcode);
+    /**
+     * Enable a Entity action with a given code
+     * 
+     * @param actionCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @POST
+    @Path("/field/{actionCode}/{appliesTo}/enable")
+    ActionStatus enableAction(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo);
 
-	/**
-	 * Returns a list of filtered CustomFieldTemplate of an entity. The list of
-	 * entity is evaluted againsts the entity with the given code.
-	 * 
-	 * @param appliesTo
-	 *            - the type of entity to which the CFT applies. eg OFFER,
-	 *            SERVICE.
-	 * @param entityCode
-	 *            - code of the entity
-	 * @return
-	 */
+    /**
+     * Disable a Entity action with a given code
+     * 
+     * @param actionCode Entity action code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @POST
+    @Path("/field/{actionCode}/{appliesTo}/disable")
+    ActionStatus disableAction(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo);
+
+    /**
+     * Returns a List of BusinessEntities given a CustomFieldTemplate code. The CustomFieldTemplate is pulled from the database and entityClass is use in query. For example entity
+     * class is of type OfferTemplate, then it will return a list of OfferTemplates.
+     * 
+     * @param code CFT code
+     * @param wildcode code filter
+     * @return
+     */
+    @GET
+    @Path("/listBusinessEntityForCFVByCode/")
+    BusinessEntityResponseDto listBusinessEntityForCFVByCode(@QueryParam("code") String code, @QueryParam("wildcode") String wildcode);
+
+    /**
+     * Returns a list of filtered CustomFieldTemplate of an entity. The list of entity is evaluted againsts the entity with the given code.
+     * 
+     * @param appliesTo - the type of entity to which the CFT applies. eg OFFER, SERVICE.
+     * @param entityCode - code of the entity
+     * @return
+     */
     @GET
     @Path("/entity/listELFiltered")
     public EntityCustomizationResponseDto listELFiltered(@QueryParam("appliesTo") String appliesTo, @QueryParam("entityCode") String entityCode);
 
+    /**
+     * Execute and action of a given entity
+     * 
+     * @param actionCode Action code
+     * @param appliesTo Entity it applies to
+     * @param entityCode Entity code to execute action on
+     * @return Request processing status
+     */
     @POST
     @Path("/entity/action/execute/{actionCode}/{appliesTo}/{entityCode}")
-	ActionStatus execute(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo,
-			@PathParam("entityCode") String entityCode);
+    ActionStatus execute(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo, @PathParam("entityCode") String entityCode);
 
 }

@@ -34,6 +34,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
@@ -72,6 +73,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @param jobInstance Job instance
      * @return True if job is completely done. False if any data are left to process.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Boolean persistResult(Job job, JobExecutionResultImpl result, JobInstance jobInstance) {
         try {
@@ -228,57 +230,59 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
-     * Count job execution history records which end date is older then a given date.
+     * Count job execution history records which end date is older then a given date and belong to a given job (optional)
      * 
-     * @param jobName job name
+     * @param jobName job name (optional)
      * @param date Date to check
      * @return A number of job execution history records which is older then a given date
      */
     public long countJobExecutionHistoryToDelete(String jobName, Date date) {
         long result = 0;
-        if (date != null) {
-            QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "t"); // FIXME:.cacheable();
-            if (!StringUtils.isEmpty(jobName)) {
-                qb.addCriterion("t.jobInstance.code", "=", jobName, false);
+
+        if (jobName == null) {
+            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDate", Long.class).setParameter("date", date).getSingleResult();
+        } else {
+            JobInstance jobInstance = jobInstanceService.findByCode(jobName);
+            if (jobInstance == null) {
+                log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
+                return 0;
             }
-            qb.addCriterion("t.startDate", "<", date, false);
-            result = qb.count(getEntityManager());
+            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date)
+                .setParameter("jobInstance", jobInstance).getSingleResult();
         }
 
         return result;
     }
 
     /**
-     * Remove job execution history older then a given date.
+     * Remove job execution history older than a given date and belong to a given job (optional)
      * 
-     * @param jobName Job name to match
+     * @param jobName Job name to match (optional)
      * @param date Date to check
      * @return A number of records that were removed
      */
-    @SuppressWarnings("unchecked")
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int deleteJobExecutionHistory(String jobName, Date date) {
-        log.trace("Removing {} job execution history older then a {} date", jobName, date);
+    public long deleteJobExecutionHistory(String jobName, Date date) {
+        log.debug("Removing Job execution history of job {} which date is older then a {} date", jobName == null ? "ALL" : jobName, date);
 
-        List<JobInstance> jobInstances = null;
-        if (jobName != null) {
-            QueryBuilder qb = new QueryBuilder(JobInstance.class, "ji");
-            qb.addCriterion("ji.code", "=", jobName, false);
-            jobInstances = qb.getQuery(getEntityManager()).getResultList();
-            if (jobInstances.isEmpty()) {
-                log.info("Removed 0 job execution history which start date is older then a {} date", date);
+        long itemsDeleted = 0;
+
+        if (jobName == null) {
+            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDate").setParameter("date", date).executeUpdate();
+
+        } else {
+            JobInstance jobInstance = jobInstanceService.findByCode(jobName);
+            if (jobInstance == null) {
+                log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
                 return 0;
             }
+            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date)
+                .setParameter("jobInstance", jobInstance).executeUpdate();
         }
 
-        QueryBuilder qb = new QueryBuilder("delete from JobExecutionResultImpl t", null);
-        if (jobName != null) {
-            qb.addSqlCriterion("t.jobInstance in :jis", "jis", jobInstances);
-        }
-        qb.addCriterionDateRangeToTruncatedToDay("t.startDate", date);
-        int itemsDeleted = qb.getQuery(getEntityManager()).executeUpdate();
+        log.info("Removed {} Job execution history of job {} which date is older then a {} date", itemsDeleted, jobName == null ? "ALL" : jobName, date);
 
-        log.info("Removed {} job execution history which start date is older then a {} date ", itemsDeleted, date);
         return itemsDeleted;
     }
 
@@ -362,6 +366,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     /**
      * Finds the last job execution result by a given job instance.
+     * 
      * @param jobInstance JobInstance filter
      * @return last job execution result
      */

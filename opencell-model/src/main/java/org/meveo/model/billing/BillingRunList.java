@@ -30,97 +30,97 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "billing_billing_run_list")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_list_seq"), })
-public class BillingRunList extends EnableEntity {
+public class BillingRunList extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "invoice")
-	private Boolean invoice;
+    private Boolean invoice;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_run_id")
-	private BillingRun billingRun;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run_id")
+    private BillingRun billingRun;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_account_id")
-	private BillingAccount billingAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id")
+    private BillingAccount billingAccount;
 
-	@Column(name = "rated_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal RatedAmountWithoutTax = BigDecimal.ZERO;
+    @Column(name = "rated_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal RatedAmountWithoutTax = BigDecimal.ZERO;
 
-	@Column(name = "rated_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal RatedAmountTax = BigDecimal.ZERO;
+    @Column(name = "rated_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal RatedAmountTax = BigDecimal.ZERO;
 
-	@Column(name = "rated_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal RatedAmountWithTax = BigDecimal.ZERO;
+    @Column(name = "rated_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal RatedAmountWithTax = BigDecimal.ZERO;
 
-	@Column(name = "rated_amount2_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal RatedAmount2WithoutTax = BigDecimal.ZERO;
+    @Column(name = "rated_amount2_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal RatedAmount2WithoutTax = BigDecimal.ZERO;
 
-	public Boolean getInvoice() {
-		return invoice;
-	}
+    public Boolean getInvoice() {
+        return invoice;
+    }
 
-	public void setInvoice(Boolean invoice) {
-		this.invoice = invoice;
-	}
+    public void setInvoice(Boolean invoice) {
+        this.invoice = invoice;
+    }
 
-	public BillingRun getBillingRun() {
-		return billingRun;
-	}
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
 
-	public void setBillingRun(BillingRun billingRun) {
-		this.billingRun = billingRun;
-		if (billingRun != null) {
-			billingRun.getBillingRunLists().add(this);
-		}
-	}
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
+        if (billingRun != null) {
+            billingRun.getBillingRunLists().add(this);
+        }
+    }
 
-	public BigDecimal getRatedAmountWithoutTax() {
-		return RatedAmountWithoutTax;
-	}
+    public BigDecimal getRatedAmountWithoutTax() {
+        return RatedAmountWithoutTax;
+    }
 
-	public void setRatedAmountWithoutTax(BigDecimal ratedAmountWithoutTax) {
-		RatedAmountWithoutTax = ratedAmountWithoutTax;
-	}
+    public void setRatedAmountWithoutTax(BigDecimal ratedAmountWithoutTax) {
+        RatedAmountWithoutTax = ratedAmountWithoutTax;
+    }
 
-	public BigDecimal getRatedAmountTax() {
-		return RatedAmountTax;
-	}
+    public BigDecimal getRatedAmountTax() {
+        return RatedAmountTax;
+    }
 
-	public void setRatedAmountTax(BigDecimal ratedAmountTax) {
-		RatedAmountTax = ratedAmountTax;
-	}
+    public void setRatedAmountTax(BigDecimal ratedAmountTax) {
+        RatedAmountTax = ratedAmountTax;
+    }
 
-	public BigDecimal getRatedAmountWithTax() {
-		return RatedAmountWithTax;
-	}
+    public BigDecimal getRatedAmountWithTax() {
+        return RatedAmountWithTax;
+    }
 
-	public void setRatedAmountWithTax(BigDecimal ratedAmountWithTax) {
-		RatedAmountWithTax = ratedAmountWithTax;
-	}
+    public void setRatedAmountWithTax(BigDecimal ratedAmountWithTax) {
+        RatedAmountWithTax = ratedAmountWithTax;
+    }
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public BigDecimal getRatedAmount2WithoutTax() {
-		return RatedAmount2WithoutTax;
-	}
+    public BigDecimal getRatedAmount2WithoutTax() {
+        return RatedAmount2WithoutTax;
+    }
 
-	public void setRatedAmount2WithoutTax(BigDecimal ratedAmount2WithoutTax) {
-		RatedAmount2WithoutTax = ratedAmount2WithoutTax;
-	}
+    public void setRatedAmount2WithoutTax(BigDecimal ratedAmount2WithoutTax) {
+        RatedAmount2WithoutTax = ratedAmount2WithoutTax;
+    }
 
 }

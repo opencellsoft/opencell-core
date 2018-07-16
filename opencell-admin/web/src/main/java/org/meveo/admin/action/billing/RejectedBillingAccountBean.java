@@ -66,6 +66,7 @@ public class RejectedBillingAccountBean extends BaseBean<RejectedBillingAccount>
     /**
      * Method, that is invoked in billing run screen. This method returns billingAccountRejected associated with current Billing Run.
      * 
+     * @param br Billing run
      * @return Data model for Primefaces data list component
      */
     public LazyDataModel<RejectedBillingAccount> getBArejected(BillingRun br) {

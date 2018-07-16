@@ -12,6 +12,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -113,8 +117,61 @@ public class BillingAccountDto extends AccountDto {
      * Instantiates a new billing account dto.
      */
     public BillingAccountDto() {
-
+        super();
     }
+    
+    /**
+     * Instantiates a new billing account dto.
+     * 
+     * @param e BillingAccount entity
+     */
+	public BillingAccountDto(BillingAccount e) {
+		super(e);
+
+		if (e.getCustomerAccount() != null) {
+			setCustomerAccount(e.getCustomerAccount().getCode());
+		}
+		BillingCycle bc = e.getBillingCycle();
+		if (bc != null) {
+			setBillingCycle(bc.getCode());
+			setInvoicingThreshold(bc.getInvoicingThreshold());
+		}
+		if (e.getTradingCountry() != null) {
+			setCountry(e.getTradingCountry().getCountryCode());
+		}
+		if (e.getTradingLanguage() != null) {
+			setLanguage(e.getTradingLanguage().getLanguageCode());
+		}
+		setNextInvoiceDate(e.getNextInvoiceDate());
+		setSubscriptionDate(e.getSubscriptionDate());
+		setTerminationDate(e.getTerminationDate());
+		setElectronicBilling(e.getElectronicBilling());
+		setStatus(e.getStatus());
+		setStatusDate(e.getStatusDate());
+		setPhone(e.getPhone());
+		setMinimumAmountEl(e.getMinimumAmountEl());
+		setMinimumLabelEl(e.getMinimumLabelEl());
+		if (e.getTerminationReason() != null) {
+			setTerminationReason(e.getTerminationReason().getCode());
+		}
+		setEmail(e.getEmail());
+
+		if (e.getDiscountPlan() != null) {
+			setDiscountPlan(e.getDiscountPlan().getCode());
+		}
+
+		// Start compatibility with pre-4.6 versions
+
+		PaymentMethod paymentMethod = e.getCustomerAccount().getPreferredPaymentMethod();
+		if (paymentMethod != null) {
+			setPaymentMethod(paymentMethod.getPaymentType());
+			if (paymentMethod instanceof DDPaymentMethod) {
+				setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
+			}
+		}
+
+		// End compatibility with pre-4.6 versions
+	}
 
     /**
      * Gets the customer account.

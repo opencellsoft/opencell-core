@@ -91,7 +91,7 @@ public class FilteredList4_3Api extends BaseApi {
                 throw new EntityDoesNotExistsException(Filter.class, filter.getCode());
         	}
         	 // check if user own the filter
-            if (result.getShared() == null || !result.getShared()) {
+            if (result != null && (result.getShared() == null || !result.getShared())) {
                 if (!result.getAuditable().isCreator(currentUser)) {
                     throw new MeveoApiException("INVALID_FILTER_OWNER");
                 }

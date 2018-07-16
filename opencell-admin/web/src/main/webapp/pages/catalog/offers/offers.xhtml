@@ -19,6 +19,8 @@
 
     <ui:define name="body">
         <o:importConstants type="org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum"/>
+        <o:importConstants type="org.meveo.model.catalog.LifeCycleStatusEnum"/>
+        
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -102,7 +104,7 @@
                                                         value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}"/>
                                                 <f:setPropertyActionListener
                                                         target="#{entityExportImportBean.dataModelToExport}"
-                                                        value="#{offerTemplateListBean.listFromBOM()}"/>
+                                                        value="#{offerTemplateListBean.listNotDisabledFromBOM()}"/>
                                                 <f:setPropertyActionListener
                                                         target="#{entityExportImportBean.selectedEntitiesToExport}"
                                                         value="#{offerTemplateListBean.selectedOfferTemplates}"/>
@@ -123,7 +125,7 @@
                             title="#{messages['marketingManager.catalog.view.detailed']}">
                         <h:form id="mainForm" styleClass="ui-fluid">
                             <p:dataGrid id="dataGrid"
-                                        value="#{offerTemplateListBean.listFromBOM()}" var="entity"
+                                        value="#{offerTemplateListBean.listNotDisabledFromBOM()}" var="entity"
                                         paginator="true" rows="10" columns="1" layout="grid"
                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                         lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
@@ -236,7 +238,7 @@
                                                     <li><p:commandLink id="addToExportLink"
                                                                        styleClass="fa fa-share-square-o text-blue fa-2x"
                                                                        update=":offerForExportPanel :dlgOfferExport"
-                                                                       action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.export']}">
+                                                                       action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.addToExport']}">
                                                     </p:commandLink></li>
                                                     
                                                      <li><p:commandLink id="deleteLink"
@@ -293,7 +295,7 @@
                                                     paginatorAlwaysVisible="false"
                                                     value="#{entity.offerProductTemplates}"
                                                     var="opt" type="ordered"
-                                                    rendered="#{entity.offerProductTemplates!=null}">
+                                                    rendered="#{entity.offerProductTemplates!=null and !entity.offerProductTemplates.isEmpty()}">
                                             <div class="ui-g ui-g-nopad">
 	                                            <div class="ui-g-1">
 	                                            	<p:graphicImage value="#{defaultImageStreamer.image}"
@@ -325,33 +327,75 @@
                            title="#{messages['marketingManager.catalog.view.condensed']}">
                         <hftl:dataList id="dataList"
                                        backingBean="#{offerTemplateListBean}"
-                                       dataModel="#{offerTemplateListBean.listFromBOM()}"
+                                       dataModel="#{offerTemplateListBean.listNotDisabledFromBOM()}"
                                        checkMany="false" exportToCsv="false" exportToXml="false"
                                        exportXlsxButton="false" sortOrder="DESCENDING"
                                        styleClass="DataListCenter">
  							
-  							<hftl:column label="#{messages['commons.nameOrCode']}"
-                                         field="name">
-  							 </hftl:column>
-                            <hftl:column label="#{messages['commons.category']}"
-                                         field="offerTemplateCategories" isList="true"
-                                         valueLabelField="description">
-                            </hftl:column>
-                            <hftl:column label="#{messages['commons.validFrom']}"
-                                         field="validity.from" isDate="true">
-                            </hftl:column>
-                            <hftl:column label="#{messages['commons.validTo']}"
-                                         field="validity.to" isDate="true">
-                            </hftl:column>
-                            <p:column>
-                                <f:facet name="header">#{messages['commons.status']}</f:facet>
-                                <h:outputText
+ 							
+ 							<p:column headerText="#{messages['commons.nameOrCode']}" sortBy="#{entity.name}" filterBy="#{entity.name}">
+					            <h:outputText value="#{entity.name}" />
+					        </p:column>
+					        
+					        <p:column headerText="#{messages['commons.categories']}" filterBy="#{entity.offerTemplateCategories}" sortBy="#{entity.offerTemplateCategories}" >
+					             <f:facet name="filter">
+									<p:selectCheckboxMenu onchange="PF('cellEntity_results').filter()" label="#{messages['commons.choose']}">
+									    <f:converter converterId="offerTemplateCategoryConverter" />
+									    <p:ajax event="toggleSelect"  process="@this" partialSubmit="true" oncomplete="PF('cellEntity_results').filter()"/>
+					                    <f:selectItems value="#{offerTemplateListBean.activeOfferTemplateCategories}" var="item" itemValue="#{item}" 
+					                                   itemLabel="#{item.description}"/>
+					                </p:selectCheckboxMenu>
+								</f:facet>
+					            <p:dataList value="#{entity.offerTemplateCategories}" var="category" type="unordered">
+					                <h:outputText value="#{category.description}" />
+					            </p:dataList>
+					        </p:column>
+
+						   <p:column headerText="#{messages['commons.validFrom']}" 
+						             sortBy="#{entity.validity.from}" 
+						             filterBy="#{entity.validity.from}">
+						             
+						            <f:facet name="filter">
+										<p:calendar  pattern="dd/MM/yyyy">
+										    <p:ajax event="blur"  oncomplete="PF('cellEntity_results').filter()" />
+										</p:calendar>
+									</f:facet>
+			                        <h:outputText value="#{entity.validity.from}">
+			                            <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+			                        </h:outputText>
+					        </p:column>
+					        <p:column headerText="#{messages['commons.validTo']}" 
+						             sortBy="#{entity.validity.to}" 
+						             filterBy="#{entity.validity.to}">
+						             
+						            <f:facet name="filter">
+										<p:calendar  pattern="dd/MM/yyyy">
+										    <p:ajax event="blur" oncomplete="PF('cellEntity_results').filter()" />
+										</p:calendar>
+									</f:facet>
+			                        <h:outputText value="#{entity.validity.to}">
+			                            <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+			                        </h:outputText>
+					        </p:column>
+					        
+					         <p:column  filterBy="#{entity.lifeCycleStatus}"  sortBy="#{entity.lifeCycleStatus}" headerText="#{messages['commons.status']}" >
+					            <f:facet name="filter">
+					                <p:selectOneMenu onchange="PF('cellEntity_results').filter()">
+					                    <f:converter converterId="enumConverter" />
+					                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.catalog.LifeCycleStatusEnum" />
+					                    <f:selectItem />
+					                    <f:selectItems value="#{LifeCycleStatusEnum}" var="item" itemValue="#{item}" 
+					                                   itemLabel="#{messages[of:concat('enum.LifeCycleStatusEnum.', item)]}"/>
+					                </p:selectOneMenu>
+					            </f:facet>
+					            <h:outputText
                                         value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
                                         styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}"/>
-                            </p:column>
+					        </p:column>
+                            
                             <p:column headerText="#{messages['commons.actions']}">
                                 <p:link outcome="mm_offerTemplateDetail"
-                                        styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
+                                        styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue" title="#{messages['action.view']}">
                                     <f:param name="cid"
                                              value="#{javax.enterprise.context.conversation.id}"/>
                                     <f:param name="objectId" value="#{entity.id}"></f:param>
@@ -361,7 +405,7 @@
                                 </p:link>
                                 <p:link
                                         styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-blue"
-                                        outcome="mm_offerTemplateDetail">
+                                        outcome="mm_offerTemplateDetail" title="#{messages['action.edit']}">
                                     <f:param name="cid"
                                              value="#{javax.enterprise.context.conversation.id}"/>
                                     <f:param name="objectId" value="#{entity.id}"></f:param>
@@ -369,20 +413,29 @@
                                     <f:param name="backView" value="mm_offers"></f:param>
                                     <f:param name="tab" value="1"></f:param>
                                 </p:link>
-                                <p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
-                                               update=":tabView"
-                                               styleClass="Padding5">
-									<i class="fa fa-copy no-text-decoration text-blue fa-2x" />
-									<f:setPropertyActionListener
-                                            target="#{offerTemplateListBean.entity}" value="#{entity}"/>
-                                    <f:param name="tab" value="1"></f:param>
-                                    <p:confirm header="#{messages['commons.duplicate']}"
-                                               message="#{messages['commons.confirmDuplicate']}"/>
-                                </p:commandLink>
+<!--                                 <p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}" -->
+<!--                                                update=":tabView" -->
+<!--                                                styleClass="Padding5" title="#{messages['commons.duplicate']}"> -->
+<!-- 									<i class="fa fa-copy no-text-decoration text-blue fa-2x" /> -->
+<!-- 									<f:setPropertyActionListener -->
+<!--                                             target="#{offerTemplateListBean.entity}" value="#{entity}"/> -->
+<!--                                     <f:param name="tab" value="1"></f:param> -->
+<!--                                     <p:confirm header="#{messages['commons.duplicate']}" -->
+<!--                                                message="#{messages['commons.confirmDuplicate']}"/> -->
+<!--                                 </p:commandLink> -->
+								<p:link id="duplicate" title="#{messages['commons.duplicate']}"
+                                     styleClass="fa fa-copy no-text-decoration text-blue fa-2x" outcome="mm_offerTemplateDetail">
+                                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                     <f:param name="objectId" value="#{entity.id}" />
+                                     <f:param name="edit" value="true" />
+                                     <f:param name="backView" value="mm_offers" />
+                                     <f:param name="tab" value="0" />
+                                     <f:param name="duplicateOffer" value="true" />
+                                 </p:link>
                                 <p:commandLink
                                         styleClass="Padding5"
                                         update=":offerForExportPanel :dlgOfferExport"
-                                        action="#{offerTemplateListBean.addForExport(entity)}">
+                                        action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.addToExport']}">
                                         <i class="fa fa-share-square-o no-text-decoration fa-2x text-blue" />
                                 </p:commandLink>
                             </p:column>

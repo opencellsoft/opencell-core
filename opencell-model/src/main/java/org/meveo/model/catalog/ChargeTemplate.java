@@ -48,8 +48,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
@@ -67,9 +67,9 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_charge_template_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
-public class ChargeTemplate extends BusinessCFEntity {
+public class ChargeTemplate extends EnableBusinessCFEntity {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6619927605555822610L;
 
     public enum ChargeTypeEnum {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION
@@ -151,7 +151,6 @@ public class ChargeTemplate extends BusinessCFEntity {
     public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
         this.invoiceSubCategory = invoiceSubCategory;
     }
-
 
     public List<TriggeredEDRTemplate> getEdrTemplates() {
         return edrTemplates;

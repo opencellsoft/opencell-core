@@ -25,9 +25,11 @@ public class ScriptInstanceDto extends CustomScriptDto {
 
     /** The execution roles. */
     private List<RoleDto> executionRoles = new ArrayList<RoleDto>();
-    
+
     /** The sourcing roles. */
     private List<RoleDto> sourcingRoles = new ArrayList<RoleDto>();
+    
+    private String scriptInstanceCategoryCode;
 
     /**
      * Instantiates a new script instance dto.
@@ -37,12 +39,12 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
-     * Instantiates a new script instance dto.
+     * Convert script instance entity to DTO
      *
-     * @param scriptInstance the ScriptInstance entity
+     * @param scriptInstance Entity to convert
      */
     public ScriptInstanceDto(ScriptInstance scriptInstance) {
-        super(scriptInstance.getCode(), scriptInstance.getDescription(), scriptInstance.getSourceTypeEnum(), scriptInstance.getScript());
+        super(scriptInstance);
 
         if (scriptInstance.getExecutionRoles() != null) {
             for (Role role : scriptInstance.getExecutionRoles()) {
@@ -54,8 +56,10 @@ public class ScriptInstanceDto extends CustomScriptDto {
                 sourcingRoles.add(new RoleDto(role, true, true));
             }
         }
+        if(scriptInstance.getScriptInstanceCategory() != null) {
+        	scriptInstanceCategoryCode = scriptInstance.getScriptInstanceCategory().getCode();
+        }
     }
-
 
     @Override
     public String toString() {
@@ -99,7 +103,9 @@ public class ScriptInstanceDto extends CustomScriptDto {
         this.sourcingRoles = sourcingRoles;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -108,9 +114,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof ScriptInstanceDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        
+        if (obj == null || !(obj instanceof ScriptInstanceDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 
@@ -125,4 +130,12 @@ public class ScriptInstanceDto extends CustomScriptDto {
         }
         return true;
     }
+
+	public String getScriptInstanceCategoryCode() {
+		return scriptInstanceCategoryCode;
+	}
+
+	public void setScriptInstanceCategoryCode(String scriptInstanceCategoryCode) {
+		this.scriptInstanceCategoryCode = scriptInstanceCategoryCode;
+	}
 }

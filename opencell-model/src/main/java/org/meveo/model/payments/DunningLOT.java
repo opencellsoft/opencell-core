@@ -34,64 +34,65 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.DunningHistory;
 
 @Entity
 @Table(name = "ar_dunning_lot")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_dunning_lot_seq"), })
-public class DunningLOT extends EnableEntity {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_dunning_lot_seq"), })
+public class DunningLOT extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "file_name", length = 255)
+    @Column(name = "file_name", length = 255)
     @Size(max = 255)
-	private String fileName;
+    private String fileName;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "action_type")
-	private DunningActionTypeEnum actionType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action_type")
+    private DunningActionTypeEnum actionType;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "dunning_history_id")
-	private DunningHistory dunningHistory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dunning_history_id")
+    private DunningHistory dunningHistory;
 
-	@OneToMany(mappedBy = "dunningLOT", fetch = FetchType.LAZY)
-	private List<ActionDunning> actions = new ArrayList<ActionDunning>();
+    @OneToMany(mappedBy = "dunningLOT", fetch = FetchType.LAZY)
+    private List<ActionDunning> actions = new ArrayList<ActionDunning>();
 
-	public DunningLOT() {
-	}
+    public DunningLOT() {
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-	public DunningActionTypeEnum getActionType() {
-		return actionType;
-	}
+    public DunningActionTypeEnum getActionType() {
+        return actionType;
+    }
 
-	public void setActionType(DunningActionTypeEnum actionType) {
-		this.actionType = actionType;
-	}
+    public void setActionType(DunningActionTypeEnum actionType) {
+        this.actionType = actionType;
+    }
 
-	public List<ActionDunning> getActions() {
-		return actions;
-	}
+    public List<ActionDunning> getActions() {
+        return actions;
+    }
 
-	public void setActions(List<ActionDunning> actions) {
-		this.actions = actions;
-	}
+    public void setActions(List<ActionDunning> actions) {
+        this.actions = actions;
+    }
 
-	public void setDunningHistory(DunningHistory dunningHistory) {
-		this.dunningHistory = dunningHistory;
-	}
+    public void setDunningHistory(DunningHistory dunningHistory) {
+        this.dunningHistory = dunningHistory;
+    }
 
-	public DunningHistory getDunningHistory() {
-		return dunningHistory;
-	}
+    public DunningHistory getDunningHistory() {
+        return dunningHistory;
+    }
 
 }

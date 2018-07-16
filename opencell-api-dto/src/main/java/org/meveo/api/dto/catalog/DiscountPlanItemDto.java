@@ -9,11 +9,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
- * The Class DiscountPlanItemDto.
+ * Discount plan item
  *
  * @author Tyshan Shi(tyshan@manaty.net)
  * @author Edward P. Legaspi
@@ -22,39 +23,60 @@ import org.meveo.model.catalog.DiscountPlanItem;
  */
 @XmlRootElement(name = "DiscountPlanItem")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DiscountPlanItemDto extends BaseDto {
+public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4512584223794507921L;
 
-    /** The code. */
+    /**
+     * Code
+     */
     @NotNull
     @XmlAttribute(required = true)
     private String code;
 
-    /** The discount plan code. */
+    /**
+     * Discount plan code
+     */
     @NotNull
     @XmlElement(required = true)
     private String discountPlanCode;
 
-    /** The invoice category code. */
+    /**
+     * Invoice category code
+     */
     private String invoiceCategoryCode;
 
-    /** The invoice sub category code. */
+    /**
+     * Invoice sub category code
+     */
     private String invoiceSubCategoryCode;
 
-    /** The percent. */
+    /**
+     * Discount percent
+     */
     private BigDecimal percent;
 
-    /** The accounting code. */
+    /**
+     * Accounting code
+     */
     @Deprecated // until further analysis
     private String accountingCode;
 
-    /** The expression el. */
+    /**
+     * EL expression to determine if discount plan item applies
+     */
     private String expressionEl;
 
-    /** The discount percent el. */
+    /**
+     * EL expression to determine discount percentage
+     */
     private String discountPercentEl;
+
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
     /**
      * Instantiates a new discount plan item dto.
@@ -63,9 +85,9 @@ public class DiscountPlanItemDto extends BaseDto {
     }
 
     /**
-     * Instantiates a new discount plan item dto.
+     * Convert discount plan item entity to DTO
      *
-     * @param discountPlanItem the discount plan item
+     * @param discountPlanItem Entity to convert
      */
     public DiscountPlanItemDto(DiscountPlanItem discountPlanItem) {
         this.code = discountPlanItem.getCode();
@@ -76,6 +98,7 @@ public class DiscountPlanItemDto extends BaseDto {
         this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
         this.discountPercentEl = discountPlanItem.getDiscountPercentEl();
+        this.disabled = discountPlanItem.isDisabled();
     }
 
     /**
@@ -204,7 +227,6 @@ public class DiscountPlanItemDto extends BaseDto {
         this.expressionEl = expressionEl;
     }
 
-
     /**
      * Gets the discount percent el.
      *
@@ -221,6 +243,16 @@ public class DiscountPlanItemDto extends BaseDto {
      */
     public void setDiscountPercentEl(String discountPercentEl) {
         this.discountPercentEl = discountPercentEl;
+    }
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
     }
 
     @Override

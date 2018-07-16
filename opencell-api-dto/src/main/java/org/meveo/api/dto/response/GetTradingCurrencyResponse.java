@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.CurrencyIsoDto;
+import org.meveo.api.dto.CurrencyDto;
 
 /**
  * The Class GetTradingCurrencyResponse.
@@ -16,11 +16,15 @@ import org.meveo.api.dto.CurrencyIsoDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetTradingCurrencyResponse extends BaseResponse {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = -5595545533673878857L;
 
-    /** The currency. */
-    private CurrencyIsoDto currency;
+    /**
+     * The country
+     */
+    private CurrencyDto currency;
 
     /**
      * Instantiates a new gets the trading currency response.
@@ -34,7 +38,7 @@ public class GetTradingCurrencyResponse extends BaseResponse {
      *
      * @return the currency
      */
-    public CurrencyIsoDto getCurrency() {
+    public CurrencyDto getCurrency() {
         return currency;
     }
 
@@ -43,7 +47,7 @@ public class GetTradingCurrencyResponse extends BaseResponse {
      *
      * @param currency the new currency
      */
-    public void setCurrency(CurrencyIsoDto currency) {
+    public void setCurrency(CurrencyDto currency) {
         this.currency = currency;
     }
 

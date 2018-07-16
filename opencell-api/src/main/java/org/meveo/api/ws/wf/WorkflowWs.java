@@ -32,6 +32,24 @@ public interface WorkflowWs extends IBaseWs {
     @WebMethod
     public WorkflowsResponseDto list();
 
+    /**
+     * Enable a Workflow by its code
+     * 
+     * @param code Workflow code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus enable(@WebParam(name = "code") String code);
+
+    /**
+     * Disable a Workflow by its code
+     * 
+     * @param code Workflow code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disable(@WebParam(name = "code") String code);
+
     @WebMethod
     public ActionStatus execute(@WebParam(name = "baseEntityName") String baseEntityName, @WebParam(name = "entityInstanceCode") String entityInstanceCode,
             @WebParam(name = "workflowCode") String workflowCode);

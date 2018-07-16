@@ -220,9 +220,9 @@ public class CardPaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "CardPaymentMethod [tokenId=" + tokenId + ", cardType=" + cardType + ", owner=" + owner + ", monthExpiration=" + monthExpiration + ", yearExpiration="
-                + yearExpiration + ", cardNumber=" + hiddenCardNumber + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2=" + getInfo2() + ", info3="
-                + getInfo3() + ", info4=" + getInfo4() + ", info5=" + getInfo5() + ", issueNumber=" + issueNumber + "]";
+        return "CardPaymentMethod [tokenId=" + getTokenId() + ", cardType=" + getCardType() + ", owner=" + getOwner() + ", monthExpiration=" + getMonthExpiration() + ", yearExpiration="
+                + getYearExpiration() + ", cardNumber=" + getHiddenCardNumber() + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2=" + getInfo2() + ", info3="
+                + getInfo3() + ", info4=" + getInfo4() + ", info5=" + getInfo5() + ", issueNumber=" + getIssueNumber() + "]";
     }
 
     public static String hideCardNumber(String cardNumber) {

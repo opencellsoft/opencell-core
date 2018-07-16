@@ -21,8 +21,8 @@ package org.meveo.admin.action.crm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
@@ -48,7 +48,6 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import org.slf4j.Logger;
 
 /**
  * Standard backing bean for {@link AccountEntity} that allows build accounts hierarchy for richfaces tree component. In this Bean you can set icons and links used in tree.
@@ -107,9 +106,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     @Inject
     private AccessService accessService;
     
-    @Inject
-    private Logger log;
-
     private TreeNode accountsHierarchy;
 
     private Long selectedEntityId;
@@ -175,7 +171,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             return accountsHierarchy;
         }
 
-        if (entity.isTransient()) {
+        if (entity == null || entity.isTransient()) {
             return null;
         }
 
@@ -189,11 +185,13 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
         } else if (entity instanceof CustomerAccount) {
             CustomerAccount acc = (CustomerAccount) entity;
+            acc = customerAccountService.refreshOrRetrieve(acc);
             customer = acc.getCustomer();
             selectedEntityClass = CustomerAccount.class;
 
         } else if (entity instanceof BillingAccount) {
             BillingAccount acc = (BillingAccount) entity;
+            acc = billingAccountService.refreshOrRetrieve(acc);
             // this kind of check is not really necessary, because tree
             // hierarchy should not be shown when creating new page
             if (acc.getCustomerAccount() != null) {
@@ -203,6 +201,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
         } else if (entity instanceof UserAccount) {
             UserAccount acc = (UserAccount) entity;
+            acc = userAccountService.refreshOrRetrieve(acc);
             if (acc.getBillingAccount() != null && acc.getBillingAccount().getCustomerAccount() != null) {
                 customer = acc.getBillingAccount().getCustomerAccount().getCustomer();
             }
@@ -210,6 +209,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             
         } else if (entity instanceof Subscription) {
             Subscription s = (Subscription) entity;
+            s = subscriptionService.refreshOrRetrieve(s);
             if (s.getUserAccount() != null && s.getUserAccount().getBillingAccount() != null && s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {
                 customer = s.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
             }
@@ -217,6 +217,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
         } else if (entity instanceof Access) {
             Access access = (Access) entity;
+            access = accessService.refreshOrRetrieve(access);
             if (access.getSubscription() != null && access.getSubscription().getUserAccount() != null && access.getSubscription().getUserAccount().getBillingAccount() != null
                     && access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount() != null) {
                 customer = access.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();

@@ -3,6 +3,11 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    
+	<!--     
+	   idSufix : When having the same field name in the form (e.g : offer.longDescription & service.longDescription) , use this attribut in order to avoid axceptions 
+	   due to a duplicate component id ...
+	-->
 
 <ui:composition>
 
@@ -57,19 +62,24 @@
     <c:if test="${empty(label)}">
         <c:set var="label" value="#{messages['businessEntity.description']}" />
     </c:if>
+    
+    <c:set var="inputId" value="#{field}" />
+    <c:if test="${!empty(idSufix)}">
+        <c:set var="inputId" value="#{field}_#{idSufix}" />
+    </c:if>
 
-    <hftl:decorateFormField fieldId="#{field}" label="#{label}" componentWidth="#{componentWidth}" displayOneLine="#{displayOneLine}" required="#{required}">
+    <hftl:decorateFormField fieldId="#{inputId}" label="#{label}" componentWidth="#{componentWidth}" displayOneLine="#{displayOneLine}" required="#{required}">
 
         <div style="float: left; width: 36px;">&nbsp;</div>
         <div style="clear: right;">
             <c:if test="#{textArea and edit}">
-                <p:inputTextarea id="#{field}" value="#{entity[field]}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true" />
+                <p:inputTextarea id="#{inputId}" value="#{entity[field]}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true" />
             </c:if>
             <c:if test="#{!textArea and edit}">
-                <p:inputText id="#{field}" value="#{entity[field]}" size="#{size}" maxlength="#{maxlength}" rendered="#{edit}" required="#{required}" />
+                <p:inputText id="#{inputId}" value="#{entity[field]}" size="#{size}" maxlength="#{maxlength}" rendered="#{edit}" required="#{required}" />
             </c:if>
             <c:if test="#{!edit}">
-                <h:outputText id="#{field}" value="#{entity[field]}" />
+                <h:outputText id="#{inputId}" value="#{entity[field]}" />
             </c:if>
         </div>
 

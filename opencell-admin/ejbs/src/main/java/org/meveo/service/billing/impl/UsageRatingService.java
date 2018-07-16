@@ -14,7 +14,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +31,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.event.CounterPeriodEvent;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterPeriod;
@@ -63,7 +64,6 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -76,9 +76,9 @@ public class UsageRatingService implements Serializable {
     private static final long serialVersionUID = 1411446109227299227L;
 
     @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager em;
-
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+    
     @Inject
     protected Logger log;
 
@@ -301,7 +301,7 @@ public class UsageRatingService implements Serializable {
         if (usageChargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
             chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
         } else {
-            chargeTemplate = em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
+            chargeTemplate = emWrapper.getEntityManager().find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
         }
 
         synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
@@ -336,7 +336,7 @@ public class UsageRatingService implements Serializable {
         // Fire notifications if counter value matches trigger value and counter value is tracked
         if (counterValueChangeInfo != null && counterPeriod.getNotificationLevels() != null) {
             // Need to refresh counterPeriod as it is stale object if it was updated in counterInstanceService.deduceCounterValue()
-            counterPeriod = em.find(CounterPeriod.class, counterPeriod.getId());
+            counterPeriod = emWrapper.getEntityManager().find(CounterPeriod.class, counterPeriod.getId());
             List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(),
                 counterValueChangeInfo.getNewValue());
 
@@ -428,7 +428,7 @@ public class UsageRatingService implements Serializable {
             chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
 
         } else {
-            chargeTemplate = em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
+            chargeTemplate = emWrapper.getEntityManager().find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
         }
 
         for (TriggeredEDRTemplate triggeredEDR : chargeTemplate.getEdrTemplates()) {
@@ -473,8 +473,10 @@ public class UsageRatingService implements Serializable {
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
                     log.debug("response {}", actionStatus);
 
-                    if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+                    if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                         throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                    } else if (actionStatus != null) {
+                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr");
                     }
                 }
             }
@@ -673,8 +675,6 @@ public class UsageRatingService implements Serializable {
 
             edr.setStatus(EDRStatusEnum.REJECTED);
             edr.setRejectReason(rejectReason);
-            
-            throw e;
 
         } finally {
             // put back the original quantity in edr (could have been decrease by counters)
@@ -695,17 +695,14 @@ public class UsageRatingService implements Serializable {
      */
     private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, boolean requirePP) throws BusinessException, ChargeWitoutPricePlanException {
 
-        long startDate = System.currentTimeMillis();
         UsageChargeTemplate chargeTemplate = null;
         if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
             chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate();
         } else {
-            chargeTemplate = em.find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
+            chargeTemplate = emWrapper.getEntityManager().find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
         }
 
         String filter1 = chargeTemplate.getFilterParam1();
-
-        log.debug("Retrieved ChargeTemplate in: {}", (System.currentTimeMillis() - startDate));
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
             String filter2 = chargeTemplate.getFilterParam2();
@@ -719,9 +716,7 @@ public class UsageRatingService implements Serializable {
 
                             if (requirePP) {
                                 String chargeCode = chargeTemplate.getCode();
-                                startDate = System.currentTimeMillis();
                                 List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(chargeCode);
-                                log.debug("Retrieved PPs in: {}", (System.currentTimeMillis() - startDate));
                                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                                     throw new ChargeWitoutPricePlanException(chargeCode);
                                 }
