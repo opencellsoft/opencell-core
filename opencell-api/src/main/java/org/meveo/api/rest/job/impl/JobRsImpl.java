@@ -10,6 +10,7 @@ import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
@@ -19,6 +20,7 @@ import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobRs;
+import org.meveo.model.jobs.JobCategoryEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -197,6 +199,17 @@ public class JobRsImpl extends BaseRs implements JobRs {
         JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
         try {
             result.setJobExecutionResultDto(jobApi.findJobExecutionResult(code, jobExecutionResultId));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
+    @Override
+    public JobCategoriesResponseDto listCategories() {
+        JobCategoriesResponseDto result = new JobCategoriesResponseDto();
+        try {
+            result.setJobCategories(JobCategoryEnum.values());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

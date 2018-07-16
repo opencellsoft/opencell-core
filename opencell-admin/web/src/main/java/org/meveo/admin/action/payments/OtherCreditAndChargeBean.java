@@ -121,7 +121,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
     public OtherCreditAndCharge initEntity() {
 
         // Initialize a new one from ID or empty
-        if (initType == null || initType == null) {
+        if (initType == null) {
             super.initEntity();
 
             // Either create a new entity from a user selected template

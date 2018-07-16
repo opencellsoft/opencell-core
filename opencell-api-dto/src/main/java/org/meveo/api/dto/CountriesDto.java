@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "Countries")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountriesDto extends BaseDto {
+public class CountriesDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -8690397660261914992L;

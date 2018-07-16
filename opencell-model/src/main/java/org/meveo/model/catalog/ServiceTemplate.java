@@ -24,6 +24,7 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -46,7 +47,14 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
+import org.meveo.model.billing.SubscriptionRenewal;
 
+/**
+ * This represents a service that is part of an offer. It contains charges of different types.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
+ */
 @Entity
 @ModuleItem
 @ObservableEntity
@@ -98,7 +106,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
-
+    
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)
@@ -111,6 +119,9 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
+    
+    @Embedded
+    private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
     @Transient
     private boolean selected;
@@ -296,5 +307,13 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
+
+	public SubscriptionRenewal getServiceRenewal() {
+		return serviceRenewal;
+	}
+
+	public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
+		this.serviceRenewal = serviceRenewal;
+	}
 
 }

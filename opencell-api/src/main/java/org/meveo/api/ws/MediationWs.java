@@ -11,6 +11,7 @@ import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 
 /**
  * Mediation related API WS interface
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -49,7 +50,7 @@ public interface MediationWs extends IBaseWs {
     /**
      * Confirms the reservation
      * 
-     * @param reservationDto Prepaid reservation's data
+     * @param reservation Prepaid reservation's data
      * @return Request processing status
      */
     @WebMethod
@@ -58,7 +59,7 @@ public interface MediationWs extends IBaseWs {
     /**
      * Cancels the reservation
      * 
-     * @param reservationDto Prepaid reservation's data
+     * @param reservation Prepaid reservation's data
      * @return Request processing status
      */
     @WebMethod
@@ -71,5 +72,5 @@ public interface MediationWs extends IBaseWs {
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus notifyOfRejectedCdrs(@WebParam(name = "cdrList") CdrListDto cdrLst);
+    ActionStatus notifyOfRejectedCdrs(@WebParam(name = "cdrList") CdrListDto cdrList);
 }

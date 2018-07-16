@@ -52,7 +52,21 @@ public class CustomEntityInstance extends EnableBusinessCFEntity {
         return parentEntityUuid;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((cetCode == null) ? 0 : cetCode.hashCode());
+        result = prime * result + ((parentEntityUuid == null) ? 0 : parentEntityUuid.hashCode());
+        return result;
+    }
+
+    /**
+     * @see org.meveo.model.BusinessEntity#equals(java.lang.Object)
+     */
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -71,7 +85,7 @@ public class CustomEntityInstance extends EnableBusinessCFEntity {
 
         if (code == null && other.getCode() != null) {
             return false;
-        } else if (!code.equals(other.getCode())) {
+        } else if (code != null && !code.equals(other.getCode())) {
             return false;
         } else if (cetCode == null && other.getCetCode() != null) {
             return false;
@@ -80,4 +94,5 @@ public class CustomEntityInstance extends EnableBusinessCFEntity {
         }
         return true;
     }
+   
 }

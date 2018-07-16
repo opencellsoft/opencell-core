@@ -96,7 +96,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private RecordedInvoice recordedInvoice;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
+    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @Column(name = "invoice_number", length = 50)
     @Size(max = 50)
@@ -158,7 +158,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private TradingLanguage tradingLanguage;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
+    private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     @Column(name = "comment", length = 1200)
     @Size(max = 1200)
@@ -192,7 +192,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
-    private List<Order> orders = new ArrayList<Order>();
+    private List<Order> orders = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
@@ -215,6 +215,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
+    
+    @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal dueBalance;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -534,25 +537,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.uuid = uuid;
     }
 
+    @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
     }
 
+    @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
-    }
-
-    @Override
-    public CustomFieldValues getCfValuesNullSafe() {
-        if (cfValues == null) {
-            cfValues = new CustomFieldValues();
-        }
-        return cfValues;
-    }
-
-    @Override
-    public void clearCfValues() {
-        cfValues = null;
     }
 
     @Override
@@ -696,5 +688,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         }
 
         setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
-    }    
+    }
+
+	public BigDecimal getDueBalance() {
+		return dueBalance;
+	}
+
+	public void setDueBalance(BigDecimal dueBalance) {
+		this.dueBalance = dueBalance;
+	}
 }

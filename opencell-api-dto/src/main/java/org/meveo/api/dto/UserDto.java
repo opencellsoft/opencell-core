@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 
 /**
@@ -40,10 +41,11 @@ import org.meveo.model.security.Role;
  *
  * @author Mohamed Hamidi
  * @since Mai 23, 2016
+ * @lastModifiedVersion 5.0.2
  */
 @XmlRootElement(name = "User")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserDto extends BaseDto {
+public class UserDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6633504145323452803L;
@@ -97,6 +99,11 @@ public class UserDto extends BaseDto {
     /** The last login date. */
     private Date lastLoginDate;
 
+    /** The roles. */
+    @XmlElementWrapper(name = "permissions")
+    @XmlElement(name = "permission")
+    private List<String> permissions;
+
     /**
      * Instantiates a new user dto.
      */
@@ -110,6 +117,7 @@ public class UserDto extends BaseDto {
      * @param includeSecuredEntities the include secured entities
      */
     public UserDto(User user, boolean includeSecuredEntities) {
+    	super(user);
         if (user.getName() != null) {
             firstName = user.getName().getFirstName();
             lastName = user.getName().getLastName();
@@ -123,13 +131,22 @@ public class UserDto extends BaseDto {
 
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
             roles = new ArrayList<String>();
+            permissions = new ArrayList<String>();
             for (Role r : user.getRoles()) {
                 roles.add(r.getName());
+                for (Permission permission : r.getPermissions()) {
+                    permissions.add(permission.getPermission());
+                }
+
                 role = r.getName();
             }
 
             Collections.sort(this.roles);
             role = roles.get(roles.size() - 1);
+        }
+
+        if (this.permissions != null) {
+            Collections.sort(this.permissions);
         }
 
         if (user.getUserLevel() != null) {
@@ -361,6 +378,20 @@ public class UserDto extends BaseDto {
      */
     public void setExternalRoles(List<RoleDto> externalRoles) {
         this.externalRoles = externalRoles;
+    }
+
+    /**
+     * @return the permissions
+     */
+    public List<String> getPermissions() {
+        return permissions;
+    }
+
+    /**
+     * @param permissions the permissions to set
+     */
+    public void setPermissions(List<String> permissions) {
+        this.permissions = permissions;
     }
 
     @Override

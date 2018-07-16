@@ -13,6 +13,13 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 
+
+/**
+ * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
+ */
 @Embeddable
 public class SubscriptionRenewal implements Serializable {
 
@@ -63,6 +70,21 @@ public class SubscriptionRenewal implements Serializable {
 
         public int getCalendarField() {
             return calendarField;
+        }
+    }
+    
+    public enum InitialTermTypeEnum {
+    	/**
+    	 * Uses RenewalPeriodUnitEnum.
+    	 */
+    	RECURRING,
+    	/**
+    	 * Uses date picker.
+    	 */
+    	FIXED;
+    	
+    	public String getLabel() {
+            return this.getClass().getSimpleName() + "." + this.name();
         }
     }
 
@@ -125,6 +147,10 @@ public class SubscriptionRenewal implements Serializable {
      */
     @Column(name = "renew_for")
     private Integer renewFor;
+    
+	@Enumerated(EnumType.STRING)
+	@Column(name = "initial_term_type")
+	private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
 
     public boolean isAutoRenew() {
         return autoRenew;
@@ -213,4 +239,13 @@ public class SubscriptionRenewal implements Serializable {
             renewForUnit = null;
         }
     }
+
+	public InitialTermTypeEnum getInitialTermType() {
+		return initialTermType;
+	}
+
+	public void setInitialTermType(InitialTermTypeEnum initialTermType) {
+		this.initialTermType = initialTermType;
+	}
+
 }

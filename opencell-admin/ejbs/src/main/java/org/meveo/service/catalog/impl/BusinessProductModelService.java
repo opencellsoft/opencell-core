@@ -45,6 +45,7 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
 
     /**
      * Use by GUI. Prefix is null, as ID of the new product is used.
+     * 
      * @param entity product template
      * @param bpm business product model
      * @return product template
@@ -53,6 +54,7 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
     public ProductTemplate instantiateBPM(ProductTemplate entity, BusinessProductModel bpm) throws BusinessException {
         return instantiateBPM(null, entity, bpm, null);
     }
+
     /**
      * Instantiates a product from a given BusinessProductModel.
      * 
@@ -64,7 +66,7 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
      * @throws BusinessException business exception.
      */
     public ProductTemplate instantiateBPM(String prefix, ProductTemplate productTemplate, BusinessProductModel bpm, List<CustomFieldDto> customFields) throws BusinessException {
-        
+
         ProductScriptInterface productScript = null;
         if (bpm.getScript() != null) {
             try {
@@ -77,7 +79,7 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
         // 2 - instantiate
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
         List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
-        
+
         if (productTemplate == null) {
             productTemplate = bpm.getProductTemplate();
         }
@@ -94,6 +96,28 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
         }
 
         return newProductTemplate;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<BusinessProductModel> listByProductTemplate(ProductTemplate productTemplate) {
+        QueryBuilder qb = new QueryBuilder(BusinessProductModel.class, "t");
+        qb.addCriterionEntity("productTemplate", productTemplate);
+
+        List<BusinessProductModel> result = (List<BusinessProductModel>) qb.getQuery(getEntityManager()).getResultList();
+        return (result == null || result.isEmpty()) ? null : result;
+    }
+    
+    /**
+     * Returns the count of all installed BPM
+     * @param productTemplate productTemplate of BPM
+     * @return count of install BPM
+     */
+    public Long countByProductTemplate(ProductTemplate productTemplate) {
+        QueryBuilder qb = new QueryBuilder(BusinessProductModel.class, "t");
+        qb.addCriterionEntity("productTemplate", productTemplate);
+        qb.addCriterion("installed", "=", true, true);
+
+        return qb.count(getEntityManager());
     }
 
 }

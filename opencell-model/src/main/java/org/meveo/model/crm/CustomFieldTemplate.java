@@ -1,10 +1,13 @@
 package org.meveo.model.crm;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -572,11 +575,11 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
         if (code == null && other.getCode() != null) {
             return false;
-        } else if (!code.equals(other.getCode())) {
+        } else if (code != null && !code.equals(other.getCode())) {
             return false;
         } else if (appliesTo == null && other.getAppliesTo() != null) {
             return false;
-        } else if (!appliesTo.equals(other.getAppliesTo())) {
+        } else if (appliesTo != null && !appliesTo.equals(other.getAppliesTo())) {
             return false;
         }
         return true;
@@ -827,7 +830,9 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
             if (dataType == CustomFieldMapKeyEnum.STRING) {
                 valBuilder.append((String) columnValue);
             } else if (dataType == CustomFieldMapKeyEnum.LONG || dataType == CustomFieldMapKeyEnum.DOUBLE) {
-                valBuilder.append(columnValue.toString());
+                DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+                df.setMaximumFractionDigits(340);
+                valBuilder.append(df.format(columnValue));
             }
         }
 

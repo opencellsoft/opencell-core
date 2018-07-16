@@ -82,7 +82,6 @@
             <p:inputText id="#{id}_text" value="#{fieldItem}" size="#{size}" disabled="true" />
             <p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" size="#{size}" />
             <p:commandButton id="#{popupId}_selectLink" onclick="PF('dlg_#{popupId}').show()" type="button" icon="ui-icon-search" />
-            <p:tooltip for="#{popupId}_selectLink" value="#{messages['commons.search']}" />
         </c:if>
 
         <c:if test="#{!edit}">

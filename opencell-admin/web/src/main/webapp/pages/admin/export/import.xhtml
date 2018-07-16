@@ -22,7 +22,6 @@
                 </f:facet>
                 <p:messages id="messages" autoUpdate="true" />
                 <hftl:decorateFormField fieldId="import_requireFK" label="#{messages['export.requireFK']}" displayOneLine="true" labelWidth="65" componentWidth="20">
-                    <p:tooltip for="import_requireFK">#{messages['export.requireFK.help']}</p:tooltip>
                     <p:selectBooleanCheckbox id="import_requireFK" value="#{entityExportImportBean.requireFK}">
                         <p:ajax event="change" />
                     </p:selectBooleanCheckbox>

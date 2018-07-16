@@ -106,7 +106,12 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.deleteMinRT", query = "DELETE from RatedTransaction r "
                 + " WHERE r.invoice=:invoice AND r.wallet IS null"),
         
-        @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)") })
+        @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+                + " AND r.billingAccount=:billingAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+                + " AND r.wallet.userAccount=:userAccount")
+})
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -210,6 +215,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @Column(name = "parameter_3", length = 255)
     @Size(max = 255)
     private String parameter3;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date")
+    private Date startDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date")
+    private Date endDate;
 
     @Column(name = "parameter_extra", columnDefinition = "TEXT")
     private String parameterExtra;
@@ -273,12 +286,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.setEdr(ratedTransaction.getEdr());
         this.setOfferTemplate(ratedTransaction.getOfferTemplate());
         this.setRatingUnitDescription(ratedTransaction.getRatingUnitDescription());
+        this.setStartDate(ratedTransaction.getStartDate());
+        this.setEndDate(ratedTransaction.getEndDate());
     }
 
     public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax,
             BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet,
             BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
-            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description) {
+            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate, Date endDate) {
 
         super();
 
@@ -315,6 +330,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.priceplan = priceplan;
         this.offerCode = offerCode;
         this.edr = edr;
+        this.startDate = startDate;
+        this.endDate = endDate;
 
         if (unityDescription != null) {
             this.unityDescription = unityDescription;
@@ -526,6 +543,22 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setParameter3(String parameter3) {
         this.parameter3 = parameter3;
+    }
+    
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
     
     public void setParameterExtra(String parameterExtra) {

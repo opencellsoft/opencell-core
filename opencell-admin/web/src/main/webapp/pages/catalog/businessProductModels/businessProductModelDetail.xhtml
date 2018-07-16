@@ -100,7 +100,7 @@
 
 			<ui:param name="buttons" value="true" />
 			<ui:define name="buttons">
-				<hf:formButtons backingBean="#{businessProductModelBean}"
+				<hf:formButtons killConversationOnSave="false" killConversationOnBack="false" backingBean="#{businessProductModelBean}"
 					edit="true"
 					showEditButton="#{!businessProductModelBean.entity.downloaded}"
 					showEnableDisableButton="#{!businessProductModelBean.entity.downloaded}"

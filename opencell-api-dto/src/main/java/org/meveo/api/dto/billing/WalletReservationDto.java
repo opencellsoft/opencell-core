@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class WalletReservationDto.
@@ -16,7 +16,7 @@ import org.meveo.api.dto.BaseDto;
  */
 @XmlRootElement(name = "WalletReservation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletReservationDto extends BaseDto {
+public class WalletReservationDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6900140578404875714L;

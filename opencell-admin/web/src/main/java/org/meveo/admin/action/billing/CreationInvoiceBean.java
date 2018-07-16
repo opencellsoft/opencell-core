@@ -18,6 +18,8 @@
  */
 package org.meveo.admin.action.billing;
 
+import static org.meveo.commons.utils.NumberUtils.round;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -60,6 +62,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
@@ -82,8 +85,9 @@ import org.primefaces.model.LazyDataModel;
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
  *
- * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Named
 @ViewScoped
@@ -165,6 +169,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date endDate;
     private boolean draftGenerated = false;
     private Invoice invoiceCopy = null;
+    private Date rtStartDate;
+    private Date rtEndDate;
+    
+    private Integer invoiceRounding =  appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding(); 
+    private RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode(); 
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -181,7 +190,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         entity.setInvoiceDate(new Date());
 
         if (entity.isTransient()) {
-            if (mode != null && mode != null) {
+            if (mode != null) {
                 setDetailled("detailed".equals(mode));
             }
             if (linkedInvoiceIdParam != null) {
@@ -300,6 +309,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             ratedTransaction.setParameter1(parameter1);
             ratedTransaction.setParameter2(parameter2);
             ratedTransaction.setParameter3(parameter3);
+            ratedTransaction.setStartDate(rtStartDate);
+            ratedTransaction.setEndDate(rtEndDate);
             ratedTransaction.setOrderNumber(orderNumber);
             ratedTransaction.setInvoice(entity);
             ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
@@ -326,9 +337,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(agregateHandler.getSubCatInvAgregateMap().values());
         categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>(agregateHandler.getCatInvAgregateMap().values());
-        entity.setAmountWithoutTax(agregateHandler.getInvoiceAmountWithoutTax());
-        entity.setAmountTax(agregateHandler.getInvoiceAmountTax());
-        entity.setAmountWithTax(agregateHandler.getInvoiceAmountWithTax());
+       
+        entity.setAmountWithoutTax( round(agregateHandler.getInvoiceAmountWithoutTax(), invoiceRounding, invoiceRoundingMode) );
+        entity.setAmountTax( round(agregateHandler.getInvoiceAmountTax(), invoiceRounding, invoiceRoundingMode) );
+        entity.setAmountWithTax( round(agregateHandler.getInvoiceAmountWithTax(), invoiceRounding, invoiceRoundingMode) );
 
         BigDecimal netToPay = entity.getAmountWithTax();
         if (!appProvider.isEntreprise() && isIncludeBalance()) {
@@ -336,7 +348,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = entity.getAmountWithTax().add(balance);
+            netToPay = entity.getAmountWithTax().add( round(balance, invoiceRounding, invoiceRoundingMode) );
         }
         entity.setNetToPay(netToPay);
     }
@@ -351,6 +363,53 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         } catch (BusinessException be) {
             messages.error(be.getMessage());
             return;
+        }
+    }
+
+    private void downloadFile(String fileName) {
+        log.info("Requested to download file {}", fileName);
+
+        File file = new File(fileName);
+
+        OutputStream out = null;
+        InputStream fin = null;
+        try {
+            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            res.setContentType("application/force-download");
+            res.setContentLength((int) file.length());
+            res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
+
+            out = res.getOutputStream();
+            fin = new FileInputStream(file);
+
+            byte[] buf = new byte[1024];
+            int sig = 0;
+            while ((sig = fin.read(buf, 0, 1024)) != -1) {
+                out.write(buf, 0, sig);
+            }
+            fin.close();
+            out.flush();
+            out.close();
+            context.responseComplete();
+            log.info("File made available for download");
+        } catch (Exception e) {
+            log.error("Error: {}, when dowload file: {}", e.getMessage(), file.getAbsolutePath());
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log.error("Error", e);
+                }
+            }
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                    log.error("Error", e);
+                }
+            }
         }
     }
 
@@ -524,53 +583,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         downloadFile(fileName);
     }
 
-    private void downloadFile(String fileName) {
-        log.info("Requested to download file {}", fileName);
-
-        File file = new File(fileName);
-
-        OutputStream out = null;
-        InputStream fin = null;
-        try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
-            res.setContentType("application/force-download");
-            res.setContentLength((int) file.length());
-            res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
-
-            out = res.getOutputStream();
-            fin = new FileInputStream(file);
-
-            byte[] buf = new byte[1024];
-            int sig = 0;
-            while ((sig = fin.read(buf, 0, 1024)) != -1) {
-                out.write(buf, 0, sig);
-            }
-            fin.close();
-            out.flush();
-            out.close();
-            context.responseComplete();
-            log.info("File made available for download");
-        } catch (Exception e) {
-            log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    log.error("Error", e);
-                }
-            }
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch (IOException e) {
-                    log.error("Error", e);
-                }
-            }
-        }
-    }
-
     @Override
     public String saveOrUpdate(boolean killConversation) {
         try {
@@ -668,6 +680,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         newRT.setParameter1(rt.getParameter1());
                         newRT.setParameter2(rt.getParameter2());
                         newRT.setParameter3(rt.getParameter3());
+                        newRT.setStartDate(rt.getStartDate());
+                        newRT.setEndDate(rt.getEndDate());
                         newRT.setOrderNumber(rt.getOrderNumber());
                         newRT.setInvoice(entity);
                         agregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
@@ -1134,6 +1148,22 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public Date getRtStartDate() {
+        return rtStartDate;
+    }
+
+    public void setRtStartDate(Date rtStartDate) {
+        this.rtStartDate = rtStartDate;
+    }
+
+    public Date getRtEndDate() {
+        return rtEndDate;
+    }
+
+    public void setRtEndDate(Date rtEndDate) {
+        this.rtEndDate = rtEndDate;
     }
 
     public Order getOrder() {

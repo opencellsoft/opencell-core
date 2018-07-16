@@ -5,33 +5,30 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * The Class WalletOperationDto.
  *
  * @author Edward P. Legaspi
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "WalletOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletOperationDto extends BaseDto {
+public class WalletOperationDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1920217666509809184L;
-
-    /** The code. */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /** The description. */
-    @XmlAttribute()
-    private String description;
 
     /** The user account. */
     private String userAccount;
@@ -122,6 +119,10 @@ public class WalletOperationDto extends BaseDto {
 
     /** The raw amount with tax. */
     private BigDecimal rawAmountWithTax;
+    
+    /** The rated transaction. */
+    @JsonInclude(Include.ALWAYS)
+    private WoRatedTransactionDto ratedTransaction;
 
     /**
      * Instantiates a new wallet operation dto.
@@ -136,8 +137,7 @@ public class WalletOperationDto extends BaseDto {
      * @param walletOperation the WalletOperation entity
      */
     public WalletOperationDto(WalletOperation walletOperation) {
-        code = walletOperation.getCode();
-        description = walletOperation.getDescription();
+        super(walletOperation);
         seller = walletOperation.getSeller().getCode();
 
         if (walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null) {
@@ -171,24 +171,6 @@ public class WalletOperationDto extends BaseDto {
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
     }
 
     /**
@@ -658,25 +640,6 @@ public class WalletOperationDto extends BaseDto {
     public void setSubscription(String subscription) {
         this.subscription = subscription;
     }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     /**
      * Gets the rating unit description.
      *
@@ -749,6 +712,20 @@ public class WalletOperationDto extends BaseDto {
         this.rawAmountWithTax = rawAmountWithTax;
     }
     
+    /**
+     * @return the ratedTransaction
+     */
+    public WoRatedTransactionDto getRatedTransaction() {
+        return ratedTransaction;
+    }
+
+    /**
+     * @param ratedTransaction the ratedTransaction to set
+     */
+    public void setRatedTransaction(WoRatedTransactionDto ratedTransaction) {
+        this.ratedTransaction = ratedTransaction;
+    }
+
     @Override
     public String toString() {
         return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="

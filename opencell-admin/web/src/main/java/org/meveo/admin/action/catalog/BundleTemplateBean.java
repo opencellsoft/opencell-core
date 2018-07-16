@@ -61,9 +61,6 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
     @Inject
     private DigitalResourceService digitalResourceService;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private BigDecimal salesPrice;
     private BigDecimal catalogPrice;
     private BigDecimal discountedAmount;

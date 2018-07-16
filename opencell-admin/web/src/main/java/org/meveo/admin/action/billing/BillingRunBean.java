@@ -27,11 +27,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -56,7 +57,7 @@ import org.primefaces.model.SortOrder;
  */
 @Named
 @ViewScoped
-public class BillingRunBean extends BaseBean<BillingRun> {
+public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     private static final long serialVersionUID = 1L;
 
@@ -72,9 +73,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
     private Boolean postReport;
 
     private boolean launchInvoicingRejectedBA = false;
-
-    @Inject
-    private Messages messages;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -175,7 +173,9 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             entity.setProcessDate(new Date());
             entity.setLastTransactionDate(DateUtils.setDateToEndOfDay(entity.getLastTransactionDate()));
 
+            customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) entity, true);
             billingRunService.create(entity);
+            
             return "billingRuns";
 
         } catch (Exception e) {

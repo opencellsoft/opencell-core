@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.wf.WFDecisionRule;
 
 /**
@@ -31,7 +31,7 @@ import org.meveo.model.wf.WFDecisionRule;
  * @author anasseh
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WFDecisionRuleDto extends BaseDto {
+public class WFDecisionRuleDto extends BaseEntityDto {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8309866046667741458L;

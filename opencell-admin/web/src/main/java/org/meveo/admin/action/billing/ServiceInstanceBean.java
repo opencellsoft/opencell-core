@@ -26,7 +26,6 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -50,9 +49,6 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
-
-    @Inject
-    private Messages messages;
 
     /**
      * Offer Id passed as a parameter. Used when creating new Service from Offer window, so default offer will be set on newly created service.
@@ -206,5 +202,12 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         }
 
         return outcome;
+    }
+    
+    /**
+     * Update subscribedTillDate field in service
+     */
+    public void updateSubscribedTillDate() {
+        entity.updateSubscribedTillAndRenewalNotifyDates();
     }
 }

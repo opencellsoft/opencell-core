@@ -19,7 +19,7 @@ import org.meveo.model.billing.Country;
  */
 @XmlRootElement(name = "CountryIso")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryIsoDto extends BaseDto {
+public class CountryIsoDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4175660113940481232L;

@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.international.status.builder.BundleTemplateMessage;
+import org.jboss.seam.international.status.builder.BundleTemplateMessageImpl;
 import org.jboss.seam.international.status.builder.TemplateMessage;
 
 /**
@@ -115,7 +116,6 @@ public class MessageFactory implements Serializable {
      * <p/>
      * <b>NOTE:</b> Using this method should be avoided at all costs.
      *
-     * @param manager The bean manager with which to perform the lookup.
      * @param type    The class for which to return an instance.
      * @return The managed instance, or null if none could be provided.
      */
@@ -129,6 +129,10 @@ public class MessageFactory implements Serializable {
                 result = (T) manager.getReference(bean, type, context);
             }
         }
+        if (result == null) {
+            return (T) new BundleTemplateMessageImpl();
+        }
+
         return result;
     }
 

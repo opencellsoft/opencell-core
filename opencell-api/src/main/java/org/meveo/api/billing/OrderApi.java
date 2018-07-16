@@ -32,6 +32,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -55,6 +56,7 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -78,7 +80,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 /**
  * @author Andrius Karpavičius
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  *
  */
 @Stateless
@@ -125,6 +127,9 @@ public class OrderApi extends BaseApi {
     
     @Inject
     private ServiceInstanceService serviceInstanceService;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     /**
      * Register an order from TMForumApi.
@@ -157,6 +162,14 @@ public class OrderApi extends BaseApi {
         order.setExternalId(productOrder.getExternalId());
         order.setReceivedFromApp("API");
         order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
+        
+        if(!StringUtils.isBlank(productOrder.getBillingCycle())) {
+            BillingCycle billingCycle = billingCycleService.findByCode(productOrder.getBillingCycle());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, productOrder.getBillingCycle());
+            }
+            order.setBillingCycle(billingCycle);
+        }
 
         if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
             PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, currentUser);
@@ -687,7 +700,7 @@ public class OrderApi extends BaseApi {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
                 CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), CustomFieldValue.parseValueFromString(cft, characteristic.getValue()),
-                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY);
+                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, cft);
                 customFieldsDto.getCustomField().add(cftDto);
             }
         }
@@ -918,6 +931,10 @@ public class OrderApi extends BaseApi {
             PaymentMethodDto pmDto = new PaymentMethodDto(order.getPaymentMethod());
             productOrder.getPaymentMethods().add(pmDto);
 
+        }
+        
+        if(order.getBillingCycle() != null) {
+            productOrder.setBillingCycle(order.getBillingCycle().getCode());
         }
 
         List<ProductOrderItem> productOrderItems = new ArrayList<>();

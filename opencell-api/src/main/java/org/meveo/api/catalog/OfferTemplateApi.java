@@ -51,7 +51,6 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -85,9 +84,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private ProductTemplateService productTemplateService;
-
-    @Inject
-    private SellerService sellerService;
 
     @Inject
     private SubscriptionApi subscriptionApi;

@@ -311,6 +311,17 @@ public class EntityCustomActionApi extends BaseApi {
         return action;
     }
 
+    /**
+     * @param actionCode
+     * @param appliesTo
+     * @param entityCode
+     * @return
+     * @throws MeveoApiException
+     * @throws InvalidScriptException
+     * @throws ElementNotFoundException
+     * @throws InvalidPermissionException
+     * @throws BusinessException
+     */
     @SuppressWarnings("rawtypes")
     public String execute(String actionCode, String appliesTo, String entityCode)
             throws MeveoApiException, InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
@@ -322,8 +333,9 @@ public class EntityCustomActionApi extends BaseApi {
         Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
         Class entityClass = null;
         for (Class<?> clazz : cfClasses) {
-            if (appliesTo.startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+            if (appliesTo.equals(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
                 entityClass = clazz;
+                break;
             }
         }
 

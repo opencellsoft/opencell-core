@@ -18235,7 +18235,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="MS" description="Ms.">
+         <title code="MS" description="Miss">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -39861,26 +39861,6 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
          
          <businessAccountModelDto code="Client" license="GPL" description="Individual customer">
           <moduleItems>
-			<customFieldTemplate code="password" description="password">
-				<fieldType>STRING</fieldType>
-				<appliesTo>CUST</appliesTo>
-				<storageType>SINGLE</storageType>
-			</customFieldTemplate>
-			<customFieldTemplate code="poNumber" description="poNumber">
-				<fieldType>STRING</fieldType>
-				<appliesTo>CUST</appliesTo>
-				<storageType>SINGLE</storageType>
-			</customFieldTemplate>
-			<customFieldTemplate code="crmAccountId" description="crmAccountId">
-				<fieldType>STRING</fieldType>
-				<appliesTo>CUST</appliesTo>
-				<storageType>SINGLE</storageType>
-			</customFieldTemplate>
-			<customFieldTemplate code="contact" description="contact">
-				<fieldType>STRING</fieldType>
-				<appliesTo>CUST</appliesTo>
-				<storageType>SINGLE</storageType>
-			</customFieldTemplate>
 			<emailNotif code="AccountCreationNotif">
 				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
 				<eventTypeFilter>CREATED</eventTypeFilter>
@@ -40395,6 +40375,7 @@ public class ForgotPassword extends ModuleScript{
             <lastName>${#Project#CCLastname}</lastName>
             <userRoles>
                <userRole>CUSTOMER_CARE_USER</userRole>
+               <userRole>SUPER_ADMIN</userRole>
             </userRoles>
          </user>
       </ws:createOrUpdateUser>
@@ -40479,8 +40460,6 @@ public class ForgotPassword extends ModuleScript{
       <con:setupScript/>
       <con:properties/>
     </con:testCase>
-    
-    
     <con:properties/>
   </con:testSuite>
   <con:testSuite id="0ce82b55-ffaa-41fa-879f-8de8eb9b9999" name="Create resellers">
@@ -40518,12 +40497,12 @@ public class ForgotPassword extends ModuleScript{
                            <lastName>${#Project#reseller1}</lastName>
                         </name>
                         <address>
-                           <address1></address1>
+                           <address1>22 rue du 11 Novembre</address1>
                            <address2></address2>
                            <address3></address3>
-                           <zipCode></zipCode>
-                           <city></city>
-                           <country></country>
+                           <zipCode>92000</zipCode>
+                           <city>Nanterre</city>
+                           <country>France</country>
                         </address>
             		    <customerCategory>CLIENT</customerCategory>
                         <customerBrand>${#Project#templateCode}</customerBrand>
@@ -40644,12 +40623,12 @@ public class ForgotPassword extends ModuleScript{
                            <lastName>${#Project#reseller2}</lastName>
                         </name>
                         <address>
-                           <address1></address1>
+                           <address1>6 rue des Etudiants</address1>
                            <address2></address2>
                            <address3></address3>
-                           <zipCode></zipCode>
-                           <city></city>
-                           <country></country>
+                           <zipCode>92400</zipCode>
+                           <city>Courbevoie</city>
+                           <country>France</country>
                         </address>
             		    <customerCategory>CLIENT</customerCategory>
                         <customerBrand>${#Project#templateCode}</customerBrand>
@@ -40943,7 +40922,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_ADMIN Reseller 1" id="9bb0cda1-dcdf-4cef-b8b0-a94ce880aeaa">
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 1" id="9bb0cda1-dcdf-4cef-b8b0-a94ce880aeaa" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -40966,10 +40945,8 @@ public class ForgotPassword extends ModuleScript{
             <password>eric.canneva</password>
             <userRoles>
                <userRole>CUSTOMER_CARE_USER</userRole>
+               <userRole>PC_ADMIN</userRole>
             </userRoles>
-             <externalRoles>
-               <externalRole name="PC_ADMIN"/>
-             </externalRoles>
             <accessibleEntities>
             	<accessibleEntity code="Reseller1" entityClass="org.meveo.model.admin.Seller"/>
             </accessibleEntities>
@@ -41053,7 +41030,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 1" id="e296deb3-84d8-48ff-83be-e6d6981577bb">
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 1" id="e296deb3-84d8-48ff-83be-e6d6981577bb" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41076,10 +41053,8 @@ public class ForgotPassword extends ModuleScript{
             <password>etienne.eric</password>
             <userRoles>
                <userRole>CUSTOMER_CARE_USER</userRole>
-            </userRoles>
-             <externalRoles>
-               <externalRole name="PC_LEVEL_2" />
-            </externalRoles>
+               <userRole>PC_LEVEL_2</userRole>
+            </userRoles>             
             <accessibleEntities>
             	<accessibleEntity code="Reseller1" entityClass="org.meveo.model.admin.Seller" />
             </accessibleEntities>
@@ -41112,7 +41087,8 @@ public class ForgotPassword extends ModuleScript{
       </con:testStep>
       <con:setupScript/>
       <con:properties/>
-    </con:testCase><con:testCase id="248d9845-50d9-47eb-aab7-509a267970aa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Reseller2 Users" searchProperties="true">
+    </con:testCase>
+    <con:testCase id="248d9845-50d9-47eb-aab7-509a267970aa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Reseller2 Users" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="ForgotPasswordModule" id="8f5e4ee6-8996-4f5a-ac90-79be809d82cf" disabled="true">
         <con:settings/>
@@ -41313,7 +41289,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_ADMIN Reseller 2" id="283f8109-611c-4466-911a-a102a73fd0a2">
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 2" id="283f8109-611c-4466-911a-a102a73fd0a2" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41336,10 +41312,8 @@ public class ForgotPassword extends ModuleScript{
             <password>anita.allighari</password>
             <userRoles>
                <userRole>CUSTOMER_CARE_USER</userRole>
+			<userRole>PC_ADMIN</userRole>
             </userRoles>
-             <externalRoles>
-               <externalRole name="PC_ADMIN" />
-            </externalRoles>
             <accessibleEntities>
             	<accessibleEntity code="Reseller2" entityClass="org.meveo.model.admin.Seller" />
             </accessibleEntities>
@@ -41423,7 +41397,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 2" id="38f178cc-c83f-476a-8d3a-0a7b4e1eaf8a">
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 2" id="38f178cc-c83f-476a-8d3a-0a7b4e1eaf8a" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41446,10 +41420,8 @@ public class ForgotPassword extends ModuleScript{
             <password>simone.lampiri</password>
             <userRoles>
                <userRole>CUSTOMER_CARE_USER</userRole>
+               <userRole>PC_LEVEL_2</userRole>
             </userRoles>
-             <externalRoles>
-               <externalRole name="PC_LEVEL_2" />
-            </externalRoles>
             <accessibleEntities>
             	<accessibleEntity code="Reseller2" entityClass="org.meveo.model.admin.Seller" />
             </accessibleEntities>
@@ -41482,7 +41454,8 @@ public class ForgotPassword extends ModuleScript{
       </con:testStep>
       <con:setupScript/>
       <con:properties/>
-    </con:testCase><con:properties>
+    </con:testCase>
+    <con:properties>
       <con:property>
         <con:name>CUST</con:name>
         <con:value>bob.churn</con:value>
@@ -41617,11 +41590,6 @@ public class ForgotPassword extends ModuleScript{
             <country>FR</country>\r
             <electronicBilling>true</electronicBilling>\r
             <externalRef1>FR 28552046955</externalRef1>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>
-            </customFields>
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -41976,11 +41944,6 @@ public class ForgotPassword extends ModuleScript{
             <contactInformation>
             	<email>${#TestSuite#CUST}@opencellsoft.com</email>
             </contactInformation>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#password}</stringValue>
-              </customField>   
-            </customFields>
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -42485,11 +42448,6 @@ public class ForgotPassword extends ModuleScript{
             <contactInformation>
             	<email>${#TestSuite#CUST}@opencellsoft.com</email>
             </contactInformation>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>   
-            </customFields>
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -43180,12 +43138,6 @@ public class ForgotPassword extends ModuleScript{
             <contactInformation>\r
                <email>${#TestSuite#CUST}@opencellsoft.com</email>\r
             </contactInformation>\r
-            <customFields>\r
-               <customField code="password">\r
-                  <stringValue>${#TestSuite#CUST}</stringValue>\r
-               </customField>\r
-            </customFields>\r
-
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -44664,11 +44616,6 @@ public class ForgotPassword extends ModuleScript{
             <contactInformation>
             	<email>${#TestSuite#CUST}@opencellsoft.com</email>
             </contactInformation>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>   
-            </customFields>
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -46460,11 +46407,6 @@ MFBG0AAAAABJRU5ErkJggg==
             <contactInformation>
             	<email>${#TestSuite#CUST}@opencellsoft.com</email>
             </contactInformation>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>   
-            </customFields>
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -50211,11 +50153,6 @@ MFBG0AAAAABJRU5ErkJggg==
             <contactInformation>
             	<email>${#Project#SCUsername}@opencellsoft.com</email>
             </contactInformation>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>   
-            </customFields>
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -55606,7 +55543,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
           </con:request>
         </con:config>
       </con:testStep>
-      
       <con:testStep type="request" name="createInvoice" id="1d8a596f-1477-4ddf-8d42-94afd52338b1">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -55807,7 +55743,6 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
           </con:request>
         </con:config>
       </con:testStep>
-      
       <con:testStep type="request" name="Execute AO_Job" id="20fb851c-be0a-42db-b312-024da811cf27">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -56021,7 +55956,6 @@ http://<server>:<port>/opencell/inbound/DEMO/payment-callback?STATUS=<STATUS>&PA
           </con:request>
         </con:config>
       </con:testStep>
-      
       <con:properties/>
     </con:testCase>
     <con:testCase id="07c017c7-4dd4-4f4e-9408-335057d04421" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="slimPay" searchProperties="true" disabled="true">
@@ -57103,7 +57037,59 @@ public class CheckPaymentScript_${#TestSuite#index} extends Script {
         <con:name>offerLabels</con:name>
         <con:value>Main,Monthly,Classic,Future</con:value>
       </con:property>
-    <con:property><con:name>CUST</con:name><con:value>ben.ohara</con:value></con:property><con:property><con:name>FIRST_MONTH</con:name><con:value>2016-12</con:value></con:property><con:property><con:name>LAST_MONTH</con:name><con:value>2017-01</con:value></con:property><con:property><con:name>THIS_MONTH</con:name><con:value>2017-02</con:value></con:property><con:property><con:name>SUBSCRIPTION_DATE</con:name><con:value>${#TestSuite#FIRST_MONTH}-15</con:value></con:property><con:property><con:name>firstname</con:name><con:value>Ben</con:value></con:property><con:property><con:name>lastname</con:name><con:value>Ohara</con:value></con:property><con:property><con:name>offerCode</con:name><con:value>OF_${#Project#templateCode}_MAIN</con:value></con:property><con:property><con:name>billingCycle</con:name><con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value></con:property><con:property><con:name>invoice1_number</con:name><con:value>INV-CLASSIC-000000003</con:value></con:property><con:property><con:name>invoice1_amount</con:name><con:value>113.29</con:value></con:property><con:property><con:name>invoice2_number</con:name><con:value>INV-CLASSIC-000000004</con:value></con:property><con:property><con:name>invoice2_amount</con:name><con:value>26.40</con:value></con:property></con:properties>
+      <con:property>
+        <con:name>CUST</con:name>
+        <con:value>ben.ohara</con:value>
+      </con:property>
+      <con:property>
+        <con:name>FIRST_MONTH</con:name>
+        <con:value>2016-12</con:value>
+      </con:property>
+      <con:property>
+        <con:name>LAST_MONTH</con:name>
+        <con:value>2017-01</con:value>
+      </con:property>
+      <con:property>
+        <con:name>THIS_MONTH</con:name>
+        <con:value>2017-02</con:value>
+      </con:property>
+      <con:property>
+        <con:name>SUBSCRIPTION_DATE</con:name>
+        <con:value>${#TestSuite#FIRST_MONTH}-15</con:value>
+      </con:property>
+      <con:property>
+        <con:name>firstname</con:name>
+        <con:value>Ben</con:value>
+      </con:property>
+      <con:property>
+        <con:name>lastname</con:name>
+        <con:value>Ohara</con:value>
+      </con:property>
+      <con:property>
+        <con:name>offerCode</con:name>
+        <con:value>OF_${#Project#templateCode}_MAIN</con:value>
+      </con:property>
+      <con:property>
+        <con:name>billingCycle</con:name>
+        <con:value>BC_${#Project#templateCode}_MONTHLY_1ST</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice1_number</con:name>
+        <con:value>INV-CLASSIC-000000003</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice1_amount</con:name>
+        <con:value>113.29</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice2_number</con:name>
+        <con:value>INV-CLASSIC-000000004</con:value>
+      </con:property>
+      <con:property>
+        <con:name>invoice2_amount</con:name>
+        <con:value>26.40</con:value>
+      </con:property>
+    </con:properties>
   </con:testSuite>
   <con:testSuite id="0b7adc2d-8d68-4347-8e61-b068fd6697c6" name="Measurable Quantities">
     <con:settings/>
@@ -61530,7 +61516,7 @@ rkJggg==
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://custom.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
