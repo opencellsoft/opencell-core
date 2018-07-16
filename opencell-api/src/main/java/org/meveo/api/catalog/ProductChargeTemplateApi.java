@@ -81,6 +81,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -160,6 +161,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
