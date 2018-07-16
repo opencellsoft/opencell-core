@@ -1235,5 +1235,13 @@
             <column name="invoice_rounding_mode" type="varchar(50)" />
         </addColumn>
      </changeSet>
+     
+     <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="rum_prefix" type="varchar(15)" />
+            <column name="rum_sequence_size" type="bigint" />
+			<column name="rum_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
     
 </databaseChangeLog> 

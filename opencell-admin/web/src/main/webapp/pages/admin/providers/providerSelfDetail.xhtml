@@ -88,6 +88,12 @@
                         
                         <hftl:formField label="#{messages['invoiceConfiguration.currentInvoiceNb']}" field="invoiceConfiguration" childField="currentInvoiceNb" id="currentInvoiceNb" />
                     </p:fieldset>
+                    
+                    <p:fieldset legend="#{messages['rumSequence.title']}" styleClass="clearLeft">
+                        <hftl:formField label="#{messages['rumSequence.prefix']}" field="rumSequence" childField="prefix" size="15" newLine="true" />
+                        <hftl:formField label="#{messages['rumSequence.sequenceSize']}" field="rumSequence" childField="sequenceSize" maxValue="20" />
+                        <hftl:formField label="#{messages['rumSequence.currentSequenceNb']}" field="rumSequence" childField="currentSequenceNb" maxValue="35" disabled="true" />
+                    </p:fieldset>
 					
                 </p:tab>
 

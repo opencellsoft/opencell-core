@@ -38,7 +38,9 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 
 /**
  * Provider service implementation.
@@ -62,6 +64,9 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     @Inject
     private HttpServletRequest request;
+    
+    @Inject
+    private ServiceSingleton serviceSingleton;
 
     /**
      * @return provider
@@ -198,4 +203,9 @@ public class ProviderService extends PersistenceService<Provider> {
 
         }
     }
+
+	public RumSequence getNextMandateNumber() {
+		RumSequence rumSequence = serviceSingleton.getNextMandateNumberSequence();		
+		return rumSequence;
+	}
 }

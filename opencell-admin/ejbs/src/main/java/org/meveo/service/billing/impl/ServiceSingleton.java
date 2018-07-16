@@ -19,6 +19,7 @@ import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -211,5 +212,16 @@ public class ServiceSingleton {
         invoiceTypeService.create(invoiceType);
         return invoiceType;
     }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public RumSequence getNextMandateNumberSequence() {
+    	RumSequence rumSequence = appProvider.getRumSequence();
+    	
+    	rumSequence.setCurrentSequenceNb(rumSequence.getCurrentSequenceNb() + 1L);
+    	
+    	return rumSequence;
+	}
 
 }
