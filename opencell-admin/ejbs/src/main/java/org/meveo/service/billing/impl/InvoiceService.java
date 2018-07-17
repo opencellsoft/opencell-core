@@ -419,7 +419,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice invoice = null;
         EntityManager em = getEntityManager();
         try {
-            BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
+            BillingCycle billingCycle = (billingRun == null || billingRun.getBillingCycle() == null) ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
             if (billingCycle == null) {
                 throw new BusinessException("Cant find the billing cycle");
             }
