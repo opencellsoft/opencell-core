@@ -14,6 +14,7 @@ import org.meveo.api.rest.payment.RumSequenceRs;
 
 /**
  * @author Edward P. Legaspi
+ * @LastModifiedVersion 5.2
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

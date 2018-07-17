@@ -16,6 +16,7 @@ import org.meveo.api.rest.IBaseRs;
  * API for managing RUM sequence use for SEPA direct debit.
  * 
  * @author Edward P. Legaspi
+ * @LastModifiedVersion 5.2
  */
 @Path("/payment/rumSequences")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

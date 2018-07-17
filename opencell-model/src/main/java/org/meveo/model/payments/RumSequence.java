@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -31,12 +32,14 @@ public class RumSequence implements Serializable {
 	 * prefix.length.
 	 */
 	@Column(name = "rum_sequence_size")
+	@Max(20L)
 	private Long sequenceSize = 20L;
 
 	/**
-	 * Current value of the sequence.
+	 * Current value of the sequence. This field is readonly and lock read. Updated only when a next sequence value is requested.
 	 */
 	@Column(name = "rum_current_sequence_nb")
+	@Size(max = 35)
 	private Long currentSequenceNb = 0L;
 
 	public RumSequence() {

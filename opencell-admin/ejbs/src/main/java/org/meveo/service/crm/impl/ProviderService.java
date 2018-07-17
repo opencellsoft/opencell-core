@@ -46,8 +46,9 @@ import org.meveo.service.billing.impl.ServiceSingleton;
  * Provider service implementation.
  * 
  * @author Andrius Karpavicius
+ * @author Edward Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0.1
+ * @lastModifiedVersion 5.2
  * 
  */
 @Stateless
@@ -204,8 +205,12 @@ public class ProviderService extends PersistenceService<Provider> {
         }
     }
 
-	public RumSequence getNextMandateNumber() {
-		RumSequence rumSequence = serviceSingleton.getNextMandateNumberSequence();		
+	public RumSequence getNextMandateNumber() throws BusinessException {		
+		RumSequence rumSequence = serviceSingleton.getNextMandateNumberSequence();
+		Provider provider = findById(appProvider.getId());
+		provider.setRumSequence(rumSequence);
+		update(provider);
+		
 		return rumSequence;
 	}
 }

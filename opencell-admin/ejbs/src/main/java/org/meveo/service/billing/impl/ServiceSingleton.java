@@ -30,6 +30,8 @@ import org.slf4j.Logger;
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
  * 
  * @author Andrius Karpavicius
+ * @author Edward Legaspi
+ * @LastModifiedVersion 5.2
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -218,6 +220,10 @@ public class ServiceSingleton {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public RumSequence getNextMandateNumberSequence() {
     	RumSequence rumSequence = appProvider.getRumSequence();
+    	
+    	if(rumSequence == null) {
+    		rumSequence = new RumSequence();
+    	}
     	
     	rumSequence.setCurrentSequenceNb(rumSequence.getCurrentSequenceNb() + 1L);
     	
