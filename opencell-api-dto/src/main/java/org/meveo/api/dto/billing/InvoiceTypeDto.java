@@ -35,6 +35,12 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     /** The occ template negative code. */
     private String occTemplateNegativeCode;
 
+    /** The occ template code EL. */
+    private String occTemplateCodeEl;
+    
+    /** The occ template negative code EL. */
+    private String occTemplateNegativeCodeEl;
+
     /** The sequence dto. */
     private SequenceDto sequenceDto;
 
@@ -85,6 +91,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
         this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode() : null;
         this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode() : null;
+        this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
+        this.occTemplateNegativeCodeEl = invoiceType.getOccTemplateNegativeCodeEl();
         this.sequenceDto = new SequenceDto(invoiceType.getSequence());
         if (invoiceType.getAppliesTo() != null) {
             for (InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()) {
@@ -294,6 +302,42 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      */
     public void setUseSelfSequence(boolean useSelfSequence) {
         this.useSelfSequence = useSelfSequence;
+    }
+    
+    /**
+     * Gets the occ template code EL.
+     *
+     * @return the occ template code EL
+     */
+    public String getOccTemplateCodeEl() {
+        return occTemplateCodeEl;
+    }
+
+    /**
+     * Sets the occ template code EL.
+     *
+     * @param occTemplateCodeEl the new occ template code EL
+     */
+    public void setOccTemplateCodeEl(String occTemplateCodeEl) {
+        this.occTemplateCodeEl = occTemplateCodeEl;
+    }
+
+    /**
+     * Gets the occ template negative code EL.
+     *
+     * @return the occ template negative code EL
+     */
+    public String getOccTemplateNegativeCodeEl() {
+        return occTemplateNegativeCodeEl;
+    }
+
+    /**
+     * Sets the occ template negative code EL.
+     *
+     * @param occTemplateNegativeCodeEl the new occ template negative code EL
+     */
+    public void setOccTemplateNegativeCodeEl(String occTemplateNegativeCodeEl) {
+        this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
 
     @Override

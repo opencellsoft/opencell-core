@@ -105,6 +105,14 @@ public class InvoiceType extends BusinessEntity {
     @Size(max = 2000)
     private String billingTemplateNameEL;
 
+    @Column(name = "occ_template_code_el", length = 2000)
+    @Size(max = 2000)
+    private String occTemplateCodeEl;
+    
+    @Column(name = "occ_template_negative_code_el", length = 2000)
+    @Size(max = 2000)
+    private String occTemplateNegativeCodeEl;
+
     public OCCTemplate getOccTemplate() {
         return occTemplate;
     }
@@ -220,6 +228,21 @@ public class InvoiceType extends BusinessEntity {
     public void setUseSelfSequence(boolean useSelfSequence) {
         this.useSelfSequence = useSelfSequence;
     }
-    
+
+        public String getOccTemplateCodeEl() {
+        return occTemplateCodeEl;
+    }
+
+    public void setOccTemplateCodeEl(String occTemplateCodeEl) {
+        this.occTemplateCodeEl = occTemplateCodeEl;
+    }
+
+    public String getOccTemplateNegativeCodeEl() {
+        return occTemplateNegativeCodeEl;
+    }
+
+    public void setOccTemplateNegativeCodeEl(String occTemplateNegativeCodeEl) {
+        this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
+    }
     
 }

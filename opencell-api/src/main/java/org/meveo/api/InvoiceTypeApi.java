@@ -104,6 +104,8 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setDescription(postData.getDescription());
         invoiceType.setOccTemplate(occTemplate);
         invoiceType.setOccTemplateNegative(occTemplateNegative);
+        invoiceType.setOccTemplateCodeEl(postData.getOccTemplateCodeEl());
+        invoiceType.setOccTemplateNegativeCodeEl(postData.getOccTemplateNegativeCodeEl());
         invoiceType.setAppliesTo(invoiceTypesToApplies);
         invoiceType.setSequence(postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto());
         invoiceType.setUseSelfSequence(postData.isUseSelfSequence());
@@ -180,6 +182,14 @@ public class InvoiceTypeApi extends BaseApi {
         }
         invoiceType.setOccTemplateNegative(occTemplateNegative);
         invoiceType.setOccTemplate(occTemplate);
+        
+        if (invoiceTypeDto.getOccTemplateCodeEl() != null) {
+            invoiceType.setOccTemplateCodeEl(invoiceTypeDto.getOccTemplateCodeEl());
+        }
+        if (invoiceTypeDto.getOccTemplateNegativeCodeEl() != null) {
+            invoiceType.setOccTemplateNegativeCodeEl(invoiceTypeDto.getOccTemplateNegativeCodeEl());
+        }
+        
         if (!StringUtils.isBlank(invoiceTypeDto.getDescription())) {
             invoiceType.setDescription(invoiceTypeDto.getDescription());
         }
