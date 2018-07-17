@@ -44,235 +44,240 @@ import org.apache.poi.ss.util.CellRangeAddress;
  **/
 public final class ExcelExporter {
 
-    /**
-     * Private Default Construct.
-     */
-    private ExcelExporter() {
-        super();
-    }
+	/**
+	 * Private Default Construct.
+	 */
+	private ExcelExporter() {
+		super();
+	}
 
-    /**
-     * @param sheetDataList
-     * @param input
-     * @param output
-     */
-    public static void exportToExcel(List<SheetData> sheetDataList, File input, File output) {
+	/**
+	 * This function create and fill an Excel file (output) using the sheetData list
+	 * and the excel template.
+	 * 
+	 * @param sheetDataList List of structured Data
+	 * @param input         xls template
+	 * @param output        xls output (final result report)
+	 */
+	public static void exportToExcel(List<SheetData> sheetDataList, File input, File output) {
 
-        FileInputStream inputStream;
-        Workbook workbook;
+		FileInputStream inputStream;
+		Workbook workbook;
 
-        try {
-            inputStream = new FileInputStream(input);
-            workbook = WorkbookFactory.create(inputStream);
+		try {
+			inputStream = new FileInputStream(input);
+			workbook = WorkbookFactory.create(inputStream);
 
-        } catch (InvalidFormatException | IOException e) {
-            throw new RuntimeException("Unable to create file", e);
-        }
+		} catch (InvalidFormatException | IOException e) {
+			throw new RuntimeException("Unable to create file", e);
+		}
 
-        if (sheetDataList != null && !sheetDataList.isEmpty()) {
+		if (sheetDataList != null && !sheetDataList.isEmpty()) {
 
-            for (SheetData sheetData : sheetDataList) {
+			for (SheetData sheetData : sheetDataList) {
 
-                Sheet sheet = workbook.getSheetAt(sheetData.getIndex());
-                sheet.setForceFormulaRecalculation(sheetData.isForceFormulaRecalculation());
+				Sheet sheet = workbook.getSheetAt(sheetData.getIndex());
+				sheet.setForceFormulaRecalculation(sheetData.isForceFormulaRecalculation());
 
-                Map<String, ConditionalFormatting> cfMap = getConditionalFormattingMap(sheet);
+				Map<String, ConditionalFormatting> cfMap = getConditionalFormattingMap(sheet);
 
-                // Dynamic data table feature
-                // ====================================================================
+				// Dynamic data table feature
+				// ====================================================================
 
-                if (sheetData.getRowFrom() > 0) {
+				int sheetDataRowFrom = sheetData.getRowFrom();
 
-                    if (sheetData.getNumberOfRows() == 1) {
+				if (sheetDataRowFrom > 0) {
 
-                        removeRow(sheet, sheetData.getRowFrom());
+					if (sheetData.getNumberOfRows() == 1) {
 
-                    } else if (sheetData.getNumberOfRows() == 0) {
+						removeRow(sheet, sheetDataRowFrom);
 
-                        removeRow(sheet, sheetData.getRowFrom());
-                        removeRow(sheet, sheetData.getRowFrom() - 1);
+					} else if (sheetData.getNumberOfRows() == 0) {
 
-                    } else {
+						removeRow(sheet, sheetDataRowFrom);
+						removeRow(sheet, sheetDataRowFrom - 1);
 
-                        int oddRowsNumber = 0;
-                        if (sheetData.getNumberOfRows() % 2 != 0) {
-                            oddRowsNumber = 1;
-                        }
+					} else {
 
-                        int halfSize = (sheetData.getNumberOfRows() / 2) + oddRowsNumber - 1;
+						int oddRowsNumber = 0;
+						if (sheetData.getNumberOfRows() % 2 != 0) {
+							oddRowsNumber = 1;
+						}
 
-                        for (int i = 0; i < halfSize; i++) {
+						int halfSize = (sheetData.getNumberOfRows() / 2) + oddRowsNumber - 1;
 
-                            CopyRow.copyRow(sheet, (sheetData.getRowFrom() - 1), ((sheetData.getRowFrom() + 1) + 2 * i), cfMap);
+						for (int i = 0; i < halfSize; i++) {
 
-                            if (sheetData.getNumberOfRows() % 2 == 0 || i < halfSize - 1) {
-                                CopyRow.copyRow(sheet, sheetData.getRowFrom(), ((sheetData.getRowFrom() + 2) + 2 * i), cfMap);
-                            }
-                        }
-                    }
-                }
-                // =========================================================
+							CopyRow.copyRow(sheet, (sheetDataRowFrom - 1), ((sheetDataRowFrom + 1) + 2 * i), cfMap);
 
-                for (String position : sheetData.getDatas().keySet()) {
+							if (sheetData.getNumberOfRows() % 2 == 0 || i < halfSize - 1) {
+								CopyRow.copyRow(sheet, sheetDataRowFrom, ((sheetDataRowFrom + 2) + 2 * i), cfMap);
+							}
+						}
+					}
+				}
+				// =========================================================
 
-                    CellRangeAddress address = CellRangeAddress.valueOf(position);
+				for (String position : sheetData.getDatas().keySet()) {
 
-                    int rowStart = address.getFirstRow();
-                    int columnStart = address.getFirstColumn();
+					CellRangeAddress address = CellRangeAddress.valueOf(position);
 
-                    if (sheetData.getRowFrom() > 0 && rowStart > sheetData.getRowFrom()) {
-                        rowStart = rowStart - 2 + sheetData.getNumberOfRows();
-                    }
+					int rowStart = address.getFirstRow();
+					int columnStart = address.getFirstColumn();
 
-                    Object[][] datas = sheetData.getDatas().get(position);
+					if (sheetDataRowFrom > 0 && rowStart > sheetDataRowFrom) {
+						rowStart = rowStart - 2 + sheetData.getNumberOfRows();
+					}
 
-                    int rowIndex = rowStart;
+					Object[][] datas = sheetData.getDatas().get(position);
 
-                    for (Object[] row : datas) {
+					int rowIndex = rowStart;
 
-                        int columnIndex = columnStart;
+					for (Object[] row : datas) {
 
-                        for (Object field : row) {
+						int columnIndex = columnStart;
 
-                            Row currentRow = sheet.getRow(rowIndex);
+						for (Object field : row) {
 
-                            if (currentRow == null) {
-                                currentRow = sheet.createRow(rowIndex);
-                            }
+							Row currentRow = sheet.getRow(rowIndex);
 
-                            Cell cell = currentRow.getCell(columnIndex);
+							if (currentRow == null) {
+								currentRow = sheet.createRow(rowIndex);
+							}
 
-                            if (cell == null) {
-                                cell = currentRow.createCell(columnIndex);
-                            }
+							Cell cell = currentRow.getCell(columnIndex);
 
-                            if (field instanceof Date) {
-                                cell.setCellValue((Date) field);
-                            } else if (field instanceof Boolean) {
-                                cell.setCellValue((Boolean) field);
-                            } else if (field instanceof String) {
-                                cell.setCellValue((String) field);
-                            } else if (field instanceof Double) {
-                                cell.setCellValue((Double) field);
-                            } else if (field instanceof Integer) {
-                                cell.setCellValue((Integer) field);
-                            }
+							if (cell == null) {
+								cell = currentRow.createCell(columnIndex);
+							}
 
-                            columnIndex++;
-                        }
-                        rowIndex++;
-                    }
-                }
-            }
-            // Save to file
-            try {
-                inputStream.close();
+							if (field instanceof Date) {
+								cell.setCellValue((Date) field);
+							} else if (field instanceof Boolean) {
+								cell.setCellValue((Boolean) field);
+							} else if (field instanceof String) {
+								cell.setCellValue((String) field);
+							} else if (field instanceof Double) {
+								cell.setCellValue((Double) field);
+							} else if (field instanceof Integer) {
+								cell.setCellValue((Integer) field);
+							}
 
-                FileOutputStream outputStream = new FileOutputStream(output);
-                workbook.write(outputStream);
-                workbook.close();
-                outputStream.close();
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to export to Excel", e);
-            }
-        }
-    }
+							columnIndex++;
+						}
+						rowIndex++;
+					}
+				}
+			}
+			// Save to file
+			try {
+				inputStream.close();
 
-    /**
-     * @param sheetDataList
-     * @param template
-     * @param output
-     */
-    public static void exportToExcel(List<SheetData> sheetDataList, String template, File output) {
+				FileOutputStream outputStream = new FileOutputStream(output);
+				workbook.write(outputStream);
+				workbook.close();
+				outputStream.close();
+			} catch (Exception e) {
+				throw new RuntimeException("Unable to export to Excel", e);
+			}
+		}
+	}
 
-        File input;
-        try {
-            input = getFile(template);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to open template file : ", e);
-        }
-        exportToExcel(sheetDataList, input, output);
-    }
+	/**
+	 * @param sheetDataList
+	 * @param template
+	 * @param output
+	 */
+	public static void exportToExcel(List<SheetData> sheetDataList, String template, File output) {
 
-    /**
-     * @param value
-     * @return
-     */
-    public static Object[][] singleValueToMatrix(Object value) {
-        return new Object[][] { new Object[] { value } };
-    }
+		File input;
+		try {
+			input = getFile(template);
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to open template file : ", e);
+		}
+		exportToExcel(sheetDataList, input, output);
+	}
 
-    /**
-     * @param values
-     * @return
-     */
-    public static Object[][] arrayToColumn(Object[] values) {
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static Object[][] singleValueToMatrix(Object value) {
+		return new Object[][] { new Object[] { value } };
+	}
 
-        Object[][] datas = new Object[values.length][1];
+	/**
+	 * @param values
+	 * @return
+	 */
+	public static Object[][] arrayToColumn(Object[] values) {
 
-        int i = 0;
-        for (Object value : values) {
-            datas[i++] = new Object[] { value };
-        }
-        return datas;
-    }
+		Object[][] datas = new Object[values.length][1];
 
-    /**
-     * @param values
-     * @return
-     */
-    public static Object[][] arrayToRow(Object[] values) {
-        return new Object[][] { values };
-    }
+		int i = 0;
+		for (Object value : values) {
+			datas[i++] = new Object[] { value };
+		}
+		return datas;
+	}
 
-    /**
-     * @param sheet
-     * @param rowIndex
-     */
-    private static void removeRow(Sheet sheet, int rowIndex) {
-        int lastRowNum = sheet.getLastRowNum();
-        if (rowIndex >= 0 && rowIndex < lastRowNum) {
-            sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
-        }
-        if (rowIndex == lastRowNum) {
-            Row removingRow = sheet.getRow(rowIndex);
-            if (removingRow != null) {
-                sheet.removeRow(removingRow);
-            }
-        }
-    }
+	/**
+	 * @param values
+	 * @return
+	 */
+	public static Object[][] arrayToRow(Object[] values) {
+		return new Object[][] { values };
+	}
 
-    /**
-     * @param resource
-     * @return
-     * @throws IOException
-     */
-    private static File getFile(String resource) throws IOException {
-        ClassLoader cl = ExcelExporter.class.getClassLoader();
-        InputStream cpResource = cl.getResourceAsStream(resource);
-        File tmpFile = File.createTempFile("file", "temp");
-        FileUtils.copyInputStreamToFile(cpResource, tmpFile);
-        tmpFile.deleteOnExit();
-        return tmpFile;
-    }
+	/**
+	 * @param sheet
+	 * @param rowIndex
+	 */
+	private static void removeRow(Sheet sheet, int rowIndex) {
+		int lastRowNum = sheet.getLastRowNum();
+		if (rowIndex >= 0 && rowIndex < lastRowNum) {
+			sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
+		}
+		if (rowIndex == lastRowNum) {
+			Row removingRow = sheet.getRow(rowIndex);
+			if (removingRow != null) {
+				sheet.removeRow(removingRow);
+			}
+		}
+	}
 
-    /**
-     * @param sheet
-     * @return
-     */
-    private static Map<String, ConditionalFormatting> getConditionalFormattingMap(Sheet sheet) {
+	/**
+	 * @param resource
+	 * @return
+	 * @throws IOException
+	 */
+	private static File getFile(String resource) throws IOException {
+		ClassLoader cl = ExcelExporter.class.getClassLoader();
+		InputStream cpResource = cl.getResourceAsStream(resource);
+		File tmpFile = File.createTempFile("file", "temp");
+		FileUtils.copyInputStreamToFile(cpResource, tmpFile);
+		tmpFile.deleteOnExit();
+		return tmpFile;
+	}
 
-        int numConditionalFormattings = sheet.getSheetConditionalFormatting().getNumConditionalFormattings();
+	/**
+	 * @param sheet
+	 * @return
+	 */
+	private static Map<String, ConditionalFormatting> getConditionalFormattingMap(Sheet sheet) {
 
-        Map<String, ConditionalFormatting> cfMap = new HashMap<>();
+		int numConditionalFormattings = sheet.getSheetConditionalFormatting().getNumConditionalFormattings();
 
-        for (int i = 0; i < numConditionalFormattings; i++) {
+		Map<String, ConditionalFormatting> cfMap = new HashMap<>();
 
-            ConditionalFormatting cf = sheet.getSheetConditionalFormatting().getConditionalFormattingAt(i);
-            for (CellRangeAddress cellRangeAddress : cf.getFormattingRanges()) {
-                cfMap.put(cellRangeAddress.formatAsString(), cf);
-            }
-        }
-        return cfMap;
-    }
+		for (int i = 0; i < numConditionalFormattings; i++) {
+
+			ConditionalFormatting cf = sheet.getSheetConditionalFormatting().getConditionalFormattingAt(i);
+			for (CellRangeAddress cellRangeAddress : cf.getFormattingRanges()) {
+				cfMap.put(cellRangeAddress.formatAsString(), cf);
+			}
+		}
+		return cfMap;
+	}
 }
