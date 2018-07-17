@@ -85,14 +85,15 @@ public final class ExcelExporter {
 				// ====================================================================
 
 				int sheetDataRowFrom = sheetData.getRowFrom();
+				int sheetDataRowsNumber = sheetData.getNumberOfRows();
 
 				if (sheetDataRowFrom > 0) {
 
-					if (sheetData.getNumberOfRows() == 1) {
+					if (sheetDataRowsNumber == 1) {
 
 						removeRow(sheet, sheetDataRowFrom);
 
-					} else if (sheetData.getNumberOfRows() == 0) {
+					} else if (sheetDataRowsNumber == 0) {
 
 						removeRow(sheet, sheetDataRowFrom);
 						removeRow(sheet, sheetDataRowFrom - 1);
@@ -100,17 +101,17 @@ public final class ExcelExporter {
 					} else {
 
 						int oddRowsNumber = 0;
-						if (sheetData.getNumberOfRows() % 2 != 0) {
+						if (sheetDataRowsNumber % 2 != 0) {
 							oddRowsNumber = 1;
 						}
 
-						int halfSize = (sheetData.getNumberOfRows() / 2) + oddRowsNumber - 1;
+						int halfSize = (sheetDataRowsNumber / 2) + oddRowsNumber - 1;
 
 						for (int i = 0; i < halfSize; i++) {
 
 							CopyRow.copyRow(sheet, (sheetDataRowFrom - 1), ((sheetDataRowFrom + 1) + 2 * i), cfMap);
 
-							if (sheetData.getNumberOfRows() % 2 == 0 || i < halfSize - 1) {
+							if (sheetDataRowsNumber % 2 == 0 || i < halfSize - 1) {
 								CopyRow.copyRow(sheet, sheetDataRowFrom, ((sheetDataRowFrom + 2) + 2 * i), cfMap);
 							}
 						}
@@ -126,7 +127,7 @@ public final class ExcelExporter {
 					int columnStart = address.getFirstColumn();
 
 					if (sheetDataRowFrom > 0 && rowStart > sheetDataRowFrom) {
-						rowStart = rowStart - 2 + sheetData.getNumberOfRows();
+						rowStart = rowStart - 2 + sheetDataRowsNumber;
 					}
 
 					Object[][] datas = sheetData.getDatas().get(position);
