@@ -513,7 +513,7 @@ public class UserAgentInfo {
 		// and some older ones report as 'PIE' for Pocket IE.
 		// We also look for instances of HTC and Windows for many of their WinMo
 		// devices.
-		if (userAgent.indexOf(deviceWinMob) != -1 || userAgent.indexOf(deviceWinMob) != -1 || userAgent.indexOf(deviceIeMob) != -1 || userAgent.indexOf(enginePie) != -1
+		if (userAgent.indexOf(deviceWinMob) != -1 || userAgent.indexOf(deviceIeMob) != -1 || userAgent.indexOf(enginePie) != -1
 				|| (userAgent.indexOf(manuHtc) != -1 && userAgent.indexOf(deviceWindows) != -1) || (detectWapWml() && userAgent.indexOf(deviceWindows) != -1)) {
 			return true;
 		}
@@ -878,9 +878,7 @@ public class UserAgentInfo {
 	 * @return detection of a Maemo OS tablet
 	 */
 	public boolean detectMaemoTablet() {
-		if (userAgent.indexOf(maemo) != -1) {
-			return true;
-		} else if (userAgent.indexOf(linux) != -1 && userAgent.indexOf(deviceTablet) != -1 && !detectWebOSTablet() && !detectAndroid()) {
+		if ((userAgent.indexOf(maemo) != -1 || (userAgent.indexOf(linux) != -1 && userAgent.indexOf(deviceTablet) != -1 && !detectWebOSTablet() && !detectAndroid()))) {
 			return true;
 		}
 		return false;

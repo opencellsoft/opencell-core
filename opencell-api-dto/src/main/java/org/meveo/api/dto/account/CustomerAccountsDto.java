@@ -24,7 +24,7 @@ public class CustomerAccountsDto {
      */
     public List<CustomerAccountDto> getCustomerAccount() {
         if (customerAccount == null) {
-            customerAccount = new ArrayList<CustomerAccountDto>();
+            customerAccount = new ArrayList<>();
         }
 
         return customerAccount;

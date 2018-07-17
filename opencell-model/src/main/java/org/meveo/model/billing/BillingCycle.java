@@ -26,6 +26,8 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -94,7 +96,15 @@ public class BillingCycle extends BusinessCFEntity {
 	@Column(name = "due_date_delay_el", length = 2000)
 	@Size(max = 2000)
 	private String dueDateDelayEL;
-
+	
+	@Column(name = "invoice_type_el", length = 2000)
+    @Size(max = 2000)
+    private String invoiceTypeEl;
+	
+    @Enumerated(EnumType.STRING)
+    @Column(name = "billing_cycle_type")
+    private BillingCycleTypeEnum type;
+	
 	public String getBillingTemplateName() {
 		return billingTemplateName;
 	}
@@ -207,4 +217,21 @@ public class BillingCycle extends BusinessCFEntity {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
+
+    public String getInvoiceTypeEl() {
+        return invoiceTypeEl;
+    }
+
+    public void setInvoiceTypeEl(String invoiceTypeEl) {
+        this.invoiceTypeEl = invoiceTypeEl;
+    }
+
+    public BillingCycleTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(BillingCycleTypeEnum type) {
+        this.type = type;
+    }
+
 }

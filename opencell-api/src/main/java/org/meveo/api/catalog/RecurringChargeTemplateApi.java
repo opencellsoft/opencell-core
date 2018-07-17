@@ -100,6 +100,11 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setDurationTermInMonthEl(postData.getDurationTermInMonthEl());
+        chargeTemplate.setSubscriptionProrataEl(postData.getSubscriptionProrataEl());
+        chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
+        chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
+        chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -189,6 +194,11 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setDurationTermInMonthEl(postData.getDurationTermInMonthEl());
+        chargeTemplate.setSubscriptionProrataEl(postData.getSubscriptionProrataEl());
+        chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
+        chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
+        chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {

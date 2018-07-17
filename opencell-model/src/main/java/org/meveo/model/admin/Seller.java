@@ -19,6 +19,7 @@
 package org.meveo.model.admin;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -83,6 +84,9 @@ public class Seller extends BusinessCFEntity {
     @Embedded
     private ContactInformation contactInformation;
 
+    /**
+     * Parent seller in seller hierarchy
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_seller_id")
     private Seller seller;
@@ -130,14 +134,20 @@ public class Seller extends BusinessCFEntity {
         this.address = address;
     }
 
+    /**
+     * @return A parent seller in seller hierarchy
+     */
     public Seller getSeller() {
         return seller;
     }
 
+    /**
+     * @param seller A parent seller in seller hierarchy
+     */
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-    
+
     /**
      * Get contact informations
      * 
@@ -206,5 +216,28 @@ public class Seller extends BusinessCFEntity {
     @Override
     public Class<? extends BusinessEntity> getParentEntityType() {
         return Seller.class;
+    }
+
+    /**
+     * Traverse seller hierarchy and find a seller that has a invoice numbering sequence for a given invoice type If the sequence not found on cust.seller, we try in seller.parent
+     * (until seller.parent=null).
+     * 
+     * @param cfName Custom field name storing invoice numbering sequence
+     * @param date Date
+     * @param invoiceType Type of invoice
+     * @return Chosen seller
+     */
+    public Seller findSellerForInvoiceNumberingSequence(String cfName, Date date, InvoiceType invoiceType) {
+        if (getSeller() == null) {
+            return this;
+        }
+        if (hasCfValue(cfName)) {
+            return this;
+        }
+        if (invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(this)) {
+            return this;
+        }
+
+        return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
     }
 }

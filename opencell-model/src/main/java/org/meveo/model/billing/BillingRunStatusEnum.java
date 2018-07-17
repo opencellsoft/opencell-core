@@ -26,8 +26,9 @@ public enum BillingRunStatusEnum {
 	CANCELED(4,"BillingRunStatusEnum.canceled"), // the BR is cancelled, end of the process
 	POSTINVOICED(5,"BillingRunStatusEnum.postinvoiced"), // the invoices and postinvoicing report have been generated
 	POSTVALIDATED(6,"BillingRunStatusEnum.postvalidated"), // the postinvoicing report have been validated
-	VALIDATED(7,"BillingRunStatusEnum.validated");//the invoices are assigned an invoice number, end of the process
-
+	VALIDATED(7,"BillingRunStatusEnum.validated"), //the invoices are assigned an invoice number, end of the process
+	CANCELLING(4, "BillingRunStatusEnum.canceled");
+	
 	private Integer id;
 	private String label;
 

@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
@@ -25,7 +25,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @XmlRootElement(name = "Invoice")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceDto extends BaseDto {
+public class InvoiceDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1072382628068718580L;
@@ -85,6 +85,9 @@ public class InvoiceDto extends BaseDto {
     /** The xml filename. */
     private String xmlFilename;
     
+    /** The xml. */
+    private String xml;
+    
     /** The pdf filename. */
     private String pdfFilename;
     
@@ -115,14 +118,20 @@ public class InvoiceDto extends BaseDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /**
+     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount.
+     * Due balance is a "future" dueBalance (the due balance at the invoice due date).
+     */
+    private BigDecimal dueBalance;
 
     /**
      * Instantiates a new invoice dto.
      */
     public InvoiceDto() {
     }
-
-    /**
+    
+	/**
      * Gets the list invoice id to link.
      *
      * @return the listInvoiceIdToLink
@@ -571,4 +580,26 @@ public class InvoiceDto extends BaseDto {
     public void setNetToPay(BigDecimal netToPay) {
         this.netToPay = netToPay;
     }
+
+    /**
+     * @return the xml
+     */
+    public String getXml() {
+        return xml;
+    }
+
+    /**
+     * @param xml the xml to set
+     */
+    public void setXml(String xml) {
+        this.xml = xml;
+    }
+
+	public BigDecimal getDueBalance() {
+		return dueBalance;
+	}
+
+	public void setDueBalance(BigDecimal dueBalance) {
+		this.dueBalance = dueBalance;
+	}
 }

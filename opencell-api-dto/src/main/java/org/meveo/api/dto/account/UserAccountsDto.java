@@ -28,7 +28,7 @@ public class UserAccountsDto implements Serializable {
      */
     public List<UserAccountDto> getUserAccount() {
         if (userAccount == null) {
-            userAccount = new ArrayList<UserAccountDto>();
+            userAccount = new ArrayList<>();
         }
 
         return userAccount;

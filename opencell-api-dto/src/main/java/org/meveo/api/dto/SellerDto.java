@@ -43,7 +43,7 @@ import org.meveo.model.shared.ContactInformation;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SellerDto extends BusinessDto {
+public class SellerDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4763606402719751014L;

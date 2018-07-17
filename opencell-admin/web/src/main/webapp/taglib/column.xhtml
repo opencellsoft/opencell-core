@@ -166,7 +166,7 @@
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
-		
+        
         <c:if test="#{sort and !empty(field)}">
             <f:attribute name="field" value="#{field}" />
             <f:attribute name="sortable" value="#{true}" />
@@ -189,8 +189,8 @@
         <!-- If field is not list, then it means it is either another entity or enum. -->
         <c:if test="#{not isList}">
             <c:if test="#{empty entityView}">
-            	<!--  fix for order by active column for disabled field in EnableEntity -->
-            	<c:if test="#{isDisabledMessage}">
+                <!--  fix for order by active column for disabled field in EnableEntity -->
+                <c:if test="#{isDisabledMessage}">
                     <h:outputText rendered="#{valueField != null and valueField.toString() == 'true'}" value="#{messages['commons.no']}" />
                     <h:outputText rendered="#{valueField != null and valueField.toString() == 'false'}" value="#{messages['commons.yes']}" />
                 </c:if>
@@ -203,8 +203,8 @@
                 </c:if>
                 <c:if test="#{not isMessage and not isMap and not isDisabledMessage}">
                     <!-- If there is date field, show date in specified pattern 
-		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
-		    	 -->
+                 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
+                 -->
                     <c:set var="converter" value="#{getConverter.forType(valueField, converterParam)}" />
                     <c:if test="${!isDate and !isDatePeriod and not time}">
                         <c:if test="${!showTruncated}">
@@ -276,26 +276,16 @@
                         <f:param name="backView" value="#{backView}" />
                     </c:if>
                 </h:link>
-                <p:tooltip rendered="#{not empty popupFields}" for="#{attrId}_message_link" showEffect="slide" hideEffect="slide">
-                    <ui:repeat value="#{popupFields.split(',')}" var="popupField">
-                        <c:set var="popupFieldValue" value="#{entity}" />
-                        <ui:repeat value="#{popupField.split('\\.')}" var="p">
-                            <c:set var="popupFieldValue" value="#{popupFieldValue[p]}" />
-                        </ui:repeat>
-                        <h:outputText style="white-space:nowrap" value="#{popupFieldValue}" />
-                        <br />
-                    </ui:repeat>
-                </p:tooltip>
-                <!-- 				<p:tooltip rendered="#{empty popupFields and not empty popupValue}" -->
-                <!-- 					for="#{attrId}_message_link" showEffect="slide" hideEffect="slide"> -->
-                <!-- 					<h:outputText style="white-space:nowrap" value="#{popupValue}" /> -->
-                <!-- 				</p:tooltip> -->
+                <!--                <p:tooltip rendered="#{empty popupFields and not empty popupValue}" -->
+                <!--                    for="#{attrId}_message_link" showEffect="slide" hideEffect="slide"> -->
+                <!--                    <h:outputText style="white-space:nowrap" value="#{popupValue}" /> -->
+                <!--                </p:tooltip> -->
             </c:if>
         </c:if>
 
         <!-- If its list then run through it and show results. -->
         <c:if test="#{isList}">
-            <!-- 			<c:set var="list" value="#{entity[field]}" /> -->
+            <!--            <c:set var="list" value="#{entity[field]}" /> -->
             <ui:repeat value="#{valueField.toArray()}" var="c">
                 <c:set var="valueLabel" value="#{c}" />
                 <c:forEach var="valueLabelVar" items="#{valueLabelField.split('\\.')}">

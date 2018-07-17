@@ -16,23 +16,27 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
+import org.meveo.api.dto.billing.WoRatedTransactionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -40,6 +44,7 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -55,7 +60,8 @@ import org.primefaces.model.SortOrder;
  * Wallet operation and balance related API
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class WalletApi extends BaseApi {
@@ -98,6 +104,9 @@ public class WalletApi extends BaseApi {
 
     @Inject
     private CurrencyService currencyService;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     /**
      * Calculate current (open or reserved) wallet balance at a given level
@@ -495,41 +504,38 @@ public class WalletApi extends BaseApi {
             walletOperation.setInvoicingDate(cal.nextCalendarDate(walletOperation.getOperationDate()));
         }
 
+        // Fill missing data
+        if (walletOperation.getInvoiceSubCategory() == null || walletOperation.getInputUnitDescription() == null || walletOperation.getRatingUnitDescription() == null) {
+            ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+            if (walletOperation.getInvoiceSubCategory() == null) {
+                walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
+            }
+            if (walletOperation.getInputUnitDescription() == null) {
+                walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
+
+            }
+            if (walletOperation.getRatingUnitDescription() == null) {
+                walletOperation.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
+            }
+        }
+
         walletOperationService.create(walletOperation);
 
     }
 
     public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        return this.findOperations(postData, pagingAndFiltering, Boolean.FALSE);
+    }
+
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering, Boolean includeRatedTransactions)
+            throws MeveoApiException {
 
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
 
         if (postData != null) {
-            if (StringUtils.isBlank(postData.getUserAccount())) {
-                missingParameters.add("userAccount");
-                handleMissingParameters();
-            }
-
-            pagingAndFiltering.addFilter("wallet.userAccount.code", postData.getUserAccount());
-
-            if (!StringUtils.isBlank(postData.getWalletTemplate()) && !postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
-                pagingAndFiltering.addFilter("wallet.walletTemplate.code", postData.getWalletTemplate());
-            } else {
-                pagingAndFiltering.addFilter("wallet.code", WalletTemplate.PRINCIPAL);
-            }
-
-            pagingAndFiltering.addFilter("status", postData.getStatus());
-            pagingAndFiltering.addFilter("chargeInstance.code", postData.getChargeTemplateCode());
-            pagingAndFiltering.addFilter("fromRange operationDate", postData.getFromDate());
-            pagingAndFiltering.addFilter("toRange operationDate", postData.getToDate());
-            pagingAndFiltering.addFilter("offerCode", postData.getOfferTemplateCode());
-            pagingAndFiltering.addFilter("orderNumber", postData.getOrderNumber());
-            pagingAndFiltering.addFilter("parameter1", postData.getParameter1());
-            pagingAndFiltering.addFilter("parameter2", postData.getParameter2());
-            pagingAndFiltering.addFilter("parameter3", postData.getParameter3());
-            pagingAndFiltering.addFilter("chargeInstance.subscription.code", postData.getSubscriptionCode());
-
+            this.completeFilteringByPostedData(postData, pagingAndFiltering);
         }
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, WalletOperation.class);
@@ -543,11 +549,51 @@ public class WalletApi extends BaseApi {
         if (totalCount > 0) {
             List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);
             for (WalletOperation wo : walletOperations) {
-                result.getWalletOperations().add(new WalletOperationDto(wo));
+                WalletOperationDto woDto = new WalletOperationDto(wo);
+                if (includeRatedTransactions) {
+                    RatedTransaction rt = this.ratedTransactionService.findByWalletOperationId(wo.getId());
+                    if (rt != null) {
+                        woDto.setRatedTransaction(new WoRatedTransactionDto(rt));
+                    }
+                }
+                result.getWalletOperations().add(woDto);
             }
         }
 
         return result;
+    }
+
+    /**
+     * Complete filtering by posted data.
+     *
+     * @param postData the post data
+     * @param pagingAndFiltering the paging and filtering
+     * @throws MissingParameterException the missing parameter exception
+     */
+    private void completeFilteringByPostedData(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering) throws MissingParameterException {
+        if (StringUtils.isBlank(postData.getUserAccount())) {
+            missingParameters.add("userAccount");
+            handleMissingParameters();
+        }
+
+        pagingAndFiltering.addFilter("wallet.userAccount.code", postData.getUserAccount());
+
+        if (!StringUtils.isBlank(postData.getWalletTemplate()) && !postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
+            pagingAndFiltering.addFilter("wallet.walletTemplate.code", postData.getWalletTemplate());
+        } else {
+            pagingAndFiltering.addFilter("wallet.code", WalletTemplate.PRINCIPAL);
+        }
+
+        pagingAndFiltering.addFilter("status", postData.getStatus());
+        pagingAndFiltering.addFilter("chargeInstance.code", postData.getChargeTemplateCode());
+        pagingAndFiltering.addFilter("fromRange operationDate", postData.getFromDate());
+        pagingAndFiltering.addFilter("toRange operationDate", postData.getToDate());
+        pagingAndFiltering.addFilter("offerCode", postData.getOfferTemplateCode());
+        pagingAndFiltering.addFilter("orderNumber", postData.getOrderNumber());
+        pagingAndFiltering.addFilter("parameter1", postData.getParameter1());
+        pagingAndFiltering.addFilter("parameter2", postData.getParameter2());
+        pagingAndFiltering.addFilter("parameter3", postData.getParameter3());
+        pagingAndFiltering.addFilter("chargeInstance.subscription.code", postData.getSubscriptionCode());
     }
 
     public void create(WalletTemplateDto postData) throws MeveoApiException, BusinessException {

@@ -11,6 +11,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -33,6 +34,7 @@ public class PrepaidWalletMatchJobBean {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(String matchingChargeCode, JobExecutionResultImpl result) {

@@ -42,8 +42,8 @@ public class ScriptingJob extends Job {
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         String scriptCode = null;
         try {
-            scriptCode = ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_script")).getCode();
-            Map<String, Object> context = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "ScriptingJob_variables");
+            scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "ScriptingJob_script")).getCode();
+            Map<String, Object> context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "ScriptingJob_variables");
             if (context == null) {
                 context = new HashMap<String, Object>();
             }

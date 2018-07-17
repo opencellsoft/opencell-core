@@ -3,8 +3,6 @@ package org.meveo.api.rest.admin.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
 
 import org.meveo.api.admin.FilesApi;
 import org.meveo.api.dto.ActionStatus;
@@ -23,9 +21,6 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
 	@Inject
 	private FilesApi filesApi;
 	
-	@Context 
-	private HttpServletResponse httpServletResponse;
-
 	@Override
 	public GetFilesResponseDto listFiles() {
 		GetFilesResponseDto result = new GetFilesResponseDto();

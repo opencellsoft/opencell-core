@@ -1,111 +1,108 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org" 
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	template="/layout/template.xhtml">
+    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:hftl="http://hftl.org" 
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    template="/layout/template.xhtml">
 
-	<ui:define name="body">
+    <ui:define name="body">
 
-		<p:panel>
-			<f:facet name="header">
-				<h:outputText value="#{messages['document.panel']}" />
-			</f:facet>
+        <p:panel>
+            <f:facet name="header">
+                <h:outputText value="#{messages['document.panel']}" />
+            </f:facet>
 
-			<h:form id="documentSearchForm" styleClass="mainForm">
-				<h:panelGrid columns="2">
-					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">
-							<h:outputText value="#{messages['document.name']}"
-								style="padding-right:5px" />
-						</ui:define>
-						<h:inputText value="#{crmConnectorRejectedFileBean.filename}" />
-					</s:decorate>
+            <h:form id="documentSearchForm" styleClass="mainForm">
+                <h:panelGrid columns="2">
+                    <s:decorate template="/layout/edit.xhtml">
+                        <ui:define name="label">
+                            <h:outputText value="#{messages['document.name']}"
+                                style="padding-right:5px" />
+                        </ui:define>
+                        <h:inputText value="#{crmConnectorRejectedFileBean.filename}" />
+                    </s:decorate>
 
-					<s:decorate template="/layout/edit.xhtml">
-						<ui:define name="label">
-							<h:outputText value="#{messages['document.createdDate']}"
-								style="padding-right:5px" />
-						</ui:define>
-						<h:outputText value="#{messages['commons.dateFrom']}"
-							style="padding-right:5px" />
-						<p:calendar value="#{crmConnectorRejectedFileBean.fromDate}" popup="true"
-							showApplyButton="false" cellWidth="24px" cellHeight="22px"
-							datePattern="yyyy-MM-dd HH:mm" style="width:200px;" />
-						<h:outputText value="#{messages['commons.dateTill']}"
-							style="padding:5px" />
-						<p:calendar value="#{crmConnectorRejectedFileBean.toDate}" popup="true"
-							showApplyButton="false" cellWidth="24px" cellHeight="22px"
-							datePattern="yyyy-MM-dd HH:mm" style="width:200px" />
-					</s:decorate>
-				</h:panelGrid>
-				<h:panelGrid columns="2">
-					<h:commandButton id="buttonSearch"
-						value="#{messages['commons.search']}"
-						action="#{crmConnectorRejectedFileBean.list()}" />
-					<h:commandButton id="buttonClear" action="#{crmConnectorRejectedFileBean.clean}"
-						reRender="documentSearchForm" value="#{messages['commons.clean']}" />
-				</h:panelGrid>
-			</h:form>
-		</p:panel>
+                    <s:decorate template="/layout/edit.xhtml">
+                        <ui:define name="label">
+                            <h:outputText value="#{messages['document.createdDate']}"
+                                style="padding-right:5px" />
+                        </ui:define>
+                        <h:outputText value="#{messages['commons.dateFrom']}"
+                            style="padding-right:5px" />
+                        <p:calendar value="#{crmConnectorRejectedFileBean.fromDate}" popup="true"
+                            showApplyButton="false" cellWidth="24px" cellHeight="22px"
+                            datePattern="yyyy-MM-dd HH:mm" style="width:200px;" />
+                        <h:outputText value="#{messages['commons.dateTill']}"
+                            style="padding:5px" />
+                        <p:calendar value="#{crmConnectorRejectedFileBean.toDate}" popup="true"
+                            showApplyButton="false" cellWidth="24px" cellHeight="22px"
+                            datePattern="yyyy-MM-dd HH:mm" style="width:200px" />
+                    </s:decorate>
+                </h:panelGrid>
+                <h:panelGrid columns="2">
+                    <h:commandButton id="buttonSearch"
+                        value="#{messages['commons.search']}"
+                        action="#{crmConnectorRejectedFileBean.list()}" />
+                    <h:commandButton id="buttonClear" action="#{crmConnectorRejectedFileBean.clean}"
+                        reRender="documentSearchForm" value="#{messages['commons.clean']}" />
+                </h:panelGrid>
+            </h:form>
+        </p:panel>
 
 
-		<p:panel id="documentsPanel" width="100%">
-			<p:spacer />
-			<h:outputText value="#{messages['commons.noItems']}"
-				rendered="#{crmConnectorRejectedFiles.size()==0}" />
-			<h:form id="documentsForm" rendered="#{crmConnectorRejectedFiles.size()&gt;0}">
-				<h:panelGrid width="100%" columns="1" border="0"
-					style="padding:0px; margin:0px;text-align: right;">
-					<h:outputText
-						value="#{crmConnectorRejectedFiles.size()} #{messages['commons.itemsFound']}" />
-				</h:panelGrid>
-				<p:dataTable id="documentsDatatable" value="#{crmConnectorRejectedFiles}"
-					var="_document" resizableColumns="true"
-					reRender="documentsScroller" rows="10">
-					<p:column width="50%">
-						<f:facet name="header">
-							<h:outputText value="#{messages['document.name']}" />
-						</f:facet>
-						<h:outputText value="#{_document.filename}" />
-					</p:column>
-					<p:column width="10%">
-						<f:facet name="header">
-							<h:outputText value="#{messages['document.size']}" />
-						</f:facet>
-						<h:outputText value="#{_document.size()}" />
-					</p:column>
-					<p:column width="20%">
-						<f:facet name="header">
-							<h:outputText value="#{messages['document.createdDate']}" />
-						</f:facet>
-						<h:outputText value="#{_document.createDate}" />
-					</p:column>
-					<p:column styleClass="actions-column">
-						<f:facet name="header">
-							<h:outputText value="#{messages['commons.actions']}" />
-						</f:facet>
-						<h:commandLink id="compressLink" rendered="#{not _document.filename.endsWith('.gzip')}"
-							action="#{crmConnectorRejectedFileBean.compress(_document)}">
-							<h:graphicImage value="/img/compress.png" style="border:0;" />
-						</h:commandLink>
-						<p:tooltip for="compressLink" value="#{messages['commons.compress']}" />
-						<p:spacer width="5px" />
-						<h:commandLink id="downloadLink" action="#{crmConnectorRejectedFileBean.download(_document)}">
-							<h:graphicImage value="/img/download.png" style="border:0;" />
-						</h:commandLink>
-						<p:tooltip for="downloadLink" value="#{messages['commons.download']}" />
-						<h:commandLink id="deleteLink" action="#{crmConnectorRejectedFileBean.delete(_document)}">
-							<h:graphicImage value="/img/delete.gif" style="border:0;" />
-						</h:commandLink>
-						<p:tooltip for="deleteLink" value="#{messages['commons.delete']}" />
-					</p:column>
-				</p:dataTable>
-			</h:form>
-		</p:panel>
-	</ui:define>
+        <p:panel id="documentsPanel" width="100%">
+            <p:spacer />
+            <h:outputText value="#{messages['commons.noItems']}"
+                rendered="#{crmConnectorRejectedFiles.size()==0}" />
+            <h:form id="documentsForm" rendered="#{crmConnectorRejectedFiles.size()&gt;0}">
+                <h:panelGrid width="100%" columns="1" border="0"
+                    style="padding:0px; margin:0px;text-align: right;">
+                    <h:outputText
+                        value="#{crmConnectorRejectedFiles.size()} #{messages['commons.itemsFound']}" />
+                </h:panelGrid>
+                <p:dataTable id="documentsDatatable" value="#{crmConnectorRejectedFiles}"
+                    var="_document" resizableColumns="true"
+                    reRender="documentsScroller" rows="10">
+                    <p:column width="50%">
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['document.name']}" />
+                        </f:facet>
+                        <h:outputText value="#{_document.filename}" />
+                    </p:column>
+                    <p:column width="10%">
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['document.size']}" />
+                        </f:facet>
+                        <h:outputText value="#{_document.size()}" />
+                    </p:column>
+                    <p:column width="20%">
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['document.createdDate']}" />
+                        </f:facet>
+                        <h:outputText value="#{_document.createDate}" />
+                    </p:column>
+                    <p:column styleClass="actions-column">
+                        <f:facet name="header">
+                            <h:outputText value="#{messages['commons.actions']}" />
+                        </f:facet>
+                        <h:commandLink id="compressLink" rendered="#{not _document.filename.endsWith('.gzip')}"
+                            action="#{crmConnectorRejectedFileBean.compress(_document)}">
+                            <h:graphicImage value="/img/compress.png" style="border:0;" />
+                        </h:commandLink>
+                        <p:spacer width="5px" />
+                        <h:commandLink id="downloadLink" action="#{crmConnectorRejectedFileBean.download(_document)}">
+                            <h:graphicImage value="/img/download.png" style="border:0;" />
+                        </h:commandLink>
+                        <h:commandLink id="deleteLink" action="#{crmConnectorRejectedFileBean.delete(_document)}">
+                            <h:graphicImage value="/img/delete.gif" style="border:0;" />
+                        </h:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:panel>
+    </ui:define>
 </ui:composition>

@@ -35,12 +35,13 @@ import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 
+/**
+ * @author phung
+ *
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class CatalogRsImpl extends BaseRs implements CatalogRs {
-
-    @Inject
-    private Logger log = LoggerFactory.getLogger(CatalogRsImpl.class);
 
     @Context
     private UriInfo uriInfo;
@@ -104,9 +105,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -146,9 +145,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     public Response findProductOfferings(Date validFrom, Date validTo, UriInfo info) {
@@ -168,9 +165,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -188,9 +183,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -211,9 +204,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -230,9 +221,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -247,9 +236,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -265,9 +252,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -282,9 +267,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -299,9 +282,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -316,9 +297,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -333,9 +312,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -350,9 +327,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -368,9 +343,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -385,9 +358,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -402,9 +373,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -419,9 +388,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -436,9 +403,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -453,9 +418,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -471,9 +434,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -489,9 +450,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -505,10 +464,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         } catch (Exception e) {
             processException(e, result);
         }
-
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -523,9 +479,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -540,9 +494,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
-        return response;
+        return getResponse(responseBuilder);
     }
 
     @Override
@@ -557,8 +509,22 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             processException(e, result);
         }
 
-        Response response = responseBuilder.build();
-        log.debug("RESPONSE={}", response.getEntity());
+        return getResponse(responseBuilder);
+    }
+
+    /**
+     * @param responseBuilder response builder
+     * @return response
+     */
+    private Response getResponse(Response.ResponseBuilder responseBuilder) {
+        Response response = null;
+        if (responseBuilder != null) {
+            response = responseBuilder.build();
+            log.debug("RESPONSE={}", response.getEntity());
+        }
+
         return response;
     }
+    
+    
 }

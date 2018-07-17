@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -23,7 +23,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
  */
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceTypeDto extends BusinessDto {
+public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -34,13 +34,13 @@ public class InvoiceTypeDto extends BusinessDto {
 
     /** The occ template negative code. */
     private String occTemplateNegativeCode;
-    
+
     /** The occ template code EL. */
     private String occTemplateCodeEl;
     
     /** The occ template negative code EL. */
     private String occTemplateNegativeCodeEl;
-    
+
     /** The sequence dto. */
     private SequenceDto sequenceDto;
 
@@ -70,6 +70,9 @@ public class InvoiceTypeDto extends BusinessDto {
 
     /** The billing template name EL. */
     private String billingTemplateNameEL;
+
+    /** The use Self Sequence . */
+    private boolean useSelfSequence = true;
 
     /**
      * Instantiates a new invoice type dto.
@@ -104,6 +107,7 @@ public class InvoiceTypeDto extends BusinessDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
+        this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
 
     /**
@@ -123,25 +127,6 @@ public class InvoiceTypeDto extends BusinessDto {
     public void setOccTemplateCode(String occTemplateCode) {
         this.occTemplateCode = occTemplateCode;
     }
-    
-    /**
-     * Gets the occ template code EL.
-     *
-     * @return the occ template code EL
-     */
-    public String getOccTemplateCodeEl() {
-        return occTemplateCodeEl;
-    }
-
-    /**
-     * Sets the occ template code EL.
-     *
-     * @param occTemplateCodeEl the new occ template code EL
-     */
-    public void setOccTemplateCodeEl(String occTemplateCodeEl) {
-        this.occTemplateCodeEl = occTemplateCodeEl;
-    }
-
 
     /**
      * Gets the applies to.
@@ -232,24 +217,6 @@ public class InvoiceTypeDto extends BusinessDto {
     public void setOccTemplateNegativeCode(String occTemplateNegativeCode) {
         this.occTemplateNegativeCode = occTemplateNegativeCode;
     }
-    
-    /**
-     * Gets the occ template negative code EL.
-     *
-     * @return the occ template negative code EL
-     */
-    public String getOccTemplateNegativeCodeEl() {
-        return occTemplateNegativeCodeEl;
-    }
-
-    /**
-     * Sets the occ template negative code EL.
-     *
-     * @param occTemplateNegativeCodeEl the new occ template negative code EL
-     */
-    public void setOccTemplateNegativeCodeEl(String occTemplateNegativeCodeEl) {
-        this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
-    }
 
     /**
      * Gets the billing template name.
@@ -322,11 +289,61 @@ public class InvoiceTypeDto extends BusinessDto {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
+
+    /**
+     * @return the useSelfSequence
+     */
+    public boolean isUseSelfSequence() {
+        return useSelfSequence;
+    }
+
+    /**
+     * @param useSelfSequence the useSelfSequence to set
+     */
+    public void setUseSelfSequence(boolean useSelfSequence) {
+        this.useSelfSequence = useSelfSequence;
+    }
     
+    /**
+     * Gets the occ template code EL.
+     *
+     * @return the occ template code EL
+     */
+    public String getOccTemplateCodeEl() {
+        return occTemplateCodeEl;
+    }
+
+    /**
+     * Sets the occ template code EL.
+     *
+     * @param occTemplateCodeEl the new occ template code EL
+     */
+    public void setOccTemplateCodeEl(String occTemplateCodeEl) {
+        this.occTemplateCodeEl = occTemplateCodeEl;
+    }
+
+    /**
+     * Gets the occ template negative code EL.
+     *
+     * @return the occ template negative code EL
+     */
+    public String getOccTemplateNegativeCodeEl() {
+        return occTemplateNegativeCodeEl;
+    }
+
+    /**
+     * Sets the occ template negative code EL.
+     *
+     * @param occTemplateNegativeCodeEl the new occ template negative code EL
+     */
+    public void setOccTemplateNegativeCodeEl(String occTemplateNegativeCodeEl) {
+        this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
+    }
+
     @Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
                 + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
-                + "]";
+                + ", useSelfSequence=" + useSelfSequence + "]";
     }
 }

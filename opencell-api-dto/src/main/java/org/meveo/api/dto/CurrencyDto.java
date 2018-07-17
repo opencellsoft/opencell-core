@@ -15,7 +15,7 @@ import org.meveo.model.billing.TradingCurrency;
  */
 @XmlRootElement(name = "Currency")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyDto extends BaseDto implements IEnableDto {
+public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 9143645109603442839L;
@@ -49,6 +49,7 @@ public class CurrencyDto extends BaseDto implements IEnableDto {
      * @param tradingCurrency the trading currency
      */
     public CurrencyDto(TradingCurrency tradingCurrency) {
+        super(tradingCurrency);
         code = tradingCurrency.getCurrencyCode();
         description = tradingCurrency.getPrDescription();
         disabled = tradingCurrency.isDisabled();

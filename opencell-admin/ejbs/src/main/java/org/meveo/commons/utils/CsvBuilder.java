@@ -107,17 +107,24 @@ public class CsvBuilder {
 	}
 	
 	
-	public void writeFile(byte[] content, String filename) throws IOException { 
-		File file = new File(filename);
-		if (!file.exists()) {
-			file.createNewFile();
-		}
-		FileOutputStream fop = new FileOutputStream(file,true);
-		fop.write(content);
-		fop.flush();
-		fop.close();
- 
-	}
+    /**
+     * @param content content to be written to the file
+     * @param filename name of file to write the content
+     * @throws IOException input/output exception.
+     */
+    public void writeFile(byte[] content, String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        try (FileOutputStream fop = new FileOutputStream(file, true)) {
+            fop.write(content);
+            fop.flush();
+        } catch (IOException ex) {
+            throw ex;
+        }
+
+    }
 	
 	
 	 public void download(InputStream inputStream, String fileName) {

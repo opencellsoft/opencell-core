@@ -55,7 +55,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 
         List<TriggeredEDRTemplate> edrTemplates = chargeTemplate.getEdrTemplates();
         chargeTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
-        if (edrTemplates != null & edrTemplates.size() != 0) {
+        if (edrTemplates != null && edrTemplates.size() != 0) {
             for (TriggeredEDRTemplate edrTemplate : edrTemplates) {
                 edrTemplateService.detach(edrTemplate);
                 chargeTemplate.getEdrTemplates().add(edrTemplate);

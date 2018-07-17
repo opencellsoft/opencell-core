@@ -108,23 +108,23 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setOccTemplateNegativeCodeEl(postData.getOccTemplateNegativeCodeEl());
         invoiceType.setAppliesTo(invoiceTypesToApplies);
         invoiceType.setSequence(postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto());
+        invoiceType.setUseSelfSequence(postData.isUseSelfSequence());
         if (postData.getSellerSequences() != null) {
             for (Entry<String, SequenceDto> entry : postData.getSellerSequences().entrySet()) {
                 Seller seller = sellerService.findByCode(entry.getKey());
                 if (seller == null) {
                     throw new EntityDoesNotExistsException(Seller.class, entry.getKey());
                 }
-                if (entry.getValue().getSequenceSize().intValue() < 0) {
+                SequenceDto value = entry.getValue();
+                if (value == null || value.getSequenceSize().intValue() < 0) {
                     throw new MeveoApiException("sequence size value must be positive");
                 }
-                if (entry.getValue().getCurrentInvoiceNb().intValue() < 0) {
+
+                if (value == null || value.getCurrentInvoiceNb().intValue() < 0) {
                     throw new MeveoApiException("current invoice number value must be positive");
                 }
-                if (entry.getValue() == null) {
-                    invoiceType.getSellerSequence().remove(seller);
-                } else {
-                    invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
-                }
+
+                invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, value.fromDto()));
             }
         }
         invoiceType.setMatchingAuto(postData.isMatchingAuto());
@@ -244,7 +244,8 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceTypeDto.getXmlFilenameEL() != null) {
             invoiceType.setXmlFilenameEL(invoiceTypeDto.getXmlFilenameEL());
         }
-
+        
+        invoiceType.setUseSelfSequence(invoiceTypeDto.isUseSelfSequence());
         invoiceTypeService.update(invoiceType);
         return result;
     }

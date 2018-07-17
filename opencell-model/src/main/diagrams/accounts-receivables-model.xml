@@ -2,9 +2,9 @@
 	<entity>
 		<entity-name>org.meveo.model.payments.RecordedInvoice</entity-name>
 		<entity-width>153</entity-width>
-		<entity-height>388</entity-height>
+		<entity-height>328</entity-height>
 		<entity-X-Coordinate>70</entity-X-Coordinate>
-		<entity-Y-Coordinate>230</entity-Y-Coordinate>
+		<entity-Y-Coordinate>269</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>
@@ -13,7 +13,7 @@
 	<entity>
 		<entity-name>org.meveo.model.payments.AccountOperation</entity-name>
 		<entity-width>191</entity-width>
-		<entity-height>508</entity-height>
+		<entity-height>608</entity-height>
 		<entity-X-Coordinate>289</entity-X-Coordinate>
 		<entity-Y-Coordinate>30</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
@@ -68,7 +68,7 @@
 	<entity>
 		<entity-name>org.meveo.model.payments.Payment</entity-name>
 		<entity-width>120</entity-width>
-		<entity-height>130</entity-height>
+		<entity-height>110</entity-height>
 		<entity-X-Coordinate>611</entity-X-Coordinate>
 		<entity-Y-Coordinate>330</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>

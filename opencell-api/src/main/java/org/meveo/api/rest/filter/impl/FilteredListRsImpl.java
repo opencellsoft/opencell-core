@@ -38,9 +38,6 @@ import org.slf4j.Logger;
 public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
 
     @Inject
-    private Logger log;
-
-    @Inject
     private FilteredListApi filteredListApi;
 
     @Inject

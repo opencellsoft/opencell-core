@@ -20,9 +20,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
 
 
 /**
@@ -37,14 +35,6 @@ public class FlatFileProcessingJob extends Job {
     /** The flat file processing job bean. */
     @Inject
     private FlatFileProcessingJobBean flatFileProcessingJobBean;
-
-    /** The custom field instance service. */
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-
-    /** The job execution service . */
-    @Inject
-    private JobExecutionService jobExecutionService;
 
     /** The param bean factory. */
     @Inject
@@ -74,16 +64,16 @@ public class FlatFileProcessingJob extends Job {
             String errorAction = null;
             Map<String, Object> initContext = new HashMap<String, Object>();
             try {
-                recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_recordVariableName");
-                originFilename = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_originFilename");
-                mappingConf = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_mappingConf");
-                inputDir = paramBeanFactory.getChrootDir() + ((String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
-                fileNameExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_fileNameExtension");
-                scriptInstanceFlowCode = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_scriptsFlow");
-                formatTransfo = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_formatTransfo");
-                errorAction = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_errorAction");
-                if (customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_variables") != null) {
-                    initContext = (Map<String, Object>) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_variables");
+                recordVariableName = (String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_recordVariableName");
+                originFilename = (String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_originFilename");
+                mappingConf = (String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_mappingConf");
+                inputDir = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
+                fileNameExtension = (String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_fileNameExtension");
+                scriptInstanceFlowCode = (String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_scriptsFlow");
+                formatTransfo = (String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_formatTransfo");
+                errorAction = (String) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_errorAction");
+                if (this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_variables") != null) {
+                    initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FlatFileProcessingJob_variables");
                 }
             } catch (Exception e) {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());

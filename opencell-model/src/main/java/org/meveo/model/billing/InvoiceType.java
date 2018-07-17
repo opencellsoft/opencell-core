@@ -82,6 +82,10 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "use_self_sequence")
+    private boolean useSelfSequence = true;
 
     /**
      * An EL expression to customize invoice PDF file name.
@@ -100,7 +104,7 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
-    
+
     @Column(name = "occ_template_code_el", length = 2000)
     @Size(max = 2000)
     private String occTemplateCodeEl;
@@ -211,7 +215,21 @@ public class InvoiceType extends BusinessEntity {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
 
-    public String getOccTemplateCodeEl() {
+    /**
+     * @return the useSelfSequence
+     */
+    public boolean isUseSelfSequence() {
+        return useSelfSequence;
+    }
+
+    /**
+     * @param useSelfSequence the useSelfSequence to set
+     */
+    public void setUseSelfSequence(boolean useSelfSequence) {
+        this.useSelfSequence = useSelfSequence;
+    }
+
+        public String getOccTemplateCodeEl() {
         return occTemplateCodeEl;
     }
 
@@ -226,5 +244,5 @@ public class InvoiceType extends BusinessEntity {
     public void setOccTemplateNegativeCodeEl(String occTemplateNegativeCodeEl) {
         this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
-
+    
 }

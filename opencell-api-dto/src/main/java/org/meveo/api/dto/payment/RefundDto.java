@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -37,7 +37,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @XmlRootElement(name = "Refund")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RefundDto extends BaseDto {
+public class RefundDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

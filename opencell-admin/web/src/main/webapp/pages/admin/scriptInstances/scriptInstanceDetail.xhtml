@@ -37,6 +37,7 @@
             </h:panelGroup>
             <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" componentWidth="35" size="60" doNotShowOnNew="true" disabled="true" />
             <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:formField label="#{messages['scriptInstanceCategory']}" field="scriptInstanceCategory" valueLabelField="code" listBean="#{scriptInstanceCategoryListBean}" />
             <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" componentWidth="15" required="true" />
             <hftl:decorateFormField label="#{messages['scriptInstance.script']}" fieldId="codeMirror" componentWidth="100">
                 <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}" lineNumbers="true" required="true" />
@@ -66,7 +67,7 @@
             </hftl:decorateFormField>
             
             <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true"
-                execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}" executeLabel="#{messages['action.execute']}" />
+                execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}" executeLabel="#{messages['action.execute']}" killConversationOnSave="false" killConversationOnBack="false" />
         </hftl:formPanel>
         <p:dataTable var="log" value="#{scriptInstanceBean.getLogs()}" rendered="#{!empty(scriptInstanceBean.getLogs())}">
             <p:column headerText="Logs">
