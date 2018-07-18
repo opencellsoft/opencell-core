@@ -172,8 +172,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date rtStartDate;
     private Date rtEndDate;
     
-    private Integer invoiceRounding =  appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding(); 
-    private RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode(); 
+    private Integer invoiceRounding =  appProvider != null ? (appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding()) : 2; 
+    private RoundingModeEnum invoiceRoundingMode =  appProvider != null ? appProvider.getInvoiceRoundingMode() : RoundingModeEnum.DOWN; 
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -343,7 +343,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         entity.setAmountWithTax( round(agregateHandler.getInvoiceAmountWithTax(), invoiceRounding, invoiceRoundingMode) );
 
         BigDecimal netToPay = entity.getAmountWithTax();
-        if (!appProvider.isEntreprise() && isIncludeBalance()) {
+        if (appProvider != null && !appProvider.isEntreprise() && isIncludeBalance()) {
             BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, billingAccount.getCustomerAccount().getCode(), entity.getDueDate());
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
