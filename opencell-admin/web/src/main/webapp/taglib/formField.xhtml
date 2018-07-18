@@ -177,7 +177,7 @@
     <c:if test="${empty(childField)}">
         <c:set var="fieldItem" value="${entity[field]}" />
     </c:if>
-    <c:if test="${!empty(childField)}">
+    <c:if test="${!empty(childField) and !empty(field) and entity[field] != null}">
         <c:set var="fieldItem" value="${entity[field][childField]}" />
     </c:if>
     <c:if test="${empty(formLevelEdit)}">
