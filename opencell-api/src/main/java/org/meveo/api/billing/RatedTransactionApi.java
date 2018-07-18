@@ -1,11 +1,11 @@
 package org.meveo.api.billing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
@@ -19,16 +19,18 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.primefaces.model.SortOrder;
 
 /**
- * RatedTransactionApi : An API for Rated transaction services
+ * RatedTransactionApi : An API for Rated transaction services.
  * 
  * @author Said Ramli
+ * @author Mohamed El Youssoufi
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class RatedTransactionApi extends BaseApi {
 
     /** The rated transaction service. */
     @Inject
-    RatedTransactionService ratedTransactionService;
+    private RatedTransactionService ratedTransactionService;
 
     public RatedTransactionListResponseDto list(RatedTransactionListRequestDto postData) throws InvalidParameterException {
 
@@ -51,6 +53,37 @@ public class RatedTransactionApi extends BaseApi {
         }
         result.setRatedTransactionListDto(ratedTransactionListDto);
         return result;
+    }
+
+    /**
+     * 
+     * Call Persistence Service to update passed RatedTransactions ids.
+     * 
+     * @param postData RatedTransactionListRequestDto containing query filter
+     * @throws InvalidParameterException can throw InvalidParameterException
+     */
+    public void cancelRatedTransactions(RatedTransactionListRequestDto postData) throws InvalidParameterException {
+        List<Long> rsToCancelIds = retreiveRatedTrasactionsToCancel(postData);
+        ratedTransactionService.cancelRatedTransactions(rsToCancelIds);
+    }
+
+    /**
+     * 
+     * Retrieves, filter and construct a list of Rated Transactions ids to cancel according to query and PagingAndFiltering values.
+     * 
+     * @param postData contains all filters, specially the query filter
+     * @return list of Rated Transactions ids to cancel
+     * @throws InvalidParameterException can throw invalid parameter Exception
+     */
+    private List<Long> retreiveRatedTrasactionsToCancel(RatedTransactionListRequestDto postData) throws InvalidParameterException {
+        PagingAndFiltering pagingAndFiltering = postData.getPagingAndFiltering();
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(pagingAndFiltering.getSortBy(), SortOrder.ASCENDING, null, pagingAndFiltering, RatedTransaction.class);
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.list(paginationConfig);
+        List<Long> rsToCancelIds = new ArrayList<Long>(ratedTransactions.size());
+        for (RatedTransaction rt : ratedTransactions) {
+            rsToCancelIds.add(rt.getId());
+        }
+        return rsToCancelIds;
     }
 
 }
