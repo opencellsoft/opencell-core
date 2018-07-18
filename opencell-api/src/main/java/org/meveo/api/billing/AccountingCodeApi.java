@@ -11,7 +11,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
+import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -95,12 +95,12 @@ public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCod
         return new AccountingCodeDto(ac);
     }
 
-    public AccountingCodeListResponse list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+    public AccountingCodeListResponseDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
 
         Long totalCount = accountingCodeService.count(paginationConfiguration);
 
-        AccountingCodeListResponse result = new AccountingCodeListResponse();
+        AccountingCodeListResponseDto result = new AccountingCodeListResponseDto();
 
         result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());

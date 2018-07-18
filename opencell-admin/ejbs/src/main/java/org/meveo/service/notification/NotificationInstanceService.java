@@ -8,6 +8,13 @@ import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 
+/**
+ * A foundation service class to manage CRUD operations on Notification entity subclasses
+ * 
+ * @author Andrius Karpavicius
+ *
+ * @param <T> Notification subclass
+ */
 public abstract class NotificationInstanceService<T extends Notification> extends BusinessService<T> {
 
     @Inject
@@ -15,6 +22,9 @@ public abstract class NotificationInstanceService<T extends Notification> extend
 
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
+
+    @Inject
+    private NotificationHistoryService notificationHistoryService;
 
     @Override
     public void create(T notification) throws BusinessException {
@@ -43,6 +53,8 @@ public abstract class NotificationInstanceService<T extends Notification> extend
 
     @Override
     public void remove(T notification) throws BusinessException {
+
+        notificationHistoryService.deleteHistory(notification);
         super.remove(notification);
         notificationCacheContainerProvider.removeNotificationFromCache(notification);
     }
@@ -76,9 +88,8 @@ public abstract class NotificationInstanceService<T extends Notification> extend
             counterInstanceService.remove(entity.getCounterInstance());
 
             // Instantiate a a counter instance if new template was specified or it was changed
-        } else if (entity.getCounterTemplate() != null
-                && (entity.getCounterInstance() == null || (entity.getCounterInstance() != null && !entity.getCounterTemplate().getId()
-                    .equals(entity.getCounterInstance().getCounterTemplate().getId())))) {
+        } else if (entity.getCounterTemplate() != null && (entity.getCounterInstance() == null
+                || (entity.getCounterInstance() != null && !entity.getCounterTemplate().getId().equals(entity.getCounterInstance().getCounterTemplate().getId())))) {
             counterInstanceService.counterInstanciation(entity, entity.getCounterTemplate());
         }
     }

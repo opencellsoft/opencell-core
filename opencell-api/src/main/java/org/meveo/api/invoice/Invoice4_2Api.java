@@ -416,11 +416,12 @@ public class Invoice4_2Api extends BaseApi {
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
             throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
 
+        String billingAccountCode = null;
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
-        }
-        if (generateInvoiceRequestDto != null) {
+            return null;
+        } else {
             if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
                 missingParameters.add("targetCode");
             }

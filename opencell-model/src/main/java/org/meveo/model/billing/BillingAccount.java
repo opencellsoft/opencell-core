@@ -168,8 +168,8 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
-    @Column(name = "phone", length = 15)
-    @Size(max = 15)
+    @Column(name = "phone", length = 50)
+    @Size(max = 50)
     protected String phone;
     
     @Column(name = "minimum_amount_el", length = 2000)

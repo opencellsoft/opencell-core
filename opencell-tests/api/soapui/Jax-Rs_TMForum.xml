@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
-  <con:settings>
-    <con:setting id="com.eviware.soapui.impl.wsdl.panels.testcase.JTestRunLog$OptionsForm@max_rows">1000</con:setting>
-    <con:setting id="com.eviware.soapui.impl.wsdl.panels.testcase.JTestRunLog$OptionsForm@errors_only">true</con:setting>
-  </con:settings>
+  <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -14473,6 +14470,7 @@
       </ws:resumeSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/resumeSubscription"/>
       </con:call>
     </con:operation>
@@ -14612,6 +14610,7 @@
       </ws:suspendServices>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/suspendServices"/>
       </con:call>
     </con:operation>
@@ -14751,6 +14750,7 @@
       </ws:updateServices>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/updateServices"/>
       </con:call>
     </con:operation>
@@ -14890,6 +14890,7 @@
       </ws:resumeServices>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/resumeServices"/>
       </con:call>
     </con:operation>
@@ -15038,6 +15039,7 @@
       </ws:applyProduct>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/applyProduct"/>
       </con:call>
     </con:operation>
@@ -15062,6 +15064,7 @@
       </ws:findDueDateDelay>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/findDueDateDelay"/>
       </con:call>
     </con:operation>
@@ -15084,6 +15087,7 @@
       </ws:suspendSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/suspendSubscription"/>
       </con:call>
     </con:operation>
@@ -15192,6 +15196,7 @@
       <ws:createBillingCycle/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/>
       </con:call>
     </con:operation>
@@ -15207,6 +15212,7 @@
       <ws:createCalendar/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCalendar"/>
       </con:call>
     </con:operation>
@@ -15222,6 +15228,7 @@
       <ws:createCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCountry"/>
       </con:call>
     </con:operation>
@@ -15237,6 +15244,7 @@
       <ws:createCurrency/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCurrency"/>
       </con:call>
     </con:operation>
@@ -15252,6 +15260,7 @@
       <ws:createCustomFieldTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createCustomFieldTemplate"/>
       </con:call>
     </con:operation>
@@ -15267,6 +15276,7 @@
       <ws:createDescriptions/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createDescriptions"/>
       </con:call>
     </con:operation>
@@ -15282,6 +15292,7 @@
       <ws:createEmailTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createEmailTemplate"/>
       </con:call>
     </con:operation>
@@ -15297,6 +15308,7 @@
       <ws:createInvoiceCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceCategory"/>
       </con:call>
     </con:operation>
@@ -15312,6 +15324,7 @@
       <ws:createInvoiceSubCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategory"/>
       </con:call>
     </con:operation>
@@ -15327,6 +15340,7 @@
       <ws:createInvoiceSubCategoryCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceSubCategoryCountry"/>
       </con:call>
     </con:operation>
@@ -15342,6 +15356,7 @@
       <ws:createInvoiceType/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createInvoiceType"/>
       </con:call>
     </con:operation>
@@ -15357,6 +15372,7 @@
       <ws:createLanguage/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createLanguage"/>
       </con:call>
     </con:operation>
@@ -15372,6 +15388,7 @@
       <ws:createMeveoInstance/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createMeveoInstance"/>
       </con:call>
     </con:operation>
@@ -15387,6 +15404,7 @@
       <ws:createOccTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOccTemplate"/>
       </con:call>
     </con:operation>
@@ -15402,6 +15420,7 @@
       <ws:createOrUpdateBillingCycle/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateBillingCycle"/>
       </con:call>
     </con:operation>
@@ -15417,6 +15436,7 @@
       <ws:createOrUpdateCalendar/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCalendar"/>
       </con:call>
     </con:operation>
@@ -15432,6 +15452,7 @@
       <ws:createOrUpdateCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCountry"/>
       </con:call>
     </con:operation>
@@ -15447,6 +15468,7 @@
       <ws:createOrUpdateCurrency/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCurrency"/>
       </con:call>
     </con:operation>
@@ -15462,6 +15484,7 @@
       <ws:createOrUpdateCustomFieldTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateCustomFieldTemplate"/>
       </con:call>
     </con:operation>
@@ -15477,6 +15500,7 @@
       <ws:createOrUpdateDescriptions/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateDescriptions"/>
       </con:call>
     </con:operation>
@@ -15492,6 +15516,7 @@
       <ws:createOrUpdateEmailTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateEmailTemplate"/>
       </con:call>
     </con:operation>
@@ -15507,6 +15532,7 @@
       <ws:createOrUpdateInvoiceCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceCategory"/>
       </con:call>
     </con:operation>
@@ -15522,6 +15548,7 @@
       <ws:createOrUpdateInvoiceSubCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceSubCategory"/>
       </con:call>
     </con:operation>
@@ -15537,6 +15564,7 @@
       <ws:createOrUpdateInvoiceSubCategoryCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceSubCategoryCountry"/>
       </con:call>
     </con:operation>
@@ -15552,6 +15580,7 @@
       <ws:createOrUpdateInvoiceType/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateInvoiceType"/>
       </con:call>
     </con:operation>
@@ -15567,6 +15596,7 @@
       <ws:createOrUpdateLanguage/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateLanguage"/>
       </con:call>
     </con:operation>
@@ -15582,6 +15612,7 @@
       <ws:createOrUpdateMeveoInstance/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateMeveoInstance"/>
       </con:call>
     </con:operation>
@@ -15597,6 +15628,7 @@
       <ws:createOrUpdateOccTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateOccTemplate"/>
       </con:call>
     </con:operation>
@@ -15612,6 +15644,7 @@
       <ws:createOrUpdateProvider/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateProvider"/>
       </con:call>
     </con:operation>
@@ -15627,6 +15660,7 @@
       <ws:createOrUpdateProviderContact/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateProviderContact"/>
       </con:call>
     </con:operation>
@@ -15642,6 +15676,7 @@
       <ws:createOrUpdateRole/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateRole"/>
       </con:call>
     </con:operation>
@@ -15657,6 +15692,7 @@
       <ws:createOrUpdateSeller/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateSeller"/>
       </con:call>
     </con:operation>
@@ -15672,6 +15708,7 @@
       <ws:createOrUpdateTax/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateTax"/>
       </con:call>
     </con:operation>
@@ -15687,6 +15724,7 @@
       <ws:createOrUpdateTerminationReason/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateTerminationReason"/>
       </con:call>
     </con:operation>
@@ -15702,6 +15740,7 @@
       <ws:createOrUpdateUser/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateUser"/>
       </con:call>
     </con:operation>
@@ -15717,6 +15756,7 @@
       <ws:createOrUpdateUserHierarchyLevel/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createOrUpdateUserHierarchyLevel"/>
       </con:call>
     </con:operation>
@@ -15732,6 +15772,7 @@
       <ws:createProvider/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createProvider"/>
       </con:call>
     </con:operation>
@@ -15747,6 +15788,7 @@
       <ws:createProviderContact/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createProviderContact"/>
       </con:call>
     </con:operation>
@@ -15762,6 +15804,7 @@
       <ws:createRole/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createRole"/>
       </con:call>
     </con:operation>
@@ -15777,6 +15820,7 @@
       <ws:createSeller/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createSeller"/>
       </con:call>
     </con:operation>
@@ -15792,6 +15836,7 @@
       <ws:createTax/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createTax"/>
       </con:call>
     </con:operation>
@@ -15807,6 +15852,7 @@
       <ws:createTerminationReason/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createTerminationReason"/>
       </con:call>
     </con:operation>
@@ -15822,6 +15868,7 @@
       <ws:createUser/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUser"/>
       </con:call>
     </con:operation>
@@ -15837,6 +15884,7 @@
       <ws:createUserHierarchyLevel/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createUserHierarchyLevel"/>
       </con:call>
     </con:operation>
@@ -15852,6 +15900,7 @@
       <ws:findBillingCycle/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findBillingCycle"/>
       </con:call>
     </con:operation>
@@ -15867,6 +15916,7 @@
       <ws:findCalendar/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCalendar"/>
       </con:call>
     </con:operation>
@@ -15882,6 +15932,7 @@
       <ws:findCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCountry"/>
       </con:call>
     </con:operation>
@@ -15897,6 +15948,7 @@
       <ws:findCurrency/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCurrency"/>
       </con:call>
     </con:operation>
@@ -15912,6 +15964,7 @@
       <ws:findCustomerAccountConfiguration/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCustomerAccountConfiguration"/>
       </con:call>
     </con:operation>
@@ -15927,6 +15980,7 @@
       <ws:findCustomerConfiguration/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCustomerConfiguration"/>
       </con:call>
     </con:operation>
@@ -15942,6 +15996,7 @@
       <ws:findCustomFieldTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findCustomFieldTemplate"/>
       </con:call>
     </con:operation>
@@ -15957,6 +16012,7 @@
       <ws:findDescriptions/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findDescriptions"/>
       </con:call>
     </con:operation>
@@ -15972,6 +16028,7 @@
       <ws:findEmailTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findEmailTemplate"/>
       </con:call>
     </con:operation>
@@ -15987,6 +16044,7 @@
       <ws:findInvoiceCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceCategory"/>
       </con:call>
     </con:operation>
@@ -16002,6 +16060,7 @@
       <ws:findInvoiceSubCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceSubCategory"/>
       </con:call>
     </con:operation>
@@ -16017,6 +16076,7 @@
       <ws:findInvoiceSubCategoryCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceSubCategoryCountry"/>
       </con:call>
     </con:operation>
@@ -16032,6 +16092,7 @@
       <ws:findInvoiceType/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoiceType"/>
       </con:call>
     </con:operation>
@@ -16047,6 +16108,7 @@
       <ws:findInvoicingConfiguration/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findInvoicingConfiguration"/>
       </con:call>
     </con:operation>
@@ -16062,6 +16124,7 @@
       <ws:findLanguage/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findLanguage"/>
       </con:call>
     </con:operation>
@@ -16077,6 +16140,7 @@
       <ws:findMeveoInstance/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findMeveoInstance"/>
       </con:call>
     </con:operation>
@@ -16092,6 +16156,7 @@
       <ws:findOccTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findOccTemplate"/>
       </con:call>
     </con:operation>
@@ -16107,6 +16172,7 @@
       <ws:findProvider/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findProvider"/>
       </con:call>
     </con:operation>
@@ -16122,6 +16188,7 @@
       <ws:findProviderCF/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findProviderCF"/>
       </con:call>
     </con:operation>
@@ -16137,6 +16204,7 @@
       <ws:findProviderContact/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findProviderContact"/>
       </con:call>
     </con:operation>
@@ -16152,6 +16220,7 @@
       <ws:findRole/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findRole"/>
       </con:call>
     </con:operation>
@@ -16167,6 +16236,7 @@
       <ws:findRole4_2/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findRole4_2"/>
       </con:call>
     </con:operation>
@@ -16182,6 +16252,7 @@
       <ws:findSeller/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findSeller"/>
       </con:call>
     </con:operation>
@@ -16197,6 +16268,7 @@
       <ws:findTax/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findTax"/>
       </con:call>
     </con:operation>
@@ -16212,6 +16284,7 @@
       <ws:findTerminationReason/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findTerminationReason"/>
       </con:call>
     </con:operation>
@@ -16227,6 +16300,7 @@
       <ws:findTradingConfiguration/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findTradingConfiguration"/>
       </con:call>
     </con:operation>
@@ -16242,6 +16316,7 @@
       <ws:findTranslations/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findTranslations"/>
       </con:call>
     </con:operation>
@@ -16257,6 +16332,7 @@
       <ws:findUser/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUser"/>
       </con:call>
     </con:operation>
@@ -16272,6 +16348,7 @@
       <ws:findUserHierarchyLevel/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/findUserHierarchyLevel"/>
       </con:call>
     </con:operation>
@@ -16287,6 +16364,7 @@
       <ws:index/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/index"/>
       </con:call>
     </con:operation>
@@ -16302,6 +16380,7 @@
       <ws:listCalendars/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listCalendars"/>
       </con:call>
     </con:operation>
@@ -16317,6 +16396,7 @@
       <ws:listDescriptions/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listDescriptions"/>
       </con:call>
     </con:operation>
@@ -16332,6 +16412,7 @@
       <ws:listEmailTemplates/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listEmailTemplates"/>
       </con:call>
     </con:operation>
@@ -16347,6 +16428,7 @@
       <ws:listInvoiceTypes/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listInvoiceTypes"/>
       </con:call>
     </con:operation>
@@ -16362,6 +16444,7 @@
       <ws:listMeveoInstances/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listMeveoInstances"/>
       </con:call>
     </con:operation>
@@ -16377,6 +16460,7 @@
       <ws:listPermissions/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listPermissions"/>
       </con:call>
     </con:operation>
@@ -16392,6 +16476,7 @@
       <ws:listProviderContacts/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listProviderContacts"/>
       </con:call>
     </con:operation>
@@ -16407,6 +16492,7 @@
       <ws:listSeller/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listSeller"/>
       </con:call>
     </con:operation>
@@ -16422,6 +16508,7 @@
       <ws:listSellerCodes/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listSellerCodes"/>
       </con:call>
     </con:operation>
@@ -16437,6 +16524,7 @@
       <ws:listTaxes/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listTaxes"/>
       </con:call>
     </con:operation>
@@ -16452,6 +16540,7 @@
       <ws:listTerminationReason/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listTerminationReason"/>
       </con:call>
     </con:operation>
@@ -16467,6 +16556,7 @@
       <ws:listTranslations/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/listTranslations"/>
       </con:call>
     </con:operation>
@@ -16482,6 +16572,7 @@
       <ws:removeBillingCycle/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeBillingCycle"/>
       </con:call>
     </con:operation>
@@ -16497,6 +16588,7 @@
       <ws:removeCalendar/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCalendar"/>
       </con:call>
     </con:operation>
@@ -16512,6 +16604,7 @@
       <ws:removeCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCountry"/>
       </con:call>
     </con:operation>
@@ -16527,6 +16620,7 @@
       <ws:removeCurrency/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCurrency"/>
       </con:call>
     </con:operation>
@@ -16542,6 +16636,7 @@
       <ws:removeCustomFieldTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeCustomFieldTemplate"/>
       </con:call>
     </con:operation>
@@ -16557,6 +16652,7 @@
       <ws:removeDescriptions/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeDescriptions"/>
       </con:call>
     </con:operation>
@@ -16572,6 +16668,7 @@
       <ws:removeEmailTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeEmailTemplate"/>
       </con:call>
     </con:operation>
@@ -16587,6 +16684,7 @@
       <ws:removeInvoiceCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeInvoiceCategory"/>
       </con:call>
     </con:operation>
@@ -16602,6 +16700,7 @@
       <ws:removeInvoiceSubCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeInvoiceSubCategory"/>
       </con:call>
     </con:operation>
@@ -16617,6 +16716,7 @@
       <ws:removeInvoiceSubCategoryCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeInvoiceSubCategoryCountry"/>
       </con:call>
     </con:operation>
@@ -16632,6 +16732,7 @@
       <ws:removeInvoiceType/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeInvoiceType"/>
       </con:call>
     </con:operation>
@@ -16647,6 +16748,7 @@
       <ws:removeLanguage/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeLanguage"/>
       </con:call>
     </con:operation>
@@ -16662,6 +16764,7 @@
       <ws:removeMeveoInstance/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeMeveoInstance"/>
       </con:call>
     </con:operation>
@@ -16677,6 +16780,7 @@
       <ws:removeOccTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeOccTemplate"/>
       </con:call>
     </con:operation>
@@ -16692,6 +16796,7 @@
       <ws:removeProviderContact/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeProviderContact"/>
       </con:call>
     </con:operation>
@@ -16707,6 +16812,7 @@
       <ws:removeRole/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeRole"/>
       </con:call>
     </con:operation>
@@ -16722,6 +16828,7 @@
       <ws:removeSeller/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeSeller"/>
       </con:call>
     </con:operation>
@@ -16737,6 +16844,7 @@
       <ws:removeTax/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeTax"/>
       </con:call>
     </con:operation>
@@ -16752,6 +16860,7 @@
       <ws:removeTerminationReason/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeTerminationReason"/>
       </con:call>
     </con:operation>
@@ -16767,6 +16876,7 @@
       <ws:removeTranslations/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeTranslations"/>
       </con:call>
     </con:operation>
@@ -16782,6 +16892,7 @@
       <ws:removeUser/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeUser"/>
       </con:call>
     </con:operation>
@@ -16797,6 +16908,7 @@
       <ws:removeUserHierarchyLevel/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/removeUserHierarchyLevel"/>
       </con:call>
     </con:operation>
@@ -16812,6 +16924,7 @@
       <ws:updateBillingCycle/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/>
       </con:call>
     </con:operation>
@@ -16827,6 +16940,7 @@
       <ws:updateCalendar/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCalendar"/>
       </con:call>
     </con:operation>
@@ -16842,6 +16956,7 @@
       <ws:updateCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCountry"/>
       </con:call>
     </con:operation>
@@ -16857,6 +16972,7 @@
       <ws:updateCurrency/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCurrency"/>
       </con:call>
     </con:operation>
@@ -16872,6 +16988,7 @@
       <ws:updateCustomFieldTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateCustomFieldTemplate"/>
       </con:call>
     </con:operation>
@@ -16887,6 +17004,7 @@
       <ws:updateDescriptions/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateDescriptions"/>
       </con:call>
     </con:operation>
@@ -16902,6 +17020,7 @@
       <ws:updateEmailTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateEmailTemplate"/>
       </con:call>
     </con:operation>
@@ -16917,6 +17036,7 @@
       <ws:updateInvoiceCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceCategory"/>
       </con:call>
     </con:operation>
@@ -16932,6 +17052,7 @@
       <ws:updateInvoiceSubCategory/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategory"/>
       </con:call>
     </con:operation>
@@ -16947,6 +17068,7 @@
       <ws:updateInvoiceSubCategoryCountry/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceSubCategoryCountry"/>
       </con:call>
     </con:operation>
@@ -16962,6 +17084,7 @@
       <ws:updateInvoiceType/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateInvoiceType"/>
       </con:call>
     </con:operation>
@@ -16977,6 +17100,7 @@
       <ws:updateLanguage/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateLanguage"/>
       </con:call>
     </con:operation>
@@ -16992,6 +17116,7 @@
       <ws:updateMeveoInstance/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateMeveoInstance"/>
       </con:call>
     </con:operation>
@@ -17007,6 +17132,7 @@
       <ws:updateOccTemplate/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateOccTemplate"/>
       </con:call>
     </con:operation>
@@ -17022,6 +17148,7 @@
       <ws:updateProvider/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProvider"/>
       </con:call>
     </con:operation>
@@ -17037,6 +17164,7 @@
       <ws:updateProviderCF/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProviderCF"/>
       </con:call>
     </con:operation>
@@ -17052,6 +17180,7 @@
       <ws:updateProviderContact/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateProviderContact"/>
       </con:call>
     </con:operation>
@@ -17067,6 +17196,7 @@
       <ws:updateRole/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateRole"/>
       </con:call>
     </con:operation>
@@ -17082,6 +17212,7 @@
       <ws:updateSeller/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateSeller"/>
       </con:call>
     </con:operation>
@@ -17097,6 +17228,7 @@
       <ws:updateTax/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateTax"/>
       </con:call>
     </con:operation>
@@ -17112,6 +17244,7 @@
       <ws:updateTerminationReason/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateTerminationReason"/>
       </con:call>
     </con:operation>
@@ -17127,6 +17260,7 @@
       <ws:updateTranslations/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateTranslations"/>
       </con:call>
     </con:operation>
@@ -17142,6 +17276,7 @@
       <ws:updateUser/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateUser"/>
       </con:call>
     </con:operation>
@@ -17157,13 +17292,10 @@
       <ws:updateUserHierarchyLevel/>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
+        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
         <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateUserHierarchyLevel"/>
       </con:call>
     </con:operation>
-  </con:interface>
-  <con:interface xsi:type="con:RestService" id="02c680a6-d4f4-45c3-a5fb-09a4ce91d08e" wadlVersion="http://wadl.dev.java.net/2009/02" name="Meveo TMForum - API - wildfly" type="rest" definitionUrl="520514f8-af04-46a1-b9fc-a871ad49a262" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <con:settings/>
-    <con:endpoints/>
   </con:interface>
   <con:testSuite id="6ac7964a-a9d0-431e-b680-b0c3aa92daed" name="Setup Authorization">
     <con:settings/>
@@ -18511,6 +18643,62 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create Product Charge 3 with filterexpression" id="4b036ee6-ff7c-4a93-81cd-8e6c01dd72e8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
+          <con:request name="Create Product Charge 3 with filterexpression" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateProductChargeTemplate>
+         <productChargeTemplate code="${#Project#baseEntityPrefix}_PRD_CHG_WITHFILTER" description="[${#Project#baseEntityPrefix}] - Test Product Charge with filter">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <amountEditable>false</amountEditable>
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>[${#Project#baseEntityPrefix}] - Test Product Charge with filter</description>
+            </languageDescriptions>
+            <inputUnitDescription>1</inputUnitDescription>
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <filterExpression>false</filterExpression>
+         </productChargeTemplate>
+      </ws:createOrUpdateProductChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
+            <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create Service 1" id="22d98c20-40f2-4f8d-bd3a-8045288055c8">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -18900,6 +19088,54 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create Product 3 - filter expression" id="70c88906-5dec-4efb-b09b-37700d41cc98">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOfferTemplate</con:operation>
+          <con:request name="Create Product 3 - filter expression" id="c58f6413-0e3d-4115-a3b8-fab2e5b0bbbf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateProductTemplate>
+         <productTemplate code="${#Project#baseEntityPrefix}_PRODUCT_WITHFILTER" description="${#Project#baseEntityPrefix}_PRODUCT3_DESCRIPTION">
+            <name>PRODUCT 3</name>
+            <productChargeTemplates>
+               <productChargeTemplate code="${#Project#baseEntityPrefix}_PRD_CHG_WITHFILTER" />
+            </productChargeTemplates>
+            <lifeCycleStatus>ACTIVE</lifeCycleStatus>
+         </productTemplate>
+      </ws:createOrUpdateProductTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="975e05de-befb-4835-8c3d-6159c793fd9e"/>
+            <con:assertion type="Simple Contains" id="8a2a4152-e8f3-4e78-9753-451554d0dbf2" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create Offer3" id="1f8f9562-52a1-48c5-ac88-d1f780e653fc">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -19258,6 +19494,51 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          </pricePlan>\r
       </ws:createOrUpdatePricePlan>\r
    </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="55eb95e0-43c4-4625-9a83-abac3cb26699"/>
+            <con:assertion type="Simple Contains" name="Contains" id="518de297-32d0-4589-990d-e1683fecaf11">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Priceplan product3 - filter expression" id="a11a7354-f7c0-443f-b996-17ea88557170">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdatePricePlan</con:operation>
+          <con:request name="Create Priceplan product3 - filter expression" id="e0d242e1-a9e7-4d97-baf4-8727ef61fbef">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdatePricePlan>
+         <pricePlan code="${#Project#baseEntityPrefix}_PRD_CHG_WITHFILTER" description="PP for PRD3 - filter expression">
+            <eventCode>${#Project#baseEntityPrefix}_PRD_CHG_WITHFILTER</eventCode>
+            <amountWithoutTax>3</amountWithoutTax>
+            <amountWithTax>5</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>
+      </ws:createOrUpdatePricePlan>
+   </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="55eb95e0-43c4-4625-9a83-abac3cb26699"/>
             <con:assertion type="Simple Contains" name="Contains" id="518de297-32d0-4589-990d-e1683fecaf11">
@@ -20090,6 +20371,54 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create BillingCycle with order type" id="ac4426cb-78db-4708-82fd-f7da68e67132">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createBillingCycle</con:operation>
+          <con:request name="Create BillingCycle with order type" id="106fb7fe-2a26-4916-8ed2-8b532cd2ff24">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingCycle>
+         <billingCycle code="${#Project#baseEntityPrefix}_BC_ORDER" description="${#Project#entityPrefix}_BC_ORDER">
+            <dueDateDelay>1</dueDateDelay>
+            <calendar>MONTHLY</calendar>
+            <invoiceDateDelay>1</invoiceDateDelay>
+            <billingTemplateName>1</billingTemplateName>
+            <type>ORDER</type>
+         </billingCycle>
+      </ws:createBillingCycle>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6b7d21ee-49b9-491a-a3b8-c44030316b28"/>
+            <con:assertion type="Simple Contains" id="2eeea003-f524-482c-a2af-947b6ce76760" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="f3993aae-300d-4399-8800-6b8cc77fea4b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data setup - Create account hierarchy" searchProperties="true">
@@ -20846,6 +21175,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08:00",
    "dueDateDelayEL" : "#{order.orderDate.date}",
+   "billingCycle" : "${#Project#baseEntityPrefix}_BC_ORDER",
    "orderItem":[
       {      	
          "id":"01",
@@ -21105,7 +21435,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>8b110cc6-9052-4ce1-97a1-1875619de394</con:value>
+              <con:value>f4887ecc-21eb-419c-bb62-c688dfdd8136</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -21207,8 +21537,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -21369,6 +21698,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="fdbe693d-fa57-44ac-ab9f-0a5cc7210e3f" name="Sub">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -21409,8 +21745,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER3</offerTemplate>
                <subscriptionDate>2015-10-25T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -21442,6 +21777,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="7b66b1d4-5ea8-4d3e-ae05-070ac06f5f24" name="Sub">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB2"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -21573,8 +21915,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -21818,6 +22159,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="2831d840-cf84-4c21-9640-c170a431968f" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -21932,8 +22280,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -22195,6 +22542,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="85010068-50ef-40f9-a2b1-35ec132af764" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -22343,8 +22697,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -22615,6 +22968,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="2e755563-3e40-4a57-bc7d-0b91d2fa777b" name="Sub">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -22637,6 +22997,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#opencell.url}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="JsonPath Match" id="6fcc965b-32fa-476f-bf61-f6c4cd6e71c2" name="JsonPath Match">
+              <con:configuration>
+                <path>$[0].billingCycle</path>
+                <content>${#Project#baseEntityPrefix}_BC_ORDER</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23207,8 +23576,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -23291,6 +23659,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="56b1b9ab-df45-4085-b41b-836115b9a900" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23331,8 +23706,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V3_SUB2">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-10-25T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -23373,6 +23747,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="0333beb6-6c2d-4c1a-8d39-c6c557844943" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V3_SUB2"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -23504,8 +23885,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -23668,6 +24048,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="123ce9ad-79bc-421e-b519-3f2bfdd36742" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23782,8 +24169,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -23967,6 +24353,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="f4baa6ad-f76a-4527-8d5c-f9052ae04d64" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -24115,8 +24508,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>
                <terminationDate>2017-12-02T00:00:00${#Project#timezone}</terminationDate>
@@ -24300,6 +24692,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ac457c4f-380d-4163-98dc-f20139d88b2f" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER_VERSION_V1_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -25116,7 +25515,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="fbf3fe90-6608-4e43-9836-585b2d850978" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="f399b00f-7dca-47d9-b4c2-5b0c2ed7688d" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -25150,8 +25549,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -25303,6 +25701,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="e3e17579-14dd-45a5-80ed-5a077cbfe65b" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -25343,8 +25748,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2">
-               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+                <token>&lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER3&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -25375,6 +25779,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="2dd4496f-1c2a-42fb-b7b4-ccf3660a32b2" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB2"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -26250,7 +26661,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="3b84d9a0-e921-4b5c-acbf-d762bfeed8cd" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="c445cdb2-cec6-40a8-a6d1-699297488cd1" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -26284,8 +26695,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V1_SUB2">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-02-05T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -26368,6 +26778,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="b12782c2-d7bd-4b58-85c9-577cfa5ac59f" name="Sub">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V1_SUB2"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -26408,8 +26825,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="edaed287-eb7a-4d06-bc02-d86f5ba350da" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V3_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-09-27T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -26450,6 +26866,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="5e6c0b5c-e090-4623-8c1a-1b1102cfe5ff" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V3_SUB1"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -27290,7 +27713,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="1c5a990f-c605-4b50-9240-03b59adff10f" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="553c687f-85b0-4244-9a70-c37c2d878bed" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -27324,8 +27747,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
                <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
@@ -27443,6 +27865,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="51bb54f3-d075-4b0f-a63c-4634ff7389f0" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -27616,8 +28045,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
                <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
@@ -27737,6 +28165,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="4da8d02c-dd72-451e-9a00-c283cf640b1b" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -27815,8 +28250,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
                <endAgreementDate>2016-06-25T00:00:00${#Project#timezone2}</endAgreementDate>]]></token>
@@ -27948,6 +28382,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="763c168a-5c44-4483-a6bb-a1e0f1f924ec" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -28026,8 +28467,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -28153,6 +28593,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="2300ebd1-09f2-4864-bad9-a18f705efde2" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -28314,8 +28761,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -28441,6 +28887,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4e549bc1-e79a-4987-917e-54f13364154c" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -28595,8 +29048,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
@@ -28733,6 +29185,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="b4f8529a-b0b9-48a3-a5f6-d6915b2b4c46" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:preemptive>true</con:preemptive>
@@ -28812,8 +29271,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+                <token><![CDATA[<userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
                <terminationDate>2016-10-25T00:00:00${#Project#timezone2}</terminationDate>
@@ -28942,6 +29400,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="20390431-e438-43ec-ada9-cd512c1ec71e" name="Contains 2">
+              <con:configuration>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -29710,7 +30175,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>43</con:value>
+        <con:value>42</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -29993,7 +30458,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:sourceStep>Create Product order - 2 items</con:sourceStep>
             <con:sourcePath>$.id</con:sourcePath>
             <con:targetType>Request</con:targetType>
-            <con:targetStep>GenerateInvoice after manual service termination</con:targetStep>
+            <con:targetStep>GenerateInvoice after manual activation</con:targetStep>
             <con:targetPath>//targetCode</con:targetPath>
             <con:type>JSONPATH</con:type>
             <con:targetTransferType>XPATH</con:targetTransferType>
@@ -30111,7 +30576,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000001</invoiceNumber>
+         	<invoiceNumber>000000015</invoiceNumber>
          	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -30479,7 +30944,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000002</invoiceNumber>
+         	<invoiceNumber>000000016</invoiceNumber>
          	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -30505,6 +30970,139 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="Simple Contains" id="8dc34ece-eec6-42e7-a533-8fb6f3952b9c" name="Contains 1">
               <con:configuration>
                 <token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create Product order - filterexpression" id="0e0766a4-1c80-4412-9cb4-7ef734f996aa">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create Product order - filter expression" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order_FilterExpression",
+   "orderDate":"2015-10-25T15:50:48+08:00",
+   "dueDateDelayEL" : "#{order.orderDate.date}",
+   "orderItem":[
+      {         
+         "id":"01",
+         "action":"add",
+         "billingAccount":[
+            {
+               "id":"${#Project#baseEntityPrefix}_UA"
+            }
+         ],         
+         "productOffering":{           
+            "id":"${#Project#baseEntityPrefix}_PRODUCT_WITHFILTER"
+         },
+         "product":{ 
+            "productCharacteristic":[               
+              {
+                 "name":"quantity",
+                 "value":"2"
+              },
+              {
+           "name":"productInstanceCode",
+           "value":"${#Project#entityPrefix}_${#TestSuite#index}_Product_3_Instance"
+              },
+               {
+                  "name":"TM_BASE2_PROD_CF_STRING",
+                  "value":"CF value"
+               }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="transfer" name="Set order number - filterexpression" id="b2f438f9-daa8-409f-990f-03fdd792d13f">
+        <con:settings/>
+        <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" disabled="false" entitize="false" ignoreEmpty="false" transferChildNodes="false" transferToAll="false" useXQuery="false">
+            <con:name>Set order number</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>Create Product order - filterexpression</con:sourceStep>
+            <con:sourcePath>$.id</con:sourcePath>
+            <con:targetType>Request</con:targetType>
+            <con:targetStep>GenerateInvoice - filterexpression</con:targetStep>
+            <con:targetPath>//targetCode</con:targetPath>
+            <con:type>JSONPATH</con:type>
+            <con:targetTransferType>XPATH</con:targetTransferType>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="GenerateInvoice - filterexpression" id="0e3f4f01-6e94-430c-8788-4fe6422f38ac">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>InvoiceWsSoapBinding</con:interface>
+          <con:operation>generateInvoiceData</con:operation>
+          <con:request name="GenerateInvoice - filterexpression" id="7e62d038-732c-4fef-a703-9048e8424c07">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:generateInvoiceData>
+         <generateInvoiceRequest>
+            <invoicingDate>2016-04-01T00:00:00</invoicingDate>
+            <targetCode>64f09573-df8c-42f9-b1ee-4ce7a3e4712c</targetCode>
+            <targetType>ORDER</targetType>
+         </generateInvoiceRequest>
+      </ws:generateInvoiceData>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="1bc75f17-2661-416c-84be-e978469d0b48"/>
+            <con:assertion type="Simple Contains" id="b1c9508f-7951-43c5-a8c2-d4ef20c695cf" name="Contains">
+              <con:configuration>
+                <token>FAIL</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="107d3253-5a03-40ab-b7bb-79239c2bd148" name="Contains 1">
+              <con:configuration>
+                <token>no billable transaction for selected billing accounts.</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -30720,7 +31318,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000003</invoiceNumber>
+         	<invoiceNumber>000000017</invoiceNumber>
          	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -30935,7 +31533,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000004</invoiceNumber>
+         	<invoiceNumber>000000018</invoiceNumber>
          	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -31139,7 +31737,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000005</invoiceNumber>
+         	<invoiceNumber>000000019</invoiceNumber>
          	<invoiceType>COM</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -31182,7 +31780,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>47</con:value>
+        <con:value>46</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -31916,7 +32514,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>680fb2be-7bb6-494c-81fe-bbebef5fbf6d</con:value>
+              <con:value>100e65db-c41a-41ec-abfb-f86b5061e250</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -32219,15 +32817,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>9cda977a-483a-475e-8b5c-1ed3e8ca2473</con:value>
+        <con:value>0aaf9f17-4b0e-4a90-8483-f464a8ab179a</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>03a83f67-7614-4a31-8722-f321ed8eb26d</con:value>
+        <con:value>d63a9552-ba1b-4bf9-b9e3-79ceb15ec252</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>26</con:value>
+        <con:value>25</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

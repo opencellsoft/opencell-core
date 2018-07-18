@@ -3,7 +3,7 @@ package org.meveo.api.dto.billing;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
  * The Class ApplicableDueDateDelayDto.
@@ -11,7 +11,7 @@ import org.meveo.api.dto.BaseDto;
  * @author Edward P. Legaspi
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ApplicableDueDateDelayDto extends BaseDto {
+public class ApplicableDueDateDelayDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

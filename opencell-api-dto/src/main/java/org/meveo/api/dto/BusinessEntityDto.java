@@ -1,60 +1,100 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.BusinessEntity;
 
 /**
- * The Class BusinessEntityDto.
- *
+ * Equivalent of BusinessEntity in DTO
+ * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
- */
-@XmlRootElement(name = "BusinessEntity")
+ * @since Oct 4, 2013
+ * @lastModifiedVersion 5.0.1
+ **/
+@XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BusinessEntityDto implements Serializable {
+public class BusinessEntityDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4451119256601996946L;
 
-    /** The code. */
+    /** The id. */
     @XmlAttribute()
-    private String code;
-
-    /** The description. */
-    @XmlAttribute()
-    private String description;
+    protected Long id;
 
     /**
-     * Instantiates a new business entity dto.
+     * The code
+     */
+    // @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
+    @XmlAttribute(required = true)
+    protected String code;
+
+    /**
+     * The description
+     */
+    @XmlAttribute()
+    protected String description;
+
+    /** The updated code. */
+    protected String updatedCode;
+
+    /**
+     * Instantiates a new business dto.
      */
     public BusinessEntityDto() {
+
     }
 
     /**
-     * Instantiates a new business entity dto.
+     * Converts BusinessEntity JPA entity to DTO
      *
-     * @param entity the entity
+     * @param e Entity to convert
      */
-    public BusinessEntityDto(BusinessEntity entity) {
-        this.code = entity.getCode();
-        this.description = entity.getDescription();
+    public BusinessEntityDto(BusinessEntity e) {
+        super(e);
+        if (e != null) {
+            code = e.getCode();
+            description = e.getDescription();
+        }
     }
 
     /**
-     * Instantiates a new business entity dto.
+     * Gets the updated code.
      *
-     * @param code the code
-     * @param description the description
+     * @return the updated code
      */
-    public BusinessEntityDto(String code, String description) {
-        this.code = code;
-        this.description = description;
+    public String getUpdatedCode() {
+        return updatedCode;
+    }
+
+    /**
+     * Sets the updated code.
+     *
+     * @param updatedCode the new updated code
+     */
+    public void setUpdatedCode(String updatedCode) {
+        this.updatedCode = updatedCode;
+    }
+
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param id the new id
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -92,4 +132,5 @@ public class BusinessEntityDto implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

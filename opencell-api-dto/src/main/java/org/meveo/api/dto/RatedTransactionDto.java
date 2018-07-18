@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.RatedTransaction;
 
 /**
- * The Class RatedTransactionDto.
+ * A Dto class for Rated Transaction informations
  *
  * @author R.AITYAAZZA
  * @author Said Ramli
@@ -37,7 +37,7 @@ import org.meveo.model.billing.RatedTransaction;
 
 @XmlRootElement(name = "RatedTransaction")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RatedTransactionDto extends BaseDto {
+public class RatedTransactionDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7627662294414998797L;
@@ -102,6 +102,9 @@ public class RatedTransactionDto extends BaseDto {
     /** parameter2 : used to set more onformations in case of "DETAILLED" invoice. */
     private String parameter3;
 
+    /** The user account code. */
+    private String userAccountCode;
+
     /**
      * Instantiates a new rated transaction dto.
      */
@@ -132,6 +135,19 @@ public class RatedTransactionDto extends BaseDto {
         this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
         this.setStartDate(ratedTransaction.getStartDate());
         this.setEndDate(ratedTransaction.getEndDate());
+    }
+    
+    /**
+     * Instantiates a new rated transaction dto.
+     *
+     * @param ratedTransaction the rated transaction
+     * @param withUserAccountCode the with user account code
+     */
+    public RatedTransactionDto(RatedTransaction ratedTransaction, Boolean withUserAccountCode) {
+        this(ratedTransaction);
+        if(withUserAccountCode != null && withUserAccountCode) {
+            this.userAccountCode = ratedTransaction.getWallet().getUserAccount().getCode();
+        }
     }
 
     /**
@@ -457,6 +473,20 @@ public class RatedTransactionDto extends BaseDto {
      */
     public void setParameter3(String parameter3) {
         this.parameter3 = parameter3;
+    }
+
+    /**
+     * @return the userAccountCode
+     */
+    public String getUserAccountCode() {
+        return userAccountCode;
+    }
+
+    /**
+     * @param userAccountCode the userAccountCode to set
+     */
+    public void setUserAccountCode(String userAccountCode) {
+        this.userAccountCode = userAccountCode;
     }
 
 }

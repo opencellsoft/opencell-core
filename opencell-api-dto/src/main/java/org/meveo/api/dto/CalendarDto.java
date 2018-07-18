@@ -28,7 +28,7 @@ import org.meveo.model.catalog.HourInDay;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CalendarDto extends BusinessDto {
+public class CalendarDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8269245242022483636L;

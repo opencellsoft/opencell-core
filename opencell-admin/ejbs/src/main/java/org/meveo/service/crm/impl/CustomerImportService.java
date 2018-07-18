@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.RandomStringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -75,8 +76,8 @@ public class CustomerImportService extends ImportService {
 
     private Map<String, TradingLanguage> tradingLanguageMap = new HashMap<>();
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-
     public Customer createCustomer(org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust)
             throws BusinessException {
 
@@ -124,6 +125,7 @@ public class CustomerImportService extends ImportService {
      * @return customer account.
      * @throws BusinessException business exception.
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CustomerAccount createCustomerAccount(Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
             org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
@@ -229,6 +231,7 @@ public class CustomerImportService extends ImportService {
         return customerAccount;
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Customer updateCustomer(Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust)
             throws BusinessException {
@@ -254,6 +257,7 @@ public class CustomerImportService extends ImportService {
         return customer;
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateCustomerAccount(CustomerAccount customerAccount, Customer customer, Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
             org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
@@ -312,11 +316,13 @@ public class CustomerImportService extends ImportService {
 
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateSeller(org.meveo.model.admin.Seller seller) throws BusinessException {
         sellerService.updateNoCheck(seller);
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createSeller(org.meveo.model.admin.Seller seller) throws BusinessException {
         sellerService.create(seller);

@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
  * A service that duplicate a hierarchy such as {@link OfferTemplate} and {@link ServiceTemplate}.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class CatalogHierarchyBuilderService {
@@ -99,6 +100,9 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private ProductChargeTemplateService productChargeTemplateService;
+    
+    @Inject
+    ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -258,7 +262,7 @@ public class CatalogHierarchyBuilderService {
         if (productTemplate.getProductChargeTemplates() != null && !productTemplate.getProductChargeTemplates().isEmpty()) {
             for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
                 ProductChargeTemplate newChargeTemplate = new ProductChargeTemplate();
-                copyChargeTemplate((ChargeTemplate) productCharge, newChargeTemplate, prefix);
+                newChargeTemplate = (ProductChargeTemplate) copyChargeTemplate((ChargeTemplate) productCharge, newChargeTemplate, prefix);
 
                 newChargeTemplate.setProductTemplates(new ArrayList<ProductTemplate>());
 
@@ -267,13 +271,11 @@ public class CatalogHierarchyBuilderService {
                 } else {
                     chargeTemplateInMemory.add(newChargeTemplate);
                 }
-
-                productChargeTemplateService.create(newChargeTemplate);
-
-                productCharge = productChargeTemplateService.refreshOrRetrieve(productCharge);
-
-                copyEdrTemplates((ChargeTemplate) productCharge, newChargeTemplate);
-
+                if (newChargeTemplate.getId() == null) {
+                    productChargeTemplateService.create(newChargeTemplate);
+                    productCharge = productChargeTemplateService.refreshOrRetrieve(productCharge);
+                    copyEdrTemplates((ChargeTemplate) productCharge, newChargeTemplate);
+                }
                 newProductTemplate.addProductChargeTemplate(newChargeTemplate);
             }
         }
@@ -388,11 +390,11 @@ public class CatalogHierarchyBuilderService {
         serviceTemplate.getServiceUsageCharges().size();
 
         ServiceTemplate newServiceTemplate = new ServiceTemplate();
-
+        String newCode = prefix + serviceTemplate.getCode();
         try {
             BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
             boolean instantiatedFromBOM = serviceConfiguration != null && serviceConfiguration.isInstantiatedFromBSM();
-            String newCode = prefix + serviceTemplate.getCode();
+            
             if (instantiatedFromBOM) {
                 // append a unique id
                 newCode = newCode + "-" + UUID.randomUUID();
@@ -426,15 +428,24 @@ public class CatalogHierarchyBuilderService {
             }
 
             serviceTemplateService.refresh(serviceTemplate);
+            newCode = newServiceTemplate.getCode();
+            if (serviceTemplateService.findByCode(newCode) != null) {
+                newServiceTemplate.setCode(newCode + "_" + UUID.randomUUID());
+            }
             serviceTemplateService.create(newServiceTemplate);
 
             // update code if duplicate
             if (instantiatedFromBOM) {
-                prefix = prefix + newServiceTemplate.getId() + "_";
+                Integer serviceConfItemIndex = serviceConfiguration.getItemIndex();
+                if(serviceConfItemIndex != null) {
+                    prefix = prefix + serviceConfItemIndex + "_";
+                } else {
+                    prefix = prefix + newServiceTemplate.getId() + "_";                    
+                }
                 newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
                 newServiceTemplate = serviceTemplateService.update(newServiceTemplate);
             }
-
+            
             duplicatePrices(serviceTemplate, prefix, pricePlansInMemory);
             duplicateCharges(serviceTemplate, newServiceTemplate, prefix, chargeTemplateInMemory);
 
@@ -600,14 +611,16 @@ public class CatalogHierarchyBuilderService {
                 RecurringChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
                 RecurringChargeTemplate newChargeTemplate = new RecurringChargeTemplate();
 
-                copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
+                newChargeTemplate = (RecurringChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
                 if (chargeTemplateInMemory.contains(newChargeTemplate)) {
                     newChargeTemplate = (RecurringChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
                 } else {
                     chargeTemplateInMemory.add(newChargeTemplate);
-                    recurringChargeTemplateService.create(newChargeTemplate);
-                    copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    if (newChargeTemplate.getId() == null) {
+                        recurringChargeTemplateService.create(newChargeTemplate);
+                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    }
                 }
 
                 ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
@@ -628,14 +641,16 @@ public class CatalogHierarchyBuilderService {
                 OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
                 OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
 
-                copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
+                newChargeTemplate = (OneShotChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
                 if (chargeTemplateInMemory.contains(newChargeTemplate)) {
                     newChargeTemplate = (OneShotChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
                 } else {
                     chargeTemplateInMemory.add(newChargeTemplate);
-                    oneShotChargeTemplateService.create(newChargeTemplate);
-                    copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    if (newChargeTemplate.getId() == null) {
+                        oneShotChargeTemplateService.create(newChargeTemplate);
+                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    }
                 }
 
                 ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
@@ -656,14 +671,16 @@ public class CatalogHierarchyBuilderService {
                 OneShotChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
                 OneShotChargeTemplate newChargeTemplate = new OneShotChargeTemplate();
 
-                copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
+                newChargeTemplate = (OneShotChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
                 if (chargeTemplateInMemory.contains(newChargeTemplate)) {
                     newChargeTemplate = (OneShotChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
                 } else {
                     chargeTemplateInMemory.add(newChargeTemplate);
-                    oneShotChargeTemplateService.create(newChargeTemplate);
-                    copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    if (newChargeTemplate.getId() == null) {
+                        oneShotChargeTemplateService.create(newChargeTemplate);
+                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    }
                 }
 
                 ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
@@ -684,14 +701,16 @@ public class CatalogHierarchyBuilderService {
                 UsageChargeTemplate chargeTemplate = serviceCharge.getChargeTemplate();
                 UsageChargeTemplate newChargeTemplate = new UsageChargeTemplate();
 
-                copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
+                newChargeTemplate = (UsageChargeTemplate) copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
                 if (chargeTemplateInMemory.contains(newChargeTemplate)) {
                     newChargeTemplate = (UsageChargeTemplate) chargeTemplateInMemory.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
                 } else {
                     chargeTemplateInMemory.add(newChargeTemplate);
-                    usageChargeTemplateService.create(newChargeTemplate);
-                    copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    if (newChargeTemplate.getId() == null) {
+                        usageChargeTemplateService.create(newChargeTemplate);
+                        copyEdrTemplates(chargeTemplate, newChargeTemplate);
+                    }
                 }
 
                 ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
@@ -727,22 +746,31 @@ public class CatalogHierarchyBuilderService {
     }
 
     /**
-     * Copy basic properties of a chargeTemplate to another object.
-     * 
-     * @param sourceChargeTemplate source charge template
-     * @param targetTemplate target template
-     * @param prefix prefix
-     * @throws InvocationTargetException invocation target exception
-     * @throws IllegalAccessException illegal access exception.
+     * Copy basic properties of a chargeTemplate to another object, or return an existing ChargeTemplate having code = prefix + sourceChargeTemplate.getCode()
+     *
+     * @param sourceChargeTemplate the source charge template
+     * @param targetTemplate the target template
+     * @param prefix the prefix
+     * @return the charge template
+     * @throws IllegalAccessException the illegal access exception
+     * @throws InvocationTargetException the invocation target exception
      */
-    private void copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
-        BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
-        targetTemplate.setAuditable(null);
-        targetTemplate.setId(null);
-        targetTemplate.setCode(prefix + sourceChargeTemplate.getCode());
-        targetTemplate.clearUuid();
-        targetTemplate.setVersion(0);
-        targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+    private ChargeTemplate copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
+        
+        String newChargeCode = prefix + sourceChargeTemplate.getCode();
+        ChargeTemplate existingChargeTemplate = chargeTemplateService.findByCode(newChargeCode);
+        if (existingChargeTemplate != null) {
+            return existingChargeTemplate;
+        } else {
+            BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
+            targetTemplate.setId(null);
+            targetTemplate.setAuditable(null);
+            targetTemplate.setCode(newChargeCode);
+            targetTemplate.clearUuid();
+            targetTemplate.setVersion(0);
+            targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
+            return targetTemplate;
+        }
     }
 
     private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {

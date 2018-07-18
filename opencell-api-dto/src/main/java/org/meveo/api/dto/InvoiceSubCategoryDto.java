@@ -17,7 +17,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
  */
 @XmlRootElement(name = "InvoiceSubCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceSubCategoryDto extends BusinessDto {
+public class InvoiceSubCategoryDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1832246068609179546L;

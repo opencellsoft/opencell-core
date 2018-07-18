@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "Languages")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguagesDto extends BaseDto {
+public class LanguagesDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4455041168159380792L;

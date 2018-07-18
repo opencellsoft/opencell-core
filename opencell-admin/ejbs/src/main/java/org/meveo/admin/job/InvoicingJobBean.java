@@ -15,12 +15,11 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
-public class InvoicingJobBean {
+public class InvoicingJobBean extends BaseJobBean {
 
     @Inject
     protected Logger log;
@@ -28,9 +27,6 @@ public class InvoicingJobBean {
     @Inject
     private BillingRunService billingRunService;
 
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-    
     @Inject
     private JobExecutionService jobExecutionService;
 
@@ -46,8 +42,8 @@ public class InvoicingJobBean {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }

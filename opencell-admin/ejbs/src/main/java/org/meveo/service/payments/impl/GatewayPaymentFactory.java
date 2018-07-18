@@ -21,10 +21,11 @@ public class GatewayPaymentFactory implements Serializable {
     public GatewayPaymentInterface getInstance(PaymentGateway paymentGateway) throws Exception {
         GatewayPaymentInterface gatewayPaymentInterface = null;
 
-        if (paymentGateway.getType() == PaymentGatewayTypeEnum.CUSTOM) {
+        PaymentGatewayTypeEnum paymentType = paymentGateway.getType();
+        if (paymentType == PaymentGatewayTypeEnum.CUSTOM) {
             gatewayPaymentInterface = new CustomApiGatewayPayment((PaymentScriptInterface) scriptInstanceService.getScriptInstance(paymentGateway.getScriptInstance().getCode()));
         }
-        if (paymentGateway.getType() == PaymentGatewayTypeEnum.NATIF) {
+        if (paymentType == PaymentGatewayTypeEnum.NATIF) {
             Class<?> clazz = Class.forName(paymentGateway.getImplementationClassName());
             gatewayPaymentInterface = (GatewayPaymentInterface) clazz.newInstance();
         }

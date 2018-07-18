@@ -20,11 +20,11 @@ package org.meveo.service.validation;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 
 /**
  * @author Ignas Lelys
@@ -35,8 +35,8 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 public class ValidationService {
 
     @Inject
-    @MeveoJpaForMultiTenancyForJobs
-    private EntityManager em;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     /**
      * @param className class name
@@ -57,7 +57,7 @@ public class ValidationService {
             queryString = String.format("select count(*) from %s where lower(%s)='%s' and id != %s", className, fieldName,
                 (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, id);
         }
-        Query query = em.createQuery(queryString);
+        Query query = emWrapper.getEntityManager().createQuery(queryString);
         long count = (Long) query.getSingleResult();
         return count == 0L;
     }

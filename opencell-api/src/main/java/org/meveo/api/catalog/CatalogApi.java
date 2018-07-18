@@ -27,6 +27,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.tmf.dsmapi.catalog.resource.category.Category;
 import org.tmf.dsmapi.catalog.resource.product.Price;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
@@ -45,6 +46,9 @@ public class CatalogApi extends BaseApi {
     
     @Inject
     private RatingService ratingService;
+    
+    @Inject
+    private  RecurringChargeTemplateService recurringChargeTemplateService;
 
     public ProductOffering findProductOffering(String code, Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException, BusinessException {
         OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
@@ -165,6 +169,9 @@ public class CatalogApi extends BaseApi {
                 }
 
                 String calendarCode = serviceChargeTemplateRecurring.getChargeTemplate().getCalendar().getCode();
+                if(!StringUtils.isBlank(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl())) {
+                    calendarCode = recurringChargeTemplateService.getCalendarFromEl(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl(), null,serviceTemplate , serviceChargeTemplateRecurring.getChargeTemplate()).getCode();
+                }
                 String priceName = StringUtils.isBlank(calendarCode) ? serviceTemplate.getCode() : serviceTemplate.getCode() + " " + calendarCode;
 
                 offerPrice = new ProductOfferingPrice();

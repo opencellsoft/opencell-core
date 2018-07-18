@@ -23,6 +23,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RejectedBillingAccount;
@@ -39,6 +40,7 @@ public class RejectedBillingAccountService extends PersistenceService<RejectedBi
      * @param reason Reason why it failed
      * @throws BusinessException Business exception
      */
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void create(BillingAccount billingAccount, BillingRun billingRun, String reason) throws BusinessException {
         RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, reason);

@@ -36,8 +36,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.status(Response.Status.CREATED).entity(productQuote);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
         return buildResponse(responseBuilder);
@@ -56,8 +55,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok().entity(productQuote);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
@@ -81,8 +79,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 //            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
@@ -101,8 +98,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok().entity(productQuote);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
@@ -122,8 +118,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
@@ -141,12 +136,23 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.ok().entity(productOrder);
 
         } catch (Exception e) {
-            processException(e, result);
-            responseBuilder.entity(result);
+            processExceptionAndSetBuilder(result, responseBuilder, e);
         }
 
 
         return buildResponse(responseBuilder);
+    }
+
+    /**
+     * @param result action result
+     * @param responseBuilder builder response
+     * @param e exception happened
+     */
+    private void processExceptionAndSetBuilder(ActionStatus result, Response.ResponseBuilder responseBuilder, Exception e) {
+        processException(e, result);
+        if (responseBuilder != null) {
+            responseBuilder.entity(result);
+        }
     }
 
     /**
@@ -157,9 +163,10 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         Response response = null;
         if (responseBuilder != null) {
             response = responseBuilder.build();
+            log.debug("RESPONSE={}", response.getEntity());
         }
         
-        log.debug("RESPONSE={}", response.getEntity());
+        
         return response;
     }
 }

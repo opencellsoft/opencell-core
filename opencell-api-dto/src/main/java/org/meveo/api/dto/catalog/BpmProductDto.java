@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 
 /**
@@ -21,7 +21,7 @@ import org.meveo.api.dto.CustomFieldDto;
  */
 @XmlRootElement(name = "BpmProduct")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BpmProductDto extends BaseDto {
+public class BpmProductDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5612754939639937822L;

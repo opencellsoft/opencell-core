@@ -48,13 +48,21 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.BusinessProductModelService;
+import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.script.module.ModuleScriptInterface;
@@ -77,6 +85,18 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
 
     @Inject
     private MeveoInstanceService meveoInstanceService;
+    
+    @Inject
+    private ProductTemplateService productTemplateService;
+    
+    @Inject
+    private BusinessOfferModelService businessOfferModelService;
+    
+    @Inject
+    private BusinessServiceModelService businessServiceModelService;
+    
+    @Inject
+    private BusinessProductModelService businessProductModelService;
 
     /**
      * import module from remote meveo instance.
@@ -109,8 +129,10 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
 
             MeveoModuleDtosResponse resultDto = response.readEntity(MeveoModuleDtosResponse.class);
             log.debug("response {}", resultDto);
-            if (resultDto == null || ActionStatusEnum.SUCCESS != resultDto.getActionStatus().getStatus()) {
+            if (resultDto != null &&  ActionStatusEnum.SUCCESS != resultDto.getActionStatus().getStatus()) {
                 throw new BusinessException("Code " + resultDto.getActionStatus().getErrorCode() + ", info " + resultDto.getActionStatus().getMessage());
+            } else if (resultDto == null) {
+                throw new BusinessException("Result is null ");
             }
             result = resultDto.getModules();
             if (result != null) {
@@ -150,8 +172,10 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
             ActionStatus actionStatus = response.readEntity(ActionStatus.class);
             log.debug("response {}", actionStatus);
-            if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+            if (actionStatus != null &&  ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                 throw new BusinessException("Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+            } else if (actionStatus == null) {
+                throw new BusinessException("Action status is null");
             }
         } catch (Exception e) {
             log.error("Error when export module {} to {}. Reason {}", module.getCode(), meveoInstance.getCode(),
@@ -200,9 +224,20 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
         }
 
         if (module instanceof BusinessServiceModel) {
-            serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate());
+            ServiceTemplate serviceTemplate = ((BusinessServiceModel) module).getServiceTemplate();
+            if (businessServiceModelService.countByServiceTemplate(serviceTemplate) == 1) {
+                serviceTemplateService.disable(serviceTemplate);
+            }
         } else if (module instanceof BusinessOfferModel) {
-            offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate());
+            OfferTemplate offerTemplate = ((BusinessOfferModel) module).getOfferTemplate();
+            if (businessOfferModelService.countByOfferTemplate(offerTemplate) == 1) {
+                offerTemplateService.disable(offerTemplate);
+            }
+        } else if (module instanceof BusinessProductModel) {
+            ProductTemplate productTemplate = ((BusinessProductModel) module).getProductTemplate();
+            if (businessProductModelService.countByProductTemplate(productTemplate) == 1) {
+                productTemplateService.disable(productTemplate);
+            }
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {

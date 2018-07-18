@@ -3140,7 +3140,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>43</con:value>
+        <con:value>57</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -4565,7 +4565,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>40</con:value>
+        <con:value>54</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -6024,7 +6024,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>40</con:value>
+        <con:value>54</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7478,7 +7478,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>42</con:value>
+        <con:value>56</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7722,8 +7722,8 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
             <con:assertion type="XPath Match" id="41003589-c0a6-45ed-9b9a-da81d8c5c219" name="XPath Match">
               <con:configuration>
                 <path>//customer/@description</path>
-                <content> Line1-1;Line1-2;Line1-3 Line2-1;Line2-2;Line2-3 Line3-1;Line3-2;Line3-3</content>
-                <allowWildcards>false</allowWildcards>
+                <content>*Line1-1;Line1-2;Line1-3 Line2-1;Line2-2;Line2-3 Line3-1;Line3-2;Line3-3</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -7873,7 +7873,7 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>1</con:value>
+        <con:value>9</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -8188,11 +8188,11 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>Z</con:value>
+      <con:value>+01:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>Z</con:value>
+      <con:value>+02:00</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

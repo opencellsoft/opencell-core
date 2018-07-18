@@ -49,18 +49,13 @@
                                     <h:outputText value="#{messages['commons.actions']}" />
                                 </f:facet>
 
-                                <p:tooltip for="editDunningPlanTransitionLink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
                                 <p:commandButton id="editDunningPlanTransitionLink" update=":tabView:dunningPlanTransition_panel" action="#{workflowBean.editWfTransition(entity)}"
                                     icon="ui-icon-document" />
-                                <p:tooltip for="duplicateDunningPlanTransitionLink" value="#{messages['commons.duplicate']}" showEffect="slide" hideEffect="slide" />
                                 <p:commandButton id="duplicateDunningPlanTransitionLink" update=":tabView:dunningPlanTransition_panel" action="#{workflowBean.duplicateWfTransition(entity)}"
                                     icon="ui-icon-plus" />
-                                <p:tooltip for="deleteDunningPlanTransitionLink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
                                 <p:commandButton id="deleteDunningPlanTransitionLink" action="#{workflowBean.deleteWfTransition(entity)}" icon="ui-icon-trash" update=":tabView:workflowForm :tabView:dunningPlanTransition_panel" />
-                                <p:tooltip for="moveUpTransitionLink" value="#{messages['common.moveUp']}" showEffect="slide" hideEffect="slide" />
                                 <p:commandButton id="moveUpTransitionLink" icon="ui-icon-arrowthick-1-n" action="#{workflowBean.moveUpTransition(entity)}"
                                     update=":tabView:dunningPlanTransition_panel" />
-                                <p:tooltip for="moveDownTransitionLink" value="#{messages['common.moveDown']}" showEffect="slide" hideEffect="slide" />
                                 <p:commandButton id="moveDownTransitionLink" icon="ui-icon-arrowthick-1-s" action="#{workflowBean.moveDownTransition(entity)}"
                                     update=":tabView:dunningPlanTransition_panel" />
                             </p:column>
@@ -93,8 +88,6 @@
                                                 <c:forEach items="#{workflowBean.selectedRules}" var="rule" varStatus="loopStatus">
                                                     <p:panel id="decisionRulePanel#{loopStatus.index}" styleClass="clearLeft">
                                                         <hftl:decorateFormField fieldId="decisionRuleOperationPanel#{loopStatus.index}" label="" componentWidth="10">
-                                                            <p:tooltip for="decisionRuleOperationPanel#{loopStatus.index}" value="#{messages['commons.delete']}" showEffect="slide"
-                                                                hideEffect="slide" />
                                                             <p:commandButton id="decisionRuleOperationPanel#{loopStatus.index}" style="margin-top: 15px;"
                                                                 action="#{workflowBean.deleteWfDecisionRule(loopStatus.index)}" icon="ui-icon-trash"
                                                                 process="decisionRuleOperationPanel#{loopStatus.index}"
@@ -203,7 +196,6 @@
                                                 </c:forEach>
                                             </p:panel>
                                             <p:panel styleClass="clearLeft">
-                                                <p:tooltip for="addCriteriaBtn" value="#{messages['decisionRule.add']}" showEffect="slide" hideEffect="slide" />
                                                 <p:commandButton id="addCriteriaBtn" action="#{workflowBean.addNewRule()}" process="@this,decisionRulesPanel"
                                                     value="#{messages['decisionRule.add']}" ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus"
                                                     update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel :tabView:formDunningPlanTransition:messages" />
@@ -214,18 +206,12 @@
                                                 <c:forEach items="#{workflowBean.wfActions}" var="action" varStatus="actionIndex">
                                                     <p:panel id="transitionActionPanel#{actionIndex.index}" styleClass="clearLeft">
                                                         <hftl:decorateFormField fieldId="transitionActionOperationPanel#{actionIndex.index}" label="" componentWidth="15">
-                                                            <p:tooltip for="moveUpAction#{actionIndex.index}" value="#{messages['common.moveUp']}" showEffect="slide"
-                                                                hideEffect="slide" />
                                                             <p:commandButton id="moveUpAction#{actionIndex.index}" icon="ui-icon-arrowthick-1-n"
                                                                 action="#{workflowBean.moveUpAction(actionIndex.index)}"
                                                                 update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />
-                                                            <p:tooltip for="moveDownAction#{actionIndex.index}" value="#{messages['common.moveDown']}" showEffect="slide"
-                                                                hideEffect="slide" />
                                                             <p:commandButton id="moveDownAction#{actionIndex.index}" icon="ui-icon-arrowthick-1-s"
                                                                 action="#{workflowBean.moveDownAction(actionIndex.index)}"
                                                                 update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />
-                                                            <p:tooltip for="transitionActionOperationPanel#{actionIndex.index}" value="#{messages['commons.delete']}"
-                                                                showEffect="slide" hideEffect="slide" />
                                                             <p:commandButton id="transitionActionOperationPanel#{actionIndex.index}" style="margin-top: 15px;"
                                                                 action="#{workflowBean.deleteWfAction(actionIndex.index)}" icon="ui-icon-trash"
                                                                 process="transitionActionOperationPanel#{actionIndex.index}" ajaxSubmit="true" partialSubmit="true"
@@ -248,7 +234,6 @@
                                                 </c:forEach>
                                             </p:panel>
                                             <p:panel styleClass="clearLeft">
-                                                <p:tooltip for="addActionBtn" value="#{messages['dunningPlan.addNewActionPlanItem']}" showEffect="slide" hideEffect="slide" />
                                                 <p:commandButton id="addActionBtn" action="#{workflowBean.addNewAction()}" process="@this,transitionActionsPanel"
                                                     value="#{messages['dunningPlan.addNewActionPlanItem']}" ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus"
                                                     update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />

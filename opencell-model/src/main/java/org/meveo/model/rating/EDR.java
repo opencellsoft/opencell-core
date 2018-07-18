@@ -42,7 +42,9 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 
 /**
- * Bean for EDR data.
+ * Entity for EDR data.
+ * @author anasseh
+ * @lastModifiedVersion 5.1
  */
 @Entity
 @Table(name = "rating_edr")
@@ -157,7 +159,7 @@ public class EDR extends BaseEntity {
     @Column(name = "status")
     private EDRStatusEnum status;
 
-    @Column(name = "reject_reason", length = 255)
+    @Column(name = "reject_reason", columnDefinition = "text")
     @Size(max = 255)
     private String rejectReason;
 

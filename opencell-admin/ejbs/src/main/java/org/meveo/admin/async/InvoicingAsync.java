@@ -113,36 +113,6 @@ public class InvoicingAsync {
         return new AsyncResult<String>("OK");
     }
     
-    
-    /**
-     * Creates the agregates and invoice async. One billing account at a time in a separate transaction.
-     *
-     * @param billingAccountIds the billing account ids
-     * @param billingRun the billing run
-     * @param jobInstanceId the job instance id
-     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @return the future
-     */
-    /*@Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser, String orderNumber) {
-
-        currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
-        for (Long billingAccountId : billingAccountIds) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
-                break;
-            }
-            try {
-                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, orderNumber, null, null, null);
-            } catch (Exception e) {
-                log.error("Error for BA=" + billingAccountId + " : " + e);
-            }
-        }
-        return new AsyncResult<String>("OK");
-    }*/
-
     /**
      * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.
      *
@@ -225,7 +195,6 @@ public class InvoicingAsync {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            long startDate = System.currentTimeMillis();
             try {
                 invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
                 result.registerSucces();
@@ -234,7 +203,6 @@ public class InvoicingAsync {
                 allOk = false;
                 log.error("Failed to create XML invoice for invoice {}", invoiceId, e);
             }
-            log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate));
         }
 
         return new AsyncResult<Boolean>(allOk);

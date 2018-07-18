@@ -12,7 +12,7 @@ import org.meveo.model.security.Permission;
  */
 @XmlRootElement(name = "Permission")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PermissionDto extends BaseDto {
+public class PermissionDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

@@ -272,6 +272,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
+        entity.setOffer(offerTemplateService.refreshOrRetrieve(entity.getOffer()));
+        entity.setUserAccount(userAccountService.refreshOrRetrieve(entity.getUserAccount()));
+
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
             String datePattern = paramBeanFactory.getInstance().getDateFormat();
@@ -1038,4 +1041,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
         updateSubscribedTillDate();
     }
+    
+    public boolean isServiceInstancesEmpty() {
+		if (entity.isTransient()) {
+			return true;
+		}
+		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
+		return (si == null || si.isEmpty()) ? true : false;
+	}
 }

@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Sequence;
@@ -56,7 +57,7 @@ public class ServiceSingleton {
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
      * @param invoiceDate Invoice date
-     * @param invoiceType Invoice type id
+     * @param invoiceTypeId Invoice type id
      * @param seller Seller
      * @param cfName CFT name
      * @param incrementBy A number to increment by
@@ -65,6 +66,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Sequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
         Long currentNbFromCF = null;
@@ -102,13 +104,26 @@ public class ServiceSingleton {
         if (currentNbFromCF != null) {
             sequence.setCurrentInvoiceNb(currentNbFromCF);
         } else {
-            if (sequence.getCurrentInvoiceNb() == null) {
-                sequence.setCurrentInvoiceNb(0L);
+            if (invoiceType.isUseSelfSequence()) {
+                if (sequence.getCurrentInvoiceNb() == null) {
+                    sequence.setCurrentInvoiceNb(0L);
+                }
+                previousInvoiceNb = sequence.getCurrentInvoiceNb();
+                sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
+                invoiceType = invoiceTypeService.update(invoiceType);
+            } else {
+                Sequence sequenceGlobal = new Sequence();
+                sequenceGlobal.setPrefixEL(sequence.getPrefixEL());
+                sequenceGlobal.setSequenceSize(sequence.getSequenceSize());               
+                
+                previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
+                sequenceGlobal.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
+                sequenceGlobal.setPreviousInvoiceNb(previousInvoiceNb);
+                invoiceTypeService.setCurrentGlobalInvoiceBb(previousInvoiceNb + incrementBy);
+                return sequenceGlobal;
             }
-            previousInvoiceNb = sequence.getCurrentInvoiceNb();
-            sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
         }
-        
+
         // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
 
@@ -127,6 +142,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Sequence reserveInvoiceNumbers(Long invoiceTypeId, Long sellerId, Date invoiceDate, long numberOfInvoices) throws BusinessException {
 
@@ -159,6 +175,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public InvoiceType createInvoiceType(String occCode, String occCodeDefaultValue, String invoiceTypeCode, OperationCategoryEnum operationCategory) throws BusinessException {
 

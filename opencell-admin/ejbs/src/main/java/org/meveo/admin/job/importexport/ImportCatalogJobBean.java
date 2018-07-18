@@ -24,6 +24,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -65,6 +66,7 @@ public class ImportCatalogJobBean {
             "Amount w/out tax", "Amount with tax", "Min quantity", "Max quantity", "Criteria 1", "Criteria 2", "Criteria 3", "Criteria EL", "Start rating", "End rating",
             "Min subscr age", "Max subscr age", "Validity calendar" };
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result, String parameter) {

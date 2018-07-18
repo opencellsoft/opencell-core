@@ -7,12 +7,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.FilterDto;
 
 /**
  * The Class GenerateInvoiceRequestDto.
  * 
  * @author anasseh
+ * @author Abdelmounaim Akadid
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1 
  */
 @XmlRootElement(name = "GenerateInvoiceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,7 +57,8 @@ public class GenerateInvoiceRequestDto {
     /** The generate AO. */
     private Boolean generateAO;
     
-    
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new generate invoice request dto.
@@ -240,6 +245,20 @@ public class GenerateInvoiceRequestDto {
      */
     public void setFirstTransactionDate(Date firstTransactionDate) {
         this.firstTransactionDate = firstTransactionDate;
+    }
+
+    /**
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 
     @Override
