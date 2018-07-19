@@ -674,16 +674,7 @@
 		
 		<addUniqueConstraint columnNames="email" constraintName="com_contact_email" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact" />
 		
-		
-		<createTable tableName="crm_address_book_com_contact">
-			<column name="address_book_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-			<column name="contact_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-		</createTable>
-        
+		       
         <createTable tableName="crm_address_book">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_pkey" />

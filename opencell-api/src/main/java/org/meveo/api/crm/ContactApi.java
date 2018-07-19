@@ -1,8 +1,13 @@
 package org.meveo.api.crm;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -18,18 +23,14 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.CustomerBrand;
-import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.intcrm.AdditionalDetails;
-import org.meveo.model.intcrm.AddressBook;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -115,33 +116,7 @@ public class ContactApi extends AccountEntityApi {
 			contact.setAddressBook(customer.getAddressbook());
 		}
 		else {
-			customer = new Customer();
-			CustomerBrand customerBrand = customerBrandService.findByCode("DEFAULT");
-			Seller seller = sellerService.findByCode("MAIN_SELLER");
-			CustomerCategory customerCategory = customerCategoryService.findByCode("PROSPECT");
-			
-			customer.setCustomerBrand(customerBrand);
-			customer.setSeller(seller);
-			customer.setCustomerCategory(customerCategory);
-			
-			customer.setCode(contact.getCode());
-			customer.setName(contact.getName());
-			customer.setAddress(contact.getAddress());
-
-	        
-	        AdditionalDetails additionalDetails = new AdditionalDetails();
-	        additionalDetails.setCompanyName(contact.getCompany());
-	        additionalDetails.setPosition(contact.getPosition());
-	        additionalDetailsService.create(additionalDetails);
-	        
-	        AddressBook addressBook = new AddressBook(contact.getCode());
-	        addressBookService.create(addressBook);
-	        
-	        customer.setAdditionalDetails(additionalDetails);
-	        customer.setAddressbook(addressBook);	        
-			customerService.create(customer);
-			
-			contact.setAddressBook(addressBook);
+			customer = contactService.createCustomerFromContact(contact);
 		}
 			
 		contactService.create(contact);
@@ -226,6 +201,17 @@ public class ContactApi extends AccountEntityApi {
 			contact.setAgreedToUA(postData.isAgreedToUA());
 		}
 
+		if(contact.getCompany() != postData.getCompany()) {
+			contact.setCompany(postData.getCompany());
+			Customer customer = customerService.findByCompanyName(postData.getCompany());
+			if(customer != null) {
+				contact.setAddressBook(customer.getAddressbook());
+			}
+			else {
+				customer = contactService.createCustomerFromContact(contact);
+			}
+		}
+		
 		contact = contactService.update(contact);
 		return contact;
 	}
@@ -329,13 +315,50 @@ public class ContactApi extends AccountEntityApi {
 		return result;
 	}
 
-	public void importLinkedInFromText(String context) {
-		try {
-			contactService.parseLinkedInFromText(context);
-		} catch (IOException | BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public ContactsDto importLinkedInFromText(String context) throws IOException {
+		Set<Contact> failedToPersist = new HashSet<Contact>();
+		Set<Contact> contacts = null;
+		List<String> failedToPersistLog = new ArrayList<String>();
+
+		contacts = contactService.parseLinkedInFromText(context);
+		
+		for(Contact contact : contacts) {
+			if(StringUtils.isBlank(contact.getName().getFirstName())) {
+				missingParameters.add("firstName");
+			}
+			if(StringUtils.isBlank(contact.getName().getLastName())) {
+				missingParameters.add("lastName");
+			}
+			if(StringUtils.isBlank(contact.getEmail()) && StringUtils.isBlank(contact.getCode())) {
+				missingParameters.add("email");
+				missingParameters.add("code");
+			}
+			
+			try {
+				handleMissingParameters();
+				
+				Contact c = contactService.findByCode(contact.getCode());
+				if (c == null) {
+					contactService.create(contact);
+				}
+				else {
+					update(new ContactDto(contact));
+				}
+				
+			} catch (BusinessException | MeveoApiException e) {
+				failedToPersist.add(contact);
+				failedToPersistLog.add(contact.toString() + " | " +  e.getMessage());
+			}
 		}
+		
+		ContactsDto contactsDto = new ContactsDto();
+		for(Contact contact : failedToPersist) {
+			contactsDto.getContact().add(new ContactDto(contact));
+		}
+		
+		contactService.logContactError(failedToPersistLog);
+		
+		return contactsDto;
 	}
 
 }

@@ -277,5 +277,7 @@ public class Contact extends AccountEntity {
 		this.contactGroup = contactGroup;
 	}
 	
-	
+	public String toString() {
+		return this.getName().toString() + " code:" + this.getCode();
+	}
 }

@@ -9,29 +9,25 @@
 
     
 	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.contacts']}" disabled="true" />
+				<p:menuitem outcome="contact" value="#{messages['menu.contacts']}" />
+			</p:breadCrumb>
+		</h:form>   
+		
+		<hftl:searchPanel label="#{messages['contact.search']}" backingBean="#{contactListBean}">
+            <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" componentWidth="75" size="100" />
+        </hftl:searchPanel>
+        
+        <hftl:dataList label="#{messages['contact.search']}" sortBy="code" backingBean="#{contactListBean}">
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('accountManagement')}" />
+        </hftl:dataList>
+        
 		<div style="margin: 10%">
 			<H1>BUTTON BELLOW</H1>
-			<h:form>
-				<p:panel>
-					<p:commandButton id="import" value="Test Import Button" action="#{contactBean.importContacts}"></p:commandButton>
-				</p:panel>
-			</h:form>
-			<h:form>
-				<p:panel>
-					<p:commandButton id="show1" value="Test Show id 3 Button" action="#{contactBean.findContactById}"></p:commandButton>
-				</p:panel>
-			</h:form>
-			<h:form>
-				<p:panel>
-					<p:commandButton id="show2" value="Test Show code Button" action="#{contactBean.findContactByCode}"></p:commandButton>
-				</p:panel>
-			</h:form>
-			<h:form>
-				<p:panel>
-					<p:commandButton id="test3" value="Delete All" action="#{contactBean.removeAllContacts}"></p:commandButton>
-				</p:panel>
-			</h:form>
-			
 			<h:form id="form" enctype="multipart/form-data">
 				 <h:inputFile id="file" value="#{contactBean.file}"/>
 				 <h:commandButton value="Upload"

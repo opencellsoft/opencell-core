@@ -1,15 +1,22 @@
 package org.meveo.service.intcrm.impl;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -63,7 +70,7 @@ public class ContactService extends BusinessService<Contact> {
 	private AdditionalDetailsService additionalDetailsService;
 	
 
-	public Set<Contact> parseLinkedInFromText(String context) throws IOException, BusinessException {
+	public Set<Contact> parseLinkedInFromText(String context) throws IOException {
 		log.debug(context);
 		Set<Contact> contacts = new HashSet<Contact>();
 
@@ -112,57 +119,37 @@ public class ContactService extends BusinessService<Contact> {
 			}
 		}
 
-		return this.create(contacts);
+		return contacts;
 	}
 
 	public Set<Contact> create(Set<Contact> contacts) {
 		Set<Contact> failedToPersistContacts = new HashSet<Contact>();
 
-		for (Contact c : contacts) {
+		for (Contact contact : contacts) {
 			try {
-				Customer customer = customerService.findByCompanyName(c.getCompany());
-				if(customer != null) {
-					c.setAddressBook(customer.getAddressbook());
-				}
-				else {
-					customer = new Customer();
-					CustomerBrand customerBrand = customerBrandService.findByCode("DEFAULT");
-					Seller seller = sellerService.findByCode("MAIN_SELLER");
-					CustomerCategory customerCategory = customerCategoryService.findByCode("PROSPECT");
-					
-					customer.setCustomerBrand(customerBrand);
-					customer.setSeller(seller);
-					customer.setCustomerCategory(customerCategory);
-					
-					customer.setCode(c.getCode());
-					customer.setName(c.getName());
-					customer.setAddress(c.getAddress());
-
-			        
-			        AdditionalDetails additionalDetails = new AdditionalDetails();
-			        additionalDetails.setCompanyName(c.getCompany());
-			        additionalDetails.setPosition(c.getPosition());
-			        additionalDetailsService.create(additionalDetails);
-			        
-			        AddressBook addressBook = new AddressBook(c.getCode());
-			        addressBookService.create(addressBook);
-			        
-			        customer.setAdditionalDetails(additionalDetails);
-			        customer.setAddressbook(addressBook);	        
-					customerService.create(customer);
-					
-					c.setAddressBook(addressBook);
-				}
-				this.create(c);
+				create(contact);
 			} catch (BusinessException e) {
-				log.debug("Failed to save contact : " + c.toString());
-				failedToPersistContacts.add(c);
+				log.debug("Failed to save contact : " + contact.toString());
+				log.debug(e.getMessage());
+				failedToPersistContacts.add(contact);
 			}
 		}
 
 		return failedToPersistContacts;
 	}
 
+	public void create(Contact contact) throws BusinessException {
+		Customer customer = customerService.findByCompanyName(contact.getCompany());
+		if(customer != null) {
+			contact.setAddressBook(customer.getAddressbook());
+		}
+		else {
+			customer = createCustomerFromContact(contact);
+		}
+		super.create(contact);
+	}
+	
+	
 	public Set<Contact> parseLinkedInFile(File file) {
 		String csvPath;
 		Set<Contact> contacts = null;
@@ -176,7 +163,7 @@ public class ContactService extends BusinessService<Contact> {
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
 			contacts = parseLinkedInFromText(new String(encoded, Charset.defaultCharset()));
-		} catch (IOException | BusinessException e) {
+		} catch (IOException e) {
 			log.error("Failed parsing file={}", e.getMessage());
 		}
 
@@ -191,5 +178,63 @@ public class ContactService extends BusinessService<Contact> {
 
 		}
 	}
+	
+	public Customer createCustomerFromContact(Contact contact) throws BusinessException {
+		Customer customer = new Customer();
+		CustomerBrand customerBrand = customerBrandService.findByCode("DEFAULT");
+		Seller seller = sellerService.findByCode("MAIN_SELLER");
+		CustomerCategory customerCategory = customerCategoryService.findByCode("PROSPECT");
+		
+		customer.setCustomerBrand(customerBrand);
+		customer.setSeller(seller);
+		customer.setCustomerCategory(customerCategory);
+		
+		customer.setCode(contact.getCode());
+		customer.setName(contact.getName());
+		customer.setAddress(contact.getAddress());
 
+        
+        AdditionalDetails additionalDetails = new AdditionalDetails();
+        additionalDetails.setCompanyName(contact.getCompany());
+        additionalDetails.setPosition(contact.getPosition());
+        additionalDetailsService.create(additionalDetails);
+        
+        AddressBook addressBook = new AddressBook("C_" + contact.getCode());
+        addressBookService.create(addressBook);
+        
+        customer.setAdditionalDetails(additionalDetails);
+        customer.setAddressbook(addressBook);	        
+		customerService.create(customer);
+		
+		contact.setAddressBook(addressBook);
+		
+		return customer;
+	}
+	
+	public void logContactError(List<String> contactErrors) throws IOException {
+		String path1 = System.getProperty("jboss.server.log.dir") + "\\ContactError.log";
+		String path2 = System.getProperty("jboss.server.log.dir") + "\\LastContactError.log";
+		
+		try {
+			FileWriter fw1 = new FileWriter(path1, true);
+		    BufferedWriter bw1 = new BufferedWriter(fw1);
+		    PrintWriter pwout1 = new PrintWriter(bw1);
+		    
+
+			FileWriter fw2 = new FileWriter(path2, true);
+		    BufferedWriter bw2 = new BufferedWriter(fw2);
+		    PrintWriter pwout2 = new PrintWriter(bw2);
+	
+			for(String contactError : contactErrors) {
+				pwout1.println(new Date().toString() + " | " + contactError);
+				pwout2.println(new Date().toString() + " | " + contactError);
+				
+			}
+			pwout1.close();
+			pwout2.close();
+			
+		} catch (IOException e) {	
+		    
+		}
+	}
 }

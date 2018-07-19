@@ -54,7 +54,7 @@ public class ContactDto extends AccountDto {
 	}
 	
 	public ContactDto(Contact contact) {
-		super(contact);
+		super(contact, null);
 		email = contact.getEmail();
 		assistantName = contact.getAssistantName();
 		assistantPhone = contact.getAssistantPhone();

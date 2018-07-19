@@ -18,6 +18,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
+import org.meveo.service.intcrm.impl.ContactService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 
@@ -26,6 +27,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 public class AddressBookApi  extends BaseApi {
 	@Inject
 	AddressBookService addressBookService;
+	
+	@Inject
+	ContactService contactService;
 	
 	@Inject
 	CustomerService customerService;
@@ -40,8 +44,21 @@ public class AddressBookApi  extends BaseApi {
 		addressBookService.createAll();
 	}
 	
-	public void addContact(String code, Contact contact) {
+	public void addContact(String addrCode, String ctCode) throws BusinessException {
+		Contact contact = contactService.findByCode(ctCode);
+		AddressBook addressBook = addressBookService.findByCode(addrCode);
 		
+		if(contact == null)
+			throw new BusinessException("Contact " + ctCode + " not found");
+		if (addressBook == null)
+			throw new BusinessException("AddressBook " + addrCode + " not found");
+			
+			
+		contact.setAddressBook(addressBook);
+		contact = contactService.update(contact);
+		
+		addressBook.getContacts().add(contact);
+		addressBookService.update(addressBook);
 	}
 	
 	public AddressBookDto findAddressBook(String code, String from) throws Exception {

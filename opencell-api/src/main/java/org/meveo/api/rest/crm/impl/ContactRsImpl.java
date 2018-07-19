@@ -7,6 +7,7 @@ import org.meveo.api.crm.ContactApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.crm.ContactDto;
+import org.meveo.api.dto.crm.ContactsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
@@ -103,16 +104,19 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	}
 
 	@Override
-	public ActionStatus importLinkedInFromText(String context) {
-
-		ActionStatus result = new ActionStatus();
-		
+	public ContactsResponseDto importLinkedInFromText(String context) {
+		ContactsResponseDto result = new ContactsResponseDto();
 		try {
-			contactApi.importLinkedInFromText(context);
+			ContactsDto contacts = contactApi.importLinkedInFromText(context);
+			result.setContacts(contacts);
+			if(result.getContacts() != null && !result.getContacts().getContact().isEmpty())
+				result.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, "The following contacts have failed to persist"));
+			return result;
+			
 		} catch (Exception e) {
-			processException(e, result);
+			processException(e, result.getActionStatus());
+			return result;
 		}
-		return result;
 	}
 
 	@Override

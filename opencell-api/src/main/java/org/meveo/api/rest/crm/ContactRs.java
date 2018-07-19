@@ -68,7 +68,7 @@ public interface ContactRs extends IBaseRs {
     
     @POST
     @Path("/importLinkedInFromText")
-    ActionStatus importLinkedInFromText(String context);
+    ContactsResponseDto importLinkedInFromText(String context);
     
     @POST
     @Path("/importLinkedInFile")

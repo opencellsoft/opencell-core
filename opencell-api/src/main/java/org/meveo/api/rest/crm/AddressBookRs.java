@@ -21,7 +21,7 @@ public interface AddressBookRs extends IBaseRs {
 
     @GET
     @Path("/addContact")
-    ActionStatus createOrUpdate(@QueryParam("addressbookid") Long id, @QueryParam("contactcode") String code);
+    ActionStatus addContact(@QueryParam("addressbookCode") String addrCode, @QueryParam("contactCode") String ctCode);
     
     @GET
     @Path("/")

@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.crm.AdditionalDetailsDto;
 import org.meveo.api.dto.crm.AddressBookDto;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.intcrm.AdditionalDetails;
 
 /**
  * The Class CustomerDto.
@@ -31,10 +32,6 @@ public class CustomerDto extends AccountDto {
     /** The customer brand. */
     @XmlElement()
     private String customerBrand;
-
-//    private AdditionalDetailsDto additionalDetails;
-//    
-//    private AddressBookDto addressBook;
 
     /** The seller. */
     @XmlElement(required = true)
@@ -62,7 +59,6 @@ public class CustomerDto extends AccountDto {
     
     private AdditionalDetailsDto additionalDetails = new AdditionalDetailsDto();
     
-    private AddressBookDto addressBook = new AddressBookDto();
     
     /**
      * Instantiates a new customer dto.
@@ -96,6 +92,10 @@ public class CustomerDto extends AccountDto {
 
 		if (e.getContactInformation() != null) {
 			setContactInformation(new ContactInformationDto(e.getContactInformation()));
+		}
+		
+		if (e.getAdditionalDetails() != null) {
+			setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
 		}
 	}
 
@@ -152,23 +152,6 @@ public class CustomerDto extends AccountDto {
     public void setCustomerBrand(String customerBrand) {
         this.customerBrand = customerBrand;
     }
-//
-//    
-//    public AdditionalDetailsDto getAdditionalDetails() {
-//		return additionalDetails;
-//	}
-//
-//	public void setAdditionalDetails(AdditionalDetailsDto additionalDetails) {
-//		this.additionalDetails = additionalDetails;
-//	}
-//
-//	public AddressBookDto getAddressBook() {
-//		return addressBook;
-//	}
-//
-//	public void setAddressBook(AddressBookDto addressBook) {
-//		this.addressBook = addressBook;
-//	}
 
 	/**
      * Gets the customer accounts.
@@ -286,13 +269,6 @@ public class CustomerDto extends AccountDto {
 		this.additionalDetails = additionalDetails;
 	}
 
-	public AddressBookDto getAddressBook() {
-		return addressBook;
-	}
-
-	public void setAddressBook(AddressBookDto addressBook) {
-		this.addressBook = addressBook;
-	}
 
 	@Override
     public String toString() {

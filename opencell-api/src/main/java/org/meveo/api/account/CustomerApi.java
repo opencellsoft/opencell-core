@@ -100,10 +100,10 @@ public class CustomerApi extends AccountEntityApi {
 
 	@Inject
 	private InvoiceService invoiceService;
-	
+
 	@Inject
 	private AddressBookService addressBookService;
-	
+
 	@Inject
 	private AdditionalDetailsService additionalDetailsService;
 
@@ -194,20 +194,20 @@ public class CustomerApi extends AccountEntityApi {
 			throw e;
 		}
 
-		AddressBook addressBook = new AddressBook(customer.getCode());
-        addressBookService.create(addressBook);
-        
-        AdditionalDetails additionalDetails = new AdditionalDetails();
-        if(postData.getAdditionalDetails() != null) {
-            additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
-            additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
-        }
-        additionalDetailsService.create(additionalDetails);
-        
-        
-        customer.setAdditionalDetails(additionalDetails);
-        customer.setAddressbook(addressBook);
-        
+		AddressBook addressBook = new AddressBook("C_" + customer.getCode());
+		addressBookService.create(addressBook);
+
+		AdditionalDetails additionalDetails = new AdditionalDetails();
+		if (postData.getAdditionalDetails() != null) {
+			additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
+			additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
+			additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
+		}
+		additionalDetailsService.create(additionalDetails);
+
+		customer.setAdditionalDetails(additionalDetails);
+		customer.setAddressbook(addressBook);
+
 		customerService.create(customer);
 
 		return customer;
@@ -321,24 +321,33 @@ public class CustomerApi extends AccountEntityApi {
 			log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
-		
-		if(customer.getAddressbook() == null) {
-			AddressBook addressBook = new AddressBook(customer.getCode());
-	        addressBookService.create(addressBook);
-	        customer.setAddressbook(addressBook);
+
+		if (customer.getAddressbook() == null) {
+			AddressBook addressBook = new AddressBook("C_" + customer.getCode());
+			addressBookService.create(addressBook);
+			customer.setAddressbook(addressBook);
 		}
-        
-		if(customer.getAdditionalDetails() == null) {
+
+		if (customer.getAdditionalDetails() == null) {
 			AdditionalDetails additionalDetails = new AdditionalDetails();
-	        if(!StringUtils.isBlank(postData.getAdditionalDetails().getCompanyName())) {
-	            additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
-	        }
-	        if(!StringUtils.isBlank(postData.getAdditionalDetails().getPosition())) {
-	            additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
-	        }
-	        additionalDetailsService.create(additionalDetails);
-	        customer.setAdditionalDetails(additionalDetails);
+			if (!StringUtils.isBlank(postData.getAdditionalDetails().getCompanyName())) {
+				additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
+			}
+			if (!StringUtils.isBlank(postData.getAdditionalDetails().getPosition())) {
+				additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
+			}
+			additionalDetailsService.create(additionalDetails);
+			if (!StringUtils.isBlank(postData.getAdditionalDetails().getInstantMessengers())) {
+				additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
+			}
+			customer.setAdditionalDetails(additionalDetails);
 		}
+		
+		try {
+            customer = customerService.update(customer);
+        } catch (BusinessException e1) {
+            throw new MeveoApiException(e1.getMessage());
+        }
 		
 		return customer;
 	}
@@ -726,10 +735,11 @@ public class CustomerApi extends AccountEntityApi {
 
 	/**
 	 * Exports an account hierarchy given a specific customer selected in the GUI.
-	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
-	 * as a zipped file along with the pdf invoices.
+	 * It includes Subscription, AccountOperation and Invoice details. It packaged
+	 * the json output as a zipped file along with the pdf invoices.
 	 * 
-	 * @throws Exception when zipping fail
+	 * @throws Exception
+	 *             when zipping fail
 	 */
 	public void exportCustomerHierarchy(String customerCode, HttpServletResponse response) throws Exception {
 		CustomerDto result;
@@ -758,8 +768,8 @@ public class CustomerApi extends AccountEntityApi {
 		xstream.omitField(AccountOperationDto.class, "accountCode");
 		xstream.omitField(AccountOperationDto.class, "accountingCode");
 		xstream.omitField(AccountOperationDto.class, "accountCodeClientSide");
-		xstream.omitField(PaymentMethodDto.class, "tokenId");		
-		
+		xstream.omitField(PaymentMethodDto.class, "tokenId");
+
 		String accountHierarchy = xstream.toXML(result);
 
 		File accountHierarchyFile = File.createTempFile(customerCode, ".json");
@@ -792,14 +802,10 @@ public class CustomerApi extends AccountEntityApi {
 				response.addHeader("Content-disposition", "attachment;filename=\"" + customerCode + ".zip\"");
 				IOUtils.copy(is, response.getOutputStream());
 				response.flushBuffer();
-				
+
 			} catch (IOException e) {
 				throw new BusinessApiException("Error zipping customer data.");
 			}
 		}
-	}
-	
-	public CustomerDto findByCompany(String companyName) {
-		return new CustomerDto(customerService.findByCompanyName(companyName));
 	}
 }
