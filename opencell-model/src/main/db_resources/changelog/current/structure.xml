@@ -1356,4 +1356,86 @@
     <changeSet id="#3064_20180328" author="anasseh">
         <modifyDataType tableName="rating_edr" columnName="reject_reason" newDataType="text" />        
     </changeSet> 
+    
+    <changeSet id="#3290_04062018" author="anasseh">
+        <addColumn tableName="billing_invoice_type">
+            <column name="use_self_sequence" type="${type.boolean}" />
+        </addColumn>
+         <sql>update ${db.schema.adapted}billing_invoice_type set use_self_sequence = 0 </sql>
+         <addColumn tableName="billing_invoice_configuration">
+            <column name="current_invoice_nb" type="bigint" />
+        </addColumn>
+       <createTable tableName="temp_to_delete">
+            <column name="max_id" type="bigint" />
+        </createTable>
+         <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_invoice_type)); </sql>
+         <sql>insert into  ${db.schema.adapted}temp_to_delete (max_id) values((select max(current_invoice_nb) from ${db.schema.adapted}billing_seq_invtyp_sell)); </sql>
+         <sql>update ${db.schema.adapted}billing_invoice_configuration set current_invoice_nb = (select max(max_id) from temp_to_delete);</sql>
+         <dropTable tableName="temp_to_delete"/>
+    </changeSet>    
+
+    <changeSet id="#2206_20180502 Add possibility to override RecurringChargeTemplate parameters" author="anasseh">
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="subscription_prorata_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="termination_prorata_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="apply_in_advance_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="duration_term_in_month_el" type="varchar(2000)" />
+        </addColumn>   
+        <addColumn tableName="cat_recurring_charge_templ">
+            <column name="calendar_code_el" type="varchar(2000)" />
+        </addColumn>                             
+    </changeSet>
+  
+     <changeSet id="#3272_20180217" author="anasseh">     
+        <addColumn tableName="billing_invoice_cat">
+            <column name="occ_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_cat">
+            <column name="occ_templ_negative_id" type="bigint" />
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="occ_template_id" baseTableName="billing_invoice_cat" constraintName="fk_occ_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+        <addForeignKeyConstraint baseColumnNames="occ_templ_negative_id" baseTableName="billing_invoice_cat" constraintName="fk_occ_neg_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />            
+     </changeSet>
+     <changeSet id="#3272_20180217_2" author="anasseh">     
+        <addColumn tableName="ar_account_operation">
+            <column name="recorded_invoice_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="cat_inv_agregate_id" type="bigint" />
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="recorded_invoice_id" baseTableName="ar_account_operation" constraintName="fk_inv_aos" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+        <addForeignKeyConstraint baseColumnNames="cat_inv_agregate_id" baseTableName="ar_account_operation" constraintName="fk_inv_cat_agregate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />            
+     </changeSet>     
+
+     <changeSet id="#3036_19062018" author="SaidRamli">
+        <addColumn tableName="crm_provider">
+            <column name="rounding_mode" type="varchar(50)" />
+            <column name="invoice_rounding" defaultValueNumeric="2"  type="int4"  />
+            <column name="invoice_rounding_mode" type="varchar(50)" />
+        </addColumn>
+     </changeSet>
+     
+     <changeSet id="#3239_20180511" author="AbdelmounaimAkadid">
+    	<addColumn tableName="cat_product_charge_templ">
+            <column name="filter_expression" type="varchar(2000)"  />           
+        </addColumn>
+	</changeSet>
+
+    <changeSet id="#3288_20180503" author="AbdelmounaimAkadid">
+        <addColumn tableName="billing_invoice_type">
+            <column name="occ_template_code_el" type="varchar(2000)"  />           
+            <column name="occ_template_negative_code_el" type="varchar(2000)"  />           
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -399,7 +399,7 @@
 											popup="true" popupId="userAccountPopup" allowEdit="false" componentWidth="30"/>
 										<hftl:formField id="offerSelectId"
 											label="#{messages['subscription.offer']}" field="offer"
-											valueLabelField="code" componentWidth="30" allowEdit="#{subscriptionBean.entity.serviceInstances.isEmpty()}"
+											valueLabelField="code" componentWidth="30" allowEdit="#{subscriptionBean.isServiceInstancesEmpty()}"
 											required="true" popup="true" popupId="offerPopup"/>
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>

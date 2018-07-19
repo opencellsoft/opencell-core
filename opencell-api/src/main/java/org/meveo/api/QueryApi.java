@@ -37,7 +37,7 @@ public class QueryApi extends BaseApi {
      * Checks if the query fragment contains any of the blacklisted SQL keywords.
      *
      * @param queryFragment the query fragment to be checked for blacklisted words.
-     * @throws MeveoApiException
+     * @throws MeveoApiException when a black-listed keyword is used
      */
     private void validateQueryFragment(Object queryFragment) throws MeveoApiException {
 
@@ -53,9 +53,9 @@ public class QueryApi extends BaseApi {
     /**
      * Retrieves a data list based on an HQL query.
      *
-     * @param query - Search criteria. An HQL query that retrieves the list of entities. It only allows HQL queries<br />
+     * @param query - Search criteria. An HQL query that retrieves the list of entities. It only allows HQL queries<br>
      *        that starts with "from" and does not contain the keyword "into", otherwise, will throw an error.
-     * @param alias - alias name for the main entity that was used in the query.<br />
+     * @param alias - alias name for the main entity that was used in the query.<br>
      *        e.g. if the query is "FROM Customer cust", then the alias should be "cust"
      * @param fields - comma delimited fields. allows nested field names.
      * @param params - a map of parameters that will be passed into the HQL query
@@ -64,8 +64,8 @@ public class QueryApi extends BaseApi {
      * @param sortBy - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder - sort order.
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return QueryResponse object
+     * @throws MeveoApiException when query does not start with "from" or when query fails
      */
     public QueryResponse list(String query, String alias, String fields, Map<String, Object> params, String offset, String limit, String sortBy, String sortOrder)
             throws MeveoApiException {

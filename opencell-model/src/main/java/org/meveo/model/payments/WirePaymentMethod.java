@@ -52,6 +52,6 @@ public class WirePaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "WirePaymentMethod [alias= " + getAlias() + ", preferred=" + preferred + "]";
+        return "WirePaymentMethod [alias= " + getAlias() + ", preferred=" + isPreferred() + "]";
     }
 }

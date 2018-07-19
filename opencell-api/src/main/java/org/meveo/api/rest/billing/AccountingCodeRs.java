@@ -17,7 +17,7 @@ import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
-import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
+import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -69,7 +69,6 @@ public interface AccountingCodeRs extends IBaseRs {
      * @return request processing status
      */
     @GET
-    @Path("/{accountingCode}")
     AccountingCodeGetResponseDto find(@QueryParam("accountingCode") String accountingCode);
 
     /**
@@ -83,7 +82,7 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    AccountingCodeListResponse listGet(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
+    AccountingCodeListResponseDto listGet(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
@@ -94,7 +93,7 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    AccountingCodeListResponse listPost(PagingAndFiltering pagingAndFiltering);
+    AccountingCodeListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Removes an AccountingCode entity.

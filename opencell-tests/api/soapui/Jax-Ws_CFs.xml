@@ -22575,7 +22575,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="85cd32b1-9f2b-4203-baae-72d7290d3006" name="XPath Match">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required" valuePeriodStartDate="2018-06-01T00:00:00*" valuePeriodEndDate="2018-07-01T00:00:00*">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required" valuePeriodStartDate="2018-*-01T00:00:00*" valuePeriodEndDate="2018-*-01T00:00:00*">
                      <fieldType>STRING</fieldType>
                      <stringValue>def value versioned from customer</stringValue>
                   </customField>]]></content>
@@ -22729,7 +22729,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="e74a27a2-2a15-4ea1-8570-709bafa2af97" name="XPath Match">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required" valuePeriodStartDate="2018-06-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-07-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required" valuePeriodStartDate="2018-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-*-01T00:00:00${#Project#timezone2}">
                      <fieldType>STRING</fieldType>
                      <stringValue>b</stringValue>
                   </customField>]]></content>
@@ -22741,7 +22741,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="c553c910-997b-4dcb-839c-93a45ac2e714" name="XPath Match 1">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required" valuePeriodStartDate="2018-06-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-07-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required" valuePeriodStartDate="2018-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-*-01T00:00:00${#Project#timezone2}">
                      <fieldType>STRING</fieldType>
                      <mapValue>
                         <entry>
@@ -22760,7 +22760,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="0b8d5a3c-9fbf-49a1-a953-6c51d7cf85d8" name="XPath Match 2">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="CF_BASE_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required" valuePeriodStartDate="2018-06-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-07-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="CF_BASE_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required" valuePeriodStartDate="2018-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-*-01T00:00:00${#Project#timezone2}">
                      <fieldType>STRING</fieldType>
                      <listValue>
                         <value>
@@ -22776,7 +22776,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="36855ad6-a6ff-42de-bdd1-935a7ae239e5" name="XPath Match 3">
               <con:configuration>
                 <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED"]</path>
-                <content><![CDATA[<customField code="CF_BASE_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required" valuePeriodStartDate="2018-06-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-07-01T00:00:00${#Project#timezone2}">
+                <content><![CDATA[<customField code="CF_BASE_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required" valuePeriodStartDate="2018-*-01T00:00:00${#Project#timezone2}" valuePeriodEndDate="2018-*-01T00:00:00${#Project#timezone2}">
                      <fieldType>STRING</fieldType>
                      <mapValue>
                         <entry>
@@ -34331,7 +34331,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>34</con:value>
+        <con:value>38</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36962,7 +36962,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>74</con:value>
+        <con:value>78</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38517,7 +38517,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>41</con:value>
+        <con:value>45</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39740,7 +39740,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>35</con:value>
+        <con:value>39</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

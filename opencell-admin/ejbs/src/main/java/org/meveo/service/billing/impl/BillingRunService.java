@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -104,6 +106,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private ServiceSingleton serviceSingleton;
 
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
+    
     /**
      * Generate pre invoicing reports.
      *
@@ -419,6 +424,45 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         billingRun.setStatus(BillingRunStatusEnum.CANCELED);
         update(billingRun);
     }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void cleanCancelBillingRun(Long billingRunId) throws BusinessException {
+
+        BillingRun billingRun = findById(billingRunId);
+        int count = 10;
+        // We will wait until we get a billingRun instance with status Cancelling
+        while (billingRun != null && count > 0 && !billingRun.getStatus().equals(BillingRunStatusEnum.CANCELLING)) {
+            try {
+                Thread.sleep((10 - count) * 1000);
+            } catch (InterruptedException e) {
+            	log.warn("Warning on thread sleep={}", e.getMessage());
+            }
+            refresh(billingRun);
+            log.info("BillingRun {} has status {}. COUNT:{}.", billingRunId, billingRun.getStatus(), count);
+            count--;
+        }
+        if (billingRun == null) {
+            throw new BusinessException("Cannot instantiate a billingRun instance with id :" + billingRunId);
+        }
+        if (!billingRun.getStatus().equals(BillingRunStatusEnum.CANCELLING)) {
+            log.info("BillingRun {} has status {}.", billingRunId, billingRun.getStatus());
+            throw new BusinessException("BillingRun instance status " + billingRun.getStatus() + " with id :" + billingRunId);
+        }
+
+        cleanBillingRun(billingRun);
+        cancel(billingRun);
+    }
+
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Future<String> cancelAsync(Long billingRunId) {
+        try {
+            cleanCancelBillingRun(billingRunId);
+        } catch (BusinessException e) {
+            log.error("Error cancelling a billing run with id={}. {}", billingRunId, e.getMessage());
+        }
+        return new AsyncResult<>("OK");
+    }
 
     /**
      * Clean billing run.
@@ -426,33 +470,41 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param billingRun the billing run
      */
     @SuppressWarnings("unchecked")
-    public void cleanBillingRun(BillingRun billingRun) {
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void cleanBillingRun(BillingRun billingRun) throws BusinessException {
+        long start = System.currentTimeMillis();
         Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
                 + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
 
-        Query queryMinTrans = getEntityManager().createQuery("delete from " + RatedTransaction.class.getName() + " where billingRun=:billingRun AND wallet IS null");
-        queryMinTrans.setParameter("billingRun", billingRun);
-        queryMinTrans.executeUpdate();
+        log.info("> cleanBillingRun >> Update rated transaction > {}", System.currentTimeMillis() - start);
 
-        Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        Query queryAgregate = getEntityManager().createQuery("SELECT id from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryAgregate.setParameter("billingRun", billingRun);
-        List<InvoiceAgregate> invoiceAgregates = (List<InvoiceAgregate>) queryAgregate.getResultList();
-        for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
 
-            getEntityManager().remove(invoiceAgregate);
+        List<Long> invoiceAgregates = (List<Long>) queryAgregate.getResultList();
+        log.info("> cleanBillingRun >> Collect Invoice Aggregates > {}", System.currentTimeMillis() - start);
+
+        for (Long invoiceAgregate : invoiceAgregates) {
+        	invoiceAgregateService.setInvoiceToNull(invoiceAgregate);
+            remove(InvoiceAgregate.class, invoiceAgregate);
         }
+        log.info("> cleanBillingRun >> Invoice Aggregated will be Removed  > {}", System.currentTimeMillis() - start);
         getEntityManager().flush();
+        log.info("> cleanBillingRun >> Invoice Aggregated Removed  > {}", System.currentTimeMillis() - start);
 
         Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
         queryInvoices.setParameter("billingRun", billingRun);
         queryInvoices.executeUpdate();
+        log.info("> cleanBillingRun >> Invoices deleted > {}", System.currentTimeMillis() - start);
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
+
+        log.info("> cleanBillingRun >> End. > {}", System.currentTimeMillis() - start);
     }
 
     /**

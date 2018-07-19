@@ -34,6 +34,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
+
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
@@ -597,4 +598,38 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	public BigDecimal customerAccountFutureBalanceExigibleWithoutLitigation(CustomerAccount customerAccount) throws BusinessException {
 		return computeBalance(customerAccount, null, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
 	}
+
+    
+    /**
+     * Return list customerAccount ids for payment.
+     * 
+     * @param paymentMethodEnum payment method.
+     * @return list of customerAccount ids.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> getCAidsForPayment(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+        try {
+            return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForPayment").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("dueDateIN", dueDate).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Return list customerAccount ids for refund.
+     * 
+     * @param paymentMethodEnum payment method.
+     * @return list of customerAccount ids.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> getCAidsForRefund(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+        try {
+            return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForRefund").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("dueDateIN", dueDate).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 }

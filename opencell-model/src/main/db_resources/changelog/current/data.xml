@@ -2847,4 +2847,172 @@ ORDER BY
         </insert>
     </changeSet>
 
+   <changeSet id="20180715 Payment gateway" author="ansseh">
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0, now(), 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
+			package org.meveo.service.script.demo;
+
+import java.io.StringReader;
+import java.util.Map;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.script.payment.PaymentScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+
+/**
+ * 
+ * @author anasseh
+ *
+ */
+
+public class CustomGatewayPaymentScript extends PaymentScript{
+
+	private static final Logger log = LoggerFactory.getLogger(CustomGatewayPaymentScript.class);
+
+	@Override
+	public void createCardToken(Map<String, Object> methodContext) throws BusinessException {			
+		methodContext.put(PaymentScript.RESULT_TOKEN, "7ced0000-3ab2-000d-6a50-08d4b8a6"+(int )(Math.random() * 1000 + 1));
+	}
+
+	@Override
+    public void doPaymentToken(Map<String, Object> methodContext) throws BusinessException {
+	    doIt(methodContext, "PAL");
+	}  
+	
+	@Override
+    public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
+	    doIt(methodContext, "RFD");
+    }
+	
+	
+	
+	private void doIt(Map<String, Object> methodContext,String operationType) throws BusinessException {
+		try{
+			log.debug("EXECUTE  methodContext {} ", methodContext);
+			Long amountCts = (Long)methodContext.get(PaymentScript.CONTEXT_AMOUNT_CTS);
+			if(amountCts == null){
+				throw new BusinessException("amountCts is null");
+			}
+			CardPaymentMethod paymentToken = (CardPaymentMethod)methodContext.get(PaymentScript.CONTEXT_TOKEN);
+			if(paymentToken == null){
+				throw new BusinessException("paymentMethod is null");
+			}
+
+			String body  = "{";
+			body  += " \"PSPID\" : \"PSPID\" ,";
+			body  += " \"USERID\" : \"USERID\" ,";
+			body  += " \"PSWD\" : \"PSWD\" ,";
+			body  += " \"REFKIND\" :  \"PSPID\" ,";
+			body  += " \"REFID\" : \"PSPID\" ,";
+			body  += " \"OPERATION\" : \""+operationType +"\" ,";
+			body  += " \"AMOUNT\" : \""+amountCts.longValue()+"\" ,";
+			body  += " \"CURRENCY\" : \""+paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode()+"\" ,";
+			body  += " \"TRANSACTIONID\" : \""+paymentToken.getTokenId()+"\" ,";
+			body  += " \"SHASIGN\" : \"SHASIGN\" ,";
+			body  += " }";
+			log.debug("request body {} ", body);
+/*			invoke here the real webService. 
+            
+*/
+			String paymentResponse = "<root>"; 
+			paymentResponse += "<STATUS>92</STATUS>";
+			paymentResponse += "<PAYID>"+((int )(Math.random() * 100000 + 1))+"</PAYID>"; 
+			paymentResponse += "<TRANSACTIONID>92</TRANSACTIONID>";
+			paymentResponse += "<CRMTOKEN>clientSide</CRMTOKEN>"; 
+			paymentResponse += "<BRAND>VISA</BRAND>";
+			paymentResponse += "<ACCEPTENCE>bankRef</ACCEPTENCE>"; 
+			paymentResponse += "</root>";
+			methodContext.put(PaymentScript.RESULT_PAYMENT_STATUS, PaymentStatusEnum.PENDING);
+			methodContext.put(PaymentScript.RESULT_PAYMENT_ID, getValue(paymentResponse,"/root/PAYID"));
+			methodContext.put(PaymentScript.RESULT_TRANSACTION_ID, getValue(paymentResponse,"/root/TRANSACTIONID"));
+			methodContext.put(PaymentScript.RESULT_CODE_CLIENT_SIDE, getValue(paymentResponse,"/root/CRMTOKEN"));
+			methodContext.put(PaymentScript.RESULT_PAYMENT_BRAND, getValue(paymentResponse,"/root/BRAND"));
+			methodContext.put(PaymentScript.RESULT_BANK_REFERENCE, getValue(paymentResponse,"/root/ACCEPTENCE"));			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BusinessException(e.getMessage());
+		}
+	}	
+
+	private String getValue(String sourceXML,String expression) throws XPathExpressionException{		
+		InputSource iSource = new InputSource(new StringReader(sourceXML));
+		XPathFactory xpathFactory = XPathFactory.newInstance();
+		XPath xpath = xpathFactory.newXPath();		
+		return xpath.evaluate(expression, iSource);			
+	}
+}
+		');]]></sql>
+
+ <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-11	, 0, 0, now(), 'org.meveo.service.script.demo.PaymentCallBackScript', 'PaymentCallBackScript', 'JAVA', '
+			package org.meveo.service.script.smoove;
+
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.payments.impl.PaymentService;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 
+ * @author anasseh
+ *
+ *         Script executed after a payment callBack (inbound request), if the payment is rejected , the invoice matching is removed and a new is created with a the new reject
+ *         payment account operation
+ *
+ */
+
+public class PaymentCallBackScript extends Script {
+
+    private static final Logger log = LoggerFactory.getLogger(PaymentCallBackScript.class);
+    private PaymentService paymentService = (PaymentService) getServiceInterface("PaymentService");
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        log.debug("EXECUTE  methodContext {} ", methodContext);
+        @SuppressWarnings("unchecked")
+        Map<String, String> params = (Map<String, String>) methodContext.get("params");
+        log.info("params:" + params);
+        if (params.get("STATUS") == null) {
+            throw new BusinessException("Parameter STATUS is required");
+        }
+        if (params.get("PAYID") == null) {
+            throw new BusinessException("Parameter PAYID is required");
+        }
+        PaymentStatusEnum paymentStatus = PaymentStatusEnum.ACCEPTED;
+        if (!"9".equals(params.get("STATUS"))) {
+            paymentStatus = PaymentStatusEnum.REJECTED;
+        }
+        paymentService.paymentCallback(params.get("PAYID"), paymentStatus, params.get("NCERROR"), params.get("NCERROR"));
+    }
+
+}
+		');]]></sql>		
+		
+		 <sql><![CDATA[INSERT INTO ${db.schema.adapted}ar_payment_gateway VALUES (-10, 0, 0, now(), NULL, 'customGatewayDemo', 'A customGateway for Demo', 'CUSTOM', 'CARD', NULL, NULL, -10, NULL, NULL,
+		  '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin', NULL, NULL, NULL, NULL, NULL, NULL);]]></sql>	
+		  
+		  <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification VALUES (-10, 0, 0, now(), NULL, 'PaymentCallBack', NULL, 'org.meveo.model.notification.InboundRequest', 
+		  '#{event.pathInfo.startsWith("/DEMO/custom_payment-callback?")}', 'INBOUND_REQ', 'opencell.admin', NULL, NULL, NULL, -11, 0);]]></sql>	
+
+<sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification_params VALUES (-10, '#{event.getParameters()}', 'params');]]></sql>	
+<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-16, 6, 0, now(), now(), 'PaymentCard_Job', NULL, 'ACCOUNT_RECEIVABLES',
+ 'PaymentJob', NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, '2c72550b-4e79-4dab-a8bd-df8499abd25b', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Credit"}],"waitingMillis":[{"long":0}],
+ "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>	
+<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-17, 3, 0, now(), now(), 'RefundCard_Job', NULL, 'ACCOUNT_RECEIVABLES', 'PaymentJob',
+ NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, 'a4bb9554-85f3-4c0a-8f62-438fec7bdac2', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Debit"}],"waitingMillis":[{"long":0}],
+ "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>	
+
+<sql><![CDATA[ UPDATE ${db.schema.adapted}ar_payment_gateway set application_el ='#{"is already setup" eq "OK"}' where code <> 'customGatewayDemo';]]></sql>	
+		  
+		</changeSet>
 </databaseChangeLog>

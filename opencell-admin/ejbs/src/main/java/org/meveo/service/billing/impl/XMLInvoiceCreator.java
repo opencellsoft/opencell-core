@@ -18,11 +18,12 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.meveo.commons.utils.NumberUtils.roundToString;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,12 +89,12 @@ import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -111,21 +112,19 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import org.meveo.util.ApplicationProvider;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
-
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Mounir Bahije
+ * @author Said Ramli
  * @lastModifiedVersion 5.1
- *
  **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
@@ -321,9 +320,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         serviceIds = new ArrayList<>();
         offerIds = new ArrayList<>();
         priceplanIds = new ArrayList<>();
-
         boolean entreprise = appProvider.isEntreprise();
-        int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+
+        int invoiceRounding = appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding(); 
+        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode(); 
 
         if (!isInvoiceAdjustment && billingRun != null && BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus()) && invoiceNumber == null) {
             invoiceService.assignInvoiceNumber(invoice);
@@ -370,6 +370,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         if (invoiceConfiguration != null && invoiceConfiguration.getDisplayProvider() != null && invoiceConfiguration.getDisplayProvider()) {
             Element providerTag = doc.createElement("provider");
             providerTag.setAttribute("code", appProvider.getCode() + "");
+            providerTag.setAttribute("description", appProvider.getDescription() + "");
             BankCoordinates appBankCoordinates = appProvider.getBankCoordinates();
             if (appBankCoordinates != null) {
                 Element bankCoordinates = doc.createElement("bankCoordinates");
@@ -567,13 +568,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         Element amountWithoutTax = doc.createElement("amountWithoutTax");
 
-        Text amountWithoutTaxTxt = doc.createTextNode(round(amountWithoutTax2, rounding));
+        Text amountWithoutTaxTxt = doc.createTextNode(roundToString(amountWithoutTax2, invoiceRounding, invoiceRoundingMode));
         amountWithoutTax.appendChild(amountWithoutTaxTxt);
         amount.appendChild(amountWithoutTax);
 
         Element amountWithTax = doc.createElement("amountWithTax");
         BigDecimal iAmountWithTax = invoice.getAmountWithTax();
-        Text amountWithTaxTxt = doc.createTextNode(round(iAmountWithTax, rounding));
+        Text amountWithTaxTxt = doc.createTextNode(roundToString(iAmountWithTax, invoiceRounding, invoiceRoundingMode));
         amountWithTax.appendChild(amountWithTaxTxt);
         amount.appendChild(amountWithTax);
 
@@ -590,7 +591,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
          */
 
         Element netToPayElement = doc.createElement("netToPay");
-        Text netToPayTxt = doc.createTextNode(round(netToPay, rounding));
+        Text netToPayTxt = doc.createTextNode(roundToString(netToPay, invoiceRounding, invoiceRoundingMode));
         netToPayElement.appendChild(netToPayTxt);
         amount.appendChild(netToPayElement);
 
@@ -1271,7 +1272,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
-
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+        
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
 
@@ -1280,7 +1282,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element categories = doc.createElement("categories");
         parent.appendChild(categories);
         boolean entreprise = appProvider.isEntreprise();
-        int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+        int rounding = getProviderRounding();
 
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
 
@@ -1318,7 +1320,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             category.setAttribute("code", invoiceCategory != null && invoiceCategory.getCode() != null ? invoiceCategory.getCode() : "");
             categories.appendChild(category);
             Element amountWithoutTax = doc.createElement("amountWithoutTax");
-            Text amountWithoutTaxTxt = doc.createTextNode(round(categoryInvoiceAgregate.getAmountWithoutTax(), rounding));
+            Text amountWithoutTaxTxt = doc.createTextNode(roundToString(categoryInvoiceAgregate.getAmountWithoutTax(), rounding, roundingMode));
             amountWithoutTax.appendChild(amountWithoutTaxTxt);
             category.appendChild(amountWithoutTax);
             addCustomFields(invoiceCategory, doc, category);
@@ -1376,10 +1378,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subCategories.appendChild(subCategory);
                     subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
                     subCategory.setAttribute("code", invoiceSubCat.getCode());
-                    subCategory.setAttribute("amountWithoutTax", round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
+                    subCategory.setAttribute("amountWithoutTax", roundToString(subCatInvoiceAgregate.getAmountWithoutTax(), rounding, roundingMode));
 
                     if (!entreprise) {
-                        subCategory.setAttribute("amountWithTax", round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
+                        subCategory.setAttribute("amountWithTax", roundToString(subCatInvoiceAgregate.getAmountWithTax(), rounding, roundingMode));
                     }
 
                     String taxesCode = "";
@@ -1387,7 +1389,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     String sep = "";
                     for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {
                         taxesCode = taxesCode + sep + tax.getCode();
-                        taxesPercent = taxesPercent + sep + round(tax.getPercent(), rounding);
+                        taxesPercent = taxesPercent + sep + roundToString(tax.getPercent(), rounding, roundingMode);
                         sep = ";";
                     }
                     subCategory.setAttribute("taxCode", taxesCode);
@@ -1521,13 +1523,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         line.appendChild(lineUnitAmountWithoutTax);
 
                         Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                        Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithoutTax(), rounding));
+                        Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
                         lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
                         line.appendChild(lineAmountWithoutTax);
 
                         if (!enterprise) {
                             Element lineAmountWithTax = doc.createElement("amountWithTax");
-                            Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(), rounding));
+                            Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
                             lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                             line.appendChild(lineAmountWithTax);
                         }
@@ -1618,7 +1620,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subCategory = doc.createElement("subCategory");
                     subCategory.setAttribute("label", ratedTransaction.getDescription());
                     subCategory.setAttribute("code", ratedTransaction.getCode());
-                    subCategory.setAttribute("amountWithoutTax", round(ratedTransaction.getAmountWithoutTax(), rounding));
+                    subCategory.setAttribute("amountWithoutTax", roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
                 }
 
                 Element line = doc.createElement("line");
@@ -1632,13 +1634,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 line.appendChild(lineUnitAmountWithoutTax);
 
                 Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithoutTax(), rounding));
+                Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
                 lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
                 line.appendChild(lineAmountWithoutTax);
 
                 if (!enterprise) {
                     Element lineAmountWithTax = doc.createElement("amountWithTax");
-                    Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(), rounding));
+                    Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
                     lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                     line.appendChild(lineAmountWithTax);
                 }
@@ -1681,7 +1683,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         // log.info("adding taxes...");
         Element taxes = doc.createElement("taxes");
         boolean exoneratedFromTaxes = billingAccountService.isExonerated(billingAccount);
-
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+        
         if (exoneratedFromTaxes) {
             Element exoneratedElement = doc.createElement("exonerated");
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
@@ -1690,8 +1693,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             exoneratedElement.setAttribute("reason", customerCategory.getExonerationReason());
             taxes.appendChild(exoneratedElement);
         } else {
-            int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
-            taxes.setAttribute("total", round(amountTax, rounding));
+            int rounding = getProviderRounding();
+            taxes.setAttribute("total", roundToString(amountTax, rounding, roundingMode));
             parent.appendChild(taxes);
             Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
             if (hasInvoiceAgregate) {
@@ -1751,17 +1754,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 tax.appendChild(taxName);
 
                 Element percent = doc.createElement("percent");
-                Text percentTxt = doc.createTextNode(round(taxInvoiceAgregate.getTaxPercent(), rounding));
+                Text percentTxt = doc.createTextNode(roundToString(taxInvoiceAgregate.getTaxPercent(), rounding, roundingMode));
                 percent.appendChild(percentTxt);
                 tax.appendChild(percent);
 
                 Element taxAmount = doc.createElement("amount");
-                Text amountTxt = doc.createTextNode(round(taxInvoiceAgregate.getAmountTax(), rounding));
+                Text amountTxt = doc.createTextNode(roundToString(taxInvoiceAgregate.getAmountTax(), rounding, roundingMode));
                 taxAmount.appendChild(amountTxt);
                 tax.appendChild(taxAmount);
 
                 Element amountHT = doc.createElement("amountHT");
-                Text amountHTTxt = doc.createTextNode(round(taxInvoiceAgregate.getAmountWithoutTax(), rounding));
+                Text amountHTTxt = doc.createTextNode(roundToString(taxInvoiceAgregate.getAmountWithoutTax(), rounding, roundingMode));
                 amountHT.appendChild(amountHTTxt);
                 tax.appendChild(amountHT);
 
@@ -1769,6 +1772,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             }
         }
+    }
+
+    private int getProviderRounding() {
+        return appProvider.getRounding() == null ? 2 : appProvider.getRounding();
     }
 
     /**
@@ -1849,9 +1856,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @param entreprise true/false
      */
     private void addHeaderCategories(LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories, Document doc, Element parent, boolean entreprise) {
-        int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+        int rounding = getProviderRounding();
         // log.debug("add header categories");
-
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
         Element categories = doc.createElement("categories");
         parent.appendChild(categories);
         for (XMLInvoiceHeaderCategoryDTO xmlInvoiceHeaderCategoryDTO : headerCategories.values()) {
@@ -1861,7 +1868,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             categories.appendChild(category);
 
             Element amountWithoutTax = doc.createElement("amountWithoutTax");
-            Text amountWithoutTaxTxt = doc.createTextNode(round(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax(), rounding));
+            Text amountWithoutTaxTxt = doc.createTextNode(roundToString(xmlInvoiceHeaderCategoryDTO.getAmountWithoutTax(), rounding, roundingMode));
             amountWithoutTax.appendChild(amountWithoutTaxTxt);
             category.appendChild(amountWithoutTax);
             if (xmlInvoiceHeaderCategoryDTO.getSubCategoryInvoiceAgregates() != null) {
@@ -1875,41 +1882,50 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     // String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription() == null ? "" : subCatInvoiceAgregate.getDescription();
 
                     String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
-                    if (
-                            subCatInvoiceAgregate.getInvoice() != null  &&
-                                    subCatInvoiceAgregate.getInvoice().getBillingAccount()  != null  &&
-                                    subCatInvoiceAgregate.getInvoice().getBillingAccount().getTradingLanguage()  != null  &&
-                                    subCatInvoiceAgregate.getInvoice().getBillingAccount().getTradingLanguage().getLanguageCode() != null
-                            )
-                    {
-                        String languageCode = subCatInvoiceAgregate.getInvoice().getBillingAccount().getTradingLanguage().getLanguageCode();
-                        if ( (invoiceSubCat != null) &&
-                                (invoiceSubCat.getDescriptionI18nNullSafe() != null) &&
-                                !(StringUtils.isBlank(invoiceSubCat.getDescriptionI18nNullSafe().get(languageCode)))) {
-                            // get label description by language code
-                            invoiceSubCategoryLabel = invoiceSubCat.getDescriptionI18nNullSafe().get(languageCode);
+                    Invoice invoice = subCatInvoiceAgregate.getInvoice();
+                    if (invoice != null) {
+                        BillingAccount billingAccount = invoice.getBillingAccount();
+                        if (billingAccount != null) {
+                            TradingLanguage tradingLanguage = billingAccount.getTradingLanguage();
+                            if (tradingLanguage != null
+                                    && tradingLanguage.getLanguageCode() != null) {
+                                String languageCode = tradingLanguage.getLanguageCode();
+                                
+                                if (invoiceSubCat != null) {
+                                    Map<String, String> descriptionI18nNullSafe = invoiceSubCat.getDescriptionI18nNullSafe();
+                                    if (descriptionI18nNullSafe != null &&
+                                    !(StringUtils.isBlank(descriptionI18nNullSafe.get(languageCode)))) {
+                                        // get label description by language code
+                                        invoiceSubCategoryLabel = descriptionI18nNullSafe.get(languageCode);
+                                    }
+                                }
+                            }
                         }
                     }
 
                     subCategories.appendChild(subCategory);
                     subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
-                    subCategory.setAttribute("code", invoiceSubCat.getCode());
+                    String code = "";
+                    if (invoiceSubCat != null) {
+                        code = invoiceSubCat.getCode();
+                    }
+                    subCategory.setAttribute("code", code);
                     String taxesCode = "";
                     String taxesPercent = "";
                     String sep = "";
                     for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {
                         taxesCode = taxesCode + sep + tax.getCode();
-                        taxesPercent = taxesPercent + sep + round(tax.getPercent(), rounding);
+                        taxesPercent = taxesPercent + sep + roundToString(tax.getPercent(), rounding, roundingMode);
                         sep = ";";
                     }
                     subCategory.setAttribute("taxCode", taxesCode);
                     subCategory.setAttribute("taxPercent", taxesPercent);
 
                     if (!entreprise) {
-                        subCategory.setAttribute("amountWithTax", round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
+                        subCategory.setAttribute("amountWithTax", roundToString(subCatInvoiceAgregate.getAmountWithTax(), rounding, roundingMode));
                     }
 
-                    subCategory.setAttribute("amountWithoutTax", round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
+                    subCategory.setAttribute("amountWithoutTax", roundToString(subCatInvoiceAgregate.getAmountWithoutTax(), rounding, roundingMode));
                     // subCategory.setAttribute("taxAmount",
                     // round(subCatInvoiceAgregate.getAmountTax(), rounding));
 
@@ -1926,7 +1942,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     private void addDiscounts(Invoice invoice, Document doc, Element parent, boolean isVirtual) {
 
-        int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+        int rounding = getProviderRounding();
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
         Element discounts = doc.createElement("discounts");
 
         parent.appendChild(discounts);
@@ -1946,29 +1963,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             discount.setAttribute("discountPlanCode", subCategoryInvoiceAgregate.getDiscountPlanCode());
             discount.setAttribute("discountPlanItemCode", subCategoryInvoiceAgregate.getDiscountPlanItemCode());
             discount.setAttribute("invoiceSubCategoryCode", subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode());
-            discount.setAttribute("discountAmountWithoutTax", round(subCategoryInvoiceAgregate.getAmountWithoutTax(), rounding) + "");
-            discount.setAttribute("discountPercent", round(subCategoryInvoiceAgregate.getDiscountPercent(), rounding) + "");
+            discount.setAttribute("discountAmountWithoutTax", roundToString(subCategoryInvoiceAgregate.getAmountWithoutTax(), rounding, roundingMode) + "");
+            discount.setAttribute("discountPercent", roundToString(subCategoryInvoiceAgregate.getDiscountPercent(), rounding, roundingMode) + "");
 
             discounts.appendChild(discount);
 
         }
 
-    }
-
-    /**
-     * @param amount amount needs to be rounded
-     * @param scale mode of scale
-     * @return string represents the amount.
-     */
-    private String round(BigDecimal amount, Integer scale) {
-        if (amount == null) {
-            amount = BigDecimal.ZERO;
-        }
-        if (scale == null) {
-            scale = 2;
-        }
-        amount = amount.setScale(scale, RoundingMode.HALF_UP);
-        return amount.toPlainString();
     }
 
     /**

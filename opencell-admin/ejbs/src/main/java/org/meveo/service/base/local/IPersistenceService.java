@@ -268,4 +268,11 @@ public interface IPersistenceService<E extends IEntity> {
 
     String findReferencedByEntities(Class<E> clazz, Long id);
     
+    /**
+     * Removes an entity with a given class and id. 
+     * 
+     * @param parentClass Class of the entity
+     * @param parentId id of the entity
+     */
+    void remove(@SuppressWarnings("rawtypes") Class parentClass, Object parentId);
 }

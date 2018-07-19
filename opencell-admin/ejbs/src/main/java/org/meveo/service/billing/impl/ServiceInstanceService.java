@@ -50,6 +50,7 @@ import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.service.ServiceModelScriptService;
@@ -60,7 +61,8 @@ import org.meveo.service.script.service.ServiceModelScriptService;
  * @author Edward P. Legaspi
  * @author anasseh
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -105,6 +107,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private OrderHistoryService orderHistoryService;
+    
+    @Inject
+    private  RecurringChargeTemplateService recurringChargeTemplateService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -414,7 +419,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         // activate recurring charges
-
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
             // application of subscription prorata
@@ -426,10 +430,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             
             walletOperationService.initializeAndApplyFirstRecuringCharge(recurringChargeInstance);
 
-            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
-                serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
-            
-            log.debug("Rated {} missing periods during service activation for recurring charge instance {}", ratingStatus.getNbRating(), recurringChargeInstance.getId());
+            RecurringChargeInstance activeRecurringChargeInstance = recurringChargeInstanceService.retrieveIfNotManaged(recurringChargeInstance);
+            Long chargeInstanceId = recurringChargeInstance.getId();
+            if (walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+                log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
+                RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId,
+                    serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
+                
+                log.debug("Rated {} missing periods during service activation for recurring charge instance {}", ratingStatus.getNbRating(), recurringChargeInstance.getId());
+            }
         }
         
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
@@ -512,7 +521,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
             Date storedNextChargeDate = recurringChargeInstance.getNextChargeDate();
 
-            if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null && !recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
+            boolean isApplyInAdvance = (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()  == null) ? false : recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance();
+            if(!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
+                isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), serviceInstance, recurringChargeInstance.getRecurringChargeTemplate()); 
+            }
+            if (!isApplyInAdvance) {
                 nextChargeDate = recurringChargeInstance.getChargeDate();
             }
 
@@ -818,4 +831,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return ids;
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<ServiceInstance> findBySubscription(Subscription s) {
+		QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "si");
+		qb.addCriterionEntity("subscription", s);
+
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
 }

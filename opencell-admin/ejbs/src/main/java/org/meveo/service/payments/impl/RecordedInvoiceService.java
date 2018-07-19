@@ -21,9 +21,13 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -32,7 +36,10 @@ import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -41,8 +48,12 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.RecordedInvoiceCatAgregate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.InvoiceAgregateService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
@@ -53,6 +64,12 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
+
+    @Inject
+    private InvoiceAgregateService invoiceAgregateService;
+
+    @Inject
+    private OCCTemplateService occTemplateService;
 
     /**
      * @param recordedInvoiceId recored invoice id
@@ -175,6 +192,63 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     }
 
     /**
+     * @param expression EL expression
+     * @param invoice invoice
+     * @param billingRun billingRun
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    public String evaluateStringExpression(String expression, Invoice invoice, BillingRun billingRun) throws BusinessException {
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, invoice, billingRun);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
+        }
+        return result;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param invoice invoice
+     * @param billingRun billingRun
+     * @return userMap userMap
+     */
+    private Map<Object, Object> constructElContext(String expression, Invoice invoice, BillingRun billingRun) {
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        BillingAccount billingAccount = invoice.getBillingAccount();
+
+        if (expression.indexOf("invoice") >= 0) {
+            userMap.put("invoice", invoice);
+        }
+        if (expression.indexOf("br") >= 0) {
+            userMap.put("br", billingRun);
+        }
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", billingAccount);
+        }
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount.getCustomerAccount());
+        }
+        if (expression.indexOf("c") >= 0) {
+            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
+        }
+        if (expression.indexOf("prov") >= 0) {
+            userMap.put("prov", appProvider);
+        }
+
+        return userMap;
+    }
+
+    /**
      * @param invoice invoice used to generate
      * @throws InvoiceExistException invoice exist exception
      * @throws ImportInvoiceException import invoice exception
@@ -182,39 +256,106 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        CustomerAccount customerAccount = null;
-        RecordedInvoice recordedInvoice = new RecordedInvoice();
-        BillingAccount billingAccount = invoice.getBillingAccount();
+        List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
+        List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<RecordedInvoiceCatAgregate>();
 
-        if (isRecordedInvoiceExist(invoice.getInvoiceNumber())) {
+        BigDecimal amountWithoutTaxForRecordedIncoice = invoice.getAmountWithoutTax();
+        BigDecimal amountWithTaxForRecordedIncoice = invoice.getAmountWithTax();
+        BigDecimal amountTaxForRecordedIncoice = invoice.getAmountTax();
+
+        for (CategoryInvoiceAgregate catAgregate : cats) {
+            if (catAgregate.getInvoiceCategory().getOccTemplate() != null) {
+                BigDecimal tax = BigDecimal.ZERO, ttc = BigDecimal.ZERO;
+                for (SubCategoryInvoiceAgregate sub : catAgregate.getSubCategoryInvoiceAgregates()) {
+                    tax = tax.add(sub.getAmountTax());
+                    ttc = ttc.add(sub.getAmountWithTax());
+                }
+                RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(catAgregate.getAmountWithoutTax(), ttc, tax, null, invoice,
+                    catAgregate.getInvoiceCategory().getOccTemplate(), false);
+                listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
+                amountWithoutTaxForRecordedIncoice = amountWithoutTaxForRecordedIncoice.subtract(catAgregate.getAmountWithoutTax());
+                amountWithTaxForRecordedIncoice = amountWithTaxForRecordedIncoice.subtract(ttc);
+                amountTaxForRecordedIncoice = amountTaxForRecordedIncoice.subtract(tax);
+            }
+        }
+
+        OCCTemplate occTemplate = null;
+        if (invoice.getNetToPay().compareTo(BigDecimal.ZERO) < 0) {
+            String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
+            if (!StringUtils.isBlank(occTemplateCode)) {
+                occTemplate = occTemplateService.findByCode(occTemplateCode);
+            }
+
+            if(occTemplate == null) {
+                occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+            }
+
+            if (occTemplate == null) {
+                throw new ImportInvoiceException("Cant find negative OccTemplate");
+            }
+        } else {
+            String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
+            if (!StringUtils.isBlank(occTemplateCode)) {
+                occTemplate = occTemplateService.findByCode(occTemplateCode);
+            }
+
+            if(occTemplate == null) {
+                occTemplate = invoice.getInvoiceType().getOccTemplate();
+            }
+            
+            if (occTemplate == null) {
+                throw new ImportInvoiceException("Cant find OccTemplate");
+            }
+        }
+
+        RecordedInvoice recordedInvoice = createRecordedInvoice(amountWithoutTaxForRecordedIncoice, amountWithTaxForRecordedIncoice, amountTaxForRecordedIncoice,
+            invoice.getNetToPay(), invoice, occTemplate, true);
+        create(recordedInvoice);
+
+        for (RecordedInvoiceCatAgregate recordedInvoiceCatAgregate : listRecordedInvoiceCatAgregate) {
+            recordedInvoiceCatAgregate.setRecordedInvoice(recordedInvoice);
+            create(recordedInvoiceCatAgregate);
+        }
+        invoice.setRecordedInvoice(recordedInvoice);
+    }
+
+    private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
+            OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
+
+        if (isRecordedInvoiceExist((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber())) {
             throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
         }
 
+        CustomerAccount customerAccount = null;
+        T recordedInvoice = null;
+        BillingAccount billingAccount = invoice.getBillingAccount();
+
+        if (isRecordedIvoince) {
+            recordedInvoice = (T) new RecordedInvoice();
+            recordedInvoice.setNetToPay(netToPay);
+
+            List<String> orderNums = new ArrayList<String>();
+            if (invoice.getOrders() != null) {
+                for (Order order : invoice.getOrders()) {
+                    if (order != null) {
+                        orderNums.add(order.getOrderNumber());
+                    }
+                }
+                recordedInvoice.setOrderNumber(StringUtils.concatenate("|", orderNums));
+            }
+        } else {
+            recordedInvoice = (T) new RecordedInvoiceCatAgregate();
+        }
+        recordedInvoice.setReference((isRecordedIvoince ? "" : "IC_") + invoice.getInvoiceNumber());
         try {
-            customerAccount = invoice.getBillingAccount().getCustomerAccount();
+            customerAccount = billingAccount.getCustomerAccount();
             recordedInvoice.setCustomerAccount(customerAccount);
         } catch (Exception e) {
             log.error("error while getting customer account ", e);
             throw new ImportInvoiceException("Cant find customerAccount");
         }
-        if (invoice.getNetToPay() == null) {
-            throw new ImportInvoiceException("Net to pay is null");
-        }
-        if (invoice.getInvoiceType() == null) {
-            throw new ImportInvoiceException("Invoice type is null");
-        }
 
-        OCCTemplate occTemplate = invoice.getInvoiceType().getOccTemplate();
-        if (occTemplate == null) {
-            throw new ImportInvoiceException("Cant find OccTemplate");
-        }
-        BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
-        BigDecimal amountTax = invoice.getAmountTax();
-        BigDecimal amountWithTax = invoice.getAmountWithTax();
-        BigDecimal netToPay = invoice.getNetToPay();
-
-        if (netToPay.compareTo(BigDecimal.ZERO) < 0) {
-            occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+        if (netToPay != null && netToPay.compareTo(BigDecimal.ZERO) < 0) {
             if (occTemplate == null) {
                 throw new ImportInvoiceException("Cant find negative OccTemplate");
             }
@@ -230,7 +371,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             }
         }
 
-        recordedInvoice.setReference(invoice.getInvoiceNumber());
         recordedInvoice.setAccountingCode(occTemplate.getAccountingCode());
         recordedInvoice.setOccCode(occTemplate.getCode());
         recordedInvoice.setOccDescription(occTemplate.getDescription());
@@ -243,16 +383,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         recordedInvoice.setAmountWithoutTax(amountWithoutTax);
         recordedInvoice.setTaxAmount(amountTax);
-        recordedInvoice.setNetToPay(invoice.getNetToPay());
-        List<String> orderNums = new ArrayList<String>();
-        if (invoice.getOrders() != null) {
-            for (Order order : invoice.getOrders()) {
-                if(order != null) {
-                    orderNums.add(order.getOrderNumber());
-                }
-            }
-            recordedInvoice.setOrderNumber(StringUtils.concatenate("|", orderNums));
-        }
+
         try {
             recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
         } catch (Exception e) {
@@ -270,7 +401,6 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
-
             recordedInvoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
             BankCoordinates bankCoordiates = null;
             if (preferedPaymentMethod instanceof DDPaymentMethod) {
@@ -288,7 +418,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             }
         }
         recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-        create(recordedInvoice);
-        invoice.setRecordedInvoice(recordedInvoice);
+
+        return recordedInvoice;
     }
 }

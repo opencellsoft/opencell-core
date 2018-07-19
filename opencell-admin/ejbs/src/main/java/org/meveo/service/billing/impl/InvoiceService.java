@@ -18,6 +18,9 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
+import static org.meveo.commons.utils.NumberUtils.round;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,6 +74,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -92,6 +96,7 @@ import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -101,6 +106,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -123,7 +129,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.1 
  */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
@@ -184,6 +190,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     
     @Inject
     private BillingRunService billingRunService;
+    
+    @Inject
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     private String PDF_DIR_NAME = "pdf";
 
@@ -464,8 +473,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice createAgregatesAndInvoice(Long billingAccountId, Long billingRunId, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
 
-        log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
-            billingAccountId, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
+        log.debug("createAgregatesAndInvoice billingAccountId={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
+            billingAccountId, billingRunId, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
 
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
@@ -992,8 +1001,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public void recomputeAggregates(Invoice invoice) throws BusinessException {
+        
         boolean entreprise = appProvider.isEntreprise();
+        // #3036 : using invoice rounding & rounding mode instead of the rating rounding
+        int invoiceRounding = appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding();
+        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+        
+        
         BillingAccount billingAccount = billingAccountService.findById(invoice.getBillingAccount().getId());
         boolean exoneratedFromTaxes = billingAccountService.isExonerated(billingAccount);
         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
@@ -1028,7 +1044,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax().multiply(taxInvoiceAgregate.getTaxPercent()).divide(new BigDecimal("100")));
             // then round the tax
-            taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+            taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, getRoundingMode(roundingMode) ));
 
             taxInvoiceAgregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithoutTax().add(taxInvoiceAgregate.getAmountTax()));
         }
@@ -1045,8 +1061,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
             }
 
-            subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax() != null
-                    ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP) : BigDecimal.ZERO);
+            BigDecimal amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
+            subCategoryInvoiceAgregate.setAmountWithoutTax(amountWithoutTax != null ? amountWithoutTax.setScale(rounding, getRoundingMode(roundingMode)) : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -1059,12 +1075,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
                 CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-                invoice.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP));
+                invoice.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax().setScale(invoiceRounding, getRoundingMode(invoiceRoundingMode) ));
             }
 
             if (invoiceAgregate instanceof TaxInvoiceAgregate) {
                 TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
-                invoice.addAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+                invoice.addAmountTax(taxInvoiceAgregate.getAmountTax().setScale(invoiceRounding, getRoundingMode(invoiceRoundingMode)));
             }
         }
 
@@ -1076,37 +1092,37 @@ public class InvoiceService extends PersistenceService<Invoice> {
             BigDecimal delta = nonEnterprisePriceWithTax.subtract(invoice.getAmountWithTax());
             log.debug("delta={}-{}={}", nonEnterprisePriceWithTax, invoice.getAmountWithTax(), delta);
 
-            biggestSubCat.setAmountWithoutTax(biggestSubCat.getAmountWithoutTax().add(delta).setScale(rounding, RoundingMode.HALF_UP));
+            biggestSubCat.setAmountWithoutTax(biggestSubCat.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode) ));
             for (Tax tax : biggestSubCat.getSubCategoryTaxes()) {
                 TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(tax.getId());
                 log.debug("tax3 ht={}", invoiceAgregateT.getAmountWithoutTax());
 
-                invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(rounding, RoundingMode.HALF_UP));
+                invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode) ));
                 log.debug("tax4 ht={}", invoiceAgregateT.getAmountWithoutTax());
 
             }
 
             CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat.getCategoryInvoiceAgregate();
-            invoiceAgregateR.setAmountWithoutTax(invoiceAgregateR.getAmountWithoutTax().add(delta).setScale(rounding, RoundingMode.HALF_UP));
+            invoiceAgregateR.setAmountWithoutTax(invoiceAgregateR.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode) ));
 
-            invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(rounding, RoundingMode.HALF_UP));
-            invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(rounding, RoundingMode.HALF_UP));
+            invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(invoiceRounding, getRoundingMode(invoiceRoundingMode) ));
+            invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(invoiceRounding, getRoundingMode(invoiceRoundingMode) ));
         }
 
         // calculate discounts here
         // no need to create discount aggregates we will use the one from
         // adjustedInvoice
 
-        Object[] object = invoiceAgregateService.findTotalAmountsForDiscountAggregates(getLinkedInvoice(invoice));
-        BigDecimal discountAmountWithoutTax = (BigDecimal) object[0];
-        BigDecimal discountAmountTax = (BigDecimal) object[1];
-        BigDecimal discountAmountWithTax = (BigDecimal) object[2];
+        Object[] discountAmount = invoiceAgregateService.findTotalAmountsForDiscountAggregates(getLinkedInvoice(invoice));
+        BigDecimal discountAmountWithoutTax = (BigDecimal) discountAmount[0];
+        BigDecimal discountAmountTax = (BigDecimal) discountAmount[1];
+        BigDecimal discountAmountWithTax = (BigDecimal) discountAmount[2];
 
-        log.debug("discountAmountWithoutTax= {}, discountAmountTax={}, discountAmountWithTax={}", object[0], object[1], object[2]);
+        log.debug("discountAmountWithoutTax= {}, discountAmountTax={}, discountAmountWithTax={}", discountAmount[0], discountAmount[1], discountAmount[2]);
 
-        invoice.addAmountWithoutTax(discountAmountWithoutTax);
-        invoice.addAmountTax(discountAmountTax);
-        invoice.addAmountWithTax(discountAmountWithTax);
+        invoice.addAmountWithoutTax( round(discountAmountWithoutTax, invoiceRounding, invoiceRoundingMode) );
+        invoice.addAmountTax( round(discountAmountTax, invoiceRounding, invoiceRoundingMode) );
+        invoice.addAmountWithTax( round(discountAmountWithTax, invoiceRounding, invoiceRoundingMode) );
 
         // compute net to pay
         BigDecimal netToPay = BigDecimal.ZERO;
@@ -1118,7 +1134,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = invoice.getAmountWithTax().add(balance);
+            netToPay = invoice.getAmountWithTax().add( round(balance, invoiceRounding, invoiceRoundingMode) );
         }
 
         invoice.setNetToPay(netToPay);
@@ -1130,7 +1146,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice used to recompute
      */
     public void recomputeSubCategoryAggregate(Invoice invoice) {
+        
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
 
         List<TaxInvoiceAgregate> taxInvoiceAgregates = new ArrayList<TaxInvoiceAgregate>();
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
@@ -1155,7 +1173,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountWithoutTax().multiply(taxInvoiceAgregate.getTaxPercent()).divide(new BigDecimal("100")));
             // then round the tax
-            taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+            taxInvoiceAgregate.setAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, getRoundingMode(roundingMode)));
 
             taxInvoiceAgregate.setAmountWithTax(taxInvoiceAgregate.getAmountWithoutTax().add(taxInvoiceAgregate.getAmountTax()));
         }
@@ -1548,27 +1566,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return null;
     }
+    
 
     /**
-     * Create RatedTransaction and generate invoice for the billingAccount.
+     * Create RatedTransaction and generate invoice for the billingAccount. 
      *
-     * @param billingAccount billing account
-     * @param invoiceDate date of invoice
-     * @param firstTransactionDate first transaction date.
-     * @param lastTransactionDate date of last transaction
-     * @param ratedTxFilter rated transaction filter
-     * @param orderNumber Order number associated to subscription
-     * @param isDraft Is it a draft
-     * @param produceXml Produce invoice XML file
-     * @param producePdf Produce invoice PDF file
-     * @param generateAO Generate AOs
-     * @return invoice
-     * @throws BusinessException business exception
-     * @throws InvoiceExistException invoice exists exception
-     * @throws ImportInvoiceException import invoice exception
+     * @param billingAccount the billing account
+     * @param generateInvoiceRequestDto the generate invoice request dto
+     * @param ratedTxFilter the rated tx filter
+     * @param isDraft the is draft
+     * @return the invoice
+     * @throws BusinessException the business exception
+     * @throws InvoiceExistException the invoice exist exception
+     * @throws ImportInvoiceException the import invoice exception
      */
-    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
-            boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
+    public Invoice generateInvoice(BillingAccount billingAccount, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
+            throws BusinessException, InvoiceExistException, ImportInvoiceException {
+
+        Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
+        Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
+        Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        String orderNumber = generateInvoiceRequestDto.getOrderNumber();
 
         if (StringUtils.isBlank(billingAccount)) {
             throw new BusinessException("billingAccount is null");
@@ -1611,23 +1629,75 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft);
         assignInvoiceNumber(invoice);
 
+        // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         commit();
+        return invoice;
+    }
 
+    /**
+     * Produce files and AO.
+     *
+     * @param produceXml the produce xml
+     * @param producePdf the produce pdf
+     * @param generateAO the generate AO
+     * @param invoice the invoice
+     * @throws BusinessException the business exception
+     * @throws InvoiceExistException the invoice exist exception
+     * @throws ImportInvoiceException the import invoice exception
+     */
+    public void produceFilesAndAO(boolean produceXml, boolean producePdf, boolean generateAO, Invoice invoice, boolean isDraft)
+            throws BusinessException, InvoiceExistException, ImportInvoiceException {
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
-
         if (producePdf) {
             produceInvoicePdfNoUpdate(invoice);
         }
-
         if (generateAO && !isDraft) {
             recordedInvoiceService.generateRecordedInvoice(invoice);
         }
+        update(invoice);
+    }
 
-        invoice = update(invoice);
+    /**
+     * Create RatedTransaction and generate invoice for the billingAccount.
+     * 
+     * @param billingAccount billing account
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate first transaction date.
+     * @param lastTransactionDate date of last transaction
+     * @param ratedTxFilter rated transaction filter
+     * @param orderNumber Order number associated to subscription
+     * @param isDraft Is it a draft
+     * @param produceXml Produce invoice XML file
+     * @param producePdf Produce invoice PDF file
+     * @param generateAO Generate AOs
+     * @return invoice
+     * @throws BusinessException business exception
+     * @throws ImportInvoiceException import invoice exception
+     * @throws InvoiceExistException invoice exists exception
+     * 
+     * @Deprecated : - It contains a lot of args.
+     *               - It breaks the 'Separation of responsibilities' pattern by creating the Invoice , creating the PDF/XML file & producing the AOs !!
+     *               => use generateInvoice(BillingAccount, GenerateInvoiceRequestDto) + produceFilesAndAO(boolean, boolean, boolean, Invoice) instead.
+     */
+    @Deprecated
+    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
+            boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
+        GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
+        generateInvoiceRequestDto.setGenerateXML(produceXml);
+        generateInvoiceRequestDto.setGeneratePDF(producePdf);
+        generateInvoiceRequestDto.setGenerateAO(generateAO);
+        generateInvoiceRequestDto.setInvoicingDate(invoiceDate);
+        generateInvoiceRequestDto.setFirstTransactionDate(firstTransactionDate);
+        generateInvoiceRequestDto.setLastTransactionDate(lastTransactionDate);
+        generateInvoiceRequestDto.setOrderNumber(orderNumber);
+        
+        Invoice invoice = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
+        this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+        
         return invoice;
     }
 

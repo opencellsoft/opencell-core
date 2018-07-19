@@ -10,7 +10,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
-import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
+import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.AccountingWs;
 
@@ -78,8 +78,8 @@ public class AccountingWsImpl extends BaseWs implements AccountingWs {
     }
 
     @Override
-    public AccountingCodeListResponse listAccountingCode(PagingAndFiltering pagingAndFiltering) {
-        AccountingCodeListResponse result = new AccountingCodeListResponse();
+    public AccountingCodeListResponseDto listAccountingCode(PagingAndFiltering pagingAndFiltering) {
+        AccountingCodeListResponseDto result = new AccountingCodeListResponseDto();
 
         try {
             return accountingCodeApi.list(pagingAndFiltering);

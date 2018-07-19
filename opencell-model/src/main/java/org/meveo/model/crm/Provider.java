@@ -61,6 +61,7 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -69,7 +70,8 @@ import org.meveo.model.shared.InterBankTitle;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Entity
 @ObservableEntity
@@ -145,8 +147,23 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Enumerated(EnumType.STRING)
     private List<PaymentMethodEnum> paymentMethods = new ArrayList<PaymentMethodEnum>();
 
+    /** The Rating rounding. */
     @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
+    
+    /** The Rating rounding mode*/
+    @Column (name = "rounding_mode")
+    @Enumerated(EnumType.STRING)
+    private RoundingModeEnum roundingMode; 
+
+    /** The invoice rounding. */
+    @Column(name = "invoice_rounding", columnDefinition = "int DEFAULT 2")
+    private Integer invoiceRounding = 2;
+    
+    /** The invoice rounding mode. */
+    @Column (name = "invoice_rounding_mode")
+    @Enumerated(EnumType.STRING)
+    private RoundingModeEnum invoiceRoundingMode; 
 
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
@@ -498,5 +515,53 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    /**
+     * @return the roundingMode
+     */
+    public RoundingModeEnum getRoundingMode() {
+        return roundingMode;
+    }
+
+    /**
+     * @param roundingMode the roundingMode to set
+     */
+    public void setRoundingMode(RoundingModeEnum roundingMode) {
+        this.roundingMode = roundingMode;
+    }
+
+    /**
+     * @return the invoiceRounding
+     */
+    public Integer getInvoiceRounding() {
+        if (this.invoiceRounding == null) {
+            this.invoiceRounding = this.rounding;
+        }
+        return invoiceRounding;
+    }
+
+    /**
+     * @return the invoiceRoundingMode
+     */
+    public RoundingModeEnum getInvoiceRoundingMode() {
+        if (this.invoiceRoundingMode == null) {
+            this.invoiceRoundingMode = this.roundingMode;
+        }
+        return invoiceRoundingMode;
+    }
+
+    /**
+     * @param invoiceRounding the invoiceRounding to set
+     */
+    public void setInvoiceRounding(Integer invoiceRounding) {
+        this.invoiceRounding = invoiceRounding;
+    }
+
+    /**
+     * @param invoiceRoundingMode the invoiceRoundingMode to set
+     */
+    public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
+        this.invoiceRoundingMode = invoiceRoundingMode;
     }
 }

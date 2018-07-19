@@ -1,5 +1,9 @@
 package org.meveo.api.dto.response.billing;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.BaseResponse;
 
@@ -10,6 +14,8 @@ import org.meveo.api.dto.response.BaseResponse;
  * @version 26 Feb 2018
  * @lastModifiedVersion 5.0
  */
+@XmlRootElement(name = "AccountingCodeGetResponse")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class AccountingCodeGetResponseDto extends BaseResponse {
 
     /** The Constant serialVersionUID. */
