@@ -110,7 +110,7 @@ public class ServiceSingleton {
                 }
                 previousInvoiceNb = sequence.getCurrentInvoiceNb();
                 sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
-                invoiceType = invoiceTypeService.update(invoiceType);
+                //invoiceType = invoiceTypeService.update(invoiceType);
             } else {
                 Sequence sequenceGlobal = new Sequence();
                 sequenceGlobal.setPrefixEL(sequence.getPrefixEL());
