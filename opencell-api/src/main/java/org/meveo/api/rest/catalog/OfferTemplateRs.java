@@ -71,8 +71,8 @@ public interface OfferTemplateRs extends IBaseRs {
     @GET
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
-            @QueryParam("loadOfferServiceTemplate") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") boolean loadOfferProductTemplate,
-            @QueryParam("loadServiceChargeTemplate") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") boolean loadProductChargeTemplate);
+            @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
+            @QueryParam("loadServiceChargeTemplate") @DefaultValue("false") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") @DefaultValue("false") boolean loadProductChargeTemplate);
 
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
