@@ -123,7 +123,8 @@ import org.xml.sax.SAXException;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.1
  **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
@@ -1249,354 +1250,22 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             expiration.appendChild(expirationTxt);
         }
     }
-
+    
     /**
-     * @param userAccount user account
-     * @param invoice invoice which create need to xml
-     * @param doc Document
-     * @param invoiceTag invoice tag
-     * @param parent parent node
-     * @param generateSubCat true/false
-     * @param enterprise true/false
-     * @param isVirtual true/false
-     * @param invoiceAgregates agregates of invoice
-     * @param hasInvoiceAgregates true/false
-     * @param allServiceInstances list of service instances
+     * getMinAmountRTCategory
+     * 
+     * @param doc dom document
      * @param ratedTransactions rated transactions
-     * @param subCategoryInvoiceAgregates list of sub category invoice agregates
+     * @param enterprise true/false
+     * @param rounding rounding
+     * @param roundingMode rounding mode enum
+     * @return category element
      * @throws BusinessException business exception
      */
-    public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag, Element parent, boolean generateSubCat, boolean enterprise,
-            boolean isVirtual, List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAgregates, List<ServiceInstance> allServiceInstances,
-            List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
-        long startDate = System.currentTimeMillis();
-        ParamBean paramBean = paramBeanFactory.getInstance();
-
-        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
-        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
-
-        String languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-
-        Element categories = doc.createElement("categories");
-        parent.appendChild(categories);
-        boolean entreprise = appProvider.isEntreprise();
-        int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
-
-        List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
-
-        if (hasInvoiceAgregates) {
-            for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-                if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                    CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-                    categoryInvoiceAgregates.add(categoryInvoiceAgregate);
-                }
-            }
-        }
-
-        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
-            public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
-                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null
-                        && c1.getInvoiceCategory().getSortIndex() != null) {
-                    return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
-                }
-                return 0;
-            }
-        });
-
-        for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
-            InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
-            String invoiceCategoryLabel = categoryInvoiceAgregate.getDescription();
-            Element category = doc.createElement("category");
-            category.setAttribute("label", (invoiceCategoryLabel != null) ? invoiceCategoryLabel : "");
-            category.setAttribute("code", invoiceCategory != null && invoiceCategory.getCode() != null ? invoiceCategory.getCode() : "");
-            categories.appendChild(category);
-            Element amountWithoutTax = doc.createElement("amountWithoutTax");
-            Text amountWithoutTaxTxt = doc.createTextNode(round(categoryInvoiceAgregate.getAmountWithoutTax(), rounding));
-            amountWithoutTax.appendChild(amountWithoutTaxTxt);
-            category.appendChild(amountWithoutTax);
-            addCustomFields(invoiceCategory, doc, category);
-
-            // if (!entreprise) {
-            // Element amountWithTax = doc.createElement("amountWithTax");
-            // Text amountWithTaxTxt =
-            // doc.createTextNode(round(categoryInvoiceAgregate.getAmountWithTax(),
-            // rounding));
-            // amountWithTax.appendChild(amountWithTaxTxt);
-            // category.appendChild(amountWithTax);
-            // }
-
-            if (isVirtual) {
-                Set<SubCategoryInvoiceAgregate> tmpSubCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
-                subCategoryInvoiceAgregates = new ArrayList<>();
-                for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : tmpSubCategoryInvoiceAgregates) {
-                    subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
-                }
-            }
-
-            if (generateSubCat) {
-                Element subCategories = doc.createElement("subCategories");
-                category.appendChild(subCategories);
-                // List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates =
-                // userAccountService.listByInvoice(invoice);//categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
-                for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
-                    CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
-                    if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId() != null && categoryInvoiceAgregate.getId() != null
-                            && categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId().longValue()
-                            || (categoryInvoiceAgregate2 == null || categoryInvoiceAgregate == null)) {
-                        continue;
-                    }
-
-                    InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
-                    // List<RatedTransaction> transactions = null;
-                    WalletInstance wallet = subCatInvoiceAgregate.getWallet();
-
-                    if (isVirtual) {
-                        ratedTransactions = invoice.getRatedTransactionsForCategory(wallet, invoiceSubCat);
-                    } /*
-                       * else { transactions = ratedTransactionService.getRatedTransactionsForXmlInvoice( wallet, invoice, invoiceSubCat); }
-                       */
-
-                    String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
-                    Element subCategory = doc.createElement("subCategory");
-                    subCategories.appendChild(subCategory);
-                    subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
-                    subCategory.setAttribute("code", invoiceSubCat.getCode());
-                    subCategory.setAttribute("amountWithoutTax", round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
-
-                    if (!entreprise) {
-                        subCategory.setAttribute("amountWithTax", round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
-                    }
-
-                    String taxesCode = "";
-                    String taxesPercent = "";
-                    String sep = "";
-                    for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {
-                        taxesCode = taxesCode + sep + tax.getCode();
-                        taxesPercent = taxesPercent + sep + round(tax.getPercent(), rounding);
-                        sep = ";";
-                    }
-                    subCategory.setAttribute("taxCode", taxesCode);
-                    subCategory.setAttribute("taxPercent", taxesPercent);
-
-                    for (RatedTransaction ratedTransaction : ratedTransactions) {
-                        if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
-                                && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
-                            continue;
-                        }
-                        if (!isVirtual) {
-                            getEntityManager().refresh(ratedTransaction);
-                        }
-                        BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax() : ratedTransaction.getAmountWithoutTax();
-                        if (transactionAmount == null) {
-                            transactionAmount = BigDecimal.ZERO;
-                        }
-
-                        Element line = doc.createElement("line");
-                        String code = "", description = "";
-                        Date periodStartDate = null;
-                        Date periodEndDate = null;
-                        WalletOperation walletOperation = ratedTransaction.getWalletOperation();
-                        code = ratedTransaction.getCode();
-                        description = ratedTransaction.getDescription();
-
-                        if (ratedTransaction.getWalletOperationId() != null) {
-                            walletOperation = getEntityManager().find(WalletOperation.class, ratedTransaction.getWalletOperationId());
-                        }
-                        if (walletOperation != null) {
-                            if (StringUtils.isBlank(code)) {
-                                code = walletOperation.getCode();
-                            }
-                            if (StringUtils.isBlank(description)) {
-                                description = walletOperation.getDescription();
-                            }
-                            ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-                            if (appProvider.getInvoiceConfiguration().getDisplayChargesPeriods()) {
-
-                                if (!isVirtual) {
-                                    chargeInstance = (ChargeInstance) chargeInstanceService.findById(chargeInstance.getId(), false);
-                                }
-
-                                ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                                // get periodStartDate and periodEndDate for recurrents
-                                periodStartDate = walletOperation.getStartDate();
-                                periodEndDate = walletOperation.getEndDate();
-                                // get periodStartDate and periodEndDate for usages
-                                // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
-                                Date operationDate = walletOperation.getOperationDate();
-                                if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
-                                    CounterPeriod counterPeriod = null;
-                                    CounterInstance counter = walletOperation.getCounter();
-                                    if (!isVirtual) {
-                                        counterPeriod = counterPeriodService.getCounterPeriod(counter, operationDate);
-                                    } else {
-                                        counterPeriod = counter.getCounterPeriod(operationDate);
-                                    }
-                                    if (counterPeriod != null) {
-                                        periodStartDate = counterPeriod.getPeriodStartDate();
-                                        periodEndDate = counterPeriod.getPeriodEndDate();
-                                    }
-                                }
-                                line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
-                                line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
-                            }
-                        }
-
-                        line.setAttribute("code", code != null ? code : "");
-
-                        if (ratedTransaction.getParameter1() != null) {
-                            line.setAttribute("param1", ratedTransaction.getParameter1());
-                        }
-                        if (ratedTransaction.getParameter2() != null) {
-                            line.setAttribute("param2", ratedTransaction.getParameter2());
-                        }
-                        if (ratedTransaction.getParameter3() != null) {
-                            line.setAttribute("param3", ratedTransaction.getParameter3());
-                        }
-                        if (ratedTransaction.getParameterExtra() != null) {
-                            Element paramExtra = doc.createElement("paramExtra");
-                            paramExtra.appendChild(doc.createTextNode(ratedTransaction.getParameterExtra()));
-                            line.appendChild(paramExtra);
-                        }
-
-                        if (ratedTransaction.getPriceplan() != null) {
-                            Element pricePlan = doc.createElement("pricePlan");
-                            pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
-
-                            String translationKey = "PP_" + ratedTransaction.getPriceplan().getCode() + "_" + languageCode;
-                            String descTranslated = descriptionMap.get(translationKey);
-                            if (descTranslated == null) {
-                                descTranslated = ratedTransaction.getPriceplan().getDescriptionOrCode();
-                                if (ratedTransaction.getPriceplan().getDescriptionI18n() != null
-                                        && ratedTransaction.getPriceplan().getDescriptionI18n().get(languageCode) != null) {
-                                    descTranslated = ratedTransaction.getPriceplan().getDescriptionI18n().get(languageCode);
-                                }
-                                descriptionMap.put(translationKey, descTranslated);
-                            }
-
-                            pricePlan.setAttribute("description", descTranslated);
-
-                            line.appendChild(pricePlan);
-                            if (!priceplanIds.contains(ratedTransaction.getPriceplan().getId())) {
-                                addPricePlans(ratedTransaction.getPriceplan(), doc, invoiceTag);
-                                priceplanIds.add(ratedTransaction.getPriceplan().getId());
-                            }
-                        }
-
-                        Element lebel = doc.createElement("label");
-                        Text lebelTxt = doc.createTextNode(description != null ? description : "");
-
-                        lebel.appendChild(lebelTxt);
-                        line.appendChild(lebel);
-
-                        if (!StringUtils.isBlank(ratedTransaction.getUnityDescription())) {
-                            Element lineUnit = doc.createElement("unit");
-                            Text lineUnitTxt = doc.createTextNode(ratedTransaction.getUnityDescription());
-                            lineUnit.appendChild(lineUnitTxt);
-                            line.appendChild(lineUnit);
-                        }
-                        if (!StringUtils.isBlank(ratedTransaction.getRatingUnitDescription())) {
-                            Element lineRatingUnit = doc.createElement("ratingUnit");
-                            Text lineUnitTxt = doc.createTextNode(ratedTransaction.getRatingUnitDescription());
-                            lineRatingUnit.appendChild(lineUnitTxt);
-                            line.appendChild(lineRatingUnit);
-                        }
-                        Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                        Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
-                        lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
-                        line.appendChild(lineUnitAmountWithoutTax);
-
-                        Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                        Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithoutTax(), rounding));
-                        lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
-                        line.appendChild(lineAmountWithoutTax);
-
-                        if (!enterprise) {
-                            Element lineAmountWithTax = doc.createElement("amountWithTax");
-                            Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(), rounding));
-                            lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-                            line.appendChild(lineAmountWithTax);
-                        }
-
-                        Element quantity = doc.createElement("quantity");
-                        Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
-                        quantity.appendChild(quantityTxt);
-                        line.appendChild(quantity);
-
-                        Element usageDate = doc.createElement("usageDate");
-                        Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(), invoiceDateFormat));
-                        usageDate.appendChild(usageDateTxt);
-                        line.appendChild(usageDate);
-                        EDR edr = ratedTransaction.getEdr();
-
-                        if (appProvider.getInvoiceConfiguration() != null && appProvider.getInvoiceConfiguration().getDisplayEdrs() != null
-                                && appProvider.getInvoiceConfiguration().getDisplayEdrs() && edr != null) {
-                            Element edrInfo = doc.createElement("edr");
-                            edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord() : "");
-                            edrInfo.setAttribute("originBatch", edr.getOriginBatch() != null ? edr.getOriginBatch() : "");
-                            edrInfo.setAttribute("quantity", edr.getQuantity() != null ? edr.getQuantity().toPlainString() : "");
-                            edrInfo.setAttribute("status", String.valueOf(edr.getStatus()) != null ? String.valueOf(edr.getStatus()) : "");
-                            edrInfo.setAttribute("rejectReason", edr.getRejectReason() != null ? edr.getRejectReason() : "");
-                            edrInfo.setAttribute("subscription", edr.getSubscription() != null ? edr.getSubscription().getDescription() : "");
-                            edrInfo.setAttribute("eventDate", DateUtils.formatDateWithPattern(edr.getEventDate(), invoiceDateTimeFormat));
-                            edrInfo.setAttribute("accessCode", edr.getAccessCode() != null ? edr.getAccessCode() : "");
-                            edrInfo.setAttribute("parameter1", edr.getParameter1() != null ? edr.getParameter1() : "");
-                            edrInfo.setAttribute("parameter2", edr.getParameter2() != null ? edr.getParameter2() : "");
-                            edrInfo.setAttribute("parameter3", edr.getParameter3() != null ? edr.getParameter3() : "");
-                            edrInfo.setAttribute("parameter4", edr.getParameter4() != null ? edr.getParameter4() : "");
-                            edrInfo.setAttribute("parameter5", edr.getParameter5() != null ? edr.getParameter5() : "");
-                            edrInfo.setAttribute("parameter6", edr.getParameter6() != null ? edr.getParameter6() : "");
-                            edrInfo.setAttribute("parameter7", edr.getParameter7() != null ? edr.getParameter7() : "");
-                            edrInfo.setAttribute("parameter8", edr.getParameter8() != null ? edr.getParameter8() : "");
-                            edrInfo.setAttribute("parameter9", edr.getParameter9() != null ? edr.getParameter9() : "");
-                            edrInfo.setAttribute("dateParam1", DateUtils.formatDateWithPattern(edr.getDateParam1(), invoiceDateFormat));
-                            edrInfo.setAttribute("dateParam2", DateUtils.formatDateWithPattern(edr.getDateParam2(), invoiceDateTimeFormat));
-                            edrInfo.setAttribute("dateParam3", DateUtils.formatDateWithPattern(edr.getDateParam3(), invoiceDateTimeFormat));
-                            edrInfo.setAttribute("dateParam4", DateUtils.formatDateWithPattern(edr.getDateParam4(), invoiceDateTimeFormat));
-                            edrInfo.setAttribute("dateParam5", DateUtils.formatDateWithPattern(edr.getDateParam5(), invoiceDateTimeFormat));
-                            edrInfo.setAttribute("decimalParam1", edr.getDecimalParam1() != null ? edr.getDecimalParam1().toPlainString() : "");
-                            edrInfo.setAttribute("decimalParam2", edr.getDecimalParam2() != null ? edr.getDecimalParam2().toPlainString() : "");
-                            edrInfo.setAttribute("decimalParam3", edr.getDecimalParam3() != null ? edr.getDecimalParam3().toPlainString() : "");
-                            edrInfo.setAttribute("decimalParam4", edr.getDecimalParam4() != null ? edr.getDecimalParam4().toPlainString() : "");
-                            edrInfo.setAttribute("decimalParam5", edr.getDecimalParam5() != null ? edr.getDecimalParam5().toPlainString() : "");
-                            line.appendChild(edrInfo);
-                        }
-
-                        if (!isVirtual) {
-                            if (walletOperation != null) {
-                                // Retrieve Service Instance
-                                ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-                                ServiceInstance serviceInstance = null;
-                                if (chargeInstance instanceof RecurringChargeInstance) {
-                                    serviceInstance = ((RecurringChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-                                } else if (chargeInstance instanceof UsageChargeInstance) {
-                                    serviceInstance = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-                                } else if (chargeInstance instanceof OneShotChargeInstance) {
-                                    serviceInstance = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
-                                    if (serviceInstance == null) {
-                                        ((OneShotChargeInstance) walletOperation.getChargeInstance()).getTerminationServiceInstance();
-                                    }
-                                }
-
-                                log.debug("Before serviceInstance:" + (System.currentTimeMillis() - startDate));
-
-                                if (serviceInstance != null) {
-                                    addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
-                                }
-
-                                log.debug("After serviceInstance:" + (System.currentTimeMillis() - startDate));
-
-                            }
-                        }
-                        subCategory.appendChild(line);
-                    }
-                    addCustomFields(invoiceSubCat, doc, subCategory);
-                }
-            }
-        }
-
-        // generate invoice line for min amount RT
+    private Element getMinAmountRTCategory(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, final int rounding) throws BusinessException {
+    
+        Element category = null;
         boolean hasMinAmountRT = false;
-        Element subCategories = doc.createElement("subCategories");
         LinkedHashMap<String, Element> subCategoriesMap = new LinkedHashMap<String, Element>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             if (ratedTransaction.getWallet() == null) {
@@ -1644,16 +1313,409 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }   
         }
 
-        for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
-            subCategories.appendChild(entry.getValue());
-        }
-
         if(hasMinAmountRT) {
-            Element category = doc.createElement("category");
+            category = doc.createElement("category");
             category.setAttribute("label", "-");
             category.setAttribute("code", "min_amount");
+            Element subCategories = doc.createElement("subCategories");
+            for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
+                subCategories.appendChild(entry.getValue());
+            }
             category.appendChild(subCategories);
-            categories.appendChild(category);
+        }
+        return category;
+    }
+    
+    /**
+     * isValidCategoryInvoiceAgregate
+     * 
+     * @param userAccount user account
+     * @param categoryInvoiceAgregate category invoice
+     * @throws BusinessException business exception
+     */
+    private boolean isValidCategoryInvoiceAgregate(final UserAccount userAccount, final CategoryInvoiceAgregate categoryInvoiceAgregate)
+            throws BusinessException {
+        boolean isValidCategoryInvoiceAgregate = false;
+        if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getUserAccount() !=null && categoryInvoiceAgregate.getUserAccount().getId() == userAccount.getId()) {
+            isValidCategoryInvoiceAgregate = true;
+        }
+        return isValidCategoryInvoiceAgregate;
+    }
+    
+    /**
+     * @param doc Document
+     * @param parent parent node
+     * @return categories element
+     * @throws BusinessException business exception
+     */
+    private Element createCategoriesElement(Document doc, Element parent) {
+        Element categories = doc.createElement("categories");
+        parent.appendChild(categories);
+        return categories;
+    }
+
+    /**
+     * @param userAccount user account
+     * @param invoice invoice which create need to xml
+     * @param doc Document
+     * @param invoiceTag invoice tag
+     * @param parent parent node
+     * @param generateSubCat true/false
+     * @param enterprise true/false
+     * @param isVirtual true/false
+     * @param invoiceAgregates agregates of invoice
+     * @param hasInvoiceAgregates true/false
+     * @param allServiceInstances list of service instances
+     * @param ratedTransactions rated transactions
+     * @param subCategoryInvoiceAgregates list of sub category invoice agregates
+     * @throws BusinessException business exception
+     */
+    public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag, Element parent, boolean generateSubCat, boolean enterprise,
+            boolean isVirtual, List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAgregates, List<ServiceInstance> allServiceInstances,
+            List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
+        long startDate = System.currentTimeMillis();
+        ParamBean paramBean = paramBeanFactory.getInstance();
+
+        String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
+        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
+
+        String languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+
+        List<Element> categoriesList = new ArrayList<>();
+        boolean entreprise = appProvider.isEntreprise();
+        int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
+
+        List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
+
+        if (hasInvoiceAgregates) {
+            for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
+                if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                    CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+                    categoryInvoiceAgregates.add(categoryInvoiceAgregate);
+                }
+            }
+        }
+
+        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
+            public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
+                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null
+                        && c1.getInvoiceCategory().getSortIndex() != null) {
+                    return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
+                }
+                return 0;
+            }
+        });
+
+        for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
+            
+            if(isValidCategoryInvoiceAgregate(userAccount, categoryInvoiceAgregate)) {
+                InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
+                String invoiceCategoryLabel = categoryInvoiceAgregate.getDescription();
+                Element category = doc.createElement("category");
+                category.setAttribute("label", (invoiceCategoryLabel != null) ? invoiceCategoryLabel : "");
+                category.setAttribute("code", invoiceCategory != null && invoiceCategory.getCode() != null ? invoiceCategory.getCode() : "");
+                categoriesList.add(category);
+                Element amountWithoutTax = doc.createElement("amountWithoutTax");
+                Text amountWithoutTaxTxt = doc.createTextNode(round(categoryInvoiceAgregate.getAmountWithoutTax(), rounding));
+                amountWithoutTax.appendChild(amountWithoutTaxTxt);
+                category.appendChild(amountWithoutTax);
+                addCustomFields(invoiceCategory, doc, category);
+    
+                // if (!entreprise) {
+                // Element amountWithTax = doc.createElement("amountWithTax");
+                // Text amountWithTaxTxt =
+                // doc.createTextNode(round(categoryInvoiceAgregate.getAmountWithTax(),
+                // rounding));
+                // amountWithTax.appendChild(amountWithTaxTxt);
+                // category.appendChild(amountWithTax);
+                // }
+    
+                if (isVirtual) {
+                    Set<SubCategoryInvoiceAgregate> tmpSubCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+                    subCategoryInvoiceAgregates = new ArrayList<>();
+                    for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : tmpSubCategoryInvoiceAgregates) {
+                        subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+                    }
+                }
+    
+                if (generateSubCat) {
+                    Element subCategories = doc.createElement("subCategories");
+                    category.appendChild(subCategories);
+                    // List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates =
+                    // userAccountService.listByInvoice(invoice);//categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+                    for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+                        CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
+                        if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId() != null && categoryInvoiceAgregate.getId() != null
+                                && categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId().longValue()
+                                || (categoryInvoiceAgregate2 == null || categoryInvoiceAgregate == null)) {
+                            continue;
+                        }
+    
+                        InvoiceSubCategory invoiceSubCat = subCatInvoiceAgregate.getInvoiceSubCategory();
+                        // List<RatedTransaction> transactions = null;
+                        WalletInstance wallet = subCatInvoiceAgregate.getWallet();
+    
+                        if (isVirtual) {
+                            ratedTransactions = invoice.getRatedTransactionsForCategory(wallet, invoiceSubCat);
+                        } /*
+                           * else { transactions = ratedTransactionService.getRatedTransactionsForXmlInvoice( wallet, invoice, invoiceSubCat); }
+                           */
+    
+                        String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
+                        Element subCategory = doc.createElement("subCategory");
+                        subCategories.appendChild(subCategory);
+                        subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
+                        subCategory.setAttribute("code", invoiceSubCat.getCode());
+                        subCategory.setAttribute("amountWithoutTax", round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
+    
+                        if (!entreprise) {
+                            subCategory.setAttribute("amountWithTax", round(subCatInvoiceAgregate.getAmountWithTax(), rounding));
+                        }
+    
+                        String taxesCode = "";
+                        String taxesPercent = "";
+                        String sep = "";
+                        for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {
+                            taxesCode = taxesCode + sep + tax.getCode();
+                            taxesPercent = taxesPercent + sep + round(tax.getPercent(), rounding);
+                            sep = ";";
+                        }
+                        subCategory.setAttribute("taxCode", taxesCode);
+                        subCategory.setAttribute("taxPercent", taxesPercent);
+    
+                        for (RatedTransaction ratedTransaction : ratedTransactions) {
+                            if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
+                                    && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
+                                continue;
+                            }
+                            if (!isVirtual) {
+                                getEntityManager().refresh(ratedTransaction);
+                            }
+                            BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax() : ratedTransaction.getAmountWithoutTax();
+                            if (transactionAmount == null) {
+                                transactionAmount = BigDecimal.ZERO;
+                            }
+    
+                            Element line = doc.createElement("line");
+                            String code = "", description = "";
+                            Date periodStartDate = null;
+                            Date periodEndDate = null;
+                            WalletOperation walletOperation = ratedTransaction.getWalletOperation();
+                            code = ratedTransaction.getCode();
+                            description = ratedTransaction.getDescription();
+    
+                            if (ratedTransaction.getWalletOperationId() != null) {
+                                walletOperation = getEntityManager().find(WalletOperation.class, ratedTransaction.getWalletOperationId());
+                            }
+                            if (walletOperation != null) {
+                                if (StringUtils.isBlank(code)) {
+                                    code = walletOperation.getCode();
+                                }
+                                if (StringUtils.isBlank(description)) {
+                                    description = walletOperation.getDescription();
+                                }
+                                ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+                                if (appProvider.getInvoiceConfiguration().getDisplayChargesPeriods()) {
+    
+                                    if (!isVirtual) {
+                                        chargeInstance = (ChargeInstance) chargeInstanceService.findById(chargeInstance.getId(), false);
+                                    }
+    
+                                    ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+                                    // get periodStartDate and periodEndDate for recurrents
+                                    periodStartDate = walletOperation.getStartDate();
+                                    periodEndDate = walletOperation.getEndDate();
+                                    // get periodStartDate and periodEndDate for usages
+                                    // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
+                                    Date operationDate = walletOperation.getOperationDate();
+                                    if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
+                                        CounterPeriod counterPeriod = null;
+                                        CounterInstance counter = walletOperation.getCounter();
+                                        if (!isVirtual) {
+                                            counterPeriod = counterPeriodService.getCounterPeriod(counter, operationDate);
+                                        } else {
+                                            counterPeriod = counter.getCounterPeriod(operationDate);
+                                        }
+                                        if (counterPeriod != null) {
+                                            periodStartDate = counterPeriod.getPeriodStartDate();
+                                            periodEndDate = counterPeriod.getPeriodEndDate();
+                                        }
+                                    }
+                                    line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDate, invoiceDateFormat));
+                                    line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDate, invoiceDateFormat));
+                                }
+                            }
+    
+                            line.setAttribute("code", code != null ? code : "");
+    
+                            if (ratedTransaction.getParameter1() != null) {
+                                line.setAttribute("param1", ratedTransaction.getParameter1());
+                            }
+                            if (ratedTransaction.getParameter2() != null) {
+                                line.setAttribute("param2", ratedTransaction.getParameter2());
+                            }
+                            if (ratedTransaction.getParameter3() != null) {
+                                line.setAttribute("param3", ratedTransaction.getParameter3());
+                            }
+                            if (ratedTransaction.getParameterExtra() != null) {
+                                Element paramExtra = doc.createElement("paramExtra");
+                                paramExtra.appendChild(doc.createTextNode(ratedTransaction.getParameterExtra()));
+                                line.appendChild(paramExtra);
+                            }
+    
+                            if (ratedTransaction.getPriceplan() != null) {
+                                Element pricePlan = doc.createElement("pricePlan");
+                                pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
+    
+                                String translationKey = "PP_" + ratedTransaction.getPriceplan().getCode() + "_" + languageCode;
+                                String descTranslated = descriptionMap.get(translationKey);
+                                if (descTranslated == null) {
+                                    descTranslated = ratedTransaction.getPriceplan().getDescriptionOrCode();
+                                    if (ratedTransaction.getPriceplan().getDescriptionI18n() != null
+                                            && ratedTransaction.getPriceplan().getDescriptionI18n().get(languageCode) != null) {
+                                        descTranslated = ratedTransaction.getPriceplan().getDescriptionI18n().get(languageCode);
+                                    }
+                                    descriptionMap.put(translationKey, descTranslated);
+                                }
+    
+                                pricePlan.setAttribute("description", descTranslated);
+    
+                                line.appendChild(pricePlan);
+                                if (!priceplanIds.contains(ratedTransaction.getPriceplan().getId())) {
+                                    addPricePlans(ratedTransaction.getPriceplan(), doc, invoiceTag);
+                                    priceplanIds.add(ratedTransaction.getPriceplan().getId());
+                                }
+                            }
+    
+                            Element lebel = doc.createElement("label");
+                            Text lebelTxt = doc.createTextNode(description != null ? description : "");
+    
+                            lebel.appendChild(lebelTxt);
+                            line.appendChild(lebel);
+    
+                            if (!StringUtils.isBlank(ratedTransaction.getUnityDescription())) {
+                                Element lineUnit = doc.createElement("unit");
+                                Text lineUnitTxt = doc.createTextNode(ratedTransaction.getUnityDescription());
+                                lineUnit.appendChild(lineUnitTxt);
+                                line.appendChild(lineUnit);
+                            }
+                            if (!StringUtils.isBlank(ratedTransaction.getRatingUnitDescription())) {
+                                Element lineRatingUnit = doc.createElement("ratingUnit");
+                                Text lineUnitTxt = doc.createTextNode(ratedTransaction.getRatingUnitDescription());
+                                lineRatingUnit.appendChild(lineUnitTxt);
+                                line.appendChild(lineRatingUnit);
+                            }
+                            Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+                            Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                            lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+                            line.appendChild(lineUnitAmountWithoutTax);
+    
+                            Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+                            Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithoutTax(), rounding));
+                            lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
+                            line.appendChild(lineAmountWithoutTax);
+    
+                            if (!enterprise) {
+                                Element lineAmountWithTax = doc.createElement("amountWithTax");
+                                Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(), rounding));
+                                lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+                                line.appendChild(lineAmountWithTax);
+                            }
+    
+                            Element quantity = doc.createElement("quantity");
+                            Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                            quantity.appendChild(quantityTxt);
+                            line.appendChild(quantity);
+    
+                            Element usageDate = doc.createElement("usageDate");
+                            Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(), invoiceDateFormat));
+                            usageDate.appendChild(usageDateTxt);
+                            line.appendChild(usageDate);
+                            EDR edr = ratedTransaction.getEdr();
+    
+                            if (appProvider.getInvoiceConfiguration() != null && appProvider.getInvoiceConfiguration().getDisplayEdrs() != null
+                                    && appProvider.getInvoiceConfiguration().getDisplayEdrs() && edr != null) {
+                                Element edrInfo = doc.createElement("edr");
+                                edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord() : "");
+                                edrInfo.setAttribute("originBatch", edr.getOriginBatch() != null ? edr.getOriginBatch() : "");
+                                edrInfo.setAttribute("quantity", edr.getQuantity() != null ? edr.getQuantity().toPlainString() : "");
+                                edrInfo.setAttribute("status", String.valueOf(edr.getStatus()) != null ? String.valueOf(edr.getStatus()) : "");
+                                edrInfo.setAttribute("rejectReason", edr.getRejectReason() != null ? edr.getRejectReason() : "");
+                                edrInfo.setAttribute("subscription", edr.getSubscription() != null ? edr.getSubscription().getDescription() : "");
+                                edrInfo.setAttribute("eventDate", DateUtils.formatDateWithPattern(edr.getEventDate(), invoiceDateTimeFormat));
+                                edrInfo.setAttribute("accessCode", edr.getAccessCode() != null ? edr.getAccessCode() : "");
+                                edrInfo.setAttribute("parameter1", edr.getParameter1() != null ? edr.getParameter1() : "");
+                                edrInfo.setAttribute("parameter2", edr.getParameter2() != null ? edr.getParameter2() : "");
+                                edrInfo.setAttribute("parameter3", edr.getParameter3() != null ? edr.getParameter3() : "");
+                                edrInfo.setAttribute("parameter4", edr.getParameter4() != null ? edr.getParameter4() : "");
+                                edrInfo.setAttribute("parameter5", edr.getParameter5() != null ? edr.getParameter5() : "");
+                                edrInfo.setAttribute("parameter6", edr.getParameter6() != null ? edr.getParameter6() : "");
+                                edrInfo.setAttribute("parameter7", edr.getParameter7() != null ? edr.getParameter7() : "");
+                                edrInfo.setAttribute("parameter8", edr.getParameter8() != null ? edr.getParameter8() : "");
+                                edrInfo.setAttribute("parameter9", edr.getParameter9() != null ? edr.getParameter9() : "");
+                                edrInfo.setAttribute("dateParam1", DateUtils.formatDateWithPattern(edr.getDateParam1(), invoiceDateFormat));
+                                edrInfo.setAttribute("dateParam2", DateUtils.formatDateWithPattern(edr.getDateParam2(), invoiceDateTimeFormat));
+                                edrInfo.setAttribute("dateParam3", DateUtils.formatDateWithPattern(edr.getDateParam3(), invoiceDateTimeFormat));
+                                edrInfo.setAttribute("dateParam4", DateUtils.formatDateWithPattern(edr.getDateParam4(), invoiceDateTimeFormat));
+                                edrInfo.setAttribute("dateParam5", DateUtils.formatDateWithPattern(edr.getDateParam5(), invoiceDateTimeFormat));
+                                edrInfo.setAttribute("decimalParam1", edr.getDecimalParam1() != null ? edr.getDecimalParam1().toPlainString() : "");
+                                edrInfo.setAttribute("decimalParam2", edr.getDecimalParam2() != null ? edr.getDecimalParam2().toPlainString() : "");
+                                edrInfo.setAttribute("decimalParam3", edr.getDecimalParam3() != null ? edr.getDecimalParam3().toPlainString() : "");
+                                edrInfo.setAttribute("decimalParam4", edr.getDecimalParam4() != null ? edr.getDecimalParam4().toPlainString() : "");
+                                edrInfo.setAttribute("decimalParam5", edr.getDecimalParam5() != null ? edr.getDecimalParam5().toPlainString() : "");
+                                line.appendChild(edrInfo);
+                            }
+    
+                            if (!isVirtual) {
+                                if (walletOperation != null) {
+                                    // Retrieve Service Instance
+                                    ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+                                    ServiceInstance serviceInstance = null;
+                                    if (chargeInstance instanceof RecurringChargeInstance) {
+                                        serviceInstance = ((RecurringChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+                                    } else if (chargeInstance instanceof UsageChargeInstance) {
+                                        serviceInstance = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+                                    } else if (chargeInstance instanceof OneShotChargeInstance) {
+                                        serviceInstance = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
+                                        if (serviceInstance == null) {
+                                            ((OneShotChargeInstance) walletOperation.getChargeInstance()).getTerminationServiceInstance();
+                                        }
+                                    }
+    
+                                    log.debug("Before serviceInstance:" + (System.currentTimeMillis() - startDate));
+    
+                                    if (serviceInstance != null) {
+                                        addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
+                                    }
+    
+                                    log.debug("After serviceInstance:" + (System.currentTimeMillis() - startDate));
+    
+                                }
+                            }
+                            subCategory.appendChild(line);
+                        }
+                        addCustomFields(invoiceSubCat, doc, subCategory);
+                    }
+                }
+            }
+        }
+        
+        Element categories = null;
+        if(!categoriesList.isEmpty()) {
+            categories = createCategoriesElement(doc, parent);
+            for (Element category : categoriesList) {
+                categories.appendChild(category);
+            }
+            
+        }
+
+        // generate invoice line for min amount RT
+        Element minAmountRTCategory = getMinAmountRTCategory(doc, ratedTransactions, enterprise, rounding);
+        if(minAmountRTCategory != null) {
+            if(categories == null) {
+                categories = createCategoriesElement(doc, parent);
+            }
+            categories.appendChild(minAmountRTCategory);
         }
     }
 
