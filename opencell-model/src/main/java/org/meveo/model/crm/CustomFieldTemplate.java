@@ -264,7 +264,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     }
 
     public Map<String, String> getListValues() {
-        return listValues;
+        return getListValuesSorted();
     }
 
     /**
