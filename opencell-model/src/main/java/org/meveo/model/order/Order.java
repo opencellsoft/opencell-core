@@ -29,7 +29,9 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
@@ -43,7 +45,7 @@ import org.meveo.model.shared.Address;
 @Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_seq"), })
-public class Order extends BusinessCFEntity {
+public class Order extends BusinessCFEntity implements IBillableEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
 
@@ -159,6 +161,10 @@ public class Order extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run")
+    private BillingRun billingRun;
 
     public String getExternalId() {
         return externalId;
@@ -351,5 +357,13 @@ public class Order extends BusinessCFEntity {
 
     public void setBillingCycle(BillingCycle billingCycle) {
         this.billingCycle = billingCycle;
+    }
+    
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
+
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
     }
 }
