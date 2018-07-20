@@ -345,7 +345,7 @@ public class ContactApi extends AccountEntityApi {
 					update(new ContactDto(contact));
 				}
 				
-			} catch (BusinessException | MeveoApiException e) {
+			} catch (Exception e) {
 				failedToPersist.add(contact);
 				failedToPersistLog.add(contact.toString() + " | " +  e.getMessage());
 			}

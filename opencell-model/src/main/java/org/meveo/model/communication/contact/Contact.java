@@ -69,12 +69,12 @@ public class Contact extends AccountEntity {
 	@Size(max = 15)
 	private String assistantPhone;
 
-	@Column(name = "position", length = 100)
-	@Size(max = 100)
+	@Column(name = "position", length = 200)
+	@Size(max = 200)
 	private String position;
 	
-	@Column(name = "company", length = 100)
-	@Size(max = 100)
+	@Column(name = "company", length = 200)
+	@Size(max = 200)
 	private String company;
 	
 	@Column(name = "mobile", length = 15)

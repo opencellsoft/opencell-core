@@ -80,13 +80,14 @@ public class ContactBean extends BaseBean<Contact> {
 	@SuppressWarnings("resource")
 	@ActionMethod
 	public String upload() {
-		String message = null;
+		String message = "Success";
 	    	try {
 				fileContent = new Scanner(file.getInputStream()).useDelimiter("\\A").next();
 		    	contactApi.importLinkedInFromText(fileContent);
 		    	message = FileUtils.getFileAsString(System.getProperty("jboss.server.log.dir") + "\\LastContactError.log");
 		    	
-		    	if(message != null) return message;
+		    	if(message != null)
+		    		return message;
 			} catch (IOException e) {
 				
 			}

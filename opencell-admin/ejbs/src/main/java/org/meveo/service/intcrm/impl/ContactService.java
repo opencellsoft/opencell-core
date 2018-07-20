@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CSVUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
@@ -139,7 +140,9 @@ public class ContactService extends BusinessService<Contact> {
 	}
 
 	public void create(Contact contact) throws BusinessException {
-		Customer customer = customerService.findByCompanyName(contact.getCompany());
+		Customer customer = null;
+		if(!StringUtils.isBlank(contact.getCompany()))
+			customer = customerService.findByCompanyName(contact.getCompany());
 		if(customer != null) {
 			contact.setAddressBook(customer.getAddressbook());
 		}
@@ -212,8 +215,8 @@ public class ContactService extends BusinessService<Contact> {
 	}
 	
 	public void logContactError(List<String> contactErrors) throws IOException {
-		String path1 = System.getProperty("jboss.server.log.dir") + "\\ContactError.log";
-		String path2 = System.getProperty("jboss.server.log.dir") + "\\LastContactError.log";
+		String path1 = System.getProperty("jboss.server.temp.dir") + "\\ContactError.log";
+		String path2 = System.getProperty("jboss.server.temp.dir") + "\\LastContactError.log";
 		
 		try {
 			FileWriter fw1 = new FileWriter(path1, true);

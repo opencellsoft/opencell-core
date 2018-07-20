@@ -21,12 +21,12 @@ public class AdditionalDetails extends BaseEntity {
 	 */
 	private static final long serialVersionUID = 2502533941498882545L;
 
-	@Column(name = "company_name", length = 50)
-	@Size(max = 50)
+	@Column(name = "company_name", length = 200)
+	@Size(max = 200)
 	private String companyName;
 	
-	@Column(name = "position", length = 50)
-	@Size(max = 100)
+	@Column(name = "position", length = 200)
+	@Size(max = 200)
 	private String position;
 		
 	@Column(name = "instant_messengers", length = 2000)

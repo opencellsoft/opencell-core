@@ -646,8 +646,8 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_additional_details_pkey" />
             </column>
             <column name="version" type="int4" />
-            <column name="company_name" type="varchar(50)"/>
-            <column name="position" type="varchar(100)"/>
+            <column name="company_name" type="varchar(200)"/>
+            <column name="position" type="varchar(200)"/>
             <column name="instant_messengers" type="varchar(2000)"/>
         </createTable>
         <createSequence sequenceName="crm_additional_details_seq" />
@@ -658,8 +658,8 @@
         	</column>
             <column name="assistant_name" type="varchar(50)"/>
             <column name="assistant_phone" type="varchar(15)"/>
-            <column name="position" type="varchar(100)"/>
-            <column name="company" type="varchar(100)"/>
+            <column name="position" type="varchar(200)"/>
+            <column name="company" type="varchar(200)"/>
             <column name="phone" type="varchar(15)"/>
             <column name="mobile" type="varchar(15)"/>
             <column name="imported_from" type="varchar(50)"/>
