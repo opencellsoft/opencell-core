@@ -78,7 +78,7 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 public class CustomerApi extends AccountEntityApi {
 
     /**
-     * 
+     * Default sort for list call.
      */
     private static final String DEFAULT_SORT_ORDER_CODE = "code";
 
