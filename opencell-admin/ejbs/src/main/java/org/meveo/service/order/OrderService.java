@@ -71,7 +71,7 @@ public class OrderService extends BusinessService<Order> {
 
     public Order findByCodeOrExternalId(String codeOrExternalId) {
         Order order = null;
-        Query query = getEntityManager().createQuery("from " + Order.class.getName() + " a where (a.code = :code OR  a.externalId = :code)");
+        Query query = getEntityManager().createQuery("from " + Order.class.getName() + " a left join fetch a.billingRun where (a.code = :code OR  a.externalId = :code) ");
         query.setParameter("code", codeOrExternalId);
         try {
             order = (Order) query.getSingleResult();

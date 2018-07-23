@@ -32,51 +32,68 @@ import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
+/**
+ * Product charge instance service
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.1 Candidate
+ */
 @Stateless
 public class ProductChargeInstanceService extends BusinessService<ProductChargeInstance> {
 
-	@EJB
-	private WalletService walletService;
+    @EJB
+    private WalletService walletService;
 
-	@EJB
-	private WalletOperationService walletOperationService;
-	
-	/**
-	 * @param code code of product charge instance
-	 * @param userAccountId id of user account
-	 * @return product charge instance.
-	 */
-	public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
-		ProductChargeInstance productChargeInstance = null;
-		try {
+    @EJB
+    private WalletOperationService walletOperationService;
+    
+    /**
+     * @param code code of product charge instance
+     * @param userAccountId id of user account
+     * @return product charge instance.
+     */
+    public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
+        ProductChargeInstance productChargeInstance = null;
+        try {
             log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] {"ProductChargeInstance", code, userAccountId});
-			QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c");
-			qb.addCriterion("c.code", "=", code, true);
-			qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
-			productChargeInstance = (ProductChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
+            QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c");
+            qb.addCriterion("c.code", "=", code, true);
+            qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
+            productChargeInstance = (ProductChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
             log.debug("end of find {} by code (code={}, userAccountId={}). Result found={}.",
                 new Object[] {"ProductChargeInstance", code, userAccountId, productChargeInstance != null });
-		} catch (NoResultException nre) {
-			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
-		} catch (Exception e) {
-			log.error("failed to find productChargeInstance by Code and subsription", e);
-		}
-		return productChargeInstance;
-	}
+        } catch (NoResultException nre) {
+            log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
+        } catch (Exception e) {
+            log.error("failed to find productChargeInstance by Code and subsription", e);
+        }
+        return productChargeInstance;
+    }
 
     /**
+     * Apply product charge instance
+     * v5.1 Candidate apply rating filter to product charge instance
+     * 
      * @param productChargeInstance product charge instance
-     * @param isVirtual true/false
-     * @return list of wallet operation
+     * @param isVirtual indicates that it is virtual operation
+     * @return list of wallet operations
      * @throws BusinessException business exception.
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.1 Candidate
      */
     public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = null;
-        ChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
+        ProductChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
+
+        if (!walletOperationService.isChargeMatch(productChargeInstance, chargeTemplate.getFilterExpression())) {
+            log.debug("not rating productChargeInstance with code={}, filter expression not evaluated to true", productChargeInstance.getCode());
+            return new ArrayList<WalletOperation>();
+        }
 
         UserAccount userAccount = productChargeInstance.getUserAccount();
         Subscription subscription = productChargeInstance.getSubscription();
@@ -94,19 +111,19 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
         }
         return walletOperations;
     }
-	
-	@SuppressWarnings("unchecked")
-	public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
-		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
-		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-		return qb.getQuery(getEntityManager()).getResultList();
-	}
+    
+    @SuppressWarnings("unchecked")
+    public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
+        QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
+        qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
+        return qb.getQuery(getEntityManager()).getResultList();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<ProductChargeInstance> findByUserAccountId(Long userAccountId) {
-		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
-		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
-		qb.addSql("c.subscription is null");
-		return qb.getQuery(getEntityManager()).getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<ProductChargeInstance> findByUserAccountId(Long userAccountId) {
+        QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
+        qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
+        qb.addSql("c.subscription is null");
+        return qb.getQuery(getEntityManager()).getResultList();
+    }
 }

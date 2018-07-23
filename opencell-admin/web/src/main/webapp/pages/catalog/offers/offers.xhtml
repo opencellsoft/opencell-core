@@ -238,7 +238,7 @@
                                                     <li><p:commandLink id="addToExportLink"
                                                                        styleClass="fa fa-share-square-o text-blue fa-2x"
                                                                        update=":offerForExportPanel :dlgOfferExport"
-                                                                       action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.export']}">
+                                                                       action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.addToExport']}">
                                                     </p:commandLink></li>
                                                     
                                                      <li><p:commandLink id="deleteLink"
@@ -295,7 +295,7 @@
                                                     paginatorAlwaysVisible="false"
                                                     value="#{entity.offerProductTemplates}"
                                                     var="opt" type="ordered"
-                                                    rendered="#{entity.offerProductTemplates!=null}">
+                                                    rendered="#{entity.offerProductTemplates!=null and !entity.offerProductTemplates.isEmpty()}">
                                             <div class="ui-g ui-g-nopad">
 	                                            <div class="ui-g-1">
 	                                            	<p:graphicImage value="#{defaultImageStreamer.image}"
@@ -395,7 +395,7 @@
                             
                             <p:column headerText="#{messages['commons.actions']}">
                                 <p:link outcome="mm_offerTemplateDetail"
-                                        styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
+                                        styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue" title="#{messages['action.view']}">
                                     <f:param name="cid"
                                              value="#{javax.enterprise.context.conversation.id}"/>
                                     <f:param name="objectId" value="#{entity.id}"></f:param>
@@ -405,7 +405,7 @@
                                 </p:link>
                                 <p:link
                                         styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-blue"
-                                        outcome="mm_offerTemplateDetail">
+                                        outcome="mm_offerTemplateDetail" title="#{messages['action.edit']}">
                                     <f:param name="cid"
                                              value="#{javax.enterprise.context.conversation.id}"/>
                                     <f:param name="objectId" value="#{entity.id}"></f:param>
@@ -413,20 +413,29 @@
                                     <f:param name="backView" value="mm_offers"></f:param>
                                     <f:param name="tab" value="1"></f:param>
                                 </p:link>
-                                <p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
-                                               update=":tabView"
-                                               styleClass="Padding5">
-									<i class="fa fa-copy no-text-decoration text-blue fa-2x" />
-									<f:setPropertyActionListener
-                                            target="#{offerTemplateListBean.entity}" value="#{entity}"/>
-                                    <f:param name="tab" value="1"></f:param>
-                                    <p:confirm header="#{messages['commons.duplicate']}"
-                                               message="#{messages['commons.confirmDuplicate']}"/>
-                                </p:commandLink>
+<!--                                 <p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}" -->
+<!--                                                update=":tabView" -->
+<!--                                                styleClass="Padding5" title="#{messages['commons.duplicate']}"> -->
+<!-- 									<i class="fa fa-copy no-text-decoration text-blue fa-2x" /> -->
+<!-- 									<f:setPropertyActionListener -->
+<!--                                             target="#{offerTemplateListBean.entity}" value="#{entity}"/> -->
+<!--                                     <f:param name="tab" value="1"></f:param> -->
+<!--                                     <p:confirm header="#{messages['commons.duplicate']}" -->
+<!--                                                message="#{messages['commons.confirmDuplicate']}"/> -->
+<!--                                 </p:commandLink> -->
+								<p:link id="duplicate" title="#{messages['commons.duplicate']}"
+                                     styleClass="fa fa-copy no-text-decoration text-blue fa-2x" outcome="mm_offerTemplateDetail">
+                                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                     <f:param name="objectId" value="#{entity.id}" />
+                                     <f:param name="edit" value="true" />
+                                     <f:param name="backView" value="mm_offers" />
+                                     <f:param name="tab" value="0" />
+                                     <f:param name="duplicateOffer" value="true" />
+                                 </p:link>
                                 <p:commandLink
                                         styleClass="Padding5"
                                         update=":offerForExportPanel :dlgOfferExport"
-                                        action="#{offerTemplateListBean.addForExport(entity)}">
+                                        action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.addToExport']}">
                                         <i class="fa fa-share-square-o no-text-decoration fa-2x text-blue" />
                                 </p:commandLink>
                             </p:column>

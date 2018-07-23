@@ -486,23 +486,23 @@ public class ServiceInstance extends BusinessCFEntity {
 		if (isRenewed()) {
 			return;
 		}
-		if (getSubscriptionDate() != null && getServiceRenewal() != null
-				&& getServiceRenewal().getInitialyActiveFor() != null) {
-			if (getServiceRenewal().getInitialyActiveForUnit() == null) {
-				getServiceRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-			}
-			java.util.Calendar calendar = new GregorianCalendar();
-			calendar.setTime(getSubscriptionDate());
-			calendar.add(getServiceRenewal().getInitialyActiveForUnit().getCalendarField(),
-					getServiceRenewal().getInitialyActiveFor());
-			setSubscribedTillDate(calendar.getTime());
+		
+		if (getServiceRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+			if (getSubscriptionDate() != null && getServiceRenewal() != null && getServiceRenewal().getInitialyActiveFor() != null) {
+				if (getServiceRenewal().getInitialyActiveForUnit() == null) {
+					getServiceRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+				}
+				java.util.Calendar calendar = new GregorianCalendar();
+				calendar.setTime(getSubscriptionDate());
+				calendar.add(getServiceRenewal().getInitialyActiveForUnit().getCalendarField(), getServiceRenewal().getInitialyActiveFor());
+				setSubscribedTillDate(calendar.getTime());
 
-		} else {
-			setSubscribedTillDate(null);
+			} else {
+				setSubscribedTillDate(null);
+			}
 		}
 
-		if (getSubscribedTillDate() != null && getServiceRenewal().isAutoRenew()
-				&& getServiceRenewal().getDaysNotifyRenewal() != null) {
+		if (getSubscribedTillDate() != null && getServiceRenewal().isAutoRenew() && getServiceRenewal().getDaysNotifyRenewal() != null) {
 			java.util.Calendar calendar = new GregorianCalendar();
 			calendar.setTime(getSubscribedTillDate());
 			calendar.add(java.util.Calendar.DAY_OF_MONTH, getServiceRenewal().getDaysNotifyRenewal() * (-1));

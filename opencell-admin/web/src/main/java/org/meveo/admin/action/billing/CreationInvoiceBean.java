@@ -18,6 +18,8 @@
  */
 package org.meveo.admin.action.billing;
 
+import static org.meveo.commons.utils.NumberUtils.round;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -60,6 +62,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
@@ -83,7 +86,8 @@ import org.primefaces.model.LazyDataModel;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Named
 @ViewScoped
@@ -167,6 +171,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Invoice invoiceCopy = null;
     private Date rtStartDate;
     private Date rtEndDate;
+    
+    private Integer invoiceRounding =  appProvider != null ? (appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding()) : 2; 
+    private RoundingModeEnum invoiceRoundingMode =  appProvider != null ? appProvider.getInvoiceRoundingMode() : RoundingModeEnum.DOWN; 
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -330,17 +337,18 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(agregateHandler.getSubCatInvAgregateMap().values());
         categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>(agregateHandler.getCatInvAgregateMap().values());
-        entity.setAmountWithoutTax(agregateHandler.getInvoiceAmountWithoutTax());
-        entity.setAmountTax(agregateHandler.getInvoiceAmountTax());
-        entity.setAmountWithTax(agregateHandler.getInvoiceAmountWithTax());
+       
+        entity.setAmountWithoutTax( round(agregateHandler.getInvoiceAmountWithoutTax(), invoiceRounding, invoiceRoundingMode) );
+        entity.setAmountTax( round(agregateHandler.getInvoiceAmountTax(), invoiceRounding, invoiceRoundingMode) );
+        entity.setAmountWithTax( round(agregateHandler.getInvoiceAmountWithTax(), invoiceRounding, invoiceRoundingMode) );
 
         BigDecimal netToPay = entity.getAmountWithTax();
-        if (!appProvider.isEntreprise() && isIncludeBalance()) {
+        if (appProvider != null && !appProvider.isEntreprise() && isIncludeBalance()) {
             BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, billingAccount.getCustomerAccount().getCode(), entity.getDueDate());
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = entity.getAmountWithTax().add(balance);
+            netToPay = entity.getAmountWithTax().add( round(balance, invoiceRounding, invoiceRoundingMode) );
         }
         entity.setNetToPay(netToPay);
     }

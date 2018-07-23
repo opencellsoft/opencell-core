@@ -11,6 +11,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -286,7 +287,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         return newOfferProductTemplates;
     }
 
-    private List<OfferServiceTemplate> instantiateServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
+    public List<OfferServiceTemplate> instantiateServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
             BusinessOfferModel businessOfferModel) throws BusinessException {
         List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
         // we need this to check in case of non-bsm, non-existing service template
@@ -425,6 +426,28 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         }
 
         return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<BusinessOfferModel> listByOfferTemplate(OfferTemplate offerTemplate) {
+        QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b");
+        qb.addCriterionEntity("offerTemplate", offerTemplate);
+
+        List<BusinessOfferModel> result = (List<BusinessOfferModel>) qb.getQuery(getEntityManager()).getResultList();
+        return (result == null || result.isEmpty()) ? null : result;
+    }
+    
+    /**
+     * Returns the count of all installed BOM
+     * @param offerTemplate offerTemplate of BOM
+     * @return count of install BOM
+     */
+    public Long countByOfferTemplate(OfferTemplate offerTemplate) {
+        QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b");
+        qb.addCriterionEntity("offerTemplate", offerTemplate);
+        qb.addCriterion("installed", "=", true, true);
+
+        return qb.count(getEntityManager());
     }
 
 }

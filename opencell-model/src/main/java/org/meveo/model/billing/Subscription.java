@@ -49,6 +49,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
@@ -71,7 +72,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -166,6 +167,14 @@ public class Subscription extends BusinessCFEntity {
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_cycle")
+    private BillingCycle billingCycle;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run")
+    private BillingRun billingRun;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -359,6 +368,14 @@ public class Subscription extends BusinessCFEntity {
         this.minimumLabelEl = minimumLabelEl;
     }
 
+    public BillingCycle getBillingCycle() {
+        return billingCycle;
+    }
+
+    public void setBillingCycle(BillingCycle billingCycle) {
+        this.billingCycle = billingCycle;
+    }
+
     /**
      * Check if renewal notice should be fired for a current date
      * 
@@ -392,6 +409,7 @@ public class Subscription extends BusinessCFEntity {
         if (isRenewed()) {
             return;
         }
+		if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
         if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
             if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
                 getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
@@ -404,6 +422,7 @@ public class Subscription extends BusinessCFEntity {
         } else {
             setSubscribedTillDate(null);
         }
+		}
 
         if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
             Calendar calendar = new GregorianCalendar();
@@ -413,13 +432,21 @@ public class Subscription extends BusinessCFEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
-    }
+	} 
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
 
         }
 
+    }
+
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
+
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
     }
 
     /**

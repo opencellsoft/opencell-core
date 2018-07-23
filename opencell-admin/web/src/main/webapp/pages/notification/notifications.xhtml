@@ -4,7 +4,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{notificationListBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{scriptNotificationListBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
@@ -17,16 +17,16 @@
 		</h:form>  
         <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 
-        <hftl:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{notificationListBean}" ajaxUpdateIds="notifications_panel">
+        <hftl:searchPanel label="#{messages['menu.notifications']}" columns="3" backingBean="#{scriptNotificationListBean}" ajaxUpdateIds="notifications_panel">
             <hftl:searchField label="#{messages['entity.code']}" field="code" />
-            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{notificationBean}"
+            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{scriptNotificationListBean}"
                 autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
             <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
         </hftl:searchPanel>
 
         <!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-        <hftl:dataList resultsId="notifications" backingBean="#{notificationListBean}" exportButton="false" exportToCsv="true" fileName="Notifications" importCsv="true"
+        <hftl:dataList resultsId="notifications" backingBean="#{scriptNotificationListBean}" exportButton="false" exportToCsv="true" fileName="Notifications" importCsv="true"
             importStrategy="true" sortBy="code">
             <hftl:column label="#{messages['entity.code']}" field="code" />
             <hftl:column label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />

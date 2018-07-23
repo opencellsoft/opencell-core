@@ -453,7 +453,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                 bomDto.getOfferTemplate().getCode() + " / " + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidFrom(), datePattern) + " / "
                         + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidTo(), datePattern));
         }
-
+        
+        offerTemplate.setActive(true);
         bom.setOfferTemplate(offerTemplate);
     }
 
@@ -474,6 +475,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             throw new EntityDoesNotExistsException(ServiceTemplate.class, bsmDto.getServiceTemplate().getCode());
         }
 
+        serviceTemplate.setActive(true);
         bsm.setServiceTemplate(serviceTemplate);
     }
 
@@ -504,6 +506,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                         + DateUtils.formatDateWithPattern(dto.getProductTemplate().getValidTo(), datePattern));
         }
 
+        productTemplate.setActive(true);
         businessModel.setProductTemplate(productTemplate);
     }
 

@@ -13,7 +13,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
  * The Class RecurringChargeTemplateDto.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  */
 @XmlRootElement(name = "RecurringChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -44,6 +44,26 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     /** The filter expression. */
     @Size(max = 2000)
     private String filterExpression = null;
+    
+    /** The calendar code el. */
+    @Size(max = 2000)
+    private String calendarCodeEl;
+
+    /** The duration term in month El. */
+    @Size(max = 2000)
+    private String durationTermInMonthEl;
+
+    /** The subscription prorata el. */
+    @Size(max = 2000)
+    private String subscriptionProrataEl;
+
+    /** The termination prorata el. */
+    @Size(max = 2000)
+    private String terminationProrataEl;
+
+    /** The apply in advance el. */
+    @Size(max = 2000)
+    private String applyInAdvanceEl;
 
     /**
      * Instantiates a new recurring charge template dto.
@@ -64,6 +84,11 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         subscriptionProrata = recurringChargeTemplate.getSubscriptionProrata();
         terminationProrata = recurringChargeTemplate.getTerminationProrata();
         applyInAdvance = recurringChargeTemplate.getApplyInAdvance();
+        durationTermInMonthEl = recurringChargeTemplate.getDurationTermInMonthEl();
+        subscriptionProrataEl = recurringChargeTemplate.getSubscriptionProrataEl();
+        terminationProrataEl = recurringChargeTemplate.getTerminationProrataEl();
+        applyInAdvanceEl = recurringChargeTemplate.getApplyInAdvanceEl();
+        calendarCodeEl = recurringChargeTemplate.getCalendarCodeEl();
         setFilterExpression(recurringChargeTemplate.getFilterExpression());
         if (recurringChargeTemplate.getShareLevel() != null) {
             shareLevel = recurringChargeTemplate.getShareLevel().getId();
@@ -199,13 +224,104 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
     }
+    
+    
 
+    /**
+     * Gets the calendar code el.
+     *
+     * @return the calendarCodeEl
+     */
+    public String getCalendarCodeEl() {
+        return calendarCodeEl;
+    }
+
+    /**
+     * Sets the calendar code el.
+     *
+     * @param calendarCodeEl the calendarCodeEl to set
+     */
+    public void setCalendarCodeEl(String calendarCodeEl) {
+        this.calendarCodeEl = calendarCodeEl;
+    }
+
+   
+    /**
+     * @return the durationTermInMonthEl
+     */
+    public String getDurationTermInMonthEl() {
+        return durationTermInMonthEl;
+    }
+
+    /**
+     * @param durationTermInMonthEl the durationTermInMonthEl to set
+     */
+    public void setDurationTermInMonthEl(String durationTermInMonthEl) {
+        this.durationTermInMonthEl = durationTermInMonthEl;
+    }
+
+    /**
+     * Gets the subscription prorata el.
+     *
+     * @return the subscriptionProrataEl
+     */
+    public String getSubscriptionProrataEl() {
+        return subscriptionProrataEl;
+    }
+
+    /**
+     * Sets the subscription prorata el.
+     *
+     * @param subscriptionProrataEl the subscriptionProrataEl to set
+     */
+    public void setSubscriptionProrataEl(String subscriptionProrataEl) {
+        this.subscriptionProrataEl = subscriptionProrataEl;
+    }
+
+    /**
+     * Gets the termination prorata el.
+     *
+     * @return the terminationProrataEl
+     */
+    public String getTerminationProrataEl() {
+        return terminationProrataEl;
+    }
+
+    /**
+     * Sets the termination prorata el.
+     *
+     * @param terminationProrataEl the terminationProrataEl to set
+     */
+    public void setTerminationProrataEl(String terminationProrataEl) {
+        this.terminationProrataEl = terminationProrataEl;
+    }
+
+    /**
+     * Gets the apply in advance el.
+     *
+     * @return the applyInAdvanceEl
+     */
+    public String getApplyInAdvanceEl() {
+        return applyInAdvanceEl;
+    }
+
+    /**
+     * Sets the apply in advance el.
+     *
+     * @param applyInAdvanceEl the applyInAdvanceEl to set
+     */
+    public void setApplyInAdvanceEl(String applyInAdvanceEl) {
+        this.applyInAdvanceEl = applyInAdvanceEl;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
+     */
     @Override
     public String toString() {
         return "RecurringChargeTemplateDto [calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth + ", subscriptionProrata=" + subscriptionProrata
-                + ", terminationProrata=" + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", getCode()=" + getCode()
-                + ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions() + ", toString()=" + super.toString()
-                + ", getAmountEditable()=" + getAmountEditable() + ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled() + ", getClass()="
-                + getClass() + ", hashCode()=" + hashCode() + "]";
+                + ", terminationProrata=" + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", filterExpression=" + filterExpression
+                + ", calendarCodeEl=" + calendarCodeEl + ", durationTermInMonthEl=" + durationTermInMonthEl + ", subscriptionProrataEl=" + subscriptionProrataEl
+                + ", terminationProrataEl=" + terminationProrataEl + ", applyInAdvanceEl=" + applyInAdvanceEl + "]";
     }
 }

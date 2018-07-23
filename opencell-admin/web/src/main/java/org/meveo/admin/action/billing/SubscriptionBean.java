@@ -41,6 +41,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -178,7 +179,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
     private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
     private EntityListDataModelPF<ProductInstance> productInstances = null;
-
+    
     public SubscriptionBean() {
         super(Subscription.class);
     }
@@ -251,7 +252,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
         log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
     }
+    
+    public BillingCycle getBillingCycle() {
+        return entity.getBillingCycle();
+    }
 
+    public void setBillingCycle(BillingCycle billingCycle) {
+        if (billingCycle != null) {
+            entity.setBillingCycle(billingCycle);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -260,6 +271,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        entity.setOffer(offerTemplateService.refreshOrRetrieve(entity.getOffer()));
+        entity.setUserAccount(userAccountService.refreshOrRetrieve(entity.getUserAccount()));
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
@@ -1027,4 +1041,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
         updateSubscribedTillDate();
     }
+    
+    public boolean isServiceInstancesEmpty() {
+		if (entity.isTransient()) {
+			return true;
+		}
+		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
+		return (si == null || si.isEmpty()) ? true : false;
+	}
 }

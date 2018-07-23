@@ -18,7 +18,14 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.admin.exception.NoTaxException;
+import org.meveo.admin.exception.PriceELErrorException;
+import org.meveo.admin.exception.RatingScriptExecutionErrorException;
+import org.meveo.admin.exception.SubscriptionNotFoundException;
+import org.meveo.admin.exception.WalletNotFoundException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -48,6 +55,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -177,6 +185,7 @@ public class UsageRatingService implements Serializable {
         walletOperation.setParameter2(edr.getParameter2());
         walletOperation.setParameter3(edr.getParameter3());
         walletOperation.setOrderNumber(chargeInstance.getOrderNumber());
+        walletOperation.setSubscription(chargeInstance.getSubscription());
         walletOperation.setEdr(edr);
 
         UserAccount userAccount = chargeInstance.getUserAccount();
@@ -190,7 +199,7 @@ public class UsageRatingService implements Serializable {
             tradingCountry, edr.getEventDate());
 
         if (invoiceSubcategoryCountry == null) {
-            throw new BusinessException(
+            throw new NoTaxException(
                 "No tax defined for country=" + tradingCountry.getCountryCode() + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategory().getCode());
         }
 
@@ -208,7 +217,7 @@ public class UsageRatingService implements Serializable {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), userAccount, billingAccount, null);
         }
         if (tax == null) {
-            throw new BusinessException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+            throw new NoTaxException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
@@ -433,7 +442,7 @@ public class UsageRatingService implements Serializable {
                         String subCode = evaluateStringExpression(triggeredEDR.getSubscriptionEl(), edr, walletOperation);
                         sub = subscriptionService.findByCode(subCode);
                         if (sub == null) {
-                            throw new BusinessException("could not find subscription for code =" + subCode + " (EL=" + triggeredEDR.getSubscriptionEl()
+                            throw new SubscriptionNotFoundException("could not find subscription for code =" + subCode + " (EL=" + triggeredEDR.getSubscriptionEl()
                                     + ") in triggered EDR with code " + triggeredEDR.getCode());
                         }
                     }
@@ -457,9 +466,9 @@ public class UsageRatingService implements Serializable {
                     log.debug("response {}", actionStatus);
 
                     if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-                        throw new BusinessException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr on remote instance Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
                     } else if (actionStatus != null) {
-                        throw new BusinessException("Error charging Edr");
+                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr");
                     }
                 }
             }
@@ -556,13 +565,13 @@ public class UsageRatingService implements Serializable {
 
         if (edr.getQuantity() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason("NULL_QUANTITY");
+            edr.setRejectReason(EDRRejectReasonEnum.QUANTITY_IS_NULL.getCode());
             return null;
         }
 
         if (edr.getSubscription() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason("NULL_SUBSCRIPTION");
+            edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL.getCode());
             return null;
         }
 
@@ -581,7 +590,7 @@ public class UsageRatingService implements Serializable {
                 usageChargeInstances = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     edr.setStatus(EDRStatusEnum.REJECTED);
-                    edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
+                    edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE.getCode());
                     return null;
                 }
 
@@ -620,19 +629,44 @@ public class UsageRatingService implements Serializable {
 
             if (!edrIsRated) {
                 edr.setStatus(EDRStatusEnum.REJECTED);
-                edr.setRejectReason(!foundPricePlan ? "NO_PRICEPLAN" : "NO_MATCHING_CHARGE");
+                edr.setRejectReason(!foundPricePlan ? EDRRejectReasonEnum.NO_PRICEPLAN.getCode() : EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
                 return null;
             }
 
         } catch (BusinessException e) {
+            String rejectReason = "";
+
             if (e instanceof InsufficientBalanceException) {
-                log.error("failed to rate usage Within Transaction: {}", e.getMessage());
-            } else {
-                log.error("failed to rate usage Within Transaction", e);
+                rejectReason = EDRRejectReasonEnum.INSUFFICIENT_BALANCE.getCode();
+            } 
+            if (e instanceof NoPricePlanException) {
+                rejectReason = EDRRejectReasonEnum.NO_PRICEPLAN.getCode();
             }
+            if (e instanceof PriceELErrorException) {
+                rejectReason = EDRRejectReasonEnum.PRICE_EL_ERROR.getCode();
+            }
+            if (e instanceof NoTaxException) {
+                rejectReason = EDRRejectReasonEnum.NO_TAX.getCode();
+            }
+            if (e instanceof RatingScriptExecutionErrorException) {
+                rejectReason = EDRRejectReasonEnum.RATING_SCRIPT_EXECUTION_ERROR.getCode();
+            }
+            if (e instanceof ChargingEdrOnRemoteInstanceErrorException) {
+                rejectReason = EDRRejectReasonEnum.CHARGING_EDR_ON_REMOTE_INSTANCE_ERROR.getCode();
+            }
+            if (e instanceof WalletNotFoundException) {
+                rejectReason = EDRRejectReasonEnum.WALLET_NOT_FOUND.getCode();
+            }
+            
+            if(StringUtils.isNotBlank(rejectReason)) {
+                rejectReason += " : "; 
+            }
+            rejectReason +=  e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
+            
+            log.error("failed to rate usage Within Transaction", e);
+
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason((e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
-            throw e;
+            edr.setRejectReason(rejectReason);
 
         } finally {
             // put back the original quantity in edr (could have been decrease by counters)
@@ -715,7 +749,7 @@ public class UsageRatingService implements Serializable {
 
         if (edr.getSubscription() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
-            edr.setRejectReason("SUBSCRIPTION_IS_NULL");
+            edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL.getCode());
         } else {
             boolean edrIsRated = false;
 
@@ -754,11 +788,11 @@ public class UsageRatingService implements Serializable {
 
                     if (!edrIsRated) {
                         edr.setStatus(EDRStatusEnum.REJECTED);
-                        edr.setRejectReason("NO_MATCHING_CHARGE");
+                        edr.setRejectReason(EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
                     }
                 } else {
                     edr.setStatus(EDRStatusEnum.REJECTED);
-                    edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
+                    edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE.getCode());
                 }
             } catch (Exception e) {
                 edr.setStatus(EDRStatusEnum.REJECTED);

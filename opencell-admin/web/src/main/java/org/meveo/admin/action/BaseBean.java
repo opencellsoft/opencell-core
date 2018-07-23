@@ -1454,12 +1454,22 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
         uploadedFile = event.getFile();
-
+        
         try {
-            ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(currentUser.getProviderCode());
-            String filename = uploadHandler.handleImageUpload(entity, uploadedFile);
+            // When dealing with a BackingBean (BaseBean) with generic type T having an image field, and this Type T refers to another type ( or list of types )  E which also has an image field
+            // then keeping the ImageUploadEventHandler Type frozen to the Generic Type 'T' will cause an issue and leads to override the parent field image by the child one ...
+            // That's why the IEntity is used instead of 'T' , to instantiate a flexible  ImageUploadEventHandler
+            ImageUploadEventHandler<IEntity> uploadHandler = new ImageUploadEventHandler<IEntity>(currentUser.getProviderCode());
+            Object componentEntity = event.getComponent().getAttributes().get("componentEntity");
+            
+            IEntity currenttEntity = this.entity;
+            if (componentEntity != null && componentEntity instanceof IEntity) {
+                currenttEntity = (IEntity) componentEntity;
+            }
+            
+            String filename = uploadHandler.handleImageUpload(currenttEntity, uploadedFile);
             if (filename != null) {
-                ((IImageUpload) entity).setImagePath(filename);
+                ((IImageUpload) currenttEntity).setImagePath(filename);
                 messages.info(new BundleKey("messages", "message.upload.succesful"));
             }
         } catch (Exception e) {

@@ -222,6 +222,15 @@ public class PagingAndFiltering implements Serializable {
     }
 
     /**
+     * Sets the fields.
+     *
+     * @param fields comma delimited list of fields
+     */
+    public void setFields(String fields) {
+        this.fields = fields;
+    }
+
+    /**
      * Gets the offset.
      *
      * @return the offset

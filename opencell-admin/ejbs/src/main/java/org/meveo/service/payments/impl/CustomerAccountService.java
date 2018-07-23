@@ -34,14 +34,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
+
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
@@ -52,7 +51,6 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
-import org.meveo.util.ApplicationProvider;
 
 /**
  * Customer Account service implementation.
@@ -100,18 +98,25 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         List<CustomerAccount> failedImports = new ArrayList<CustomerAccount>();
         return failedImports;
     }
+    
+    private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isDue, Date to, MatchingStatusEnum... status) throws Exception {
+    	return computeOccAmount(customerAccount, operationCategoryEnum, false, isDue, to, status);
+    }
 
-    private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isDue, Date to, MatchingStatusEnum... status)
-            throws Exception {
-
+    private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to, MatchingStatusEnum... status) throws Exception {
         BigDecimal balance = null;
         QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
         queryBuilder.addCriterionEnum("transactionCategory", operationCategoryEnum);
-        if (isDue) {
-            queryBuilder.addCriterion("dueDate", "<=", to, false);
-        } else {
-            queryBuilder.addCriterion("transactionDate", "<=", to, false);
-        }
+        
+		if (!isFuture) {
+			if (isDue) {
+				queryBuilder.addCriterion("dueDate", "<=", to, false);
+				
+			} else {
+				queryBuilder.addCriterion("transactionDate", "<=", to, false);
+			}
+		}
+		
         queryBuilder.addCriterionEntity("customerAccount", customerAccount);
         if (status.length == 1) {
             queryBuilder.addCriterionEnum("matchingStatus", status[0]);
@@ -127,21 +132,37 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         balance = (BigDecimal) query.getSingleResult();
         return balance;
     }
-
+    
     private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+    	return computeBalance(customerAccount, to, false, isDue, status);
+    }
+
+    /**
+     * Computes a balance given a customerAccount. 
+     * to and isDue parameters are ignored when isFuture is true.
+     * 
+     * @param customerAccount account of the customer
+     * @param to compare the invoice due or transaction date here
+     * @param isFuture includes the future due or transaction date
+     * @param isDue if true filter via dueDate else transactionDate
+     * @param status can be a list of MatchingStatusEnum
+     * @return the computed balance
+     * @throws BusinessException when an error in computation is encoutered
+     */
+    private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isFuture, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
         log.trace("start computeBalance customerAccount:{}, toDate:{}, isDue:{}", (customerAccount == null ? "null" : customerAccount.getCode()), to, isDue);
         if (customerAccount == null) {
             log.warn("Error when customerAccount is null!");
             throw new BusinessException("customerAccount is null");
         }
-        if (to == null) {
+        if (!isFuture && to == null) {
             log.warn("Error when toDate is null!");
             throw new BusinessException("toDate is null");
         }
         BigDecimal balance = null, balanceDebit = null, balanceCredit = null;
         try {
-            balanceDebit = computeOccAmount(customerAccount, OperationCategoryEnum.DEBIT, isDue, to, status);
-            balanceCredit = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, status);
+            balanceDebit = computeOccAmount(customerAccount, OperationCategoryEnum.DEBIT, isFuture, isDue, to, status);
+            balanceCredit = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isFuture, isDue, to, status);
             if (balanceDebit == null) {
                 balanceDebit = BigDecimal.ZERO;
             }
@@ -565,4 +586,50 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
         return result;
     }
+
+    /**
+     * Computes the future dueBalance or the dueBalance at the invoice due date.
+     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount. 
+     * 
+     * @param customerAccount Account of the Customer
+     * @return computed due balance of a customer account
+     * @throws BusinessException when an error occurred in computation
+     */
+	public BigDecimal customerAccountFutureBalanceExigibleWithoutLitigation(CustomerAccount customerAccount) throws BusinessException {
+		return computeBalance(customerAccount, null, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
+	}
+
+    
+    /**
+     * Return list customerAccount ids for payment.
+     * 
+     * @param paymentMethodEnum payment method.
+     * @return list of customerAccount ids.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> getCAidsForPayment(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+        try {
+            return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForPayment").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("dueDateIN", dueDate).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Return list customerAccount ids for refund.
+     * 
+     * @param paymentMethodEnum payment method.
+     * @return list of customerAccount ids.
+     */
+    @SuppressWarnings("unchecked")
+    public List<Long> getCAidsForRefund(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+        try {
+            return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForRefund").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("dueDateIN", dueDate).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 }

@@ -89,6 +89,21 @@
 <!-- 				updateField=":parentTab:formId:childTab:trLanguageSelectId"> -->
 <!-- 			</hftl:entityPopup> -->
 
+				<hftl:entityPopup id="billingCyclePopup"
+					header="#{messages['billingCycle.popup.header']}"
+					backingBean="#{billingCycleBean}"
+					searchField1Label="#{messages['businessEntity.code']}"
+					searchField1="code"
+					searchField2Label="#{messages['businessEntity.description']}"
+					searchField2="description"
+					column1Label="#{messages['businessEntity.code']}" column1="code"
+					column2Label="#{messages['businessEntity.description']}"
+					column2="description"
+					selection="#{billingAccountBean.entity.billingCycle}"
+					dataModel="#{billingCycleBean.listBillingAccountBillingCycle()}"
+					updateField=":parentTab:formId:childTab:billingCycleSelectId :parentTab:formId:childTab:billingCycleSelectId_text">
+				</hftl:entityPopup>
+
 		</c:if>
 		
         <h:panelGroup styleClass="col2-set">
@@ -126,11 +141,9 @@
 														id="description" field="description" useConverter="false"
 														size="70" />
 												
-													<hftl:formField id="cycleSelectId"
-														label="#{messages['billingAccount.billingCycle']}"
-														field="billingCycle" valueLabelField="code" required="true" listBean="#{billingCycleBean}"/>
-<!-- 														popup="true" popupId="billingCyclePopup" /> -->
-													
+													<hftl:formField id="billingCycleSelectId" required="true" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
+                            							popupId="billingCyclePopup" />	
+														
 													<hftl:formField
 														label="#{messages['discountPlan.title']}"
 														listBean="#{discountPlanBean}" field="discountPlan"
@@ -415,7 +428,7 @@
 								<hftl:column label="#{messages['invoice.dueDate']}" isDate="true"
 									field="dueDate" />
 								<hftl:column label="#{messages['invoice.amountWithTax']}"
-									field="amountWithTax" />
+									field="amountWithTax" converterParam="4digits"/>
 								<hftl:column label="#{messages['invoice.paymentMethod']}"
 									field="paymentMethodType.label" isMessage="true" />
 								<p:column width="100">

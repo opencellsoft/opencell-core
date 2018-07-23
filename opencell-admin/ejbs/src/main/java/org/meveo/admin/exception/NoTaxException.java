@@ -16,14 +16,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.action.notification;
+package org.meveo.admin.exception;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.1
+ */
+public class NoTaxException extends BusinessException {
+    private static final long serialVersionUID = 1L;
 
-@Named
-@ConversationScoped
-public class NotificationListBean extends NotificationBean {
+    public NoTaxException() {
+        super();
+    }
 
-    private static final long serialVersionUID = -3037867704912788045L;
+    public NoTaxException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public NoTaxException(String message) {
+        super(message);
+    }
+
+    public NoTaxException(Throwable cause) {
+        super(cause);
+    }
 }

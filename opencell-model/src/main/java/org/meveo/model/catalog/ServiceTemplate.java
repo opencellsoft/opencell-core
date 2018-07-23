@@ -49,6 +49,12 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.SubscriptionRenewal;
 
+/**
+ * This represents a service that is part of an offer. It contains charges of different types.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
+ */
 @Entity
 @ModuleItem
 @ObservableEntity
@@ -100,7 +106,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
-
+    
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)

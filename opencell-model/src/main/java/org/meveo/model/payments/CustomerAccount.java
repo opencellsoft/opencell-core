@@ -32,6 +32,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -58,6 +60,13 @@ import org.meveo.model.shared.ContactInformation;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "ar_customer_account")
+@NamedQueries({
+    @NamedQuery(name = "CustomerAccount.listCAIdsForPayment", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and " + 
+            "                   ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and pm.paymentType =:paymentMethodIN  and " + 
+            "                   ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:dueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0"),       
+    @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and " + 
+            "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and " + 
+            "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:dueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0")})
 public class CustomerAccount extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();

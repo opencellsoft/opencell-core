@@ -94,8 +94,8 @@
                             <hftl:column label="#{messages['invoiceSubCategoryCountry.taxe']}" field="tax.code" />
                             <hftl:column label="#{messages['invoiceSubCategoryCountry.taxeCodeEL']}" field="taxCodeEL" />
                             <hftl:column label="#{messages['invoiceSubCategoryCountry.priority']}" field="priority" />
-                            <hftl:column label="#{messages['invoiceSubCategoryCountry.startValidityDate']}" field="startValidityDate" />
-                            <hftl:column label="#{messages['invoiceSubCategoryCountry.endValidityDate']}" field="endValidityDate" />
+                            <hftl:column label="#{messages['invoiceSubCategoryCountry.startValidityDate']}" field="startValidityDate" isDate="true" />
+                            <hftl:column label="#{messages['invoiceSubCategoryCountry.endValidityDate']}" field="endValidityDate" isDate="true" />
                             <p:column styleClass="actions-column" rendered="#{invoiceSubCategoryBean.edit}">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['commons.actions']}" />

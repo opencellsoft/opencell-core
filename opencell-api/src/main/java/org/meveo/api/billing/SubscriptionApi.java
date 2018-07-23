@@ -78,6 +78,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -152,9 +153,12 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
-    
+
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
+
+    @Inject
+    private BillingCycleService billingCycleService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -206,6 +210,14 @@ public class SubscriptionApi extends BaseApi {
         subscription.setDescription(postData.getDescription());
         subscription.setUserAccount(userAccount);
         subscription.setOffer(offerTemplate);
+
+        if (!StringUtils.isBlank(postData.getBillingCycle())) {
+            BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+            }
+            subscription.setBillingCycle(billingCycle);
+        }
 
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -292,8 +304,15 @@ public class SubscriptionApi extends BaseApi {
             subscription.setOffer(offerTemplate);
         }
 
-        subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        if (!StringUtils.isBlank(postData.getBillingCycle())) {
+            BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
+            if (billingCycle == null) {
+                throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
+            }
+            subscription.setBillingCycle(billingCycle);
+        }
 
+        subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -301,7 +320,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed()));
         subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
         subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);
@@ -598,7 +617,7 @@ public class SubscriptionApi extends BaseApi {
             serviceInstance.setOrderNumber(instantiateServicesDto.getOrderNumber());
             serviceInstance.setOrderItemId(instantiateServicesDto.getOrderItemId());
             serviceInstance.setOrderItemAction(instantiateServicesDto.getOrderItemAction());
-            
+
             if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -635,7 +654,7 @@ public class SubscriptionApi extends BaseApi {
     /**
      * Apply an one shot charge on a subscription
      * 
-     * @param postData The apply  one shot charge instance request dto
+     * @param postData The apply one shot charge instance request dto
      * @throws MeveoApiException Meveo api exception
      */
     public void applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData) throws MeveoApiException {
@@ -903,9 +922,8 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
     public SubscriptionsListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
-        boolean inherit = pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("inheritedCF");
         boolean merge = mergedCF != null && mergedCF;
-        return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(inherit, merge));
+        return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
     }
 
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
@@ -943,7 +961,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * Find subscription 
+     * Find subscription
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
      * @param inheritCF Custom field inheritance type
@@ -1003,40 +1021,41 @@ public class SubscriptionApi extends BaseApi {
     public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
         SubscriptionDto dto = new SubscriptionDto(subscription);
         if (subscription.getAccessPoints() != null) {
-        	for (Access ac : subscription.getAccessPoints()) {
-        		CustomFieldsDto customFieldsDTO = null;
-        		customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, inheritCF);
+            for (Access ac : subscription.getAccessPoints()) {
+                CustomFieldsDto customFieldsDTO = null;
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, inheritCF);
 
-        		AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
-        		dto.getAccesses().getAccess().add(accessDto);
-        	}
+                AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
+                dto.getAccesses().getAccess().add(accessDto);
+            }
         }
 
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription, inheritCF));
         if (subscription.getServiceInstances() != null) {
-        	for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-        		ServiceInstanceDto serviceInstanceDto = null;
-        		CustomFieldsDto customFieldsDTO = null;
-        		customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, inheritCF);
+            for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                ServiceInstanceDto serviceInstanceDto = null;
+                CustomFieldsDto customFieldsDTO = null;
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, inheritCF);
 
-        		serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
-        		dto.getServices().addServiceInstance(serviceInstanceDto);
-        	}
+                serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
+                dto.getServices().addServiceInstance(serviceInstanceDto);
+            }
         }
 
         if (subscription.getProductInstances() != null) {
-        	for (ProductInstance productInstance : subscription.getProductInstances()) {
-        		CustomFieldsDto customFieldsDTO = null;
-        		customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
+            for (ProductInstance productInstance : subscription.getProductInstances()) {
+                CustomFieldsDto customFieldsDTO = null;
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
 
-        		dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
-        	}
+                dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
+            }
         }
 
         return dto;
     }
 
-    public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws MeveoApiException, BusinessException {
+    public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
+            throws MeveoApiException, BusinessException {
 
         SubscriptionDto existedSubscriptionDto = null;
         try {
@@ -1233,7 +1252,7 @@ public class SubscriptionApi extends BaseApi {
             }
         }
     }
-    
+
     /**
      * Suspend subscription
      * @param subscriptionCode subscription code
@@ -1652,10 +1671,10 @@ public class SubscriptionApi extends BaseApi {
      * @param postData the post data
      * @throws BusinessException the business exception
      * @throws MissingParameterException the missing parameter exception
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      */
     public RateSubscriptionResponseDto rateSubscription(RateSubscriptionRequestDto postData) throws BusinessException, MissingParameterException, InvalidParameterException {
-       
+
         String subscriptionCode = postData.getSubscriptionCode();
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
@@ -1672,11 +1691,11 @@ public class SubscriptionApi extends BaseApi {
         handleMissingParameters();
 
         RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
-        
-        // Recurring charges : 
+
+        // Recurring charges :
         List<Long> activeRecurringChargeIds = recurringChargeInstanceService.findIdsByStatusAndSubscriptionCode(InstanceStatusEnum.ACTIVE, rateUntillDate, subscriptionCode, false);
         for (Long chargeId : activeRecurringChargeIds) {
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate);
+            int nbRating = recurringChargeInstanceService.applyRecurringCharge(chargeId, rateUntillDate).getNbRating();
             result.addResult(chargeId, nbRating);
         }
         return result;

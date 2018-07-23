@@ -1,7 +1,8 @@
 package org.meveo.service.billing.impl;
 
+import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +35,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Stateful
 public class InvoiceAgregateHandler {
@@ -151,7 +153,7 @@ public class InvoiceAgregateHandler {
 	 * @param ratedTransaction rated transaction.
 	 * @throws BusinessException business exception
 	 */
-    public void addLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
+    private void addLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
             RatedTransaction ratedTransaction) throws BusinessException {
         addOrRemoveLine(invoiceSubCategory, billingAccount, userAccount, description, amountWithoutTax, ratedTransaction, true);
     }
@@ -166,7 +168,7 @@ public class InvoiceAgregateHandler {
 	 * @param ratedTransaction rated transaction
 	 * @throws BusinessException business exception
 	 */
-    public void removeLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
+    private void removeLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
             RatedTransaction ratedTransaction) throws BusinessException {
         addOrRemoveLine(invoiceSubCategory, billingAccount, userAccount, description, amountWithoutTax, ratedTransaction, false);
     }
@@ -186,8 +188,7 @@ public class InvoiceAgregateHandler {
 	 * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
 	 */
-    
-    public void addOrRemoveLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
+    private void addOrRemoveLine(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, String description, BigDecimal amountWithoutTax,
             RatedTransaction ratedTransaction, boolean isToAdd) throws BusinessException {
         log.debug("addOrRemoveLine amountWithoutTax {} ...", amountWithoutTax);
 
@@ -401,7 +402,7 @@ public class InvoiceAgregateHandler {
 	 */
 	private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
 		Integer rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
-		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, RoundingMode.HALF_UP));
+		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, getRoundingMode(appProvider.getRoundingMode())));
 		return ttc;
 	}
 
