@@ -646,7 +646,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, null, new Date());
+            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {

@@ -290,7 +290,7 @@ public class Invoice4_2Api extends BaseApi {
                 RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                     ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(),
                     ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax(), RatedTransactionStatusEnum.BILLED, null, billingAccount, invoiceSubCategory, null, null,
-                    null, null, null, ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription(), ratedTransaction.getStartDate(), ratedTransaction.getEndDate());
+                    null, null, null, null, ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription(), ratedTransaction.getStartDate(), ratedTransaction.getEndDate());
 
                 meveoRatedTransaction.setInvoice(invoice);
                 meveoRatedTransaction.setWallet(billingAccountUserAccount.getWallet());
@@ -387,13 +387,14 @@ public class Invoice4_2Api extends BaseApi {
             BillingProcessTypesEnum.AUTOMATIC);
     }
 
-    private void updateBAtotalAmount(Long billingAccountId, BillingRun billingRun) throws BusinessException {
-        billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun);
+    private void updateBAtotalAmount(BillingAccount billingAccount, BillingRun billingRun) throws BusinessException {
+        billingAccountService.updateEntityTotalAmounts(billingAccount, billingRun);
         log.debug("updateBillingAccountTotalAmounts ok");
     }
 
     public void createRatedTransaction(Long billingAccountId, Date invoicingDate) throws Exception {
-        ratedTransactionService.createRatedTransaction(billingAccountId, invoicingDate);
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+        ratedTransactionService.createRatedTransaction(billingAccount, invoicingDate);
     }
 
     public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber) throws BusinessException {
@@ -421,11 +422,12 @@ public class Invoice4_2Api extends BaseApi {
             handleMissingParameters();
             return null;
         } else {
-            billingAccountCode = generateInvoiceRequestDto.getBillingAccountCode();
-            if (StringUtils.isBlank(billingAccountCode)) {
-                missingParameters.add("billingAccountCode");
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
+                missingParameters.add("targetCode");
             }
-
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetType())) {
+                missingParameters.add("targetType");
+            }
             if (generateInvoiceRequestDto.getInvoicingDate() == null) {
                 missingParameters.add("invoicingDate");
             }
@@ -436,9 +438,9 @@ public class Invoice4_2Api extends BaseApi {
 
         handleMissingParameters();
 
-        BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode, Arrays.asList("billingRun"));
+        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
         if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
+            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getTargetCode());
         }
 
         if (billingAccount.getBillingRun() != null && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
@@ -458,13 +460,13 @@ public class Invoice4_2Api extends BaseApi {
         Long billingRunId = billingRun.getId();
         log.info("launchExceptionalInvoicing ok , billingRun.id:" + billingRunId);
 
-        updateBAtotalAmount(billingAccount.getId(), billingRun);
+        updateBAtotalAmount(billingAccount, billingRun);
         log.info("updateBillingAccountTotalAmounts ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1);
         log.info("update billingRun ON_GOING");
 
-        billingRunService.createAgregatesAndInvoice(billingRun.getId(), 1, 0, null, null);
+        billingRunService.createAgregatesAndInvoice(billingRun, 1, 0, null, null);
         log.info("createAgregatesAndInvoice ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null);

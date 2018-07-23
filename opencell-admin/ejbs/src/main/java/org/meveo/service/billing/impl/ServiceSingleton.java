@@ -68,7 +68,7 @@ public class ServiceSingleton {
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Sequence incrementInvoiceNumberSequence(Date invoiceDate, Long invoiceTypeId, Seller seller, String cfName, long incrementBy) throws BusinessException {
+    public Sequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
         Long currentNbFromCF = null;
         Long previousInvoiceNb = null;
 
@@ -89,7 +89,6 @@ public class ServiceSingleton {
             }
         }
 
-        InvoiceType invoiceType = invoiceTypeService.findById(invoiceTypeId);
         Sequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
         if (sequence == null) {
             sequence = invoiceType.getSequence();
@@ -111,7 +110,7 @@ public class ServiceSingleton {
                 }
                 previousInvoiceNb = sequence.getCurrentInvoiceNb();
                 sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
-                invoiceType = invoiceTypeService.update(invoiceType);
+                //invoiceType = invoiceTypeService.update(invoiceType);
             } else {
                 Sequence sequenceGlobal = new Sequence();
                 sequenceGlobal.setPrefixEL(sequence.getPrefixEL());
@@ -155,7 +154,7 @@ public class ServiceSingleton {
         Seller seller = sellerService.findById(sellerId);
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
-        Sequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceTypeId, seller, cfName, numberOfInvoices);
+        Sequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
 
         try {
             sequence = (Sequence) BeanUtils.cloneBean(sequence);

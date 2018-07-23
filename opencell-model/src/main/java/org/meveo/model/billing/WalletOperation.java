@@ -67,6 +67,10 @@ import org.meveo.model.rating.EDR;
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
         @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.orderNumber=:orderNumber"),
         @NamedQuery(name = "WalletOperation.listToInvoiceIds", query = "SELECT o.id FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
         @NamedQuery(name = "WalletOperation.getBalance", query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
@@ -239,6 +243,10 @@ public class WalletOperation extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    protected Subscription subscription;
 
     @Transient
     private BillingRun billingRun;
@@ -526,6 +534,7 @@ public class WalletOperation extends BusinessEntity {
         result.setInputUnitDescription(inputUnitDescription);
         result.setWallet(wallet);
         result.setEdr(edr);
+        result.setSubscription(subscription);
         return result;
     }
 
@@ -623,6 +632,14 @@ public class WalletOperation extends BusinessEntity {
 
     public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
         this.rawAmountWithTax = rawAmountWithTax;
+    }
+    
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 
 }

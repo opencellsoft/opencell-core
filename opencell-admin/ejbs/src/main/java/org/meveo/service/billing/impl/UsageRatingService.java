@@ -185,6 +185,7 @@ public class UsageRatingService implements Serializable {
         walletOperation.setParameter2(edr.getParameter2());
         walletOperation.setParameter3(edr.getParameter3());
         walletOperation.setOrderNumber(chargeInstance.getOrderNumber());
+        walletOperation.setSubscription(chargeInstance.getSubscription());
         walletOperation.setEdr(edr);
 
         // log.debug("AKK URS line 193");
