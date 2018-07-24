@@ -361,4 +361,26 @@ public class ContactApi extends AccountEntityApi {
 		return contactsDto;
 	}
 
+	public void addTag(String code, String tag) throws BusinessException, EntityDoesNotExistsException {
+		Contact contact = contactService.findByCode(code);
+		if(contact != null) {
+			if(!contact.getTags().contains(tag)) {
+				contact.getTags().add(tag);
+			}
+			else throw new BusinessException("Contact code: " + code + " already has tag: " + tag);
+		}
+		else throw new EntityDoesNotExistsException(Contact.class, code, "code");
+	}
+
+	public void removeTag(String code, String tag) throws BusinessException, EntityDoesNotExistsException {
+		Contact contact = contactService.findByCode(code);
+		if(contact != null) {
+			if(contact.getTags().contains(tag)) {
+				contact.getTags().remove(tag);
+			}
+			else throw new BusinessException("Contact code: " + code + " do not contain tag: " + tag);
+		}
+		else throw new EntityDoesNotExistsException(Contact.class, code, "code");
+	}
+
 }

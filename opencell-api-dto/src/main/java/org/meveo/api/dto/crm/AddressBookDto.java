@@ -8,7 +8,6 @@ import org.meveo.api.dto.BusinessEntityDto;
 
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.intcrm.ContactGroup;
 
 public class AddressBookDto extends BusinessEntityDto  {
 
@@ -17,8 +16,6 @@ public class AddressBookDto extends BusinessEntityDto  {
 	 */
 	private static final long serialVersionUID = -1144224800558842204L;
 
-	private List<ContactGroupDto> contactGroup;
-	
 	private List<ContactDto> contact;
 	
 	public AddressBookDto() {
@@ -28,18 +25,7 @@ public class AddressBookDto extends BusinessEntityDto  {
 
 	public AddressBookDto(AddressBook addressBook) {
 		super(addressBook);
-		
-		Set<ContactGroup> contactGroups = addressBook.getContactGroups();
-		
-		if(contactGroups != null) {
-			List<ContactGroupDto> contactGroupDtos= new ArrayList<ContactGroupDto>();
-			for(ContactGroup cg : contactGroups) {
-				ContactGroupDto cgd = new ContactGroupDto(cg);
-				contactGroupDtos.add(cgd);
-			}
-			contactGroup = contactGroupDtos;
-		}
-		
+				
 		Set<Contact> contacts = addressBook.getContacts();
 		
 		if(contacts != null) {
@@ -50,16 +36,6 @@ public class AddressBookDto extends BusinessEntityDto  {
 			}
 			contact = contactDtos;
 		}
-	}
-
-
-	public List<ContactGroupDto> getContactGroup() {
-		return contactGroup;
-	}
-
-
-	public void setContactGroup(List<ContactGroupDto> contactGroup) {
-		this.contactGroup = contactGroup;
 	}
 
 

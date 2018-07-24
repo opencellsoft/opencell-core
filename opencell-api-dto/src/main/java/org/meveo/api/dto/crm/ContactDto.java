@@ -1,13 +1,11 @@
 package org.meveo.api.dto.crm;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.intcrm.ContactGroup;
 
 public class ContactDto extends AccountDto {
 
@@ -45,10 +43,8 @@ public class ContactDto extends AccountDto {
 
 //	private List<Message> messages;
 	
-//	private AddressBookDto addressBook;
+	private Set<String> tags = new HashSet<String>();
 	
-    private List<ContactGroupDto> contactGroup = new ArrayList<ContactGroupDto>();
-
 	public ContactDto () {
 		
 	}
@@ -69,23 +65,11 @@ public class ContactDto extends AccountDto {
 		isVip = contact.isVip();
 		isProspect = contact.isProspect();
 		agreedToUA = contact.isAgreedToUA();
+		tags = contact.getTags();
 //		messages = contact.getMessages();
 		
 //		addressBook = new AddressBookDto(contact.getAddressBook());
-		
-		Set<ContactGroup> contactGroups = contact.getContactGroup();
-		
-		if(contactGroups != null) {
-			List<ContactGroupDto> contactGroupDto = new ArrayList<ContactGroupDto>();
 			
-			for(ContactGroup cg : contactGroups) {
-				ContactGroupDto cgd = new ContactGroupDto(cg);
-				contactGroupDto.add(cgd);
-			}
-			this.setContactGroup(contactGroupDto);
-		}
-		
-		
 	}
 
 	public String getEmail() {
@@ -217,19 +201,11 @@ public class ContactDto extends AccountDto {
 		this.socialIdentifier = socialIdentifier;
 	}
 
-//	public AddressBookDto getAddressBook() {
-//		return addressBook;
-//	}
-//
-//	public void setAddressBook(AddressBookDto addressBook) {
-//		this.addressBook = addressBook;
-//	}
-
-	public List<ContactGroupDto> getContactGroup() {
-		return contactGroup;
+	public Set<String> getTags() {
+		return tags;
 	}
 
-	public void setContactGroup(List<ContactGroupDto> contactGroup) {
-		this.contactGroup = contactGroup;
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
 	}
 }

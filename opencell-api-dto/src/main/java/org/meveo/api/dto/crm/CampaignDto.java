@@ -14,8 +14,6 @@ public class CampaignDto extends BusinessEntityDto {
 	 */
 	private static final long serialVersionUID = 3629760837848965128L;
 	
-//	private List<ContactGroup> contactGroups;
-
 	private Date scheduleDate;
 
 	private Date startDate;

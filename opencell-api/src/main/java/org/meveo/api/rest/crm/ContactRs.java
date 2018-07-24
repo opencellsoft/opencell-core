@@ -44,9 +44,17 @@ public interface ContactRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ContactDto postData);
+
+    @PUT
+    @Path("/{code}/{tag}")
+    ActionStatus addTag(@PathParam("code") String code, @PathParam("tag") String tag);
+    
+    @DELETE
+    @Path("/{code}/{tag}")
+    ActionStatus removeTag(@PathParam("code") String code, @PathParam("tag") String tag);
     
     /**
-     * List customers matching a given criteria
+     * List contacts matching a given criteria
      *
      * @param query Search criteria
      * @param fields Data retrieval options/fieldnames separated by a comma

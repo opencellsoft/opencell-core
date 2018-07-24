@@ -29,10 +29,6 @@ public class AddressBook extends BusinessEntity {
 
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "addressBook", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ContactGroup> contactGroups = new HashSet<ContactGroup>();
-
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "addressBook", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Contact> contacts = new HashSet<Contact>();
 
 	public AddressBook() {
@@ -43,15 +39,7 @@ public class AddressBook extends BusinessEntity {
 		this.setCode(code);
 
 	}
-
-	public Set<ContactGroup> getContactGroups() {
-		return contactGroups;
-	}
-
-	public void setContactGroups(Set<ContactGroup> contactGroups) {
-		this.contactGroups = contactGroups;
-	}
-
+	
 	public Set<Contact> getContacts() {
 		return contacts;
 	}

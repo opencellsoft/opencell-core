@@ -18,18 +18,19 @@
  */
 package org.meveo.model.communication.contact;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -43,7 +44,6 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -124,10 +124,13 @@ public class Contact extends AccountEntity {
 	@JoinColumn(name = "address_book_id")
 	private AddressBook addressBook;
 	
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "crm_contact_group_com_contact", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "contact_group_id"))
-    private Set<ContactGroup> contactGroup;
-
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "com_contact_tag", joinColumns =
+	@JoinColumn(name = "contact_id"))
+	@Column(name = "tag")
+	private Set<String> tags = new HashSet<String>();
+	
 	public Contact() {
 		accountType = ACCOUNT_TYPE;
 	}
@@ -269,14 +272,15 @@ public class Contact extends AccountEntity {
 		this.addressBook = addressBook;
 	}
 
-	public Set<ContactGroup> getContactGroup() {
-		return contactGroup;
+	
+	public Set<String> getTags() {
+		return tags;
 	}
 
-	public void setContactGroup(Set<ContactGroup> contactGroup) {
-		this.contactGroup = contactGroup;
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
 	}
-	
+
 	public String toString() {
 		return this.getName().toString() + " code:" + this.getCode();
 	}

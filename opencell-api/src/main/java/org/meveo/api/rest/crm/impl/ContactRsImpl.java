@@ -57,6 +57,28 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	}
 
 	@Override
+	public ActionStatus addTag(@PathParam("code") String code, @PathParam("tag") String tag) {
+		ActionStatus result = new ActionStatus();
+		try {
+			contactApi.addTag(code, tag);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeTag(@PathParam("code") String code, @PathParam("tag") String tag) {
+		ActionStatus result = new ActionStatus();
+		try {
+			contactApi.removeTag(code, tag);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+		return result;
+	}
+	
+	@Override
 	public ActionStatus remove(@PathParam("code") String code) {
 		ActionStatus result = new ActionStatus();
 
@@ -124,4 +146,6 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 }

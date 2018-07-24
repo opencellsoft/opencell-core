@@ -20,16 +20,10 @@ package org.meveo.model.communication;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -42,7 +36,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
 @ExportIdentifier({ "campaign" })
@@ -52,10 +45,6 @@ import org.meveo.model.intcrm.ContactGroup;
 public class Campaign extends BusinessEntity {
 
 	private static final long serialVersionUID = -5865150907978275819L;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JoinTable(name = "com_campaign_crm_contact_group", joinColumns = @JoinColumn(name = "campaign_id"), inverseJoinColumns = @JoinColumn(name = "contact_group_id"))
-    private Set<ContactGroup> contactGroups;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "schedule_date")
@@ -95,15 +84,6 @@ public class Campaign extends BusinessEntity {
 	@OneToMany(mappedBy = "campaign")
 	private List<Message> messages;
 	
-
-	public Set<ContactGroup> getContactGroups() {
-		return contactGroups;
-	}
-
-	public void setContactGroups(Set<ContactGroup> contactGroups) {
-		this.contactGroups = contactGroups;
-	}
-
 	public Date getScheduleDate() {
 		return scheduleDate;
 	}

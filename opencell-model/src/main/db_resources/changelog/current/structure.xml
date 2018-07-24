@@ -758,6 +758,13 @@
         <addColumn tableName="adm_user">
             <column name="crm_address_book_id" type="bigint" />
         </addColumn>
+        
+        <createTable tableName="com_contact_tag">
+        	<column name="contact_id" type="bigint" />
+        	<column name="tag" type="varchar(100)"/>
+        </createTable>
+        <addPrimaryKey columnNames="contact_id, tag" constraintName="com_contact_tag_pkey" tableName="com_contact_tag" />
+        
     </changeSet>
 
 	<changeSet id="perf_mediation_20180404" author="Wassim" dbms="postgresql">
