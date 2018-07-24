@@ -57,6 +57,7 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
+import org.meveo.service.account.GpdrService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -70,7 +71,7 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -96,6 +97,9 @@ public class CustomerApi extends AccountEntityApi {
 
 	@Inject
 	private InvoiceService invoiceService;
+	
+	@Inject
+	private GpdrService gpdrService;
 
 	public void create(CustomerDto postData) throws MeveoApiException, BusinessException {
 		create(postData, true);
@@ -757,5 +761,10 @@ public class CustomerApi extends AccountEntityApi {
 				throw new BusinessApiException("Error zipping customer data.");
 			}
 		}
+	}
+
+	public void anonymizeGpdr(String customerCode) throws BusinessException {
+		Customer entity = customerService.findByCode(customerCode);
+		gpdrService.anonymize(entity);		
 	}
 }

@@ -41,6 +41,10 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CUST")
 @ExportIdentifier({ "code" })
@@ -149,6 +153,17 @@ public class Customer extends AccountEntity {
 
 	public void setVatNo(String vatNo) {
 		this.vatNo = vatNo;
+	}
+	
+	@Override
+	public void anonymize(String code) {
+		super.anonymize(code);
+		contactInformation.anonymize(code);
+		if (getCustomerAccounts() != null) {
+			for (CustomerAccount ca : getCustomerAccounts()) {
+				ca.anonymize(code);
+			}
+		}
 	}
 
 }

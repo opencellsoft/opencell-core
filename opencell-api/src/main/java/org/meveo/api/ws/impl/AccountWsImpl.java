@@ -75,7 +75,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * 
  * @author anasseh
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2
  */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -1189,5 +1189,18 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         }
 
         return result;
+	}
+
+	@Override
+	public ActionStatus anonymizeGpdr(String customerCode) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.anonymizeGpdr(customerCode);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
 	}
 }

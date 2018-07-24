@@ -27,7 +27,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @Path("/account/customer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -231,4 +231,15 @@ public interface CustomerRs extends IBaseRs {
     @GET
     @Path("/exportCustomerHierarchy")
     ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
+    
+    /**
+     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
+	 * Upon request, they can require their data to be erased.
+	 * In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * @param customerCode The code of the customer
+     * @return Request processing status
+     */
+    @GET
+    @Path("/anonymizeGpdr")
+    ActionStatus anonymizeGpdr(@QueryParam("customerCode") String customerCode);
 }

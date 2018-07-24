@@ -54,6 +54,8 @@ import org.meveo.model.shared.ContactInformation;
 
 /**
  * Customer Account entity.
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CA")
@@ -483,4 +485,15 @@ public class CustomerAccount extends AccountEntity {
         }
         return true;
     }
+    
+    @Override
+	public void anonymize(String code) {
+		super.anonymize(code);
+		contactInformation.anonymize(code);
+		if (getBillingAccounts() != null) {
+			for (BillingAccount ba : getBillingAccounts()) {
+				ba.anonymize(code);
+			}
+		}
+	}
 }

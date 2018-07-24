@@ -23,7 +23,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -261,6 +261,19 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
 		try {
 			customerApi.exportCustomerHierarchy(customerCode, httpServletResponse);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus anonymizeGpdr(String customerCode) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.anonymizeGpdr(customerCode);
 		} catch (Exception e) {
 			processException(e, result);
 		}

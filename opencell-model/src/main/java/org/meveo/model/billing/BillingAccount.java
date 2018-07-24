@@ -53,6 +53,10 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BA")
 @ExportIdentifier({ "code" })
@@ -432,4 +436,16 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.minimumLabelEl = minimumLabelEl;
     }
 
+    @Override
+	public void anonymize(String code) {
+		super.anonymize(code);
+		setEmail(code + "@opencellsoft.com");
+		setPhone(code);
+		if (getUsersAccounts() != null) {
+			for (UserAccount ua : getUsersAccounts()) {
+				ua.anonymize(code);
+			}
+		}
+	}
+    
 }

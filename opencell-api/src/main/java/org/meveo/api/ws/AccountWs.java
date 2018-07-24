@@ -56,7 +56,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @author Edward P. Legaspi
  * @author anasseh
  * 
- * @lastModifiedVersion willBeSetHere
+ * @lastModifiedVersion 5.2
  **/
 @WebService
 public interface AccountWs extends IBaseWs {
@@ -538,6 +538,16 @@ public interface AccountWs extends IBaseWs {
    	 * 
      * @param customerCode the code of the customer
      */
-	@WebMethod
+    @WebMethod
 	ActionStatus exportCustomerHierarchy(@WebParam(name = "customerCode") String customerCode);
+    
+    /**
+     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
+	 * Upon request, they can require their data to be erased.
+	 * In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * @param customerCode The code of the customer
+     * @return Request processing status
+     */
+    @WebMethod
+	ActionStatus anonymizeGpdr(@WebParam(name = "customerCode") String customerCode);
 }
