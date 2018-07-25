@@ -223,10 +223,7 @@ public class ContactService extends BusinessService<Contact> {
 		    BufferedWriter bw1 = new BufferedWriter(fw1);
 		    PrintWriter pwout1 = new PrintWriter(bw1);
 		    
-
-			FileWriter fw2 = new FileWriter(path2, true);
-		    BufferedWriter bw2 = new BufferedWriter(fw2);
-		    PrintWriter pwout2 = new PrintWriter(bw2);
+		    PrintWriter pwout2 = new PrintWriter(path2);
 	
 			for(String contactError : contactErrors) {
 				pwout1.println(new Date().toString() + " | " + contactError);

@@ -126,7 +126,9 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
                 + " AND r.billingAccount=:billingAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
-                + " AND r.wallet.userAccount=:userAccount")
+                + " AND r.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "RatedTransaction.setStatusToCanceledByRsCodes", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
+                + " where rt.id IN :rsToCancelCodes and rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN")
 })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
