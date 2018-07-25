@@ -990,11 +990,11 @@
 	</changeSet>
 	<changeSet id="#2870_20180129 - Convert to EnableBussEntity" author="EdwardLegaspi">
 		<addColumn tableName="dwh_report_extract">
-			<column name="uuid" type="varchar(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="cf_values" type="${type.json}"/>
+			<column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}"/>            
 		</addColumn>
+        <sql>update ${db.schema.adapted}dwh_report_extract set uuid=concat('dre_',id)</sql>
+        <addNotNullConstraint tableName="dwh_report_extract" columnName="uuid" columnDataType="varchar(60)"/>
 	</changeSet>
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
