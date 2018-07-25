@@ -24,7 +24,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -39,7 +38,6 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CUST")
@@ -62,9 +60,6 @@ public class Customer extends AccountEntity {
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
-
-    @Embedded
-    private ContactInformation contactInformation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
@@ -110,14 +105,6 @@ public class Customer extends AccountEntity {
 
     public void setCustomerAccounts(List<CustomerAccount> customerAccounts) {
         this.customerAccounts = customerAccounts;
-    }
-
-    public ContactInformation getContactInformation() {
-        return contactInformation;
-    }
-
-    public void setContactInformation(ContactInformation contactInformation) {
-        this.contactInformation = contactInformation;
     }
 
     @Override

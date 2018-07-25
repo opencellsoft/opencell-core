@@ -516,10 +516,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
          */
 
         Element email = doc.createElement("email");
-        String billingEmail = billingAccount.getEmail();
-        Text emailTxt = doc.createTextNode(billingEmail != null ? billingEmail : "");
-        email.appendChild(emailTxt);
-        billingAccountTag.appendChild(email);
+        if(billingAccount.getContactInformation() != null) {
+            String billingEmail = billingAccount.getContactInformation().getEmail();
+            Text emailTxt = doc.createTextNode(billingEmail != null ? billingEmail : "");
+            email.appendChild(emailTxt);
+            billingAccountTag.appendChild(email);
+        }
 
         addNameAndAdress(billingAccount, doc, billingAccountTag, billingAccountLanguage);
 

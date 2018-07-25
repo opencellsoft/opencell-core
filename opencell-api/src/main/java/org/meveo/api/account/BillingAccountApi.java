@@ -172,7 +172,7 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
         billingAccount.setTerminationDate(postData.getTerminationDate());
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
-        billingAccount.setPhone(postData.getPhone());
+        billingAccount.getContactInformation().setPhone(postData.getPhone());
         billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
 
@@ -190,7 +190,7 @@ public class BillingAccountApi extends AccountEntityApi {
         } else {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
-        billingAccount.setEmail(postData.getEmail());
+        billingAccount.getContactInformation().setEmail(postData.getEmail());
         billingAccount.setExternalRef1(postData.getExternalRef1());
         billingAccount.setExternalRef2(postData.getExternalRef2());
 
@@ -317,13 +317,13 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
         if (!StringUtils.isBlank(postData.getEmail())) {
-            billingAccount.setEmail(postData.getEmail());
+            billingAccount.getContactInformation().setEmail(postData.getEmail());
         }
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
         if (!StringUtils.isBlank(postData.getPhone())) {
-            billingAccount.setPhone(postData.getPhone());
+            billingAccount.getContactInformation().setPhone(postData.getPhone());
         }
         if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
             billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());

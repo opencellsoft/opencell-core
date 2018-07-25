@@ -1267,4 +1267,13 @@
     	</addColumn>
     </changeSet>
     
+    <changeSet id="#3217_20180725" author="AbdelmounaimAkadid">
+        <addColumn tableName="account_entity">
+            <column name="email" type="varchar(2000)" />
+            <column name="fax" type="varchar(2000)" />
+            <column name="mobile" type="varchar(2000)" />
+            <column name="phone" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
