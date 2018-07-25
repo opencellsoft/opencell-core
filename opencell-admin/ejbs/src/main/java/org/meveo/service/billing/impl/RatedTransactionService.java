@@ -272,7 +272,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactionFilter Filter to use to filter rated transactions.
      * @param ratedTransactions A list of rated transactions - used in conjunction with isVirtual=true
-     * @param orderNumber Order number used to retrieve rated transactions
      * @param firstTransactionDate First transaction date
      * @param lastTransactionDate Last transaction date
      * @param isInvoiceAdjustment Is this invoice adjustment
@@ -1210,6 +1209,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByUA").setParameter("userAccount", userAccount).getSingleResult();
         } catch (NoResultException e) {
             log.warn("failed to countNotInvoiced RT by UA", e);
+            return null;
+        }
+    }
+    
+    public Long countNotInvoicedRTByCA(CustomerAccount customerAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByCA").setParameter("customerAccount", customerAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotInvoiced RT by CA", e);
             return null;
         }
     }

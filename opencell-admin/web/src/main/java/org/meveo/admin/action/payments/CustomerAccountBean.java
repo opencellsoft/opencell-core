@@ -53,7 +53,10 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
@@ -80,6 +83,15 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     @Inject
     private CustomerService customerService;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
 
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
@@ -140,7 +152,24 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new ValidationException("CustomerAccount does not have a preferred payment method", "paymentMethod.noPreferredPaymentMethod");
         }
-
+        
+        // a safeguard to allow this only if all the WO/RT have been invoiced.
+        Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
+        if(countNonTreatedWO > 0) {
+            messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
+            return null;
+        }
+        Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
+        if(countNonInvoicedRT > 0) {
+            messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
+            return null;
+        }
+        Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
+        if(countUnmatchedAO > 0) {
+            messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
+            return null;
+        }
+        
         entity.setCustomer(customerService.findById(entity.getCustomer().getId()));
 
         String outcome = super.saveOrUpdate(killConversation);
