@@ -62,6 +62,7 @@ import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.communication.postalmail.GpdrConfiguration;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -223,6 +224,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
+    
+    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GpdrConfiguration gpdrConfiguration = new GpdrConfiguration();
 
     public String getCode() {
         return code;
@@ -564,4 +568,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
+
+	public GpdrConfiguration getGpdrConfiguration() {
+		return gpdrConfiguration;
+	}
+
+	public void setGpdrConfiguration(GpdrConfiguration gpdrConfiguration) {
+		this.gpdrConfiguration = gpdrConfiguration;
+	}
 }

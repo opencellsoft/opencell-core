@@ -88,6 +88,17 @@
                         
                         <hftl:formField label="#{messages['invoiceConfiguration.currentInvoiceNb']}" field="invoiceConfiguration" childField="currentInvoiceNb" id="currentInvoiceNb" />
                     </p:fieldset>
+                    	
+                    <p:fieldset legend="#{messages['gpdrConfiguration.title']}" styleClass="clearLeft">
+                    	<label title="#{messages['gpdrConfiguration.note.duration']}"></label>
+                    	<hftl:formField label="#{messages['gpdrConfiguration.inactiveSubscriptionLife']}" field="gpdrConfiguration" childField="inactiveSubscriptionLife" />
+                    	<hftl:formField label="#{messages['gpdrConfiguration.inactiveOrderLife']}" field="gpdrConfiguration" childField="inactiveOrderLife" />
+                    	<hftl:formField label="#{messages['gpdrConfiguration.invoiceLife']}" field="gpdrConfiguration" childField="invoiceLife" />
+                    	<hftl:formField label="#{messages['gpdrConfiguration.accountingLife']}" field="gpdrConfiguration" childField="accountingLife" />
+                    	<hftl:formField label="#{messages['gpdrConfiguration.customerProspectLife']}" field="gpdrConfiguration" childField="customerProspectLife" />
+                    	<hftl:formField label="#{messages['gpdrConfiguration.mailingLife']}" field="gpdrConfiguration" childField="mailingLife" />
+                    	<hftl:formField label="#{messages['gpdrConfiguration.aoCheckUnpaidLife']}" field="gpdrConfiguration" childField="aoCheckUnpaidLife" />
+                    </p:fieldset>
 					
                 </p:tab>
 
