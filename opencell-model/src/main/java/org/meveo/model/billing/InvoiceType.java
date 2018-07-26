@@ -45,7 +45,14 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 
+
+/**
+ *
+ * @author Bahije Mounir
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
@@ -64,6 +71,10 @@ public class InvoiceType extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_templ_negative_id")
     private OCCTemplate occTemplateNegative;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance customInvoiceXmlScriptInstance;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoice_type_applies_to", joinColumns = @JoinColumn(name = "invoice_type_id"), inverseJoinColumns = @JoinColumn(name = "applies_to_id"))
@@ -244,5 +255,12 @@ public class InvoiceType extends BusinessEntity {
     public void setOccTemplateNegativeCodeEl(String occTemplateNegativeCodeEl) {
         this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
-    
+
+    public ScriptInstance getCustomInvoiceXmlScriptInstance() {
+        return customInvoiceXmlScriptInstance;
+    }
+
+    public void setCustomInvoiceXmlScriptInstance(ScriptInstance customInvoiceXmlScriptInstance) {
+        this.customInvoiceXmlScriptInstance = customInvoiceXmlScriptInstance;
+    }
 }
