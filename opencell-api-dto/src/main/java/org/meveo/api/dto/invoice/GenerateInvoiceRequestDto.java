@@ -22,11 +22,14 @@ import org.meveo.api.dto.FilterDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GenerateInvoiceRequestDto {
 
-    @XmlElement(required = true)
+    @XmlElement()
     private String targetType;
     
-    @XmlElement(required = true)
+    @XmlElement()
     private String targetCode;
+    
+    @XmlElement()
+    private String billingAccountCode;
 
     /** The invoicing date. */
     @XmlElement(required = true)
@@ -260,8 +263,22 @@ public class GenerateInvoiceRequestDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+    
+    /**
+	 * @return the billingAccountCode
+	 */
+	public String getBillingAccountCode() {
+		return billingAccountCode;
+	}
 
-    @Override
+	/**
+	 * @param billingAccountCode the billingAccountCode to set
+	 */
+	public void setBillingAccountCode(String billingAccountCode) {
+		this.billingAccountCode = billingAccountCode;
+	}
+
+	@Override
     public String toString() {
         return "GenerateInvoiceRequestDto [targetCode=" + targetCode + ", targetType=" + targetType + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate
                 + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
