@@ -93,6 +93,13 @@ public abstract class AccountEntity extends BusinessCFEntity {
     
     @Embedded
     private ContactInformation contactInformation;
+    
+    @Column(name = "vat_no", length = 100)
+    private String vatNo;
+    
+    @Column(name = "registration_no", length = 100)
+    private String registrationNo;
+
 
     public String getExternalRef1() {
         return externalRef1;
@@ -170,6 +177,22 @@ public abstract class AccountEntity extends BusinessCFEntity {
 		this.jobTitle = jobTitle;
 	}
 	
+	public String getVatNo() {
+		return vatNo;
+	}
+
+	public void setVatNo(String vatNo) {
+		this.vatNo = vatNo;
+	}
+
+	public String getRegistrationNo() {
+		return registrationNo;
+	}
+
+	public void setRegistrationNo(String registrationNo) {
+		this.registrationNo = registrationNo;
+	}
+
 	public ContactInformation getContactInformation() {
 	    if(contactInformation == null) {
 	        contactInformation = new ContactInformation();
@@ -180,5 +203,5 @@ public abstract class AccountEntity extends BusinessCFEntity {
     public void setContactInformation(ContactInformation contactInformation) {
         this.contactInformation = contactInformation;
     }
-
+    
 }

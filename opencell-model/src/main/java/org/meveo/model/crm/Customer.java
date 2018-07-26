@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -65,12 +64,6 @@ public class Customer extends AccountEntity {
     @JoinColumn(name = "seller_id")
     private Seller seller;
     
-    @Column(name = "vat_no", length = 100)
-    private String vatNo;
-    
-    @Column(name = "registration_no", length = 100)
-    private String registrationNo;
-
     public Customer() {
         accountType = ACCOUNT_TYPE;
     }
@@ -121,21 +114,5 @@ public class Customer extends AccountEntity {
     public Class<? extends BusinessEntity> getParentEntityType() {
         return Seller.class;
     }
-
-	public String getRegistrationNo() {
-		return registrationNo;
-	}
-
-	public void setRegistrationNo(String registrationNo) {
-		this.registrationNo = registrationNo;
-	}
-
-	public String getVatNo() {
-		return vatNo;
-	}
-
-	public void setVatNo(String vatNo) {
-		this.vatNo = vatNo;
-	}
 
 }
