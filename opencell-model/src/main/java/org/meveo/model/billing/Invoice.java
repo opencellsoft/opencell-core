@@ -553,10 +553,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-
+    
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
+        return new ICustomFieldEntity[] { billingRun };
     }
 
     public Set<Invoice> getLinkedInvoices() {
