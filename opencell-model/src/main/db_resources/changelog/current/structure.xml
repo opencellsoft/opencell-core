@@ -1288,5 +1288,13 @@
         </createTable>
         <addPrimaryKey columnNames="customfieldtemplate_id, key" constraintName="crm_custom_field_tmpl_val_pos_pkey" tableName="crm_custom_field_tmpl_val_pos" />
     </changeSet>
+    
+    <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="rum_prefix" type="varchar(15)" />
+            <column name="rum_sequence_size" type="bigint" />
+			<column name="rum_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
 
 </databaseChangeLog>
