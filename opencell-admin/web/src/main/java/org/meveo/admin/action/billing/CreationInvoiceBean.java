@@ -695,6 +695,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                             updateAmountsAndLines(getFreshBA());
                         }
                     }
+                    
+                    for (RatedTransaction rt : invoice.getRatedTransactions()) {
+                        if(rt.getWallet() == null) {
+                            agregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
+                        }
+                    }
+                    updateAmountsAndLines(getFreshBA());
                 }
 
             }
