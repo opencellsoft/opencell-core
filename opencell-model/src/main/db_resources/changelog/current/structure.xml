@@ -27,10 +27,10 @@
         <modifyDataType tableName="billing_charge_instance" columnName="termination_date" newDataType="datetime" />
         <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime" />
     </changeSet>
-    
-    <changeSet id="#3196_20180131-migration" author="AndriusKarpavicius">    
+
+    <changeSet id="#3196_20180131-migration" author="AndriusKarpavicius">
         <sql>update ${db.schema.adapted}billing_recurring_charge_inst set next_charge_date = date(next_charge_date) + cast(subscription_date as time)
-        where recurring_chrg_tmpl_id in (select chrgt.id from ${db.schema.adapted}cat_recurring_charge_templ chrgt join ${db.schema.adapted}cat_calendar cal on chrgt.calendar_id = cal.id where cal.cal_type='PERIOD')</sql>
+            where recurring_chrg_tmpl_id in (select chrgt.id from ${db.schema.adapted}cat_recurring_charge_templ chrgt join ${db.schema.adapted}cat_calendar cal on chrgt.calendar_id = cal.id where cal.cal_type='PERIOD')</sql>
     </changeSet>
 
     <changeSet id="#2819_20180212" author="AbdelmounaimAkadid">
@@ -289,10 +289,6 @@
             </column>
             <column name="sql_query" type="varchar(2000)" />
             <column name="script_instance_id" type="bigint" />
-            <column name="uuid" type="varchar(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="cf_values" type="${type.json}"/>
 		</createTable>
 		
 		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="dwh_report_extract" constraintName="fk_report_extract_script_instance" deferrable="false" initiallyDeferred="false"
@@ -735,6 +731,8 @@
         </createTable>
         <addPrimaryKey columnNames="contact_id, tag" constraintName="com_contact_tag_pkey" tableName="com_contact_tag" />
         
+    	<dropColumn tableName="com_contact" columnName="contact_code"/>
+
     </changeSet>
 
 	<changeSet id="perf_mediation_20180404" author="Wassim" dbms="postgresql">
@@ -1059,10 +1057,6 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="#3148_20180522" author="FranckValot">
-    	<dropColumn tableName="com_contact" columnName="contact_code"/>
-    </changeSet>
-
 	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
 	   <sql splitStatements="false" stripComments="false"><![CDATA[	
 	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
@@ -1074,7 +1068,6 @@
 			$$ LANGUAGE plpgsql;
 		]]></sql>
 	</changeSet>
-
     <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
     <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
      <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
@@ -1094,70 +1087,17 @@
 								return @textvalue;				
 			end;
 		]]></sql>
-	</changeSet>    
-	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
-		   <sql splitStatements="false" stripComments="false"><![CDATA[	
-		   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
-		         BEGIN
-		         	RETURN  translate($1,
-		   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
-		   							 'cCaaAAeeeEEEiIuUoO');
-		        END;
-				$$ LANGUAGE plpgsql;
-			]]></sql>
-		</changeSet>
-	
-	    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
-	    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
-	     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
-		    <sql splitStatements="false" stripComments="false"><![CDATA[	     
-				create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
-								returns varchar(2000)
-								begin				
-									set @textvalue =  input_text;
-									set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
-									set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
-									set @count = length(@withaccents);
-									
-									while @count > 0 do
-									    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
-									    set @count = @count - 1;
-									end while;					
-									return @textvalue;				
-				end;
-			]]></sql>
-	</changeSet>    
-	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
-		   <sql splitStatements="false" stripComments="false"><![CDATA[	
-		   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
-		         BEGIN
-		         	RETURN  translate($1,
-		   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
-		   							 'cCaaAAeeeEEEiIuUoO');
-		        END;
-				$$ LANGUAGE plpgsql;
-			]]></sql>
-		</changeSet>
-	    <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
-	    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
-	     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
-		    <sql splitStatements="false" stripComments="false"><![CDATA[	     
-				create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
-								returns varchar(2000)
-								begin				
-									set @textvalue =  input_text;
-									set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
-									set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
-									set @count = length(@withaccents);
-									
-									while @count > 0 do
-									    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
-									    set @count = @count - 1;
-									end while;					
-									return @textvalue;				
-				end;
-			]]></sql>
+		
 	</changeSet>
+	<changeSet id="#2870_20180129 - Convert to EnableBussEntity" author="EdwardLegaspi">
+		<addColumn tableName="dwh_report_extract">
+			<column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}"/>            
+		</addColumn>
+        <sql>update ${db.schema.adapted}dwh_report_extract set uuid=concat('dre_',id)</sql>
+        <addNotNullConstraint tableName="dwh_report_extract" columnName="uuid" columnDataType="varchar(60)"/>
+	</changeSet>
+
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
@@ -1433,4 +1373,28 @@
     	</addColumn>
     </changeSet>
     
+    <changeSet author="MounirBahije" id="#3493_20180706">
+        <createTable tableName="crm_custom_field_tmpl_val_pos">
+            <column name="customfieldtemplate_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="gui_position" type="varchar(255)" defaultValue="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="key" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="label" type="varchar(255)"/>
+        </createTable>
+        <addPrimaryKey columnNames="customfieldtemplate_id, key" constraintName="crm_custom_field_tmpl_val_pos_pkey" tableName="crm_custom_field_tmpl_val_pos" />
+    </changeSet>
+    
+    <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="rum_prefix" type="varchar(15)" />
+            <column name="rum_sequence_size" type="bigint" />
+			<column name="rum_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
+
 </databaseChangeLog>

@@ -65,6 +65,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.InterBankTitle;
 
@@ -223,6 +224,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
+    
+    @Embedded
+    private RumSequence rumSequence = new RumSequence();
 
     public String getCode() {
         return code;
@@ -564,4 +568,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
+
+    public RumSequence getRumSequence() {
+		return rumSequence;
+	}
+
+	public void setRumSequence(RumSequence rumSequence) {
+		this.rumSequence = rumSequence;
+	}
 }

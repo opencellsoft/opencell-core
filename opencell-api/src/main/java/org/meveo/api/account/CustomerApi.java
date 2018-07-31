@@ -74,11 +74,17 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Mohamed El Youssoufi
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class CustomerApi extends AccountEntityApi {
+
+    /**
+     * Default sort for list call.
+     */
+    private static final String DEFAULT_SORT_ORDER_CODE = "code";
 
 	@Inject
 	private CustomerService customerService;
@@ -111,16 +117,14 @@ public class CustomerApi extends AccountEntityApi {
 		create(postData, true);
 	}
 
-	public Customer create(CustomerDto postData, boolean checkCustomFields)
-			throws MeveoApiException, BusinessException {
+    public Customer create(CustomerDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
 		return create(postData, true, null);
 	}
 
-	public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel)
-			throws MeveoApiException, BusinessException {
+    public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 		}
 		if (StringUtils.isBlank(postData.getCustomerCategory())) {
 			missingParameters.add("customerCategory");
@@ -128,8 +132,7 @@ public class CustomerApi extends AccountEntityApi {
 		if (StringUtils.isBlank(postData.getSeller())) {
 			missingParameters.add("seller");
 		}
-		if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle())
-				&& StringUtils.isBlank(postData.getName().getLastName())) {
+        if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
 			missingParameters.add("name.lastName");
 		}
 
@@ -217,16 +220,14 @@ public class CustomerApi extends AccountEntityApi {
 		update(postData, true);
 	}
 
-	public Customer update(CustomerDto postData, boolean checkCustomFields)
-			throws MeveoApiException, BusinessException {
+    public Customer update(CustomerDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
 		return update(postData, true, null);
 	}
 
-	public Customer update(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel)
-			throws MeveoApiException, BusinessException {
+    public Customer update(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 		}
 		if (StringUtils.isBlank(postData.getCustomerCategory())) {
 			missingParameters.add("customerCategory");
@@ -234,8 +235,7 @@ public class CustomerApi extends AccountEntityApi {
 		if (StringUtils.isBlank(postData.getSeller())) {
 			missingParameters.add("seller");
 		}
-		if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle())
-				&& StringUtils.isBlank(postData.getName().getLastName())) {
+        if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
 			missingParameters.add("name.lastName");
 		}
 
@@ -247,8 +247,7 @@ public class CustomerApi extends AccountEntityApi {
 		if (customer == null) {
 			throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
 		}
-		customer.setCode(
-				StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        customer.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
 		if (!StringUtils.isBlank(postData.getCustomerCategory())) {
 			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory());
@@ -342,12 +341,8 @@ public class CustomerApi extends AccountEntityApi {
 			}
 			customer.setAdditionalDetails(additionalDetails);
 		}
-		
-		try {
-            customer = customerService.update(customer);
-        } catch (BusinessException e1) {
-            throw new MeveoApiException(e1.getMessage());
-        }
+        
+		customer = customerService.update(customer);
 		
 		return customer;
 	}
@@ -394,18 +389,14 @@ public class CustomerApi extends AccountEntityApi {
 	}
 
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-	@FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Customer.class) })
-	public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering)
-			throws MeveoApiException {
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) })
+    public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 		return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
 	}
 
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-	@FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Customer.class) })
-	public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering,
-			CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) })
+    public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
 		if (pagingAndFiltering == null) {
 			pagingAndFiltering = new PagingAndFiltering();
@@ -415,11 +406,15 @@ public class CustomerApi extends AccountEntityApi {
 			pagingAndFiltering.addFilter("customerCategory.code", postData.getCustomerCategory());
 			pagingAndFiltering.addFilter("seller.code", postData.getSeller());
 			pagingAndFiltering.addFilter("customerBrand.code", postData.getCustomerBrand());
-			pagingAndFiltering.addFilter("code", postData.getCode());
+            pagingAndFiltering.addFilter(DEFAULT_SORT_ORDER_CODE, postData.getCode());
+        }
+
+        String sortBy = DEFAULT_SORT_ORDER_CODE;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
 		}
 
-		PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null,
-				pagingAndFiltering, Customer.class);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, Customer.class);
 
 		Long totalCount = customerService.count(paginationConfig);
 
@@ -444,7 +439,7 @@ public class CustomerApi extends AccountEntityApi {
 	public void createBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 			handleMissingParametersAndValidate(postData);
 		}
 
@@ -462,7 +457,7 @@ public class CustomerApi extends AccountEntityApi {
 	public void updateBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 			handleMissingParametersAndValidate(postData);
 		}
 
@@ -473,13 +468,11 @@ public class CustomerApi extends AccountEntityApi {
 		}
 
 		boolean toUpdate = false;
-		if (!StringUtils.isBlank(postData.getUpdatedCode())
-				&& !postData.getUpdatedCode().equals(customerBrand.getCode())) {
+        if (!StringUtils.isBlank(postData.getUpdatedCode()) && !postData.getUpdatedCode().equals(customerBrand.getCode())) {
 			customerBrand.setCode(postData.getUpdatedCode());
 			toUpdate = true;
 		}
-		if (postData.getDescription() != null
-				&& StringUtils.compare(postData.getDescription(), customerBrand.getDescription()) != 0) {
+        if (postData.getDescription() != null && StringUtils.compare(postData.getDescription(), customerBrand.getDescription()) != 0) {
 			customerBrand.setDescription(postData.getDescription());
 			toUpdate = true;
 		}
@@ -491,7 +484,7 @@ public class CustomerApi extends AccountEntityApi {
 
 	public void createCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 			handleMissingParametersAndValidate(postData);
 		}
 
@@ -514,7 +507,7 @@ public class CustomerApi extends AccountEntityApi {
 	public void updateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 			handleMissingParametersAndValidate(postData);
 		}
 
@@ -524,29 +517,24 @@ public class CustomerApi extends AccountEntityApi {
 		}
 
 		boolean toUpdate = false;
-		if (!StringUtils.isBlank(postData.getUpdatedCode())
-				&& !postData.getUpdatedCode().equals(customerCategory.getCode())) {
+        if (!StringUtils.isBlank(postData.getUpdatedCode()) && !postData.getUpdatedCode().equals(customerCategory.getCode())) {
 			customerCategory.setCode(postData.getUpdatedCode());
 			toUpdate = true;
 		}
-		if (postData.getDescription() != null
-				&& StringUtils.compare(postData.getDescription(), customerCategory.getDescription()) != 0) {
+        if (postData.getDescription() != null && StringUtils.compare(postData.getDescription(), customerCategory.getDescription()) != 0) {
 			customerCategory.setDescription(postData.getDescription());
 			toUpdate = true;
 		}
 
-		if (postData.isExoneratedFromTaxes() != null
-				&& customerCategory.getExoneratedFromTaxes() != postData.isExoneratedFromTaxes().booleanValue()) {
+        if (postData.isExoneratedFromTaxes() != null && customerCategory.getExoneratedFromTaxes() != postData.isExoneratedFromTaxes().booleanValue()) {
 			customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
 			toUpdate = true;
 		}
-		if (postData.getExonerationTaxEl() != null
-				&& StringUtils.compare(postData.getExonerationTaxEl(), customerCategory.getExonerationTaxEl()) != 0) {
+        if (postData.getExonerationTaxEl() != null && StringUtils.compare(postData.getExonerationTaxEl(), customerCategory.getExonerationTaxEl()) != 0) {
 			customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
 			toUpdate = true;
 		}
-		if (postData.getExonerationReason() != null
-				&& StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
+        if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
 			customerCategory.setExonerationReason(postData.getExonerationReason());
 			toUpdate = true;
 		}
@@ -559,11 +547,9 @@ public class CustomerApi extends AccountEntityApi {
 	/**
 	 * Find customer category by customer category code
 	 * 
-	 * @param customerCategoryCode
-	 *            customer category code
+     * @param customerCategoryCode customer category code
 	 * @return customer category dto
-	 * @throws MeveoApiException
-	 *             Meveo Api Exception
+     * @throws MeveoApiException Meveo Api Exception
 	 * 
 	 * @author akadid abdelmounaim
 	 * @lastModifiedVersion 5.0
@@ -586,7 +572,7 @@ public class CustomerApi extends AccountEntityApi {
 	public void createOrUpdateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 			handleMissingParametersAndValidate(postData);
 		}
 
@@ -649,17 +635,14 @@ public class CustomerApi extends AccountEntityApi {
 	/**
 	 * Create or update customer brand based on code.
 	 *
-	 * @param postData
-	 *            posted data to API containing customer's brand.
-	 * @throws MeveoApiException
-	 *             meveo api exception
-	 * @throws BusinessException
-	 *             business exception
+     * @param postData posted data to API containing customer's brand.
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
 	 */
 	public void createOrUpdateBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
 			handleMissingParametersAndValidate(postData);
 		}
 
@@ -671,12 +654,9 @@ public class CustomerApi extends AccountEntityApi {
 	}
 
 	/**
-	 * @param customerDto
-	 *            customer data
-	 * @throws MeveoApiException
-	 *             meveo api exception
-	 * @throws BusinessException
-	 *             business exception
+     * @param customerDto customer data
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
 	 */
 	public void createOrUpdatePartial(CustomerDto customerDto) throws MeveoApiException, BusinessException {
 		CustomerDto existedCustomerDto = null;
@@ -718,8 +698,7 @@ public class CustomerApi extends AccountEntityApi {
 					existedCustomerDto.getContactInformation().setPhone(customerDto.getContactInformation().getPhone());
 				}
 				if (!StringUtils.isBlank(customerDto.getContactInformation().getMobile())) {
-					existedCustomerDto.getContactInformation()
-							.setMobile(customerDto.getContactInformation().getMobile());
+                    existedCustomerDto.getContactInformation().setMobile(customerDto.getContactInformation().getMobile());
 				}
 				if (!StringUtils.isBlank(customerDto.getContactInformation().getFax())) {
 					existedCustomerDto.getContactInformation().setFax(customerDto.getContactInformation().getFax());
@@ -737,9 +716,10 @@ public class CustomerApi extends AccountEntityApi {
 	 * Exports an account hierarchy given a specific customer selected in the GUI.
 	 * It includes Subscription, AccountOperation and Invoice details. It packaged
 	 * the json output as a zipped file along with the pdf invoices.
+     * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
+     * zipped file along with the pdf invoices.
 	 * 
-	 * @throws Exception
-	 *             when zipping fail
+     * @throws Exception when zipping fail
 	 */
 	public void exportCustomerHierarchy(String customerCode, HttpServletResponse response) throws Exception {
 		CustomerDto result;
@@ -752,8 +732,7 @@ public class CustomerApi extends AccountEntityApi {
 		result = new CustomerDto(customer);
 		if (customer.getCustomerAccounts() != null && !customer.getCustomerAccounts().isEmpty()) {
 			for (CustomerAccount ca : customer.getCustomerAccounts()) {
-				result.getCustomerAccounts().getCustomerAccount()
-						.add(customerAccountApi.exportCustomerAccountHierarchy(ca));
+                result.getCustomerAccounts().getCustomerAccount().add(customerAccountApi.exportCustomerAccountHierarchy(ca));
 			}
 		}
 
@@ -787,8 +766,7 @@ public class CustomerApi extends AccountEntityApi {
 
 				for (String pdfFile : invoicePdfs) {
 					try (FileInputStream fis = new FileInputStream(pdfFile)) {
-						ZipEntry zipEntry = new ZipEntry(
-								customerCode + File.separator + Paths.get(pdfFile).getFileName().toString());
+                        ZipEntry zipEntry = new ZipEntry(customerCode + File.separator + Paths.get(pdfFile).getFileName().toString());
 						FileUtils.addZipEntry(zipOut, fis, zipEntry);
 					} catch (FileNotFoundException e) {
 						log.warn("Report is not yet generated with path={}", e.getMessage());
