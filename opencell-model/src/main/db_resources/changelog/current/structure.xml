@@ -694,36 +694,6 @@
         
         <createSequence sequenceName="crm_address_book_seq" />
 
-        <createTable tableName="crm_contact_group">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_contact_group_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="name" type="varchar(50)"/>
-            <column name="description" type="varchar(255)"/>
-            <column name="type" type="varchar(50)"/>
-            <column name="address_book_id" type="bigint"/>
-        </createTable>
-        
-        <createSequence sequenceName="crm_contact_group_seq" />
-        
-        <createTable tableName="crm_contact_group_com_contact">
-            <column name="contact_group_id" type="bigint"/>
-            <column name="contact_id" type="bigint"/>
-        </createTable>
-        <addPrimaryKey columnNames="contact_group_id, contact_id" constraintName="contact_group_com_contact_pkey" tableName="crm_contact_group_com_contact" />
-		
-		<createTable tableName="crm_address_book_crm_contact_group">
-            <column name="address_book_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="contact_group_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="address_book_id, contact_group_id" constraintName="crm_address_book_crm_contact_group_pkey" tableName="crm_address_book_crm_contact_group" />
-		
-		
         <createTable tableName="com_communication_entity">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_communication_entity_pkey" />
@@ -745,15 +715,15 @@
             <column name="crm_address_book_id" type="bigint" />
         </addColumn>
 
-        <createTable tableName="com_campaign_crm_contact_group">
+        <createTable tableName="com_campaign_crm_contact_tag">
             <column name="campaign_id" type="bigint">
                 <constraints nullable="false" />
             </column>
-            <column name="contact_group_id" type="bigint">
+            <column name="tag" type="varchar(100)">
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addPrimaryKey columnNames="campaign_id, contact_group_id" constraintName="com_campaign_crm_contact_group_pkey" tableName="com_campaign_crm_contact_group" />
+        <addPrimaryKey columnNames="campaign_id, tag" constraintName="com_campaign_crm_contact_tag_pkey" tableName="com_campaign_crm_contact_tag" />
 
         <addColumn tableName="adm_user">
             <column name="crm_address_book_id" type="bigint" />

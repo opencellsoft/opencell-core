@@ -110,6 +110,7 @@ public class ContactApi extends AccountEntityApi {
 		contact.setVip(postData.isVip());
 		contact.setProspect(postData.isProspect());
 		contact.setAgreedToUA(postData.isAgreedToUA());
+		contact.setTags(postData.getTags()	);
 		
 		Customer customer = customerService.findByCompanyName(postData.getCompany());
 		if(customer != null) {
@@ -199,6 +200,10 @@ public class ContactApi extends AccountEntityApi {
 
 		if (!StringUtils.isBlank(postData.isAgreedToUA())) {
 			contact.setAgreedToUA(postData.isAgreedToUA());
+		}
+		
+		if (!StringUtils.isBlank(postData.getTags())) {
+			contact.setTags(postData.getTags());
 		}
 
 		if(contact.getCompany() != postData.getCompany()) {
