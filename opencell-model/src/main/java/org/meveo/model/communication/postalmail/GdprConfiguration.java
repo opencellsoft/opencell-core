@@ -24,10 +24,10 @@ import org.meveo.model.crm.Provider;
  * @lastModifiedVersion 5.2
  **/
 @Entity
-@Table(name = "adm_gpdr_configuration")
+@Table(name = "adm_gdpr_configuration")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", //
-		parameters = { @Parameter(name = "sequence_name", value = "adm_gpdr_configuration_seq"), })
-public class GpdrConfiguration extends BaseEntity implements Serializable, IEntity {
+		parameters = { @Parameter(name = "sequence_name", value = "adm_gdpr_configuration_seq"), })
+public class GdprConfiguration extends BaseEntity implements Serializable, IEntity {
 
 	private static final long serialVersionUID = -207809406272424682L;
 

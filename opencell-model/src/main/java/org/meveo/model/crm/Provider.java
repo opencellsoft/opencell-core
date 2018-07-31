@@ -62,7 +62,7 @@ import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.communication.postalmail.GpdrConfiguration;
+import org.meveo.model.communication.postalmail.GdprConfiguration;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -226,7 +226,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     private CustomFieldValues cfValues;
     
     @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
-    private GpdrConfiguration gpdrConfiguration = new GpdrConfiguration();
+    private GdprConfiguration gdprConfiguration;
 
     public String getCode() {
         return code;
@@ -569,11 +569,19 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
-	public GpdrConfiguration getGpdrConfiguration() {
-		return gpdrConfiguration;
+	public GdprConfiguration getGdprConfiguration() {
+		return gdprConfiguration;
 	}
 
-	public void setGpdrConfiguration(GpdrConfiguration gpdrConfiguration) {
-		this.gpdrConfiguration = gpdrConfiguration;
+	public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
+		this.gdprConfiguration = gdprConfiguration;
+	}
+	
+	public GdprConfiguration getGdprConfigurationNullSafe() {
+		if (gdprConfiguration == null) {
+			gdprConfiguration = new GdprConfiguration();
+		}
+
+		return gdprConfiguration;
 	}
 }

@@ -146,11 +146,11 @@ public class CustomerBean extends AccountBean<Customer> {
     	try {
     		entity = customerService.refreshOrRetrieve(entity);
 	    	gpdrService.anonymize(entity);
-	    	messages.info(new BundleKey("messages", "gpdr.delete.ok"));
+	    	messages.info(new BundleKey("messages", "gdpr.delete.ok"));
     	
     	} catch(Exception e) {
     		log.error("Failed anonymizing account hierarchy={}", e.getMessage());
-    		messages.info(new BundleKey("messages", "gpdr.delete.ko"));
+    		messages.info(new BundleKey("messages", "gdpr.delete.ko"));
     	}
     	
     	return null;

@@ -31,7 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
-import org.meveo.model.communication.postalmail.GpdrConfiguration;
+import org.meveo.model.communication.postalmail.GdprConfiguration;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -84,6 +84,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         }
 
         super.initEntity();
+        
         if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
             invoiceConfiguration.setProvider(entity);
@@ -94,8 +95,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             entity.setBankCoordinates(new BankCoordinates());
         }
         
-        if(entity.getGpdrConfiguration() == null) {
-        	entity.setGpdrConfiguration(new GpdrConfiguration());
+        if(entity.getGdprConfiguration() == null) {
+        	GdprConfiguration gdprConfiguration = new GdprConfiguration();
+        	gdprConfiguration.setProvider(entity);
+        	entity.setGdprConfiguration(gdprConfiguration);
         }
 
         return entity;

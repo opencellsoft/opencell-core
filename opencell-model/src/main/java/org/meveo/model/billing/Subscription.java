@@ -86,7 +86,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
-    private Date statusDate = new Date();;
+    private Date statusDate = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")

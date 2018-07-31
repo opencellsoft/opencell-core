@@ -310,5 +310,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
+ 
+    /**
+     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date > n years.
+     * @param nYear age of the subscription
+     * @return Filtered list of subscriptions
+     */
+    public List<Subscription> listInactiveSubscription(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
+    	
+    	
+    	return null;
+    }
 
 }
