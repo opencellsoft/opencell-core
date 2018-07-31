@@ -75,7 +75,7 @@ public interface ModuleRs extends IBaseRs {
     /**
      * Install Meveo module
      * 
-     * @param moduleDto
+     * @param moduleDto the Meveo's module
      * @return Request processing status
      */
     @PUT
@@ -86,7 +86,7 @@ public interface ModuleRs extends IBaseRs {
      * Find a Meveo's module with a given code 
      * 
      * @param code The Meveo module's code
-     * @return
+     * @return Meveo module DTO Response.
      */
     @GET
     @Path("/")

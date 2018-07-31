@@ -60,7 +60,7 @@ public class ServiceSingleton {
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
      * @param invoiceDate Invoice date
-     * @param invoiceTypeId Invoice type id
+     * @param invoiceType Invoice type
      * @param seller Seller
      * @param cfName CFT name
      * @param incrementBy A number to increment by
