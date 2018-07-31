@@ -8,7 +8,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
-import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
+import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 
 /**
  * REST API to manage AccountingCode or Chart of accounts.
@@ -63,7 +63,7 @@ public interface AccountingWs extends IBaseWs {
      * @return The accounting code list dto
      */
     @WebMethod
-    AccountingCodeListResponse listAccountingCode(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    AccountingCodeListResponseDto listAccountingCode(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     /**
      * Removes an AccountingCode.
@@ -74,4 +74,21 @@ public interface AccountingWs extends IBaseWs {
     @WebMethod
     ActionStatus removeAccountingCode(@WebParam(name = "accountingCode") String accountingCode);
 
+    /**
+     * Enable an AccountingCode by its code
+     * 
+     * @param code Accounting code code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus enableAccountingCode(@WebParam(name = "code") String code);
+
+    /**
+     * Disable an AccountingCode by its code
+     * 
+     * @param code Accounting code code
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus disableAccountingCode(@WebParam(name = "code") String code);
 }

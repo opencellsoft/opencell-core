@@ -89,4 +89,24 @@ public interface MeasurableQuantityRs extends IBaseRs {
     @GET
     GetListMeasurableQuantityResponse list();
 
+    /**
+     * Enable a Measurable quantity with a given code
+     * 
+     * @param code Measurable quantity code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Measurable quantity with a given code
+     * 
+     * @param code Measurable quantity code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
 }

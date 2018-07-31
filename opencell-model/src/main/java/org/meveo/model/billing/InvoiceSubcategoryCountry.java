@@ -37,7 +37,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.shared.DateUtils;
 
@@ -53,7 +53,7 @@ import org.meveo.model.shared.DateUtils;
         @Parameter(name = "sequence_name", value = "billing_inv_sub_cat_country_seq"), })
 @NamedQueries({
         @NamedQuery(name = "InvoiceSubcategoryCountry.findByInvoiceSubCategoryAndCountry", query = "select i from InvoiceSubcategoryCountry i where i.invoiceSubCategory=:invoiceSubCategory and i.tradingCountry=:tradingCountry and ((i.startValidityDate<=:applicationDate AND :applicationDate<=i.endValidityDate) OR (i.startValidityDate IS NULL AND i.endValidityDate IS NULL) OR (i.startValidityDate IS NULL AND :applicationDate<=i.endValidityDate) OR (i.endValidityDate IS NULL AND i.startValidityDate<=:applicationDate)) ORDER BY priority DESC") })
-public class InvoiceSubcategoryCountry extends EnableEntity {
+public class InvoiceSubcategoryCountry extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)

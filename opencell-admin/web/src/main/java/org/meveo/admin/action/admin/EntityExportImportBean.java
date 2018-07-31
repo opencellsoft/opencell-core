@@ -171,7 +171,7 @@ public class EntityExportImportBean implements Serializable {
     /**
      * Get Export template data model
      * 
-     * @return
+     * @return Data model for Primefaces datalist component
      */
     @SuppressWarnings("rawtypes")
     public LazyDataModel getExportTemplates() {
@@ -179,12 +179,12 @@ public class EntityExportImportBean implements Serializable {
     }
 
     /**
-     * Get Export template data model
+     * Get Export template data model.
      * 
-     * @param inputFilters
-     * @param forceReload
+     * @param inputFilters Map of input filters
+     * @param forceReload Whether to force reload or not
      * 
-     * @return
+     * @return Data model for Primefaces datalist component
      */
     @SuppressWarnings("rawtypes")
     public LazyDataModel getExportTemplates(Map<String, Object> inputFilters, boolean forceReload) {

@@ -14,7 +14,7 @@ public class WirePaymentMethod extends PaymentMethod {
         this.paymentType = PaymentMethodEnum.WIRETRANSFER;
     }
 
-    public WirePaymentMethod(boolean isDisabled,String alias, boolean preferred, CustomerAccount customerAccount) {
+    public WirePaymentMethod(boolean isDisabled, String alias, boolean preferred, CustomerAccount customerAccount) {
         super();
         this.paymentType = PaymentMethodEnum.WIRETRANSFER;
         this.alias = alias;
@@ -22,6 +22,7 @@ public class WirePaymentMethod extends PaymentMethod {
         this.customerAccount = customerAccount;
         setDisabled(isDisabled);
     }
+
     public WirePaymentMethod(String alias, boolean preferred) {
         super();
         this.alias = alias;
@@ -51,6 +52,6 @@ public class WirePaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "WirePaymentMethod [alias=" + alias + ", preferred=" + preferred + "]";
+        return "WirePaymentMethod [alias= " + getAlias() + ", preferred=" + isPreferred() + "]";
     }
 }

@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -20,7 +20,7 @@ import org.meveo.model.billing.ProductInstance;
  * @author Edward P. Legaspi
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductInstanceDto extends BusinessDto {
+public class ProductInstanceDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6853333357907373635L;
@@ -55,10 +55,8 @@ public class ProductInstanceDto extends BusinessDto {
      * @param customFieldInstances the custom field instances
      */
     public ProductInstanceDto(ProductInstance productInstance, CustomFieldsDto customFieldInstances) {
-
+        super(productInstance);
         id = productInstance.getId();
-        code = productInstance.getCode();
-        description = productInstance.getDescription();
         applicationDate = productInstance.getApplicationDate();
         quantity = productInstance.getQuantity();
         orderNumber = productInstance.getOrderNumber();

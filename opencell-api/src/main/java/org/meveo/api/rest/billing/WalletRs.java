@@ -29,7 +29,8 @@ import org.meveo.api.rest.IBaseRs;
  * Wallet operation and balance related REST API
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  **/
 @Path("/billing/wallet")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -186,8 +187,13 @@ public interface WalletRs extends IBaseRs {
      */
     @GET
     @Path("/operation/list")
-    public FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
-            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    public FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query, 
+                                            @QueryParam("fields") String fields, 
+                                            @QueryParam("offset") Integer offset,
+                                            @QueryParam("limit") Integer limit, 
+                                            @DefaultValue("id") @QueryParam("sortBy") String sortBy, 
+                                            @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder, 
+                                            @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
 
     /**
      * List wallet operations matching a given criteria
@@ -197,7 +203,7 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/operation/list")
-    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering);
+    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering, @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
 
     /**
      * Create new or update an existing wallet template

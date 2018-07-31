@@ -76,7 +76,7 @@
 					<hftl:customFields backingBean="#{accessBean}" messagesId=":formId:messages"/>
 
 				</p:tabView>
-				<hf:formButtons ajaxSubmit="true" edit="true" backingBean="#{accessBean}" showEnableDisableButton="false" showDeleteButton="false"
+				<hf:formButtons killConversationOnSave="false" killConversationOnBack="false" ajaxSubmit="true" edit="true" backingBean="#{accessBean}" showEnableDisableButton="false" showDeleteButton="false"
 					 showBackButton="false" rendered="#{not empty accessBean.subscriptionId}">
 						<p:commandButton value="#{messages['commons.disable']}"
 							rendered="#{backingBean.entity.active}"

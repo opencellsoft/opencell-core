@@ -9,35 +9,46 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
 
-
 /**
  * The Class CountryDto.
  *
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
- * @deprecated will be renammed to TradingCountryDto
  */
 @XmlRootElement(name = "Country")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryDto extends BaseDto {
+public class CountryDto extends AuditableEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4175660113940481232L;
 
-    /** The country code. */
+    /**
+     * The country code
+     */
     @XmlAttribute(required = true)
     private String countryCode;
 
-    /** The name. */
+    /**
+     * The country name
+     */
     @XmlAttribute()
     private String name;
 
-    /** The currency code. */
+    /**
+     * The currency code
+     */
     @XmlElement(required = true)
     private String currencyCode;
 
-    /** The language code. */
+    /**
+     * Corresponding language code
+     */
     private String languageCode;
+
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
     /**
      * Instantiates a new country dto.
@@ -52,6 +63,7 @@ public class CountryDto extends BaseDto {
      * @param country the Country enntity
      */
     public CountryDto(Country country) {
+        super(country);
         countryCode = country.getCountryCode();
         name = country.getDescription();
         currencyCode = country.getCurrency().getCurrencyCode();
@@ -77,6 +89,7 @@ public class CountryDto extends BaseDto {
         if (tradingCountry.getCountry() != null && tradingCountry.getCountry().getLanguage() != null) {
             languageCode = tradingCountry.getCountry().getLanguage().getLanguageCode();
         }
+        disabled = tradingCountry.isDisabled();
     }
 
     /**
@@ -94,6 +107,7 @@ public class CountryDto extends BaseDto {
         if (country.getLanguage() != null) {
             languageCode = country.getLanguage().getLanguageCode();
         }
+        disabled = tradingCountry.isDisabled();
     }
 
     /**
@@ -168,12 +182,18 @@ public class CountryDto extends BaseDto {
         this.languageCode = languageCode;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "CountryDto [countryCode=" + countryCode + ", name=" + name + ", currencyCode=" + currencyCode + ", languageCode=" + languageCode + "]";
+        return "CountryDto [countryCode=" + countryCode + ", name=" + name + ", currencyCode=" + currencyCode + ", languageCode=" + languageCode + ", disabled=" + disabled + "]";
     }
 
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
+    }
 }

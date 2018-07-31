@@ -13,7 +13,6 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
@@ -21,6 +20,7 @@ import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
@@ -28,12 +28,11 @@ import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
-
 /**
  * The Interface PaymentWs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  */
 @WebService
 public interface PaymentWs extends IBaseWs {
@@ -181,6 +180,24 @@ public interface PaymentWs extends IBaseWs {
     public PaymentMethodTokensDto listPaymentMethods(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     /**
+     * Enable payment method.
+     * 
+     * @param id Payment method id
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus enablePaymentMethod(@WebParam(name = "id") Long id);
+
+    /**
+     * Disable payment method.
+     * 
+     * @param id Payment method id
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus disablePaymentMethod(@WebParam(name = "id") Long id);
+
+    /**
      * Retrieve payment method by its id
      * 
      * @param id Id
@@ -272,14 +289,14 @@ public interface PaymentWs extends IBaseWs {
     /**
      * List payment gateways on searching by any payment gateway fields in addition to paging and sorting.
      * 
-     * @param  pagingAndFiltering Paging and filtering criteria.
+     * @param pagingAndFiltering Paging and filtering criteria.
      * @return A list of payment gateways
      */
     @WebMethod
     public PaymentGatewayResponseDto listPaymentGateways(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     /**
-     * Retrieve payment gateway by its id
+     * Retrieve payment gateway by its code
      * 
      * @param code code
      * @return payment DTO
@@ -295,7 +312,24 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentGatewayResponseDto createOrUpdatePaymentGateway(@WebParam(name = "paymentGateway") PaymentGatewayDto paymentGateway);
-    
+
+    /**
+     * Enable payment gateway by its code
+     * 
+     * @param code Payment gateway code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus enablePaymentGateway(@WebParam(name = "code") String code);
+
+    /**
+     * Disable payment gateway by its code
+     * 
+     * @param code Payment gateway code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus disablePaymentGateway(@WebParam(name = "code") String code);
 
     /**
      * List payment history matching a given criteria

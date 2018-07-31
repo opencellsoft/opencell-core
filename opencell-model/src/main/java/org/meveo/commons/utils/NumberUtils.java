@@ -27,16 +27,22 @@ import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
  * @author R.AITYAAZZA
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 public class NumberUtils {
 
-    public static BigDecimal round(BigDecimal what, int howmuch) {
+    public static BigDecimal round(BigDecimal what, int howmuch, RoundingModeEnum roundingModeEnum) {
         if (what == null) {
             return null;
         }
-
-        what = what.setScale(howmuch, RoundingMode.HALF_UP);
+        
+        what = what.setScale(howmuch, getRoundingMode(roundingModeEnum));
         return what;
+    }
+    
+    public static BigDecimal round(BigDecimal what, int howmuch) {
+        return round(what, howmuch, null);
     }
 
     public static String format(BigDecimal amount, String format) {
@@ -56,22 +62,14 @@ public class NumberUtils {
 		if (minuend == null) {
 			return new BigDecimal(0);
 		}
-
-
-
-
-
-
 		if (subtrahend == null) {
 			return minuend;
 
 		}
-
-
 		return minuend.subtract(subtrahend);
 	}
 
-    public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingModeEnum) {        
+    public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingMode) {        
         if (unitMultiplicator == null){
             unitMultiplicator = BigDecimal.ONE;
         }   
@@ -80,7 +78,7 @@ public class NumberUtils {
         }
 
         BigDecimal result = unitValue.multiply(unitMultiplicator);          
-        result = result.setScale(unitNbDecimal, getRoundingMode(roundingModeEnum));
+        result = result.setScale(unitNbDecimal, getRoundingMode(roundingMode));
         return result;
     }
     
@@ -96,7 +94,26 @@ public class NumberUtils {
         if (RoundingModeEnum.UP.name().equals(roundingModeEnum.name())) {
             return RoundingMode.CEILING;
         } 
-            
         return RoundingMode.HALF_UP;        
+    }
+    
+    
+    /**
+     * Round to string.
+     *
+     * @param amount the amount
+     * @param scale the scale
+     * @param roundingMode the rounding mode
+     * @return the string
+     */
+    public static String roundToString(BigDecimal amount, Integer scale, RoundingModeEnum roundingMode) {
+        if (amount == null) {
+            amount = BigDecimal.ZERO;
+        }
+        if (scale == null) {
+            scale = 2;
+        }
+        amount = amount.setScale(scale, getRoundingMode(roundingMode));
+        return amount.toPlainString();
     }
 }

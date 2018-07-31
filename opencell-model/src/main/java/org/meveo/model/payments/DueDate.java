@@ -31,59 +31,60 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "ar_due_date")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_due_date_seq"), })
-public class DueDate extends EnableEntity {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_due_date_seq"), })
+public class DueDate extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "due_date")
-	@Temporal(TemporalType.DATE)
-	private Date dueDate;
+    @Column(name = "due_date")
+    @Temporal(TemporalType.DATE)
+    private Date dueDate;
 
-	@Column(name = "payment_method")
-	@Enumerated(EnumType.STRING)
-	private PaymentMethodEnum paymentMethod;
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "invoice_number")
-	private Integer invoiceNumber;
+    @Column(name = "invoice_number")
+    private Integer invoiceNumber;
 
-	@Column(name = "invoice_amount", precision = 23, scale = 12)
-	private BigDecimal invoiceAmount;
+    @Column(name = "invoice_amount", precision = 23, scale = 12)
+    private BigDecimal invoiceAmount;
 
-	public Date getDueDate() {
-		return dueDate;
-	}
+    public Date getDueDate() {
+        return dueDate;
+    }
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
 
-	public PaymentMethodEnum getPaymentMethod() {
-		return paymentMethod;
-	}
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
 
-	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-	public Integer getInvoiceNumber() {
-		return invoiceNumber;
-	}
+    public Integer getInvoiceNumber() {
+        return invoiceNumber;
+    }
 
-	public void setInvoiceNumber(Integer invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
+    public void setInvoiceNumber(Integer invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
 
-	public BigDecimal getInvoiceAmount() {
-		return invoiceAmount;
-	}
+    public BigDecimal getInvoiceAmount() {
+        return invoiceAmount;
+    }
 
-	public void setInvoiceAmount(BigDecimal invoiceAmount) {
-		this.invoiceAmount = invoiceAmount;
-	}
+    public void setInvoiceAmount(BigDecimal invoiceAmount) {
+        this.invoiceAmount = invoiceAmount;
+    }
 
 }

@@ -19,7 +19,8 @@ import org.meveo.api.rest.IBaseRs;
 
 /**
  * CRUD/list discountPlanItem via REST API.
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * 
+ * @author Tyshan Shi(tyshan@manaty.net)
  * @since Aug 2, 2016 11:02:01 AM
  *
  */
@@ -29,18 +30,19 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface DiscountPlanItemRs extends IBaseRs {
 
-	/**
-	 * Create a new discount plan item.
+    /**
+     * Create a new discount plan item.
      *
-	 * @param postData A discount plan item's data
-	 * @return Request processing status
-	 */
+     * @param postData A discount plan item's data
+     * @return Request processing status
+     */
     @Path("/")
     @POST
     ActionStatus create(DiscountPlanItemDto postData);
 
     /**
      * update an existed discount plan item.
+     * 
      * @param postData A discount plan item's data
      * @return Request processing status
      */
@@ -86,4 +88,24 @@ public interface DiscountPlanItemRs extends IBaseRs {
     @Path("/list")
     @GET
     DiscountPlanItemsResponseDto list();
+
+    /**
+     * Enable a Discount plan item with a given code
+     * 
+     * @param code Discount plan item code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Discount plan item with a given code
+     * 
+     * @param code Discount plan item code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

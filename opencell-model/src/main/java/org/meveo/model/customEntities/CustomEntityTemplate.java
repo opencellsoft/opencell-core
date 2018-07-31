@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 
@@ -24,7 +24,7 @@ import org.meveo.model.ModuleItem;
 @Table(name = "cust_cet", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cust_cet_seq"), })
 @NamedQueries({ @NamedQuery(name = "CustomEntityTemplate.getCETForCache", query = "SELECT cet from CustomEntityTemplate cet where cet.disabled=false order by cet.name ") })
-public class CustomEntityTemplate extends BusinessEntity implements Comparable<CustomEntityTemplate> {
+public class CustomEntityTemplate extends EnableBusinessEntity implements Comparable<CustomEntityTemplate> {
 
     private static final long serialVersionUID = 8281478284763353310L;
 

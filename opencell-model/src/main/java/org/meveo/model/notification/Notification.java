@@ -1,7 +1,6 @@
 package org.meveo.model.notification;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
@@ -18,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
@@ -28,7 +26,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.billing.CounterInstance;
@@ -48,7 +46,7 @@ import org.meveo.validation.constraint.ClassName;
                 @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
         @NamedQuery(name = "Notification.getActiveNotificationsByEventAndClasses", query = "SELECT n from Notification n where n.disabled=false and n.eventTypeFilter=:eventTypeFilter and n.classNameFilter in :classNameFilter order by priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class Notification extends BusinessEntity {
+public class Notification extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
 
@@ -82,9 +80,6 @@ public class Notification extends BusinessEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "adm_notification_params")
     private Map<String, String> params = new HashMap<String, String>();
-
-    @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE)
-    protected List<NotificationHistory> notificationHistories;
 
     /**
      * The lower number, the higher the priority is
@@ -165,14 +160,6 @@ public class Notification extends BusinessEntity {
         return String.format("Notification [%s, classNameFilter=%s, eventTypeFilter=%s, elFilter=%s, scriptInstance=%s, counterTemplate=%s, counterInstance=%s]", super.toString(),
             classNameFilter, eventTypeFilter, elFilter, scriptInstance != null ? scriptInstance.getId() : null, counterTemplate != null ? counterTemplate.getId() : null,
             counterInstance != null ? counterInstance.getId() : null);
-    }
-
-    public List<NotificationHistory> getNotificationHistories() {
-        return notificationHistories;
-    }
-
-    public void setNotificationHistories(List<NotificationHistory> notificationHistories) {
-        this.notificationHistories = notificationHistories;
     }
 
     public int getPriority() {

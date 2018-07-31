@@ -21,7 +21,7 @@ import org.meveo.service.job.Job;
  * The Class PaymentJob, create payment or payout for all opened account operations.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class PaymentJob extends Job {
@@ -40,7 +40,6 @@ public class PaymentJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
-
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
@@ -95,7 +94,7 @@ public class PaymentJob extends Job {
         Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
         lisValuesCreditDebit.put("Credit", "Payment");
         lisValuesCreditDebit.put("Debit", "Refund");
-        
+
         CustomFieldTemplate creditOrDebit = new CustomFieldTemplate();
         creditOrDebit.setCode("PaymentJob_creditOrDebit");
         creditOrDebit.setAppliesTo("JOB_PaymentJob");
@@ -116,11 +115,11 @@ public class PaymentJob extends Job {
         payentGatewayCF.setEntityClazz(PaymentGateway.class.getName());
         payentGatewayCF.setValueRequired(false);
         result.put("PaymentJob_paymentGateway", payentGatewayCF);
-        
+
         Map<String, String> lisValuesCardDD = new HashMap<String, String>();
         lisValuesCardDD.put("CARD", "Card");
         lisValuesCardDD.put("DIRECTDEBIT", "Sepa");
-        
+
         CustomFieldTemplate cardOrDD = new CustomFieldTemplate();
         cardOrDD.setCode("PaymentJob_cardOrDD");
         cardOrDD.setAppliesTo("JOB_PaymentJob");
@@ -131,8 +130,32 @@ public class PaymentJob extends Job {
         cardOrDD.setValueRequired(true);
         cardOrDD.setListValues(lisValuesCardDD);
         result.put("PaymentJob_cardOrDD", cardOrDD);
-        
+
+        Map<String, String> lisValuesAOorCA = new HashMap<String, String>();
+        lisValuesAOorCA.put("AO", "AO");
+        lisValuesAOorCA.put("CA", "CA");
+
+        CustomFieldTemplate AOorCA = new CustomFieldTemplate();
+        AOorCA.setCode("PaymentJob_AOorCA");
+        AOorCA.setAppliesTo("JOB_PaymentJob");
+        AOorCA.setActive(true);
+        AOorCA.setDefaultValue("CA");
+        AOorCA.setDescription(resourceMessages.getString("jobExecution.AOorCA"));
+        AOorCA.setFieldType(CustomFieldTypeEnum.LIST);
+        AOorCA.setValueRequired(true);
+        AOorCA.setListValues(lisValuesAOorCA);
+        result.put("PaymentJob_AOorCA", AOorCA);
+
+        CustomFieldTemplate daysBeforeOrAfterDueDate = new CustomFieldTemplate();
+        daysBeforeOrAfterDueDate.setCode("PaymentJob_daysBeforeOrAfterDueDate");
+        daysBeforeOrAfterDueDate.setAppliesTo("JOB_PaymentJob");
+        daysBeforeOrAfterDueDate.setActive(true);
+        daysBeforeOrAfterDueDate.setDescription(resourceMessages.getString("jobExecution.daysBeforeOrAfterDueDate"));
+        daysBeforeOrAfterDueDate.setFieldType(CustomFieldTypeEnum.LONG);
+        daysBeforeOrAfterDueDate.setValueRequired(false);
+        daysBeforeOrAfterDueDate.setDefaultValue("");
+        result.put("PaymentJob_daysBeforeOrAfterDueDate", daysBeforeOrAfterDueDate);
+
         return result;
     }
-
 }

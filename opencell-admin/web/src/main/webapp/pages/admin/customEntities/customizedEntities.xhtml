@@ -41,7 +41,7 @@
         <h:form prependId="false">
             <p:panel width="100">
                 <p:dataTable id="searchResults" value="#{customEntityTemplateListBean.customizedEntities}" var="entity" sortOrder="ascending" sortBy="#{entity.classnameToDisplayHuman}"
-                    paginator="true" rows="30" resizableColumns="true"
+                    paginator="true" rows="30" resizableColumns="true" first="#{customEntityTemplateListBean.dataTableFirstAttribute}"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="30,50"
                     lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex">
                     <p:column headerText="#{messages['customizedEntities.entityName']}" sortBy="#{entity.classnameToDisplayHuman}">

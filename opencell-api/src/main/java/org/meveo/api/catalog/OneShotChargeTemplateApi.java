@@ -70,6 +70,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
+    @Override
     public OneShotChargeTemplate create(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -97,7 +98,9 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         OneShotChargeTemplate chargeTemplate = new OneShotChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            chargeTemplate.setDisabled(postData.isDisabled());
+        }
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
         chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
@@ -106,7 +109,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-		chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -151,6 +154,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return chargeTemplate;
     }
 
+    @Override
     public OneShotChargeTemplate update(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -182,7 +186,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
         chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
         chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
@@ -191,7 +194,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-		chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -260,22 +263,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return result;
     }
 
-    public void remove(String code) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("oneShotChargeTemplateCode");
-            handleMissingParameters();
-        }
-        // check if code already exists
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(code);
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
-        }
-
-        oneShotChargeTemplateService.remove(chargeTemplate);
-
-    }
-
     public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date)
             throws MeveoApiException {
 
@@ -295,7 +282,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             if (country == null) {
                 log.warn("country with code={} does not exists", countryCode);
             } else {
-                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithHighestPriority(invoiceSubCategory.getId(), country.getId());
+                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+                    .findByInvoiceSubCategoryAndCountryWithHighestPriority(invoiceSubCategory.getId(), country.getId());
                 if (invoiceSubcategoryCountry != null && invoiceSubcategoryCountry.getTax() != null) {
                     Tax tax = invoiceSubcategoryCountry.getTax();
                     oneShotChargeDto.setTaxCode(tax.getCode());
@@ -318,13 +306,5 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         }
 
         return oneShotChargeTemplatesWPrice;
-    }
-
-    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-        if (oneShotChargeTemplateService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

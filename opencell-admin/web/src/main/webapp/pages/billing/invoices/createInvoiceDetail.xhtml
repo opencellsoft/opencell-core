@@ -208,13 +208,15 @@
 											<p:columnGroup type="header">
 												<p:row>
 													<p:column headerText="#{messages['ratedTransaction.usageDate']}" width="90"/>
-													<p:column headerText="#{messages['BusinessEntity.description']}" />
-													<p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" width="130"/>
+													<p:column headerText="#{messages['BusinessEntity.description']}" width="130"/>
+													<p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" width="100"/>
 													<p:column headerText="#{messages['invoice.quantity']}" width="60"/>
-													<p:column headerText="#{messages['ratedTransaction.param1']}"  width="120"/>
-													<p:column headerText="#{messages['ratedTransaction.param2']}"  width="120"/>
-													<p:column headerText="#{messages['ratedTransaction.param3']}"  width="120"/>
-													<p:column headerText="#{messages['order.number']}" width="120"/>
+													<p:column headerText="#{messages['ratedTransaction.param1']}"  width="100"/>
+													<p:column headerText="#{messages['ratedTransaction.param2']}"  width="100"/>
+													<p:column headerText="#{messages['ratedTransaction.param3']}"  width="100"/>
+													<p:column headerText="#{messages['ratedTransaction.startDate']}"  width="100"/>
+													<p:column headerText="#{messages['ratedTransaction.endDate']}"  width="100"/>
+													<p:column headerText="#{messages['order.number']}" width="100"/>
 													<p:column headerText="#{messages['commons.actions']}" width="40"/>
 												</p:row>
 											</p:columnGroup>
@@ -238,7 +240,7 @@
 
 											</p:column>
 											<p:column>
-												<p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="15">
+												<p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="10">
 													<p:keyFilter mask="num" />
 													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
@@ -257,22 +259,28 @@
 												</p:inputText>
 											</p:column>
 											<p:column>
-												<p:inputText value="#{rated.parameter1}" size="15"
+												<p:inputText value="#{rated.parameter1}" size="10"
 													label="#{messages['ratedTransaction.param1']}">
 												</p:inputText>
 											</p:column>
 											<p:column>
-												<p:inputText value="#{rated.parameter2}" size="15"
+												<p:inputText value="#{rated.parameter2}" size="10"
 													label="#{messages['ratedTransaction.param2']}">
 												</p:inputText>
 											</p:column>
 											<p:column>
-												<p:inputText value="#{rated.parameter3}" size="15"
+												<p:inputText value="#{rated.parameter3}" size="10"
 													label="#{messages['ratedTransaction.param3']}">
 												</p:inputText>
 											</p:column>
 											<p:column>
-												<p:inputText value="#{rated.orderNumber}" size="15"
+												<p:calendar value="#{rated.startDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.startDate']}"/>
+											</p:column>
+											<p:column>
+												<p:calendar value="#{rated.endDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.endDate']}"/>
+											</p:column>
+											<p:column>
+												<p:inputText value="#{rated.orderNumber}" size="10"
 													label="#{messages['order.number']}">
 												</p:inputText>
 											</p:column>
@@ -443,6 +451,12 @@
 										<hftl:decorateFormField fieldId="parameter3" label="#{messages['ratedTransaction.param3']}">
 											<p:inputText id="parameter3" value="#{creationInvoiceBean.parameter3}" />
 										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="rtStartDate" label="#{messages['ratedTransaction.startDate']}">
+											<p:calendar id="rtStartDate" value="#{creationInvoiceBean.rtStartDate}" pattern="#{paramBean.dateFormat}" />
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="rtEndDate" label="#{messages['ratedTransaction.endDate']}">
+											<p:calendar id="rtEndDate" value="#{creationInvoiceBean.rtEndDate}" pattern="#{paramBean.dateFormat}" />
+										</hftl:decorateFormField>
 										<hftl:decorateFormField fieldId="orderNumber" label="#{messages['order.number']}">
 											<p:inputText id="orderNumber" value="#{creationInvoiceBean.orderNumber}" />
 										</hftl:decorateFormField>
@@ -566,7 +580,6 @@
 		                             </p:fieldset>
 		                         </h:panelGroup>
 		                </p:fieldset>
-		                
 			      </p:tab>  
 				  <hftl:customFields backingBean="#{creationInvoiceBean}"
 							messagesId=":formId:messages" />

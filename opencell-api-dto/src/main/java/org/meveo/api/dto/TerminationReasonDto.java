@@ -13,7 +13,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
  */
 @XmlRootElement(name = "TerminationReasonDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerminationReasonDto extends BusinessDto {
+public class TerminationReasonDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6013621511892042364L;
@@ -40,8 +40,7 @@ public class TerminationReasonDto extends BusinessDto {
      * @param subscriptionTerminationReason the SubscriptionTerminationReason entity
      */
     public TerminationReasonDto(SubscriptionTerminationReason subscriptionTerminationReason) {
-        setCode(subscriptionTerminationReason.getCode());
-        setDescription(subscriptionTerminationReason.getDescription());
+        super(subscriptionTerminationReason);
         applyAgreement = subscriptionTerminationReason.isApplyAgreement();
         applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();

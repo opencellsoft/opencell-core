@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.communication.MeveoInstanceStatusEnum;
 
@@ -19,7 +19,7 @@ import org.meveo.model.communication.MeveoInstanceStatusEnum;
  */
 @XmlRootElement(name = "MeveoInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MeveoInstanceDto extends BusinessDto {
+public class MeveoInstanceDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4747242987390520289L;

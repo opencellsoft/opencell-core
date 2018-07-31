@@ -43,7 +43,7 @@ public class BundleTemplateDto extends ProductTemplateDto implements Serializabl
      * @param asLink the as link
      */
     public BundleTemplateDto(BundleTemplate bundleTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
-        super(bundleTemplate, customFieldsDto, asLink);
+        super(bundleTemplate, customFieldsDto, asLink, true);
     }
 
     /**

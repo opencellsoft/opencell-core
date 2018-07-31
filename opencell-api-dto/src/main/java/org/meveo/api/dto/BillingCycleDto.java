@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.BillingCycle;
-
+import org.meveo.model.billing.BillingEntityTypeEnum;
 
 /**
  * The Class BillingCycleDto.
@@ -17,7 +17,7 @@ import org.meveo.model.billing.BillingCycle;
  */
 @XmlRootElement(name = "BillingCycle")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BillingCycleDto extends BusinessDto {
+public class BillingCycleDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5986901351613880941L;
@@ -61,6 +61,10 @@ public class BillingCycleDto extends BusinessDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /** The billing cycle type. */
+    @XmlElement
+    private BillingEntityTypeEnum type;
 
     /**
      * Instantiates a new billing cycle dto.
@@ -87,6 +91,7 @@ public class BillingCycleDto extends BusinessDto {
             invoiceDateProductionDelay = billingCycleEntity.getInvoiceDateProductionDelay();
             transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
             invoicingThreshold = billingCycleEntity.getInvoicingThreshold();
+            type = billingCycleEntity.getType();
 
             if (billingCycleEntity.getInvoiceType() != null) {
                 invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
@@ -305,6 +310,24 @@ public class BillingCycleDto extends BusinessDto {
      */
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
+    }
+    
+    /**
+     * Gets the billing cycle type.
+     *
+     * @return the billing cycle type
+     */
+    public BillingEntityTypeEnum getType() {
+        return type;
+    }
+
+    /**
+     * Sets the billing cycle type.
+     *
+     * @param type the billing cycle type
+     */
+    public void setType(BillingEntityTypeEnum type) {
+        this.type = type;
     }
 
 }

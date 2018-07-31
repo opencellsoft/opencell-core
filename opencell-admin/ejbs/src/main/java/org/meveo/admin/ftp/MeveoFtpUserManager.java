@@ -80,7 +80,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
     public boolean doesExist(String username) throws FtpException {
         log.debug("doesExisted .. " + username);
         org.meveo.model.admin.User meveoUser = userService.findByUsername(username);
-        return meveoUser != null && meveoUser.isActive();
+        return meveoUser != null;
     }
 
     @Override
@@ -130,7 +130,6 @@ public class MeveoFtpUserManager extends AbstractUserManager {
         }
         BaseUser user = new BaseUser();
         user.setName(meveoUser.getUserName());
-        user.setEnabled(meveoUser.isActive());
         user.setHomeDirectory(homeDir);
         List<Authority> authorities = new ArrayList<Authority>();
 

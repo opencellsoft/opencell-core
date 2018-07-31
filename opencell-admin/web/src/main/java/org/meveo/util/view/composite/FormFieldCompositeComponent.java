@@ -12,7 +12,7 @@ public class FormFieldCompositeComponent extends BackingBeanBasedCompositeCompon
     /**
      * Check if in edit mode in the following order: component's attribute, formPanel's attribute, backing bean's edit property
      * 
-     * @return
+     * @return Flag that indicates if edit mode or not
      */
     public boolean isFieldEdit() {
 

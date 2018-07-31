@@ -41,6 +41,8 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.chart.ChartModel;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+
 import com.google.gson.Gson;
 
 @Named
@@ -75,7 +77,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public String getMrrOnSubscriptionsValues() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_MRR_REC_PER_MONTH_SUBS");
         ChartJsModel jsModel = new ChartJsModel();
         jsModel.getDatasets().put("regular", new ArrayList<BigDecimal>());
@@ -85,17 +87,17 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
         for (MeasuredValue value : measuredValues) {
             jsModel.getChartLabels().add(format.format(value.getDate()));
-            jsModel.getDatasets().get("regular").add(new BigDecimal(value.getDimension1()));
-            jsModel.getDatasets().get("new").add(new BigDecimal(value.getDimension2()));
-            jsModel.getDatasets().get("upsell").add(new BigDecimal(value.getDimension3()));
-            jsModel.getDatasets().get("cancelled").add(new BigDecimal(value.getDimension4()).multiply(BigDecimal.ONE.negate()));
+            jsModel.getDatasets().get("regular").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0")));
+            jsModel.getDatasets().get("new").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")));
+            jsModel.getDatasets().get("upsell").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension3(), "0")));
+            jsModel.getDatasets().get("cancelled").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension4(), "0")).multiply(BigDecimal.ONE.negate()));
         }
         Gson gson = new Gson();
         return gson.toJson(jsModel);
     }
 
     public String getChurnValues() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_CHURN_SUB_PER_MONTH");
         ChartJsModel jsModel = new ChartJsModel();
         jsModel.getDatasets().put("subscriptions", new ArrayList<BigDecimal>());
@@ -104,8 +106,8 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
         for (MeasuredValue value : measuredValues) {
             jsModel.getChartLabels().add(format.format(value.getDate()));
-            jsModel.getDatasets().get("subscriptions").add(new BigDecimal(value.getDimension1()));
-            jsModel.getDatasets().get("terminations").add(new BigDecimal(value.getDimension2()).multiply(BigDecimal.ONE.negate()));
+            jsModel.getDatasets().get("subscriptions").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0")));
+            jsModel.getDatasets().get("terminations").add(new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0")).multiply(BigDecimal.ONE.negate()));
             jsModel.getDatasets().get("trend").add(value.getValue());
         }
 
@@ -116,7 +118,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     public String getMrrOnOffers() throws BusinessException {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         List<MeasuredValue> measuredValues = getMeasuredValuesPerYear(null, "MQ_MRR_REC_PER_MONTH_PER_OFFER");
         ChartJsModel jsModel = new ChartJsModel();
         jsModel.getDatasets().put("offer1", new ArrayList<BigDecimal>());
@@ -134,10 +136,10 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
         for (MeasuredValue value : measuredValues) {
             jsModel.getChartLabels().add(format.format(value.getDate()));
-            offer1 = new BigDecimal(value.getDimension1());
-            offer2 = new BigDecimal(value.getDimension2());
-            offer3 = new BigDecimal(value.getDimension3());
-            offer4 = new BigDecimal(value.getDimension4());
+            offer1 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension1(), "0"));
+            offer2 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension2(), "0"));
+            offer3 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension3(), "0"));
+            offer4 = new BigDecimal(this.defaultIfEmptyOrNull(value.getDimension4(), "0"));
             others = value.getValue();
             total = offer1.add(offer2).add(offer3).add(offer4).add(others);
             jsModel.getDatasets().get("offer1").add(offer1);
@@ -159,6 +161,13 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
 
         Gson gson = new Gson();
         return gson.toJson(jsModel);
+    }
+
+    private String defaultIfEmptyOrNull(String source, String defaultStr) {
+        if ("null".equals(source)) {
+            return defaultStr;
+        }
+        return defaultIfEmpty(source, defaultStr);
     }
 
     public String getOrdersByStatus() throws BusinessException {       

@@ -28,53 +28,54 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
  * InvoiceCategoryLanguage entity.
  */
 @Entity
-@ExportIdentifier({ "invoiceCategory.code", "tradingLanguage.language.languageCode"})
+@ExportIdentifier({ "invoiceCategory.code", "tradingLanguage.language.languageCode" })
 @Table(name = "billing_invoice_cat_lang")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_cat_lang_seq"), })
-public class InvoiceCategoryLanguage extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_invoice_cat_lang_seq"), })
+public class InvoiceCategoryLanguage extends AuditableEntity {
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoice_category_id")
-	private InvoiceCategory invoiceCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_category_id")
+    private InvoiceCategory invoiceCategory;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	@Column(name = "description", length = 255)
-	@Size(max = 255)
-	private String description;
+    @Column(name = "description", length = 255)
+    @Size(max = 255)
+    private String description;
 
-	public InvoiceCategory getInvoiceCategory() {
-		return invoiceCategory;
-	}
+    public InvoiceCategory getInvoiceCategory() {
+        return invoiceCategory;
+    }
 
-	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
-		this.invoiceCategory = invoiceCategory;
-	}
+    public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
+        this.invoiceCategory = invoiceCategory;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }

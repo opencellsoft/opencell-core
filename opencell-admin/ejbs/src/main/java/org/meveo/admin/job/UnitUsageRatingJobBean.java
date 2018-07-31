@@ -15,6 +15,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
@@ -44,23 +45,19 @@ public class UnitUsageRatingJobBean {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long edrId) throws BusinessException {
-        long startDate = System.currentTimeMillis();
+
         log.debug("Processing EDR {}", edrId);
 
         try {
             EDR edr = edrService.findById(edrId);
-            log.debug("After findById:" + (System.currentTimeMillis() - startDate));
             if (edr == null) {
                 return;
             }
             usageRatingService.ratePostpaidUsage(edr);
 
-            log.debug("After ratePostpaidUsage EDR {}: {}", edrId, (System.currentTimeMillis() - startDate));
-
             if (edr.getStatus() == EDRStatusEnum.RATED) {
                 edr = edrService.updateNoCheck(edr);
                 result.registerSucces();
-                log.debug("After registerSucces EDR {}: {}", edrId, (System.currentTimeMillis() - startDate));
             } else {
                 throw new BusinessException(edr.getRejectReason());
             }

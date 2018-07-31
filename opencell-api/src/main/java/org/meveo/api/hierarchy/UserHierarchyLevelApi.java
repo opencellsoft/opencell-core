@@ -33,8 +33,8 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.primefaces.model.SortOrder;
 
-@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class UserHierarchyLevelApi extends BaseApi {
 
     @Inject

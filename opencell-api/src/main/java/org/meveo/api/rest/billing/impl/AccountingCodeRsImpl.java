@@ -11,7 +11,7 @@ import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
-import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
+import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.AccountingCodeRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -83,8 +83,8 @@ public class AccountingCodeRsImpl extends BaseRs implements AccountingCodeRs {
     }
 
     @Override
-    public AccountingCodeListResponse listGet(Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
-        AccountingCodeListResponse result = new AccountingCodeListResponse();
+    public AccountingCodeListResponseDto listGet(Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+        AccountingCodeListResponseDto result = new AccountingCodeListResponseDto();
 
         PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(null, null, offset, limit, sortBy, sortOrder);
 
@@ -98,8 +98,8 @@ public class AccountingCodeRsImpl extends BaseRs implements AccountingCodeRs {
     }
 
     @Override
-    public AccountingCodeListResponse listPost(PagingAndFiltering pagingAndFiltering) {
-        AccountingCodeListResponse result = new AccountingCodeListResponse();
+    public AccountingCodeListResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
+        AccountingCodeListResponseDto result = new AccountingCodeListResponseDto();
 
         try {
             return accountingCodeApi.list(pagingAndFiltering);
@@ -123,4 +123,31 @@ public class AccountingCodeRsImpl extends BaseRs implements AccountingCodeRs {
         return result;
     }
 
+    @Override
+    public ActionStatus enable(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accountingCodeApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+
+        ActionStatus result = new ActionStatus();
+
+        try {
+            accountingCodeApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

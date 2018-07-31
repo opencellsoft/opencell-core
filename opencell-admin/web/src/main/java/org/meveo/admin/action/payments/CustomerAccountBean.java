@@ -93,7 +93,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private PaymentMethodEnum newPaymentMethodType = PaymentMethodEnum.CARD;
     private PaymentMethod selectedPaymentMethod;
-    private boolean bicRequired = true;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -102,11 +101,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         super(CustomerAccount.class);
     }
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @return customer account
-     */
     @Override
     public CustomerAccount initEntity() {
         super.initEntity();
@@ -139,12 +133,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         return entity;
     }
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous window (e.g if he came from customer window). Otherwise if user came from edit/new link, customer
-     * account saving does redirect him to same page in view mode.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
@@ -194,9 +182,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         return "customerAccountDetailOperationsTab";
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
     @Override
     protected IPersistenceService<CustomerAccount> getPersistenceService() {
         return customerAccountService;
@@ -206,7 +191,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      * Compute balance due
      * 
      * @return due balance
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
@@ -216,20 +201,23 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     }
 
     /**
-     * Compute balance exigible without litigation
+     * Compute balance exigible without litigation.
      * 
      * @return exigible balance without litigation
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        } else
+        } else {
             return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity, new Date());
+        }
     }
 
     /**
-     * is current customerAccount active
+     * Is current customerAccount active.
+     * 
+     * @return State of customer account : active / not active
      */
     public boolean isActiveAccount() {
         if (entity != null && entity.getId() != null) {
@@ -239,9 +227,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     }
 
     /**
-     * Close customerAccount
+     * Close customerAccount.
      * 
-     * @return
+     * @return Edit view
      */
     public String closeCustomerAccount() {
         log.info("closeAccount customerAccountId:" + entity.getId());

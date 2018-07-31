@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "CatMessages")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CatMessagesDto extends BaseDto {
+public class CatMessagesDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

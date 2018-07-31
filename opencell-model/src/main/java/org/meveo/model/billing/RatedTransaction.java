@@ -53,8 +53,24 @@ import org.meveo.model.rating.EDR;
         @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
 @NamedQueries({ @NamedQuery(name = "RatedTransaction.listByWalletOperationId", query = "SELECT r FROM RatedTransaction r where r.walletOperationId=:walletOperationId"),
         @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet "
-                + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber and r.invoice is null order by r.usageDate desc "),
+        
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r where "
+                + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber "
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.invoice is null order by r.usageDate desc "),
+        
+        @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription=:subscription"
+                + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" 
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " 
+                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+        
+        @NamedQuery(name = "RatedTransaction.listAllRTByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount=:billingAccount "
+                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+        
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount=:billingAccount "
+                + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" 
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+        
         @NamedQuery(name = "RatedTransaction.countListToInvoiceByOrderNumber", query = "SELECT count(r) FROM RatedTransaction r where "
                 + "r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber and r.invoice is null" 
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
@@ -106,7 +122,14 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.deleteMinRT", query = "DELETE from RatedTransaction r "
                 + " WHERE r.invoice=:invoice AND r.wallet IS null"),
         
-        @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)") })
+        @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+                + " AND r.billingAccount=:billingAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED "
+                + " AND r.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "RatedTransaction.setStatusToCanceledByRsCodes", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
+                + " where rt.id IN :rsToCancelCodes and rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN")
+})
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -210,6 +233,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @Column(name = "parameter_3", length = 255)
     @Size(max = 255)
     private String parameter3;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date")
+    private Date startDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date")
+    private Date endDate;
 
     @Column(name = "parameter_extra", columnDefinition = "TEXT")
     private String parameterExtra;
@@ -233,6 +264,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adjusted_rated_tx")
     private RatedTransaction adjustedRatedTx;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    protected Subscription subscription;
 
     @Transient
     private OfferTemplate offerTemplate;
@@ -273,12 +308,15 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.setEdr(ratedTransaction.getEdr());
         this.setOfferTemplate(ratedTransaction.getOfferTemplate());
         this.setRatingUnitDescription(ratedTransaction.getRatingUnitDescription());
+        this.setStartDate(ratedTransaction.getStartDate());
+        this.setEndDate(ratedTransaction.getEndDate());
+        this.setSubscription(ratedTransaction.getSubscription());
     }
 
     public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax,
             BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet,
-            BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
-            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description) {
+            BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription,
+            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate, Date endDate) {
 
         super();
 
@@ -312,9 +350,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.parameter3 = parameter3;
         this.parameterExtra = parameterExtra;
         this.orderNumber = orderNumber;
+        this.subscription = subscription;
         this.priceplan = priceplan;
         this.offerCode = offerCode;
         this.edr = edr;
+        this.startDate = startDate;
+        this.endDate = endDate;
 
         if (unityDescription != null) {
             this.unityDescription = unityDescription;
@@ -528,6 +569,22 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.parameter3 = parameter3;
     }
     
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+    
     public void setParameterExtra(String parameterExtra) {
         this.parameterExtra = parameterExtra;
     }
@@ -638,5 +695,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setRatingUnitDescription(String ratingUnitDescription) {
         this.ratingUnitDescription = ratingUnitDescription;
+    }
+    
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 }

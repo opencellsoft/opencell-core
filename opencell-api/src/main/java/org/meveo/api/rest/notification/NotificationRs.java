@@ -12,13 +12,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.notification.NotificationDto;
-import org.meveo.api.dto.response.notification.GetNotificationResponseDto;
+import org.meveo.api.dto.notification.ScriptNotificationDto;
+import org.meveo.api.dto.response.notification.GetScriptNotificationResponseDto;
 import org.meveo.api.dto.response.notification.InboundRequestsResponseDto;
 import org.meveo.api.dto.response.notification.NotificationHistoriesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
+ * REST service for managing Notification object.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/notification")
@@ -35,7 +37,7 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    ActionStatus create(NotificationDto postData);
+    ActionStatus create(ScriptNotificationDto postData);
 
     /**
      * Update an existing notification
@@ -45,20 +47,20 @@ public interface NotificationRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    ActionStatus update(NotificationDto postData);
+    ActionStatus update(ScriptNotificationDto postData);
 
     /**
-     * Find a notification with a given code 
+     * Find a notification with a given code
      * 
      * @param notificationCode The notification's code
-     * @return
+     * @return Script notification information
      */
     @GET
     @Path("/")
-    GetNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
+    GetScriptNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
     /**
-     * Remove an existing notification with a given code 
+     * Remove an existing notification with a given code
      * 
      * @param notificationCode The notification's code
      * @return Request processing status
@@ -66,11 +68,31 @@ public interface NotificationRs extends IBaseRs {
     @DELETE
     @Path("/{notificationCode}")
     ActionStatus remove(@PathParam("notificationCode") String notificationCode);
-    
+
+    /**
+     * Enable a Script type notification with a given code
+     * 
+     * @param code Script type notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Script type notification with a given code
+     * 
+     * @param code Script type notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
     /**
      * List the notification history
      * 
-     * @return
+     * @return Notification history list
      */
     @GET
     @Path("/listNotificationHistory")
@@ -79,7 +101,7 @@ public interface NotificationRs extends IBaseRs {
     /**
      * List inbound requests
      * 
-     * @return
+     * @return A list of inbound requests
      */
     @GET
     @Path("/listInboundRequest")
@@ -93,5 +115,5 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    ActionStatus createOrUpdate(NotificationDto postData);
+    ActionStatus createOrUpdate(ScriptNotificationDto postData);
 }

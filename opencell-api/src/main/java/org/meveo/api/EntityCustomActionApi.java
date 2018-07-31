@@ -56,8 +56,7 @@ public class EntityCustomActionApi extends BaseApi {
             throw new EntityAlreadyExistsException(EntityCustomAction.class, actionDto.getCode() + "/" + actionDto.getAppliesTo());
         }
 
-        EntityCustomAction action = new EntityCustomAction();
-        entityCustomActionFromDTO(actionDto, action);
+        EntityCustomAction action = entityCustomActionFromDTO(actionDto, null);
 
         entityCustomActionService.create(action);
 
@@ -82,7 +81,7 @@ public class EntityCustomActionApi extends BaseApi {
             throw new EntityDoesNotExistsException(EntityCustomAction.class, actionDto.getCode() + "/" + actionDto.getAppliesTo());
         }
 
-        entityCustomActionFromDTO(actionDto, action);
+        action = entityCustomActionFromDTO(actionDto, action);
 
         action = entityCustomActionService.update(action);
 
@@ -159,6 +158,50 @@ public class EntityCustomActionApi extends BaseApi {
         entityCustomActionService.remove(scriptInstance);
     }
 
+    /**
+     * Enable or disable Entity custom action
+     * 
+     * @param actionCode Action code
+     * @param appliesTo Entity it Applies to
+     * @param enable Shall action be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(String actionCode, String appliesTo, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (StringUtils.isBlank(actionCode)) {
+            missingParameters.add("actionCode");
+        }
+        if (StringUtils.isBlank(appliesTo)) {
+            missingParameters.add("appliesTo");
+        }
+
+        handleMissingParameters();
+
+        EntityCustomAction scriptInstance = entityCustomActionService.findByCodeAndAppliesTo(actionCode, appliesTo);
+        if (scriptInstance == null) {
+            throw new EntityDoesNotExistsException(EntityCustomAction.class, actionCode);
+        }
+        if (enable) {
+            entityCustomActionService.enable(scriptInstance);
+        } else {
+            entityCustomActionService.disable(scriptInstance);
+        }
+    }
+
+    /**
+     * Create or update EntityCustomAction entity with possibility to force appliesTo field value
+     * 
+     * @param postData Entity info
+     * @param appliesTo AppliesTo value to force
+     * @return A list of script compilation errors
+     * @throws MissingParameterException Missing parameter exception
+     * @throws EntityAlreadyExistsException Entity already exists exception
+     * @throws EntityDoesNotExistsException Entity does not exist exception
+     * @throws MeveoApiException General API exception
+     * @throws BusinessException Business exception
+     */
     public List<ScriptInstanceErrorDto> createOrUpdate(EntityCustomActionDto postData, String appliesTo)
             throws MissingParameterException, EntityAlreadyExistsException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
 
@@ -218,13 +261,19 @@ public class EntityCustomActionApi extends BaseApi {
      * @param action EntityCustomAction to update with values from dto
      * @return A new or updated EntityCustomAction object
      * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
-    private void entityCustomActionFromDTO(EntityCustomActionDto dto, EntityCustomAction action) throws MeveoApiException, BusinessException {
+    private EntityCustomAction entityCustomActionFromDTO(EntityCustomActionDto dto, EntityCustomAction actionToUpdate) throws MeveoApiException, BusinessException {
 
-        if (action.isTransient()) {
+        EntityCustomAction action = actionToUpdate;
+        if (action == null) {
+            action = new EntityCustomAction();
             action.setCode(dto.getCode());
             action.setAppliesTo(dto.getAppliesTo());
+
+            if (dto.isDisabled() != null) {
+                action.setDisabled(dto.isDisabled());
+            }
         }
         if (dto.getDescription() != null) {
             action.setDescription(dto.getDescription());
@@ -258,8 +307,21 @@ public class EntityCustomActionApi extends BaseApi {
             }
             action.setScript(scriptInstance);
         }
+
+        return action;
     }
 
+    /**
+     * @param actionCode
+     * @param appliesTo
+     * @param entityCode
+     * @return
+     * @throws MeveoApiException
+     * @throws InvalidScriptException
+     * @throws ElementNotFoundException
+     * @throws InvalidPermissionException
+     * @throws BusinessException
+     */
     @SuppressWarnings("rawtypes")
     public String execute(String actionCode, String appliesTo, String entityCode)
             throws MeveoApiException, InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {

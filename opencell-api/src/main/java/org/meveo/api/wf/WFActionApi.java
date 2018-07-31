@@ -7,7 +7,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.WFActionDto;
 import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -22,16 +21,15 @@ public class WFActionApi extends BaseApi {
     private WFActionService wfActionService;
 
     /**
+     * Create Workflow action
      * 
-     * @param wfActionDto
-     * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
+     * @param wfTransition Workflow transition entity
+     * @param wfActionDto Workflow action Dto
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws BusinessException General business exception
      */
     public void create(WFTransition wfTransition, WFActionDto wfActionDto)
-            throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
+            throws MissingParameterException, BusinessException {
         validateDto(wfActionDto, false);
         WFAction wfAction = fromDTO(wfActionDto, null);
         wfAction.setWfTransition(wfTransition);
@@ -39,13 +37,14 @@ public class WFActionApi extends BaseApi {
     }
 
     /**
+     * Update Workflow action
      * 
-     * @param wfActionDto
-     * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @param wfTransition Workflow transition entity
+     * @param wfActionDto Workflow action Dto
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws BusinessException General business exception
+     * @throws BusinessApiException General business exception
      */
     public void update(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException {
         validateDto(wfActionDto, true);
@@ -65,17 +64,17 @@ public class WFActionApi extends BaseApi {
     }
 
     /**
+     * Create or update Workflow action
      * 
-     * @param wfActionDto
-     * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws EntityAlreadyExistsException
-     * @throws BusinessException
-     * @throws BusinessApiException
+     * @param wfTransition Workflow transition entity
+     * @param wfActionDto Workflow action Dto
+     * @throws MissingParameterException Missing one or more parameters
+     * @throws EntityDoesNotExistsException Reference to an entity was not found
+     * @throws BusinessException General business exception
+     * @throws BusinessApiException General business exception
      */
     public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto)
-            throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException {
         WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid());
         if (wfAction == null) {
             create(wfTransition, wfActionDto);
@@ -85,9 +84,11 @@ public class WFActionApi extends BaseApi {
     }
 
     /**
+     * Validate Workflow action Dto
      * 
-     * @param wfActionDto
-     * @throws MissingParameterException
+     * @param wfActionDto Workflow action Dto
+     * @param isUpdate indicates that Dto is for update
+     * @throws MissingParameterException Missing one or more parameters
      */
     public void validateDto(WFActionDto wfActionDto, boolean isUpdate) throws MissingParameterException {
         if (isUpdate && StringUtils.isBlank(wfActionDto.getUuid())) {
@@ -100,6 +101,13 @@ public class WFActionApi extends BaseApi {
         handleMissingParameters();
     }
 
+    /**
+     * Transform Workflow action Dto to Workflow action entity
+     * 
+     * @param dto Workflow action Dto
+     * @param wfActionToUpdate Workflow action to update
+     * @return Workflow action entity
+     */
     protected WFAction fromDTO(WFActionDto dto, WFAction wfActionToUpdate) {
         WFAction wfAction = new WFAction();
         if (wfActionToUpdate != null) {

@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.dwh.Chart;
 
 /**
@@ -14,7 +14,7 @@ import org.meveo.model.dwh.Chart;
  */
 @XmlRootElement(name = "Chart")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChartDto extends BusinessDto {
+public class ChartDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2573963792647472501L;

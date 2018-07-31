@@ -28,53 +28,54 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
  * TaxLanguage entity.
  */
 @Entity
-@ExportIdentifier({ "tax.code", "tradingLanguage.language.languageCode"})
+@ExportIdentifier({ "tax.code", "tradingLanguage.language.languageCode" })
 @Table(name = "billing_tax_language")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_tax_language_seq"), })
-public class TaxLanguage extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_tax_language_seq"), })
+public class TaxLanguage extends AuditableEntity {
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "tax_id")
-	private Tax tax;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	@Column(name = "description", length = 255)
-	@Size(max = 255)
-	private String description;
+    @Column(name = "description", length = 255)
+    @Size(max = 255)
+    private String description;
 
-	public Tax getTax() {
-		return tax;
-	}
+    public Tax getTax() {
+        return tax;
+    }
 
-	public void setTax(Tax tax) {
-		this.tax = tax;
-	}
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }

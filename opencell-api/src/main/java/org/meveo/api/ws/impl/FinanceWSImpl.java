@@ -10,6 +10,9 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.finance.ReportExtractDto;
 import org.meveo.api.dto.finance.RevenueRecognitionRuleDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.finance.ReportExtractExecutionResultResponseDto;
+import org.meveo.api.dto.response.finance.ReportExtractExecutionResultsResponseDto;
 import org.meveo.api.dto.response.finance.ReportExtractResponseDto;
 import org.meveo.api.dto.response.finance.ReportExtractsResponseDto;
 import org.meveo.api.dto.response.finance.RunReportExtractDto;
@@ -22,7 +25,7 @@ import org.meveo.api.ws.FinanceWs;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  */
 @WebService(serviceName = "FinanceWs", endpointInterface = "org.meveo.api.ws.FinanceWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -30,7 +33,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
 
     @Inject
     private RevenueRecognitionRuleApi rrrApi;
-    
+
     @Inject
     private ReportExtractApi reportExtractApi;
 
@@ -164,11 +167,11 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
     }
 
     @Override
-    public ReportExtractsResponseDto listReportExtract() {
+    public ReportExtractsResponseDto listReportExtract(PagingAndFiltering pagingAndFiltering) {
         ReportExtractsResponseDto result = new ReportExtractsResponseDto();
 
         try {
-            result.setReportExtracts(reportExtractApi.list());
+            result = reportExtractApi.list(pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -188,7 +191,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus runReportExtract(RunReportExtractDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -201,5 +204,96 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs {
 
         return result;
     }
-    
+
+    @Override
+    public ActionStatus enableRevenueRecognitionRule(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            rrrApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableRevenueRecognitionRule(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            rrrApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus enableReportExtract(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            reportExtractApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableReportExtract(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            reportExtractApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ReportExtractExecutionResultsResponseDto listReportExtractRunHistory(PagingAndFiltering pagingAndFiltering) {
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        try {
+            result = reportExtractApi.listReportExtractRunHistory(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ReportExtractExecutionResultResponseDto findReportExtractHistoryById(Long id) {
+        ReportExtractExecutionResultResponseDto result = new ReportExtractExecutionResultResponseDto();
+
+        try {
+            result.setReportExtractExecutionResult(reportExtractApi.findReportExtractHistory(id));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ReportExtractExecutionResultsResponseDto findReportExtractHistoryByCode(String code) {
+        ReportExtractExecutionResultsResponseDto result = new ReportExtractExecutionResultsResponseDto();
+
+        try {
+            result = reportExtractApi.listReportExtractRunHistoryByRECode(code);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
 }

@@ -10,6 +10,7 @@ import javax.faces.event.PhaseId;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.web.servlet.PictureServlet;
 import org.meveo.model.crm.Provider;
@@ -49,7 +50,9 @@ public class DefaultImageStreamer {
             return PictureServlet.DEFAULT_SERVICE_IMAGE;
         } else if (groupName.equals("product")) {
             return PictureServlet.DEFAULT_PRODUCT_IMAGE;
-        }
+        } else if (groupName.equals("reportExtract")) {
+            return PictureServlet.DEFAULT_REPORT_EXTRACT_IMAGE;
+        } 
 
         return "offer";
     }
@@ -72,9 +75,10 @@ public class DefaultImageStreamer {
                 streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath));
             } catch (FileNotFoundException | NullPointerException e) {
                 log.debug("failed loading image={}", imagePath);
+                String ext = FilenameUtils.getExtension(fileName);
                 imagePath = ModuleUtil.getPicturePath(currentUser.getProviderCode(), groupName) + File.separator + getDefaultImage(groupName);
                 try {
-                    streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath), "image/png");
+                    streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath), "image/" + ext);
                 } catch (FileNotFoundException e1) {
                     log.error("no group default image, loading no image default...");
                     streamedFile = new DefaultStreamedContent(getClass().getClassLoader().getResourceAsStream("img/no_picture.png"), "image/png");

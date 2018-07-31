@@ -29,13 +29,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     @Inject
     private OfferTemplateCategoryService offerTemplateCategoryService;
 
-    /**
-     * 
-     * @param postData posted data to API
-     * @return offer template category
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException business exception
-     */
+    @Override
     public OfferTemplateCategory create(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -47,8 +41,6 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
         handleMissingParametersAndValidate(postData);
 
-        
-
         if (offerTemplateCategoryService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
         }
@@ -57,6 +49,11 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         offerTemplateCategory.setCode(postData.getCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
+        if (postData.isActive() != null) {
+            offerTemplateCategory.setActive(postData.isActive());
+        } else if (postData.isDisabled() != null) {
+            offerTemplateCategory.setDisabled(postData.isDisabled());
+        }
         try {
             saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -89,13 +86,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         return offerTemplateCategory;
     }
 
-    /**
-     * 
-     * @param postData posted data to API
-     * @return offer template category
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException business exception
-     */
+    @Override
     public OfferTemplateCategory update(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -106,13 +97,13 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         }
 
         handleMissingParametersAndValidate(postData);
-        
+
         OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getCode());
 
         if (offerTemplateCategory == null) {
             throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
         }
-        offerTemplateCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+        offerTemplateCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
 
@@ -148,9 +139,6 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         return offerTemplateCategory;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public OfferTemplateCategoryDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
@@ -172,7 +160,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         return offerTemplateCategoryDto;
 
     }
-    
+
     /**
      * 
      * @param code offer template category
@@ -196,49 +184,6 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
 
         return offerTemplateCategoryDto;
-    }
-
-    /**
-     * 
-     * @param code code of offer template category
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException business exception
-     */
-    public void remove(String code) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
-            handleMissingParameters();
-        }
-
-        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(code);
-
-        if (offerTemplateCategory == null) {
-            throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
-        }
-
-        deleteImage(offerTemplateCategory);
-        offerTemplateCategoryService.remove(offerTemplateCategory);
-
-    }
-
-    /**
-     * 
-     * @param postData posted data to API
-     * @return offer template category
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException business exceptions
-     */
-    public OfferTemplateCategory createOrUpdate(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
-       if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
-        }        
-        if (offerTemplateCategoryService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 
     /**
@@ -283,7 +228,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     /**
      * 
      * @param code code of offer template category
-
+     * 
      * @return offer template category
      * @throws MeveoApiException meveo api exception
      */
@@ -307,14 +252,13 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     /**
      * @param uriInfo uri information
      * @param code code of offer template category
-
+     * 
      * @return found offer template category
      * @throws EntityDoesNotExistsException entity does not exist exception
      * @throws InvalidParameterException invalid parameter exception
      * @throws MissingParameterException missing parameter exception
      */
-    public OfferTemplateCategoryDto findByCode(String code, UriInfo uriInfo) throws EntityDoesNotExistsException, InvalidParameterException,
-            MissingParameterException {
+    public OfferTemplateCategoryDto findByCode(String code, UriInfo uriInfo) throws EntityDoesNotExistsException, InvalidParameterException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();

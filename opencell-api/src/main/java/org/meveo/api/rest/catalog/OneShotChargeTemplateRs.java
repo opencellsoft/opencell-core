@@ -95,4 +95,24 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(OneShotChargeTemplateDto postData);
+
+    /**
+     * Enable a One shot charge template with a given code
+     * 
+     * @param code One shot charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a One shot charge template with a given code
+     * 
+     * @param code One shot charge template code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 }

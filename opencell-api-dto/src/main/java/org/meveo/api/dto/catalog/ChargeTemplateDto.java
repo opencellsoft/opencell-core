@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -25,7 +25,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
  */
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChargeTemplateDto extends BusinessDto implements Serializable {
+public class ChargeTemplateDto extends EnableBusinessDto implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5143285194077662656L;
@@ -33,10 +33,6 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
     /** The invoice sub category. */
     @XmlElement(required = true)
     private String invoiceSubCategory;
-
-    /** The disabled. */
-    @XmlElement(required = true)
-    private boolean disabled;
 
     /** The amount editable. */
     private Boolean amountEditable;
@@ -86,7 +82,6 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
         if (chargeTemplate.getInvoiceSubCategory() != null) {
             invoiceSubCategory = chargeTemplate.getInvoiceSubCategory().getCode();
         }
-        disabled = chargeTemplate.isDisabled();
         amountEditable = chargeTemplate.getAmountEditable();
         if (chargeTemplate.getEdrTemplates() != null) {
             triggeredEdrs = new TriggeredEdrTemplatesDto();
@@ -158,24 +153,6 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
      */
     public void setInvoiceSubCategory(String invoiceSubCategory) {
         this.invoiceSubCategory = invoiceSubCategory;
-    }
-
-    /**
-     * Checks if is disabled.
-     *
-     * @return true, if is disabled
-     */
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    /**
-     * Sets the disabled.
-     *
-     * @param disabled the new disabled
-     */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     /**
@@ -324,7 +301,7 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
     
     @Override
     public String toString() {
-        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled
+        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + isDisabled()
                 + ", amountEditable=" + amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription
                 + ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", customFields="
                 + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + "]";

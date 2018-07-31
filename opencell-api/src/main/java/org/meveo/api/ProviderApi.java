@@ -520,6 +520,9 @@ public class ProviderApi extends BaseApi {
             if (invoiceConfigurationDto.getDisplayOrders() != null) {
                 provider.getInvoiceConfiguration().setDisplayOrders(invoiceConfigurationDto.getDisplayOrders());
             }
+            if (invoiceConfigurationDto.getCurrentInvoiceNb() != null) {
+                provider.getInvoiceConfiguration().setCurrentInvoiceNb(invoiceConfigurationDto.getCurrentInvoiceNb());
+            }
         }
         return provider;
     }

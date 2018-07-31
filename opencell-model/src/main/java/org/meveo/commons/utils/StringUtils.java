@@ -20,6 +20,7 @@ package org.meveo.commons.utils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
@@ -93,17 +94,26 @@ public class StringUtils {
         return sb.toString();
     }
 
+    /**
+     * @param filePath file path
+     * @return content of file as string
+     * @throws java.io.IOException input/output exception.
+     */
     public static String readFileAsString(String filePath) throws java.io.IOException {
+        int bufferSize = 1024;
         StringBuffer fileData = new StringBuffer(1000);
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        char[] buf = new char[1024];
-        int numRead = 0;
-        while ((numRead = reader.read(buf)) != -1) {
-            String readData = String.valueOf(buf, 0, numRead);
-            fileData.append(readData);
-            buf = new char[1024];
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            char[] buf = new char[bufferSize];
+            int numRead = 0;
+            while ((numRead = reader.read(buf)) != -1) {
+                String readData = String.valueOf(buf, 0, numRead);
+                fileData.append(readData);
+                buf = new char[bufferSize];
+            }
+        } catch (IOException ex) {
+            throw ex;
         }
-        reader.close();
+
         return fileData.toString();
     }
 
@@ -159,6 +169,28 @@ public class StringUtils {
         buildString = buildString.replaceFirst("0", firstChar);
         return buildString;
     }
+    
+    /**
+     * Returns the zero-padded RUM sequence value.
+     * 
+     * @param value input Long value
+     * @param nbChar number of char
+     * @return Long as string
+     */
+	public static String getLongAsNChar(Long value, Long nbChar) {
+		String firstChar = "0";
+		if (value < 0) {
+			firstChar = "-";
+			value = value * -1L;
+		}
+		StringBuilder buildString = new StringBuilder("" + value);
+		while (buildString.length() < nbChar) {
+			buildString = buildString.insert(0, "0");
+		}
+		buildString = buildString.replace(0, 1, firstChar);
+
+		return buildString.toString();
+	}
 
     public static String getArrayElements(String[] t) {
         String str = "";

@@ -8,8 +8,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.mediation.Access;
 
 /**
@@ -19,7 +20,7 @@ import org.meveo.model.mediation.Access;
  */
 @XmlRootElement(name = "Access")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AccessDto extends BaseDto {
+public class AccessDto extends BaseEntityDto implements IEnableDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6495211234062070223L;
@@ -39,8 +40,12 @@ public class AccessDto extends BaseDto {
     private Date endDate;
 
     /** Custom fields. */
-    @XmlElement(required = false)
     private CustomFieldsDto customFields;
+
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
     /**
      * Instantiates a new access dto.
@@ -65,6 +70,7 @@ public class AccessDto extends BaseDto {
         }
 
         customFields = customFieldInstances;
+        disabled = access.isDisabled();
     }
 
     /**
@@ -156,9 +162,19 @@ public class AccessDto extends BaseDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
-    
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
+    }
+
     @Override
     public String toString() {
         return "AccessDto [code=" + code + ", subscription=" + subscription + ", startDate=" + startDate + ", endDate=" + endDate + ", customFields=" + customFields + "]";
-    }    
+    }
 }

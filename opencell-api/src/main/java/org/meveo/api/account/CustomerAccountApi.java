@@ -10,14 +10,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
-import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
+import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -30,6 +29,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -38,17 +38,12 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingCode;
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -57,7 +52,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  *  
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * 
+ * @lastModifiedVersion willBeSetHere
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -73,9 +69,6 @@ public class CustomerAccountApi extends AccountEntityApi {
     private CustomerService customerService;
 
     @Inject
-    private AccountOperationService accountOperationService;
-
-    @Inject
     private TradingCurrencyService tradingCurrencyService;
 
     @Inject
@@ -86,6 +79,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @EJB
     private AccountHierarchyApi accountHierarchyApi;
+    
+    @Inject
+    private BillingAccountApi billingAccountApi;
 
     public void create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -476,31 +472,6 @@ public class CustomerAccountApi extends AccountEntityApi {
         return result;
     }
 
-    public void dunningExclusionInclusion(DunningInclusionExclusionDto dunningDto) throws EntityDoesNotExistsException, BusinessException {
-
-        for (String ref : dunningDto.getInvoiceReferences()) {
-            AccountOperation accountOp = accountOperationService.findByReference(ref);
-            if (accountOp == null) {
-                throw new EntityDoesNotExistsException(AccountOperation.class, "no account operation with this reference " + ref);
-            }
-            if (accountOp instanceof RecordedInvoice) {
-                accountOp.setExcludedFromDunning(dunningDto.getExclude());
-                accountOperationService.update(accountOp);
-            } else {
-                throw new BusinessEntityException(accountOp.getReference() + " is not an invoice account operation");
-            }
-            if (accountOp.getMatchingStatus() == MatchingStatusEnum.P) {
-                for (MatchingAmount matchingAmount : accountOp.getMatchingAmounts()) {
-                    MatchingCode matchingCode = matchingAmount.getMatchingCode();
-                    for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
-                        AccountOperation accountoperation = ma.getAccountOperation();
-                        accountoperation.setExcludedFromDunning(dunningDto.getExclude());
-                        accountOperationService.update(accountoperation);
-                    }
-                }
-            }
-        }
-    }
 
     public void createCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -667,5 +638,29 @@ public class CustomerAccountApi extends AccountEntityApi {
             update(existedCustomerAccountDto);
         }
     }
+
+    /**
+     * Exports a json representation of the CustomerAcount hierarchy. It include subscription, accountOperations and invoices.
+     * 
+     * @param ca the selected CustomerAccount
+     * @return DTO representation of a CustomerAccount
+     */
+	public CustomerAccountDto exportCustomerAccountHierarchy(CustomerAccount ca) {
+		CustomerAccountDto result = new CustomerAccountDto(ca);
+		
+		if(ca.getAccountOperations() != null && !ca.getAccountOperations().isEmpty()) {
+			for(AccountOperation ao : ca.getAccountOperations()) {
+				result.getAccountOperations().add(new AccountOperationDto(ao));
+			}
+		}
+		
+		if(ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
+			for(BillingAccount ba : ca.getBillingAccounts()) {
+				result.getBillingAccounts().getBillingAccount().add(billingAccountApi.exportBillingAccountHierarchy(ba));
+			}
+		}
+		
+		return result;
+	}
 
 }

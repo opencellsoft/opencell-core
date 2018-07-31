@@ -108,10 +108,8 @@ public class ImportCatalogJobBean {
                 excelInputStream = new FileInputStream(file);
 
                 int processed = 0;
-                Workbook workbook;
 
-                try {
-                    workbook = WorkbookFactory.create(excelInputStream);
+                try (Workbook workbook = WorkbookFactory.create(excelInputStream)) {
                     Sheet sheet = workbook.getSheetAt(0);
 
                     Iterator<Row> rowIterator = sheet.rowIterator();

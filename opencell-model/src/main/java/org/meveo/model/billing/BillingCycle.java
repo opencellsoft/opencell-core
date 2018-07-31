@@ -26,6 +26,8 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -40,6 +42,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle.
@@ -94,7 +97,19 @@ public class BillingCycle extends BusinessCFEntity {
 	@Column(name = "due_date_delay_el", length = 2000)
 	@Size(max = 2000)
 	private String dueDateDelayEL;
-
+	
+	@Column(name = "invoice_type_el", length = 2000)
+    @Size(max = 2000)
+    private String invoiceTypeEl;
+	
+    @Enumerated(EnumType.STRING)
+    @Column(name = "billing_cycle_type")
+    private BillingEntityTypeEnum type;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance scriptInstance;
+	
 	public String getBillingTemplateName() {
 		return billingTemplateName;
 	}
@@ -207,4 +222,29 @@ public class BillingCycle extends BusinessCFEntity {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
+
+    public String getInvoiceTypeEl() {
+        return invoiceTypeEl;
+    }
+
+    public void setInvoiceTypeEl(String invoiceTypeEl) {
+        this.invoiceTypeEl = invoiceTypeEl;
+    }
+
+    public BillingEntityTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(BillingEntityTypeEnum type) {
+        this.type = type;
+    }
+    
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
+    }
+
+    public void setScriptInstance(ScriptInstance scriptInstance) {
+        this.scriptInstance = scriptInstance;
+    }
+
 }

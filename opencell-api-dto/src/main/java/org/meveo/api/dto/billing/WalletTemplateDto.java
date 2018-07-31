@@ -4,10 +4,9 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.catalog.WalletTemplate;
 
@@ -18,18 +17,10 @@ import org.meveo.model.catalog.WalletTemplate;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletTemplateDto extends BaseDto {
+public class WalletTemplateDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2681139334253613359L;
-
-    /** The code. */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /** The description. */
-    @XmlAttribute()
-    private String description;
 
     /** The wallet type. */
     private BillingWalletTypeEnum walletType;
@@ -56,48 +47,11 @@ public class WalletTemplateDto extends BaseDto {
      * @param walletTemplate the WalletTemplate entity
      */
     public WalletTemplateDto(WalletTemplate walletTemplate) {
-        code = walletTemplate.getCode();
-        description = walletTemplate.getDescription();
+        super(walletTemplate);
         walletType = walletTemplate.getWalletType();
         consumptionAlertSet = walletTemplate.isConsumptionAlertSet();
         fastRatingLevel = walletTemplate.getFastRatingLevel();
         lowBalanceLevel = walletTemplate.getLowBalanceLevel();
-    }
-
-    /**
-     * Gets the code.
-     *
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Sets the code.
-     *
-     * @param code the new code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * Gets the description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description.
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**

@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.model.wf.WFTransition;
@@ -37,7 +37,7 @@ import org.meveo.model.wf.WFTransition;
  * @author anasseh
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WFTransitionDto extends BaseDto {
+public class WFTransitionDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8309866046667741458L;
@@ -69,7 +69,7 @@ public class WFTransitionDto extends BaseDto {
     /** The list WF action dto. */
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
-    private List<WFActionDto> listWFActionDto = new ArrayList<WFActionDto>();
+    private List<WFActionDto> listWFActionDto = new ArrayList<>();
 
     /** The list WF decision rule dto. */
     @XmlElementWrapper(name = "decisionRules")

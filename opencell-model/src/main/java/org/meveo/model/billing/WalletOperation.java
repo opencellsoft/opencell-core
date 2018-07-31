@@ -67,6 +67,10 @@ import org.meveo.model.rating.EDR;
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
         @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.orderNumber=:orderNumber"),
         @NamedQuery(name = "WalletOperation.listToInvoiceIds", query = "SELECT o.id FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
         @NamedQuery(name = "WalletOperation.getBalance", query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
@@ -86,7 +90,12 @@ import org.meveo.model.rating.EDR;
                 + " and w.id IN :notBilledWalletIdList"),
         @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"), })
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"), 
+        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
+                + " AND o.wallet.userAccount.billingAccount=:billingAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
+                + " AND o.wallet.userAccount=:userAccount")
+})
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -231,8 +240,13 @@ public class WalletOperation extends BusinessEntity {
     @Transient
     private BillingAccount billingAccount;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    protected Subscription subscription;
 
     @Transient
     private BillingRun billingRun;
@@ -484,7 +498,6 @@ public class WalletOperation extends BusinessEntity {
     }
 
     protected WalletOperation fillUnratedClone(WalletOperation result) {
-        result.setActive(true);
         result.setAggregatedServiceInstance(aggregatedServiceInstance);
         result.setAppendGeneratedCode(appendGeneratedCode);
         result.setAuditable(getAuditable());
@@ -494,7 +507,6 @@ public class WalletOperation extends BusinessEntity {
         result.setCounter(counter);
         result.setCurrency(currency);
         result.setDescription(description);
-        result.setDisabled(false);
         result.setEndDate(endDate);
         result.setInvoiceSubCategory(invoiceSubCategory);
         result.setInvoicingDate(invoicingDate);
@@ -522,6 +534,7 @@ public class WalletOperation extends BusinessEntity {
         result.setInputUnitDescription(inputUnitDescription);
         result.setWallet(wallet);
         result.setEdr(edr);
+        result.setSubscription(subscription);
         return result;
     }
 
@@ -619,6 +632,14 @@ public class WalletOperation extends BusinessEntity {
 
     public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
         this.rawAmountWithTax = rawAmountWithTax;
+    }
+    
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 
 }

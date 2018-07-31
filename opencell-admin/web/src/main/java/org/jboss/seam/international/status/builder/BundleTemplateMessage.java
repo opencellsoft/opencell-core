@@ -60,6 +60,8 @@ public interface BundleTemplateMessage extends MessageBuilder {
      * 
      * Any expressions of the form "{0}, {1} ... {N}" found in the template will be interpolated; numbers reference the index of
      * any given parameters, and can be used more than once per template.
+     * 
+     * @param text Resource bundle key
      * @return bundle template message
      */
     public BundleTemplateMessage key(final BundleKey text);
@@ -83,7 +85,7 @@ public interface BundleTemplateMessage extends MessageBuilder {
      * Any expressions of the form "{0}, {1} ... {N}" found in the template will be interpolated; numbers reference the index of
      * any given parameters, and can be used more than once per template.
      * @param text template's text
-     * @return bundle template message
+     * @return Bundle template message
      */
     public BundleTemplateMessage defaults(final String text);
 
@@ -93,7 +95,9 @@ public interface BundleTemplateMessage extends MessageBuilder {
      * Parameters may be referenced by index in the template , using expressions of the form "
      * {0}, {1} ... {N}". The same parameters will be used when interpolating default text, in the case when a bundle key
      * cannot be resolved.
+     * 
      * @param textParams text params
+     * @return Bundle template message
      */
     public BundleTemplateMessage params(final Object... textParams);
 

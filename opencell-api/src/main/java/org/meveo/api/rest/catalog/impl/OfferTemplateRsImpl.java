@@ -57,11 +57,13 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF) {
+    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
+            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate,
+                loadServiceChargeTemplate, loadProductChargeTemplate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -72,7 +74,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     @Override
     public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query,
             String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
-        
+
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
         try {
@@ -83,10 +85,10 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
-    
+
     @Override
     public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
-        
+
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
         try {
@@ -124,4 +126,29 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         return result;
     }
 
+    @Override
+    public ActionStatus enable(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateApi.enableOrDisable(code, validFrom, validTo, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            offerTemplateApi.enableOrDisable(code, validFrom, validTo, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

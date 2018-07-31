@@ -6,9 +6,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobInstance;
 
 /**
  * The Class JobInstanceDto.
@@ -17,7 +18,7 @@ import org.meveo.model.jobs.JobCategoryEnum;
  */
 @XmlRootElement(name = "JobInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JobInstanceDto extends BusinessDto {
+public class JobInstanceDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5166093858617578774L;
@@ -36,9 +37,12 @@ public class JobInstanceDto extends BusinessDto {
     /** Parameter to job execution. */
     private String parameter;
 
-    /** Is job active. */
-    @XmlElement(required = true)
-    private boolean active = false;
+    /**
+     * Is job active. A negative of Disabled. Deprecated in 5.0.1. Use Disabled field instead.
+     * 
+     */
+    @Deprecated
+    private Boolean active;
 
     /** Custom fields. */
     private CustomFieldsDto customFields;
@@ -56,6 +60,41 @@ public class JobInstanceDto extends BusinessDto {
      * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
      */
     private Boolean limitToSingleNode;
+
+    /**
+     * Instantiate a new JobInstance DTO
+     */
+    public JobInstanceDto() {
+    }
+
+    /**
+     * Convert JobInstance entity to DTO including its custom field values
+     * 
+     * @param jobInstance JobInstance entity
+     * @param customFieldInstances Custom field values
+     */
+    public JobInstanceDto(JobInstance jobInstance, CustomFieldsDto customFieldInstances) {
+        super(jobInstance);
+
+        setActive(jobInstance.isActive());
+
+        setJobCategory(jobInstance.getJobCategoryEnum());
+        setJobTemplate(jobInstance.getJobTemplate());
+        setParameter(jobInstance.getParametres());
+
+        if (jobInstance.getTimerEntity() != null) {
+            setTimerCode(jobInstance.getTimerEntity().getCode());
+        }
+
+        setRunOnNodes(jobInstance.getRunOnNodes());
+        setLimitToSingleNode(jobInstance.isLimitToSingleNode());
+
+        setCustomFields(customFieldInstances);
+
+        if (jobInstance.getFollowingJob() != null) {
+            setFollowingJob(jobInstance.getFollowingJob().getCode());
+        }
+    }
 
     /**
      * Gets the job category.
@@ -134,7 +173,7 @@ public class JobInstanceDto extends BusinessDto {
      *
      * @return true, if is active
      */
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
@@ -143,7 +182,7 @@ public class JobInstanceDto extends BusinessDto {
      *
      * @param active the new active
      */
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

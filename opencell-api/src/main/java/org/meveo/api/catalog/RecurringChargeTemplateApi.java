@@ -51,6 +51,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
+    @Override
     public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -83,7 +84,9 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            chargeTemplate.setDisabled(postData.isDisabled());
+        }
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
         chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
@@ -97,6 +100,11 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setDurationTermInMonthEl(postData.getDurationTermInMonthEl());
+        chargeTemplate.setSubscriptionProrataEl(postData.getSubscriptionProrataEl());
+        chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
+        chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
+        chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -141,6 +149,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         return chargeTemplate;
     }
 
+    @Override
     public RecurringChargeTemplate update(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -172,7 +181,6 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
         chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
         chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
@@ -186,6 +194,11 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setDurationTermInMonthEl(postData.getDurationTermInMonthEl());
+        chargeTemplate.setSubscriptionProrataEl(postData.getSubscriptionProrataEl());
+        chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
+        chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
+        chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -254,29 +267,5 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
 
         return result;
-    }
-
-    public void remove(String code) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("recurringChargeTemplateCode");
-            handleMissingParameters();
-        }
-
-        // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code);
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
-        }
-
-        recurringChargeTemplateService.remove(chargeTemplate);
-    }
-
-    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-        if (recurringChargeTemplateService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

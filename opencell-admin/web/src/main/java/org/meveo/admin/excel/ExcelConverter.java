@@ -70,14 +70,12 @@ public class ExcelConverter {
 	private Logger log = LoggerFactory.getLogger(ExcelConverter.class);
 
 	/**
-	 * Generates file for export
+	 * Generates file for export.
 	 * 
-	 * @param dataModel
-	 *            filtered data model
-	 * @param backingBean
-	 *            Entities Bean
-	 * @throws RowsExceededException
-	 * @throws WriteException
+	 * @param dataModel Filtered data model
+	 * @param backingBean Entities Bean
+	 * @throws RowsExceededException Rows exceeded exception
+	 * @throws WriteException Write exception
 	 */
 	@SuppressWarnings("rawtypes")
 	public void export(PaginationDataModel dataModel, BaseBean backingBean)
@@ -88,10 +86,10 @@ public class ExcelConverter {
 	}
 
 	/**
-	 * Generates file for export
+	 * Generates file for export.
 	 * 
-	 * @throws RowsExceededException
-	 * @throws WriteException
+     * @throws RowsExceededException Rows exceeded exception
+     * @throws WriteException Write exception
 	 */
 	@SuppressWarnings("unchecked")
 	public void export() throws RowsExceededException, WriteException {
@@ -146,10 +144,10 @@ public class ExcelConverter {
 	}
 
 	/**
-	 * Generates document header
+	 * Generates document header.
 	 * 
-	 * @throws WriteException
-	 * @throws RowsExceededException
+     * @throws RowsExceededException Rows exceeded exception
+     * @throws WriteException Write exception
 	 */
 	public void generateHeader() throws RowsExceededException, WriteException {
 		Field[] entityFields = getEntityFields();
@@ -162,10 +160,10 @@ public class ExcelConverter {
 	}
 
 	/**
-	 * Getting value from Messages.properties file
+	 * Getting value from Messages.properties file.
 	 * 
-	 * @param messageText
-	 *            text to find and get label from Messages.properties file
+	 * @param messageText text to find and get label from Messages.properties file
+	 * @return label from Messages.properties
 	 * 
 	 */
 	public String getMessage(String messageText) {
@@ -179,11 +177,10 @@ public class ExcelConverter {
 	}
 
 	/**
-	 * Generating caption to get from Messages.properties file
+	 * Generating caption to get from Messages.properties file.
 	 * 
-	 * @param entityField
-	 *            variable name of entity field
-	 * 
+	 * @param entityField Variable name of entity field
+	 * @return Caption text from Messages.properties file
 	 */
 	public String getMessageText(String entityField) {
 		String className = dataListBean.getClazz().getSimpleName();
@@ -197,16 +194,16 @@ public class ExcelConverter {
 	}
 
 	/**
-	 * Processes one row wit Entity data
+	 * Processes one row wit Entity data.
 	 * 
-	 * @param rowIndex
-	 *            row number where add cell
-	 * @param rowData
-	 *            Object with data to procces in row
+	 * @param rowIndex row number where add cell
+	 * @param rowData Object with data to procces in row
 	 * 
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException Invocation target exception
+	 * @throws IllegalAccessException Illegal access exception
+     * @throws IllegalArgumentException Illegal argument exception
+     * @throws RowsExceededException Rows exceeded exception
+     * @throws WriteException Write exception
 	 * 
 	 */
 	public void processRow(int rowIndex, BaseEntity rowData)
@@ -237,10 +234,10 @@ public class ExcelConverter {
 	}
 
 	/**
-	 * Checks if variable is Enum
+	 * Checks if variable is Enum.
 	 * 
-	 * @param variableName
-	 *            variable name to check if it is Enum
+     * @param variableName variable name to check if it is Enum
+     * @return Is enum or not
 	 */
 	public boolean isEnum(String variableName) {
 

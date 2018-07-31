@@ -86,4 +86,30 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
         return result;
     }
+
+    @Override
+    public ActionStatus enable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            jobTriggerApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus disable(String code) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            jobTriggerApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

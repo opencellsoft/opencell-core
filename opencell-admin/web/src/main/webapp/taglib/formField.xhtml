@@ -116,6 +116,8 @@
 		pictureGroupName - can be offerCategory, offer, service or product
 		imageWidth - width of the image
 		imageHeight - height of the image
+		sizeLimit - the maximum size of the image (bytes)
+		allowTypes - type of files allowed
 
  -->
 
@@ -175,7 +177,7 @@
     <c:if test="${empty(childField)}">
         <c:set var="fieldItem" value="${entity[field]}" />
     </c:if>
-    <c:if test="${!empty(childField)}">
+    <c:if test="${!empty(childField) and !empty(field) and entity[field] != null}">
         <c:set var="fieldItem" value="${entity[field][childField]}" />
     </c:if>
     <c:if test="${empty(formLevelEdit)}">
@@ -202,7 +204,9 @@
     <c:if test="${empty(imageHeight)}">
         <c:set var="imageHeight" value="150px" />
     </c:if>
-
+    <c:if test="${empty(allowTypes)}">
+        <c:set var="sizeLimit" value="1000000" />
+    </c:if>
 
 <!--     <c:if test="#{rendered}"> Comented out as cause component id duplication on boolean and entity list type field updates-->
         <!--  Select and entity or a FK to an entity -->
@@ -373,7 +377,7 @@
             <hftl:formImageField id="${empty(id)?fieldIdPrefix.concat('_image'):id}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}" required="${required}"
                 componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
                 labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" edit="#{edit}"
-                backingBean="${backingBean}" pictureGroupName="${pictureGroupName}" imageWidth="${imageWidth}" imageHeight="${imageHeight}" />
+                backingBean="${backingBean}" pictureGroupName="${pictureGroupName}" imageWidth="${imageWidth}" imageHeight="${imageHeight}" sizeLimit="${sizeLimit}" />
         </c:if>
 
 <!--     </c:if> -->

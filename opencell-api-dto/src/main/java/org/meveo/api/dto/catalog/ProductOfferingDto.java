@@ -13,9 +13,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.api.dto.IVersionedDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
@@ -30,7 +32,7 @@ import org.meveo.model.catalog.ProductOffering;
  */
 @XmlRootElement(name = "ProductOffering")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductOfferingDto extends BusinessDto {
+public class ProductOfferingDto extends EnableBusinessDto implements IVersionedDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4599063410509766484L;
@@ -60,7 +62,7 @@ public class ProductOfferingDto extends BusinessDto {
     /** The attachments. */
     @XmlElementWrapper(name = "digitalResources")
     @XmlElement(name = "digitalResource")
-    protected List<DigitalResourcesDto> attachments;
+    protected List<DigitalResourceDto> attachments;
 
     /** The model code. */
     protected String modelCode;
@@ -80,9 +82,6 @@ public class ProductOfferingDto extends BusinessDto {
     /** The image base 64. */
     protected String imageBase64;
 
-    /** The disabled. */
-    protected boolean disabled = false;
-
     /** The language descriptions. */
     protected List<LanguageDescriptionDto> languageDescriptions;
 
@@ -99,6 +98,10 @@ public class ProductOfferingDto extends BusinessDto {
     @XmlElementWrapper(name = "sellers")
     @XmlElement(name = "seller")
     private List<String> sellers;
+
+    @XmlElementWrapper(name = "customerCategories")
+    @XmlElement(name = "customerCategory")
+    private List<CustomerCategoryDto> customerCategories;
 
     /**
      * Instantiates a new product offering dto.
@@ -123,13 +126,13 @@ public class ProductOfferingDto extends BusinessDto {
 
         if (asLink) {
             this.setDescription(null);
+            this.setDisabled(null);
             return;
         }
         this.setDescription(productOffering.getDescription());
         this.setName(productOffering.getName());
         this.setLifeCycleStatus(productOffering.getLifeCycleStatus());
         this.imagePath = productOffering.getImagePath();
-        this.disabled = productOffering.isDisabled();
 
         List<OfferTemplateCategory> offerTemplateCategories = productOffering.getOfferTemplateCategories();
         if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
@@ -140,9 +143,9 @@ public class ProductOfferingDto extends BusinessDto {
         }
         List<DigitalResource> digitalResources = productOffering.getAttachments();
         if (digitalResources != null && !digitalResources.isEmpty()) {
-            this.setAttachments(new ArrayList<DigitalResourcesDto>());
+            this.setAttachments(new ArrayList<DigitalResourceDto>());
             for (DigitalResource digitalResource : digitalResources) {
-                this.getAttachments().add(new DigitalResourcesDto(digitalResource));
+                this.getAttachments().add(new DigitalResourceDto(digitalResource));
             }
         }
 
@@ -171,6 +174,12 @@ public class ProductOfferingDto extends BusinessDto {
         if (productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
             setChannels(productOffering.getChannels().stream().map(p -> {
                 return new ChannelDto(p);
+            }).collect(Collectors.toList()));
+        }
+
+        if (productOffering.getCustomerCategories() != null && !productOffering.getCustomerCategories().isEmpty()) {
+            setCustomerCategories(productOffering.getCustomerCategories().stream().map(p -> {
+                return new CustomerCategoryDto(p);
             }).collect(Collectors.toList()));
         }
 
@@ -218,7 +227,7 @@ public class ProductOfferingDto extends BusinessDto {
      *
      * @return the attachments
      */
-    public List<DigitalResourcesDto> getAttachments() {
+    public List<DigitalResourceDto> getAttachments() {
         return attachments;
     }
 
@@ -227,7 +236,7 @@ public class ProductOfferingDto extends BusinessDto {
      *
      * @param attachments the new attachments
      */
-    public void setAttachments(List<DigitalResourcesDto> attachments) {
+    public void setAttachments(List<DigitalResourceDto> attachments) {
         this.attachments = attachments;
     }
 
@@ -249,38 +258,22 @@ public class ProductOfferingDto extends BusinessDto {
         this.modelCode = modelCode;
     }
 
-    /**
-     * Gets the valid from.
-     *
-     * @return the valid from
-     */
+    @Override
     public Date getValidFrom() {
         return validFrom;
     }
 
-    /**
-     * Sets the valid from.
-     *
-     * @param validFrom the new valid from
-     */
+    @Override
     public void setValidFrom(Date validFrom) {
         this.validFrom = validFrom;
     }
 
-    /**
-     * Gets the valid to.
-     *
-     * @return the valid to
-     */
+    @Override
     public Date getValidTo() {
         return validTo;
     }
 
-    /**
-     * Sets the valid to.
-     *
-     * @param validTo the new valid to
-     */
+    @Override
     public void setValidTo(Date validTo) {
         this.validTo = validTo;
     }
@@ -355,24 +348,6 @@ public class ProductOfferingDto extends BusinessDto {
      */
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
-    }
-
-    /**
-     * Checks if is disabled.
-     *
-     * @return true, if is disabled
-     */
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    /**
-     * Sets the disabled.
-     *
-     * @param disabled the new disabled
-     */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     /**
@@ -481,5 +456,13 @@ public class ProductOfferingDto extends BusinessDto {
      */
     public void setSellers(List<String> sellers) {
         this.sellers = sellers;
+    }
+
+    public List<CustomerCategoryDto> getCustomerCategories() {
+        return customerCategories;
+    }
+
+    public void setCustomerCategories(List<CustomerCategoryDto> customerCategories) {
+        this.customerCategories = customerCategories;
     }
 }

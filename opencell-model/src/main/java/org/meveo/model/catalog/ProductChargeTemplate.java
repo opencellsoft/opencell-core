@@ -21,6 +21,7 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -28,7 +29,15 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
+/**
+ * Product charge template
+ * v5.1 Candidate add filter expression to product charge template
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.1 Candidate
+ */
 @Entity
 @Table(name = "cat_product_charge_templ")
 @NamedQueries({
@@ -40,6 +49,10 @@ public class ProductChargeTemplate extends ChargeTemplate {
     public static final String CHARGE_TYPE = "PRODUCT";
 
     private static final long serialVersionUID = 1L;
+    
+    @Column(name = "filter_expression", length = 2000)
+    @Size(max = 2000)
+    private String filterExpression = null;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "productChargeTemplates")
     private List<ProductTemplate> productTemplates = new ArrayList<>();
@@ -54,6 +67,14 @@ public class ProductChargeTemplate extends ChargeTemplate {
 
     public String getChargeType() {
         return CHARGE_TYPE;
+    }
+    
+    public String getFilterExpression() {
+        return filterExpression;
+    }
+
+    public void setFilterExpression(String filterExpression) {
+        this.filterExpression = filterExpression;
     }
 
 }

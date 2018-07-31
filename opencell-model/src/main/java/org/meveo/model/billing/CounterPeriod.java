@@ -41,7 +41,10 @@ import org.meveo.model.catalog.CounterTypeEnum;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_counter_period_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"), })
+        @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"),
+        @NamedQuery(name = "CounterPeriod.countPeriodsToPurgeByDate", query = "select count(*) FROM CounterPeriod cp WHERE cp.periodEndDate<=:date"),
+        @NamedQuery(name = "CounterPeriod.purgePeriodsByDate", query = "delete CounterPeriod cp WHERE cp.periodEndDate<=:date") })
+
 public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 

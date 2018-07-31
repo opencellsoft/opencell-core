@@ -71,10 +71,21 @@ public class UsageChargeInstance extends ChargeInstance {
     @Column(name = "priority", columnDefinition = "int default 1")
     private int priority = 1;
 
+    /**
+     * Instantiate Usage charge instance
+     */
     public UsageChargeInstance() {
-        // TODO Auto-generated constructor stub
     }
 
+    /**
+     * Instantiate Usage charge instance from a Usage charge template
+     * 
+     * @param amountWithoutTax Amount without tax to override
+     * @param amountWithTax Amount with tax to override
+     * @param usageChargeTemplate Usage charge template to instantiate from
+     * @param serviceInstance Service instance that charge will belong to
+     * @param status Activation status
+     */
     public UsageChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, UsageChargeTemplate usageChargeTemplate, ServiceInstance serviceInstance,
             InstanceStatusEnum status) {
 

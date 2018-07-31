@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.AuditableEntity;
 
 /**
  * @author anasseh
@@ -28,22 +28,19 @@ import org.meveo.model.EnableEntity;
 @Table(name = "ar_payment_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_history_seq"), })
-public class PaymentHistory extends EnableEntity{
+public class PaymentHistory extends AuditableEntity {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 4319694328397367053L;
 
     /** The customer Account Code. */
     @Column(name = "customer_account_code")
     @NotNull
     private String customerAccountCode;
-    
+
     /** The customer Account Name. */
     @Column(name = "customer_account_name")
     private String customerAccountName;
-    
+
     /** The seller Code. */
     @Column(name = "seller_code")
     private String sellerCode;
@@ -56,77 +53,75 @@ public class PaymentHistory extends EnableEntity{
     @Column(name = "operation_date")
     @NotNull
     private Date operationDate;
-    
+
     /** The last Update Date. */
     @Column(name = "last_update_date")
     private Date lastUpdateDate;
-    
+
     /** The amount. */
     @Column(name = "amount_cts")
     @NotNull
     private Long amountCts;
-    
+
     /** The synchrone status. */
     @Column(name = "sync_status")
     @Enumerated(EnumType.STRING)
     @NotNull
     private PaymentStatusEnum syncStatus;
-    
+
     /** The asynchrone status. */
     @Column(name = "async_status")
     @Enumerated(EnumType.STRING)
     private PaymentStatusEnum asyncStatus;
-    
+
     /** The status. */
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private PaymentStatusEnum status;
-    
+
     /** The external payment id. */
     @Column(name = "external_payment_id")
     private String externalPaymentId;
-    
+
     /** The error code. */
     @Column(name = "error_code")
     private String errorCode;
-    
+
     /** The error message. */
     @Column(name = "error_message")
     private String errorMessage;
-    
+
     /** The error type, rejected or error. */
     @Column(name = "error_type")
     @Enumerated(EnumType.STRING)
     private PaymentErrorTypeEnum errorType;
-    
+
     /** The payment gateway. */
     @Column(name = "payment_gateway_code")
     private String paymentGatewayCode;
-    
+
     /** The payment method type. */
     @Column(name = "payment_method_type")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethodType;
-    
+
     /** The payment method name: card number or mandat. */
     @Column(name = "payment_method_name")
     private String paymentMethodName;
-    
+
     /** The operation category, credit for payment or debit for refund. */
     @Column(name = "operation_category")
     @Enumerated(EnumType.STRING)
     @NotNull
     private OperationCategoryEnum operationCategory;
-    
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;
-    
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refund_id")
     private Refund refund;
-    
-    
 
     /**
      * @return the sellerCode
@@ -255,8 +250,6 @@ public class PaymentHistory extends EnableEntity{
     public void setErrorType(PaymentErrorTypeEnum errorType) {
         this.errorType = errorType;
     }
-
-  
 
     /**
      * @return the customerAccountCode

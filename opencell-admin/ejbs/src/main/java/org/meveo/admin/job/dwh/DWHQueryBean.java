@@ -163,7 +163,7 @@ public class DWHQueryBean {
                             value = new BigDecimal("" + res);
                         }
                         date = DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
-                        MeasuredValue mv = mvService.getByDate(em, date, mve, mq);
+                        MeasuredValue mv = mvService.getByDate(date, mve, mq);
                         if (mv == null) {
                             mv = new MeasuredValue();
                         }

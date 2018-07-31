@@ -20,6 +20,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
@@ -36,7 +37,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
+    @Override
     public JobInstance create(JobInstanceDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getJobTemplate()) || StringUtils.isBlank(postData.getCode())) {
 
@@ -57,7 +62,13 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         JobInstance jobInstance = new JobInstance();
-        jobInstance.setActive(postData.isActive());
+
+        // Use Active or Disabled field
+        if (postData.isActive() != null) {
+            jobInstance.setActive(postData.isActive());
+        } else if (postData.isDisabled() != null) {
+            jobInstance.setDisabled(postData.isDisabled());
+        }
         jobInstance.setParametres(postData.getParameter());
         jobInstance.setJobCategoryEnum(jobCategory);
         jobInstance.setJobTemplate(postData.getJobTemplate());
@@ -110,14 +121,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         return jobInstance;
     }
 
-    /**
-     * Updates JobInstance based on Code.
-     * 
-     * @param postData posted data to API.
-     * @return job instance
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException business exception.
-     */
+    @Override
     public JobInstance update(JobInstanceDto postData) throws MeveoApiException, BusinessException {
 
         String jobInstanceCode = postData.getCode();
@@ -139,7 +143,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
         jobInstance.setJobTemplate(postData.getJobTemplate());
         jobInstance.setParametres(postData.getParameter()); // TODO setParametres should be renamed
-        jobInstance.setActive(postData.isActive());
         jobInstance.setJobCategoryEnum(jobCategory);
         jobInstance.setDescription(postData.getDescription());
         jobInstance.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -189,29 +192,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         return jobInstance;
     }
 
-    /**
-     * Create or update Job Instance based on code.
-     * 
-     * @param jobInstanceDto job instance dto
-     * 
-     * @throws MeveoApiException meveo api excepion
-     * @throws BusinessException business exception.
-     */
-    public JobInstance createOrUpdate(JobInstanceDto jobInstanceDto) throws MeveoApiException, BusinessException {
-        if (jobInstanceService.findByCode(jobInstanceDto.getCode()) == null) {
-            return create(jobInstanceDto);
-        } else {
-            return update(jobInstanceDto);
-        }
-    }
-
-    /**
-     * Retrieves a Job Instance base on the code if it is existing.
-     * 
-     * @param code job instance code
-     * @return job instance dto
-     * @throws MeveoApiException meveo api exception.
-     */
+    @Override
     public JobInstanceDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
@@ -223,57 +204,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
-
-        JobInstanceDto jobInstanceDto = jobInstanceToDto(jobInstance);
-        return jobInstanceDto;
-
-    }
-
-    /**
-     * 
-     * Removes a Job Instance base on a code.
-     * 
-     * @param code job instance code
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException business exception.
-     */
-    public void remove(String code) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
-            handleMissingParameters();
-        }
-        JobInstance jobInstance = jobInstanceService.findByCode(code);
-        if (jobInstance == null) {
-            throw new EntityDoesNotExistsException(JobInstance.class, code);
-        }
-        jobInstanceService.remove(jobInstance);
-    }
-
-    private JobInstanceDto jobInstanceToDto(JobInstance jobInstance) {
-        JobInstanceDto dto = new JobInstanceDto();
-
-        dto.setCode(jobInstance.getCode());
-        dto.setActive(jobInstance.isActive());
-
-        dto.setDescription(jobInstance.getDescription());
-
-        dto.setJobCategory(jobInstance.getJobCategoryEnum());
-        dto.setJobTemplate(jobInstance.getJobTemplate());
-        dto.setParameter(jobInstance.getParametres());
-
-        if (jobInstance.getTimerEntity() != null) {
-            dto.setTimerCode(jobInstance.getTimerEntity().getCode());
-        }
-
-        dto.setRunOnNodes(jobInstance.getRunOnNodes());
-        dto.setLimitToSingleNode(jobInstance.isLimitToSingleNode());
         
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(jobInstance, true));
-
-        if (jobInstance.getFollowingJob() != null) {
-            dto.setFollowingJob(jobInstance.getFollowingJob().getCode());
-        }
-
-        return dto;
+        customFieldInstanceService.instantiateCFWithDefaultValue(jobInstance);
+        
+        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, false));
+        return jobInstanceDto;
     }
 }

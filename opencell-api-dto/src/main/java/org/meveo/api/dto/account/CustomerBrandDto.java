@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.crm.CustomerBrand;
 
 /**
@@ -14,7 +14,7 @@ import org.meveo.model.crm.CustomerBrand;
  */
 @XmlRootElement(name = "CustomerBrand")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerBrandDto extends BusinessDto {
+public class CustomerBrandDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6809423084709875338L;

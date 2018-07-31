@@ -10,9 +10,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 
 /**
@@ -24,7 +25,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubscriptionDto extends BusinessDto {
+public class SubscriptionDto extends BusinessEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -6021918810749866648L;
@@ -103,12 +104,48 @@ public class SubscriptionDto extends BusinessDto {
 
     /** The renewal rule. */
     private SubscriptionRenewalDto renewalRule;
+    
+    /** The billing cycle. */
+    @XmlElement(required = true)
+    private String billingCycle;
 
     /**
      * Instantiates a new subscription dto.
      */
     public SubscriptionDto() {
+        super();
+    }
+    
+    /**
+     * Instantiates a new subscription dto.
+     * 
+     * @param e Subscription entity
+     */
+    public SubscriptionDto(Subscription e) {
+        super(e);
+        
+        setStatus(e.getStatus());
+        setStatusDate(e.getStatusDate());
+        setOrderNumber(e.getOrderNumber());
 
+        if (e.getUserAccount() != null) {
+            setUserAccount(e.getUserAccount().getCode());
+        }
+
+        if (e.getOffer() != null) {
+            setOfferTemplate(e.getOffer().getCode());
+        }
+        
+        setSubscriptionDate(e.getSubscriptionDate());
+        setTerminationDate(e.getTerminationDate());
+        if (e.getSubscriptionTerminationReason() != null) {
+            setTerminationReason(e.getSubscriptionTerminationReason().getCode());
+        }
+        setEndAgreementDate(e.getEndAgreementDate());
+        setSubscribedTillDate(e.getSubscribedTillDate());
+        setRenewed(e.isRenewed());
+        setRenewalNotifiedDate(e.getRenewalNotifiedDate());
+        setRenewalRule(new SubscriptionRenewalDto(e.getSubscriptionRenewal()));
     }
 
     /**
@@ -469,6 +506,24 @@ public class SubscriptionDto extends BusinessDto {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
+    }
+    
+    /**
+     * Gets the billing cycle.
+     *
+     * @return the billing cycle
+     */
+    public String getBillingCycle() {
+        return billingCycle;
+    }
+
+    /**
+     * Sets the billing cycle.
+     *
+     * @param billingCycle the new billing cycle
+     */
+    public void setBillingCycle(String billingCycle) {
+        this.billingCycle = billingCycle;
     }
 
     @Override

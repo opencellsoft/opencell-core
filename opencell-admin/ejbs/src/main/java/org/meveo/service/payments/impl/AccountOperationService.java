@@ -41,6 +41,8 @@ import org.meveo.service.base.PersistenceService;
 public class AccountOperationService extends PersistenceService<AccountOperation> {
 
     /**
+     * Gets the account operations.
+     *
      * @param date date
      * @param operationCode code of operation.
      * @return list of account operations.
@@ -54,6 +56,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     /**
+     * Gets the account operation.
+     *
      * @param amount account operation account
      * @param customerAccount customer account
      * @param transactionType transaction type.
@@ -71,6 +75,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     /**
+     * Find by reference.
+     *
      * @param reference reference of account operation.
      * @return account operation.
      */
@@ -102,15 +108,18 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     /**
-     * Return list debit AO to pay.
-     * 
+     * Gets the AO list to pay .
+     *
      * @param paymentMethodEnum payment method.
-     * @return list of account operation ids.
+     * @param dueDate the due date
+     * @param customerAccountId the customer account id
+     * @return list of account operations.
      */
     @SuppressWarnings("unchecked")
-    public List<Long> getAOidsToPay(PaymentMethodEnum paymentMethodEnum) {
+    public List<AccountOperation> getAOsToPay(PaymentMethodEnum paymentMethodEnum,Date dueDate,Long customerAccountId) {
         try {
-            return (List<Long>) getEntityManager().createNamedQuery("AccountOperation.listAOIdsToPay").setParameter("payMethod", paymentMethodEnum).getResultList();
+            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPay").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("caIdIN", customerAccountId).setParameter("dueDateIN", dueDate).getResultList();
         } catch (NoResultException e) {
             return null;
         }
@@ -120,12 +129,15 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * Return list credit AO to refund.
      * 
      * @param paymentMethodEnum payment method.
-     * @return list of account operation ids.
+     * @param dueDate the due date
+     * @param customerAccountId the customer account id
+     * @return list of account operations.
      */
     @SuppressWarnings("unchecked")
-    public List<Long> getAOidsToRefund(PaymentMethodEnum paymentMethodEnum) {
+    public List<AccountOperation> getAOsToRefund(PaymentMethodEnum paymentMethodEnum,Date dueDate,Long customerAccountId) {
         try {
-            return (List<Long>) getEntityManager().createNamedQuery("AccountOperation.listAOIdsToRefund").setParameter("payMethod", paymentMethodEnum).getResultList();
+            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAOIdsToRefund").setParameter("paymentMethodIN", paymentMethodEnum)
+                    .setParameter("caIdIN", customerAccountId).setParameter("dueDateIN", dueDate).getResultList();
         } catch (NoResultException e) {
             return null;
         }

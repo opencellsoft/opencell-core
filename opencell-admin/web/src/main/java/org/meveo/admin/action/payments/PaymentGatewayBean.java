@@ -31,14 +31,12 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
-import org.meveo.util.ApplicationProvider;
 import org.meveo.util.PaymentGatewayClass;
 
 /**
@@ -54,10 +52,6 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
      */
     @Inject
     private PaymentGatewayService paymentGatewayeService;
-
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
