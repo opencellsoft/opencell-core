@@ -47,73 +47,93 @@ public class SheetData {
     private Map<String, Object[][]> datas;
 
     /**
-     * @return
+     * gets current index.
+     * 
+     * @return current index
      */
     public int getIndex() {
         return index;
     }
 
     /**
-     * @param index
+     * sets current index.
+     * 
+     * @param pIndex index
      */
-    public void setIndex(int index) {
-        this.index = index;
+    public void setIndex(int pIndex) {
+        this.index = pIndex;
     }
 
     /**
-     * @return
+     * get Row From.
+     * 
+     * @return current rowFrom
      */
     public int getRowFrom() {
         return rowFrom;
     }
 
     /**
-     * @param rowFrom
+     * set Row From.
+     * 
+     * @param pRowFrom row From
      */
-    public void setRowFrom(int rowFrom) {
-        this.rowFrom = rowFrom;
+    public void setRowFrom(int pRowFrom) {
+        this.rowFrom = pRowFrom;
     }
 
     /**
-     * @return
+     * Gets Number Of Rows.
+     * 
+     * @return number Of Rows
      */
     public int getNumberOfRows() {
         return numberOfRows;
     }
 
     /**
-     * @param numberOfRows
+     * Sets Number Of Rows.
+     * 
+     * @param pNumberOfRows number Of Rows
      */
-    public void setNumberOfRows(int numberOfRows) {
-        this.numberOfRows = numberOfRows;
+    public void setNumberOfRows(int pNumberOfRows) {
+        this.numberOfRows = pNumberOfRows;
     }
 
     /**
-     * @return
+     * Checks if we have to Force Formula Recalculation.
+     * 
+     * @return true or false
      */
     public boolean isForceFormulaRecalculation() {
         return forceFormulaRecalculation;
     }
 
     /**
-     * @param forceFormulaRecalculation
+     * Sets if we have to Force Formula Recalculation.
+     * 
+     * @param pForceFormulaRecalculation force Formula Recalculation
      */
-    public void setForceFormulaRecalculation(boolean forceFormulaRecalculation) {
-        this.forceFormulaRecalculation = forceFormulaRecalculation;
+    public void setForceFormulaRecalculation(boolean pForceFormulaRecalculation) {
+        this.forceFormulaRecalculation = pForceFormulaRecalculation;
     }
 
     /**
-     * @return
+     * Gets Matrix Datas.
+     * 
+     * @return Data Matrix
      */
     public Map<String, Object[][]> getDatas() {
         return datas;
     }
 
     /**
-     * @param datas
+     * Sets Matrix Datas.
+     * 
+     * @param pDatas Data Matrix.
      */
-    public void setDatas(Map<String, Object[][]> datas) {
-        this.datas = datas;
+    public void setDatas(Map<String, Object[][]> pDatas) {
+        this.datas = pDatas;
     }
 
 }
