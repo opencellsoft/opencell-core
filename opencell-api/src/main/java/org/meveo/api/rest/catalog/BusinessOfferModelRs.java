@@ -86,9 +86,17 @@ public interface BusinessOfferModelRs extends IBaseRs {
     @POST
     ActionStatus createOrUpdate(BusinessOfferModelDto postData);
 
+    
+    
     /**
      * List business offer models.
-     * 
+     *
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
      * @return A list of business offer models
      */
     @GET
@@ -99,6 +107,7 @@ public interface BusinessOfferModelRs extends IBaseRs {
     /**
      * List business offer models.
      * 
+     * @param pagingAndFiltering Pagination and filtering criteria
      * @return A list of business offer models
      */
     @POST

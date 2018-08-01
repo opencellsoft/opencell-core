@@ -8,7 +8,7 @@ import javax.validation.constraints.Pattern;
  * RUM Sequence value DTO representation.
  * 
  * @author Edward P. Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 public class RumSequenceDto implements Serializable {
 

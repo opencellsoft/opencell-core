@@ -73,6 +73,8 @@ public class MediationApi extends BaseApi {
      * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
      * 
      * @param postData String of CDRs
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException business exception.
      */
     public void registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
 
@@ -110,8 +112,9 @@ public class MediationApi extends BaseApi {
      * Same as registerCdrList, but at the same process rate the EDR created
      * 
      * @param ip where request came from
-     * 
      * @param cdr String of CDR
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException business exception.
      */
     public void chargeCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(cdr)) {
@@ -172,6 +175,8 @@ public class MediationApi extends BaseApi {
      * @param cdr String of CDR
      * @param ip where request came from
      * @return Available quantity and reservationID is returned. if the reservation succeed then returns -1, else returns the available quantity for this cdr
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException business exception.
      */
     public CdrReservationResponseDto reserveCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
         CdrReservationResponseDto result = new CdrReservationResponseDto();
@@ -229,6 +234,7 @@ public class MediationApi extends BaseApi {
      * 
      * @param reservationDto Prepaid reservation's data
      * @param ip where request came from
+     * @throws MeveoApiException Meveo api exception.
      */
     public void confirmReservation(PrepaidReservationDto reservationDto, String ip) throws MeveoApiException {
         if (reservationDto.getReservationId() > 0) {
@@ -289,6 +295,7 @@ public class MediationApi extends BaseApi {
      * 
      * @param reservationDto Prepaid reservation's data
      * @param ip where request came from
+     * @throws MeveoApiException Meveo api exception.
      */
     public void cancelReservation(PrepaidReservationDto reservationDto, String ip) throws MeveoApiException {
         if (reservationDto.getReservationId() > 0) {
