@@ -115,7 +115,7 @@ public class MultiLanguageFieldListBean extends BaseBean<IEntity> {
     /**
      * Save changes to language fields
      * 
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @SuppressWarnings("unchecked")
     public void updateEntity() throws BusinessException {

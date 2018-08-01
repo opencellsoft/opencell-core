@@ -15,52 +15,91 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.EntityCustomAction;
 
 /**
+ * The Class EntityCustomizationDto.
+ *
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
- **/
+ */
 
 @XmlRootElement(name = "EntityCustomization")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EntityCustomizationDto extends BaseDto {
+public class EntityCustomizationDto extends BaseEntityDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 5242092476533516746L;
 
+    /** The classname. */
     @XmlAttribute(required = true)
     private String classname;
 
+    /** The fields. */
     @XmlElementWrapper(name = "fields")
     @XmlElement(name = "field")
     private List<CustomFieldTemplateDto> fields;
 
+    /** The actions. */
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
     private List<EntityCustomActionDto> actions;
 
+    /**
+     * Instantiates a new entity customization dto.
+     */
     public EntityCustomizationDto() {
 
     }
 
+    /**
+     * Gets the classname.
+     *
+     * @return the classname
+     */
     public String getClassname() {
         return classname;
     }
 
+    /**
+     * Sets the classname.
+     *
+     * @param classname the new classname
+     */
     public void setClassname(String classname) {
         this.classname = classname;
     }
 
+    /**
+     * Gets the fields.
+     *
+     * @return the fields
+     */
     public List<CustomFieldTemplateDto> getFields() {
         return fields;
     }
 
+    /**
+     * Sets the fields.
+     *
+     * @param fields the new fields
+     */
     public void setFields(List<CustomFieldTemplateDto> fields) {
         this.fields = fields;
     }
 
+    /**
+     * Gets the actions.
+     *
+     * @return the actions
+     */
     public List<EntityCustomActionDto> getActions() {
         return actions;
     }
 
+    /**
+     * Sets the actions.
+     *
+     * @param actions the new actions
+     */
     public void setActions(List<EntityCustomActionDto> actions) {
         this.actions = actions;
     }
@@ -97,6 +136,11 @@ public class EntityCustomizationDto extends BaseDto {
         return dto;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         final int maxLen = 10;

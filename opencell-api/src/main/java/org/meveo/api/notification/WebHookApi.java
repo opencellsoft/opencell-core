@@ -36,6 +36,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Override
     public WebHook create(WebHookDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -92,13 +93,13 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         webHook.setParams(postData.getScriptParams());
         webHook.setElFilter(postData.getElFilter());
         webHook.setCounterTemplate(counterTemplate);
-        
+
         if (!StringUtils.isBlank(postData.getHttpProtocol())) {
             webHook.setHttpProtocol(postData.getHttpProtocol());
         } else {
             webHook.setHttpProtocol(HttpProtocol.HTTP);
         }
-        
+
         webHook.setHost(postData.getHost());
         webHook.setPort(postData.getPort());
         webHook.setPage(postData.getPage());
@@ -112,14 +113,14 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
             webHook.getWebhookParams().putAll(postData.getParams());
         }
 
+        if (postData.isDisabled() != null) {
+            webHook.setDisabled(postData.isDisabled());
+        }
         webHookService.create(webHook);
 
         return webHook;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public WebHookDto find(String notificationCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         WebHookDto result = new WebHookDto();
@@ -140,7 +141,8 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
         return result;
     }
-    
+
+    @Override
     public WebHook update(WebHookDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -219,30 +221,5 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         webHook = webHookService.update(webHook);
 
         return webHook;
-    }
-
-    public void remove(String notificationCode) throws MeveoApiException, BusinessException {
-        if (!StringUtils.isBlank(notificationCode)) {
-            WebHook webHook = webHookService.findByCode(notificationCode);
-
-            if (webHook == null) {
-                throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
-            }
-
-            webHookService.remove(webHook);
-        } else {
-            missingParameters.add("code");
-
-            handleMissingParameters();
-        }
-    }
-
-    @Override
-    public WebHook createOrUpdate(WebHookDto postData) throws MeveoApiException, BusinessException {
-        if (webHookService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

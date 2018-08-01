@@ -88,4 +88,25 @@ public interface AccessRs extends IBaseRs {
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(AccessDto postData);
 
+    /**
+     * Enable an Access point with a given access code and subscription code.
+     * 
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{accessCode}/{subscriptionCode}/enable")
+    ActionStatus enable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode);
+
+    /**
+     * Disable an Access point with a given access code and subscription code.
+     * 
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{accessCode}/{subscriptionCode}/disable")
+    ActionStatus disable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode);
 }

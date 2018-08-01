@@ -1,6 +1,7 @@
 package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,40 +11,55 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
- * Customer Account DTO
- * 
- * @author anasseh
+ * Customer Account DTO.
  *
+ * @author anasseh
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 // @FilterResults(propertyToFilter = "billingAccounts.billingAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = BillingAccount.class) })
 public class CustomerAccountDto extends AccountDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -137632696663739285L;
 
+    /** The customer. */
     @XmlElement(required = true)
     private String customer;
 
+    /** The currency. */
     @XmlElement(required = true)
     private String currency;
 
+    /** The language. */
     @XmlElement(required = true)
     private String language;
 
+    /** The status. */
     private CustomerAccountStatusEnum status;
+    
+    /** The credit category. */
     private String creditCategory;
+    
+    /** The date status. */
     private Date dateStatus;
+    
+    /** The date dunning level. */
     private Date dateDunningLevel;
 
+    /** The contact information. */
     private ContactInformationDto contactInformation;
 
+    /** The dunning level. */
     private DunningLevelEnum dunningLevel;
     /**
      * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
@@ -56,31 +72,32 @@ public class CustomerAccountDto extends AccountDto {
     @Deprecated
     private Date mandateDate;
 
-    /**
-     * balanceExigible (status=O, P; isDue=true; dunning=false) - creditBalance
-     */
+    /** balanceExigible (status=O, P; isDue=true; dunning=false) - creditBalance. */
     private BigDecimal balance = BigDecimal.ZERO;
-    /**
-     * exigibleWithoutLitigation; status=O, P; isDue=true; dunning=true
-     */
+    
+    /** exigibleWithoutLitigation; status=O, P; isDue=true; dunning=true. */
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
-    /**
-     * totalInvoiceBalance - creditBalance
-     */
+    
+    /** totalInvoiceBalance - creditBalance. */
     private BigDecimal accountBalance = BigDecimal.ZERO;
     /**
      * Balance. status=O, P, I; isDue=false; dunning=false; category=CREDIT.
      */
     private BigDecimal creditBalance = BigDecimal.ZERO;
 
+    /** The termination date. */
     // currently not use
     private Date terminationDate;
+    
+    /** The due date delay EL. */
     private String dueDateDelayEL;
 
+    /** The payment methods. */
     @XmlElementWrapper(name = "paymentMethods")
     @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
+    /** The excluded from payment. */
     private boolean excludedFromPayment;
 
     /**
@@ -92,20 +109,67 @@ public class CustomerAccountDto extends AccountDto {
     /**
      * Use for GET / LIST only.
      */
-    private BillingAccountsDto billingAccounts;
+    private BillingAccountsDto billingAccounts = new BillingAccountsDto();
+    
+    private List<AccountOperationDto> accountOperations;
 
+    /**
+     * Instantiates a new customer account dto.
+     */
     public CustomerAccountDto() {
         super();
     }
+    
+    /**
+     * Instantiates a new customer account dto.
+     * 
+     * @param e CustomerAccount entity
+     */
+	public CustomerAccountDto(CustomerAccount e) {
+		super(e);
 
-    @Override
-    public String toString() {
-        return "CustomerAccountDto [code="+code+", customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory
-                + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
-                + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
-    }
+		if (e.getCustomer() != null) {
+			setCustomer(e.getCustomer().getCode());
+		}
+
+		if (e.getTradingCurrency() != null) {
+			setCurrency(e.getTradingCurrency().getCurrencyCode());
+		}
+
+		if (e.getTradingLanguage() != null) {
+			setLanguage(e.getTradingLanguage().getLanguageCode());
+		}
+
+		setStatus(e.getStatus());
+		setDateStatus(e.getDateStatus());
+		try {
+			setCreditCategory(e.getCreditCategory().getCode());
+		} catch (NullPointerException ex) {
+		}
+		setDunningLevel(e.getDunningLevel());
+		setDateStatus(e.getDateStatus());
+		setDateDunningLevel(e.getDateDunningLevel());
+		if (e.getContactInformation() != null) {
+			setContactInformation(new ContactInformationDto(e.getContactInformation()));
+		}
+		setDueDateDelayEL(e.getDueDateDelayEL());
+		setExcludedFromPayment(e.isExcludedFromPayment());
+
+		if (e.getPaymentMethods() != null && !e.getPaymentMethods().isEmpty()) {
+			setPaymentMethods(new ArrayList<>());
+			for (PaymentMethod pm : e.getPaymentMethods()) {
+				getPaymentMethods().add(new PaymentMethodDto(pm));
+			}
+
+			// Start compatibility with pre-4.6 versions
+			setPaymentMethod(e.getPaymentMethods().get(0).getPaymentType());
+			// End compatibility with pre-4.6 versions
+		}
+	}
 
     /**
+     * Gets the customer.
+     *
      * @return the customer
      */
     public String getCustomer() {
@@ -113,6 +177,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the customer.
+     *
      * @param customer the customer to set
      */
     public void setCustomer(String customer) {
@@ -120,6 +186,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the currency.
+     *
      * @return the currency
      */
     public String getCurrency() {
@@ -127,6 +195,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the currency.
+     *
      * @param currency the currency to set
      */
     public void setCurrency(String currency) {
@@ -134,6 +204,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the language.
+     *
      * @return the language
      */
     public String getLanguage() {
@@ -141,6 +213,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the language.
+     *
      * @param language the language to set
      */
     public void setLanguage(String language) {
@@ -148,6 +222,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the status.
+     *
      * @return the status
      */
     public CustomerAccountStatusEnum getStatus() {
@@ -155,6 +231,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the status.
+     *
      * @param status the status to set
      */
     public void setStatus(CustomerAccountStatusEnum status) {
@@ -162,6 +240,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the credit category.
+     *
      * @return the creditCategory
      */
     public String getCreditCategory() {
@@ -169,6 +249,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the credit category.
+     *
      * @param creditCategory the creditCategory to set
      */
     public void setCreditCategory(String creditCategory) {
@@ -176,6 +258,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the date status.
+     *
      * @return the dateStatus
      */
     public Date getDateStatus() {
@@ -183,6 +267,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the date status.
+     *
      * @param dateStatus the dateStatus to set
      */
     public void setDateStatus(Date dateStatus) {
@@ -190,6 +276,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the date dunning level.
+     *
      * @return the dateDunningLevel
      */
     public Date getDateDunningLevel() {
@@ -197,6 +285,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the date dunning level.
+     *
      * @param dateDunningLevel the dateDunningLevel to set
      */
     public void setDateDunningLevel(Date dateDunningLevel) {
@@ -204,6 +294,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the contact information.
+     *
      * @return the contactInformation
      */
     public ContactInformationDto getContactInformation() {
@@ -211,6 +303,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the contact information.
+     *
      * @param contactInformation the contactInformation to set
      */
     public void setContactInformation(ContactInformationDto contactInformation) {
@@ -218,6 +312,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the dunning level.
+     *
      * @return the dunningLevel
      */
     public DunningLevelEnum getDunningLevel() {
@@ -225,6 +321,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the dunning level.
+     *
      * @param dunningLevel the dunningLevel to set
      */
     public void setDunningLevel(DunningLevelEnum dunningLevel) {
@@ -232,6 +330,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the mandate identification.
+     *
      * @return the mandateIdentification
      */
     public String getMandateIdentification() {
@@ -239,6 +339,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the mandate identification.
+     *
      * @param mandateIdentification the mandateIdentification to set
      */
     public void setMandateIdentification(String mandateIdentification) {
@@ -246,6 +348,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the mandate date.
+     *
      * @return the mandateDate
      */
     public Date getMandateDate() {
@@ -253,6 +357,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the mandate date.
+     *
      * @param mandateDate the mandateDate to set
      */
     public void setMandateDate(Date mandateDate) {
@@ -260,6 +366,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the balance.
+     *
      * @return the balance
      */
     public BigDecimal getBalance() {
@@ -267,6 +375,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the balance.
+     *
      * @param balance the balance to set
      */
     public void setBalance(BigDecimal balance) {
@@ -274,6 +384,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the total invoice balance.
+     *
      * @return the totalInvoiceBalance
      */
     public BigDecimal getTotalInvoiceBalance() {
@@ -281,6 +393,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the total invoice balance.
+     *
      * @param totalInvoiceBalance the totalInvoiceBalance to set
      */
     public void setTotalInvoiceBalance(BigDecimal totalInvoiceBalance) {
@@ -288,6 +402,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the termination date.
+     *
      * @return the terminationDate
      */
     public Date getTerminationDate() {
@@ -295,6 +411,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the termination date.
+     *
      * @param terminationDate the terminationDate to set
      */
     public void setTerminationDate(Date terminationDate) {
@@ -302,6 +420,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the due date delay EL.
+     *
      * @return the dueDateDelayEL
      */
     public String getDueDateDelayEL() {
@@ -309,6 +429,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the due date delay EL.
+     *
      * @param dueDateDelayEL the dueDateDelayEL to set
      */
     public void setDueDateDelayEL(String dueDateDelayEL) {
@@ -316,6 +438,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the payment methods.
+     *
      * @return the paymentMethods
      */
     public List<PaymentMethodDto> getPaymentMethods() {
@@ -323,6 +447,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the payment methods.
+     *
      * @param paymentMethods the paymentMethods to set
      */
     public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
@@ -330,6 +456,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Checks if is excluded from payment.
+     *
      * @return the excludedFromPayment
      */
     public boolean isExcludedFromPayment() {
@@ -337,6 +465,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the excluded from payment.
+     *
      * @param excludedFromPayment the excludedFromPayment to set
      */
     public void setExcludedFromPayment(boolean excludedFromPayment) {
@@ -344,6 +474,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the payment method.
+     *
      * @return the paymentMethod
      */
     public PaymentMethodEnum getPaymentMethod() {
@@ -351,6 +483,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the payment method.
+     *
      * @param paymentMethod the paymentMethod to set
      */
     public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
@@ -358,6 +492,8 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Gets the billing accounts.
+     *
      * @return the billingAccounts
      */
     public BillingAccountsDto getBillingAccounts() {
@@ -365,25 +501,65 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     /**
+     * Sets the billing accounts.
+     *
      * @param billingAccounts the billingAccounts to set
      */
     public void setBillingAccounts(BillingAccountsDto billingAccounts) {
         this.billingAccounts = billingAccounts;
     }
 
+    /**
+     * Gets the account balance.
+     *
+     * @return the account balance
+     */
     public BigDecimal getAccountBalance() {
         return accountBalance;
     }
 
+    /**
+     * Sets the account balance.
+     *
+     * @param accountBalance the new account balance
+     */
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
     }
 
+    /**
+     * Gets the credit balance.
+     *
+     * @return the credit balance
+     */
     public BigDecimal getCreditBalance() {
         return creditBalance;
     }
 
+    /**
+     * Sets the credit balance.
+     *
+     * @param creditBalance the new credit balance
+     */
     public void setCreditBalance(BigDecimal creditBalance) {
         this.creditBalance = creditBalance;
     }
+    
+    @Override
+    public String toString() {
+        return "CustomerAccountDto [code=" + code + ", customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory="
+                + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel="
+                + dunningLevel + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
+    }
+
+	public List<AccountOperationDto> getAccountOperations() {
+		if (accountOperations == null) {
+			accountOperations = new ArrayList<>();
+		}
+		return accountOperations;
+	}
+
+	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
+		this.accountOperations = accountOperations;
+	}    
 }

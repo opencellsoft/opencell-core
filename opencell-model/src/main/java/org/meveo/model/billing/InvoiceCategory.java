@@ -26,6 +26,8 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -41,7 +43,14 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.payments.OCCTemplate;
 
+
+/**
+ * InvoiceCategory Entity
+ * @author anasseh
+ * @lastModifiedVersion 5.1
+ */
 @Entity
 @Cacheable
 @ObservableEntity
@@ -68,6 +77,14 @@ public class InvoiceCategory extends BusinessCFEntity {
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "occ_template_id")
+    private OCCTemplate occTemplate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "occ_templ_negative_id")
+    private OCCTemplate occTemplateNegative;
 
     public List<InvoiceSubCategory> getInvoiceSubCategories() {
         return invoiceSubCategories;
@@ -105,4 +122,34 @@ public class InvoiceCategory extends BusinessCFEntity {
         }
         return descriptionI18n;
     }
+
+    /**
+     * @return the occTemplate
+     */
+    public OCCTemplate getOccTemplate() {
+        return occTemplate;
+    }
+
+    /**
+     * @param occTemplate the occTemplate to set
+     */
+    public void setOccTemplate(OCCTemplate occTemplate) {
+        this.occTemplate = occTemplate;
+    }
+
+    /**
+     * @return the occTemplateNegative
+     */
+    public OCCTemplate getOccTemplateNegative() {
+        return occTemplateNegative;
+    }
+
+    /**
+     * @param occTemplateNegative the occTemplateNegative to set
+     */
+    public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
+        this.occTemplateNegative = occTemplateNegative;
+    }
+    
+    
 }

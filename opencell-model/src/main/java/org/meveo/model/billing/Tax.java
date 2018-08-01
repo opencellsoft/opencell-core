@@ -83,7 +83,6 @@ public class Tax extends BusinessCFEntity {
         this.code = tax.getCode();
         this.description = tax.getDescription();
         this.setAuditable(tax.getAuditable());
-        this.setDisabled(tax.isDisabled());
         this.accountingCode = tax.getAccountingCode();
         this.percent = tax.getPercent();
     }

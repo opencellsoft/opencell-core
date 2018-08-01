@@ -1,6 +1,5 @@
 package org.meveo.service.billing.impl;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
@@ -13,12 +12,14 @@ import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -26,15 +27,15 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
- * A singleton service to handle synchronized calls. DO not change lock mode to
- * Write
+ * A singleton service to handle synchronized calls. DO not change lock mode to Write
  * 
  * @author Andrius Karpavicius
+ * @author Edward Legaspi
+ * @LastModifiedVersion 5.2
  */
 @Singleton
 @Lock(LockType.WRITE)
 public class ServiceSingleton {
-
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
@@ -54,7 +55,7 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
-    
+
     /**
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
@@ -68,8 +69,9 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Sequence incrementInvoiceNumberSequence(Date invoiceDate, Long invoiceTypeId, Seller seller, String cfName, long incrementBy) throws BusinessException {
+    public Sequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
         Long currentNbFromCF = null;
         Long previousInvoiceNb = null;
 
@@ -90,7 +92,6 @@ public class ServiceSingleton {
             }
         }
 
-        InvoiceType invoiceType = invoiceTypeService.findById(invoiceTypeId);
         Sequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
         if (sequence == null) {
             sequence = invoiceType.getSequence();
@@ -106,15 +107,29 @@ public class ServiceSingleton {
         if (currentNbFromCF != null) {
             sequence.setCurrentInvoiceNb(currentNbFromCF);
         } else {
-            if (sequence.getCurrentInvoiceNb() == null) {
-                sequence.setCurrentInvoiceNb(0L);
+            if (invoiceType.isUseSelfSequence()) {
+                if (sequence.getCurrentInvoiceNb() == null) {
+                    sequence.setCurrentInvoiceNb(0L);
+                }
+                previousInvoiceNb = sequence.getCurrentInvoiceNb();
+                sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
+                //invoiceType = invoiceTypeService.update(invoiceType);
+            } else {
+                Sequence sequenceGlobal = new Sequence();
+                sequenceGlobal.setPrefixEL(sequence.getPrefixEL());
+                sequenceGlobal.setSequenceSize(sequence.getSequenceSize());               
+                
+                previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
+                sequenceGlobal.setCurrentInvoiceNb(previousInvoiceNb + incrementBy);
+                sequenceGlobal.setPreviousInvoiceNb(previousInvoiceNb);
+                invoiceTypeService.setCurrentGlobalInvoiceBb(previousInvoiceNb + incrementBy);
+                return sequenceGlobal;
             }
-            previousInvoiceNb = sequence.getCurrentInvoiceNb();
-            sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
         }
-        invoiceType = invoiceTypeService.update(invoiceType);
 
+        // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
+
         return sequence;
     }
 
@@ -130,6 +145,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Sequence reserveInvoiceNumbers(Long invoiceTypeId, Long sellerId, Date invoiceDate, long numberOfInvoices) throws BusinessException {
 
@@ -139,9 +155,9 @@ public class ServiceSingleton {
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
 
         Seller seller = sellerService.findById(sellerId);
-        seller = chooseSeller(seller, cfName, invoiceDate, invoiceType);
+        seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
-        Sequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceTypeId, seller, cfName, numberOfInvoices);
+        Sequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
 
         try {
             sequence = (Sequence) BeanUtils.cloneBean(sequence);
@@ -149,31 +165,6 @@ public class ServiceSingleton {
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             throw new BusinessException("Failed to close invoice numbering sequence", e);
         }
-    }
-
-    /**
-     * if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null).
-     * 
-     * @param seller seller
-     * @param cfName custom field name
-     * @param date date
-     * @param invoiceType type of invoice
-     * @return choosen seller.
-     */
-    @Lock(LockType.READ)
-    public Seller chooseSeller(Seller seller, String cfName, Date date, InvoiceType invoiceType) {
-        if (seller.getSeller() == null) {
-            return seller;
-        }
-        if (customFieldInstanceService.hasCFValue(seller, cfName)) {
-            return seller;
-        }
-        if (invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)) {
-            return seller;
-        }
-
-        return chooseSeller(seller.getSeller(), cfName, date, invoiceType);
-
     }
 
     /**
@@ -187,6 +178,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public InvoiceType createInvoiceType(String occCode, String occCodeDefaultValue, String invoiceTypeCode, OperationCategoryEnum operationCategory) throws BusinessException {
 
@@ -221,5 +213,20 @@ public class ServiceSingleton {
         invoiceTypeService.create(invoiceType);
         return invoiceType;
     }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public RumSequence getNextMandateNumberSequence() {
+    	RumSequence rumSequence = appProvider.getRumSequence();
+    	
+    	if(rumSequence == null) {
+    		rumSequence = new RumSequence();
+    	}
+    	
+    	rumSequence.setCurrentSequenceNb(rumSequence.getCurrentSequenceNb() + 1L);
+    	
+    	return rumSequence;
+	}
 
 }

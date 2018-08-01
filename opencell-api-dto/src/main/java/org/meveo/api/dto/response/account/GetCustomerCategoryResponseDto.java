@@ -8,34 +8,48 @@ import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * GetCustomerCategoryResponse Dto
+ * GetCustomerCategoryResponse Dto.
+ *
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0
- **/
+ */
 @XmlRootElement(name = "GetCustomerCategoryResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetCustomerCategoryResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -8824614133076085044L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8824614133076085044L;
 
-	private CustomerCategoryDto customerCategory;
+    /** The customer category. */
+    private CustomerCategoryDto customerCategory;
 
-	public GetCustomerCategoryResponseDto() {
-		super();
-	}
+    /**
+     * Instantiates a new gets the customer category response dto.
+     */
+    public GetCustomerCategoryResponseDto() {
+        super();
+    }
 
-	public CustomerCategoryDto getCustomerCategory() {
-		return customerCategory;
-	}
+    /**
+     * Gets the customer category.
+     *
+     * @return the customer category
+     */
+    public CustomerCategoryDto getCustomerCategory() {
+        return customerCategory;
+    }
 
-	public void setCustomerCategory(CustomerCategoryDto customerCategory) {
-		this.customerCategory = customerCategory;
-	}
+    /**
+     * Sets the customer category.
+     *
+     * @param customerCategory the new customer category
+     */
+    public void setCustomerCategory(CustomerCategoryDto customerCategory) {
+        this.customerCategory = customerCategory;
+    }
 
-	@Override
-	public String toString() {
-		return "GetCustomerCategoryResponse [customerCategory=" + customerCategory + ", toString()=" + super.toString()
-				+ "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetCustomerCategoryResponse [customerCategory=" + customerCategory + ", toString()=" + super.toString() + "]";
+    }
 }

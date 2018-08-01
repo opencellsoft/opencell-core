@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
@@ -21,7 +21,7 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "code"})
 @Table(name = "cat_digital_resource", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_digital_resource_seq"), })
-public class DigitalResource extends BusinessEntity {
+public class DigitalResource extends EnableBusinessEntity {
 
 	private static final long serialVersionUID = -7528761006943581984L;
 

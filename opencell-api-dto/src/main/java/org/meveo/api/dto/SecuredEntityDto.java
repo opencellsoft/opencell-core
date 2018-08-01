@@ -7,40 +7,76 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.admin.SecuredEntity;
 
+/**
+ * The Class SecuredEntityDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "SecuredEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SecuredEntityDto extends BaseDto {
+public class SecuredEntityDto extends BaseEntityDto {
 
-	private static final long serialVersionUID = 8941891021770440273L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 8941891021770440273L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    /** The code. */
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlAttribute(required = true)
-	private String entityClass;
+    /** The entity class. */
+    @XmlAttribute(required = true)
+    private String entityClass;
 
-	public SecuredEntityDto() {
-	}
+    /**
+     * Instantiates a new secured entity dto.
+     */
+    public SecuredEntityDto() {
+    }
 
-	public SecuredEntityDto(SecuredEntity entity) {
-		this.code = entity.getCode();
-		this.entityClass = entity.getEntityClass();
-	}
+    /**
+     * Instantiates a new secured entity dto.
+     *
+     * @param entity the entity
+     */
+    public SecuredEntityDto(SecuredEntity entity) {
+        this.code = entity.getCode();
+        this.entityClass = entity.getEntityClass();
+    }
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getEntityClass() {
-		return entityClass;
-	}
+    /**
+     * Gets the entity class.
+     *
+     * @return the entity class
+     */
+    public String getEntityClass() {
+        return entityClass;
+    }
 
-	public void setEntityClass(String entityClass) {
-		this.entityClass = entityClass;
-	}
+    /**
+     * Sets the entity class.
+     *
+     * @param entityClass the new entity class
+     */
+    public void setEntityClass(String entityClass) {
+        this.entityClass = entityClass;
+    }
 
 }

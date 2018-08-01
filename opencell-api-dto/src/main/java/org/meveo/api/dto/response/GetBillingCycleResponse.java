@@ -7,27 +7,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BillingCycleDto;
 
 /**
+ * The Class GetBillingCycleResponse.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetBillingCycleResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetBillingCycleResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -1125948385137327401L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1125948385137327401L;
 
-	private BillingCycleDto billingCycle;
+    /** The billing cycle. */
+    private BillingCycleDto billingCycle;
 
-	public BillingCycleDto getBillingCycle() {
-		return billingCycle;
-	}
+    /**
+     * Gets the billing cycle.
+     *
+     * @return the billing cycle
+     */
+    public BillingCycleDto getBillingCycle() {
+        return billingCycle;
+    }
 
-	public void setBillingCycle(BillingCycleDto billingCycle) {
-		this.billingCycle = billingCycle;
-	}
+    /**
+     * Sets the billing cycle.
+     *
+     * @param billingCycle the new billing cycle
+     */
+    public void setBillingCycle(BillingCycleDto billingCycle) {
+        this.billingCycle = billingCycle;
+    }
 
-	@Override
-	public String toString() {
-		return "GetBillingCycleResponse [billingCycle=" + billingCycle + ", toString()=" + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "GetBillingCycleResponse [billingCycle=" + billingCycle + ", toString()=" + super.toString() + "]";
+    }
 
 }

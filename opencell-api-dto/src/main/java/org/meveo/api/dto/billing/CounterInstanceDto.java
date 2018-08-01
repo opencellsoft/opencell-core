@@ -1,29 +1,39 @@
 package org.meveo.api.dto.billing;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.billing.CounterInstance;
 
+/**
+ * The Class CounterInstanceDto.
+ * 
+ * @author anasseh
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CounterInstanceDto implements Serializable{
+public class CounterInstanceDto extends BusinessEntityDto {
 
-	private static final long serialVersionUID = -72154111229222183L;
-	
-	public CounterInstanceDto() {}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -72154111229222183L;
 
-	public CounterInstanceDto(CounterInstance counterInstance) {
-		this.code = counterInstance.getCode();
-		this.description = counterInstance.getDescription();
-	}
-	
-	@XmlElement(required = true)
-	private String code;
-	
-	@XmlElement(required = false)
-	private String description;
-	
+    /**
+     * Instantiates a new counter instance dto.
+     */
+    public CounterInstanceDto() {
+    }
+
+    /**
+     * Instantiates a new counter instance dto.
+     *
+     * @param counterInstance the counter instance
+     */
+    public CounterInstanceDto(CounterInstance counterInstance) {
+        super(counterInstance);
+    }
+
+    @Override
+    public String toString() {
+        return "CounterInstanceDto [code=" + code + ", description=" + description + "]";
+    }
 }

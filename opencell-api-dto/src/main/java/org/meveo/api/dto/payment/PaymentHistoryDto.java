@@ -8,90 +8,97 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 
-
 /**
- * Class to represent payments that was initiated from OC, we find payment done, ,pending,rejected and  error.
+ * Class to represent payments that was initiated from OC, we find payment done, ,pending,rejected and error.
  *
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.2
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentHistoryDto extends BaseDto {
-    
-    /**
-     * 
-     */
+public class PaymentHistoryDto extends AuditableEntityDto {
+
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
+
     /** The customer Account Code. */
     private String customerAccountCode;
-    
+
     /** The seller Code. */
     private String sellerCode;
     
+    /** The customer Code. */
+    @XmlTransient
+    private String customerCode;    
+
     /** The customer Account Name. */
     private String customerAccountName;
 
     /** The operation date. */
     private Date operationDate;
-    
+
     /** The updated status date. */
     private Date updatedStatusDate;
-    
+
     /** The last Update Date. */
     private Date lastUpdateDate;
-    
+
     /** The amount in cts. */
     private Long amountCts;
-    
+
     /** The synchrone status. */
     private PaymentStatusEnum syncStatus;
-    
+
     /** The asynchrone status. */
     private PaymentStatusEnum asyncStatus;
-    
-    /** The  status. */
-    private PaymentStatusEnum status;    
-    
+
+    /** The status. */
+    private PaymentStatusEnum status;
+
     /** The external payment id. */
     private String externalPaymentId;
-    
+
     /** The error code. */
     private String errorCode;
-    
+
     /** The error message. */
     private String errorMessage;
-    
+
     /** The error type, rejected or error. */
     private PaymentErrorTypeEnum errorType;
-    
+
     /** The payment gateway. */
     private String paymentGatewayCode;
-    
+
     /** The payment method. */
     private PaymentMethodEnum paymentMethodType;
-    
-    /** The payment method name: card number or mandat. */    
+
+    /** The payment method name: card number or mandat. */
     private String paymentMethodName;
-    
+
     /** The operation category, credit for payment or debit for refund. */
     private OperationCategoryEnum operationCategory;
-    
+
+    /** The payment. */
     private AccountOperationDto payment;
-    
+
+    /** The refund. */
     private AccountOperationDto refund;
-    
-    private AccountOperationsDto listAoPaid ;
+
+    /** The list ao paid. */
+    private AccountOperationsDto listAoPaid;
 
     /**
+     * Gets the customer account code.
+     *
      * @return the customerAccountCode
      */
     public String getCustomerAccountCode() {
@@ -99,6 +106,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the seller code.
+     *
      * @return the sellerCode
      */
     public String getSellerCode() {
@@ -106,6 +115,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the seller code.
+     *
      * @param sellerCode the sellerCode to set
      */
     public void setSellerCode(String sellerCode) {
@@ -113,6 +124,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the customer account code.
+     *
      * @param customerAccountCode the customerAccountCode to set
      */
     public void setCustomerAccountCode(String customerAccountCode) {
@@ -120,6 +133,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the customer account name.
+     *
      * @return the customerAccountName
      */
     public String getCustomerAccountName() {
@@ -127,6 +142,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the customer account name.
+     *
      * @param customerAccountName the customerAccountName to set
      */
     public void setCustomerAccountName(String customerAccountName) {
@@ -134,6 +151,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the operation date.
+     *
      * @return the operationDate
      */
     public Date getOperationDate() {
@@ -141,6 +160,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the operation date.
+     *
      * @param operationDate the operationDate to set
      */
     public void setOperationDate(Date operationDate) {
@@ -148,6 +169,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the updated status date.
+     *
      * @return the updatedStatusDate
      */
     public Date getUpdatedStatusDate() {
@@ -155,6 +178,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the updated status date.
+     *
      * @param updatedStatusDate the updatedStatusDate to set
      */
     public void setUpdatedStatusDate(Date updatedStatusDate) {
@@ -162,6 +187,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the amount cts.
+     *
      * @return the amountCts
      */
     public Long getAmountCts() {
@@ -169,6 +196,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the amount cts.
+     *
      * @param amountCts the amountCts to set
      */
     public void setAmountCts(Long amountCts) {
@@ -176,6 +205,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the sync status.
+     *
      * @return the syncStatus
      */
     public PaymentStatusEnum getSyncStatus() {
@@ -183,6 +214,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the sync status.
+     *
      * @param syncStatus the syncStatus to set
      */
     public void setSyncStatus(PaymentStatusEnum syncStatus) {
@@ -190,6 +223,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the async status.
+     *
      * @return the asyncStatus
      */
     public PaymentStatusEnum getAsyncStatus() {
@@ -197,6 +232,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the async status.
+     *
      * @param asyncStatus the asyncStatus to set
      */
     public void setAsyncStatus(PaymentStatusEnum asyncStatus) {
@@ -204,6 +241,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the status.
+     *
      * @return the status
      */
     public PaymentStatusEnum getStatus() {
@@ -211,6 +250,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the status.
+     *
      * @param status the status to set
      */
     public void setStatus(PaymentStatusEnum status) {
@@ -218,6 +259,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the external payment id.
+     *
      * @return the externalPaymentId
      */
     public String getExternalPaymentId() {
@@ -225,6 +268,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the external payment id.
+     *
      * @param externalPaymentId the externalPaymentId to set
      */
     public void setExternalPaymentId(String externalPaymentId) {
@@ -232,6 +277,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the error code.
+     *
      * @return the errorCode
      */
     public String getErrorCode() {
@@ -239,6 +286,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the error code.
+     *
      * @param errorCode the errorCode to set
      */
     public void setErrorCode(String errorCode) {
@@ -246,6 +295,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the error message.
+     *
      * @return the errorMessage
      */
     public String getErrorMessage() {
@@ -253,6 +304,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the error message.
+     *
      * @param errorMessage the errorMessage to set
      */
     public void setErrorMessage(String errorMessage) {
@@ -260,6 +313,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the error type.
+     *
      * @return the errorType
      */
     public PaymentErrorTypeEnum getErrorType() {
@@ -267,6 +322,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the error type.
+     *
      * @param errorType the errorType to set
      */
     public void setErrorType(PaymentErrorTypeEnum errorType) {
@@ -274,6 +331,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the payment gateway code.
+     *
      * @return the paymentGatewayCode
      */
     public String getPaymentGatewayCode() {
@@ -281,6 +340,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the payment gateway code.
+     *
      * @param paymentGatewayCode the paymentGatewayCode to set
      */
     public void setPaymentGatewayCode(String paymentGatewayCode) {
@@ -288,6 +349,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the payment method type.
+     *
      * @return the paymentMethodType
      */
     public PaymentMethodEnum getPaymentMethodType() {
@@ -295,6 +358,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the payment method type.
+     *
      * @param paymentMethodType the paymentMethodType to set
      */
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
@@ -302,6 +367,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the payment method name.
+     *
      * @return the paymentMethodName
      */
     public String getPaymentMethodName() {
@@ -309,6 +376,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the payment method name.
+     *
      * @param paymentMethodName the paymentMethodName to set
      */
     public void setPaymentMethodName(String paymentMethodName) {
@@ -316,6 +385,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the operation category.
+     *
      * @return the operationCategory
      */
     public OperationCategoryEnum getOperationCategory() {
@@ -323,6 +394,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the operation category.
+     *
      * @param operationCategory the operationCategory to set
      */
     public void setOperationCategory(OperationCategoryEnum operationCategory) {
@@ -330,6 +403,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the payment.
+     *
      * @return the payment
      */
     public AccountOperationDto getPayment() {
@@ -337,6 +412,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the payment.
+     *
      * @param payment the payment to set
      */
     public void setPayment(AccountOperationDto payment) {
@@ -344,6 +421,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the refund.
+     *
      * @return the refund
      */
     public AccountOperationDto getRefund() {
@@ -351,6 +430,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the refund.
+     *
      * @param refund the refund to set
      */
     public void setRefund(AccountOperationDto refund) {
@@ -358,6 +439,8 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Gets the list ao paid.
+     *
      * @return the listAoPaid
      */
     public AccountOperationsDto getListAoPaid() {
@@ -365,14 +448,17 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the list ao paid.
+     *
      * @param listAoPaid the listAoPaid to set
      */
     public void setListAoPaid(AccountOperationsDto listAoPaid) {
         this.listAoPaid = listAoPaid;
     }
-    
 
     /**
+     * Gets the last update date.
+     *
      * @return the lastUpdateDate
      */
     public Date getLastUpdateDate() {
@@ -380,10 +466,29 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * Sets the last update date.
+     *
      * @param lastUpdateDate the lastUpdateDate to set
      */
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+    
+    
+
+
+    /**
+     * @return the customerCode
+     */
+    public String getCustomerCode() {
+        return customerCode;
+    }
+
+    /**
+     * @param customerCode the customerCode to set
+     */
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
     }
 
     @Override
@@ -394,5 +499,5 @@ public class PaymentHistoryDto extends BaseDto {
                 + paymentGatewayCode + ", paymentMethodType=" + paymentMethodType + ", paymentMethodName=" + paymentMethodName + ", operationCategory=" + operationCategory
                 + ", payment=" + payment + ", refund=" + refund + ", listAoPaid=" + listAoPaid + "]";
     }
-  
+
 }

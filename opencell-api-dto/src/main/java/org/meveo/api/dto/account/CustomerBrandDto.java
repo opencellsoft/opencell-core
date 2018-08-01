@@ -4,29 +4,40 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.crm.CustomerBrand;
 
 /**
+ * The Class CustomerBrandDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CustomerBrand")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerBrandDto extends BusinessDto {
+public class CustomerBrandDto extends BusinessEntityDto {
 
-	private static final long serialVersionUID = -6809423084709875338L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6809423084709875338L;
 
-	public CustomerBrandDto() {
+    /**
+     * Instantiates a new customer brand dto.
+     */
+    public CustomerBrandDto() {
 
-	}
+    }
 
-	public CustomerBrandDto(CustomerBrand e) {
-		super(e);
-	}
+    /**
+     * Instantiates a new customer brand dto.
+     *
+     * @param customerBrand the CustomerBrand entity
+     */
+    public CustomerBrandDto(CustomerBrand customerBrand) {
+        super(customerBrand);
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerBrandDto [code=" + getCode() + ", description=" + getDescription() + "]";
-	}
+    @Override
+    public String toString() {
+        return "CustomerBrandDto [code=" + getCode() + ", description=" + getDescription() + "]";
+    }
 
 }

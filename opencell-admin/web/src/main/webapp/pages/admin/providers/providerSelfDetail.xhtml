@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -31,9 +31,13 @@
                     <hftl:formField label="#{messages['provider.enterprise']}" field="entreprise" id="enterprise" />
 
                     <hftl:formField label="#{messages['provider.rounding']}" field="rounding" id="rounding" newLine="true" />
+                    <hftl:formField label="#{messages['provider.rounding.mode']}" field="roundingMode" id="roundingMode"  />
+                    
+                    <hftl:formField label="#{messages['provider.invoice.rounding']}" field="invoiceRounding" maxValue="4" id="invoiceRounding"  />
+                    <hftl:formField label="#{messages['provider.invoice.rounding.mode']}" field="invoiceRoundingMode" id="invoiceRoundingMode"  />
 
                     <hftl:formField label="#{messages['provider.prepaidReservationExpirationDelayinMillisec']}" field="prepaidReservationExpirationDelayinMillisec"
-                        id="prepaidReservationExpirationDelayinMillisec" />
+                        id="prepaidReservationExpirationDelayinMillisec" newLine="true" />
 
                     <!-- <hftl:formField label="#{messages['provider.amountValidation']}"
                                 field="amountValidation" id="amountValidation"/> -->
@@ -81,6 +85,14 @@
                         <hftl:formField label="#{messages['invoiceConfiguration.displayBillingCycle']}" field="invoiceConfiguration" childField="displayBillingCycle" id="displayBillingCycle" />
 
                         <hftl:formField label="#{messages['invoiceConfiguration.displayOrders']}" field="invoiceConfiguration" childField="displayOrders" id="displayOrders" />
+                        
+                        <hftl:formField label="#{messages['invoiceConfiguration.currentInvoiceNb']}" field="invoiceConfiguration" childField="currentInvoiceNb" id="currentInvoiceNb" />
+                    </p:fieldset>
+                    
+                    <p:fieldset legend="#{messages['rumSequence.title']}" styleClass="clearLeft">
+                        <hftl:formField label="#{messages['rumSequence.prefix']}" field="rumSequence" childField="prefix" size="15" newLine="true" />
+                        <hftl:formField label="#{messages['rumSequence.sequenceSize']}" field="rumSequence" childField="sequenceSize" maxValue="20" />
+                        <hftl:formField label="#{messages['rumSequence.currentSequenceNb']}" field="rumSequence" childField="currentSequenceNb" maxValue="35" disabled="true" />
                     </p:fieldset>
 					
                 </p:tab>

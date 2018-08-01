@@ -3,7 +3,7 @@
     xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <f:metadata>
-        <!-- 		<f:event type="preRenderView" listener="#{cacheBean.preRenderView}" /> -->
+        <!--        <f:event type="preRenderView" listener="#{cacheBean.preRenderView}" /> -->
     </f:metadata>
 
 
@@ -29,7 +29,6 @@
                         <!--                             <f:param name="cacheName" value="#{cacheInfo['name']}" /> -->
                         <!--                         </p:button> -->
 
-                        <p:tooltip for="refreshlink" value="#{messages['cache.reload']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="refreshlink" icon="ui-icon-refresh" action="#{cacheBean.refresh(cacheInfo['name'])}" update="@all" >
                             <p:confirm header="" message="#{messages['cache.confirmReload']}"/>
                         </p:commandButton>

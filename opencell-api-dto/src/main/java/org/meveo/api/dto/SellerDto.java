@@ -35,72 +35,90 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
 /**
+ * The Class SellerDto.
+ *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0
- **/
+ */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SellerDto extends BusinessDto {
+public class SellerDto extends BusinessEntityDto {
 
-	private static final long serialVersionUID = 4763606402719751014L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4763606402719751014L;
 
-	private String currencyCode;
-	private String countryCode;
-	private String languageCode;
-	private String parentSeller;
+    /** The currency code. */
+    private String currencyCode;
 
-	private CustomersDto customers;
-	
-	private CustomFieldsDto customFields;
-	
-	private Map<String,SequenceDto> invoiceTypeSequences = new HashMap<String,SequenceDto>();
+    /** The country code. */
+    private String countryCode;
 
-	@XmlElement(name = "businessAccountModel")
-	private BusinessEntityDto businessAccountModel;
-	
+    /** The language code. */
+    private String languageCode;
+
+    /** The parent seller. */
+    private String parentSeller;
+
+    /** The customers. */
+    private CustomersDto customers;
+
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+
+    /** The invoice type sequences. */
+    private Map<String, SequenceDto> invoiceTypeSequences = new HashMap<String, SequenceDto>();
+
+    /** The business account model. */
+    @XmlElement(name = "businessAccountModel")
+    private BusinessEntityDto businessAccountModel;
+
+    /** The contact information. */
     private ContactInformationDto contactInformation;
+
+    /** The address. */
     private AddressDto address;
 
-	public SellerDto() {
-	}
+    /**
+     * Instantiates a new seller dto.
+     */
+    public SellerDto() {
+    }
 
-	/**
-     * Create SellerDto from Seller and CustomFieldsDto
-     * v5.0: Added ContactInformation and Address
-     * 
+    /**
+     * Create SellerDto from Seller and CustomFieldsDto v5.0: Added ContactInformation and Address
+     *
+     * @author akadid abdelmounaim
      * @param seller seller
      * @param customFieldInstances customFieldsDto
-     * 
-     * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-	public SellerDto(Seller seller, CustomFieldsDto customFieldInstances) {
-		super(seller);
-		if(seller.getInvoiceTypeSequence() != null){
-			for(InvoiceTypeSellerSequence seq : seller.getInvoiceTypeSequence() ){
-				invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getSequence()));
-			}
-		}
+    public SellerDto(Seller seller, CustomFieldsDto customFieldInstances) {
+        super(seller);
+        if (seller.getInvoiceTypeSequence() != null) {
+            for (InvoiceTypeSellerSequence seq : seller.getInvoiceTypeSequence()) {
+                invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getSequence()));
+            }
+        }
 
-		if (seller.getTradingCountry() != null) {
-			countryCode = seller.getTradingCountry().getCountryCode();
-		}
+        if (seller.getTradingCountry() != null) {
+            countryCode = seller.getTradingCountry().getCountryCode();
+        }
 
-		if (seller.getTradingCurrency() != null) {
-			currencyCode = seller.getTradingCurrency().getCurrencyCode();
-		}
+        if (seller.getTradingCurrency() != null) {
+            currencyCode = seller.getTradingCurrency().getCurrencyCode();
+        }
 
-		if (seller.getTradingLanguage() != null) {
-			languageCode = seller.getTradingLanguage().getLanguageCode();
-		}
+        if (seller.getTradingLanguage() != null) {
+            languageCode = seller.getTradingLanguage().getLanguageCode();
+        }
 
-		if (seller.getSeller() != null) {
-			parentSeller = seller.getSeller().getCode();
-		}
-		
-		ContactInformation sellerContactInformation = seller.getContactInformation();
-		if (sellerContactInformation != null) {
+        if (seller.getSeller() != null) {
+            parentSeller = seller.getSeller().getCode();
+        }
+
+        ContactInformation sellerContactInformation = seller.getContactInformation();
+        if (sellerContactInformation != null) {
             if (getContactInformation() == null) {
                 setContactInformation(new ContactInformationDto());
             }
@@ -109,8 +127,8 @@ public class SellerDto extends BusinessDto {
             contactInformation.setMobile(sellerContactInformation.getMobile());
             contactInformation.setFax(sellerContactInformation.getFax());
         }
-		
-		Address sellerAddress = seller.getAddress();
+
+        Address sellerAddress = seller.getAddress();
         if (sellerAddress != null) {
             if (getAddress() == null) {
                 setAddress(new AddressDto());
@@ -119,102 +137,198 @@ public class SellerDto extends BusinessDto {
             address.setAddress2(sellerAddress.getAddress2());
             address.setAddress3(sellerAddress.getAddress3());
             address.setCity(sellerAddress.getCity());
-            address.setCountry(sellerAddress.getCountry() == null ? null : sellerAddress.getCountry().getCountryCode());                        
+            address.setCountry(sellerAddress.getCountry() == null ? null : sellerAddress.getCountry().getCountryCode());
             address.setState(sellerAddress.getState());
             address.setZipCode(sellerAddress.getZipCode());
         }
-		
-		customFields = customFieldInstances;
-	}
 
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+        customFields = customFieldInstances;
+    }
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    /**
+     * Gets the currency code.
+     *
+     * @return the currency code
+     */
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-	public String getCountryCode() {
-		return countryCode;
-	}
+    /**
+     * Sets the currency code.
+     *
+     * @param currencyCode the new currency code
+     */
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
+    /**
+     * Gets the country code.
+     *
+     * @return the country code
+     */
+    public String getCountryCode() {
+        return countryCode;
+    }
 
-	public String getLanguageCode() {
-		return languageCode;
-	}
+    /**
+     * Sets the country code.
+     *
+     * @param countryCode the new country code
+     */
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
+    /**
+     * Gets the language code.
+     *
+     * @return the language code
+     */
+    public String getLanguageCode() {
+        return languageCode;
+    }
 
-	public String getParentSeller() {
-		return parentSeller;
-	}
+    /**
+     * Sets the language code.
+     *
+     * @param languageCode the new language code
+     */
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
-	public void setParentSeller(String parentSeller) {
-		this.parentSeller = parentSeller;
-	}
+    /**
+     * Gets the parent seller.
+     *
+     * @return the parent seller
+     */
+    public String getParentSeller() {
+        return parentSeller;
+    }
 
-	public CustomersDto getCustomers() {
-		return customers;
-	}
+    /**
+     * Sets the parent seller.
+     *
+     * @param parentSeller the new parent seller
+     */
+    public void setParentSeller(String parentSeller) {
+        this.parentSeller = parentSeller;
+    }
 
-	public void setCustomers(CustomersDto customers) {
-		this.customers = customers;
-	}
+    /**
+     * Gets the customers.
+     *
+     * @return the customers
+     */
+    public CustomersDto getCustomers() {
+        return customers;
+    }
 
-	public CustomFieldsDto getCustomFields() {
+    /**
+     * Sets the customers.
+     *
+     * @param customers the new customers
+     */
+    public void setCustomers(CustomersDto customers) {
+        this.customers = customers;
+    }
+
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
         return customFields;
     }
-	
-	public void setCustomFields(CustomFieldsDto customFields) {
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
 
-	/**
-	 * @return the invoiceTypeSequences
-	 */
-	public Map<String, SequenceDto> getInvoiceTypeSequences() {
-		return invoiceTypeSequences;
-	}
+    /**
+     * Gets the invoice type sequences.
+     *
+     * @return the invoiceTypeSequences
+     */
+    public Map<String, SequenceDto> getInvoiceTypeSequences() {
+        return invoiceTypeSequences;
+    }
 
-	/**
-	 * @param invoiceTypeSequences the invoiceTypeSequences to set
-	 */
-	public void setInvoiceTypeSequences(Map<String, SequenceDto> invoiceTypeSequences) {
-		this.invoiceTypeSequences = invoiceTypeSequences;
-	}
+    /**
+     * Sets the invoice type sequences.
+     *
+     * @param invoiceTypeSequences the invoiceTypeSequences to set
+     */
+    public void setInvoiceTypeSequences(Map<String, SequenceDto> invoiceTypeSequences) {
+        this.invoiceTypeSequences = invoiceTypeSequences;
+    }
 
-	public BusinessEntityDto getBusinessAccountModel() {
-		return businessAccountModel;
-	}
+    /**
+     * Gets the business account model.
+     *
+     * @return the business account model
+     */
+    public BusinessEntityDto getBusinessAccountModel() {
+        return businessAccountModel;
+    }
 
-	public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
-		this.businessAccountModel = businessAccountModel;
-	}
-	
-	public ContactInformationDto getContactInformation() {
+    /**
+     * Sets the business account model.
+     *
+     * @param businessAccountModel the new business account model
+     */
+    public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
+        this.businessAccountModel = businessAccountModel;
+    }
+
+    /**
+     * Gets the contact information.
+     *
+     * @return the contact information
+     */
+    public ContactInformationDto getContactInformation() {
         return contactInformation;
     }
 
+    /**
+     * Sets the contact information.
+     *
+     * @param contactInformation the new contact information
+     */
     public void setContactInformation(ContactInformationDto contactInformation) {
         this.contactInformation = contactInformation;
     }
 
+    /**
+     * Gets the address.
+     *
+     * @return the address
+     */
     public AddressDto getAddress() {
         return address;
     }
 
+    /**
+     * Sets the address.
+     *
+     * @param address the new address
+     */
     public void setAddress(AddressDto address) {
         this.address = address;
     }
 
     @Override
-	public String toString() {
-		return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + ", contactInformation=" + contactInformation + ", address=" + address + "]";
-	}	
+    public String toString() {
+        return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
+                + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences
+                + ", businessAccountModel=" + businessAccountModel + ", contactInformation=" + contactInformation + ", address=" + address + "]";
+    }
 }

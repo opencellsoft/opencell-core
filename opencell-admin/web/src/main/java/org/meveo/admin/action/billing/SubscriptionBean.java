@@ -41,6 +41,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -141,9 +142,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -181,7 +179,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private EntityListDataModelPF<UsageChargeInstance> usageChargeInstances = null;
     private EntityListDataModelPF<ProductChargeInstance> productChargeInstances = null;
     private EntityListDataModelPF<ProductInstance> productInstances = null;
-
+    
     public SubscriptionBean() {
         super(Subscription.class);
     }
@@ -254,7 +252,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
         log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
     }
+    
+    public BillingCycle getBillingCycle() {
+        return entity.getBillingCycle();
+    }
 
+    public void setBillingCycle(BillingCycle billingCycle) {
+        if (billingCycle != null) {
+            entity.setBillingCycle(billingCycle);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -263,6 +271,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        entity.setOffer(offerTemplateService.refreshOrRetrieve(entity.getOffer()));
+        entity.setUserAccount(userAccountService.refreshOrRetrieve(entity.getUserAccount()));
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
@@ -277,7 +288,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
             return null;
         }
-
+        
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -500,11 +511,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
                 ServiceInstance serviceInstance = new ServiceInstance();
                 serviceInstance.setCode(serviceTemplate.getCode());
-                if (!StringUtils.isBlank(descriptionOverride)) {
-                    serviceInstance.setDescription(descriptionOverride);
-                } else {
-                    serviceInstance.setDescription(descriptionOverride);
-                }
+                serviceInstance.setDescription(descriptionOverride);
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription((Subscription) entity);
                 if (entity.getSubscriptionDate() != null) {
@@ -537,14 +544,19 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             log.error("error in SubscriptionBean.instanciateManyServices", e);
             messages.error(e.getMessage());
         }
+        
+        keepCurrentTab();
+        
     }
 
+    /**
+     * actives services.
+     */
     public void activateService() {
         log.debug("activateService...");
         try {
-            log.debug("activateService id={} checked", selectedServiceInstance.getId());
             if (selectedServiceInstance != null) {
-
+                log.debug("activateService id={} checked", selectedServiceInstance.getId());
                 if (selectedServiceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                     messages.info(new BundleKey("messages", "error.activation.terminatedService"));
                     return;
@@ -565,6 +577,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 initServiceInstances(entity.getServiceInstances());
                 initServiceTemplates();
                 resetChargesDataModels();
+                keepCurrentTab();
 
             } else {
                 log.error("activateService id=#0 is NOT a serviceInstance");
@@ -578,6 +591,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             log.error("unexpected exception when activating service!", e);
             messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage());
         }
+    }
+
+    /**
+     * Keeps current active Tab selected.
+     */
+    private void keepCurrentTab() {
+        super.setActiveMainTab(super.getActiveTab());
     }
 
     @ActionMethod
@@ -1032,4 +1052,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
         updateSubscribedTillDate();
     }
+    
+    public boolean isServiceInstancesEmpty() {
+		if (entity.isTransient()) {
+			return true;
+		}
+		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
+		return (si == null || si.isEmpty()) ? true : false;
+	}
 }

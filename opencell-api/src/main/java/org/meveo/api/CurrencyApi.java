@@ -19,7 +19,6 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 /**
  * @author Edward P. Legaspi
  * 
- * @deprecated will be renammed to TradingCurrencyApi
  **/
 @Stateless
 public class CurrencyApi extends BaseApi {
@@ -36,8 +35,6 @@ public class CurrencyApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        
 
         if (tradingCurrencyService.findByTradingCurrencyCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(TradingCurrency.class, postData.getCode());
@@ -58,6 +55,9 @@ public class CurrencyApi extends BaseApi {
         tradingCurrency.setCurrencyCode(postData.getCode());
         tradingCurrency.setPrDescription(postData.getDescription());
         tradingCurrency.setActive(true);
+        if (postData.isDisabled() != null) {
+            tradingCurrency.setDisabled(postData.isDisabled());
+        }
         tradingCurrencyService.create(tradingCurrency);
     }
 
@@ -69,14 +69,14 @@ public class CurrencyApi extends BaseApi {
 
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code);
 
-        if (tradingCurrency != null) {
-            return new CurrencyDto(tradingCurrency);
+        if (tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingLanguage.class, code);
         }
-
-        throw new EntityDoesNotExistsException(TradingLanguage.class, code);
+        return new CurrencyDto(tradingCurrency);
     }
 
     public void remove(String code) throws BusinessException, MissingParameterException, EntityDoesNotExistsException {
+
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -85,9 +85,9 @@ public class CurrencyApi extends BaseApi {
         TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code);
         if (tradingCurrency == null) {
             throw new EntityDoesNotExistsException(TradingCurrency.class, code);
-        } else {
-            tradingCurrencyService.remove(tradingCurrency);
         }
+
+        tradingCurrencyService.remove(tradingCurrency);
     }
 
     public void update(CurrencyDto postData) throws MeveoApiException, BusinessException {
@@ -103,19 +103,17 @@ public class CurrencyApi extends BaseApi {
 
         Currency currency = currencyService.findByCode(postData.getCode());
 
-        if (currency != null) {
-
-            currency.setDescriptionEn(postData.getDescription());
-            currency = currencyService.update(currency);
-            
-            tradingCurrency.setCurrency(currency);
-            tradingCurrency.setCurrencyCode(postData.getCode());
-            tradingCurrency.setPrDescription(postData.getDescription());
-            tradingCurrencyService.update(tradingCurrency);
-            
-        } else {
+        if (currency == null) {
             throw new EntityDoesNotExistsException(Currency.class, postData.getCode());
         }
+        currency.setDescriptionEn(postData.getDescription());
+        currency = currencyService.update(currency);
+
+        tradingCurrency.setCurrency(currency);
+        tradingCurrency.setCurrencyCode(postData.getCode());
+        tradingCurrency.setPrDescription(postData.getDescription());
+
+        tradingCurrencyService.update(tradingCurrency);
     }
 
     public void createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
@@ -126,20 +124,49 @@ public class CurrencyApi extends BaseApi {
             update(postData);
         }
     }
+
     public void findOrCreate(String currencyCode) throws EntityDoesNotExistsException, BusinessException {
-        if (StringUtils.isBlank(currencyCode)){
+        if (StringUtils.isBlank(currencyCode)) {
             return;
         }
-		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
-		if (tradingCurrency==null) {
-			Currency currency = currencyService.findByCode(currencyCode);
-			if (currency==null) {
-				throw new EntityDoesNotExistsException(Currency.class, currencyCode);
-			}
-			tradingCurrency = new TradingCurrency();
-			tradingCurrency.setCurrency(currency);
-			tradingCurrency.setPrDescription(currency.getDescriptionEn());
-			tradingCurrencyService.create(tradingCurrency);
-		}
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
+        if (tradingCurrency == null) {
+            Currency currency = currencyService.findByCode(currencyCode);
+            if (currency == null) {
+                throw new EntityDoesNotExistsException(Currency.class, currencyCode);
+            }
+            tradingCurrency = new TradingCurrency();
+            tradingCurrency.setCurrency(currency);
+            tradingCurrency.setPrDescription(currency.getDescriptionEn());
+            tradingCurrencyService.create(tradingCurrency);
+        }
+    }
+
+    /**
+     * Enable or disable Trading currency
+     * 
+     * @param code Currency code
+     * @param enable Should Trading currency be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(code);
+        if (tradingCurrency == null) {
+            throw new EntityDoesNotExistsException(TradingCurrency.class, code);
+        }
+        if (enable) {
+            tradingCurrencyService.enable(tradingCurrency);
+        } else {
+            tradingCurrencyService.disable(tradingCurrency);
+        }
     }
 }

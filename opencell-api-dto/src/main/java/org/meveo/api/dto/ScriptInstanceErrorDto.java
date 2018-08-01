@@ -9,83 +9,100 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.scripts.ScriptInstanceError;
 
 /**
+ * The Class ScriptInstanceErrorDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "ScriptInstanceError")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScriptInstanceErrorDto {
 
-	@XmlAttribute(required = true)
-	private long lineNumber;
+    /** The line number. */
+    @XmlAttribute(required = true)
+    private long lineNumber;
 
-	@XmlAttribute(required = true)
-	private long columnNumber;
+    /** The column number. */
+    @XmlAttribute(required = true)
+    private long columnNumber;
 
-	@XmlElement(required = true)
-	private String message;
+    /** The message. */
+    @XmlElement(required = true)
+    private String message;
 
-	public ScriptInstanceErrorDto(){
-	}
+    /**
+     * Instantiates a new script instance error dto.
+     */
+    public ScriptInstanceErrorDto() {
+    }
 
+    /**
+     * Instantiates a new script instance error dto.
+     *
+     * @param error the error
+     */
+    public ScriptInstanceErrorDto(ScriptInstanceError error) {
+        setLineNumber(error.getLineNumber());
+        setColumnNumber(error.getColumnNumber());
+        setMessage(error.getMessage());
+    }
 
+    /**
+     * Gets the line number.
+     *
+     * @return the lineNumber
+     */
+    public long getLineNumber() {
+        return lineNumber;
+    }
 
-	public ScriptInstanceErrorDto(ScriptInstanceError error) {
-	    setLineNumber(error.getLineNumber());
-		setColumnNumber(error.getColumnNumber());
-		setMessage(error.getMessage());
-	}
+    /**
+     * Sets the line number.
+     *
+     * @param lineNumber the lineNumber to set
+     */
+    public void setLineNumber(long lineNumber) {
+        this.lineNumber = lineNumber;
+    }
 
+    /**
+     * Gets the column number.
+     *
+     * @return the columnNumber
+     */
+    public long getColumnNumber() {
+        return columnNumber;
+    }
 
+    /**
+     * Sets the column number.
+     *
+     * @param columnNumber the columnNumber to set
+     */
+    public void setColumnNumber(long columnNumber) {
+        this.columnNumber = columnNumber;
+    }
 
-	/**
-	 * @return the lineNumber
-	 */
-	public long getLineNumber() {
-		return lineNumber;
-	}
+    /**
+     * Gets the message.
+     *
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	/**
-	 * @param lineNumber the lineNumber to set
-	 */
-	public void setLineNumber(long lineNumber) {
-		this.lineNumber = lineNumber;
-	}
+    /**
+     * Sets the message.
+     *
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	/**
-	 * @return the columnNumber
-	 */
-	public long getColumnNumber() {
-		return columnNumber;
-	}
-
-	/**
-	 * @param columnNumber the columnNumber to set
-	 */
-	public void setColumnNumber(long columnNumber) {
-		this.columnNumber = columnNumber;
-	}
-
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
-
-	/**
-	 * @param message the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "ScriptInstanceErrorDto [lineNumber=" + lineNumber + ", columnNumber=" + columnNumber + ", message=" + message + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "ScriptInstanceErrorDto [lineNumber=" + lineNumber + ", columnNumber=" + columnNumber + ", message=" + message + "]";
+    }
 
 }

@@ -9,52 +9,111 @@ import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
 
 /**
+ * The Class LanguageDto.
+ *
  * @author Edward P. Legaspi
- * 
- * @deprecated will be renammed to TradingLanguageDto
- **/
+ */
 @XmlRootElement(name = "Language")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageDto extends BaseDto {
+public class LanguageDto extends AuditableEntityDto implements IEnableDto {
 
-	private static final long serialVersionUID = 725968016559888810L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 725968016559888810L;
 
-	@XmlAttribute(required = true)
-	private String code;
-	private String description;
+    /**
+     * Language code
+     */
+    @XmlAttribute(required = true)
+    private String code;
 
-	public LanguageDto() {
+    /**
+     * Description
+     */
+    private String description;
 
-	}
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
-	public LanguageDto(TradingLanguage e) {
-		code = e.getLanguageCode();
-		description = e.getPrDescription();
-	}
-	public LanguageDto(Language e) {
-		code = e.getLanguageCode();
-		description = e.getDescriptionEn();
-	}
+    /**
+     * Instantiates a new language dto.
+     */
+    public LanguageDto() {
 
-	public String getCode() {
-		return code;
-	}
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Instantiates a new language dto.
+     *
+     * @param tradingLanguage the trading language
+     */
+    public LanguageDto(TradingLanguage tradingLanguage) {
+        super(tradingLanguage);
+        code = tradingLanguage.getLanguageCode();
+        description = tradingLanguage.getPrDescription();
+        disabled = tradingLanguage.isDisabled();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Instantiates a new language dto.
+     *
+     * @param language the language
+     */
+    public LanguageDto(Language language) {
+        super(language);
+        code = language.getLanguageCode();
+        description = language.getDescriptionEn();
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	@Override
-	public String toString() {
-		return "LanguageDto [code=" + code + ", description=" + description + "]";
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "LanguageDto [code=" + code + ", description=" + description + ", disabled=" + disabled + "]";
+    }
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
+    }
 }

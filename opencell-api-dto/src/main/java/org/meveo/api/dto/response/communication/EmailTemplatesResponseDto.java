@@ -12,29 +12,38 @@ import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * 
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * The Class EmailTemplatesResponseDto.
  *
+ * @author Tyshan Shi(tyshan@manaty.net)
  */
-@XmlRootElement(name="EmailTemplatesResponse")
+@XmlRootElement(name = "EmailTemplatesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EmailTemplatesResponseDto extends BaseResponse {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7682857831421991842L;
+    
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7682857831421991842L;
 
-	@XmlElementWrapper(name="emailTemplates")
-	@XmlElement(name="emailTemplate")
-	private List<EmailTemplateDto> emailTemplates;
+    /** The email templates. */
+    @XmlElementWrapper(name = "emailTemplates")
+    @XmlElement(name = "emailTemplate")
+    private List<EmailTemplateDto> emailTemplates;
 
-	public List<EmailTemplateDto> getEmailTemplates() {
-		return emailTemplates;
-	}
+    /**
+     * Gets the email templates.
+     *
+     * @return the email templates
+     */
+    public List<EmailTemplateDto> getEmailTemplates() {
+        return emailTemplates;
+    }
 
-	public void setEmailTemplates(List<EmailTemplateDto> emailTemplates) {
-		this.emailTemplates = emailTemplates;
-	}
+    /**
+     * Sets the email templates.
+     *
+     * @param emailTemplates the new email templates
+     */
+    public void setEmailTemplates(List<EmailTemplateDto> emailTemplates) {
+        this.emailTemplates = emailTemplates;
+    }
 
 }
-

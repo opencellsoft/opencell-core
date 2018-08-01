@@ -290,7 +290,7 @@ public class Invoice4_2Api extends BaseApi {
                 RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                     ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(),
                     ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax(), RatedTransactionStatusEnum.BILLED, null, billingAccount, invoiceSubCategory, null, null,
-                    null, null, null, ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription());
+                    null, null, null, null, ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription(), ratedTransaction.getStartDate(), ratedTransaction.getEndDate());
 
                 meveoRatedTransaction.setInvoice(invoice);
                 meveoRatedTransaction.setWallet(billingAccountUserAccount.getWallet());
@@ -387,13 +387,14 @@ public class Invoice4_2Api extends BaseApi {
             BillingProcessTypesEnum.AUTOMATIC);
     }
 
-    private void updateBAtotalAmount(Long billingAccountId, BillingRun billingRun) throws BusinessException {
-        billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun);
+    private void updateBAtotalAmount(BillingAccount billingAccount, BillingRun billingRun) throws BusinessException {
+        billingAccountService.updateEntityTotalAmounts(billingAccount, billingRun);
         log.debug("updateBillingAccountTotalAmounts ok");
     }
 
     public void createRatedTransaction(Long billingAccountId, Date invoicingDate) throws Exception {
-        ratedTransactionService.createRatedTransaction(billingAccountId, invoicingDate);
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+        ratedTransactionService.createRatedTransaction(billingAccount, invoicingDate);
     }
 
     public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber) throws BusinessException {
@@ -415,26 +416,31 @@ public class Invoice4_2Api extends BaseApi {
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
             throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
 
+        String billingAccountCode = null;
         if (generateInvoiceRequestDto == null) {
             missingParameters.add("generateInvoiceRequest");
             handleMissingParameters();
-        }
-        if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-            missingParameters.add("billingAccountCode");
-        }
-
-        if (generateInvoiceRequestDto.getInvoicingDate() == null) {
-            missingParameters.add("invoicingDate");
-        }
-        if (generateInvoiceRequestDto.getLastTransactionDate() == null) {
-            missingParameters.add("lastTransactionDate");
+            return null;
+        } else {
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
+                missingParameters.add("targetCode");
+            }
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetType())) {
+                missingParameters.add("targetType");
+            }
+            if (generateInvoiceRequestDto.getInvoicingDate() == null) {
+                missingParameters.add("invoicingDate");
+            }
+            if (generateInvoiceRequestDto.getLastTransactionDate() == null) {
+                missingParameters.add("lastTransactionDate");
+            }
         }
 
         handleMissingParameters();
 
-        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
+        BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
         if (billingAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
+            throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getTargetCode());
         }
 
         if (billingAccount.getBillingRun() != null && (billingAccount.getBillingRun().getStatus().equals(BillingRunStatusEnum.NEW)
@@ -454,7 +460,7 @@ public class Invoice4_2Api extends BaseApi {
         Long billingRunId = billingRun.getId();
         log.info("launchExceptionalInvoicing ok , billingRun.id:" + billingRunId);
 
-        updateBAtotalAmount(billingAccount.getId(), billingRun);
+        updateBAtotalAmount(billingAccount, billingRun);
         log.info("updateBillingAccountTotalAmounts ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1);

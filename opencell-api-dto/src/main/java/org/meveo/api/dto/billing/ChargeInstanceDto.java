@@ -4,122 +4,185 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.billing.ChargeInstance;
 
 /**
+ * The Class ChargeInstanceDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChargeInstanceDto {
+public class ChargeInstanceDto extends BusinessEntityDto {
 
-	@XmlAttribute
-	private String code;
+    /**
+     * The auto generated serial no
+     */
+    private static final long serialVersionUID = -1785188672347740647L;
 
-	@XmlAttribute
-	private String description;
+    /** The status. */
+    private String status;
 
-	private String status;
-	private BigDecimal amountWithTax;
-	private BigDecimal amountWithoutTax;
-	private String sellerCode;
-	private String userAccountCode;
-	
-	public ChargeInstanceDto() {
-		
-	}
-	
-	public ChargeInstanceDto(ChargeInstance e) {
-		super();
-		if (e != null) {
-			this.code = e.getCode();
-			this.description = e.getDescription();
-			if (e.getStatus() != null) {
-				this.status = e.getStatus().name();
-			}
-			this.amountWithTax = e.getAmountWithTax();
-			this.amountWithoutTax = e.getAmountWithoutTax();
-			if (e.getSeller() != null) {
-				this.sellerCode = e.getSeller().getCode();
-			}
-			if (e.getUserAccount() != null) {
-				this.userAccountCode = e.getUserAccount().getCode();
-			}
-		}
-	}
+    /** The amount with tax. */
+    private BigDecimal amountWithTax;
 
-	public ChargeInstanceDto(String code, String description, String status, BigDecimal amountWithTax, BigDecimal amountWithoutTax, String sellerCode, String userAccountCode) {
-		super();
-		this.code = code;
-		this.description = description;
-		this.status = status;
-		this.amountWithTax = amountWithTax;
-		this.amountWithoutTax = amountWithoutTax;
-		this.sellerCode = sellerCode;
-		this.userAccountCode = userAccountCode;
-	}
+    /** The amount without tax. */
+    private BigDecimal amountWithoutTax;
 
-	public String getCode() {
-		return code;
-	}
+    /** The seller code. */
+    private String sellerCode;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /** The user account code. */
+    private String userAccountCode;
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Instantiates a new charge instance dto.
+     */
+    public ChargeInstanceDto() {
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    /**
+     * Instantiates a new charge instance dto.
+     *
+     * @param chargeInstance the ChargeInstance entity
+     */
+    public ChargeInstanceDto(ChargeInstance chargeInstance) {
+        super(chargeInstance);
+        if (chargeInstance != null) {
+            this.code = chargeInstance.getCode();
+            this.description = chargeInstance.getDescription();
+            if (chargeInstance.getStatus() != null) {
+                this.status = chargeInstance.getStatus().name();
+            }
+            this.amountWithTax = chargeInstance.getAmountWithTax();
+            this.amountWithoutTax = chargeInstance.getAmountWithoutTax();
+            if (chargeInstance.getSeller() != null) {
+                this.sellerCode = chargeInstance.getSeller().getCode();
+            }
+            if (chargeInstance.getUserAccount() != null) {
+                this.userAccountCode = chargeInstance.getUserAccount().getCode();
+            }
+        }
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    /**
+     * Instantiates a new charge instance dto.
+     *
+     * @param code the code
+     * @param description the description
+     * @param status the status
+     * @param amountWithTax the amount with tax
+     * @param amountWithoutTax the amount without tax
+     * @param sellerCode the seller code
+     * @param userAccountCode the user account code
+     */
+    public ChargeInstanceDto(String code, String description, String status, BigDecimal amountWithTax, BigDecimal amountWithoutTax, String sellerCode, String userAccountCode) {
+        super();
+        this.code = code;
+        this.description = description;
+        this.status = status;
+        this.amountWithTax = amountWithTax;
+        this.amountWithoutTax = amountWithoutTax;
+        this.sellerCode = sellerCode;
+        this.userAccountCode = userAccountCode;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    /**
+     * Gets the status.
+     *
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    /**
+     * Sets the status.
+     *
+     * @param status the new status
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    /**
+     * Gets the amount with tax.
+     *
+     * @return the amount with tax
+     */
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    /**
+     * Sets the amount with tax.
+     *
+     * @param amountWithTax the new amount with tax
+     */
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public String getSellerCode() {
-		return sellerCode;
-	}
+    /**
+     * Gets the amount without tax.
+     *
+     * @return the amount without tax
+     */
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
-	}
+    /**
+     * Sets the amount without tax.
+     *
+     * @param amountWithoutTax the new amount without tax
+     */
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public String getUserAccountCode() {
-		return userAccountCode;
-	}
+    /**
+     * Gets the seller code.
+     *
+     * @return the seller code
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
 
-	public void setUserAccountCode(String userAccountCode) {
-		this.userAccountCode = userAccountCode;
-	}
+    /**
+     * Sets the seller code.
+     *
+     * @param sellerCode the new seller code
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
 
-	@Override
-	public String toString() {
-		return "ChargeInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", amountWithTax=" + amountWithTax + ", amountWithoutTax="
-				+ amountWithoutTax + ", sellerCode=" + sellerCode + ", userAccountCode=" + userAccountCode + "]";
-	}
+    /**
+     * Gets the user account code.
+     *
+     * @return the user account code
+     */
+    public String getUserAccountCode() {
+        return userAccountCode;
+    }
+
+    /**
+     * Sets the user account code.
+     *
+     * @param userAccountCode the new user account code
+     */
+    public void setUserAccountCode(String userAccountCode) {
+        this.userAccountCode = userAccountCode;
+    }
+
+    @Override
+    public String toString() {
+        return "ChargeInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", amountWithTax=" + amountWithTax + ", amountWithoutTax="
+                + amountWithoutTax + ", sellerCode=" + sellerCode + ", userAccountCode=" + userAccountCode + "]";
+    }
 
 }

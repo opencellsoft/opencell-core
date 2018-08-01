@@ -14,6 +14,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -55,7 +56,7 @@ public class InvoicingAsync {
     /**
      * Update billing account total amounts async. One billing account at a time in a separate transaction.
      *
-     * @param billingAccountIds Billing account ids
+     * @param entities Entities
      * @param billingRun The billing run
      * @param jobInstanceId Job instance id
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -65,17 +66,17 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
+    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
             throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         int count = 0;
-        for (Long billingAccountId : billingAccountIds) {
+        for (IBillableEntity entity : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
+            if (billingAccountService.updateEntityTotalAmounts(entity, billingRun)) {
                 count++;
             }
         }
@@ -84,9 +85,9 @@ public class InvoicingAsync {
     }
 
     /**
-     * Creates the agregates and invoice async. One billing account at a time in a separate transaction.
+     * Creates the agregates and invoice async. One entity at a time in a separate transaction.
      *
-     * @param billingAccountIds the billing account ids
+     * @param entities the entity objects
      * @param billingRun the billing run
      * @param jobInstanceId the job instance id
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -95,23 +96,23 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<?> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        for (Long billingAccountId : billingAccountIds) {
+        for (IBillableEntity entity : (List<IBillableEntity>) entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null, null);
+                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null);
             } catch (Exception e) {
-                log.error("Error for BA=" + billingAccountId + " : " + e);
+                log.error("Error for entity=" + entity + " : " + e);
             }
         }
         return new AsyncResult<String>("OK");
     }
-
+    
     /**
      * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.
      *
@@ -194,7 +195,6 @@ public class InvoicingAsync {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            long startDate = System.currentTimeMillis();
             try {
                 invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
                 result.registerSucces();
@@ -203,7 +203,6 @@ public class InvoicingAsync {
                 allOk = false;
                 log.error("Failed to create XML invoice for invoice {}", invoiceId, e);
             }
-            log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate));
         }
 
         return new AsyncResult<Boolean>(allOk);

@@ -10,94 +10,144 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.InvoiceSubCategory;
 
 /**
+ * The Class InvoiceSubCategoryDto.
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
- **/
+ */
 @XmlRootElement(name = "InvoiceSubCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceSubCategoryDto extends BusinessDto {
+public class InvoiceSubCategoryDto extends BusinessEntityDto {
 
-	private static final long serialVersionUID = 1832246068609179546L;
-	
-	@XmlElement(required = true)
-	private String invoiceCategory;
-	
-	@XmlElement(required = true)
-	private String accountingCode;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1832246068609179546L;
 
-	private List<LanguageDescriptionDto> languageDescriptions;
-	
-	private CustomFieldsDto customFields;
-	
-	private String taxScriptScode;
+    /** The invoice category. */
+    @XmlElement(required = true)
+    private String invoiceCategory;
 
-	public InvoiceSubCategoryDto() {
+    /** The accounting code. */
+    @XmlElement(required = true)
+    private String accountingCode;
 
-	}
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
 
-	public InvoiceSubCategoryDto(InvoiceSubCategory invoiceSubCategory, CustomFieldsDto customFieldInstances) {
-		super(invoiceSubCategory);
-		invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+    
+    private String taxScriptScode;
+
+    /**
+     * Instantiates a new invoice sub category dto.
+     */
+    public InvoiceSubCategoryDto() {
+
+    }
+
+    /**
+     * Instantiates a new invoice sub category dto.
+     *
+     * @param invoiceSubCategory the invoice sub category
+     * @param customFieldInstances the custom field instances
+     */
+    public InvoiceSubCategoryDto(InvoiceSubCategory invoiceSubCategory, CustomFieldsDto customFieldInstances) {
+        super(invoiceSubCategory);
+        invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
         if (invoiceSubCategory.getAccountingCode() != null) {
             accountingCode = invoiceSubCategory.getAccountingCode().getCode();
         }
         if(invoiceSubCategory.getTaxScript() != null) {
             taxScriptScode = invoiceSubCategory.getTaxScript().getCode();
         }
-		customFields = customFieldInstances;
+        customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
-	}
+    }
 
-	public String getInvoiceCategory() {
-		return invoiceCategory;
-	}
+    /**
+     * Gets the invoice category.
+     *
+     * @return the invoice category
+     */
+    public String getInvoiceCategory() {
+        return invoiceCategory;
+    }
 
-	public void setInvoiceCategory(String invoiceCategory) {
-		this.invoiceCategory = invoiceCategory;
-	}
+    /**
+     * Sets the invoice category.
+     *
+     * @param invoiceCategory the new invoice category
+     */
+    public void setInvoiceCategory(String invoiceCategory) {
+        this.invoiceCategory = invoiceCategory;
+    }
 
-	public List<LanguageDescriptionDto> getLanguageDescriptions() {
-		return languageDescriptions;
-	}
+    /**
+     * Gets the language descriptions.
+     *
+     * @return the language descriptions
+     */
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
 
-	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
-		this.languageDescriptions = languageDescriptions;
-	}
-	
-	public String getAccountingCode() {
-		return accountingCode;
-	}
+    /**
+     * Sets the language descriptions.
+     *
+     * @param languageDescriptions the new language descriptions
+     */
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    /**
+     * Gets the accounting code.
+     *
+     * @return the accounting code
+     */
+    public String getAccountingCode() {
+        return accountingCode;
+    }
 
-	/**
-	 * @return the customFields
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /**
+     * Sets the accounting code.
+     *
+     * @param accountingCode the new accounting code
+     */
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	/**
-	 * @param customFields the customFields to set
-	 */
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
-	
-	@Override
+    /**
+     * Gets the custom fields.
+     *
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    @Override
 	public String toString() {
-        return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode
-                + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
+		return "InvoiceSubCategoryDto [invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions
+				+ ", customFields=" + customFields + ", taxScriptScode=" + taxScriptScode + "]";
 	}
 
-    public String getTaxScriptScode() {
-        return taxScriptScode;
-    }
+	public String getTaxScriptScode() {
+		return taxScriptScode;
+	}
 
-    public void setTaxScriptScode(String taxScriptScode) {
-        this.taxScriptScode = taxScriptScode;
-    }
+	public void setTaxScriptScode(String taxScriptScode) {
+		this.taxScriptScode = taxScriptScode;
+	}
 
 }

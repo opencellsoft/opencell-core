@@ -8,30 +8,43 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class UserAccountsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserAccountsDto implements Serializable {
 
-	private static final long serialVersionUID = -7157890853854236463L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7157890853854236463L;
 
-	private List<UserAccountDto> userAccount;
+    /** The user account. */
+    private List<UserAccountDto> userAccount;
 
-	public List<UserAccountDto> getUserAccount() {
-		if(userAccount == null) {
-			userAccount = new ArrayList<UserAccountDto>();	
-		}
-		
-		return userAccount;
-	}
+    /**
+     * Gets the user account.
+     *
+     * @return the user account
+     */
+    public List<UserAccountDto> getUserAccount() {
+        if (userAccount == null) {
+            userAccount = new ArrayList<>();
+        }
 
-	public void setUserAccount(List<UserAccountDto> userAccount) {
-		this.userAccount = userAccount;
-	}
+        return userAccount;
+    }
 
-	@Override
-	public String toString() {
-		return "UserAccountsDto [userAccount=" + userAccount + "]";
-	}
+    /**
+     * Sets the user account.
+     *
+     * @param userAccount the new user account
+     */
+    public void setUserAccount(List<UserAccountDto> userAccount) {
+        this.userAccount = userAccount;
+    }
 
+    @Override
+    public String toString() {
+        return "UserAccountsDto [userAccount=" + userAccount + "]";
+    }
 }

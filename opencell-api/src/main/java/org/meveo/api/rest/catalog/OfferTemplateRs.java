@@ -59,6 +59,10 @@ public interface OfferTemplateRs extends IBaseRs {
      * Search offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.
      * 
      * @param offerTemplateCode The offer template's code
+     * @param loadOfferServiceTemplate if true loads the services
+     * @param loadOfferProductTemplate if true loads the products
+     * @param loadServiceChargeTemplate if true load the service charges
+     * @param loadProductChargeTemplate if true load the product charges
      * @param validFrom Offer template validity range - from date
      * @param validTo Offer template validity range - to date
      * @return Return offerTemplateDto containing offerTemplate
@@ -66,7 +70,9 @@ public interface OfferTemplateRs extends IBaseRs {
     @Path("/")
     @GET
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
-            @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+            @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+            @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
+            @QueryParam("loadServiceChargeTemplate") @DefaultValue("false") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") @DefaultValue("false") boolean loadProductChargeTemplate);
 
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
@@ -125,5 +131,29 @@ public interface OfferTemplateRs extends IBaseRs {
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(OfferTemplateDto postData);
+
+    /**
+     * Enable a Offer template with a given code
+     * 
+     * @param code Offer template code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+
+    /**
+     * Disable a Offer template with a given code
+     * 
+     * @param code Offer template code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
 }

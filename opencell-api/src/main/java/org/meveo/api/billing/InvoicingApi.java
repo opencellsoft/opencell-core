@@ -14,6 +14,8 @@ import org.meveo.api.dto.billing.BillingRunDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -44,7 +46,7 @@ public class InvoicingApi extends BaseApi {
     @MeveoParamBean
     private ParamBean paramBean;
 
-    public long createBillingRun(CreateBillingRunDto createBillingRunDto) throws BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public long createBillingRun(CreateBillingRunDto createBillingRunDto) throws MeveoApiException, BusinessApiException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
         String allowManyInvoicing = paramBean.getProperty("billingRun.allowManyInvoicing", "true");
         boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
@@ -90,6 +92,19 @@ public class InvoicingApi extends BaseApi {
         }
         billingRunEntity.setStatus(BillingRunStatusEnum.NEW);
         billingRunService.create(billingRunEntity);
+        
+        // populate customFields
+        try {
+            populateCustomFields(createBillingRunDto.getCustomFields(), billingRunEntity, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
+        
         return billingRunEntity.getId();
     }
 
@@ -102,6 +117,8 @@ public class InvoicingApi extends BaseApi {
 
         BillingRunDto billingRunDtoResult = new BillingRunDto();
         billingRunDtoResult.setFromEntity(billingRunEntity);
+        billingRunDtoResult.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(billingRunEntity));
+        
         return billingRunDtoResult;
     }
 
@@ -127,7 +144,7 @@ public class InvoicingApi extends BaseApi {
             handleMissingParameters();
         }
 
-        if (billingRunId.longValue() <= 0) {
+        if (billingRunId == null || billingRunId.longValue() <= 0) {
             throw new BusinessApiException("The billingRunId should be a positive value");
         }
 
@@ -187,8 +204,9 @@ public class InvoicingApi extends BaseApi {
         if (BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
             throw new BusinessApiException("Cannot cancel a VALIDATED billingRun");
         }
-        billingRunService.cancel(billingRun);
-        billingRunService.cleanBillingRun(billingRun);
+        
+        billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
+        billingRunService.cancelAsync(billingRun.getId());
     }
 
 }

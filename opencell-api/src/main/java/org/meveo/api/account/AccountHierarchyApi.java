@@ -25,7 +25,6 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.AddressDto;
-import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
@@ -59,7 +58,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
@@ -72,8 +70,6 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
@@ -101,10 +97,10 @@ import org.meveo.util.MeveoParamBean;
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author akadid abdelmounaim
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
-
-@SuppressWarnings("deprecation")
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class AccountHierarchyApi extends BaseApi {
@@ -165,7 +161,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
-
+    
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
@@ -250,10 +246,22 @@ public class AccountHierarchyApi extends BaseApi {
         currencyApi.findOrCreate(postData.getCurrencyCode());
         languageApi.findOrCreate(postData.getLanguageCode());
 
-        sellerDto.setCountryCode(postData.getCountryCode());
-        sellerDto.setCurrencyCode(postData.getCurrencyCode());
-        sellerDto.setLanguageCode(postData.getLanguageCode());
-        sellerApi.createOrUpdate(sellerDto);
+        boolean updateSeller = false;
+        if (!postData.getCountryCode().equals(sellerDto.getCountryCode())) {
+            sellerDto.setCountryCode(postData.getCountryCode());
+            updateSeller = true;
+        }
+        if (!postData.getCurrencyCode().equals(sellerDto.getCurrencyCode())) {
+            sellerDto.setCurrencyCode(postData.getCurrencyCode());
+            updateSeller = true;
+        }
+        if (!postData.getLanguageCode().equals(sellerDto.getLanguageCode())) {
+            sellerDto.setLanguageCode(postData.getLanguageCode());
+            updateSeller = true;
+        }
+        if (updateSeller) {
+            sellerApi.createOrUpdate(sellerDto);
+        }
 
         String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         if (postData.getUsePrefix() != null && !postData.getUsePrefix()) {
@@ -929,206 +937,46 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         Seller seller = null;
-        AccountEntity accountEntity = null;
-
+        
         if (accountHierarchyTypeEnum.getHighLevel() == 4) {
             // create seller
             log.debug("create seller");
-
-            if (StringUtils.isBlank(postData.getSeller())) {
-                postData.setSeller(postData.getCode());
-            }
-
-            SellerDto sellerDto = new SellerDto();
-            sellerDto.setCode(postData.getSeller());
-            sellerDto.setDescription(postData.getDescription());
-            sellerDto.setCountryCode(postData.getCountry());
-            sellerDto.setCurrencyCode(postData.getCurrency());
-            sellerDto.setLanguageCode(postData.getLanguage());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                sellerDto.setCustomFields(cfsDto);
-            }
-
+            
+            SellerDto sellerDto = createSellerDto(postData);
             seller = sellerApi.create(sellerDto, true, businessAccountModel);
         }
 
+        AccountEntity accountEntity = null;
+        
         if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
-            // create customer
+           // create customer
             log.debug("create cust");
-
-            CustomerDto customerDto = new CustomerDto();
-            customerDto.setCode(postData.getCode());
-            customerDto.setDescription(postData.getDescription());
-            customerDto.setCustomerCategory(postData.getCustomerCategory());
-            customerDto.setCustomerBrand(postData.getCustomerBrand());
-            if (accountHierarchyTypeEnum.getHighLevel() == 3) {
-                customerDto.setSeller(postData.getCrmParentCode());
-            } else {
-                customerDto.setSeller(postData.getCode());
-            }
-            customerDto.setMandateDate(postData.getMandateDate());
-            customerDto.setMandateIdentification(postData.getMandateIdentification());
-            customerDto.setName(postData.getName());
-            customerDto.setAddress(postData.getAddress());
-            customerDto.setContactInformation(postData.getContactInformation());
-            customerDto.setExternalRef1(postData.getExternalRef1());
-            customerDto.setExternalRef2(postData.getExternalRef2());
-            customerDto.setRegistrationNo(postData.getRegistrationNo());
-            customerDto.setVatNo(postData.getVatNo());
-            customerDto.setJobTitle(postData.getJobTitle());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                customerDto.setCustomFields(cfsDto);
-            }
-
+            
+            CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
             accountEntity = customerApi.create(customerDto, true, businessAccountModel);
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 2 && accountHierarchyTypeEnum.getLowLevel() <= 2) {
-            // create customer account
+           // create customer account
             log.debug("create ca");
-
-            CustomerAccountDto customerAccountDto = new CustomerAccountDto();
-            customerAccountDto.setCode(postData.getCode());
-            customerAccountDto.setDescription(postData.getDescription());
-            if (accountHierarchyTypeEnum.getHighLevel() == 2) {
-                customerAccountDto.setCustomer(postData.getCrmParentCode());
-            } else {
-                customerAccountDto.setCustomer(postData.getCode());
-            }
-            customerAccountDto.setCurrency(postData.getCurrency());
-            customerAccountDto.setLanguage(postData.getLanguage());
-            customerAccountDto.setStatus(postData.getCaStatus());
-            customerAccountDto.setCreditCategory(postData.getCreditCategory());
-            customerAccountDto.setDateStatus(postData.getDateStatus());
-            customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
-            customerAccountDto.setContactInformation(postData.getContactInformation());
-            customerAccountDto.setDunningLevel(postData.getDunningLevel());
-            customerAccountDto.setName(postData.getName());
-            customerAccountDto.setAddress(postData.getAddress());
-            customerAccountDto.setExternalRef1(postData.getExternalRef1());
-            customerAccountDto.setExternalRef2(postData.getExternalRef2());
-            customerAccountDto.setJobTitle(postData.getJobTitle());
-
-            if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
-                customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
-                // Start compatibility with pre-4.6 versions
-            } else if (postData.getPaymentMethod() != null) {
-                customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData, false));
-            }
-            // End compatibility with pre-4.6 versions
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                customerAccountDto.setCustomFields(cfsDto);
-            }
-
+            
+            CustomerAccountDto customerAccountDto = createCustomerAccountDto(postData, accountHierarchyTypeEnum);
             accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel);
         }
 
-        if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1)
-
-        {
+        if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
             // create billing account
             log.debug("create ba");
-
-            BillingAccountDto billingAccountDto = new BillingAccountDto();
-            billingAccountDto.setCode(postData.getCode());
-            billingAccountDto.setDescription(postData.getDescription());
-            if (accountHierarchyTypeEnum.getHighLevel() == 1) {
-                billingAccountDto.setCustomerAccount(postData.getCrmParentCode());
-            } else {
-                billingAccountDto.setCustomerAccount(postData.getCode());
-            }
-            billingAccountDto.setBillingCycle(postData.getBillingCycle());
-            billingAccountDto.setCountry(postData.getCountry());
-            billingAccountDto.setLanguage(postData.getLanguage());
-            billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
-            billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-            billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
-            billingAccountDto.setStatus(postData.getBaStatus());
-            billingAccountDto.setTerminationReason(postData.getTerminationReason());
-            billingAccountDto.setEmail(postData.getEmail());
-            billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
-            billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
-            billingAccountDto.setName(postData.getName());
-            billingAccountDto.setAddress(postData.getAddress());
-            billingAccountDto.setExternalRef1(postData.getExternalRef1());
-            billingAccountDto.setExternalRef2(postData.getExternalRef2());
-            billingAccountDto.setJobTitle(postData.getJobTitle());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                billingAccountDto.setCustomFields(cfsDto);
-            }
-
+            
+            BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
             accountEntity = billingAccountApi.create(billingAccountDto, true, businessAccountModel);
         }
 
         if (accountHierarchyTypeEnum.getHighLevel() >= 0 && accountHierarchyTypeEnum.getLowLevel() <= 0) {
             // create user account
             log.debug("create ua");
-
-            UserAccountDto userAccountDto = new UserAccountDto();
-            userAccountDto.setCode(postData.getCode());
-            userAccountDto.setDescription(postData.getDescription());
-            if (accountHierarchyTypeEnum.getHighLevel() == 0) {
-                userAccountDto.setBillingAccount(postData.getCrmParentCode());
-            } else {
-                userAccountDto.setBillingAccount(postData.getCode());
-            }
-            userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-            userAccountDto.setTerminationReason(postData.getTerminationReason());
-            userAccountDto.setStatus(postData.getUaStatus());
-            userAccountDto.setName(postData.getName());
-            userAccountDto.setAddress(postData.getAddress());
-            userAccountDto.setExternalRef1(postData.getExternalRef1());
-            userAccountDto.setExternalRef2(postData.getExternalRef2());
-            userAccountDto.setJobTitle(postData.getJobTitle());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                userAccountDto.setCustomFields(cfsDto);
-            }
-
+            
+            UserAccountDto userAccountDto = createUserAccountDto(postData, accountHierarchyTypeEnum);
             accountEntity = userAccountApi.create(userAccountDto, true, businessAccountModel);
         }
 
@@ -1139,6 +987,243 @@ public class AccountHierarchyApi extends BaseApi {
                 log.error("Failed to execute a script {}. {}", businessAccountModel.getScript().getCode(), e);
             }
         }
+    }
+
+    /**
+     * 
+     * @param postData
+     * @param accountHierarchyTypeEnum
+     * @param businessAccountModel
+     * @return the created User Account DTO
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    private UserAccountDto createUserAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
+            throws MeveoApiException, BusinessException {
+
+        UserAccountDto userAccountDto = new UserAccountDto();
+        userAccountDto.setCode(postData.getCode());
+        userAccountDto.setDescription(postData.getDescription());
+        if (accountHierarchyTypeEnum.getHighLevel() == 0) {
+            userAccountDto.setBillingAccount(postData.getCrmParentCode());
+        } else {
+            userAccountDto.setBillingAccount(postData.getCode());
+        }
+        userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
+        userAccountDto.setTerminationReason(postData.getTerminationReason());
+        userAccountDto.setStatus(postData.getUaStatus());
+        userAccountDto.setName(postData.getName());
+        userAccountDto.setAddress(postData.getAddress());
+        userAccountDto.setExternalRef1(postData.getExternalRef1());
+        userAccountDto.setExternalRef2(postData.getExternalRef2());
+        userAccountDto.setJobTitle(postData.getJobTitle());
+
+        CustomFieldsDto cfsDto = new CustomFieldsDto();
+        if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
+            for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+                if (cfts.containsKey(cfDto.getCode())) {
+                    cfsDto.getCustomField().add(cfDto);
+                }
+            }
+
+            userAccountDto.setCustomFields(cfsDto);
+        }
+
+        return userAccountDto;
+    }
+
+    /**
+     * 
+     * @param postData
+     * @param accountHierarchyTypeEnum
+     * @param businessAccountModel
+     * @return the created billing account
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    private BillingAccountDto createBillingAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
+            throws MeveoApiException, BusinessException {
+       
+        BillingAccountDto billingAccountDto = new BillingAccountDto();
+        billingAccountDto.setCode(postData.getCode());
+        billingAccountDto.setDescription(postData.getDescription());
+        if (accountHierarchyTypeEnum.getHighLevel() == 1) {
+            billingAccountDto.setCustomerAccount(postData.getCrmParentCode());
+        } else {
+            billingAccountDto.setCustomerAccount(postData.getCode());
+        }
+        billingAccountDto.setBillingCycle(postData.getBillingCycle());
+        billingAccountDto.setCountry(postData.getCountry());
+        billingAccountDto.setLanguage(postData.getLanguage());
+        billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
+        billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
+        billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
+        billingAccountDto.setStatus(postData.getBaStatus());
+        billingAccountDto.setTerminationReason(postData.getTerminationReason());
+        billingAccountDto.setEmail(postData.getEmail());
+        billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+        billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
+        billingAccountDto.setName(postData.getName());
+        billingAccountDto.setAddress(postData.getAddress());
+        billingAccountDto.setExternalRef1(postData.getExternalRef1());
+        billingAccountDto.setExternalRef2(postData.getExternalRef2());
+        billingAccountDto.setJobTitle(postData.getJobTitle());
+
+        CustomFieldsDto cfsDto = new CustomFieldsDto();
+        if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
+            for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+                if (cfts.containsKey(cfDto.getCode())) {
+                    cfsDto.getCustomField().add(cfDto);
+                }
+            }
+
+            billingAccountDto.setCustomFields(cfsDto);
+        }
+
+        return billingAccountDto;
+    }
+
+    /**
+     * 
+     * @param postData
+     * @param accountHierarchyTypeEnum
+     * @param businessAccountModel
+     * @return the created Customer account dto
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    private CustomerAccountDto createCustomerAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
+            throws MeveoApiException, BusinessException {
+
+        CustomerAccountDto customerAccountDto = new CustomerAccountDto();
+        customerAccountDto.setCode(postData.getCode());
+        customerAccountDto.setDescription(postData.getDescription());
+        if (accountHierarchyTypeEnum.getHighLevel() == 2) {
+            customerAccountDto.setCustomer(postData.getCrmParentCode());
+        } else {
+            customerAccountDto.setCustomer(postData.getCode());
+        }
+        customerAccountDto.setCurrency(postData.getCurrency());
+        customerAccountDto.setLanguage(postData.getLanguage());
+        customerAccountDto.setStatus(postData.getCaStatus());
+        customerAccountDto.setCreditCategory(postData.getCreditCategory());
+        customerAccountDto.setDateStatus(postData.getDateStatus());
+        customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
+        customerAccountDto.setContactInformation(postData.getContactInformation());
+        customerAccountDto.setDunningLevel(postData.getDunningLevel());
+        customerAccountDto.setName(postData.getName());
+        customerAccountDto.setAddress(postData.getAddress());
+        customerAccountDto.setExternalRef1(postData.getExternalRef1());
+        customerAccountDto.setExternalRef2(postData.getExternalRef2());
+        customerAccountDto.setJobTitle(postData.getJobTitle());
+
+        if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+            customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+            // Start compatibility with pre-4.6 versions
+        } else if (postData.getPaymentMethod() != null) {
+            customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData, false));
+        }
+        // End compatibility with pre-4.6 versions
+
+        CustomFieldsDto cfsDto = new CustomFieldsDto();
+        if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
+            for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+                if (cfts.containsKey(cfDto.getCode())) {
+                    cfsDto.getCustomField().add(cfDto);
+                }
+            }
+
+            customerAccountDto.setCustomFields(cfsDto);
+        }
+
+        return customerAccountDto;
+    }
+
+    /**
+     * 
+     * @param postData
+     * @param accountHierarchyTypeEnum
+     * @param businessAccountModel
+     * @return the created customer dto
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    private CustomerDto createCustomerDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum)
+            throws MeveoApiException, BusinessException {
+
+        CustomerDto customerDto = new CustomerDto();
+        customerDto.setCode(postData.getCode());
+        customerDto.setDescription(postData.getDescription());
+        customerDto.setCustomerCategory(postData.getCustomerCategory());
+        customerDto.setCustomerBrand(postData.getCustomerBrand());
+        if (accountHierarchyTypeEnum.getHighLevel() == 3) {
+            customerDto.setSeller(postData.getCrmParentCode());
+        } else {
+            customerDto.setSeller(postData.getCode());
+        }
+        customerDto.setMandateDate(postData.getMandateDate());
+        customerDto.setMandateIdentification(postData.getMandateIdentification());
+        customerDto.setName(postData.getName());
+        customerDto.setAddress(postData.getAddress());
+        customerDto.setContactInformation(postData.getContactInformation());
+        customerDto.setExternalRef1(postData.getExternalRef1());
+        customerDto.setExternalRef2(postData.getExternalRef2());
+        customerDto.setRegistrationNo(postData.getRegistrationNo());
+        customerDto.setVatNo(postData.getVatNo());
+        customerDto.setJobTitle(postData.getJobTitle());
+
+        CustomFieldsDto cfsDto = new CustomFieldsDto();
+        if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
+            for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+                if (cfts.containsKey(cfDto.getCode())) {
+                    cfsDto.getCustomField().add(cfDto);
+                }
+            }
+
+            customerDto.setCustomFields(cfsDto);
+        }
+        return customerDto; 
+    }
+
+    /**
+     * 
+     * @param postData
+     * @param businessAccountModel
+     * @return the created seller dto
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    private SellerDto createSellerDto(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
+
+        if (StringUtils.isBlank(postData.getSeller())) {
+            postData.setSeller(postData.getCode());
+        }
+
+        SellerDto sellerDto = new SellerDto();
+        sellerDto.setCode(postData.getSeller());
+        sellerDto.setDescription(postData.getDescription());
+        sellerDto.setCountryCode(postData.getCountry());
+        sellerDto.setCurrencyCode(postData.getCurrency());
+        sellerDto.setLanguageCode(postData.getLanguage());
+        sellerDto.setAddress(postData.getAddress());
+        sellerDto.setContactInformation(postData.getContactInformation());
+
+        CustomFieldsDto cfsDto = new CustomFieldsDto();
+        if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
+            for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
+                if (cfts.containsKey(cfDto.getCode())) {
+                    cfsDto.getCustomField().add(cfDto);
+                }
+            }
+
+            sellerDto.setCustomFields(cfsDto);
+        }
+        return sellerDto;
     }
 
     /**
@@ -1172,75 +1257,22 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         Seller seller = null;
-        AccountEntity accountEntity = null;
 
         if (accountHierarchyTypeEnum.getHighLevel() == 4) {
             // update seller
             log.debug("update seller");
 
-            if (StringUtils.isBlank(postData.getSeller())) {
-                postData.setSeller(postData.getCode());
-            }
-
-            SellerDto sellerDto = new SellerDto();
-            sellerDto.setCode(postData.getSeller());
-            sellerDto.setDescription(postData.getDescription());
-            sellerDto.setCountryCode(postData.getCountry());
-            sellerDto.setCurrencyCode(postData.getCurrency());
-            sellerDto.setLanguageCode(postData.getLanguage());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                sellerDto.setCustomFields(cfsDto);
-            }
-
+            SellerDto sellerDto = createSellerDto(postData); 
             seller = sellerApi.update(sellerDto, true, businessAccountModel);
         }
-
+        
+        AccountEntity accountEntity = null;
+        
         if (accountHierarchyTypeEnum.getHighLevel() >= 3 && accountHierarchyTypeEnum.getLowLevel() <= 3) {
             // update customer
             log.debug("update c");
 
-            CustomerDto customerDto = new CustomerDto();
-            customerDto.setCode(postData.getCode());
-            customerDto.setDescription(postData.getDescription());
-            customerDto.setCustomerCategory(postData.getCustomerCategory());
-            customerDto.setCustomerBrand(postData.getCustomerBrand());
-            if (accountHierarchyTypeEnum.getHighLevel() == 3) {
-                customerDto.setSeller(postData.getCrmParentCode());
-            } else {
-                customerDto.setSeller(postData.getCode());
-            }
-            customerDto.setMandateDate(postData.getMandateDate());
-            customerDto.setMandateIdentification(postData.getMandateIdentification());
-            customerDto.setName(postData.getName());
-            customerDto.setAddress(postData.getAddress());
-            customerDto.setContactInformation(postData.getContactInformation());
-            customerDto.setExternalRef1(postData.getExternalRef1());
-            customerDto.setExternalRef2(postData.getExternalRef2());
-            customerDto.setRegistrationNo(postData.getRegistrationNo());
-            customerDto.setVatNo(postData.getVatNo());
-            customerDto.setJobTitle(postData.getJobTitle());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                customerDto.setCustomFields(cfsDto);
-            }
-
+            CustomerDto customerDto = createCustomerDto(postData, accountHierarchyTypeEnum);
             accountEntity = customerApi.update(customerDto, true, businessAccountModel);
         }
 
@@ -1248,49 +1280,7 @@ public class AccountHierarchyApi extends BaseApi {
             // update customer account
             log.debug("update ca");
 
-            CustomerAccountDto customerAccountDto = new CustomerAccountDto();
-            customerAccountDto.setCode(postData.getCode());
-            customerAccountDto.setDescription(postData.getDescription());
-            if (accountHierarchyTypeEnum.getHighLevel() == 2) {
-                customerAccountDto.setCustomer(postData.getCrmParentCode());
-            } else {
-                customerAccountDto.setCustomer(postData.getCode());
-            }
-            customerAccountDto.setCurrency(postData.getCurrency());
-            customerAccountDto.setLanguage(postData.getLanguage());
-            customerAccountDto.setStatus(postData.getCaStatus());
-            customerAccountDto.setCreditCategory(postData.getCreditCategory());
-            customerAccountDto.setDateStatus(postData.getDateStatus());
-            customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
-            customerAccountDto.setDunningLevel(postData.getDunningLevel());
-            customerAccountDto.setName(postData.getName());
-            customerAccountDto.setAddress(postData.getAddress());
-            customerAccountDto.setContactInformation(postData.getContactInformation());
-            customerAccountDto.setExternalRef1(postData.getExternalRef1());
-            customerAccountDto.setExternalRef2(postData.getExternalRef2());
-            customerAccountDto.setJobTitle(postData.getJobTitle());
-
-            if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
-                customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
-
-                // Start compatibility with pre-4.6 versions
-            } else if (postData.getPaymentMethod() != null) {
-                customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData, true));
-            }
-            // End compatibility with pre-4.6 versions
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                customerAccountDto.setCustomFields(cfsDto);
-            }
-
+            CustomerAccountDto customerAccountDto = createCustomerAccountDto(postData, accountHierarchyTypeEnum);
             accountEntity = customerAccountApi.update(customerAccountDto, true, businessAccountModel);
         }
 
@@ -1298,43 +1288,7 @@ public class AccountHierarchyApi extends BaseApi {
             // update billing account
             log.debug("update ba");
 
-            BillingAccountDto billingAccountDto = new BillingAccountDto();
-            billingAccountDto.setCode(postData.getCode());
-            billingAccountDto.setDescription(postData.getDescription());
-            if (accountHierarchyTypeEnum.getHighLevel() == 1) {
-                billingAccountDto.setCustomerAccount(postData.getCrmParentCode());
-            } else {
-                billingAccountDto.setCustomerAccount(postData.getCode());
-            }
-            billingAccountDto.setBillingCycle(postData.getBillingCycle());
-            billingAccountDto.setCountry(postData.getCountry());
-            billingAccountDto.setLanguage(postData.getLanguage());
-            billingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
-            billingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-            billingAccountDto.setElectronicBilling(postData.getElectronicBilling());
-            billingAccountDto.setStatus(postData.getBaStatus());
-            billingAccountDto.setTerminationReason(postData.getTerminationReason());
-            billingAccountDto.setEmail(postData.getEmail());
-            billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
-            billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
-            billingAccountDto.setName(postData.getName());
-            billingAccountDto.setAddress(postData.getAddress());
-            billingAccountDto.setExternalRef1(postData.getExternalRef1());
-            billingAccountDto.setExternalRef2(postData.getExternalRef2());
-            billingAccountDto.setJobTitle(postData.getJobTitle());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                billingAccountDto.setCustomFields(cfsDto);
-            }
-
+            BillingAccountDto billingAccountDto = createBillingAccountDto(postData, accountHierarchyTypeEnum);
             accountEntity = billingAccountApi.update(billingAccountDto, true, businessAccountModel);
         }
 
@@ -1342,35 +1296,7 @@ public class AccountHierarchyApi extends BaseApi {
             // update user account
             log.debug("update ua");
 
-            UserAccountDto userAccountDto = new UserAccountDto();
-            userAccountDto.setCode(postData.getCode());
-            userAccountDto.setDescription(postData.getDescription());
-            if (accountHierarchyTypeEnum.getHighLevel() == 0) {
-                userAccountDto.setBillingAccount(postData.getCrmParentCode());
-            } else {
-                userAccountDto.setBillingAccount(postData.getCode());
-            }
-            userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
-            userAccountDto.setTerminationReason(postData.getTerminationReason());
-            userAccountDto.setStatus(postData.getUaStatus());
-            userAccountDto.setName(postData.getName());
-            userAccountDto.setAddress(postData.getAddress());
-            userAccountDto.setExternalRef1(postData.getExternalRef1());
-            userAccountDto.setExternalRef2(postData.getExternalRef2());
-            userAccountDto.setJobTitle(postData.getJobTitle());
-
-            CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
-                Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
-                for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
-                    if (cfts.containsKey(cfDto.getCode())) {
-                        cfsDto.getCustomField().add(cfDto);
-                    }
-                }
-
-                userAccountDto.setCustomFields(cfsDto);
-            }
-
+            UserAccountDto userAccountDto = createUserAccountDto(postData, accountHierarchyTypeEnum);
             accountEntity = userAccountApi.update(userAccountDto, true, businessAccountModel);
         }
 
@@ -1436,6 +1362,14 @@ public class AccountHierarchyApi extends BaseApi {
             }
         }
 
+        if (isAccountExist(postData, accountHierarchyTypeEnum)) {
+            updateCRMAccountHierarchy(postData);
+        } else {
+            createCRMAccountHierarchy(postData);
+        }
+    }
+
+    private boolean isAccountExist(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
         boolean accountExist = false;
 
         if (accountHierarchyTypeEnum.getHighLevel() == 4) {
@@ -1464,12 +1398,7 @@ public class AccountHierarchyApi extends BaseApi {
                 accountExist = true;
             }
         }
-
-        if (accountExist) {
-            updateCRMAccountHierarchy(postData);
-        } else {
-            createCRMAccountHierarchy(postData);
-        }
+        return accountExist;
     }
 
     /**
@@ -1628,8 +1557,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public void accountEntityToDto(AccountDto dto, AccountEntity account, CustomFieldInheritanceEnum inheritCF) {
-        dto.setCode(account.getCode());
-        dto.setDescription(account.getDescription());
+        dto.setAuditable(account);
         dto.setExternalRef1(account.getExternalRef1());
         dto.setExternalRef2(account.getExternalRef2());
         dto.setJobTitle(account.getJobTitle());
@@ -1639,8 +1567,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (account.getAddress() != null) {
             dto.setAddress(new AddressDto(account.getAddress()));
         }
-        dto.setCreated(account.getAuditable().getCreated());
-
+        
         BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
 
         if (businessAccountModel != null) {
@@ -1655,27 +1582,8 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF) {
-        CustomerDto dto = new CustomerDto();
+        CustomerDto dto = new CustomerDto(customer);
         accountEntityToDto(dto, customer, inheritCF);
-
-        dto.setVatNo(customer.getVatNo());
-        dto.setRegistrationNo(customer.getRegistrationNo());
-
-        if (customer.getCustomerCategory() != null) {
-            dto.setCustomerCategory(customer.getCustomerCategory().getCode());
-        }
-
-        if (customer.getCustomerBrand() != null) {
-            dto.setCustomerBrand(customer.getCustomerBrand().getCode());
-        }
-
-        if (customer.getSeller() != null) {
-            dto.setSeller(customer.getSeller().getCode());
-        }
-
-        if (customer.getContactInformation() != null) {
-            dto.setContactInformation(new ContactInformationDto(customer.getContactInformation()));
-        }
 
         if (!dto.isLoaded() && customer.getCustomerAccounts() != null) {
             dto.setCustomerAccounts(new CustomerAccountsDto());
@@ -1694,34 +1602,8 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF) {
-        CustomerAccountDto dto = new CustomerAccountDto();
-        accountEntityToDto(dto, ca, inheritCF);
-
-        if (ca.getCustomer() != null) {
-            dto.setCustomer(ca.getCustomer().getCode());
-        }
-
-        if (ca.getTradingCurrency() != null) {
-            dto.setCurrency(ca.getTradingCurrency().getCurrencyCode());
-        }
-
-        if (ca.getTradingLanguage() != null) {
-            dto.setLanguage(ca.getTradingLanguage().getLanguageCode());
-        }
-
-        dto.setStatus(ca.getStatus());
-        dto.setDateStatus(ca.getDateStatus());
-        try {
-            dto.setCreditCategory(ca.getCreditCategory().getCode());
-        } catch (NullPointerException ex) {
-        }
-        dto.setDunningLevel(ca.getDunningLevel());
-        dto.setDateStatus(ca.getDateStatus());
-        dto.setDateDunningLevel(ca.getDateDunningLevel());
-        if (ca.getContactInformation() != null) {
-            dto.setContactInformation(new ContactInformationDto(ca.getContactInformation()));
-        }
-        dto.setDueDateDelayEL(ca.getDueDateDelayEL());
+        CustomerAccountDto dto = new CustomerAccountDto(ca);
+        accountEntityToDto(dto, ca, inheritCF);        
 
         if (!dto.isLoaded() && ca.getBillingAccounts() != null) {
             dto.setBillingAccounts(new BillingAccountsDto());
@@ -1730,20 +1612,8 @@ public class AccountHierarchyApi extends BaseApi {
                 dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba, inheritCF));
             }
         }
-
-        if (ca.getPaymentMethods() != null && !ca.getPaymentMethods().isEmpty()) {
-            dto.setPaymentMethods(new ArrayList<>());
-            for (PaymentMethod paymentMethod : ca.getPaymentMethods()) {
-                dto.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
-            }
-
-            // Start compatibility with pre-4.6 versions
-            dto.setPaymentMethod(ca.getPaymentMethods().get(0).getPaymentType());
-            // End compatibility with pre-4.6 versions
-        }
-
-        dto.setExcludedFromPayment(ca.isExcludedFromPayment());
         dto.setLoaded(true);
+        
         return dto;
     }
 
@@ -1752,35 +1622,8 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF) {
-
-        BillingAccountDto dto = new BillingAccountDto();
+        BillingAccountDto dto = new BillingAccountDto(ba);
         accountEntityToDto(dto, ba, inheritCF);
-
-        if (ba.getCustomerAccount() != null) {
-            dto.setCustomerAccount(ba.getCustomerAccount().getCode());
-        }
-        BillingCycle billingCycle = ba.getBillingCycle();
-        if (billingCycle != null) {
-            dto.setBillingCycle(billingCycle.getCode());
-            dto.setInvoicingThreshold(billingCycle.getInvoicingThreshold());
-        }
-        if (ba.getTradingCountry() != null) {
-            dto.setCountry(ba.getTradingCountry().getCountryCode());
-        }
-        if (ba.getTradingLanguage() != null) {
-            dto.setLanguage(ba.getTradingLanguage().getLanguageCode());
-        }
-        dto.setNextInvoiceDate(ba.getNextInvoiceDate());
-        dto.setSubscriptionDate(ba.getSubscriptionDate());
-        dto.setTerminationDate(ba.getTerminationDate());
-        dto.setElectronicBilling(ba.getElectronicBilling());
-        dto.setStatus(ba.getStatus());
-        dto.setStatusDate(ba.getStatusDate());
-        dto.setPhone(ba.getPhone());
-        if (ba.getTerminationReason() != null) {
-            dto.setTerminationReason(ba.getTerminationReason().getCode());
-        }
-        dto.setEmail(ba.getEmail());
 
         if (!dto.isLoaded() && ba.getUsersAccounts() != null) {
             for (UserAccount userAccount : ba.getUsersAccounts()) {
@@ -1789,22 +1632,6 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         dto.setLoaded(true);
-
-        if (ba.getDiscountPlan() != null) {
-            dto.setDiscountPlan(ba.getDiscountPlan().getCode());
-        }
-
-        // Start compatibility with pre-4.6 versions
-
-        PaymentMethod paymentMethod = ba.getCustomerAccount().getPreferredPaymentMethod();
-        if (paymentMethod != null) {
-            dto.setPaymentMethod(paymentMethod.getPaymentType());
-            if (paymentMethod instanceof DDPaymentMethod) {
-                dto.setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
-            }
-        }
-
-        // End compatibility with pre-4.6 versions
         return dto;
 
     }
@@ -1814,31 +1641,10 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public UserAccountDto userAccountToDto(UserAccount ua, CustomFieldInheritanceEnum inheritCF) {
-
-        UserAccountDto dto = new UserAccountDto();
+        UserAccountDto dto = new UserAccountDto(ua);
         accountEntityToDto(dto, ua, inheritCF);
-
-        if (ua.getBillingAccount() != null) {
-            dto.setBillingAccount(ua.getBillingAccount().getCode());
-            dto.setBillingAccountDescription(ua.getBillingAccount().getDescription());
-
-            if (ua.getBillingAccount().getCustomerAccount() != null) {
-                dto.setCustomerAccount(ua.getBillingAccount().getCustomerAccount().getCode());
-                dto.setCustomerAccountDescription(ua.getBillingAccount().getCustomerAccount().getDescription());
-
-                if (ua.getBillingAccount().getCustomerAccount().getCustomer() != null) {
-                    dto.setCustomer(ua.getBillingAccount().getCustomerAccount().getCustomer().getCode());
-                    dto.setCustomerDescription(ua.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
-                }
-            }
-        }
-
-        dto.setSubscriptionDate(ua.getSubscriptionDate());
-        dto.setTerminationDate(ua.getTerminationDate());
-        dto.setStatus(ua.getStatus());
-        dto.setStatusDate(ua.getStatusDate());
+        
         dto.setLoaded(true);
-
         return dto;
     }
 

@@ -8,27 +8,40 @@ import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetBusinessServiceModelResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetBusinessServiceModelResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetBusinessServiceModelResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -6781250820569600144L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6781250820569600144L;
 
-	private BusinessServiceModelDto businessServiceModel;
+    /** The business service model. */
+    private BusinessServiceModelDto businessServiceModel;
 
-	public BusinessServiceModelDto getBusinessServiceModel() {
-		return businessServiceModel;
-	}
+    /**
+     * Gets the business service model.
+     *
+     * @return the business service model
+     */
+    public BusinessServiceModelDto getBusinessServiceModel() {
+        return businessServiceModel;
+    }
 
-	public void setBusinessServiceModel(BusinessServiceModelDto businessServiceModel) {
-		this.businessServiceModel = businessServiceModel;
-	}
+    /**
+     * Sets the business service model.
+     *
+     * @param businessServiceModel the new business service model
+     */
+    public void setBusinessServiceModel(BusinessServiceModelDto businessServiceModel) {
+        this.businessServiceModel = businessServiceModel;
+    }
 
-	@Override
-	public String toString() {
-		return "GetBusinessServiceModelResponseDto [businessServiceModel=" + businessServiceModel + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetBusinessServiceModelResponseDto [businessServiceModel=" + businessServiceModel + "]";
+    }
 }

@@ -15,20 +15,6 @@
     
 	<ui:define name="body">
 
-<!-- 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup" -->
-<!-- 			header="#{messages['invoiceSubCategory.panel']}" -->
-<!-- 			backingBean="#{invoiceSubCategoryBean}" -->
-<!-- 			updateField=":reccuringChargeId:tabView:invoiceSubCategorySelectedId" -->
-<!-- 			selection="#{recurringChargeTemplateBean.entity.invoiceSubCategory}" -->
-<!-- 			searchField1Label="#{messages['invoiceSubCategory.code']}" -->
-<!-- 			searchField1="code" -->
-<!-- 			searchField2Label="#{messages['invoiceSubCategory.description']}" -->
-<!-- 			searchField2="description" -->
-<!-- 			column1Label="#{messages['invoiceSubCategory.code']}" column1="code" -->
-<!-- 			column2Label="#{messages['invoiceSubCategory.description']}" -->
-<!-- 			column2="description"> -->
-<!-- 		</hftl:entityPopup> -->
-
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
@@ -52,14 +38,12 @@
 
 				<p:tab title="#{messages['customer.tab.information']}">
 
-						<hftl:formField label="#{messages['chargeTemplate.code']}"
+                       <hftl:formField label="#{messages['chargeTemplate.code']}"
 							field="code" required="true" validateUnique="true" />
 						<hftl:formField
 							label="#{messages['recurringChargeTemplate.durationTermInMonth']}"
 							field="durationTermInMonth" />
-						<hftl:formField
-							label="#{messages['recurringChargeTemplate.subscriptionProrata']}"
-							field="subscriptionProrata" />
+						<hftl:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />														
 						<hftl:formField
 							label="#{messages['recurringChargeTemplate.terminationProrata']}"
 							field="terminationProrata" />
@@ -106,6 +90,18 @@
                         <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
                             field="edrTemplates" listType="pickUpList" valueLabelField="code"
                             dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
+                        
+
+   						<hftl:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']} EL"
+						   field="subscriptionProrataEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.terminationProrata']} EL"
+						   field="terminationProrataEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.applyInAdvance']} EL"
+						   field="applyInAdvanceEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']} EL"
+						   field="durationTermInMonthEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.calendar']} EL"
+						   field="calendarCodeEl" textArea="true" rows="1" maxlength="2000"/>	
 
 				</p:tab>
 

@@ -7,27 +7,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CalendarDto;
 
 /**
+ * The Class GetCalendarResponse.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetCalendarResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetCalendarResponse extends BaseResponse {
 
-	private static final long serialVersionUID = 2550428385118895687L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 2550428385118895687L;
 
-	private CalendarDto calendar;
+    /** The calendar. */
+    private CalendarDto calendar;
 
-	public CalendarDto getCalendar() {
-		return calendar;
-	}
+    /**
+     * Gets the calendar.
+     *
+     * @return the calendar
+     */
+    public CalendarDto getCalendar() {
+        return calendar;
+    }
 
-	public void setCalendar(CalendarDto calendar) {
-		this.calendar = calendar;
-	}
+    /**
+     * Sets the calendar.
+     *
+     * @param calendar the new calendar
+     */
+    public void setCalendar(CalendarDto calendar) {
+        this.calendar = calendar;
+    }
 
-	@Override
-	public String toString() {
-		return "GetCalendarResponse [calendar=" + calendar + ", toString()=" + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "GetCalendarResponse [calendar=" + calendar + ", toString()=" + super.toString() + "]";
+    }
 
 }

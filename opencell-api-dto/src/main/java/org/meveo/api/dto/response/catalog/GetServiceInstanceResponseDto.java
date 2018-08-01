@@ -8,27 +8,40 @@ import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetServiceInstanceResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetServiceInstanceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetServiceInstanceResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 3293751053613636590L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3293751053613636590L;
 
-	private ServiceInstanceDto serviceInstance;
+    /** The service instance. */
+    private ServiceInstanceDto serviceInstance;
 
-	public ServiceInstanceDto getServiceInstance() {
-		return serviceInstance;
-	}
+    /**
+     * Gets the service instance.
+     *
+     * @return the service instance
+     */
+    public ServiceInstanceDto getServiceInstance() {
+        return serviceInstance;
+    }
 
-	public void setServiceInstance(ServiceInstanceDto serviceInstance) {
-		this.serviceInstance = serviceInstance;
-	}
+    /**
+     * Sets the service instance.
+     *
+     * @param serviceInstance the new service instance
+     */
+    public void setServiceInstance(ServiceInstanceDto serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-	@Override
-	public String toString() {
-		return "GetServiceInstanceResponseDto [serviceInstance=" + serviceInstance + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetServiceInstanceResponseDto [serviceInstance=" + serviceInstance + "]";
+    }
 }

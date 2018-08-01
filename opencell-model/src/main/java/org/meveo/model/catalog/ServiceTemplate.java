@@ -24,6 +24,7 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -40,13 +41,20 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
+import org.meveo.model.billing.SubscriptionRenewal;
 
+/**
+ * This represents a service that is part of an offer. It contains charges of different types.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
+ */
 @Entity
 @ModuleItem
 @ObservableEntity
@@ -67,7 +75,7 @@ import org.meveo.model.annotation.ImageType;
         // @NamedQuery(name = "serviceTemplate.getServicesWithUsagesByChargeTemplate",
         // query = "from ServiceTemplate s left join s.serviceUsageCharges c where c.chargeTemplate=:chargeTemplate")
 })
-public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
+public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 1L;
 
@@ -98,11 +106,22 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
-
+    
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)
     private String imagePath;
+
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
+    
+    @Embedded
+    private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
     @Transient
     private boolean selected;
@@ -264,6 +283,7 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
 		this.instantiatedFromBSM = instantiatedFromBSM;
 	}
+
     public String getDescriptionOverride() {
         return descriptionOverride;
     }
@@ -272,5 +292,28 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
         this.descriptionOverride = descriptionOverride;
     }
 
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
+	public SubscriptionRenewal getServiceRenewal() {
+		return serviceRenewal;
+	}
+
+	public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
+		this.serviceRenewal = serviceRenewal;
+	}
 
 }

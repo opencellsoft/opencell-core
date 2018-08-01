@@ -15,6 +15,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -258,6 +259,7 @@ public class SubscriptionImportService extends ImportService {
 
     }
 
+    @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void activateServices(CheckedSubscription checkSubscription, org.meveo.model.jaxb.subscription.Subscription subscrip) throws SubscriptionServiceException {
         if (checkSubscription.subscription != null && checkSubscription.subscription.getServiceInstances().size() > 0) {

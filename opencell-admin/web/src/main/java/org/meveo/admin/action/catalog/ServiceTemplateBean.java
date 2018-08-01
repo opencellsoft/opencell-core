@@ -31,6 +31,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -40,6 +41,7 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
@@ -74,6 +76,9 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
     @Inject
     private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
+    
+    @Inject
+    private  RecurringChargeTemplateService recurringChargeTemplateService;
 
     private DualListModel<WalletTemplate> usageWallets;
     private DualListModel<WalletTemplate> recurringWallets;
@@ -231,7 +236,11 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
         for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
-            if (!recurringCharge.getChargeTemplate().getApplyInAdvance()) {
+            boolean isApplyInAdvance = recurringCharge.getChargeTemplate().getApplyInAdvance() == null ? false : recurringCharge.getChargeTemplate().getApplyInAdvance();
+            if(!StringUtils.isBlank(recurringCharge.getChargeTemplate().getApplyInAdvanceEl())) {
+                isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringCharge.getChargeTemplate().getApplyInAdvanceEl(), null,entity, recurringCharge.getChargeTemplate());
+            }
+            if (!isApplyInAdvance) {
                 break;
             }
         }
@@ -447,7 +456,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      * 
-     * @throws BusinessException
+     * @param id usage charge identifier
+     * @throws BusinessException General business exception
      */
 
     public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {

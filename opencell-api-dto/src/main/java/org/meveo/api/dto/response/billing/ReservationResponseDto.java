@@ -2,30 +2,57 @@ package org.meveo.api.dto.response.billing;
 
 import java.math.BigDecimal;
 
+/**
+ * The Class ReservationResponseDto.
+ * 
+ * @author anasseh
+ */
 public class ReservationResponseDto {
-	private long ReservationId;
-	private BigDecimal availableQuantity;
+    
+    /** The Reservation id. */
+    private long ReservationId;
+    
+    /** The available quantity. */
+    private BigDecimal availableQuantity;
 
-	public long getReservationId() {
-		return ReservationId;
-	}
+    /**
+     * Gets the reservation id.
+     *
+     * @return the reservation id
+     */
+    public long getReservationId() {
+        return ReservationId;
+    }
 
-	public void setReservationId(long reservationId) {
-		ReservationId = reservationId;
-	}
+    /**
+     * Sets the reservation id.
+     *
+     * @param reservationId the new reservation id
+     */
+    public void setReservationId(long reservationId) {
+        ReservationId = reservationId;
+    }
 
-	public BigDecimal getAvailableQuantity() {
-		return availableQuantity;
-	}
+    /**
+     * Gets the available quantity.
+     *
+     * @return the available quantity
+     */
+    public BigDecimal getAvailableQuantity() {
+        return availableQuantity;
+    }
 
-	public void setAvailableQuantity(BigDecimal availableQuantity) {
-		this.availableQuantity = availableQuantity;
-	}
+    /**
+     * Sets the available quantity.
+     *
+     * @param availableQuantity the new available quantity
+     */
+    public void setAvailableQuantity(BigDecimal availableQuantity) {
+        this.availableQuantity = availableQuantity;
+    }
 
-	@Override
-	public String toString() {
-		return "ReservationResponseDto [ReservationId=" + ReservationId + ", availableQuantity=" + availableQuantity
-				+ "]";
-	}
-
+    @Override
+    public String toString() {
+        return "ReservationResponseDto [ReservationId=" + ReservationId + ", availableQuantity=" + availableQuantity + "]";
+    }
 }

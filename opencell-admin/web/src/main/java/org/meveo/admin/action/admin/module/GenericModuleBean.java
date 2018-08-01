@@ -36,11 +36,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.ViewBean;
-import org.meveo.admin.action.catalog.ScriptInstanceBean;
+import org.meveo.admin.action.script.ScriptInstanceBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -63,7 +63,8 @@ import org.primefaces.model.TreeNode;
  * Meveo module bean
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.1
  */
 
 public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<T> {
@@ -147,7 +148,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
                     return module;
                 }
 
-                for (BaseDto itemDto : dto.getModuleItems()) {
+                for (BaseEntityDto itemDto : dto.getModuleItems()) {
                     TreeNode classNode = getOrCreateNodeByClass(itemDto.getClass().getName());
                     new DefaultTreeNode("item", itemDto, classNode);
                 }
@@ -287,12 +288,15 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         }
     }
 
+    /**
+     * crop module's logo.
+     */
     public void cropLogo() {
         try {
             String originFilename = croppedImage.getOriginalFilename();
             String formatname = originFilename.substring(originFilename.lastIndexOf(".") + 1);
             String filename = String.format("%s.%s", entity.getCode(), formatname);
-            filename.replaceAll(" ", "_");
+            filename = filename.replaceAll(" ", "_");
             log.debug("crop module picture to {}", filename);
             String dest = ModuleUtil.getModulePicturePath(currentUser.getProviderCode()) + File.separator + filename;
             ModuleUtil.cropPicture(dest, croppedImage);
@@ -378,7 +382,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     /**
      * clean uploaded picture
      * 
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     @Override
@@ -392,13 +396,13 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     }
 
     /**
-     * clean uploaded pictures for multi delete
+     * Clean uploaded pictures for multi delete
      * 
-     * @throws Exception
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     @Override
-    public void deleteMany() throws Exception {
+    public void deleteMany() throws BusinessException {
         List<String> files = new ArrayList<String>();
         String source = null;
         for (MeveoModule entity : getSelectedEntities()) {

@@ -30,6 +30,7 @@
         <hftl:formPanel formId="formInvoiceType" edit="#{invoiceTypeBean.edit}" label="#{messages['invoiceType.panel']}" backingBean="#{invoiceTypeBean}">
             <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
             <hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" />
+            <hftl:formField label="#{messages['invoiceType.useSelfSequence']}" field="useSelfSequence"  />
             <hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" popup="true" popupId="searchOccTemplatePopup"
                 required="true" />
             <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code" popup="true"
@@ -43,6 +44,10 @@
                 id="appliesTo" />
             <hftl:formField label="#{messages['invoiceType.pdfFilenameEl']}" field="pdfFilenameEL" textArea="true" rows="1" maxlength="2000" />
             <hftl:formField label="#{messages['invoiceType.xmlFilenameEl']}" field="xmlFilenameEL" textArea="true" rows="1" maxlength="2000" />
+            
+            <hftl:formField label="#{messages['invoiceType.occTemplateEL']}" field="occTemplateCodeEl" textArea="true" rows="1" maxlength="2000" />
+            <hftl:formField label="#{messages['invoiceType.occTemplateNegativeEL']}" field="occTemplateNegativeCodeEl" textArea="true" rows="1" maxlength="2000" />
+            
             <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">
                 <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;" value="#{invoiceTypeBean.entity.sellerSequence}"
                     var="sellerSeq" paginator="false" resizableColumns="true">

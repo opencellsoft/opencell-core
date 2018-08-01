@@ -8,22 +8,35 @@ import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class BusinessAccountModelResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "BusinessAccountModelResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BusinessAccountModelResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 2059945254478663407L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 2059945254478663407L;
 
-	private BusinessAccountModelDto businessAccountModel;
+    /** The business account model. */
+    private BusinessAccountModelDto businessAccountModel;
 
-	public BusinessAccountModelDto getBusinessAccountModel() {
-		return businessAccountModel;
-	}
+    /**
+     * Gets the business account model.
+     *
+     * @return the business account model
+     */
+    public BusinessAccountModelDto getBusinessAccountModel() {
+        return businessAccountModel;
+    }
 
-	public void setBusinessAccountModel(BusinessAccountModelDto businessAccountModel) {
-		this.businessAccountModel = businessAccountModel;
-	}
-
+    /**
+     * Sets the business account model.
+     *
+     * @param businessAccountModel the new business account model
+     */
+    public void setBusinessAccountModel(BusinessAccountModelDto businessAccountModel) {
+        this.businessAccountModel = businessAccountModel;
+    }
 }

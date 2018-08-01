@@ -11,27 +11,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * The Class GetListMeasurableQuantityResponse.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "GetListMeasurableQuantityResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetListMeasurableQuantityResponse extends BaseResponse {	
-	private static final long serialVersionUID = 1L;
-	
+public class GetListMeasurableQuantityResponse extends BaseResponse {
+    
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	@XmlElementWrapper(name="listMeasurableQuantity")
-    @XmlElement(name="measurableQuantity")
-	private List<MeasurableQuantityDto> listMeasurableQuantityDto = new ArrayList<MeasurableQuantityDto>();
+    /** The list measurable quantity dto. */
+    @XmlElementWrapper(name = "listMeasurableQuantity")
+    @XmlElement(name = "measurableQuantity")
+    private List<MeasurableQuantityDto> listMeasurableQuantityDto = new ArrayList<MeasurableQuantityDto>();
 
-	public List<MeasurableQuantityDto> getListMeasurableQuantityDto() {
-		return listMeasurableQuantityDto;
-	}
+    /**
+     * Gets the list measurable quantity dto.
+     *
+     * @return the list measurable quantity dto
+     */
+    public List<MeasurableQuantityDto> getListMeasurableQuantityDto() {
+        return listMeasurableQuantityDto;
+    }
 
-	public void setListMeasurableQuantityDto(List<MeasurableQuantityDto> listMeasurableQuantityDto) {
-		this.listMeasurableQuantityDto = listMeasurableQuantityDto;
-	}
+    /**
+     * Sets the list measurable quantity dto.
+     *
+     * @param listMeasurableQuantityDto the new list measurable quantity dto
+     */
+    public void setListMeasurableQuantityDto(List<MeasurableQuantityDto> listMeasurableQuantityDto) {
+        this.listMeasurableQuantityDto = listMeasurableQuantityDto;
+    }
 
-	@Override
-	public String toString() {
-		return "GetListMeasurableQuantityResponse [listMeasurableQuantityDto=" +( listMeasurableQuantityDto == null ? null : listMeasurableQuantityDto )+ "]";
-	}
+    @Override
+    public String toString() {
+        return "GetListMeasurableQuantityResponse [listMeasurableQuantityDto=" + (listMeasurableQuantityDto == null ? null : listMeasurableQuantityDto) + "]";
+    }
 
 }

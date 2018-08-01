@@ -5,7 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>5.0.1-SNAPSHOT</version>
+	<version>5.1-SNAPSHOT</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -478,6 +478,8 @@
 				<version>2.5.3</version>
 				<scope>test</scope>
 			</dependency>
+			
+			
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.jboss.arquillian.extension</groupId> -->
@@ -561,9 +563,9 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
+					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>2.5</version>
+					<version>3.4.0.905</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -655,6 +657,16 @@
 				<configuration>
 					<skipTests>false</skipTests>
 				</configuration>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.3</version>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-project-info-reports-plugin</artifactId>
+			  <version>2.7</version>
 			</plugin>
 		</plugins>
 

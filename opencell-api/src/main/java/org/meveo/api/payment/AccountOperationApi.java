@@ -16,7 +16,6 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
-import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -48,6 +47,8 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * The Class AccountOperationApi.
  *
  * @author Edward P. Legaspi
+ * @author anasseh
+ * 
  * @lastModifiedVersion 5.0
  */
 @Stateless
@@ -162,11 +163,6 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setTaxAmount(postData.getTaxAmount());
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());
-        if (!StringUtils.isBlank(postData.getExcludedFromDunning())) {
-            accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());
-        } else {
-            accountOperation.setExcludedFromDunning(false);
-        }
 
         // populate customFields
         try {
@@ -246,7 +242,7 @@ public class AccountOperationApi extends BaseApi {
             List<AccountOperation> accountOperations = accountOperationService.list(paginationConfiguration);
             if (accountOperations != null) {
                 for (AccountOperation accountOperation : accountOperations) {
-                    AccountOperationDto accountOperationDto = accountOperationToDto(accountOperation);
+                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, true));
                     result.getAccountOperations().getAccountOperation().add(accountOperationDto);
                 }
             }
@@ -410,15 +406,12 @@ public class AccountOperationApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      */
     public AccountOperationDto find(Long id) throws MeveoApiException {
-        AccountOperationDto result = new AccountOperationDto();
         AccountOperation ao = accountOperationService.findById(id);
         if (ao != null) {
-            result = accountOperationToDto(ao);
+            return new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, true));
         } else {
             throw new EntityDoesNotExistsException(AccountOperation.class, id);
         }
-
-        return result;
     }
 
     /**
@@ -471,62 +464,6 @@ public class AccountOperationApi extends BaseApi {
             ao.setPaymentMethod(paymentMethod);
             accountOperationService.update(ao);
         }
-    }
-
-    /**
-     * Account operation to dto.
-     *
-     * @param accountOp the account op
-     * @return the account operation dto
-     */
-    public AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
-        if (accountOp == null) {
-            return null;
-        }
-        AccountOperationDto accountOperationDto = new AccountOperationDto();
-        accountOperationDto.setId(accountOp.getId());
-        accountOperationDto.setDueDate(accountOp.getDueDate());
-        accountOperationDto.setType(accountOp.getType());
-        accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-        accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
-        accountOperationDto.setReference(accountOp.getReference());
-        if(accountOp.getAccountingCode() != null) {
-            accountOperationDto.setAccountingCode(accountOp.getAccountingCode().getCode());
-            accountOperationDto.setAccountCode(accountOp.getAccountingCode().getCode());
-        }
-        accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-        accountOperationDto.setAmount(accountOp.getAmount());
-        accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-        accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-        accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
-        accountOperationDto.setOccCode(accountOp.getOccCode());
-        accountOperationDto.setOccDescription(accountOp.getOccDescription());
-        accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(accountOp, true));
-        accountOperationDto.setBankLot(accountOp.getBankLot());
-        accountOperationDto.setBankReference(accountOp.getBankReference());
-        accountOperationDto.setDepositDate(accountOp.getDepositDate());
-        accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
-        accountOperationDto.setTaxAmount(accountOp.getTaxAmount());
-        accountOperationDto.setAmountWithoutTax(accountOp.getAmountWithoutTax());
-        accountOperationDto.setOrderNumber(accountOp.getOrderNumber());
-        accountOperationDto.setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null );
-        accountOperationDto.setExcludedFromDunning(accountOp.getExcludedFromDunning());
-        List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-        if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
-            MatchingAmountDto matchingAmountDto = null;
-            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-            matchingAmountsDto.setMatchingAmount(new ArrayList<>());
-            for (MatchingAmount matchingAmount : matchingAmounts) {
-                matchingAmountDto = new MatchingAmountDto();
-                if (matchingAmount.getMatchingCode() != null) {
-                    matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-                }
-                matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-                matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-            }
-            accountOperationDto.setMatchingAmounts(matchingAmountsDto);
-        }
-        return accountOperationDto;
     }
 
     /**

@@ -18,6 +18,8 @@
  */
 package org.meveo.model;
 
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -26,8 +28,14 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * The Class BusinessEntity.
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
+ */
 @MappedSuperclass
-public class BusinessEntity extends EnableEntity implements ISearchable {
+public abstract class BusinessEntity extends AuditableEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +57,7 @@ public class BusinessEntity extends EnableEntity implements ISearchable {
 
     @Transient
     protected boolean appendGeneratedCode = false;
-
+    
     public String getCode() {
         return code;
     }

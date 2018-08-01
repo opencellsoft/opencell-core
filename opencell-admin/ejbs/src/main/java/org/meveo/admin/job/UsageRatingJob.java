@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -27,10 +26,6 @@ public class UsageRatingJob extends Job {
     /** The usage rating job bean. */
     @Inject
     private UsageRatingJobBean usageRatingJobBean;
-
-    /** The resource messages. */
-    @Inject
-    private ResourceBundle resourceMessages;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)

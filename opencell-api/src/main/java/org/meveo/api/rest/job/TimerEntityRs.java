@@ -4,6 +4,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -25,9 +26,9 @@ import org.meveo.api.rest.IBaseRs;
 public interface TimerEntityRs extends IBaseRs {
 
     /**
-     * Create a new timer entity
+     * Create a new timer schedule
      * 
-     * @param postData The timer entity's data
+     * @param postData The timer schedule's data
      * @return Request processing status
      */
     @Path("/create")
@@ -35,9 +36,9 @@ public interface TimerEntityRs extends IBaseRs {
     ActionStatus create(TimerEntityDto postData);
 
     /**
-     * Update an existing timer entity
+     * Update an existing timer schedule
      * 
-     * @param postData The timer entity's data
+     * @param postData The timer schedule's data
      * @return Request processing status
      */
     @Path("/update")
@@ -45,9 +46,9 @@ public interface TimerEntityRs extends IBaseRs {
     ActionStatus update(TimerEntityDto postData);
 
     /**
-     * Create new or update an existing timer entity with a given code
+     * Create new or update an existing timer schedule with a given code
      * 
-     * @param postData The timer entity's data
+     * @param postData The timer schedule's data
      * @return Request processing status
      */
     @Path("/createOrUpdate")
@@ -55,13 +56,33 @@ public interface TimerEntityRs extends IBaseRs {
     ActionStatus createOrUpdate(TimerEntityDto postData);
 
     /**
-     * Find a timer entity with a given code 
+     * Find a timer schedule with a given code
      * 
-     * @param timerEntityCode The timer entity's code
+     * @param timerEntityCode The timer schedule's code
      * @return Return timerEntity
      */
     @Path("/")
     @GET
     GetTimerEntityResponseDto find(@QueryParam("timerEntityCode") String timerEntityCode);
+
+    /**
+     * Enable a Timer schedule with a given code
+     * 
+     * @param code Timer schedule code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Timer schedule with a given code
+     * 
+     * @param code Timer schedule code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 
 }

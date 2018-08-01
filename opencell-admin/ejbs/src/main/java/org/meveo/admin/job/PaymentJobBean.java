@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -21,33 +22,30 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.slf4j.Logger;
 
 /**
- * The Class PaymentJobBean, PaymentJob  implementation.
+ * The Class PaymentJobBean, PaymentJob implementation.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.1
  */
 @Stateless
-public class PaymentJobBean {
+public class PaymentJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
 
     @Inject
-    private AccountOperationService accountOperationService;
+    private CustomerAccountService customerAccountService;
 
     @Inject
     private PaymentAsync paymentAsync;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private PaymentGatewayService paymentGatewayService;
@@ -67,24 +65,28 @@ public class PaymentJobBean {
             Long waitingMillis = new Long(0);
             boolean createAO = true;
             boolean matchingAO = true;
+            Long daysBeforeOrAfterDueDate = null;
+            String paymentPerAOorCA = "CA";
 
             OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
             PaymentMethodEnum paymentMethodType = PaymentMethodEnum.CARD;
 
             PaymentGateway paymentGateway = null;
-            if ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
-                paymentGatewayService.findByCode(((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
+            if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
+                paymentGatewayService.findByCode(((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
             }
             try {
-                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
-                paymentMethodType = PaymentMethodEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                operationCategory = OperationCategoryEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
+                paymentMethodType = PaymentMethodEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                createAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_createAO"));
-                matchingAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_createAO"));
+                createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
+                matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
+                daysBeforeOrAfterDueDate = (Long) this.getParamOrCFValue(jobInstance, "PaymentJob_daysBeforeOrAfterDueDate");
+                paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
 
             } catch (Exception e) {
                 nbRuns = new Long(1);
@@ -92,14 +94,19 @@ public class PaymentJobBean {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
 
-            List<Long> ids = new ArrayList<Long>();
-            if (OperationCategoryEnum.CREDIT == operationCategory) {
-                ids = accountOperationService.getAOidsToPay(paymentMethodType);
-            } else {
-                ids = accountOperationService.getAOidsToRefund(paymentMethodType);
+            Date dueDate = new Date(1);
+            if (daysBeforeOrAfterDueDate != null) {
+                dueDate = DateUtils.addDaysToDate(new Date(), daysBeforeOrAfterDueDate.intValue());
             }
 
-            log.debug("AO to pay:" + ids.size());
+            List<Long> ids = new ArrayList<Long>();
+            if (OperationCategoryEnum.CREDIT == operationCategory) {
+                ids = customerAccountService.getCAidsForPayment(paymentMethodType, dueDate);
+            } else {
+                ids = customerAccountService.getCAidsForRefund(paymentMethodType, dueDate);
+            }
+
+            log.debug("nb CA for payment:" + ids.size());
             result.setNbItemsToProcess(ids.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
@@ -109,7 +116,7 @@ public class PaymentJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
                 futures.add(paymentAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
-                    paymentMethodType, lastCurrentUser));
+                    paymentMethodType, lastCurrentUser, paymentPerAOorCA, dueDate));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

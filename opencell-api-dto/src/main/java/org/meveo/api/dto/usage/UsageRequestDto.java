@@ -7,81 +7,93 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
+/**
+ * The Class UsageRequestDto.
+ * 
+ * @author anasseh
+ */
 @XmlRootElement(name = "UsageRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UsageRequestDto extends BaseDto{
+public class UsageRequestDto extends BaseEntityDto {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@XmlElement(required = true)
-	private String userAccountCode;
-	
-	private Date   fromDate;
-	
-	private Date   toDate;
-	
-	public UsageRequestDto(){
-		
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
+    /** The user account code. */
+    @XmlElement(required = true)
+    private String userAccountCode;
 
+    /** The from date. */
+    private Date fromDate;
 
-	/**
-	 * @return the userAccountCode
-	 */
-	public String getUserAccountCode() {
-		return userAccountCode;
-	}
+    /** The to date. */
+    private Date toDate;
 
+    /**
+     * Instantiates a new usage request dto.
+     */
+    public UsageRequestDto() {
 
+    }
 
-	/**
-	 * @param userAccountCode the userAccountCode to set
-	 */
-	public void setUserAccountCode(String userAccountCode) {
-		this.userAccountCode = userAccountCode;
-	}
+    /**
+     * Gets the user account code.
+     *
+     * @return the userAccountCode
+     */
+    public String getUserAccountCode() {
+        return userAccountCode;
+    }
 
+    /**
+     * Sets the user account code.
+     *
+     * @param userAccountCode the userAccountCode to set
+     */
+    public void setUserAccountCode(String userAccountCode) {
+        this.userAccountCode = userAccountCode;
+    }
 
+    /**
+     * Gets the from date.
+     *
+     * @return the fromDate
+     */
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	/**
-	 * @return the fromDate
-	 */
-	public Date getFromDate() {
-		return fromDate;
-	}
+    /**
+     * Sets the from date.
+     *
+     * @param fromDate the fromDate to set
+     */
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	/**
-	 * @param fromDate the fromDate to set
-	 */
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    /**
+     * Gets the to date.
+     *
+     * @return the toDate
+     */
+    public Date getToDate() {
+        return toDate;
+    }
 
-	/**
-	 * @return the toDate
-	 */
-	public Date getToDate() {
-		return toDate;
-	}
+    /**
+     * Sets the to date.
+     *
+     * @param toDate the toDate to set
+     */
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
 
-	/**
-	 * @param toDate the toDate to set
-	 */
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	@Override
-	public String toString() {
-		return "UsageRequestDto [userAccountCode=" + userAccountCode + ", fromDate=" + fromDate + ", toDate=" + toDate + "]";
-	}
-	
-	
-
+    @Override
+    public String toString() {
+        return "UsageRequestDto [userAccountCode=" + userAccountCode + ", fromDate=" + fromDate + ", toDate=" + toDate + "]";
+    }
 }

@@ -8,141 +8,279 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BaseEntityDto;
 
 /**
+ * The Class ApplyOneShotChargeInstanceRequestDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "ApplyOneShotChargeInstanceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ApplyOneShotChargeInstanceRequestDto extends BaseDto {
+public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
 
-	private static final long serialVersionUID = 3910185882621015476L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3910185882621015476L;
 
-	@XmlElement(required = true)
-	private String oneShotCharge;
+    /** The one shot charge. */
+    @XmlElement(required = true)
+    private String oneShotCharge;
 
-	@XmlElement(required = true)
-	private String subscription;
+    /** The subscription. */
+    @XmlElement(required = true)
+    private String subscription;
 
-	private String wallet;
+    /** The wallet. */
+    private String wallet;
 
-	private Boolean createWallet;
+    /** The create wallet. */
+    private Boolean createWallet;
 
-	@XmlElement(required = true)
-	private Date operationDate;
+    /** The operation date. */
+    @XmlElement(required = true)
+    private Date operationDate;
 
-	private BigDecimal quantity;
+    /** The quantity. */
+    private BigDecimal quantity;
 
-	private String description;
-	private BigDecimal amountWithoutTax;
-	private BigDecimal amountWithTax;
-	private String criteria1;
-	private String criteria2;
-	private String criteria3;
+    /** The description. */
+    private String description;
+    
+    /** The amount without tax. */
+    private BigDecimal amountWithoutTax;
+    
+    /** The amount with tax. */
+    private BigDecimal amountWithTax;
+    
+    /** The criteria 1. */
+    private String criteria1;
+    
+    /** The criteria 2. */
+    private String criteria2;
+    
+    /** The criteria 3. */
+    private String criteria3;
 
-	public String getOneShotCharge() {
-		return oneShotCharge;
-	}
+    /**
+     * Gets the one shot charge.
+     *
+     * @return the one shot charge
+     */
+    public String getOneShotCharge() {
+        return oneShotCharge;
+    }
 
-	public void setOneShotCharge(String oneShotCharge) {
-		this.oneShotCharge = oneShotCharge;
-	}
+    /**
+     * Sets the one shot charge.
+     *
+     * @param oneShotCharge the new one shot charge
+     */
+    public void setOneShotCharge(String oneShotCharge) {
+        this.oneShotCharge = oneShotCharge;
+    }
 
-	public String getWallet() {
-		return wallet;
-	}
+    /**
+     * Gets the wallet.
+     *
+     * @return the wallet
+     */
+    public String getWallet() {
+        return wallet;
+    }
 
-	public void setWallet(String wallet) {
-		this.wallet = wallet;
-	}
+    /**
+     * Sets the wallet.
+     *
+     * @param wallet the new wallet
+     */
+    public void setWallet(String wallet) {
+        this.wallet = wallet;
+    }
 
-	public Boolean getCreateWallet() {
-		return createWallet;
-	}
+    /**
+     * Gets the creates the wallet.
+     *
+     * @return the creates the wallet
+     */
+    public Boolean getCreateWallet() {
+        return createWallet;
+    }
 
-	public void setCreateWallet(Boolean createWallet) {
-		this.createWallet = createWallet;
-	}
+    /**
+     * Sets the creates the wallet.
+     *
+     * @param createWallet the new creates the wallet
+     */
+    public void setCreateWallet(Boolean createWallet) {
+        this.createWallet = createWallet;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    /**
+     * Gets the quantity.
+     *
+     * @return the quantity
+     */
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    /**
+     * Sets the quantity.
+     *
+     * @param quantity the new quantity
+     */
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public Date getOperationDate() {
-		return operationDate;
-	}
+    /**
+     * Gets the operation date.
+     *
+     * @return the operation date
+     */
+    public Date getOperationDate() {
+        return operationDate;
+    }
 
-	public void setOperationDate(Date operationDate) {
-		this.operationDate = operationDate;
-	}
+    /**
+     * Sets the operation date.
+     *
+     * @param operationDate the new operation date
+     */
+    public void setOperationDate(Date operationDate) {
+        this.operationDate = operationDate;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    /**
+     * Gets the amount without tax.
+     *
+     * @return the amount without tax
+     */
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    /**
+     * Sets the amount without tax.
+     *
+     * @param amountWithoutTax the new amount without tax
+     */
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    /**
+     * Gets the amount with tax.
+     *
+     * @return the amount with tax
+     */
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    /**
+     * Sets the amount with tax.
+     *
+     * @param amountWithTax the new amount with tax
+     */
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public String getCriteria1() {
-		return criteria1;
-	}
+    /**
+     * Gets the criteria 1.
+     *
+     * @return the criteria 1
+     */
+    public String getCriteria1() {
+        return criteria1;
+    }
 
-	public void setCriteria1(String criteria1) {
-		this.criteria1 = criteria1;
-	}
+    /**
+     * Sets the criteria 1.
+     *
+     * @param criteria1 the new criteria 1
+     */
+    public void setCriteria1(String criteria1) {
+        this.criteria1 = criteria1;
+    }
 
-	public String getCriteria2() {
-		return criteria2;
-	}
+    /**
+     * Gets the criteria 2.
+     *
+     * @return the criteria 2
+     */
+    public String getCriteria2() {
+        return criteria2;
+    }
 
-	public void setCriteria2(String criteria2) {
-		this.criteria2 = criteria2;
-	}
+    /**
+     * Sets the criteria 2.
+     *
+     * @param criteria2 the new criteria 2
+     */
+    public void setCriteria2(String criteria2) {
+        this.criteria2 = criteria2;
+    }
 
-	public String getCriteria3() {
-		return criteria3;
-	}
+    /**
+     * Gets the criteria 3.
+     *
+     * @return the criteria 3
+     */
+    public String getCriteria3() {
+        return criteria3;
+    }
 
-	public void setCriteria3(String criteria3) {
-		this.criteria3 = criteria3;
-	}
+    /**
+     * Sets the criteria 3.
+     *
+     * @param criteria3 the new criteria 3
+     */
+    public void setCriteria3(String criteria3) {
+        this.criteria3 = criteria3;
+    }
 
-	@Override
-	public String toString() {
-		return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription
-				+ ", wallet=" + wallet + ", operationDate=" + operationDate + ", description=" + description
-				+ ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1="
-				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 +"]";
-	}
+    /**
+     * Gets the subscription.
+     *
+     * @return the subscription
+     */
+    public String getSubscription() {
+        return subscription;
+    }
 
-	public String getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(String subscription) {
-		this.subscription = subscription;
-	}
-
+    /**
+     * Sets the subscription.
+     *
+     * @param subscription the new subscription
+     */
+    public void setSubscription(String subscription) {
+        this.subscription = subscription;
+    }
+    
+    @Override
+    public String toString() {
+        return "ApplyOneShotChargeInstanceDto [oneShotCharge=" + oneShotCharge + ", subscription=" + subscription + ", wallet=" + wallet + ", operationDate=" + operationDate
+                + ", description=" + description + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1=" + criteria1 + ", criteria2="
+                + criteria2 + ", criteria3=" + criteria3 + "]";
+    }
 }

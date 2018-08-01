@@ -6,7 +6,7 @@
         <groupId>com.opencellsoft</groupId>
         <artifactId>opencell</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.1-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-api</artifactId>
     <name>Opencell API</name>
@@ -75,11 +75,11 @@
             <artifactId>validation-api</artifactId>
         </dependency>
 
-        <!-- <dependency> -->
-        <!-- <groupId>org.jboss.resteasy</groupId> -->
-        <!-- <artifactId>resteasy-jaxb-provider</artifactId> -->
-        <!-- <scope>provided</scope> -->
-        <!-- </dependency> -->
+        <dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxb-provider</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
         <!-- <dependency> -->
         <!-- <groupId>org.jboss.resteasy</groupId> -->

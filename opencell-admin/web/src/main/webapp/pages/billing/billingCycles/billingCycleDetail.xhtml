@@ -11,7 +11,7 @@
             <f:viewParam name="objectId" value="#{billingCycleBean.objectId}" />
         </f:metadata>
     </ui:define>
-
+    
 	<ui:define name="body">
 		<hftl:entityPopup id="searchInvoiceTypePopup"
 			header="#{messages['invoiceType.panel']}"
@@ -23,6 +23,16 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="billingCycleScriptPopup"
+			header="#{messages['scriptInstance.popup.header']}"
+			backingBean="#{scriptInstanceBean}"
+			selection="#{billingCycleBean.entity.scriptInstance}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" eventBackingBean="#{billingCycleBean}"
+			updateField=":formBillingCycle:tabView:scriptSelectId :formBillingCycle:tabView:scriptSelectId_text">
 		</hftl:entityPopup>
 
 		<h:form id="crumbmenuForm">
@@ -69,8 +79,19 @@
 				listBean="#{calendarBean}" />
 			<hftl:formField label="#{messages['billingCycle.invoicingThreshold']}"
 				field="invoicingThreshold"	required="false" />
+			
+			<div style="clear: both;">
 			<hftl:formField label="#{messages['invoiceType.name']}" id="invoiceTypeSelectedId" field="invoiceType"  valueLabelField="code"  
 							popup="true" popupId="searchInvoiceTypePopup" showResetButton="true" required="false"/>	
+							
+			<hftl:formField label="#{messages['billingCycle.invoiceTypeEL']}" field="invoiceTypeEl" textArea="true" rows="1" maxlength="2000" />			
+			
+ 			<hftl:formField label="#{messages['billingCycle.type']}" field="type" noSelectionLabel="false" disabled="false" />		
+ 			
+ 			<hftl:formField id="scriptSelectId" label="#{messages['billingCycle.scriptCode']}" field="scriptInstance" valueLabelField="code" required="false"
+    							popup="true" popupId="billingCycleScriptPopup" showResetButton="true" /> 
+			</div>
+							
 			</p:tab>				
 			<hftl:customFields backingBean="#{billingCycleBean}" messagesId=":formBillingCycle:messages" />
 			</p:tabView>							

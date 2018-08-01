@@ -12,31 +12,38 @@ import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * 
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * The Class MeveoInstancesResponseDto.
  *
+ * @author Tyshan Shi(tyshan@manaty.net)
  */
-@XmlRootElement(name="MeveoInstancesResponse")
+@XmlRootElement(name = "MeveoInstancesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeveoInstancesResponseDto extends BaseResponse {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5630363416438814136L;
-	
-	@XmlElementWrapper(name="meveoInstances")
-	@XmlElement(name="meveoInstance")
-	private List<MeveoInstanceDto> meveoInstances;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5630363416438814136L;
 
-	public List<MeveoInstanceDto> getMeveoInstances() {
-		return meveoInstances;
-	}
+    /** The meveo instances. */
+    @XmlElementWrapper(name = "meveoInstances")
+    @XmlElement(name = "meveoInstance")
+    private List<MeveoInstanceDto> meveoInstances;
 
-	public void setMeveoInstances(List<MeveoInstanceDto> meveoInstances) {
-		this.meveoInstances = meveoInstances;
-	}
-	
-	
+    /**
+     * Gets the meveo instances.
+     *
+     * @return the meveo instances
+     */
+    public List<MeveoInstanceDto> getMeveoInstances() {
+        return meveoInstances;
+    }
+
+    /**
+     * Sets the meveo instances.
+     *
+     * @param meveoInstances the new meveo instances
+     */
+    public void setMeveoInstances(List<MeveoInstanceDto> meveoInstances) {
+        this.meveoInstances = meveoInstances;
+    }
+
 }
-

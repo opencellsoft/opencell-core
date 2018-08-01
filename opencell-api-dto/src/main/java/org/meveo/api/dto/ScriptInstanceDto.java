@@ -12,33 +12,52 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 
 /**
+ * The Class ScriptInstanceDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "ScriptInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScriptInstanceDto extends CustomScriptDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4555037251902559699L;
 
+    /** The execution roles. */
     private List<RoleDto> executionRoles = new ArrayList<RoleDto>();
-    private List<RoleDto> sourcingRoles = new ArrayList<RoleDto>();
 
+    /** The sourcing roles. */
+    private List<RoleDto> sourcingRoles = new ArrayList<RoleDto>();
+    
+    private String scriptInstanceCategoryCode;
+
+    /**
+     * Instantiates a new script instance dto.
+     */
     public ScriptInstanceDto() {
         super();
     }
 
-    public ScriptInstanceDto(ScriptInstance e) {
-        super(e.getCode(), e.getDescription(), e.getSourceTypeEnum(), e.getScript());
+    /**
+     * Convert script instance entity to DTO
+     *
+     * @param scriptInstance Entity to convert
+     */
+    public ScriptInstanceDto(ScriptInstance scriptInstance) {
+        super(scriptInstance);
 
-        if (e.getExecutionRoles() != null) {
-            for (Role role : e.getExecutionRoles()) {
+        if (scriptInstance.getExecutionRoles() != null) {
+            for (Role role : scriptInstance.getExecutionRoles()) {
                 executionRoles.add(new RoleDto(role, true, true));
             }
         }
-        if (e.getSourcingRoles() != null) {
-            for (Role role : e.getSourcingRoles()) {
+        if (scriptInstance.getSourcingRoles() != null) {
+            for (Role role : scriptInstance.getSourcingRoles()) {
                 sourcingRoles.add(new RoleDto(role, true, true));
             }
+        }
+        if(scriptInstance.getScriptInstanceCategory() != null) {
+        	scriptInstanceCategoryCode = scriptInstance.getScriptInstanceCategory().getCode();
         }
     }
 
@@ -49,6 +68,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Gets the execution roles.
+     *
      * @return the executionRoles
      */
     public List<RoleDto> getExecutionRoles() {
@@ -56,6 +77,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Sets the execution roles.
+     *
      * @param executionRoles the executionRoles to set
      */
     public void setExecutionRoles(List<RoleDto> executionRoles) {
@@ -63,6 +86,8 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Gets the sourcing roles.
+     *
      * @return the sourcingRoles
      */
     public List<RoleDto> getSourcingRoles() {
@@ -70,21 +95,27 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     /**
+     * Sets the sourcing roles.
+     *
      * @param sourcingRoles the sourcingRoles to set
      */
     public void setSourcingRoles(List<RoleDto> sourcingRoles) {
         this.sourcingRoles = sourcingRoles;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        } else if (!(obj instanceof ScriptInstanceDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
+        
+        if (obj == null || !(obj instanceof ScriptInstanceDto)) { // Fails with proxed objects: getClass() != obj.getClass()){
             return false;
         }
 
@@ -99,4 +130,12 @@ public class ScriptInstanceDto extends CustomScriptDto {
         }
         return true;
     }
+
+	public String getScriptInstanceCategoryCode() {
+		return scriptInstanceCategoryCode;
+	}
+
+	public void setScriptInstanceCategoryCode(String scriptInstanceCategoryCode) {
+		this.scriptInstanceCategoryCode = scriptInstanceCategoryCode;
+	}
 }

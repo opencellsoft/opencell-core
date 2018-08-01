@@ -9,53 +9,110 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 
 /**
+ * The Class CurrencyDto.
+ *
  * @author Edward P. Legaspi
- * 
- *  @deprecated will be renammed to  TradingCurrencyDto
- **/
+ */
 @XmlRootElement(name = "Currency")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyDto extends BaseDto {
+public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
 
-	private static final long serialVersionUID = 9143645109603442839L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 9143645109603442839L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    /**
+     * Currency code
+     */
+    @XmlAttribute(required = true)
+    private String code;
 
-	private String description;
+    /**
+     * Description
+     */
+    private String description;
 
-	public CurrencyDto() {
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
-	}
+    /**
+     * Instantiates a new currency dto.
+     */
+    public CurrencyDto() {
 
-	public CurrencyDto(TradingCurrency e) {
-		code = e.getCurrencyCode();
-		description = e.getPrDescription();
-	}
-	public CurrencyDto(Currency e) {
-		code = e.getCurrencyCode();
-		description = e.getDescriptionEn();
-	}
+    }
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Instantiates a new currency dto.
+     *
+     * @param tradingCurrency the trading currency
+     */
+    public CurrencyDto(TradingCurrency tradingCurrency) {
+        super(tradingCurrency);
+        code = tradingCurrency.getCurrencyCode();
+        description = tradingCurrency.getPrDescription();
+        disabled = tradingCurrency.isDisabled();
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Instantiates a new currency dto.
+     *
+     * @param currency the currency
+     */
+    public CurrencyDto(Currency currency) {
+        code = currency.getCurrencyCode();
+        description = currency.getDescriptionEn();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	@Override
-	public String toString() {
-		return "CurrencyDto [code=" + code + ", description=" + description + "]";
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public String toString() {
+        return "CurrencyDto [code=" + code + ", description=" + description + ", disabled=" + disabled + "]";
+    }
 }

@@ -14,6 +14,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -23,24 +24,23 @@ import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.rating.EDR;
-import org.meveo.service.notification.DefaultObserver;
 
 /**
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * @author Tyshan Shi(tyshan@manaty.net)
  * @since Aug 11, 2016 11:02:44 AM
  **/
-public abstract class BaseNotificationBean<T extends Notification>  extends UpdateMapTypeFieldBean<T>{
+public abstract class BaseNotificationBean<T extends Notification> extends UpdateMapTypeFieldBean<T> {
 
-	private static final long serialVersionUID = 1L;
-	
-	public BaseNotificationBean(){
-	}
-	
-	public BaseNotificationBean(Class<T> clazz){
-		super(clazz);
-	}
+    private static final long serialVersionUID = 1L;
 
-	/**
+    public BaseNotificationBean() {
+    }
+
+    public BaseNotificationBean(Class<T> clazz) {
+        super(clazz);
+    }
+
+    /**
      * Autocomplete method for class filter field - search entity type classes with {@link ObservableEntity} or {@link NotifiableEntity} annotation
      * 
      * @param query A partial class name (including a package)
@@ -61,7 +61,8 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-            if (((clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class))||clazz.isAnnotationPresent(NotifiableEntity.class)) && clazz.getName().toLowerCase().contains(queryLc)) {
+            if (((clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class)) || clazz.isAnnotationPresent(NotifiableEntity.class))
+                    && clazz.getName().toLowerCase().contains(queryLc)) {
                 classNames.add(clazz.getName());
             }
         }
@@ -69,10 +70,13 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
         Collections.sort(classNames);
         return classNames;
     }
+
     /**
-     * filter the event type of the notification by class
+     * Filter the event types of the notification by entity class
+     * 
+     * @return A list of applicable event types
      */
-    public List<NotificationEventTypeEnum> getNotificationEventTypeFilters(){
+    public List<NotificationEventTypeEnum> getNotificationEventTypeFilters() {
         String clazzStr = getEntity().getClassNameFilter();
         if (StringUtils.isBlank(clazzStr)) {
             return null;
@@ -81,10 +85,10 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
     }
 
     /**
-     * get notification eventType by class name filter, refer for {@link NotificationEventTypeEnum} and {@link DefaultObserver}
+     * Filter the event types of the notification by class
      * 
-     * @param clazzStr
-     * @return
+     * @param clazzStr Class
+     * @return A list of applicable event types
      */
     private List<NotificationEventTypeEnum> getEventTypesByClazz(String clazzStr) {
         Class<?> clazz = null;
@@ -108,7 +112,7 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
                 events.add(NotificationEventTypeEnum.REJECTED);
             } else if (clazzStr.equals(CounterPeriod.class.getName())) {
                 events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
-            } else if (clazzStr.equals(Subscription.class.getName())) {
+            } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName())) {
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
             }
         } else if (hasNotificableEntity(clazz)) {
@@ -119,14 +123,14 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
                 events.add(NotificationEventTypeEnum.REJECTED_CDR);
             }
         }
-		return events;
-	}
-	
-	private static boolean hasObservableEntity(Class<?> clazz){
-    	return clazz.isAnnotationPresent(Entity.class)&&clazz.isAnnotationPresent(ObservableEntity.class);
+        return events;
     }
-	private static boolean hasNotificableEntity(Class<?> clazz){
-    	return clazz.isAnnotationPresent(NotifiableEntity.class);
+
+    private static boolean hasObservableEntity(Class<?> clazz) {
+        return clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class);
+    }
+
+    private static boolean hasNotificableEntity(Class<?> clazz) {
+        return clazz.isAnnotationPresent(NotifiableEntity.class);
     }
 }
-

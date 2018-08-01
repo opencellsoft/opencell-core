@@ -49,8 +49,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -79,7 +79,7 @@ import org.meveo.model.quote.Quote;
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
-public class Invoice extends EnableEntity implements ICustomFieldEntity {
+public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -96,7 +96,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     private RecordedInvoice recordedInvoice;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
+    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @Column(name = "invoice_number", length = 50)
     @Size(max = 50)
@@ -158,7 +158,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     private TradingLanguage tradingLanguage;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
+    private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     @Column(name = "comment", length = 1200)
     @Size(max = 1200)
@@ -192,7 +192,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
-    private List<Order> orders = new ArrayList<Order>();
+    private List<Order> orders = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
@@ -215,6 +215,9 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
+    
+    @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal dueBalance;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -534,25 +537,14 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         this.uuid = uuid;
     }
 
+    @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
     }
 
+    @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
-    }
-
-    @Override
-    public CustomFieldValues getCfValuesNullSafe() {
-        if (cfValues == null) {
-            cfValues = new CustomFieldValues();
-        }
-        return cfValues;
-    }
-
-    @Override
-    public void clearCfValues() {
-        cfValues = null;
     }
 
     @Override
@@ -697,4 +689,12 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
         setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
     }
+
+	public BigDecimal getDueBalance() {
+		return dueBalance;
+	}
+
+	public void setDueBalance(BigDecimal dueBalance) {
+		this.dueBalance = dueBalance;
+	}
 }

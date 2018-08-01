@@ -29,6 +29,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
     @Inject
     private CalendarService calendarService;
 
+    @Override
     public CounterTemplate create(CounterTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -39,8 +40,6 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
 
         handleMissingParametersAndValidate(postData);
-
-        
 
         if (counterTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(CounterTemplate.class, postData.getCode());
@@ -58,7 +57,9 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
             counterTemplate.setCounterType(postData.getType());
         }
         counterTemplate.setCeiling(postData.getCeiling());
-        counterTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            counterTemplate.setDisabled(postData.isDisabled());
+        }
         counterTemplate.setCalendar(calendar);
         if (postData.getCounterLevel() != null) {
             counterTemplate.setCounterLevel(postData.getCounterLevel());
@@ -71,6 +72,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         return counterTemplate;
     }
 
+    @Override
     public CounterTemplate update(CounterTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -82,7 +84,6 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
 
         handleMissingParametersAndValidate(postData);
 
-        
         CounterTemplate counterTemplate = counterTemplateService.findByCode(postData.getCode());
         if (counterTemplate == null) {
             throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCode());
@@ -91,14 +92,13 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-        counterTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+        counterTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         counterTemplate.setDescription(postData.getDescription());
         counterTemplate.setUnityDescription(postData.getUnity());
         if (postData.getType() != null) {
             counterTemplate.setCounterType(postData.getType());
         }
         counterTemplate.setCeiling(postData.getCeiling());
-        counterTemplate.setDisabled(postData.isDisabled());
         counterTemplate.setCalendar(calendar);
         if (postData.getCounterLevel() != null) {
             counterTemplate.setCounterLevel(postData.getCounterLevel());
@@ -111,9 +111,6 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         return counterTemplate;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public CounterTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         if (StringUtils.isBlank(code)) {
@@ -126,27 +123,5 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
 
         return new CounterTemplateDto(counterTemplate);
-    }
-    
-    public void remove(String code) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(code)) {
-            missingParameters.add("counterTemplateCode");
-            handleMissingParameters();
-        }
-        CounterTemplate counterTemplate = counterTemplateService.findByCode(code);
-        if (counterTemplate == null) {
-            throw new EntityDoesNotExistsException(CounterTemplate.class, code);
-        }
-
-        counterTemplateService.remove(counterTemplate);
-    }
-
-    @Override
-    public CounterTemplate createOrUpdate(CounterTemplateDto postData) throws MeveoApiException, BusinessException {    	 
-        if (counterTemplateService.findByCode(postData.getCode()) == null) {
-            return create(postData);
-        } else {
-            return update(postData);
-        }
     }
 }

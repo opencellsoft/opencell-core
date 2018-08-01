@@ -23,9 +23,7 @@ import org.slf4j.Logger;
  */
 @Stateless
 public class SecuredBusinessEntityService extends PersistenceService<BusinessEntity> {
-    @Inject
-    protected Logger log;
-
+    
     public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code) {
         if (entityClass == null) {
             return null;

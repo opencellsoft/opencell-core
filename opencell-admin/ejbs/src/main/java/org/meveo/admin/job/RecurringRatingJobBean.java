@@ -25,11 +25,10 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 
 @Stateless
-public class RecurringRatingJobBean implements Serializable {
+public class RecurringRatingJobBean extends BaseJobBean implements Serializable {
 
     private static final long serialVersionUID = 2226065462536318643L;
 
@@ -47,9 +46,6 @@ public class RecurringRatingJobBean implements Serializable {
     private Event<Serializable> rejectededChargeProducer;
 
     @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -63,12 +59,12 @@ public class RecurringRatingJobBean implements Serializable {
             Long waitingMillis = new Long(0);
             Date rateUntilDate = null;
             try {
-                nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
+                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUntilDate");
+                rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
             } catch (Exception e) {
                 nbRuns = new Long(1);
                 waitingMillis = new Long(0);

@@ -8,28 +8,40 @@ import org.meveo.api.dto.payment.WFActionDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
- * 
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * The Class ActionPlanItemResponseDto.
  *
+ * @author Tyshan Shi(tyshan@manaty.net)
  */
-@XmlRootElement(name="ActionPlanItemResponse")
+@XmlRootElement(name = "ActionPlanItemResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActionPlanItemResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -1865272131750462531L;
-	private WFActionDto actionPlanItem;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -1865272131750462531L;
+    
+    /** The action plan item. */
+    private WFActionDto actionPlanItem;
 
-	public void setActionPlanItem(WFActionDto actionPlanItem) {
-		this.actionPlanItem = actionPlanItem;
-	}
-	
-	public WFActionDto getActionPlanItem() {
-		return actionPlanItem;
-	}
-	
-	@Override
-	public String toString() {
-		return "ActionPlanItemDto [ActionPlanItemDto=" + actionPlanItem + "]";
-	}
+    /**
+     * Sets the action plan item.
+     *
+     * @param actionPlanItem the new action plan item
+     */
+    public void setActionPlanItem(WFActionDto actionPlanItem) {
+        this.actionPlanItem = actionPlanItem;
+    }
+
+    /**
+     * Gets the action plan item.
+     *
+     * @return the action plan item
+     */
+    public WFActionDto getActionPlanItem() {
+        return actionPlanItem;
+    }
+
+    @Override
+    public String toString() {
+        return "ActionPlanItemDto [ActionPlanItemDto=" + actionPlanItem + "]";
+    }
 }
-

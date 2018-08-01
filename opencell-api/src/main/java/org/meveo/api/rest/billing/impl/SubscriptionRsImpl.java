@@ -15,6 +15,7 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.RateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
@@ -24,6 +25,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
+import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
@@ -151,15 +153,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
     @Override
     public SubscriptionsListResponseDto listGet(String userAccountCode, Boolean mergedCF, String query, String fields, Integer offset, Integer limit, String sortBy,
-        SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
+            SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
 
         SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
-        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(userAccountCode != null ? "userAccount.code:" + userAccountCode : query, "inheritedCF", offset, limit,
-            sortBy, sortOrder);
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(userAccountCode != null ? "userAccount.code:" + userAccountCode : query, null, offset, limit, sortBy,
+            sortOrder);
 
         try {
-            return subscriptionApi.list(mergedCF, pagingAndFiltering);
+            if(inheritCF != null) {
+                return subscriptionApi.list(pagingAndFiltering, inheritCF);
+            } else {
+                return subscriptionApi.list(mergedCF, pagingAndFiltering);
+            }
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -347,6 +353,17 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             processException(e, result.getActionStatus());
         }
 
+        return result;
+    }
+
+    @Override
+    public RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData) {
+        RateSubscriptionResponseDto result = new RateSubscriptionResponseDto();
+        try {
+            result = subscriptionApi.rateSubscription(postData);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
         return result;
     }
 

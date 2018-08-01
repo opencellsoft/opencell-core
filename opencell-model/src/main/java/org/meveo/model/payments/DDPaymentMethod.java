@@ -41,8 +41,8 @@ public class DDPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public DDPaymentMethod(CustomerAccount customerAccount,boolean isDisabled, String alias,boolean preferred, Date mandateDate,
-			String mandateIdentification, BankCoordinates bankCoordinates) {
+    public DDPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, boolean preferred, Date mandateDate, String mandateIdentification,
+            BankCoordinates bankCoordinates) {
         super();
         setPaymentType(PaymentMethodEnum.CARD);
         setAlias(alias);
@@ -115,7 +115,8 @@ public class DDPaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "DDPaymentMethod [bankCoordinates=" + bankCoordinates + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + "]";
+        return "DDPaymentMethod [ alias = " + getAlias() + ", account_owner = " + bankCoordinates.getAccountOwner() + ",  bank_name = " + bankCoordinates.getBankName() + ","
+                + " bic = " + bankCoordinates.getBic() + ", iban = " + bankCoordinates.getIban() + ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
     }
 
 }

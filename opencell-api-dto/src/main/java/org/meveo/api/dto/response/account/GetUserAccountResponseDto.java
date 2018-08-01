@@ -8,27 +8,40 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.response.BaseResponse;
 
 /**
+ * The Class GetUserAccountResponseDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "GetUserAccountResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetUserAccountResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = -7424258671739985150L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -7424258671739985150L;
 
-	private UserAccountDto userAccount;
+    /** The user account. */
+    private UserAccountDto userAccount;
 
-	public UserAccountDto getUserAccount() {
-		return userAccount;
-	}
+    /**
+     * Gets the user account.
+     *
+     * @return the user account
+     */
+    public UserAccountDto getUserAccount() {
+        return userAccount;
+    }
 
-	public void setUserAccount(UserAccountDto userAccount) {
-		this.userAccount = userAccount;
-	}
+    /**
+     * Sets the user account.
+     *
+     * @param userAccount the new user account
+     */
+    public void setUserAccount(UserAccountDto userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	@Override
-	public String toString() {
-		return "GetUserAccountResponse [userAccount=" + userAccount + ", toString()=" + super.toString() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "GetUserAccountResponse [userAccount=" + userAccount + ", toString()=" + super.toString() + "]";
+    }
 }

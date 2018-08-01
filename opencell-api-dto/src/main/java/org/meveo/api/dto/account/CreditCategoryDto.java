@@ -4,29 +4,40 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.payments.CreditCategory;
 
 /**
+ * The Class CreditCategoryDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "CreditCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CreditCategoryDto extends BusinessDto {
+public class CreditCategoryDto extends BusinessEntityDto {
 
-	private static final long serialVersionUID = 9096295121437014513L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 9096295121437014513L;
 
-	public CreditCategoryDto() {
+    /**
+     * Instantiates a new credit category dto.
+     */
+    public CreditCategoryDto() {
 
-	}
+    }
 
-	public CreditCategoryDto(CreditCategory e) {
-		super(e);
-	}
+    /**
+     * Instantiates a new credit category dto.
+     *
+     * @param creditCategory the CreditCategory entity
+     */
+    public CreditCategoryDto(CreditCategory creditCategory) {
+        super(creditCategory);
+    }
 
-	@Override
-	public String toString() {
-		return "CreditCategoryDto [code=" + getCode() + ", description=" + getDescription() + "]";
-	}
+    @Override
+    public String toString() {
+        return "CreditCategoryDto [code=" + getCode() + ", description=" + getDescription() + "]";
+    }
 
 }

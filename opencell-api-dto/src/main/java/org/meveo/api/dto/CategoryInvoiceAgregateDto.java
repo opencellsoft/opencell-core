@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
@@ -28,25 +29,39 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
+/**
+ * The Class CategoryInvoiceAgregateDto.
+ */
 @XmlRootElement(name = "CategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CategoryInvoiceAgregateDto extends BaseDto {
+public class CategoryInvoiceAgregateDto extends BaseEntityDto {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6165612614574594919L;
 
+	/** The category invoice code. */
 	@XmlElement(required = true)
 	private String categoryInvoiceCode;
+	
+	/** The description. */
 	private String description;
+	
+	/** The list sub category invoice agregate dto. */
 	@XmlElementWrapper
     @XmlElement(name="subCategoryInvoiceAgregateDto",required = true)
 	private List<SubCategoryInvoiceAgregateDto> listSubCategoryInvoiceAgregateDto=new ArrayList<SubCategoryInvoiceAgregateDto>();
 	
 	
+	/**
+	 * Instantiates a new category invoice agregate dto.
+	 */
 	public CategoryInvoiceAgregateDto() {
 	}
 
 
 	/**
+	 * Gets the category invoice code.
+	 *
 	 * @return the categoryInvoiceCode
 	 */
 	public String getCategoryInvoiceCode() {
@@ -55,6 +70,8 @@ public class CategoryInvoiceAgregateDto extends BaseDto {
 
 
 	/**
+	 * Gets the description.
+	 *
 	 * @return the description
 	 */
 	public String getDescription() {
@@ -63,6 +80,8 @@ public class CategoryInvoiceAgregateDto extends BaseDto {
 
 
 	/**
+	 * Sets the description.
+	 *
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
@@ -71,6 +90,8 @@ public class CategoryInvoiceAgregateDto extends BaseDto {
 
 
 	/**
+	 * Sets the category invoice code.
+	 *
 	 * @param categoryInvoiceCode the categoryInvoiceCode to set
 	 */
 	public void setCategoryInvoiceCode(String categoryInvoiceCode) {
@@ -79,6 +100,8 @@ public class CategoryInvoiceAgregateDto extends BaseDto {
 
 
 	/**
+	 * Gets the list sub category invoice agregate dto.
+	 *
 	 * @return the listSubCategoryInvoiceAgregateDto
 	 */
 	public List<SubCategoryInvoiceAgregateDto> getListSubCategoryInvoiceAgregateDto() {
@@ -87,6 +110,8 @@ public class CategoryInvoiceAgregateDto extends BaseDto {
 
 
 	/**
+	 * Sets the list sub category invoice agregate dto.
+	 *
 	 * @param listSubCategoryInvoiceAgregateDto the listSubCategoryInvoiceAgregateDto to set
 	 */
 	public void setListSubCategoryInvoiceAgregateDto(List<SubCategoryInvoiceAgregateDto> listSubCategoryInvoiceAgregateDto) {

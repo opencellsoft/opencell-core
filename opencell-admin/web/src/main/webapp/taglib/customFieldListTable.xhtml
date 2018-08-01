@@ -143,7 +143,9 @@
                 <p:columns value="#{cft.matrixColumns}" var="column" headerText="#{column.label}" sortBy="#{mapValues[column.code]}" style="height:25px;">
                     <p:cellEditor>
                         <f:facet name="output">
-                            <h:outputText value="#{mapValues[column.code]}" styleClass="field-value" />
+                            <h:outputText value="#{mapValues[column.code]}" styleClass="field-value" >
+                            	 <f:converter converterId="org.meveo.util.view.CFMultiValueConverter" />
+                            </h:outputText>
                         </f:facet>
                         <f:facet name="input">
                             <h:inputText value="#{mapValues[column.code]}" size="20" maxlength="50" rendered="#{column.keyType eq CustomFieldMapKeyEnum.STRING}" />

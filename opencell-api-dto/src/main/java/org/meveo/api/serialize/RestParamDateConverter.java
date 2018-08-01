@@ -9,8 +9,10 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Convert string parameter to a date. Example taken from https://docs.jboss.org/resteasy/docs/2.2.1.GA/userguide/html/StringConverter.html
+ * 
  */
 public class RestParamDateConverter implements StringParameterUnmarshaller<Date> {
+
 
     public void setAnnotations(Annotation[] annotations) {
         // DateFormat format = FindAnnotation.findAnnotation(annotations, DateFormat.class);

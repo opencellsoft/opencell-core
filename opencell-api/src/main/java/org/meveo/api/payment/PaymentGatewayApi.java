@@ -53,48 +53,45 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
     @Inject
     private TradingCurrencyService tradingCurrencyService;
 
-    /** The  country service. */
+    /** The country service. */
     @Inject
     private CountryService countryService;
 
-    /**
-     * Creates paymentGateway.
-     *
-     * @param paymentGatewayDto the payment gateway dto
-     * @return the long
-     * @throws MeveoApiException meveo api exception when error happened.
-     * @throws BusinessException  business exception when error happened.
-     */
-    public Long create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
+    @Override
+    public PaymentGateway create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
+        String code = null;
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
-        }
-        if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
-            missingParameters.add("code");
-        }
+            handleMissingParameters();
+            return null;
+        } else if (paymentGatewayDto != null) {
+            code = paymentGatewayDto.getCode();
+            if (StringUtils.isBlank(code)) {
+                missingParameters.add("code");
+            }
+            
+            if (paymentGatewayDto.getType() == null) {
+                missingParameters.add("type");
+            }
 
-        if (paymentGatewayDto.getType() == null) {
-            missingParameters.add("type");
-        }
+            if (paymentGatewayDto.getPaymentMethodType() == null) {
+                missingParameters.add("paymentMethodType");
+            }
 
-        if (paymentGatewayDto.getPaymentMethodType() == null) {
-            missingParameters.add("paymentMethodType");
-        }
-
-        if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM && StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
-            missingParameters.add("scriptInstanceCode");
+            if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM && StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
+                missingParameters.add("scriptInstanceCode");
+            }
         }
 
         handleMissingParameters();
 
-        if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
+        if (paymentGatewayDto != null && paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
             throw new BusinessException("Cant add Natif PaymentGateway");
         }
 
-        PaymentGateway paymentGateway = null;
-        paymentGateway = paymentGatewayService.findByCode(paymentGatewayDto.getCode());
+        PaymentGateway paymentGateway = paymentGatewayService.findByCode(code);
         if (paymentGateway != null) {
-            throw new EntityAlreadyExistsException(PaymentGateway.class, paymentGatewayDto.getCode());
+            throw new EntityAlreadyExistsException(PaymentGateway.class, code);
         }
 
         ScriptInstance scriptInstance = scriptInstanceService.findByCode(paymentGatewayDto.getScriptInstanceCode());
@@ -121,12 +118,16 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setType(paymentGatewayDto.getType());
         paymentGateway.setApplicationEL(paymentGatewayDto.getApplicationEL());
         paymentGateway.setCardType(paymentGatewayDto.getCardType());
-        paymentGateway.setCode(paymentGatewayDto.getCode());
+        paymentGateway.setCode(code);
         paymentGateway.setDescription(paymentGatewayDto.getDescription());
         paymentGateway.setPaymentMethodType(paymentGatewayDto.getPaymentMethodType());
         paymentGateway.setScriptInstance(scriptInstance);
         paymentGateway.setCountry(country);
         paymentGateway.setTradingCurrency(tradingCurrency);
+
+        if (paymentGatewayDto.isDisabled() != null) {
+            paymentGateway.setDisabled(paymentGatewayDto.isDisabled());
+        }
 
         try {
             populateCustomFields(paymentGatewayDto.getCustomFields(), paymentGateway, true, true);
@@ -139,21 +140,20 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
 
         paymentGatewayService.create(paymentGateway);
-        return paymentGateway.getId();
+        return paymentGateway;
     }
 
-    /**
-     * Update paymentGateway.
-     *
-     * @param paymentGatewayDto the payment gateway dto
-     * @throws BusinessException the business exception
-     * @throws MeveoApiException  MeveoApiException
-     */
-    public void update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
+    @Override
+    public PaymentGateway update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
+        String code = null;
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
+            handleMissingParameters();
+            return null;
         }
+
         if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
+            code = paymentGatewayDto.getCode();
             missingParameters.add("code");
         }
         handleMissingParameters();
@@ -163,9 +163,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
 
         PaymentGateway paymentGateway = null;
-        paymentGateway = paymentGatewayService.findByCode(paymentGatewayDto.getCode());
+        paymentGateway = paymentGatewayService.findByCode(code);
         if (paymentGateway == null) {
-            throw new EntityDoesNotExistsException(PaymentGateway.class, paymentGatewayDto.getCode());
+            throw new EntityDoesNotExistsException(PaymentGateway.class, code);
         }
 
         if (!StringUtils.isBlank(paymentGatewayDto.getTradingCurrencyCode())) {
@@ -201,7 +201,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (paymentGatewayDto.getPaymentMethodType() != null) {
             paymentGateway.setPaymentMethodType(paymentGatewayDto.getPaymentMethodType());
         }
-        paymentGateway.setCode(StringUtils.isBlank(paymentGatewayDto.getUpdatedCode()) ? paymentGatewayDto.getCode() : paymentGatewayDto.getUpdatedCode());
+        paymentGateway.setCode(StringUtils.isBlank(paymentGatewayDto.getUpdatedCode()) ? code : paymentGatewayDto.getUpdatedCode());
 
         try {
             populateCustomFields(paymentGatewayDto.getCustomFields(), paymentGateway, true, true);
@@ -213,30 +213,8 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
             throw new BusinessException(e.getMessage());
         }
 
-        paymentGatewayService.update(paymentGateway);
-    }
-
-    /**
-     * Removes paymentGateway.
-     *
-     * @param paymentGatewayCode the payment gateway code
-     * @throws MissingParameterException the missing parameter exception
-     * @throws EntityDoesNotExistsException the entity does not exists exception
-     * @throws BusinessException the business exception
-     */
-    public void remove(String paymentGatewayCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-        if (StringUtils.isBlank(paymentGatewayCode)) {
-            missingParameters.add("paymentGatewayCode");
-        }
-
-        handleMissingParameters();
-
-        PaymentGateway paymentGateway = null;
-        paymentGateway = paymentGatewayService.findByCode(paymentGatewayCode);
-        if (paymentGateway == null) {
-            throw new EntityDoesNotExistsException(PaymentGateway.class, paymentGatewayCode);
-        }
-        paymentGatewayService.remove(paymentGateway);
+        paymentGateway = paymentGatewayService.update(paymentGateway);
+        return paymentGateway;
     }
 
     @Override
@@ -276,32 +254,4 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         }
         return result;
     }
-
-    /**
-     * Creates or update paymentGateway.
-     *
-     * @param paymentGatewayDto the payment gateway dto
-     * @return the long
-     * @throws MeveoApiException the meveo api exception
-     * @throws BusinessException the business exception
-     */
-    @Override
-    public PaymentGateway createOrUpdate(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
-        if (paymentGatewayDto == null) {
-            missingParameters.add("paymentGatewayDto");
-        }
-        if (StringUtils.isBlank(paymentGatewayDto.getCode())) {
-            missingParameters.add("code");
-        }
-        handleMissingParameters();
-        PaymentGateway paymentGateway = null;
-        paymentGateway = paymentGatewayService.findByCode(paymentGatewayDto.getCode());
-        if (paymentGateway == null) {
-            return paymentGatewayService.findById(create(paymentGatewayDto));
-        } else {
-            update(paymentGatewayDto);
-            return paymentGateway;
-        }
-    }
-
 }

@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -140,6 +141,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     /**
      * Method, that is invoked in billing account screen. This method returns invoices associated with current Billing Account.
      * 
+     * @param ba Billing account
+     * @return Data model of Invoice
      */
     public LazyDataModel<Invoice> getBillingAccountInvoices(BillingAccount ba) {
         if (ba.getCode() == null) {
@@ -156,25 +159,24 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return null;
     }
-    
+
     /**
      * Method, that is invoked in billing run screen. This method returns invoices associated with current Billing Run.
      * 
+     * @param br Billing run
+     * @return Data model of invoice
      */
     public LazyDataModel<Invoice> getBillingRunInvoices(BillingRun br) {
         if (br == null) {
             log.warn("billingRun is null");
         } else {
-            filters.put("billingRun", br);           
+            filters.put("billingRun", br);
             return getLazyDataModel();
         }
 
         return null;
     }
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
     @Override
     protected IPersistenceService<Invoice> getPersistenceService() {
         return invoiceService;
@@ -236,6 +238,32 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
         }
+
+        // build sub categories for min amounts
+        InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
+        headerCat.setDescription("-");
+        headerCat.setCode("min_amount");
+
+        LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
+        for (RatedTransaction ratedTransaction : entity.getRatedTransactions()) {
+            if (ratedTransaction.getWallet() == null) {
+                InvoiceSubCategoryDTO headerSubCat = null;
+                if (headerSubCategories.containsKey(ratedTransaction.getCode())) {
+                    headerSubCat = headerSubCategories.get(ratedTransaction.getCode());
+                } else {
+                    headerSubCat = new InvoiceSubCategoryDTO();
+                    headerSubCat.setDescription(ratedTransaction.getDescription());
+                    headerSubCat.setCode(ratedTransaction.getCode());
+                }
+                headerSubCat.getRatedTransactions().add(ratedTransaction);
+                headerSubCat.setAmountWithoutTax(headerSubCat.getAmountWithoutTax().add(ratedTransaction.getAmountWithoutTax()));
+                headerSubCat.setAmountWithTax(headerSubCat.getAmountWithTax().add(ratedTransaction.getAmountWithTax()));
+                headerSubCategories.put(ratedTransaction.getCode(), headerSubCat);
+            }
+        }
+        headerCat.setInvoiceSubCategoryDTOMap(headerSubCategories);
+        headerCategories.put("min_amount", headerCat);
+
         return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
     }
 
@@ -267,6 +295,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "invoice.jasperNotFound"));
         } catch (Exception e) {
             log.error("failed to generate PDF ", e);
+            messages.error(new BundleKey("messages", "invoice.pdfGenerationError"));
         }
     }
 
@@ -303,6 +332,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         } catch (Exception e) {
             log.error("failed to generate xml invoice", e);
+            messages.error(new BundleKey("messages", "invoice.xmlGenerationError"));
         }
 
     }
@@ -388,7 +418,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public boolean isPdfInvoiceAlreadyGenerated() {
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
-    }
+        }
 
         return pdfGenerated.get(entity.getId());
     }
@@ -488,9 +518,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     /**
-     * Detail invoice adjustments.
+     * Detail invoice adjustments without tax.
+     * 
+     * @return Total of invoice adjustment detail unit amount without tax
      */
-
     public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithoutTax() {
         BigDecimal total = new BigDecimal(0);
         if (entity != null && uiRatedTransactions != null) {
@@ -504,6 +535,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return total;
     }
 
+    /**
+     * Detail invoice adjustments with tax.
+     * 
+     * @return Total of invoice adjustment detail unit amount with tax
+     */
     public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithTax() {
         BigDecimal total = new BigDecimal(0);
         if (entity != null && uiRatedTransactions != null) {
@@ -583,26 +619,17 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return adjustedInvoiceIdParam;
     }
-    
-    /**
-     * Saves or Update an invoice
-     * 
-     * @param killConversation kill Conversation
-     * @return outcome page outcome
-     * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
-     */
+
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-      
+
         String outcome = super.saveOrUpdate(killConversation);
-        
+
         if (outcome == null) {
             return getViewAfterSave();
         }
-        
+
         return outcome;
     }
-            
 
     public String saveOrUpdateInvoiceAdjustment() throws Exception {
         if (entity.isTransient()) {
@@ -619,7 +646,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, null, new Date());
+            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {
@@ -663,6 +690,15 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
 
         return detailedInvoiceAdjustment;
+    }
+    
+    /**
+     * Checks if list of selectedEntities is empty to disable or not the exclude button
+     *
+     * @return true, if is exclude ba disabled
+     */
+    public boolean isExcludeBaDisabled() {
+        return CollectionUtils.isEmpty(this.getSelectedEntities());
     }
 
     public Boolean getDetailedParam() {

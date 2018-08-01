@@ -85,11 +85,11 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
      */
     @SuppressWarnings("unchecked")
     protected P findByCode(String code, List<String> fetchFields, String additionalSql, Object... additionalParameters) {
-        
+
         if (StringUtils.isBlank(code)) {
             return null;
         }
-        
+
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields);
         qb.addCriterion("be.code", "=", code, true);
         if (additionalSql != null) {

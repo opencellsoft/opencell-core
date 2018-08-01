@@ -32,6 +32,12 @@ import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
 
+/**
+ *
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
+ */
+
 @Named
 @ViewScoped
 public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldTemplate> {
@@ -78,7 +84,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
         if (entity.getFieldType() == CustomFieldTypeEnum.LIST) {
             entity.setListValues(new TreeMap<String, String>());
-            updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
+            updateListTypeFieldInEntity(entity.getListOrderedValues(), "listValues");
         }
 
         CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo());
@@ -116,7 +122,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     /**
      * Autocomplete method for selecting a class/custom entity template for entity reference type Custom field template
-     * 
+     *
      * @param query Partial value entered
      * @return A list of matching values
      */
@@ -134,7 +140,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     /**
      * Autocomplete method for selecting a custom entity template for child entity reference type Custom field template
-     * 
+     *
      * @param query Partial value entered
      * @return A list of matching values
      */
@@ -152,9 +158,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     /**
      * Autocomplete method for selecting a class that implement ICustomFieldEntity. Return a human readable class name. Used in conjunction with CustomFieldAppliesToConverter
-     * 
+     *
      * @param query Partial class name to match
-     * @return
+     * @return list of class name suggestions
      */
     public List<String> autocompleteClassNamesHuman(String query) {
         List<String> clazzNames = new ArrayList<String>();
@@ -197,7 +203,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             perksSource.add(new CustomFieldMatrixColumn("description", "Description"));
 
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
-                .findByAppliesTo(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())));
+                    .findByAppliesTo(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())));
 
             for (CustomFieldTemplate cft : cfts.values()) {
                 perksSource.add(new CustomFieldMatrixColumn(cft.getCode(), cft.getDescription()));
@@ -229,7 +235,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     /**
      * Validate matrix columns of a custom field template
-     * 
+     *
      * @param cft Custom field template
      */
     public void validateMatrixColumns(CustomFieldTemplate cft) {
@@ -275,8 +281,8 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     /**
      * Copy and associate custom field template with another entity class
-     * 
-     * @throws BusinessException
+     *
+     * @throws BusinessException General business exception
      */
     @ActionMethod
     public void copyCFT() throws BusinessException {

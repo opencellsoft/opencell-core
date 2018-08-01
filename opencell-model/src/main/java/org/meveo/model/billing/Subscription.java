@@ -41,6 +41,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -48,6 +49,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
@@ -65,11 +67,12 @@ import org.meveo.model.shared.DateUtils;
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
-@NamedQueries({ @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date"),
-        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate"),
+@NamedQueries({
+        @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
+        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
-public class Subscription extends BusinessCFEntity {
+public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -156,6 +159,22 @@ public class Subscription extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
+
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_cycle")
+    private BillingCycle billingCycle;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run")
+    private BillingRun billingRun;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -333,6 +352,30 @@ public class Subscription extends BusinessCFEntity {
         this.notifyOfRenewalDate = notifyOfRenewalDate;
     }
 
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+    
+    public BillingCycle getBillingCycle() {
+        return billingCycle;
+    }
+
+    public void setBillingCycle(BillingCycle billingCycle) {
+        this.billingCycle = billingCycle;
+    }
+
     /**
      * Check if renewal notice should be fired for a current date
      * 
@@ -362,32 +405,34 @@ public class Subscription extends BusinessCFEntity {
     /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
      */
-    public void updateSubscribedTillAndRenewalNotifyDates() {
-        if (isRenewed()) {
-            return;
-        }
-        if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
-            if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
-                getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-            }
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(getSubscriptionDate());
-            calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
-            setSubscribedTillDate(calendar.getTime());
+	public void updateSubscribedTillAndRenewalNotifyDates() {
+		if (isRenewed()) {
+			return;
+		}
+		if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+			if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
+				if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
+					getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+				}
+				Calendar calendar = new GregorianCalendar();
+				calendar.setTime(getSubscriptionDate());
+				calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
+				setSubscribedTillDate(calendar.getTime());
 
-        } else {
-            setSubscribedTillDate(null);
-        }
+			} else {
+				setSubscribedTillDate(null);
+			}
+		}
 
-        if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(getSubscribedTillDate());
-            calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
-            setNotifyOfRenewalDate(calendar.getTime());
-        } else {
-            setNotifyOfRenewalDate(null);
-        }
-    }
+		if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(getSubscribedTillDate());
+			calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
+			setNotifyOfRenewalDate(calendar.getTime());
+		} else {
+			setNotifyOfRenewalDate(null);
+		}
+	} 
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
@@ -395,5 +440,21 @@ public class Subscription extends BusinessCFEntity {
         }
 
     }
+    
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
 
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
+    }
+
+    /**
+     * Is subscription active
+     * 
+     * @return True if Status is ACTIVE
+     */
+    public boolean isActive() {
+        return SubscriptionStatusEnum.ACTIVE == status;
+    }
 }
