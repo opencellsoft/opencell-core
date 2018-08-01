@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Edward Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 @Singleton
 @Lock(LockType.WRITE)

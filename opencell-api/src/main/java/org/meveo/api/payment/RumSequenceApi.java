@@ -17,7 +17,7 @@ import org.meveo.service.crm.impl.ProviderService;
  * API class for managing RumSequence. Handles both REST and SOAP calls.
  * 
  * @author Edward P. Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class RumSequenceApi extends BaseApi {
