@@ -46,10 +46,11 @@ public final class CopyRow {
 
     /**
      * Copy row from index from to index to.
-     * @param worksheet
-     * @param from
-     * @param to
-     * @param cfMap
+     * 
+     * @param worksheet Excel work sheet
+     * @param from start index
+     * @param to end index
+     * @param cfMap Conditional Formatting Map
      */
     public static void copyRow(Sheet worksheet, int from, int to, Map<String, ConditionalFormatting> cfMap) {
 
@@ -95,16 +96,20 @@ public final class CopyRow {
     }
 
     /**
-     * @param oldCell
-     * @param newCell
+     * Copy cell style.
+     * 
+     * @param oldCell old Excel cell
+     * @param newCell target Excel cell
      */
     private static void copyCellStyle(Cell oldCell, Cell newCell) {
         newCell.setCellStyle(oldCell.getCellStyle());
     }
 
     /**
-     * @param oldCell
-     * @param newCell
+     * Copy cell Comment.
+     * 
+     * @param oldCell old Excel cell
+     * @param newCell target Excel cell
      */
     private static void copyCellComment(Cell oldCell, Cell newCell) {
         if (newCell.getCellComment() != null) {
@@ -113,8 +118,10 @@ public final class CopyRow {
     }
 
     /**
-     * @param oldCell
-     * @param newCell
+     * copy Cell Hyper link.
+     * 
+     * @param oldCell old Excel cell
+     * @param newCell target Excel cell
      */
     private static void copyCellHyperlink(Cell oldCell, Cell newCell) {
         if (oldCell.getHyperlink() != null) {
@@ -123,8 +130,10 @@ public final class CopyRow {
     }
 
     /**
-     * @param oldCell
-     * @param newCell
+     * copy Cell Data Type And Value.
+     * 
+     * @param oldCell old Excel cell
+     * @param newCell target Excel cell
      */
     private static void copyCellDataTypeAndValue(Cell oldCell, Cell newCell) {
         setCellDataType(oldCell, newCell);
@@ -132,8 +141,10 @@ public final class CopyRow {
     }
 
     /**
-     * @param oldCell
-     * @param newCell
+     * set Cell Data Type.
+     * 
+     * @param oldCell old Excel cell
+     * @param newCell target Excel cell
      */
     @SuppressWarnings("deprecation")
     private static void setCellDataType(Cell oldCell, Cell newCell) {
@@ -141,8 +152,10 @@ public final class CopyRow {
     }
 
     /**
-     * @param oldCell
-     * @param newCell
+     * set Cell Data Value.
+     * 
+     * @param oldCell old Excel cell
+     * @param newCell target Excel cell
      */
     @SuppressWarnings("deprecation")
     private static void setCellDataValue(Cell oldCell, Cell newCell) {
@@ -169,17 +182,21 @@ public final class CopyRow {
     }
 
     /**
-     * @param newRow
-     * @return
+     * Checks if a row exists.
+     * 
+     * @param newRow Excel Row
+     * @return true or false
      */
     private static boolean alreadyExists(Row newRow) {
         return newRow != null;
     }
 
     /**
-     * @param worksheet
-     * @param sourceRow
-     * @param newRow
+     * copy Any Merged Regions.
+     * 
+     * @param worksheet Excel work sheet
+     * @param sourceRow source Excel Row
+     * @param newRow target Excel Row
      */
     private static void copyAnyMergedRegions(Sheet worksheet, Row sourceRow, Row newRow) {
         for (int i = 0; i < worksheet.getNumMergedRegions(); i++) {
@@ -188,10 +205,12 @@ public final class CopyRow {
     }
 
     /**
-     * @param worksheet
-     * @param sourceRow
-     * @param newRow
-     * @param mergedRegion
+     * copy and Merge Region.
+     * 
+     * @param worksheet Excel work sheet
+     * @param sourceRow source Excel Row
+     * @param newRow target Excel Row
+     * @param mergedRegion mergedRegion
      */
     private static void copyMergeRegion(Sheet worksheet, Row sourceRow, Row newRow, CellRangeAddress mergedRegion) {
         CellRangeAddress range = mergedRegion;
