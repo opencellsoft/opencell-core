@@ -650,7 +650,7 @@ public final class FileUtils {
      * 
      * @param file File
      * @return byte string representation of the file
-     * @throws IOException
+     * @throws IOException IO exeption.
      */
     public static String encodeFileToBase64Binary(File file) throws IOException {
         String encodedFile = null;

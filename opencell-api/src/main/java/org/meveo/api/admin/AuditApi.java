@@ -1,12 +1,10 @@
 package org.meveo.api.admin;
 
-import org.meveo.admin.exception.BusinessException;
+import javax.ejb.Stateless;
+
 import org.meveo.api.BaseApi;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.audit.logging.configuration.AuditConfiguration;
 import org.meveo.audit.logging.core.AuditContext;
-
-import javax.ejb.Stateless;
 
 /**
  * @author Mounir Bahije
@@ -19,7 +17,7 @@ public class AuditApi extends BaseApi {
     /**
      * Update audit logging
      * 
-     * @param active
+     * @param active is the audit active
      *
      */
     public void auditActive(Boolean active) {

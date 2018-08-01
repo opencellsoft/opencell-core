@@ -22,6 +22,9 @@ public class ReportExtractExecutionResultService extends PersistenceService<Repo
 
 	/**
 	 * Creates and commits a new ReportExtractExecutionResult in a new transaction.
+	 * 
+	 * @param reportExtractExecutionResult Result of ReportExtract execution.
+	 * @throws BusinessException Business exception.
 	 */
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
