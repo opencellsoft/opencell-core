@@ -70,7 +70,6 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
@@ -487,12 +486,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
      * @param isDraft is an invoice draft
+     * @param minAmountTransactions Min amount rated transactions
      * @return created invoice
      * @throws BusinessException business exception
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions) throws BusinessException {
 
         long startDate = System.currentTimeMillis();
         log.debug("createAgregatesAndInvoice entity={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
@@ -514,6 +514,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
+        
+        if(minAmountTransactions != null) {
+        	for (RatedTransaction minRatedTransaction : minAmountTransactions) {
+				ratedTransactionService.create(minRatedTransaction);
+			}
+        }
 
         List<Invoice> invoiceList = new ArrayList<Invoice>();
         EntityManager em = getEntityManager();
@@ -1709,7 +1715,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         ratedTransactionService.createRatedTransaction(entity, invoiceDate);
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate);
+
+        entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate);
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions());
         
         Invoice invoice = invoices.get(0);
         if (!isDraft) {
