@@ -28,7 +28,7 @@ public class ScriptNotificationDto extends NotificationDto {
     /**
      * Construct dto from a Script Notification entity
      * 
-     * @param scriptNotification
+     * @param scriptNotification Script Notification.
      */
     public ScriptNotificationDto(ScriptNotification scriptNotification) {
         super(scriptNotification);

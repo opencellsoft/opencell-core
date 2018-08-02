@@ -604,6 +604,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * Return list customerAccount ids for payment.
      * 
      * @param paymentMethodEnum payment method.
+     * @param dueDate the due date.
      * @return list of customerAccount ids.
      */
     @SuppressWarnings("unchecked")
@@ -620,6 +621,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * Return list customerAccount ids for refund.
      * 
      * @param paymentMethodEnum payment method.
+     * @param dueDate the due date.
      * @return list of customerAccount ids.
      */
     @SuppressWarnings("unchecked")

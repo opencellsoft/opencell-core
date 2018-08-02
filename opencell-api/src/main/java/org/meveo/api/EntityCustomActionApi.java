@@ -312,15 +312,15 @@ public class EntityCustomActionApi extends BaseApi {
     }
 
     /**
-     * @param actionCode
-     * @param appliesTo
-     * @param entityCode
-     * @return
-     * @throws MeveoApiException
-     * @throws InvalidScriptException
-     * @throws ElementNotFoundException
-     * @throws InvalidPermissionException
-     * @throws BusinessException
+     * @param actionCode Entity custom action code.
+     * @param appliesTo the type of entity to which the CFT applies. eg OFFER, SERVICE.
+     * @param entityCode Entity code to execute action on.
+     * @return GUI redirection or null.
+     * @throws MeveoApiException General API exception.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script.
+     * @throws ElementNotFoundException Script not found.
+     * @throws InvalidPermissionException Insufficient access to run the script.
+     * @throws BusinessException Business exception.
      */
     @SuppressWarnings("rawtypes")
     public String execute(String actionCode, String appliesTo, String entityCode)

@@ -70,11 +70,17 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Mohamed El Youssoufi
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class CustomerApi extends AccountEntityApi {
+
+    /**
+     * Default sort for list call.
+     */
+    private static final String DEFAULT_SORT_ORDER_CODE = "code";
 
     @Inject
     private CustomerService customerService;
@@ -108,7 +114,7 @@ public class CustomerApi extends AccountEntityApi {
     public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
         }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
@@ -197,10 +203,13 @@ public class CustomerApi extends AccountEntityApi {
     public Customer update(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
         }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
+        }
+        if (StringUtils.isBlank(postData.getSeller())) {
+            missingParameters.add("seller");
         }
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
@@ -335,13 +344,13 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) })
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) })
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         if (pagingAndFiltering == null) {
@@ -352,10 +361,15 @@ public class CustomerApi extends AccountEntityApi {
             pagingAndFiltering.addFilter("customerCategory.code", postData.getCustomerCategory());
             pagingAndFiltering.addFilter("seller.code", postData.getSeller());
             pagingAndFiltering.addFilter("customerBrand.code", postData.getCustomerBrand());
-            pagingAndFiltering.addFilter("code", postData.getCode());
+            pagingAndFiltering.addFilter(DEFAULT_SORT_ORDER_CODE, postData.getCode());
         }
 
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, Customer.class);
+        String sortBy = DEFAULT_SORT_ORDER_CODE;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, Customer.class);
 
         Long totalCount = customerService.count(paginationConfig);
 
@@ -380,7 +394,7 @@ public class CustomerApi extends AccountEntityApi {
     public void createBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
             handleMissingParametersAndValidate(postData);
         }
 
@@ -398,7 +412,7 @@ public class CustomerApi extends AccountEntityApi {
     public void updateBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
             handleMissingParametersAndValidate(postData);
         }
 
@@ -425,7 +439,7 @@ public class CustomerApi extends AccountEntityApi {
 
     public void createCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
             handleMissingParametersAndValidate(postData);
         }
 
@@ -449,7 +463,7 @@ public class CustomerApi extends AccountEntityApi {
     public void updateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
             handleMissingParametersAndValidate(postData);
         }
 
@@ -518,7 +532,7 @@ public class CustomerApi extends AccountEntityApi {
     public void createOrUpdateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
             handleMissingParametersAndValidate(postData);
         }
 
@@ -588,7 +602,7 @@ public class CustomerApi extends AccountEntityApi {
     public void createOrUpdateBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            missingParameters.add(DEFAULT_SORT_ORDER_CODE);
             handleMissingParametersAndValidate(postData);
         }
 
@@ -662,6 +676,8 @@ public class CustomerApi extends AccountEntityApi {
      * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
      * zipped file along with the pdf invoices.
      * 
+     * @param customerCode customer code.
+     * @param response Http servlet response.
      * @throws Exception when zipping fail
      */
     public void exportCustomerHierarchy(String customerCode, HttpServletResponse response) throws Exception {

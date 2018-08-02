@@ -101,10 +101,16 @@ import org.meveo.service.order.OrderService;
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Mohamed El Youssoufi
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class SubscriptionApi extends BaseApi {
+
+    /**
+     * Default sort for list call.
+     */
+    private static final String DEFAULT_SORT_ORDER_ID = "id";
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -927,8 +933,13 @@ public class SubscriptionApi extends BaseApi {
     }
 
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+        
+        String sortBy = DEFAULT_SORT_ORDER_ID;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
 
         Long totalCount = subscriptionService.count(paginationConfiguration);
 
@@ -1669,9 +1680,10 @@ public class SubscriptionApi extends BaseApi {
      * Rate subscription.
      *
      * @param postData the post data
+     * @return instance of RateSubscriptionResponseDto.
      * @throws BusinessException the business exception
      * @throws MissingParameterException the missing parameter exception
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parameter exception
      */
     public RateSubscriptionResponseDto rateSubscription(RateSubscriptionRequestDto postData) throws BusinessException, MissingParameterException, InvalidParameterException {
 

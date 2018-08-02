@@ -19,6 +19,7 @@ import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -29,6 +30,8 @@ import org.slf4j.Logger;
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
  * 
  * @author Andrius Karpavicius
+ * @author Edward Legaspi
+ * @lastModifiedVersion 5.2
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -57,7 +60,7 @@ public class ServiceSingleton {
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
      * @param invoiceDate Invoice date
-     * @param invoiceTypeId Invoice type id
+     * @param invoiceType Invoice type
      * @param seller Seller
      * @param cfName CFT name
      * @param incrementBy A number to increment by
@@ -210,5 +213,20 @@ public class ServiceSingleton {
         invoiceTypeService.create(invoiceType);
         return invoiceType;
     }
+
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public RumSequence getNextMandateNumberSequence() {
+    	RumSequence rumSequence = appProvider.getRumSequence();
+    	
+    	if(rumSequence == null) {
+    		rumSequence = new RumSequence();
+    	}
+    	
+    	rumSequence.setCurrentSequenceNb(rumSequence.getCurrentSequenceNb() + 1L);
+    	
+    	return rumSequence;
+	}
 
 }

@@ -59,12 +59,13 @@ public interface OfferTemplateRs extends IBaseRs {
      * Search offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.
      * 
      * @param offerTemplateCode The offer template's code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
+     * @param inheritCF Custom field inheritance type
      * @param loadOfferServiceTemplate if true loads the services
      * @param loadOfferProductTemplate if true loads the products
      * @param loadServiceChargeTemplate if true load the service charges
      * @param loadProductChargeTemplate if true load the product charges
-     * @param validFrom Offer template validity range - from date
-     * @param validTo Offer template validity range - to date
      * @return Return offerTemplateDto containing offerTemplate
      */
     @Path("/")
@@ -89,6 +90,7 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
+     * @param inheritCF Custom field inheritance type
      * @return A list of offer templates
      */
     @GET

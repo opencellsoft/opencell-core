@@ -289,10 +289,6 @@
             </column>
             <column name="sql_query" type="varchar(2000)" />
             <column name="script_instance_id" type="bigint" />
-            <column name="uuid" type="varchar(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="cf_values" type="${type.json}"/>
 		</createTable>
 		
 		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="dwh_report_extract" constraintName="fk_report_extract_script_instance" deferrable="false" initiallyDeferred="false"
@@ -962,7 +958,7 @@
     </changeSet>
     
 	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
-	   <sql splitStatements="false" stripComments="false"><![CDATA[	
+        <sql splitStatements="false" stripComments="false"><![CDATA[
 	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
 	         BEGIN
 	         	RETURN  translate($1,
@@ -971,11 +967,11 @@
 	        END;
 			$$ LANGUAGE plpgsql;
 		]]></sql>
-	</changeSet>
+    </changeSet>
     <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
-    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
-     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
-	    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+        <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+        <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+        <sql splitStatements="false" stripComments="false"><![CDATA[
 			create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
 							returns varchar(2000)
 							begin				
@@ -991,7 +987,17 @@
 								return @textvalue;				
 			end;
 		]]></sql>
+
 	</changeSet>    
+	<changeSet id="#2870_20180129 - Convert to EnableBussEntity" author="EdwardLegaspi">
+		<addColumn tableName="dwh_report_extract">
+			<column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}"/>            
+		</addColumn>
+        <sql>update ${db.schema.adapted}dwh_report_extract set uuid=concat('dre_',id)</sql>
+        <addNotNullConstraint tableName="dwh_report_extract" columnName="uuid" columnDataType="varchar(60)"/>
+	</changeSet>
+
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
@@ -1121,7 +1127,7 @@
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.rating_unit_description=cat_charge_template.rating_unit_description where billing_wallet_operation.rating_unit_description is null</sql>
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.invoice_sub_category_id=cat_charge_template.invoice_sub_category where billing_wallet_operation.invoice_sub_category_id is null</sql>
     </changeSet>
-        
+
     <changeSet id="#3291_20180620" author="EdwardPLegaspi">
     	<addColumn tableName="billing_invoice">
     		<column name="due_balance" type="numeric(23, 12)"></column>
@@ -1267,7 +1273,31 @@
     	</addColumn>
     </changeSet>
     
-</databaseChangeLog>    <changeSet id="#3464_20180522" author="AndriusKarpavicius">
+    <changeSet author="MounirBahije" id="#3493_20180706">
+        <createTable tableName="crm_custom_field_tmpl_val_pos">
+            <column name="customfieldtemplate_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="gui_position" type="varchar(255)" defaultValue="0" >
+                <constraints nullable="false" />
+            </column>
+            <column name="key" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="label" type="varchar(255)"/>
+        </createTable>
+        <addPrimaryKey columnNames="customfieldtemplate_id, key" constraintName="crm_custom_field_tmpl_val_pos_pkey" tableName="crm_custom_field_tmpl_val_pos" />
+    </changeSet>
+    
+    <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="rum_prefix" type="varchar(15)" />
+            <column name="rum_sequence_size" type="bigint" />
+			<column name="rum_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
+
+    <changeSet id="#3464_20180522" author="AndriusKarpavicius">
         <addColumn tableName="crm_provider">
             <column name="cf_values_accum" type="${type.json}"></column>
         </addColumn>
