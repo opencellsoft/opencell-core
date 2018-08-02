@@ -386,7 +386,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice createAgregatesAndInvoice(Long billingAccountId, Long billingRunId, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions) throws BusinessException {
 
         long startDate = System.currentTimeMillis();
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
@@ -414,6 +414,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         
         lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
+
+        if(minAmountTransactions != null) {
+            for (RatedTransaction minRatedTransaction : minAmountTransactions) {
+                ratedTransactionService.create(minRatedTransaction);
+            }
+        }
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
         Invoice invoice = null;
@@ -1508,7 +1514,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate);
+        ratedTransactionService.createRatedTransaction(billingAccount.getId(), invoiceDate);
+        billingAccount = billingAccountService.calculateInvoicing(billingAccount, firstTransactionDate, lastTransactionDate);
+        Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate, billingAccount.getMinRatedTransactions());
         if (!isDraft) {
             assignInvoiceNumber(invoice);
         }

@@ -14,6 +14,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -86,7 +87,7 @@ public class InvoicingAsync {
     /**
      * Creates the aggregates and invoice async. One billing account at a time in a separate transaction.
      *
-     * @param billingAccountIds the billing account ids
+     * @param billingAccounts the billing accounts
      * @param billingRunId The billing run id
      * @param jobInstanceId the job instance id
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -95,18 +96,18 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, Long billingRunId, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<BillingAccount> billingAccounts, Long billingRunId, Long jobInstanceId, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        for (Long billingAccountId : billingAccountIds) {
+        for (BillingAccount billingAccount : billingAccounts) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRunId, null, null, null, null, null);
+                invoiceService.createAgregatesAndInvoice(billingAccount.getId(), billingRunId, null, null, null, null, null, billingAccount.getMinRatedTransactions());
             } catch (Exception e) {
-                log.error("Error for BA=" + billingAccountId + " : " + e);
+                log.error("Error for BA=" + billingAccount.getId() + " : " + e);
             }
         }
         return new AsyncResult<String>("OK");

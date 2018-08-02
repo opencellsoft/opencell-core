@@ -1168,7 +1168,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
         }
-        billingAccountService.createMinAmountsRT(billingAccount, invoicingDate);
     }
 
     /**

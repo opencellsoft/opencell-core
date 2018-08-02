@@ -109,6 +109,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private InvoiceAgregateService invoiceAgregateService;
     
+    @Inject
+    private BillingRunService billingRunService;
+    
     /**
      * Generate pre invoicing reports.
      *
@@ -433,7 +436,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             try {
                 Thread.sleep((10 - count) * 1000);
             } catch (InterruptedException e) {
-            	log.warn("Warning on thread sleep={}", e.getMessage());
+                log.warn("Warning on thread sleep={}", e.getMessage());
             }
             refresh(billingRun);
             log.info("BillingRun {} has status {}. COUNT:{}.", billingRunId, billingRun.getStatus(), count);
@@ -486,7 +489,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         log.info("> cleanBillingRun >> Collect Invoice Aggregates > {}", System.currentTimeMillis() - start);
 
         for (Long invoiceAgregate : invoiceAgregates) {
-        	invoiceAgregateService.setInvoiceToNull(invoiceAgregate);
+            invoiceAgregateService.setInvoiceToNull(invoiceAgregate);
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
         log.info("> cleanBillingRun >> Invoice Aggregated will be Removed  > {}", System.currentTimeMillis() - start);
@@ -629,11 +632,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(Long billingRunId, long nbRuns, long waitingMillis, Long jobInstanceId, List<Long> billingAccountIds) throws BusinessException {
         SubListCreator subListCreator = null;
+        BillingRun billingRun = billingRunService.findById(billingRunId);
+        List<BillingAccount> billingAccounts = new ArrayList<>();
         try {
             if (billingAccountIds == null) {
-                billingAccountIds = billingAccountService.findBillingAccountIdsByBillingRun(billingRunId);
+                billingAccounts = billingAccountService.findBillingAccountsByBillingRun(billingRunId);
+            } else {
+                String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+                for (String id : Arrays.asList(baIds)) {
+                    billingAccounts.add(billingAccountService.findById(new Long(id)));
+                }
             }
-            subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
+            subListCreator = new SubListCreator(billingAccounts, (int) nbRuns);
         } catch (Exception e1) {
             throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns, e1);
         }
@@ -641,7 +651,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRunId, jobInstanceId, lastCurrentUser));
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<BillingAccount>)subListCreator.getNextWorkSet(), billingRunId, jobInstanceId, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
