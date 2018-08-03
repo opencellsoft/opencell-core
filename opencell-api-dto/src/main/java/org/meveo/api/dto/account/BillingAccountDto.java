@@ -17,6 +17,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.ContactInformation;
 
 /**
  * The Class BillingAccountDto.
@@ -148,13 +149,16 @@ public class BillingAccountDto extends AccountDto {
 		setElectronicBilling(e.getElectronicBilling());
 		setStatus(e.getStatus());
 		setStatusDate(e.getStatusDate());
-		setPhone(e.getPhone());
 		setMinimumAmountEl(e.getMinimumAmountEl());
 		setMinimumLabelEl(e.getMinimumLabelEl());
 		if (e.getTerminationReason() != null) {
 			setTerminationReason(e.getTerminationReason().getCode());
 		}
-		setEmail(e.getEmail());
+		ContactInformation contactInfos = e.getContactInformation();
+		if(contactInfos != null) {
+    	    setPhone(contactInfos.getPhone());
+    		setEmail(contactInfos.getEmail());
+		}
 
 		if (e.getDiscountPlan() != null) {
 			setDiscountPlan(e.getDiscountPlan().getCode());

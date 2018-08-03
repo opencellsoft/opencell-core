@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -39,7 +37,6 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CUST")
@@ -63,19 +60,10 @@ public class Customer extends AccountEntity {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
-    @Embedded
-    private ContactInformation contactInformation;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
     
-    @Column(name = "vat_no", length = 100)
-    private String vatNo;
-    
-    @Column(name = "registration_no", length = 100)
-    private String registrationNo;
-
     public Customer() {
         accountType = ACCOUNT_TYPE;
     }
@@ -112,14 +100,6 @@ public class Customer extends AccountEntity {
         this.customerAccounts = customerAccounts;
     }
 
-    public ContactInformation getContactInformation() {
-        return contactInformation;
-    }
-
-    public void setContactInformation(ContactInformation contactInformation) {
-        this.contactInformation = contactInformation;
-    }
-
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { seller };
@@ -134,21 +114,5 @@ public class Customer extends AccountEntity {
     public Class<? extends BusinessEntity> getParentEntityType() {
         return Seller.class;
     }
-
-	public String getRegistrationNo() {
-		return registrationNo;
-	}
-
-	public void setRegistrationNo(String registrationNo) {
-		this.registrationNo = registrationNo;
-	}
-
-	public String getVatNo() {
-		return vatNo;
-	}
-
-	public void setVatNo(String vatNo) {
-		this.vatNo = vatNo;
-	}
 
 }

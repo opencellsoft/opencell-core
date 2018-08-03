@@ -315,7 +315,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setCode(customerAccount.getCode());
             entity.setDescription(customerAccount.getDescription());
             if (customerAccount.getContactInformation() != null) {
-                entity.setEmail(customerAccount.getContactInformation().getEmail());
+                entity.getContactInformation().setEmail(customerAccount.getContactInformation().getEmail());
             }
             entity.setAddress(customerAccount.getAddress());
             entity.setExternalRef1(customerAccount.getExternalRef1());
