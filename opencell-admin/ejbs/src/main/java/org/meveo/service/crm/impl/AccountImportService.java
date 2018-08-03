@@ -187,7 +187,8 @@ public class AccountImportService extends ImportService {
 
         billingAccount.setAddress(address);
         billingAccount.setElectronicBilling("1".equalsIgnoreCase(billAccount.getElectronicBilling()));
-        billingAccount.setEmail(billAccount.getEmail());
+        
+        billingAccount.getContactInformation().setEmail(billAccount.getEmail());
         billingAccount.setExternalRef1(billAccount.getExternalRef1());
         billingAccount.setExternalRef2(billAccount.getExternalRef2());
         org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
@@ -303,7 +304,7 @@ public class AccountImportService extends ImportService {
 
         billingAccount.setAddress(address);
         billingAccount.setElectronicBilling("1".equalsIgnoreCase(billingAccountDto.getElectronicBilling()));
-        billingAccount.setEmail(billingAccountDto.getEmail());
+        billingAccount.getContactInformation().setEmail(billingAccountDto.getEmail());
         billingAccount.setExternalRef1(billingAccountDto.getExternalRef1());
         billingAccount.setExternalRef2(billingAccountDto.getExternalRef2());
         org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
