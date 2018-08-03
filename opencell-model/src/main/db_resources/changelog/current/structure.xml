@@ -1302,5 +1302,13 @@
             <column name="cf_protectable" type="${type.boolean}" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#3575_20180803 - Customer No Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="cust_no_prefix" type="varchar(15)" />
+            <column name="cust_no_sequence_size" type="bigint" />
+			<column name="cust_no_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
 
 </databaseChangeLog>
