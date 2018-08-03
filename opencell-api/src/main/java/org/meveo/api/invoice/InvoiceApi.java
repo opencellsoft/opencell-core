@@ -506,34 +506,37 @@ public class InvoiceApi extends BaseApi {
             handleMissingParameters();
             return null;
         } else {
-            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
-                missingParameters.add("targetCode");
-            }
-            if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetType())) {
-                missingParameters.add("targetType");
-            }
+        	if(StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+        		if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
+                    missingParameters.add("targetCode");
+                }
+                if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetType())) {
+                    missingParameters.add("targetType");
+                }
 
-            if (generateInvoiceRequestDto.getInvoicingDate() == null) {
-                missingParameters.add("invoicingDate");
-            }
+                if (generateInvoiceRequestDto.getInvoicingDate() == null) {
+                    missingParameters.add("invoicingDate");
+                }
+            }            
         }
-
-        /*
-        if (generateInvoiceRequestDto.getLastTransactionDate() == null && StringUtils.isBlank(generateInvoiceRequestDto.getFilter())
-                && StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
-            missingParameters.add("lastTransactionDate or filter or orderNumber");
-        }
-        */
 
         handleMissingParameters();
 
         IBillableEntity entity = null;
-        if(BillingEntityTypeEnum.BILLINGACCOUNT.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-            entity = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
-        } else if(BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-            entity = subscriptionService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
-        } else if(BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-            entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getTargetCode());
+        if(StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+	        if(BillingEntityTypeEnum.BILLINGACCOUNT.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+	            entity = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+	        } else if(BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+	            entity = subscriptionService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+	        } else if(BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+	            entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getTargetCode());
+	        }
+        } else {
+        	if(!StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
+        		entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getOrderNumber());
+        	} else {
+        		entity = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
+        	}
         }
 
         if (entity == null) {

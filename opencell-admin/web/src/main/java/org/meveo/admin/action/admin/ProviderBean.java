@@ -33,6 +33,7 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.Param;
@@ -92,6 +93,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         if (entity.getBankCoordinates() == null) {
             entity.setBankCoordinates(new BankCoordinates());
         }
+        
+        if(entity.getRumSequence() == null) {
+        	entity.setRumSequence(new RumSequence());
+    	}
 
         return entity;
     }

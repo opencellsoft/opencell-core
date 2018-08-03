@@ -20,6 +20,7 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
@@ -88,7 +90,8 @@ import com.lapis.jsfexporter.csv.CSVExportOptions;
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Mohamed El Youssoufi
+ * @lastModifiedVersion 5.2
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
@@ -156,7 +159,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private String backView;
 
     private String backViewSave;
-    
+
     /** The back entity id. */
     @Inject
     @Param()
@@ -166,7 +169,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     @Param()
     private String backTab;
-    
+
     /** The back main tab. */
     @Inject
     @Param()
@@ -213,7 +216,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected ParamBeanFactory paramBeanFactory;
 
     private UploadedFile uploadedFile;
-    
+
     private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
 
     /**
@@ -409,7 +412,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         // return objectId == null ? outcome : (outcome + "&" + objectName + "=" + objectId + "&cid=" + conversation.getId());
         return outcome;
     }
-    
+
     /**
      * Check whether entity code is updated or not.
      * 
@@ -432,11 +435,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
-        
-        if(!entity.isTransient()) {
+
+        if (!entity.isTransient()) {
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
             if ((entity instanceof BusinessEntity)) {
-                if(!currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) && !allowEntityCodeUpdate && isUpdatedEntityCode()) {
+                if (!currentUser.hasRole(SUPER_ADMIN_MANAGEMENT) && !allowEntityCodeUpdate && isUpdatedEntityCode()) {
                     messages.error(new BundleKey("messages", "error.superadminpermission.required"));
                     return null;
                 }
@@ -474,8 +477,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Save method when used in popup (ajax). Same as {@link #saveOrUpdate(boolean)}, but does not redirect to the next view. Sets validation to failed if saveOrUpdate
-     * method called does not return a value or fails.
+     * Save method when used in popup (ajax). Same as {@link #saveOrUpdate(boolean)}, but does not redirect to the next view. Sets validation to failed if saveOrUpdate method
+     * called does not return a value or fails.
      * 
      * @throws BusinessException business exception
      */
@@ -537,15 +540,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String getViewAfterSave() {
         return getListViewName();
     }
-    
+
     /**
      * Returns translation value for i18n map field, else the value itself
      * 
-     * @author akadid abdelmounaim 
+     * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
     public String getTranslation(Object fieldValue) {
-        if(fieldValue instanceof Map<?, ?>) {
+        if (fieldValue instanceof Map<?, ?>) {
             String lang = FacesContext.getCurrentInstance().getViewRoot().getLocale().getISO3Language().toUpperCase();
             Map<String, String> translationMap = (Map<String, String>) fieldValue;
             return translationMap.get(lang);
@@ -582,8 +585,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Get a navigation view name that will display an entity creation page. By default is same as {@link #getEditViewName()}. Override this method if its view name does
-     * not fit.
+     * Get a navigation view name that will display an entity creation page. By default is same as {@link #getEditViewName()}. Override this method if its view name does not fit.
      * 
      * @return Navigation view name
      */
@@ -619,6 +621,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /**
      * Get a navigation view name that will display an entity list page. Default view name is a list view in a format: entity's name + s;
+     * 
      * @return List view name
      */
     protected String getListViewName() {
@@ -919,20 +922,20 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 protected IPersistenceService<T> getPersistenceServiceImpl() {
                     return getPersistenceService();
                 }
-                
+
                 @Override
                 protected Map<String, Object> getSearchCriteria() {
                     return getSearchCriteria(null);
                 }
-                
+
                 @Override
                 protected Map<String, Object> getSearchCriteria(Map<String, Object> customFilters) {
-                 // Omit empty or null values
+                    // Omit empty or null values
                     Map<String, Object> cleanFilters = new HashMap<String, Object>();
 
                     cleanupFilters(filters, cleanFilters);
                     cleanupFilters(MapUtils.emptyIfNull(customFilters), cleanFilters);
-                    
+
                     return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
@@ -978,12 +981,40 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     }
                     return fullTextValue;
                 }
+
+                @Override
+                public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
+                    if (clazz != null && clazz == AccountEntity.class) {
+                        return listDistinctCrmAccounts(super.load(first, pageSize, sortField, sortOrder, loadingFilters));
+                    }
+                    return super.load(first, pageSize, sortField, sortOrder, loadingFilters);
+                }
+
             };
         }
 
         listFiltered = false;
 
         return dataModel;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<T> listDistinctCrmAccounts(List<T> fetchedAccountEntities) {
+        log.info(fetchedAccountEntities.size() + "");
+        List<AccountEntity> accountEntities = new ArrayList<>();
+        boolean accountWithCodeExists = false;
+        for (T ae : fetchedAccountEntities) {
+            AccountEntity aec = (AccountEntity) ae;
+            for (AccountEntity e : accountEntities) {
+                if (aec.getCode().equals(e.getCode())) {
+                    accountWithCodeExists = true;
+                }
+            }
+            if (!accountWithCodeExists) {
+                accountEntities.add(aec);
+            }
+        }
+        return (List<T>) accountEntities;
     }
 
     /**
@@ -1454,19 +1485,20 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
         uploadedFile = event.getFile();
-        
+
         try {
-            // When dealing with a BackingBean (BaseBean) with generic type T having an image field, and this Type T refers to another type ( or list of types )  E which also has an image field
+            // When dealing with a BackingBean (BaseBean) with generic type T having an image field, and this Type T refers to another type ( or list of types ) E which also has an
+            // image field
             // then keeping the ImageUploadEventHandler Type frozen to the Generic Type 'T' will cause an issue and leads to override the parent field image by the child one ...
-            // That's why the IEntity is used instead of 'T' , to instantiate a flexible  ImageUploadEventHandler
+            // That's why the IEntity is used instead of 'T' , to instantiate a flexible ImageUploadEventHandler
             ImageUploadEventHandler<IEntity> uploadHandler = new ImageUploadEventHandler<IEntity>(currentUser.getProviderCode());
             Object componentEntity = event.getComponent().getAttributes().get("componentEntity");
-            
+
             IEntity currenttEntity = this.entity;
             if (componentEntity != null && componentEntity instanceof IEntity) {
                 currenttEntity = (IEntity) componentEntity;
             }
-            
+
             String filename = uploadHandler.handleImageUpload(currenttEntity, uploadedFile);
             if (filename != null) {
                 ((IImageUpload) currenttEntity).setImagePath(filename);
