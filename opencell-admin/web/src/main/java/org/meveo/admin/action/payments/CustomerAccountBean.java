@@ -153,21 +153,26 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             throw new ValidationException("CustomerAccount does not have a preferred payment method", "paymentMethod.noPreferredPaymentMethod");
         }
         
-        // a safeguard to allow this only if all the WO/RT have been invoiced.
-        Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
-        if(countNonTreatedWO > 0) {
-            messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
-            return null;
-        }
-        Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
-        if(countNonInvoicedRT > 0) {
-            messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
-            return null;
-        }
-        Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
-        if(countUnmatchedAO > 0) {
-            messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
-            return null;
+        if(!entity.isTransient()) {
+        	CustomerAccount customerAccountFromDB = customerAccountService.findByCode(entity.getCode());
+        	if (!entity.getCustomer().equals(customerAccountFromDB.getCustomer())) {
+		        // a safeguard to allow this only if all the WO/RT have been invoiced.
+		        Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
+		        if(countNonTreatedWO > 0) {
+		            messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
+		            return null;
+		        }
+		        Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
+		        if(countNonInvoicedRT > 0) {
+		            messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
+		            return null;
+		        }
+		        Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
+		        if(countUnmatchedAO > 0) {
+		            messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
+		            return null;
+		        }
+        	}
         }
         
         entity.setCustomer(customerService.findById(entity.getCustomer().getId()));
