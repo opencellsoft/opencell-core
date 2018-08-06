@@ -1299,7 +1299,7 @@
      
       <changeSet id="#3225_22062018" author="SaidRamli">
         <addColumn tableName="crm_custom_field_tmpl">
-            <column name="cf_protectable" type="${type.boolean}" />
+            <column name="cf_protectable" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
 
