@@ -44509,11 +44509,11 @@ public class ForgotPassword extends ModuleScript{
       <con:properties>
         <con:property>
           <con:name>unduePaymentId</con:name>
-          <con:value>2</con:value>
+          <con:value>6</con:value>
         </con:property>
         <con:property>
           <con:name>undueRefundId</con:name>
-          <con:value>3</con:value>
+          <con:value>7</con:value>
         </con:property>
       </con:properties>
     </con:testCase>
