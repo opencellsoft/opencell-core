@@ -1279,49 +1279,51 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             final RoundingModeEnum roundingMode, String languageCode) throws BusinessException {
         
         LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<InvoiceSubCategory, Element>();
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getWallet() == null) {
-                
-                Element subCategory = null;
-                if(subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory()) == null) {
-                    subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), doc.createElement("subCategory"));
-                } 
-                	
-                subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());	
-                subCategory.setAttribute("label", ratedTransaction.getInvoiceSubCategory().getDescription());
-                subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());
-                subCategory.setAttribute("amountWithoutTax", roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
-
-                Element line = doc.createElement("line");
-                Element lebel = doc.createElement("label");
-                Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
-                lebel.appendChild(lebelTxt);
-
-                Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
-                lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
-                line.appendChild(lineUnitAmountWithoutTax);
-
-                Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
-                lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
-                line.appendChild(lineAmountWithoutTax);
-
-                if (!enterprise) {
-                    Element lineAmountWithTax = doc.createElement("amountWithTax");
-                    Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
-                    lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-                    line.appendChild(lineAmountWithTax);
+        if(ratedTransactions != null) {
+            for (RatedTransaction ratedTransaction : ratedTransactions) {
+                if (ratedTransaction.getWallet() == null) {
+                    
+                    Element subCategory = null;
+                    if(subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory()) == null) {
+                        subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), doc.createElement("subCategory"));
+                    } 
+                    	
+                    subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());	
+                    subCategory.setAttribute("label", ratedTransaction.getInvoiceSubCategory().getDescription());
+                    subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());
+                    subCategory.setAttribute("amountWithoutTax", roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
+    
+                    Element line = doc.createElement("line");
+                    Element lebel = doc.createElement("label");
+                    Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
+                    lebel.appendChild(lebelTxt);
+    
+                    Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+                    Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                    lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+                    line.appendChild(lineUnitAmountWithoutTax);
+    
+                    Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+                    Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
+                    lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
+                    line.appendChild(lineAmountWithoutTax);
+    
+                    if (!enterprise) {
+                        Element lineAmountWithTax = doc.createElement("amountWithTax");
+                        Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
+                        lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+                        line.appendChild(lineAmountWithTax);
+                    }
+    
+                    Element quantity = doc.createElement("quantity");
+                    Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                    quantity.appendChild(quantityTxt);
+                    line.appendChild(quantity);
+                    line.appendChild(lebel);
+                    subCategory.appendChild(line);
+    
+                    subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), subCategory);
                 }
-
-                Element quantity = doc.createElement("quantity");
-                Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
-                quantity.appendChild(quantityTxt);
-                line.appendChild(quantity);
-                line.appendChild(lebel);
-                subCategory.appendChild(line);
-
-                subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), subCategory);
             }
         }
         
