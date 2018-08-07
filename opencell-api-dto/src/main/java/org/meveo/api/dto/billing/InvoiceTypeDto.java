@@ -18,8 +18,10 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 /**
  * The Class InvoiceTypeDto.
- * 
+ *
  * @author anasseh
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -40,6 +42,9 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     
     /** The occ template negative code EL. */
     private String occTemplateNegativeCodeEl;
+
+    /** The script instance code. */
+    private String customInvoiceXmlScriptInstanceCode;
 
     /** The sequence dto. */
     private SequenceDto sequenceDto;
@@ -93,6 +98,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode() : null;
         this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
         this.occTemplateNegativeCodeEl = invoiceType.getOccTemplateNegativeCodeEl();
+        this.customInvoiceXmlScriptInstanceCode = invoiceType.getCustomInvoiceXmlScriptInstance() == null ? null : invoiceType.getCustomInvoiceXmlScriptInstance().getCode();
         this.sequenceDto = new SequenceDto(invoiceType.getSequence());
         if (invoiceType.getAppliesTo() != null) {
             for (InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()) {
@@ -340,10 +346,29 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
 
+    /**
+     * Gets the script instance code.
+     *
+     * @return the customInvoiceXmlScriptInstanceCode
+     */
+    public String getCustomInvoiceXmlScriptInstanceCode() {
+        return customInvoiceXmlScriptInstanceCode;
+    }
+
+    /**
+     * Sets the script instance code.
+     *
+     * @param customInvoiceXmlScriptInstanceCode the scriptInstanceCode to set
+     */
+    public void setCustomInvoiceXmlScriptInstanceCode(String customInvoiceXmlScriptInstanceCode) {
+        this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
+    }
+
+
     @Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
-                + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
+                + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
                 + ", useSelfSequence=" + useSelfSequence + "]";
     }
 }

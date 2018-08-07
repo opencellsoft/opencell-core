@@ -104,6 +104,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -196,9 +197,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
         log.debug("Creating xml for invoice id={} number={}.", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
 
-        String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider, "PROV_CUSTOM_INV_XML_SCRIPT_CODE");
-
-        if (invoiceXmlScript != null) {
+        ScriptInstance scriptInstance = invoice.getInvoiceType().getCustomInvoiceXmlScriptInstance();
+        if (scriptInstance != null) {
+            String invoiceXmlScript = scriptInstance.getCode();
             ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceXmlScript);
             Map<String, Object> methodContext = new HashMap<String, Object>();
             methodContext.put(Script.CONTEXT_ENTITY, invoice);
