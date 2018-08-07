@@ -487,6 +487,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     /**
      * Allow generating draft invoice
      * 
+     * @throws BusinessException General Business Exception
+     * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */

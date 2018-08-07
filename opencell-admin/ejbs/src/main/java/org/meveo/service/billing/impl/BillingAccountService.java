@@ -803,7 +803,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     /**
      * Create min amounts rated transactions.
      *
-     * @param billingAccount The billing account
+     * @param billableEntity The billable entity
      * @param lastTransactionDate Last transaction date
      * @return Invoice amount
      * @throws BusinessException General business exception
