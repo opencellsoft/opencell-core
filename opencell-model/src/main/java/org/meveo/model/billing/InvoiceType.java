@@ -24,15 +24,12 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -45,7 +42,15 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 
+
+/**
+ *
+ * @author Bahije Mounir
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
@@ -63,6 +68,10 @@ public class InvoiceType extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_templ_negative_id")
     private OCCTemplate occTemplateNegative;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance customInvoiceXmlScriptInstance;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoice_type_applies_to", joinColumns = @JoinColumn(name = "invoice_type_id"), inverseJoinColumns = @JoinColumn(name = "applies_to_id"))
@@ -256,5 +265,12 @@ public class InvoiceType extends BusinessEntity {
 	public void setPrefixEL(String prefixEL) {
 		this.prefixEL = prefixEL;
 	}
-    
+
+    public ScriptInstance getCustomInvoiceXmlScriptInstance() {
+        return customInvoiceXmlScriptInstance;
+    }
+
+    public void setCustomInvoiceXmlScriptInstance(ScriptInstance customInvoiceXmlScriptInstance) {
+        this.customInvoiceXmlScriptInstance = customInvoiceXmlScriptInstance;
+    }
 }

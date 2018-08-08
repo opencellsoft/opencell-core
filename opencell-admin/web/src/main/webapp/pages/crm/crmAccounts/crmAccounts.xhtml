@@ -8,18 +8,18 @@
 
     <ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{crmAccountBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{crmAccountListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
     <ui:define name="body">
-        <hftl:searchPanel label="#{messages['crmAccount.search']}" backingBean="#{crmAccountBean}" renderNewButton="false">
+        <hftl:searchPanel label="#{messages['crmAccount.search']}" backingBean="#{crmAccountListBean}" renderNewButton="false">
             <hftl:searchField label="#{messages['crmAccount.account.name']}" field="code" />
             <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
         </hftl:searchPanel>
 
-        <hftl:dataList backingBean="#{crmAccountListBean}" sortBy="code" dataModel="#{crmAccountListBean.listDistinctAccounts()}">
-		   	<hftl:column label="#{messages['crmAccount.account.name']}" field="code" editView="#{crmAccountBean.getView(entity['accountType'])}" propagateConversation="false"
+        <hftl:dataList backingBean="#{crmAccountListBean}" sortBy="code">
+		   	<hftl:column label="#{messages['crmAccount.account.name']}" field="code" editView="#{crmAccountListBean.getView(entity['accountType'])}" propagateConversation="false"
                 objectIdParamName="#{crmAccountBean.getIdParameterName(entity['accountType'])}" />
             <hftl:column label="#{messages['crmAccount.type']}" field="accountType" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
@@ -29,7 +29,7 @@
             
 			<hftl:actionsColumn permission="#{currentUser.hasRole('accountManagement')}" 
 					backingBean="#{crmAccountBean}"
-					editView="#{crmAccountBean.getView(entity['accountType'])}" renderDeleteLink="false"
+					editView="#{crmAccountListBean.getView(entity['accountType'])}" renderDeleteLink="false"
 					renderEditLink="true"/>
 					
         </hftl:dataList>

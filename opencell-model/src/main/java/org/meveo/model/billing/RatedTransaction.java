@@ -58,18 +58,22 @@ import org.meveo.model.rating.EDR;
                 + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber "
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.invoice is null order by r.usageDate desc "),
         
+        @NamedQuery(name = "RatedTransaction.sumByOrderNumber", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax) FROM RatedTransaction r "
+                + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null"),
+  
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription=:subscription"
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" 
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " 
-                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+                + " AND r.invoice is null order by r.usageDate desc "),
         
         @NamedQuery(name = "RatedTransaction.listAllRTByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount=:billingAccount "
-                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+                + " AND r.invoice is null order by r.usageDate desc "),
         
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r where r.billingAccount=:billingAccount "
                 + " AND r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" 
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " AND r.invoice is null AND r.wallet is not null order by r.usageDate desc "),
+                + " AND r.invoice is null order by r.usageDate desc "),
         
         @NamedQuery(name = "RatedTransaction.countListToInvoiceByOrderNumber", query = "SELECT count(r) FROM RatedTransaction r where "
                 + "r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND r.orderNumber=:orderNumber and r.invoice is null" 

@@ -20,14 +20,18 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * The CRUD Api for InvoiceType Entity.
  *
  * @author anasseh
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class InvoiceTypeApi extends BaseApi {
@@ -43,6 +47,9 @@ public class InvoiceTypeApi extends BaseApi {
     /** The seller service. */
     @Inject
     private SellerService sellerService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     /**
      * Handle parameters.
@@ -88,6 +95,14 @@ public class InvoiceTypeApi extends BaseApi {
             }
         }
 
+        ScriptInstance customInvoiceXmlScriptInstance = null;
+        if (!StringUtils.isBlank(postData.getCustomInvoiceXmlScriptInstanceCode())) {
+            customInvoiceXmlScriptInstance = scriptInstanceService.findByCode(postData.getCustomInvoiceXmlScriptInstanceCode());
+            if (customInvoiceXmlScriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getCustomInvoiceXmlScriptInstanceCode());
+            }
+        }
+
         List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();
         if (postData.getAppliesTo() != null) {
             for (String invoiceTypeCode : postData.getAppliesTo()) {
@@ -104,6 +119,7 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setDescription(postData.getDescription());
         invoiceType.setOccTemplate(occTemplate);
         invoiceType.setOccTemplateNegative(occTemplateNegative);
+        invoiceType.setCustomInvoiceXmlScriptInstance(customInvoiceXmlScriptInstance);
         invoiceType.setOccTemplateCodeEl(postData.getOccTemplateCodeEl());
         invoiceType.setOccTemplateNegativeCodeEl(postData.getOccTemplateNegativeCodeEl());
         invoiceType.setAppliesTo(invoiceTypesToApplies);
@@ -178,6 +194,16 @@ public class InvoiceTypeApi extends BaseApi {
                 throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateNegativeCode());
             }
         }
+
+        ScriptInstance customInvoiceXmlScriptInstance = null;
+        if (!StringUtils.isBlank(invoiceTypeDto.getCustomInvoiceXmlScriptInstanceCode())) {
+            customInvoiceXmlScriptInstance = scriptInstanceService.findByCode(invoiceTypeDto.getCustomInvoiceXmlScriptInstanceCode());
+            if (customInvoiceXmlScriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, invoiceTypeDto.getCustomInvoiceXmlScriptInstanceCode());
+            }
+        }
+
+
         invoiceType.setOccTemplateNegative(occTemplateNegative);
         invoiceType.setOccTemplate(occTemplate);
         
@@ -187,7 +213,9 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceTypeDto.getOccTemplateNegativeCodeEl() != null) {
             invoiceType.setOccTemplateNegativeCodeEl(invoiceTypeDto.getOccTemplateNegativeCodeEl());
         }
-        
+
+        invoiceType.setCustomInvoiceXmlScriptInstance(customInvoiceXmlScriptInstance);
+
         if (!StringUtils.isBlank(invoiceTypeDto.getDescription())) {
             invoiceType.setDescription(invoiceTypeDto.getDescription());
         }

@@ -32,7 +32,7 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Edward Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 @Singleton
 @Lock(LockType.WRITE)
@@ -61,7 +61,7 @@ public class ServiceSingleton {
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
      * @param invoiceDate Invoice date
-     * @param invoiceTypeId Invoice type id
+     * @param invoiceType Invoice type
      * @param seller Seller
      * @param cfName CFT name
      * @param incrementBy A number to increment by

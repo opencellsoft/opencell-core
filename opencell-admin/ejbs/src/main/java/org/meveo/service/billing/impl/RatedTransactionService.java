@@ -272,7 +272,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactionFilter Filter to use to filter rated transactions.
      * @param ratedTransactions A list of rated transactions - used in conjunction with isVirtual=true
-     * @param orderNumber Order number used to retrieve rated transactions
      * @param firstTransactionDate First transaction date
      * @param lastTransactionDate Last transaction date
      * @param isInvoiceAdjustment Is this invoice adjustment
@@ -304,21 +303,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     .setParameter("billingAccount", billingAccount).getResultList();
         }
         
-        Query qSumMinBilling = getEntityManager().createNamedQuery("RatedTransaction.sumMinBilling").setParameter("lastTransactionDate", lastTransactionDate)
-            .setParameter("billingAccount", billingAccount);
-        if (isInvoiceAdjustment) {
-            qSumMinBilling = qSumMinBilling.setParameter("status", RatedTransactionStatusEnum.BILLED);
-        } else {
-            qSumMinBilling = qSumMinBilling.setParameter("status", RatedTransactionStatusEnum.OPEN);
-        }
-
-        List<Object[]> minAmountsList = qSumMinBilling.getResultList();
-
-        for (Object[] minAmounts : minAmountsList) {
-            log.info("invoice subcategory {}, amountWithoutTax {}, amountWithTax {}, amountTax {}", minAmounts[0], minAmounts[1], minAmounts[2], minAmounts[3]);
-            invoice.addAmountWithoutTax(((BigDecimal) minAmounts[1]).setScale(rounding, getRoundingMode(roundingMode)));
-            invoice.addAmountWithTax(((BigDecimal) minAmounts[2]).setScale(rounding, getRoundingMode(roundingMode)));
-            invoice.addAmountTax(((BigDecimal) minAmounts[3]).setScale(rounding, getRoundingMode(roundingMode)));
+        Map<InvoiceSubCategory, BigDecimal> minAmountsWithTax = new HashMap<InvoiceSubCategory, BigDecimal>();
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+        	if(ratedTransaction.getWallet() == null) {
+        		invoice.addAmountWithoutTax((ratedTransaction.getAmountWithoutTax()).setScale(rounding, getRoundingMode(roundingMode)));
+                invoice.addAmountWithTax((ratedTransaction.getAmountWithTax()).setScale(rounding, getRoundingMode(roundingMode)));
+                invoice.addAmountTax((ratedTransaction.getAmountTax()).setScale(rounding, getRoundingMode(roundingMode)));
+                if(minAmountsWithTax.get(ratedTransaction.getInvoiceSubCategory()) == null) {
+                	minAmountsWithTax.put(ratedTransaction.getInvoiceSubCategory(), BigDecimal.ZERO);
+                }
+                minAmountsWithTax.put(ratedTransaction.getInvoiceSubCategory(), minAmountsWithTax.get(ratedTransaction.getInvoiceSubCategory()).add(ratedTransaction.getAmountWithTax()));
+        	}
         }
 
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
@@ -329,6 +324,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             // Filter only valid transactions for a particular UA (compare transaction.wallet.id = ua.wallet.id) and that transaction was not processed yet
             for (RatedTransaction ratedTransaction : ratedTransactions) {
+            	
+            	if(ratedTransaction.getWallet() == null) {
+            		continue;
+            	}
 
                 boolean recordValid = (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN) && ratedTransaction.getWallet().getId() == wallet.getId()
                         && (ratedTransaction.getInvoice() == null);
@@ -424,8 +423,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 if (!entreprise) {
                     nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(amountWithTax);
-                    for (Object[] minAmount : minAmountsList) {
-                        nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(((BigDecimal) minAmount[2]).setScale(rounding, getRoundingMode(roundingMode)));
+                    if(minAmountsWithTax.get(invoiceSubCategory) != null) {
+                    	nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(minAmountsWithTax.get(invoiceSubCategory));
                     }
                 }
 
@@ -653,6 +652,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
+        
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+        	if(ratedTransaction.getWallet() == null) {
+        		invoice.getRatedTransactions().add(ratedTransaction);
+        	}
+        }
     }
 
     /**
@@ -1134,10 +1139,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
-        }
-        
-        if(entity instanceof BillingAccount) {
-            billingAccountService.createMinAmountsRT((BillingAccount)entity, invoicingDate);
         }
     }
 

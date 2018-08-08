@@ -544,6 +544,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             log.error("error in SubscriptionBean.instanciateManyServices", e);
             messages.error(e.getMessage());
         }
+        
+        keepCurrentTab();
+        
     }
 
     /**
@@ -574,6 +577,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 initServiceInstances(entity.getServiceInstances());
                 initServiceTemplates();
                 resetChargesDataModels();
+                keepCurrentTab();
 
             } else {
                 log.error("activateService id=#0 is NOT a serviceInstance");
@@ -587,6 +591,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             log.error("unexpected exception when activating service!", e);
             messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage());
         }
+    }
+
+    /**
+     * Keeps current active Tab selected.
+     */
+    private void keepCurrentTab() {
+        super.setActiveMainTab(super.getActiveTab());
     }
 
     @ActionMethod

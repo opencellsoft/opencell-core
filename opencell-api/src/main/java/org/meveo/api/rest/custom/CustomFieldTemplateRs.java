@@ -28,7 +28,7 @@ public interface CustomFieldTemplateRs extends IBaseRs {
     /**
      * Define a new custom field
      * 
-     * @param postData
+     * @param postData posted data to API
      * @return Request processing status
      */
     @POST
@@ -38,7 +38,7 @@ public interface CustomFieldTemplateRs extends IBaseRs {
     /**
      * Update existing custom field definition
      * 
-     * @param postData
+     * @param postData posted data to API
      * @return Request processing status
      */
     @PUT
@@ -61,7 +61,7 @@ public interface CustomFieldTemplateRs extends IBaseRs {
      * 
      * @param customFieldTemplateCode Custom field template code
      * @param appliesTo Entity it applies to
-     * @return
+     * @return instance of GetCustomFieldTemplateReponseDto
      */
     @GET
     @Path("/")
@@ -70,7 +70,7 @@ public interface CustomFieldTemplateRs extends IBaseRs {
     /**
      * Define new or update existing custom field definition
      * 
-     * @param postData
+     * @param postData posted data to API
      * @return Request processing status
      */
     @POST
