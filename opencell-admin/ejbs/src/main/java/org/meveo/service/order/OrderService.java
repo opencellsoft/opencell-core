@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.billing.UserAccount;
@@ -97,9 +98,11 @@ public class OrderService extends BusinessService<Order> {
             UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
-		if (order.getPaymentMethod() != null) {
-			order.getPaymentMethod().updateAudit(currentUser);
-		}
+        if (order.getPaymentMethod() != null) {
+            order.getPaymentMethod().updateAudit(currentUser);
+        }
+
+        order.setOrderNumber(StringUtils.isBlank(order.getExternalId()) ? order.getCode() : order.getExternalId());
 
         super.create(order);
     }
@@ -117,8 +120,8 @@ public class OrderService extends BusinessService<Order> {
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
         if (order.getPaymentMethod() != null) {
-			order.getPaymentMethod().updateAudit(currentUser);
-		}
+            order.getPaymentMethod().updateAudit(currentUser);
+        }
 
         return super.update(order);
     }

@@ -1362,6 +1362,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
     // charging
     private List<WalletOperation> chargeOnWalletIds(List<Long> walletIds, WalletOperation op) throws BusinessException {
+        
+        Integer rounding = appProvider.getRounding();
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+        
         List<WalletOperation> result = new ArrayList<>();
         BigDecimal remainingAmountToCharge = op.getAmountWithTax();
         BigDecimal totalBalance = walletService.getWalletReservedBalance(walletIds);
@@ -1385,12 +1389,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
                     remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
                     BigDecimal newOpAmountWithTax = balance;
                     BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
-                    Integer invoiceRounding = appProvider.getInvoiceRounding();
-                    if (invoiceRounding != null && invoiceRounding  > 0) {
-                        RoundingModeEnum invoiceRoundingMode = appProvider.getRoundingMode();
-                        newOpAmountWithoutTax = round(newOpAmountWithoutTax, invoiceRounding, invoiceRoundingMode);
-                        newOpAmountWithTax = round(newOpAmountWithTax, invoiceRounding, invoiceRoundingMode);
-                    }
+
+                    newOpAmountWithoutTax = round(newOpAmountWithoutTax, rounding, roundingMode);
+                    newOpAmountWithTax = round(newOpAmountWithTax, rounding, roundingMode);
                     BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
                     BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);
 

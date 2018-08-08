@@ -172,8 +172,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private Date rtStartDate;
     private Date rtEndDate;
     
-    private Integer invoiceRounding =  appProvider != null ? (appProvider.getInvoiceRounding() == null ? 2 : appProvider.getInvoiceRounding()) : 2; 
-    private RoundingModeEnum invoiceRoundingMode =  appProvider != null ? appProvider.getInvoiceRoundingMode() : RoundingModeEnum.DOWN; 
+    private Integer invoiceRounding =  appProvider.getInvoiceRounding(); 
+    private RoundingModeEnum invoiceRoundingMode =  appProvider.getInvoiceRoundingMode(); 
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.

@@ -146,23 +146,27 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Enumerated(EnumType.STRING)
     private List<PaymentMethodEnum> paymentMethods = new ArrayList<PaymentMethodEnum>();
 
-    /** The Rating rounding. */
-    @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2")
-    private Integer rounding = 2;
+    /** The Rating amount rounding. */
+    @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    @NotNull
+    private int rounding = 2;
 
-    /** The Rating rounding mode*/
-    @Column (name = "rounding_mode")
+    /** The Rating amount rounding mode */
+    @Column(name = "rounding_mode", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoundingModeEnum roundingMode; 
+    @NotNull
+    private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST;
 
-    /** The invoice rounding. */
-    @Column(name = "invoice_rounding", columnDefinition = "int DEFAULT 2")
-    private Integer invoiceRounding = 2;
-    
-    /** The invoice rounding mode. */
-    @Column (name = "invoice_rounding_mode")
+    /** The invoice amount rounding. */
+    @Column(name = "invoice_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    @NotNull
+    private int invoiceRounding = 2;
+
+    /** The invoice amount rounding mode. */
+    @Column(name = "invoice_rounding_mode", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoundingModeEnum invoiceRoundingMode; 
+    @NotNull
+    private RoundingModeEnum invoiceRoundingMode = RoundingModeEnum.NEAREST;
 
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
@@ -365,10 +369,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         this.interBankTitle = interBankTitle;
     }
 
+    /**
+     * @return Rating amount rounding precision
+     */
     public Integer getRounding() {
         return rounding;
     }
 
+    /**
+     * @param rounding Rating amount rounding precision
+     */
     public void setRounding(Integer rounding) {
         this.rounding = rounding;
     }
@@ -526,60 +536,54 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return the roundingMode
+     * @return Rating amount rounding mode
      */
     public RoundingModeEnum getRoundingMode() {
         return roundingMode;
     }
 
     /**
-     * @param roundingMode the roundingMode to set
+     * @param roundingMode Rating amount rounding mode
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
     }
 
     /**
-     * @return the invoiceRounding
+     * @return Invoice amount rounding precision
      */
-    public Integer getInvoiceRounding() {
-        if (this.invoiceRounding == null) {
-            this.invoiceRounding = this.rounding;
-        }
+    public int getInvoiceRounding() {
         return invoiceRounding;
     }
 
     /**
-     * @return the invoiceRoundingMode
+     * @param invoiceRounding Invoice amount rounding precision
      */
-    public RoundingModeEnum getInvoiceRoundingMode() {
-        if (this.invoiceRoundingMode == null) {
-            this.invoiceRoundingMode = this.roundingMode;
-        }
-        return invoiceRoundingMode;
-    }
-
-    /**
-     * @param invoiceRounding the invoiceRounding to set
-     */
-    public void setInvoiceRounding(Integer invoiceRounding) {
+    public void setInvoiceRounding(int invoiceRounding) {
         this.invoiceRounding = invoiceRounding;
     }
 
     /**
-     * @param invoiceRoundingMode the invoiceRoundingMode to set
+     * @return Invoice amount rounding mode
+     */
+    public RoundingModeEnum getInvoiceRoundingMode() {
+        return invoiceRoundingMode;
+    }
+
+    /**
+     * @param invoiceRoundingMode Invoice amount rounding mode
      */
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
     public RumSequence getRumSequence() {
-		return rumSequence;
-	}
+        return rumSequence;
+    }
 
-	public void setRumSequence(RumSequence rumSequence) {
-		this.rumSequence = rumSequence;
-	}
+    public void setRumSequence(RumSequence rumSequence) {
+        this.rumSequence = rumSequence;
+    }
 
     @Override
     public CustomFieldValues getCfAccumulatedValues() {

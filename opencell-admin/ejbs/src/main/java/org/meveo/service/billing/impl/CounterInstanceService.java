@@ -19,7 +19,6 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
-import static org.meveo.commons.utils.NumberUtils.getRoundingMode;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -367,7 +365,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return qb.find(getEntityManager());
     }
 
-    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
+    public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription)
+            throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -384,12 +383,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (expression.indexOf("sub") >= 0) {
             userMap.put("sub", subscription);
         }
-
-        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
         
-        int rounding = appProvider.getRounding() == null ? 3 : appProvider.getRounding();        
-            result = result.setScale(rounding, getRoundingMode(appProvider.getRoundingMode()));
-       
+        BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+        result = result.setScale(chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode().getRoundingMode());
+
         return result;
     }
 

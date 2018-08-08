@@ -1483,5 +1483,51 @@
             <column name="tax_code_el_sp" type="varchar(2000)" />
         </addColumn>  
     </changeSet>    
+    <changeSet id="#3571_20180727" author="AndriusKarpavicius">
+        <addColumn tableName="ord_order">
+            <column name="order_number " type="varchar(255)" />            
+            <column name="due_date_delay_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}ord_order set order_number = case when external_id is not null then external_id else code end where order_number is null</sql>
+        <addColumn tableName="billing_billing_account">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="billing_subscription">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="billing_rated_transaction">
+            <column name="charge_instance_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_cycle">     
+            <column name="due_date_delay_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="ar_customer_account">     
+            <column name="due_date_delay_el_sp" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#3571_20180727_migration_P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set charge_instance_id = billing_wallet_operation.charge_instance_id from ${db.schema.adapted}billing_rated_transaction, ${db.schema.adapted}billing_wallet_operation where
+            billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id and
+            billing_rated_transaction.wallet_operation_id is not null
+        </sql>
+    </changeSet>
+
+    <changeSet id="#3571_20180727_migration_M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id set charge_instance_id = billing_wallet_operation.charge_instance_id where billing_rated_transaction.wallet_operation_id is not null</sql>
+    </changeSet>
+    
+    <changeSet id="#3577_0180802" author="AndriusKarpavicius">
+        <addDefaultValue columnName="rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
+        <addDefaultValue columnName="invoice_rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
+        <addDefaultValue columnName="rating_rounding" tableName="crm_provider" defaultValueNumeric="2"/>
+        <addDefaultValue columnName="invoice_rounding" tableName="crm_provider" defaultValueNumeric="2"/>
+    </changeSet>    
     
 </databaseChangeLog> 

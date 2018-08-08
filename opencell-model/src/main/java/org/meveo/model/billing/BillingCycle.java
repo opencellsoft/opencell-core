@@ -49,84 +49,104 @@ import org.meveo.model.scripts.ScriptInstance;
  */
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
-@Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_cycle_seq"), })
 public class BillingCycle extends BusinessCFEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "billing_template_name")
-	@Size(max = 50)
-	private String billingTemplateName;
-	
-	@Column(name = "billing_template_name_el", length = 2000)
+    @Column(name = "billing_template_name")
+    @Size(max = 50)
+    private String billingTemplateName;
+
+    @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "calendar")
-	private Calendar calendar;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar")
+    private Calendar calendar;
 
     @Column(name = "transaction_date_delay")
     private Integer transactionDateDelay;
-    
-    //used to compute the invoice date from date of billing run
+
+    // used to compute the invoice date from date of billing run
     @Column(name = "invoice_date_production_delay")
     private Integer invoiceDateProductionDelay;
-    
-    //used for immediate invoicing by oneshot charge
-	@Column(name = "invoice_date_delay")
-	private Integer invoiceDateDelay;
 
-	@Column(name = "due_date_delay")
-	private Integer dueDateDelay;
+    // used for immediate invoicing by oneshot charge
+    @Column(name = "invoice_date_delay")
+    private Integer invoiceDateDelay;
 
-	@OneToMany(mappedBy = "billingCycle", fetch = FetchType.LAZY)
-	private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
-	
-	@Column(name = "invoicing_threshold")
-	private BigDecimal invoicingThreshold; 
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoice_type_id")
-	private InvoiceType invoiceType;
-	
-	@Column(name = "due_date_delay_el", length = 2000)
-	@Size(max = 2000)
-	private String dueDateDelayEL;
-	
-	@Column(name = "invoice_type_el", length = 2000)
+    @Column(name = "due_date_delay")
+    private Integer dueDateDelay;
+
+    @OneToMany(mappedBy = "billingCycle", fetch = FetchType.LAZY)
+    private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+
+    @Column(name = "invoicing_threshold")
+    private BigDecimal invoicingThreshold;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_type_id")
+    private InvoiceType invoiceType;
+
+    /**
+     * Expression to calculate Invoice due date delay value
+     */
+    @Column(name = "due_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String dueDateDelayEL;
+
+    /**
+     * Expression to calculate Invoice due date delay value - for Spark
+     */
+    @Column(name = "due_date_delay_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String dueDateDelayELSpark;
+
+    /**
+     * Expression to resolve invoice type code
+     */
+    @Column(name = "invoice_type_el", length = 2000)
     @Size(max = 2000)
     private String invoiceTypeEl;
-	
+
+    /**
+     * Expression to resolve invoice type code for Spark
+     */
+    @Column(name = "invoice_type_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String invoiceTypeElSpark;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "billing_cycle_type")
     private BillingEntityTypeEnum type;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
-	
-	public String getBillingTemplateName() {
-		return billingTemplateName;
-	}
 
-	public void setBillingTemplateName(String billingTemplateName) {
-		this.billingTemplateName = billingTemplateName;
-	}
+    public String getBillingTemplateName() {
+        return billingTemplateName;
+    }
 
-	public Calendar getCalendar() {
-		return calendar;
-	}
+    public void setBillingTemplateName(String billingTemplateName) {
+        this.billingTemplateName = billingTemplateName;
+    }
 
-	public void setCalendar(Calendar calendar) {
-		this.calendar = calendar;
-	}
+    public Calendar getCalendar() {
+        return calendar;
+    }
 
-	public Integer getTransactionDateDelay() {
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
+    public Integer getTransactionDateDelay() {
         return transactionDateDelay;
     }
 
@@ -143,77 +163,97 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     public Integer getInvoiceDateDelay() {
-		return invoiceDateDelay;
-	}
+        return invoiceDateDelay;
+    }
 
-	public void setInvoiceDateDelay(Integer invoiceDateDelay) {
-		this.invoiceDateDelay = invoiceDateDelay;
-	}
+    public void setInvoiceDateDelay(Integer invoiceDateDelay) {
+        this.invoiceDateDelay = invoiceDateDelay;
+    }
 
-	public Integer getDueDateDelay() {
-		return dueDateDelay;
-	}
+    public Integer getDueDateDelay() {
+        return dueDateDelay;
+    }
 
-	public void setDueDateDelay(Integer dueDateDelay) {
-		this.dueDateDelay = dueDateDelay;
-	}
+    public void setDueDateDelay(Integer dueDateDelay) {
+        this.dueDateDelay = dueDateDelay;
+    }
 
-	public List<BillingAccount> getBillingAccounts() {
-		return billingAccounts;
-	}
+    public List<BillingAccount> getBillingAccounts() {
+        return billingAccounts;
+    }
 
-	public void setBillingAccounts(List<BillingAccount> billingAccounts) {
-		this.billingAccounts = billingAccounts;
-	}
+    public void setBillingAccounts(List<BillingAccount> billingAccounts) {
+        this.billingAccounts = billingAccounts;
+    }
 
-	public Date getNextCalendarDate(Date subscriptionDate, Date date) {
-		Date result = null;
-		if(calendar != null){
-			calendar.setInitDate(subscriptionDate);
-			result=calendar.nextCalendarDate(date);
-		}
-		return result;
-	}
+    public Date getNextCalendarDate(Date subscriptionDate, Date date) {
+        Date result = null;
+        if (calendar != null) {
+            calendar.setInitDate(subscriptionDate);
+            result = calendar.nextCalendarDate(date);
+        }
+        return result;
+    }
 
-	public Date getNextCalendarDate(Date subscriptionDate) {
-		return getNextCalendarDate(subscriptionDate,new Date());
-	}
+    public Date getNextCalendarDate(Date subscriptionDate) {
+        return getNextCalendarDate(subscriptionDate, new Date());
+    }
 
-	/**
-	 * @return the invoicingThreshold
-	 */
-	public BigDecimal getInvoicingThreshold() {
-		return invoicingThreshold;
-	}
+    /**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
 
-	/**
-	 * @param invoicingThreshold the invoicingThreshold to set
-	 */
-	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
-		this.invoicingThreshold = invoicingThreshold;
-	}
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
 
-	/**
-	 * @return the invoiceType
-	 */
-	public InvoiceType getInvoiceType() {
-		return invoiceType;
-	}
+    /**
+     * @return the invoiceType
+     */
+    public InvoiceType getInvoiceType() {
+        return invoiceType;
+    }
 
-	/**
-	 * @param invoiceType the invoiceType to set
-	 */
-	public void setInvoiceType(InvoiceType invoiceType) {
-		this.invoiceType = invoiceType;
-	}
+    /**
+     * @param invoiceType the invoiceType to set
+     */
+    public void setInvoiceType(InvoiceType invoiceType) {
+        this.invoiceType = invoiceType;
+    }
 
-	public String getDueDateDelayEL() {
-		return dueDateDelayEL;
-	}
+    /**
+     * @return Expression to calculate Invoice due date delay value
+     */
+    public String getDueDateDelayEL() {
+        return dueDateDelayEL;
+    }
 
-	public void setDueDateDelayEL(String dueDateDelayEL) {
-		this.dueDateDelayEL = dueDateDelayEL;
-	}
+    /**
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
+     */
+    public void setDueDateDelayEL(String dueDateDelayEL) {
+        this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    /**
+     * @return Expression to calculate Invoice due date delay value - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
+
+    /**
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     */
+    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+        this.dueDateDelayELSpark = dueDateDelayELSpark;
+    }
 
     public String getBillingTemplateNameEL() {
         return billingTemplateNameEL;
@@ -223,12 +263,32 @@ public class BillingCycle extends BusinessCFEntity {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
 
+    /**
+     * @return Expression to resolve invoice type code
+     */
     public String getInvoiceTypeEl() {
         return invoiceTypeEl;
     }
 
+    /**
+     * @param invoiceTypeEl Expression to resolve invoice type code
+     */
     public void setInvoiceTypeEl(String invoiceTypeEl) {
         this.invoiceTypeEl = invoiceTypeEl;
+    }
+
+    /**
+     * @return Expression to resolve invoice type code for Spark
+     */
+    public String getInvoiceTypeElSpark() {
+        return invoiceTypeElSpark;
+    }
+
+    /**
+     * @param invoiceTypeElSpark Expression to resolve invoice type code for Spark
+     */
+    public void setInvoiceTypeElSpark(String invoiceTypeElSpark) {
+        this.invoiceTypeElSpark = invoiceTypeElSpark;
     }
 
     public BillingEntityTypeEnum getType() {
@@ -238,7 +298,7 @@ public class BillingCycle extends BusinessCFEntity {
     public void setType(BillingEntityTypeEnum type) {
         this.type = type;
     }
-    
+
     public ScriptInstance getScriptInstance() {
         return scriptInstance;
     }

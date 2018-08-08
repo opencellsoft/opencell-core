@@ -36,13 +36,18 @@ public class NumberUtils {
         if (what == null) {
             return null;
         }
-        
-        what = what.setScale(howmuch, getRoundingMode(roundingModeEnum));
+
+        what = what.setScale(howmuch, roundingModeEnum.getRoundingMode());
         return what;
     }
-    
-    public static BigDecimal round(BigDecimal what, int howmuch) {
-        return round(what, howmuch, null);
+
+    public static BigDecimal round(BigDecimal what, int howmuch, RoundingMode roundingMode) {
+        if (what == null) {
+            return null;
+        }
+
+        what = what.setScale(howmuch, roundingMode);
+        return what;
     }
 
     public static String format(BigDecimal amount, String format) {
@@ -58,46 +63,30 @@ public class NumberUtils {
         return value;
     }
 
-	public static BigDecimal subtract(BigDecimal minuend, BigDecimal subtrahend) {
-		if (minuend == null) {
-			return new BigDecimal(0);
-		}
-		if (subtrahend == null) {
-			return minuend;
+    public static BigDecimal subtract(BigDecimal minuend, BigDecimal subtrahend) {
+        if (minuend == null) {
+            return new BigDecimal(0);
+        }
+        if (subtrahend == null) {
+            return minuend;
 
-		}
-		return minuend.subtract(subtrahend);
-	}
+        }
+        return minuend.subtract(subtrahend);
+    }
 
-    public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingMode) {        
-        if (unitMultiplicator == null){
+    public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingMode) {
+        if (unitMultiplicator == null) {
             unitMultiplicator = BigDecimal.ONE;
-        }   
-        if (unitNbDecimal == null){
+        }
+        if (unitNbDecimal == null) {
             unitNbDecimal = new Integer(2);
         }
 
-        BigDecimal result = unitValue.multiply(unitMultiplicator);          
-        result = result.setScale(unitNbDecimal, getRoundingMode(roundingMode));
+        BigDecimal result = unitValue.multiply(unitMultiplicator);
+        result = result.setScale(unitNbDecimal, roundingMode.getRoundingMode());
         return result;
     }
-    
-    public static RoundingMode getRoundingMode(RoundingModeEnum roundingModeEnum){
-        if (roundingModeEnum == null){
-            return RoundingMode.HALF_UP;
-        }
-        
-        if (RoundingModeEnum.DOWN.name().equals(roundingModeEnum.name())) {
-            return RoundingMode.FLOOR;
-        } 
-        
-        if (RoundingModeEnum.UP.name().equals(roundingModeEnum.name())) {
-            return RoundingMode.CEILING;
-        } 
-        return RoundingMode.HALF_UP;        
-    }
-    
-    
+
     /**
      * Round to string.
      *
@@ -113,7 +102,7 @@ public class NumberUtils {
         if (scale == null) {
             scale = 2;
         }
-        amount = amount.setScale(scale, getRoundingMode(roundingMode));
+        amount = amount.setScale(scale, roundingMode.getRoundingMode());
         return amount.toPlainString();
     }
 }

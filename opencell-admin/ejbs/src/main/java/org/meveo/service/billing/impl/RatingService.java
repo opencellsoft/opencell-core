@@ -280,8 +280,8 @@ public class RatingService extends BusinessService<WalletOperation> {
         walletOperation.setEndDate(endDate);
         // walletOperation.setOfferCode(offerTemplate.getCode()); Offer code is set in walletOperation.setOfferTemplate
         walletOperation.setOfferTemplate(offerTemplate);
-        
-        if (invoiceSubCategory!=null){        
+
+        if (invoiceSubCategory != null) {
             walletOperation.setInvoiceSubCategory(invoiceSubCategory);
         } else {
             walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
@@ -445,6 +445,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             throws BusinessException {
 
         PricePlanMatrix pricePlan = null;
+        int rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
 
         if ((unitPriceWithoutTax == null && appProvider.isEntreprise()) || (unitPriceWithTax == null && !appProvider.isEntreprise())) {
@@ -483,7 +484,6 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
 
-
         // if the wallet operation correspond to a recurring charge that is
         // shared, we divide the price by the number of
         // shared charges
@@ -504,7 +504,6 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
 
-
         calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
 
         // we override the wo if minimum amount el is set
@@ -516,12 +515,9 @@ public class RatingService extends BusinessService<WalletOperation> {
                 if (bareWalletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
                     BigDecimal oldAmountWithoutTax = bareWalletOperation.getAmountWithoutTax();
 
-                    Integer rounding = appProvider.getRounding();
                     bareWalletOperation.setAmountWithoutTax(minimumAmount);
                     BigDecimal amountTax = minimumAmount.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
-                    if (rounding != null && rounding > 0) {
-                        amountTax = round(amountTax, rounding, roundingMode);
-                    }
+                    amountTax = round(amountTax, rounding, roundingMode);
                     bareWalletOperation.setAmountTax(amountTax);
                     bareWalletOperation.setAmountWithTax(minimumAmount.add(amountTax));
 
@@ -565,13 +561,14 @@ public class RatingService extends BusinessService<WalletOperation> {
                 bareWalletOperation.setDescription(woDescription);
             }
         }
-        
+
         // get invoiceSubCategory based on EL from Price plan
         if (pricePlan != null && pricePlan.getInvoiceSubCategoryEL() != null) {
-            String invoiceSubCategoryCode = evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation, bareWalletOperation.getWallet()!=null?bareWalletOperation.getWallet().getUserAccount():null);
+            String invoiceSubCategoryCode = evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
+                bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null);
             if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
                 InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
-                if(invoiceSubCategory != null) {
+                if (invoiceSubCategory != null) {
                     bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
                 }
             }
@@ -633,18 +630,13 @@ public class RatingService extends BusinessService<WalletOperation> {
                 priceWithoutTax = new BigDecimal(
                     evaluateDoubleExpression(walletOperation.getPriceplan().getRatingEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
             }
-
-            if (rounding != null && rounding > 0) {
-                priceWithoutTax = round(priceWithoutTax, rounding, roundingMode);
-            }
+            priceWithoutTax = round(priceWithoutTax, rounding, roundingMode);
 
             if (walletOperation.getTaxPercent() != null) {
                 unitAmountTax = unitPriceWithoutTax.multiply(walletOperation.getTaxPercent().divide(HUNDRED));
 
                 amountTax = priceWithoutTax.multiply(walletOperation.getTaxPercent().divide(HUNDRED));
-                if (rounding != null && rounding > 0) {
-                    amountTax = round(amountTax, rounding, roundingMode);
-                }
+                amountTax = round(amountTax, rounding, roundingMode);
             }
 
             unitPriceWithTax = unitPriceWithoutTax.add(unitAmountTax);
@@ -653,18 +645,14 @@ public class RatingService extends BusinessService<WalletOperation> {
         } else {
 
             priceWithTax = walletOperation.getQuantity().multiply(unitPriceWithTax);
-            if (rounding != null && rounding > 0) {
-                priceWithTax = round(priceWithTax, rounding, roundingMode);
-            }
+            priceWithTax = round(priceWithTax, rounding, roundingMode);
 
             if (walletOperation.getTaxPercent() != null) {
                 BigDecimal percentPlusOne = BigDecimal.ONE.add(walletOperation.getTaxPercent().divide(HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 
+                // Unit amount calculation is left with higher precision
                 unitAmountTax = unitPriceWithTax.subtract(unitPriceWithTax.divide(percentPlusOne, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-                amountTax = priceWithTax.subtract(priceWithTax.divide(percentPlusOne, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-                if (rounding != null && rounding > 0) {
-                    amountTax = round(amountTax, rounding, roundingMode);
-                }
+                amountTax = priceWithTax.subtract(priceWithTax.divide(percentPlusOne, rounding, roundingMode.getRoundingMode()));
             }
 
             unitPriceWithoutTax = unitPriceWithTax.subtract(unitAmountTax);
@@ -675,7 +663,6 @@ public class RatingService extends BusinessService<WalletOperation> {
         walletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
         walletOperation.setUnitAmountWithTax(unitPriceWithTax);
         walletOperation.setUnitAmountTax(unitAmountTax);
-        walletOperation.setTaxPercent(walletOperation.getTaxPercent());
         walletOperation.setAmountWithoutTax(priceWithoutTax);
         walletOperation.setAmountWithTax(priceWithTax);
         walletOperation.setAmountTax(amountTax);
@@ -903,7 +890,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                             + chargeTemplate.getInvoiceSubCategory().getCode() + " and trading country=" + tradingCountry.getCountryCode());
                 }
 
-                Tax tax = null;               
+                Tax tax = null;
                 if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
                     tax = invoiceSubcategoryCountry.getTax();
                 } else {

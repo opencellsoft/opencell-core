@@ -90,12 +90,11 @@ import org.meveo.model.rating.EDR;
                 + " and w.id IN :notBilledWalletIdList"),
         @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"), 
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount=:userAccount")
-})
+                + " AND o.wallet.userAccount=:userAccount") })
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -128,6 +127,16 @@ public class WalletOperation extends BusinessEntity {
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
+    /**
+     * Tax applied - entity
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
+
+    /**
+     * Tax percent applied
+     */
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxPercent;
 
@@ -228,11 +237,11 @@ public class WalletOperation extends BusinessEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
-    
+
     @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithoutTax;
-    
+
     @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithTax;
@@ -243,7 +252,7 @@ public class WalletOperation extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
@@ -302,10 +311,30 @@ public class WalletOperation extends BusinessEntity {
         this.currency = currency;
     }
 
+    /**
+     * @return Tax applied - entity
+     */
+    public Tax getTax() {
+        return tax;
+    }
+
+    /**
+     * @param tax Tax applied - entity
+     */
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
+    /**
+     * @return Tax percent applied
+     */
     public BigDecimal getTaxPercent() {
         return taxPercent;
     }
 
+    /**
+     * @param taxPercent Tax percent applied
+     */
     public void setTaxPercent(BigDecimal taxPercent) {
         this.taxPercent = taxPercent;
     }
@@ -524,6 +553,7 @@ public class WalletOperation extends BusinessEntity {
         result.setStartDate(startDate);
         result.setStatus(WalletOperationStatusEnum.OPEN);
         result.setSubscriptionDate(subscriptionDate);
+        result.setTax(tax);
         result.setTaxPercent(taxPercent);
         result.setType(type);
         result.setUnitAmountTax(unitAmountTax);
@@ -633,7 +663,7 @@ public class WalletOperation extends BusinessEntity {
     public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
         this.rawAmountWithTax = rawAmountWithTax;
     }
-    
+
     public Subscription getSubscription() {
         return subscription;
     }
