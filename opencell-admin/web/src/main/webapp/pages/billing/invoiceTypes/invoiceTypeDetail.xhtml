@@ -60,14 +60,11 @@
                     <p:column headerText="#{messages['seller.title']}">
                         <h:outputText value="#{sellerSeq.seller.code}" />
                     </p:column>
+                    <p:column headerText="#{messages['seller.invoiceSequence']}">
+                        <h:outputText value="#{sellerSeq.invoiceSequence.descriptionAndCode}" />
+                    </p:column>
                     <p:column headerText="#{messages['invoiceType.sequence.prefixEl']}">
-                        <h:outputText value="#{sellerSeq.sequence.prefixEL}" />
-                    </p:column>
-                    <p:column headerText="#{messages['seller.currentInvoiceNb']}">
-                        <h:outputText value="#{sellerSeq.sequence.currentInvoiceNb}" />
-                    </p:column>
-                    <p:column headerText="#{messages['seller.invoiceSequenceSize']}">
-                        <h:outputText value="#{sellerSeq.sequence.sequenceSize}" />
+                        <h:outputText value="#{sellerSeq.prefixEL}" />
                     </p:column>
                 </p:dataTable>
             </h:panelGroup>

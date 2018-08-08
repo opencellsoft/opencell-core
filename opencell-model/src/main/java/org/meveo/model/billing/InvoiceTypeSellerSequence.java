@@ -57,11 +57,12 @@ public class InvoiceTypeSellerSequence implements IEntity {
 
     }
 
-    public InvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller, InvoiceSequence invoiceSequence) {
+    public InvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller, InvoiceSequence invoiceSequence, String prefixEL) {
         super();
         this.invoiceType = invoiceType;
         this.seller = seller;
         this.invoiceSequence = invoiceSequence;
+        this.prefixEL = prefixEL;
     }
 
     @Override

@@ -32,13 +32,11 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
 
 /**
  * @author akadid abdelmounaim
@@ -56,14 +54,9 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Inject
     private SellerService sellerService;
 
-    @Inject
-    private InvoiceTypeService invoiceTypeService;
-
     private InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence;
     private String prefixEl;
-    private Integer sequenceSize = 9;
-    private Long currentInvoiceNb = 0L;
-    private String invoiceTypeCode;
+    private InvoiceType invoiceType;
     private InvoiceSequence invoiceSequence;
     private boolean editSellerSequence = false;
 
@@ -79,7 +72,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
      * 
      * @return bean's entity 
      * @author akadid abdelmounaim
-     * @lastModifiedVersion 5.0
+     * @lastModifiedVersion 5.2
      */
     @Override
     public Seller initEntity() {
@@ -115,46 +108,26 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         return super.saveOrUpdate(killConversation);
-        // prefix must be set
-        // if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
-        // messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
-        // return null;
-        // } else {
-        // return super.saveOrUpdate(killConversation);
-        // }
     }
 
-    /*
     public void saveOrUpdateSequence() throws BusinessException {
-        if (getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceTypeCode).longValue()) {
-            messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
-            return;
-        }
-
-        InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-        if (invoiceType != null) {
-            if (!editSellerSequence) {
-                if (entity.isContainsInvoiceTypeSequence(invoiceType)) {
-                    messages.error(new BundleKey("messages", "seller.sellerSequence.unique"));
-                    FacesContext.getCurrentInstance().validationFailed();
-                    return;
-                } else {
-                    entity.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, entity, new Sequence(getPrefixEl(), getSequenceSize(), getCurrentInvoiceNb())));
-                    messages.info(new BundleKey("messages", "seller.sequence.saved"));
-                }
+        if (!editSellerSequence) {
+            if (entity.isContainsInvoiceTypeSequence(invoiceType)) {
+                messages.error(new BundleKey("messages", "seller.sellerSequence.unique"));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
             } else {
-                if (selectedInvoiceTypeSellerSequence.getSequence() == null) {
-                    selectedInvoiceTypeSellerSequence.setSequence(new Sequence());
-                }
-                selectedInvoiceTypeSellerSequence.getSequence().setPrefixEL(getPrefixEl());
-                selectedInvoiceTypeSellerSequence.getSequence().setSequenceSize(getSequenceSize());
-                selectedInvoiceTypeSellerSequence.getSequence().setCurrentInvoiceNb(getCurrentInvoiceNb());
+                entity.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, entity, invoiceSequence, prefixEl));
                 messages.info(new BundleKey("messages", "seller.sequence.saved"));
             }
+        } else {
+            selectedInvoiceTypeSellerSequence.setPrefixEL(prefixEl);
+            selectedInvoiceTypeSellerSequence.setInvoiceType(invoiceType);
+            selectedInvoiceTypeSellerSequence.setInvoiceSequence(invoiceSequence);
+            messages.info(new BundleKey("messages", "seller.sequence.saved"));
         }
         resetSequenceField();
     }
-    */
 
     public void deleteSellerSequence(InvoiceType invoiceType) {
 
@@ -166,23 +139,23 @@ public class SellerBean extends CustomFieldBean<Seller> {
         }
         messages.info(new BundleKey("messages", "seller.sequence.deleted"));
     }
+    
+    public void newInvoiceTypeSellerSequence() {
+        this.selectedInvoiceTypeSellerSequence = new InvoiceTypeSellerSequence();
+    }
 
-    /*
     public void getSequenceSelected(InvoiceTypeSellerSequence invoiceTypeSellerSequence) {
         this.selectedInvoiceTypeSellerSequence = invoiceTypeSellerSequence;
-        invoiceTypeCode = invoiceTypeSellerSequence.getInvoiceType().getCode();
-        prefixEl = invoiceTypeSellerSequence.getSequence().getPrefixEL();
-        sequenceSize = invoiceTypeSellerSequence.getSequence().getSequenceSize();
-        currentInvoiceNb = invoiceTypeSellerSequence.getSequence().getCurrentInvoiceNb();
-        editSellerSequence = true;
+        this.prefixEl = invoiceTypeSellerSequence.getPrefixEL();
+        this.invoiceType = invoiceTypeSellerSequence.getInvoiceType();
+        this.invoiceSequence = invoiceTypeSellerSequence.getInvoiceSequence();
+        this.editSellerSequence = true;
     }
-*/
     public void resetSequenceField() {
-        this.selectedInvoiceTypeSellerSequence = new InvoiceTypeSellerSequence();
-        invoiceTypeCode = null;
+        this.selectedInvoiceTypeSellerSequence = null;
         prefixEl = "";
-        sequenceSize = 9;
-        currentInvoiceNb = 0L;
+        invoiceType = null;
+        invoiceSequence = null;
         editSellerSequence = false;
     }
 
@@ -193,29 +166,13 @@ public class SellerBean extends CustomFieldBean<Seller> {
     public void setPrefixEl(String prefixEl) {
         this.prefixEl = prefixEl;
     }
-
-    public Integer getSequenceSize() {
-        return sequenceSize;
+    
+    public InvoiceType getInvoiceType() {
+        return invoiceType;
     }
 
-    public void setSequenceSize(Integer sequenceSize) {
-        this.sequenceSize = sequenceSize;
-    }
-
-    public Long getCurrentInvoiceNb() {
-        return currentInvoiceNb;
-    }
-
-    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-        this.currentInvoiceNb = currentInvoiceNb;
-    }
-
-    public String getInvoiceTypeCode() {
-        return invoiceTypeCode;
-    }
-
-    public void setInvoiceTypeCode(String invoiceTypeCode) {
-        this.invoiceTypeCode = invoiceTypeCode;
+    public void setInvoiceType(InvoiceType invoiceType) {
+        this.invoiceType = invoiceType;
     }
 
     public boolean isEditSellerSequence() {

@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InvoiceSequence;
@@ -39,6 +40,7 @@ import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
+@ViewBean
 public class InvoiceSequenceBean extends BaseBean<InvoiceSequence> {
 
 	private static final long serialVersionUID = 1L;

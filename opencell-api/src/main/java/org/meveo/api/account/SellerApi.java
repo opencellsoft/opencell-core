@@ -114,7 +114,7 @@ public class SellerApi extends BaseApi {
                 if (invoiceType == null) {
                     throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
-                seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+                seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto(), entry.getValue().getPrefixEL()));
             }
         }
         
@@ -280,7 +280,7 @@ public class SellerApi extends BaseApi {
                 	//TODO
                     seller.getInvoiceTypeSequenceByType(invoiceType).setInvoiceSequence(entry.getValue().updateFromDto(seller.getInvoiceTypeSequenceByType(invoiceType).getInvoiceSequence()));
                 } else {
-                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto(), entry.getValue().getPrefixEL()));
                 }
             }
         }

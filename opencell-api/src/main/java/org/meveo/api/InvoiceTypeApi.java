@@ -124,7 +124,7 @@ public class InvoiceTypeApi extends BaseApi {
                     throw new MeveoApiException("current invoice number value must be positive");
                 }
 
-                invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, value.fromDto()));
+                invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, value.fromDto(), value.getPrefixEL()));
             }
         }
         invoiceType.setMatchingAuto(postData.isMatchingAuto());
@@ -227,7 +227,7 @@ public class InvoiceTypeApi extends BaseApi {
                 	//TODO
                     invoiceType.getSellerSequenceByType(seller).setInvoiceSequence(entry.getValue().updateFromDto(invoiceType.getSellerSequenceByType(seller).getInvoiceSequence()));
                 } else {
-                    invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+                    invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto(), entry.getValue().getPrefixEL()));
                 }
             }
         }
