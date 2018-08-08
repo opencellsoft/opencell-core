@@ -1296,5 +1296,59 @@
 			<column name="rum_current_sequence_nb" type="bigint" />
      	</addColumn>
      </changeSet>
+     
+      <changeSet id="#3225_22062018" author="SaidRamli">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="cf_protectable" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#3217_20180725 - Field migration from Customer, BA and CA to AccountEntity " author="AbdelmounaimAkadid">
+        <addColumn tableName="account_entity">
+            <column name="email" type="varchar(100)" />
+            <column name="fax" type="varchar(50)" />
+            <column name="mobile" type="varchar(50)" />
+            <column name="phone" type="varchar(50)" />
+            <column name="vat_no" type="varchar(100)" />
+            <column name="registration_no" type="varchar(100)" />
+        </addColumn>
+        <sql><![CDATA[
+        update account_entity e set email = (select email from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		update account_entity e set fax = (select fax from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		update account_entity e set mobile = (select mobile from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		update account_entity e set phone = (select phone from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		
+		update account_entity e set email = (select email from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+		update account_entity e set phone = (select phone from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+		
+		update account_entity e set email = (select email from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update account_entity e set fax = (select fax from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update account_entity e set mobile = (select mobile from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update account_entity e set phone = (select phone from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		
+		update account_entity e set registration_no = (select registration_no from crm_customer c where c.id=e.id);
+		update account_entity e set vat_no = (select vat_no from crm_customer c where c.id=e.id);
+		]]></sql>
+        <dropColumn tableName="crm_customer" columnName="email" />
+        <dropColumn tableName="crm_customer" columnName="fax" />
+        <dropColumn tableName="crm_customer" columnName="mobile" />
+        <dropColumn tableName="crm_customer" columnName="phone" />
+        <dropColumn tableName="crm_customer" columnName="registration_no" />
+        <dropColumn tableName="crm_customer" columnName="vat_no" />
+        <dropColumn tableName="billing_billing_account" columnName="email" />
+        <dropColumn tableName="billing_billing_account" columnName="phone" />
+        <dropColumn tableName="ar_customer_account" columnName="email" />
+        <dropColumn tableName="ar_customer_account" columnName="fax" />
+        <dropColumn tableName="ar_customer_account" columnName="mobile" />
+        <dropColumn tableName="ar_customer_account" columnName="phone" />
+    </changeSet>
+
+    <changeSet id="#3545_20180725" author="MounirBahije">
+        <addColumn tableName="billing_invoice_type">
+            <column name="script_instance_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_type" constraintName="fk_invoice_type_script_instance" deferrable="false" initiallyDeferred="false"
+             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance"  />
+    </changeSet>
 
 </databaseChangeLog>

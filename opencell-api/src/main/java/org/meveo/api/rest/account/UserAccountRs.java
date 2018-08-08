@@ -57,6 +57,7 @@ public interface UserAccountRs extends IBaseRs {
      * Search for a user account with a given code.
      * 
      * @param userAccountCode user account code
+     * @param inheritCF Custom field inheritance type
      * @return found user account if exist
      */
     @GET

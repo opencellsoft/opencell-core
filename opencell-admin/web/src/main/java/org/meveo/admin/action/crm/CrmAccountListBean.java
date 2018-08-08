@@ -19,12 +19,79 @@
 package org.meveo.admin.action.crm;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.meveo.admin.action.BaseBean;
+import org.meveo.model.AccountEntity;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.CrmAccountService;
+
+/**
+ * @author Mohamed El Youssoufi
+ * @lastModifiedVersion 5.2
+ */
 
 @Named
 @ConversationScoped
-public class CrmAccountListBean extends CrmAccountBean {
+public class CrmAccountListBean extends BaseBean<AccountEntity> {
 
-	private static final long serialVersionUID = 6136014565031199360L;
-	
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * CRM Service injection.
+     */
+    @Inject
+    private CrmAccountService crmAccountService;
+
+    public CrmAccountListBean() {
+        super(AccountEntity.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<AccountEntity> getPersistenceService() {
+        return crmAccountService;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#getDefaultSort()
+     */
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    /**
+     * Gets the exact detail view by type param.
+     * 
+     * @param type
+     * @return view uri
+     */
+    public String getView(String type) {
+        if (type.equals(Customer.ACCOUNT_TYPE)) {
+            return "/pages/crm/customers/customerDetail.xhtml";
+        } else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml";
+        }
+        if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml";
+        }
+        if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml";
+        } else {
+            return "/pages/crm/customers/customerDetail.xhtml";
+        }
+    }
+
 }

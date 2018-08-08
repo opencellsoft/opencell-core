@@ -2,6 +2,7 @@ package org.meveo.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,6 +31,9 @@ import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
+ *
  **/
 
 @Stateless
@@ -145,6 +149,22 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
             scriptInstanceDtoResult.setScript("InvalidPermission");
         }
         return scriptInstanceDtoResult;
+    }
+
+    /**
+     * Execute a script instance with a given code and context
+     *
+     * @param scriptInstanceCode
+     * @param context
+     * @return
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    public Map<String, Object> execute(String scriptInstanceCode, Map<String, Object> context) throws MeveoApiException, BusinessException {
+
+        find(scriptInstanceCode);
+        Map<String, Object> result = scriptInstanceService.execute(scriptInstanceCode, context);
+        return result;
     }
 
     @Override

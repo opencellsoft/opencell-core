@@ -671,6 +671,8 @@ public class CustomerApi extends AccountEntityApi {
      * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
      * zipped file along with the pdf invoices.
      * 
+     * @param customerCode customer code.
+     * @param response Http servlet response.
      * @throws Exception when zipping fail
      */
     public void exportCustomerHierarchy(String customerCode, HttpServletResponse response) throws Exception {

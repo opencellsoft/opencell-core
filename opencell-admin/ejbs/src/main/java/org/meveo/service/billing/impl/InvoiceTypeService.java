@@ -196,8 +196,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     }
 
     /**
-     * @return
-     * @throws BusinessException
+     * @return currentInvoiceNb
+     * @throws BusinessException business exception
      */
     public Long getCurrentGlobalInvoiceBb() throws BusinessException {
         appProvider = providerService.findById(appProvider.getId());
@@ -210,7 +210,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     /**
      * @param currentInvoiceNb
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void setCurrentGlobalInvoiceBb(Long currentInvoiceNb) throws BusinessException {
         try {

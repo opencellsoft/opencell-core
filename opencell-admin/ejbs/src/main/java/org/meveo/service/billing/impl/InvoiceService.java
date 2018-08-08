@@ -208,9 +208,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private UserAccountService userAccountService;
     
     @Inject
-    private BillingRunService billingRunService;
-    
-    @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
     private String PDF_DIR_NAME = "pdf";
@@ -439,6 +436,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param br billing run
+     * @param excludeInvoicesWithoutAmount exclude invoices without amount.
      * @return list of invoice's which doesn't have the account operation, and have an amount
      */
     public List<Long> queryInvoiceIdsWithNoAccountOperation(BillingRun br, boolean excludeInvoicesWithoutAmount) {
@@ -485,7 +483,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceDate date of invoice
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
-     * @param isDraft is an invoice draft
      * @param minAmountTransactions Min amount rated transactions
      * @return created invoice
      * @throws BusinessException business exception
@@ -516,9 +513,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
         
         if(minAmountTransactions != null) {
-        	for (RatedTransaction minRatedTransaction : minAmountTransactions) {
-				ratedTransactionService.create(minRatedTransaction);
-			}
+            for (RatedTransaction minRatedTransaction : minAmountTransactions) {
+                ratedTransactionService.create(minRatedTransaction);
+            }
         }
 
         List<Invoice> invoiceList = new ArrayList<Invoice>();
@@ -1676,7 +1673,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Create RatedTransaction and generate invoice for the billingAccount. 
      *
-     * @param billingAccount the billing account
+     * @param entity entity to be billed.
      * @param generateInvoiceRequestDto the generate invoice request dto
      * @param ratedTxFilter the rated tx filter
      * @param isDraft the is draft
@@ -1737,6 +1734,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param producePdf the produce pdf
      * @param generateAO the generate AO
      * @param invoice the invoice
+     * @param isDraft is it a draft
      * @throws BusinessException the business exception
      * @throws InvoiceExistException the invoice exist exception
      * @throws ImportInvoiceException the import invoice exception
@@ -1773,9 +1771,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws ImportInvoiceException import invoice exception
      * @throws InvoiceExistException invoice exists exception
      * 
-     * @Deprecated : - It contains a lot of args.
-     *               - It breaks the 'Separation of responsibilities' pattern by creating the Invoice , creating the PDF/XML file & producing the AOs !!
-     *               => use generateInvoice(BillingAccount, GenerateInvoiceRequestDto) + produceFilesAndAO(boolean, boolean, boolean, Invoice) instead.
+     * @deprecated : - It contains a lot of args.
+     *               - It breaks the 'Separation of responsibilities' pattern by creating the Invoice, creating the PDF/XML file and producing the AOs !! <br>
+     *                use generateInvoice(BillingAccount, GenerateInvoiceRequestDto) + produceFilesAndAO(boolean, boolean, boolean, Invoice) instead.
      */
     @Deprecated
     public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
