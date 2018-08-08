@@ -33,7 +33,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
-import org.meveo.service.account.GpdrService;
+import org.meveo.service.account.GdprService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -62,7 +62,7 @@ public class CustomerBean extends AccountBean<Customer> {
     private CustomerApi customerApi;
     
     @Inject
-    private GpdrService gpdrService;
+    private GdprService gpdrService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.

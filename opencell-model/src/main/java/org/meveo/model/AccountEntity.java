@@ -39,6 +39,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 
 /**
@@ -95,6 +96,16 @@ public abstract class AccountEntity extends BusinessCFEntity {
     
     @Column(name = "job_title", length = 255)
     private String jobTitle;
+    
+    @Embedded
+    private ContactInformation contactInformation;
+    
+    @Column(name = "vat_no", length = 100)
+    private String vatNo;
+    
+    @Column(name = "registration_no", length = 100)
+    private String registrationNo;
+
 
     public String getExternalRef1() {
         return externalRef1;
@@ -176,4 +187,32 @@ public abstract class AccountEntity extends BusinessCFEntity {
 		name.anonymize(code);
 		address.anonymize(code);
 	}
+	
+	public String getVatNo() {
+		return vatNo;
+	}
+
+	public void setVatNo(String vatNo) {
+		this.vatNo = vatNo;
+	}
+
+	public String getRegistrationNo() {
+		return registrationNo;
+	}
+
+	public void setRegistrationNo(String registrationNo) {
+		this.registrationNo = registrationNo;
+	}
+
+	public ContactInformation getContactInformation() {
+	    if(contactInformation == null) {
+	        contactInformation = new ContactInformation();
+	    }
+        return contactInformation;
+    }
+
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
+    }
+    
 }

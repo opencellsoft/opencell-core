@@ -2,14 +2,14 @@ package org.meveo.model.crm;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
@@ -55,7 +55,9 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
+
  **/
 @Entity
 @ModuleItem
@@ -104,9 +106,17 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "value_required")
     private boolean valueRequired;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "crm_custom_field_tmpl_val")
+    @Transient
     private Map<String, String> listValues;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @OrderBy("gui_position ASC")
+    @CollectionTable(
+            name = "crm_custom_field_tmpl_val_pos",
+            joinColumns = { @JoinColumn(name = "customfieldtemplate_id") }
+    )
+    private List<OrderedValue> listOrderedValues = new ArrayList<OrderedValue>();
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @OrderBy("columnUse ASC, position ASC")
@@ -141,6 +151,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Type(type = "numeric_boolean")
     @Column(name = "inh_as_def_value")
     private boolean useInheritedAsDefaultValue;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "cf_protectable")
+    protected boolean protectable;
 
     /**
      * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
@@ -165,9 +179,9 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
      * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
-     * 
+     *
      * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
-     * 
+     *
      * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
      * english:0;field:0 OR tab:Second tab:1;field:1
      */
@@ -254,32 +268,37 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     }
 
     public Map<String, String> getListValues() {
-        return listValues;
+        return getListValuesSorted();
     }
 
+    /**
+     * create a Map of attribute from sorted List
+     * @return  a sorted LinkedHashMap values
+     */
     public Map<String, String> getListValuesSorted() {
-        if (listValues != null && !listValues.isEmpty()) {
-            Comparator<String> dropdownListComparator = new Comparator<String>() {
-                @Override
-                public int compare(String s1, String s2) {
-                    try {
-                        return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
-                    } catch (NumberFormatException e) {
-                        return s1.compareTo(s2);
-                    }
-                }
-            };
 
-            Map<String, String> newList = new TreeMap<>(dropdownListComparator);
-            newList.putAll(listValues);
-            return newList;
+
+        Map<String, String> newList = new LinkedHashMap<>();
+
+        if (listOrderedValues != null && !listOrderedValues.isEmpty()) {
+
+            for (int i = 0; i < listOrderedValues.size(); i++) {
+                newList.put(listOrderedValues.get(i).getKey(), listOrderedValues.get(i).getLabel());
+            }
         }
-
-        return listValues;
+        return newList;
     }
 
     public void setListValues(Map<String, String> listValues) {
         this.listValues = listValues;
+    }
+
+    public List<OrderedValue> getListOrderedValues() {
+        return listOrderedValues;
+    }
+
+    public void setListOrderedValues(List<OrderedValue> listOrderedValues) {
+        this.listOrderedValues = listOrderedValues;
     }
 
     public List<CustomFieldMatrixColumn> getMatrixColumns() {
@@ -326,7 +345,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Find a corresponding matrix column by its index (position). Note: result might differ if matrix column was added and value was not updated
-     * 
+     *
      * @param index Index to return the column for
      * @return Matched matrix column
      */
@@ -339,7 +358,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Extract codes of matrix columns into a sorted list by column index.
-     * 
+     *
      * @return A list of matrix column codes
      */
     public List<String> getMatrixColumnCodes() {
@@ -400,7 +419,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Retrieve a cet code from classname and code as it is stored in entityClazz field.
-     * 
+     *
      * @param entityClazz entity class
      * @return code
      */
@@ -570,7 +589,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         CustomFieldTemplate other = (CustomFieldTemplate) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-             return true;
+            return true;
         }
 
         if (code == null && other.getCode() != null) {
@@ -648,7 +667,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get a date period for a given date. Applies only to CFT versionable by a calendar.
-     * 
+     *
      * @param date Date
      * @return Date period matching calendar's dates
      */
@@ -670,7 +689,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     /**
      * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
      * will be updated in DB
-     * 
+     *
      * @return descriptionI18n value or instantiated descriptionI18n field value
      */
     public Map<String, String> getDescriptionI18nNullSafe() {
@@ -682,7 +701,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get description in a given language. Will return default description if not found for the language
-     * 
+     *
      * @param language language code
      * @return descriptionI18n value or instantiated descriptionI18n field value
      * @author akadid abdelmounaim
@@ -704,7 +723,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get a list of matrix columns used as key columns
-     * 
+     *
      * @return A list of matrix columns where isKeyColumn = true
      */
     public List<CustomFieldMatrixColumn> getMatrixKeyColumns() {
@@ -718,7 +737,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Extract codes of matrix columns used as key columns into a sorted list by column index
-     * 
+     *
      * @return A list of matrix column codes
      */
     public List<String> getMatrixKeyColumnCodes() {
@@ -735,7 +754,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get a list of matrix columns used as value columns
-     * 
+     *
      * @return A list of matrix columns where isKeyColumn = false
      */
     public List<CustomFieldMatrixColumn> getMatrixValueColumns() {
@@ -751,7 +770,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Extract codes of matrix columns used as value columns into a sorted list by column index
-     * 
+     *
      * @return A list of matrix column codes
      */
     public List<String> getMatrixValueColumnCodes() {
@@ -768,7 +787,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Parse multi-value value from string to a map of values
-     * 
+     *
      * @param multiValue Multi-value value as string
      * @param appendToMap Map to append values to. If not provided a new map will be instantiated.
      * @return Map of values (or same as appendToMap if provided)
@@ -808,7 +827,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Serialize multi-value from a map of values to a string
-     * 
+     *
      * @param mapValues Map of values
      * @return A string with concatenated values
      */
@@ -841,5 +860,19 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
 
         return valBuilder.toString();
+    }
+
+    /**
+     * @return the protectable
+     */
+    public boolean isProtectable() {
+        return protectable;
+    }
+
+    /**
+     * @param protectable the protectable to set
+     */
+    public void setProtectable(boolean protectable) {
+        this.protectable = protectable;
     }
 }

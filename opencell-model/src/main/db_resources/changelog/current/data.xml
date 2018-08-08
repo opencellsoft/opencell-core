@@ -3042,26 +3042,27 @@ select s.code AS "Seller code"
 	, coalesce(replace(uae.description, ',', ' '), '') AS "User Account description"
 	, coalesce(su.code, '') AS "Subscription code"
 	, coalesce(replace(su.description, ',', ' '), '') AS "Subscription description"
-	, coalesce(ap.acces_user_id, '') AS "Access Point id"  from  crm_seller s left
-OUTER JOIN crm_customer c  on c.seller_id = s.id left
-OUTER JOIN account_entity ce  on c.id = ce.id left
-OUTER JOIN ar_customer_account ca  on ca.customer_id = c.id left
-OUTER JOIN account_entity cae  on ca.id = cae.id left
-OUTER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id left
-OUTER JOIN account_entity bae  on ba.id = bae.id left
-OUTER JOIN billing_user_account ua  on ua.billing_account_id = ba.id left
-OUTER JOIN account_entity uae  on ua.id = uae.id left
-OUTER JOIN billing_subscription su  on su.user_account_id = ua.id left
-OUTER JOIN medina_access ap  on ap.subscription_id = su.id 
+	, coalesce(ap.acces_user_id, '') AS "Access Point id"  
+from  ${db.schema.adapted}crm_seller s left
+	OUTER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id left
+	OUTER JOIN ${db.schema.adapted}account_entity ce  on c.id = ce.id left
+	OUTER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.customer_id = c.id left
+	OUTER JOIN ${db.schema.adapted}account_entity cae  on ca.id = cae.id left
+	OUTER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.customer_account_id = ca.id left
+	OUTER JOIN ${db.schema.adapted}account_entity bae  on ba.id = bae.id left
+	OUTER JOIN ${db.schema.adapted}billing_user_account ua  on ua.billing_account_id = ba.id left
+	OUTER JOIN ${db.schema.adapted}account_entity uae  on ua.id = uae.id left
+	OUTER JOIN ${db.schema.adapted}billing_subscription su  on su.user_account_id = ua.id left
+	OUTER JOIN ${db.schema.adapted}medina_access ap  on ap.subscription_id = su.id 
 where s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' 
-|| :SEARCH_CRITERION || '%'  or ce.code ilike '%' || :SEARCH_CRITERION 
-|| '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' 
-|| :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION 
-|| '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' 
-|| :SEARCH_CRITERION || '%'  or uae.code ilike '%' || :SEARCH_CRITERION 
-|| '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  or su.code ilike '%' 
-|| :SEARCH_CRITERION || '%'  or su.description ilike '%' || :SEARCH_CRITERION 
-|| '%'  or ap.acces_user_id ilike '%' || :SEARCH_CRITERION || '%'  
+	|| :SEARCH_CRITERION || '%'  or ce.code ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or uae.code ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  or su.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or su.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or ap.acces_user_id ilike '%' || :SEARCH_CRITERION || '%'  
 order by s.code
 	,ce.code
 	,cae.code
@@ -3094,11 +3095,13 @@ order by s.code
 select s.code AS "Seller code"
 	, s.description AS "Seller description"
 	, coalesce(ce.code, '') AS "Customer code"
-	, coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"  from  crm_seller s left
-OUTER JOIN crm_customer c  on c.seller_id = s.id left
-OUTER JOIN account_entity ce  on c.id = ce.id where(  s.code ilike '%' || :SEARCH_CRITERION 
-|| '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' 
-|| :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+	, coalesce(replace(ce.description, ',', ' '), '') AS "Customer description"  
+from  ${db.schema.adapted}crm_seller s left
+	OUTER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id left
+	OUTER JOIN ${db.schema.adapted}account_entity ce  on c.id = ce.id 
+where(  s.code ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  
 and (  s.code ilike '%' || :SELLER || '%'  or s.description ilike '%' || :SELLER || '%'  )  
 order by s.code
 	,ce.code 
@@ -3135,8 +3138,9 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, it.code AS "Invoice type code"
 	, it.description AS "Invoice type description"
 	, trim(to_char(sum(i.amount_without_tax), '9999999990.00')) AS "Amount without tax"
-	, trim(to_char(sum(i.amount_with_tax), '9999999990.00')) AS "Amount with tax"  from billing_invoice i 
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+	, trim(to_char(sum(i.amount_with_tax), '9999999990.00')) AS "Amount with tax"  
+from ${db.schema.adapted}billing_invoice i 
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
 where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
 group by date_trunc('month', i.invoice_date)
 	, it.code
@@ -3176,15 +3180,16 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, it.code AS "Invoice type code"
 	, it.description AS "Invoice type description"
 	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
-	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s 
-INNER JOIN crm_customer c  on c.seller_id = s.id
-INNER JOIN account_entity ce  on c.id = ce.id
-INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-INNER JOIN account_entity cae  on ca.id = cae.id
-INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-INNER JOIN account_entity bae  on ba.id = bae.id
-INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from ${db.schema.adapted}crm_seller s 
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}account_entity ce  on c.id = ce.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}account_entity cae  on ca.id = cae.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}account_entity bae  on ba.id = bae.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i  on i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
 where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
 and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION 
 	|| '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION 
@@ -3240,14 +3245,17 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, it.code AS "Invoice type code"
 	, it.description AS "Invoice type description"
 	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
-	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s
-INNER JOIN crm_customer c  on c.seller_id = s.id
-INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-INNER JOIN account_entity bae  on ba.id = bae.id
-INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
-and(  bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}account_entity bae  on ba.id = bae.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i  on i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by date_trunc('month', i.invoice_date)
 	, it.code
 	, it.description
 	, bae.code
@@ -3288,13 +3296,17 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, it.code AS "Invoice type code"
 	, it.description AS "Invoice type description"
 	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
-	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s
-INNER JOIN crm_customer c  on c.seller_id = s.id
-INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-INNER JOIN account_entity cae  on ca.id = cae.id
-INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}account_entity cae  on ca.id = cae.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i  on i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by date_trunc('month', i.invoice_date)
 	, it.code
 	, it.description
 	, cae.code
@@ -3335,13 +3347,17 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, it.code AS "Invoice type code"
 	, it.description AS "Invoice type description"
 	, to_char(sum(i.amount_without_tax), '9999999990.00') AS "Amount without tax"
-	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  from crm_seller s
-INNER JOIN crm_customer c  on c.seller_id = s.id
-INNER JOIN account_entity ce  on c.id = ce.id
-INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}account_entity ce  on c.id = ce.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i  on i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by date_trunc('month', i.invoice_date)
 	, it.code
 	, it.description
 	, ce.code
@@ -3382,12 +3398,13 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, it.code AS  "Invoice type code"
 	, it.description AS  "Invoice type description"
 	, to_char(sum(i.amount_without_tax), '9999999990.00') AS  "Amount without tax"
-	, to_char(sum(i.amount_with_tax), '9999999990.00') AS  "Amount with tax"   from crm_seller s
-INNER JOIN crm_customer c  on c.seller_id = s.id
-INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id 
+	, to_char(sum(i.amount_with_tax), '9999999990.00') AS  "Amount with tax"   
+from ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i  on i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
 where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || 'month' AS INTERVAL))  
 and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  )  
 group by date_trunc('month', i.invoice_date)
@@ -3431,12 +3448,15 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, it.code AS "Invoice type code"
 	, it.description AS "Invoice type description"
 	, to_char(sum(rt.amount_without_tax), '9999999990.00') AS "Amount without tax"
-	, to_char(sum(rt.amount_with_tax), '9999999990.00') AS "Amount with tax"  from cat_offer_template of
-INNER JOIN billing_wallet_operation wo  on wo.offer_code = OF.code
-INNER JOIN billing_rated_transaction rt  on rt.wallet_operation_id = wo.id
-INNER JOIN billing_invoice i  on i.id = rt.invoice_id
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
-and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by date_trunc('month', i.invoice_date)
+	, to_char(sum(rt.amount_with_tax), '9999999990.00') AS "Amount with tax"  
+from ${db.schema.adapted}cat_offer_template of
+	INNER JOIN ${db.schema.adapted}billing_wallet_operation wo  on wo.offer_code = OF.code
+	INNER JOIN ${db.schema.adapted}billing_rated_transaction rt  on rt.wallet_operation_id = wo.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i  on i.id = rt.invoice_id
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by date_trunc('month', i.invoice_date)
 	, it.code
 	, it.description
 	, of.code
@@ -3488,9 +3508,9 @@ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(d
 					THEN ao.amount
 				ELSE - ao.amount
 				END), '99999999990.00') AS "Balance"
-FROM ar_account_operation ao
+FROM ${db.schema.adapted}ar_account_operation ao
 WHERE ao.invoice_date IS NOT NULL
-	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
+AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
 GROUP BY date_trunc('month', ao.invoice_date)
 ORDER BY date_trunc('month', ao.invoice_date) DESC
             </column>
@@ -3539,18 +3559,18 @@ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(d
 					THEN ao.amount
 				ELSE - ao.amount
 				END), '99999999990.00') AS "Balance"
-FROM crm_seller s
-INNER JOIN crm_customer c ON c.seller_id = s.id
-INNER JOIN account_entity ce ON c.id = ce.id
-INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
-INNER JOIN account_entity cae ON ca.id = cae.id
-INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
-INNER JOIN account_entity bae ON ba.id = bae.id
-INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
-INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
-	AND ao.reference = i.invoice_number
-	AND ao.invoice_date = i.invoice_date
-	AND ao.amount = abs(i.amount_with_tax)
+FROM ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}account_entity ce ON c.id = ce.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca ON ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}account_entity cae ON ca.id = cae.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba ON ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}account_entity bae ON ba.id = bae.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i ON i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}ar_account_operation ao ON ao.customer_account_id = ca.id
+		AND ao.reference = i.invoice_number
+		AND ao.invoice_date = i.invoice_date
+		AND ao.amount = abs(i.amount_with_tax)
 WHERE ao.invoice_date IS NOT NULL
 	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
 	AND (
@@ -3623,16 +3643,16 @@ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(d
 					THEN ao.amount
 				ELSE - ao.amount
 				END), '99999999990.00') AS "Balance"
-FROM crm_seller s
-INNER JOIN crm_customer c ON c.seller_id = s.id
-INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
-INNER JOIN billing_billing_account ba ON ba.customer_account_id = ca.id
-INNER JOIN account_entity bae ON ba.id = bae.id
-INNER JOIN billing_invoice i ON i.billing_account_id = ba.id
-INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
-	AND ao.reference = i.invoice_number
-	AND ao.invoice_date = i.invoice_date
-	AND ao.amount = abs(i.amount_with_tax)
+FROM ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca ON ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba ON ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}account_entity bae ON ba.id = bae.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i ON i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}ar_account_operation ao ON ao.customer_account_id = ca.id
+		AND ao.reference = i.invoice_number
+		AND ao.invoice_date = i.invoice_date
+		AND ao.amount = abs(i.amount_with_tax)
 WHERE ao.invoice_date IS NOT NULL
 	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
 	AND (
@@ -3690,11 +3710,11 @@ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(d
 					THEN ao.amount
 				ELSE - ao.amount
 				END), '99999999990.00') AS "Balance"
-FROM crm_seller s
-INNER JOIN crm_customer c ON c.seller_id = s.id
-INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
-INNER JOIN account_entity cae ON ca.id = cae.id
-INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+FROM ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca ON ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}account_entity cae ON ca.id = cae.id
+	INNER JOIN ${db.schema.adapted}ar_account_operation ao ON ao.customer_account_id = ca.id
 WHERE ao.invoice_date IS NOT NULL
 	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
 	AND (
@@ -3752,11 +3772,11 @@ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(d
 					THEN ao.amount
 				ELSE - ao.amount
 				END), '99999999990.00') AS "Balance"
-FROM crm_seller s
-INNER JOIN crm_customer c ON c.seller_id = s.id
-INNER JOIN account_entity ce ON c.id = ce.id
-INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
-INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+FROM ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}account_entity ce ON c.id = ce.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca ON ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}ar_account_operation ao ON ao.customer_account_id = ca.id
 WHERE ao.invoice_date IS NOT NULL
 	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
 	AND (
@@ -3814,10 +3834,10 @@ SELECT trim(to_char(date_trunc('month', ao.invoice_date), 'Month')) || to_char(d
 					THEN ao.amount
 				ELSE - ao.amount
 				END), '99999999990.00') AS "Balance"
-FROM crm_seller s
-INNER JOIN crm_customer c ON c.seller_id = s.id
-INNER JOIN ar_customer_account ca ON ca.customer_id = c.id
-INNER JOIN ar_account_operation ao ON ao.customer_account_id = ca.id
+FROM ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c ON c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca ON ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}ar_account_operation ao ON ao.customer_account_id = ca.id
 WHERE ao.invoice_date IS NOT NULL
 	AND ao.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))
 	AND (
@@ -3870,18 +3890,26 @@ select s.code AS "Seller code"
 	, uae.description AS "User Account description"
 	, count(DISTINCT wo.id) AS "Transaction count"
 	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo 
-INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
-INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
-INNER JOIN account_entity uae  on ua.id = uae.id 
-INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
-INNER JOIN account_entity bae  on ba.id = bae.id 
-INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
-INNER JOIN account_entity cae  on ca.id = cae.id 
-INNER JOIN crm_customer c  on c.id = ca.customer_id 
-INNER JOIN account_entity ce  on c.id = ce.id 
-INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
-and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  or uae.code ilike '%' || :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by s.code
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+from  ${db.schema.adapted}billing_wallet_operation wo 
+	INNER JOIN ${db.schema.adapted}billing_wallet wa  on wa.id = wo.wallet_id 
+	INNER JOIN ${db.schema.adapted}billing_user_account ua  on ua.id = wa.user_account_id 
+	INNER JOIN ${db.schema.adapted}account_entity uae  on ua.id = uae.id 
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.id = ua.billing_account_id 
+	INNER JOIN ${db.schema.adapted}account_entity bae  on ba.id = bae.id 
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.id = ba.customer_account_id 
+	INNER JOIN ${db.schema.adapted}account_entity cae  on ca.id = cae.id 
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.id = ca.customer_id 
+	INNER JOIN ${db.schema.adapted}account_entity ce  on c.id = ce.id 
+	INNER JOIN ${db.schema.adapted}crm_seller s  on s.id = c.seller_id 
+where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+	and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
+and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  or uae.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by s.code
 	, s.description
 	, ce.code
 	, ce.description
@@ -3921,15 +3949,20 @@ select uae.code AS "User Account code"
 	, uae.description AS "User Account description"
 	, count(DISTINCT wo.id) AS "Transaction count"
 	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo 
-INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
-INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
-INNER JOIN account_entity uae  on ua.id = uae.id 
-INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
-INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
-INNER JOIN crm_customer c  on c.id = ca.customer_id 
-INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   and EXISTS (   select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id   
-and rt.STATUS = 'OPEN'   )  )  )  and(  uae.code ilike '%' || :SEARCH_CRITERION || '%'  or uae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by uae.code
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+from  ${db.schema.adapted}billing_wallet_operation wo 
+	INNER JOIN ${db.schema.adapted}billing_wallet wa  on wa.id = wo.wallet_id 
+	INNER JOIN ${db.schema.adapted}billing_user_account ua  on ua.id = wa.user_account_id 
+	INNER JOIN ${db.schema.adapted}account_entity uae  on ua.id = uae.id 
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.id = ua.billing_account_id 
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.id = ba.customer_account_id 
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.id = ca.customer_id 
+	INNER JOIN ${db.schema.adapted}crm_seller s  on s.id = c.seller_id 
+where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   
+	and EXISTS (   select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id   
+and rt.STATUS = 'OPEN'   )  )  )  and(  uae.code ilike '%' || :SEARCH_CRITERION || '%'  or uae.description ilike '%' 
+	|| :SEARCH_CRITERION || '%'  )  
+group by uae.code
 	, uae.description order by uae.code
             </column>
         </insert>
@@ -3957,16 +3990,19 @@ select bae.code AS "Billing Account code"
 	, bae.description AS "Billing Account description"
 	, count(DISTINCT wo.id) AS "Transaction count"
 	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo
-INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
-INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
-INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
-INNER JOIN account_entity bae  on ba.id = bae.id
-INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
-INNER JOIN crm_customer c  on c.id = ca.customer_id
-INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
-and(  bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by bae.code
-	, bae.description order by bae.code
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+from  ${db.schema.adapted}billing_wallet_operation wo
+	INNER JOIN ${db.schema.adapted}billing_wallet wa  on wa.id = wo.wallet_id
+	INNER JOIN ${db.schema.adapted}billing_user_account ua  on ua.id = wa.user_account_id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.id = ua.billing_account_id
+	INNER JOIN ${db.schema.adapted}account_entity bae  on ba.id = bae.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.id = ba.customer_account_id
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.id = ca.customer_id
+	INNER JOIN ${db.schema.adapted}crm_seller s  on s.id = c.seller_id 
+where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+	and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
+	and(  bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by bae.code, bae.description order by bae.code
             </column>
         </insert>
         
@@ -3993,16 +4029,19 @@ select cae.code AS "Customer Account code"
 	, cae.description AS "Customer Account description"
 	, count(DISTINCT wo.id) AS "Transaction count"
 	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo
-INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
-INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
-INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id
-INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id
-INNER JOIN account_entity cae  on ca.id = cae.id
-INNER JOIN crm_customer c  on c.id = ca.customer_id
-INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
-and(  cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by cae.code
-	, cae.description order by cae.code
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+from  ${db.schema.adapted}billing_wallet_operation wo
+	INNER JOIN ${db.schema.adapted}billing_wallet wa  on wa.id = wo.wallet_id
+	INNER JOIN ${db.schema.adapted}billing_user_account ua  on ua.id = wa.user_account_id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.id = ua.billing_account_id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.id = ba.customer_account_id
+	INNER JOIN ${db.schema.adapted}account_entity cae  on ca.id = cae.id
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.id = ca.customer_id
+	INNER JOIN ${db.schema.adapted}crm_seller s  on s.id = c.seller_id 
+where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+	and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
+and(  cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by cae.code, cae.description order by cae.code
             </column>
         </insert>
         
@@ -4029,16 +4068,19 @@ select ce.code AS "Customer code"
 	, ce.description AS "Customer description"
 	, count(DISTINCT wo.id) AS "Transaction count"
 	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo
-INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id
-INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id
-INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
-INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
-INNER JOIN crm_customer c  on c.id = ca.customer_id 
-INNER JOIN account_entity ce  on c.id = ce.id 
-INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   and EXISTS (   select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id   and rt.STATUS = 'OPEN'   )  )  )  
-and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by ce.code
-	, ce.description order by ce.code
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+from  ${db.schema.adapted}billing_wallet_operation wo
+	INNER JOIN ${db.schema.adapted}billing_wallet wa  on wa.id = wo.wallet_id
+	INNER JOIN ${db.schema.adapted}billing_user_account ua  on ua.id = wa.user_account_id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.id = ua.billing_account_id 
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.id = ba.customer_account_id 
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.id = ca.customer_id 
+	INNER JOIN ${db.schema.adapted}account_entity ce  on c.id = ce.id 
+	INNER JOIN ${db.schema.adapted}crm_seller s  on s.id = c.seller_id 
+where  (  wo.STATUS = 'OPEN'  or (   wo.STATUS = 'TREATED'   
+	and EXISTS (   select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id   and rt.STATUS = 'OPEN'   )  )  )  
+and(  ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by ce.code, ce.description order by ce.code
             </column>
         </insert>
         
@@ -4065,15 +4107,18 @@ select s.code AS "Seller code"
 	, s.description AS "Seller description"
 	, count(DISTINCT wo.id) AS "Transaction count"
 	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  billing_wallet_operation wo 
-INNER JOIN billing_wallet wa  on wa.id = wo.wallet_id 
-INNER JOIN billing_user_account ua  on ua.id = wa.user_account_id 
-INNER JOIN billing_billing_account ba  on ba.id = ua.billing_account_id 
-INNER JOIN ar_customer_account ca  on ca.id = ba.customer_account_id 
-INNER JOIN crm_customer c  on c.id = ca.customer_id 
-INNER JOIN crm_seller s  on s.id = c.seller_id where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
-and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by s.code
-	, s.description order by s.code
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+from  ${db.schema.adapted}billing_wallet_operation wo 
+	INNER JOIN ${db.schema.adapted}billing_wallet wa  on wa.id = wo.wallet_id 
+	INNER JOIN ${db.schema.adapted}billing_user_account ua  on ua.id = wa.user_account_id 
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.id = ua.billing_account_id 
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.id = ba.customer_account_id 
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.id = ca.customer_id 
+	INNER JOIN ${db.schema.adapted}crm_seller s  on s.id = c.seller_id 
+where  (  wo.STATUS = 'OPEN'  or (  wo.STATUS = 'TREATED' 
+	and EXISTS (  select 1 from billing_rated_transaction rt where rt.wallet_operation_id = wo.id  and rt.STATUS = 'OPEN' )  )  )  
+and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by s.code, s.description order by s.code
             </column>
         </insert>
         
@@ -4100,10 +4145,13 @@ select of.code AS "Offer code"
 	, of.description AS "Offer description"
 	, count(DISTINCT wo.id) AS "Transaction count"
 	, to_char(sum(wo.amount_without_tax), '99999999990.00') AS "Amount without tax"
-	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  from  cat_offer_template of 
-INNER JOIN billing_wallet_operation wo  on wo.offer_code = OF.code where  (  wo.STATUS = 'OPEN'  or ( wo.STATUS = 'TREATED' and EXISTS ( select 1  from billing_rated_transaction rt  where rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' )  )  )  
-and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  group by of.code
-	, of.description order by of.code
+	, to_char(sum(wo.amount_with_tax), '99999999990.00') AS "Amount with tax"  
+from  ${db.schema.adapted}cat_offer_template of 
+	INNER JOIN ${db.schema.adapted}billing_wallet_operation wo  on wo.offer_code = OF.code 
+where  (  wo.STATUS = 'OPEN'  or ( wo.STATUS = 'TREATED' 
+	and EXISTS ( select 1  from billing_rated_transaction rt  where rt.wallet_operation_id = wo.id and rt.STATUS = 'OPEN' )  )  )  
+and(  of.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.description ilike '%' || :SEARCH_CRITERION || '%'  )  
+group by of.code, of.description order by of.code
             </column>
         </insert>
         
@@ -4141,16 +4189,23 @@ select trim(to_char(date_trunc('month', i.invoice_date), 'Month')) || to_char(da
 	, cae.code AS "Customer Account code"
 	, cae.description AS "Customer Account description"
 	, bae.code AS "Billing Account code"
-	, bae.description AS "Billing Account description"  from crm_seller s
-INNER JOIN crm_customer c  on c.seller_id = s.id
-INNER JOIN account_entity ce  on c.id = ce.id
-INNER JOIN ar_customer_account ca  on ca.customer_id = c.id
-INNER JOIN account_entity cae  on ca.id = cae.id
-INNER JOIN billing_billing_account ba  on ba.customer_account_id = ca.id
-INNER JOIN account_entity bae  on ba.id = bae.id
-INNER JOIN billing_invoice i  on i.billing_account_id = ba.id
-INNER JOIN billing_invoice_type it  on it.id = i.invoice_type_id where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
-and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION || '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION || '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION || '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION || '%'  )  order by date_trunc('month', i.invoice_date) DESC
+	, bae.description AS "Billing Account description"  
+from ${db.schema.adapted}crm_seller s
+	INNER JOIN ${db.schema.adapted}crm_customer c  on c.seller_id = s.id
+	INNER JOIN ${db.schema.adapted}account_entity ce  on c.id = ce.id
+	INNER JOIN ${db.schema.adapted}ar_customer_account ca  on ca.customer_id = c.id
+	INNER JOIN ${db.schema.adapted}account_entity cae  on ca.id = cae.id
+	INNER JOIN ${db.schema.adapted}billing_billing_account ba  on ba.customer_account_id = ca.id
+	INNER JOIN ${db.schema.adapted}account_entity bae  on ba.id = bae.id
+	INNER JOIN ${db.schema.adapted}billing_invoice i  on i.billing_account_id = ba.id
+	INNER JOIN ${db.schema.adapted}billing_invoice_type it  on it.id = i.invoice_type_id 
+where i.invoice_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and(  s.code ilike '%' || :SEARCH_CRITERION || '%'  or s.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or ce.code ilike '%' || :SEARCH_CRITERION || '%'  or ce.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or cae.code ilike '%' || :SEARCH_CRITERION || '%'  or cae.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  or bae.code ilike '%' || :SEARCH_CRITERION || '%'  or bae.description ilike '%' || :SEARCH_CRITERION 
+	|| '%'  )  
+order by date_trunc('month', i.invoice_date) DESC
 	, i.invoice_date DESC
 	, it.code
 	, i.invoice_number
@@ -4210,12 +4265,19 @@ SELECT  edr.id AS "Id"
 	, edr.decimal_parameter_2 AS "Param N2"
 	, edr.decimal_parameter_3 AS "Param N3"
 	, edr.decimal_parameter_4 AS "Param N4"
-	, edr.decimal_parameter_5 AS "Param N5"  from rating_edr edr
-INNER JOIN billing_subscription su  on su.id = edr.subscription_id
-INNER JOIN cat_offer_template of  on OF.id = su.offer_id where edr.event_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
-and edr.STATUS ilike '%' || :EDR_STATUS || '%'  and(  su.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.code ilike '%' || :SEARCH_CRITERION || '%'  or edr.access_code ilike '%' || :SEARCH_CRITERION || '%'  or edr.reject_reason ilike '%' || :SEARCH_CRITERION || '%'  or edr.origin_batch ilike '%' || :SEARCH_CRITERION || '%'  or edr.origin_record ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_1 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_2 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_3 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_4 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_5 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_6 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_7 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_8 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_9 ilike '%' || :SEARCH_CRITERION || '%' 
-		 )  order by edr.STATUS
-	, edr.id DESC
+	, edr.decimal_parameter_5 AS "Param N5"  
+from ${db.schema.adapted}rating_edr edr
+	INNER JOIN ${db.schema.adapted}billing_subscription su  on su.id = edr.subscription_id
+	INNER JOIN ${db.schema.adapted}cat_offer_template of  on OF.id = su.offer_id where edr.event_date > (date_trunc('month', CURRENT_DATE) - CAST(:MONTH_INTERVAL || ' month' AS INTERVAL))  
+and edr.STATUS ilike '%' || :EDR_STATUS || '%'  and(  su.code ilike '%' || :SEARCH_CRITERION || '%'  or OF.code ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or edr.access_code ilike '%' || :SEARCH_CRITERION || '%'  or edr.reject_reason ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or edr.origin_batch ilike '%' || :SEARCH_CRITERION || '%'  or edr.origin_record ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or edr.parameter_1 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_2 ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or edr.parameter_3 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_4 ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or edr.parameter_5 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_6 ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or edr.parameter_7 ilike '%' || :SEARCH_CRITERION || '%'  or edr.parameter_8 ilike '%' 
+	|| :SEARCH_CRITERION || '%'  or edr.parameter_9 ilike '%' || :SEARCH_CRITERION || '%')  
+order by edr.STATUS, edr.id DESC
             </column>
         </insert>
         

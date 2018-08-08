@@ -487,6 +487,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     /**
      * Allow generating draft invoice
      * 
+     * @throws BusinessException General Business Exception
+     * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -695,6 +697,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                             updateAmountsAndLines(getFreshBA());
                         }
                     }
+                    
+                    for (RatedTransaction rt : invoice.getRatedTransactions()) {
+                        if(rt.getWallet() == null) {
+                            agregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
+                        }
+                    }
+                    updateAmountsAndLines(getFreshBA());
                 }
 
             }

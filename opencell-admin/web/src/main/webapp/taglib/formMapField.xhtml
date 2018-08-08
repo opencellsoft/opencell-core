@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org">
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org">
 
 <ui:composition>
     <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}"
-        displayOneLine="#{displayOneLine}" styleClass="#{styleClass}" style="#{style}" labelStyle="#{labelStyle}"
-        labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
-        inputWidth="#{inputWidth}">
+                            displayOneLine="#{displayOneLine}" styleClass="#{styleClass}" style="#{style}" labelStyle="#{labelStyle}"
+                            labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+                            inputWidth="#{inputWidth}">
 
         <p:dataTable id="#{id}" value="#{fieldItem}" resizableColumns="true" var="mapValues" paginator="false" styleClass="custom-grid" reflow="true">
             <p:column headerText="#{mapKeyLabel}">
@@ -21,11 +21,15 @@
             </p:column>
             <p:column rendered="#{edit}" headerText="#{messages['commons.actions']}">
                 <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this #{id}" update="#{id}"
-                    actionListener="#{backingBean.removeMapTypeFieldValue(field, mapValues)}" />
+                                 actionListener="#{backingBean.removeMapTypeFieldValue(field, mapValues)}" />
+                <p:commandButton id="blankUp" icon="ui-icon-blank" rendered="#{!backingBean.renderMoveUp(field, mapValues)}" />
+                <p:commandButton id="moveUpFBtnCF" icon="ui-icon-arrowthick-1-n" action="#{backingBean.moveUp(field, mapValues)}" update="#{id}" rendered="#{backingBean.renderMoveUp(field, mapValues)}" />
+                <p:commandButton id="moveDownFBtnCF" icon="ui-icon-arrowthick-1-s" action="#{backingBean.moveDown(field, mapValues)}" update="#{id}" rendered="#{backingBean.renderMoveDown(field, mapValues)}" />
+                <p:commandButton id="blankDown" icon="ui-icon-blank" rendered="#{!backingBean.renderMoveDown(field, mapValues)}" />
             </p:column>
             <f:facet name="footer">
                 <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this #{id}" update="#{id}"
-                    actionListener="#{backingBean.addMapTypeFieldValue(field)}" rendered="#{edit}" />
+                                 actionListener="#{backingBean.addMapTypeFieldValue(field)}" rendered="#{edit}" />
             </f:facet>
         </p:dataTable>
 

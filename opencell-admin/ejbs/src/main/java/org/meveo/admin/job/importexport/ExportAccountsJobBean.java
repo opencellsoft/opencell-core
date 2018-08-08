@@ -112,7 +112,9 @@ public class ExportAccountsJobBean {
                 dto.setAddress(new Address(ba.getAddress()));
             }
             dto.setElectronicBilling(ba.getElectronicBilling() == null ? null : ba.getElectronicBilling() + "");
-            dto.setEmail(ba.getEmail() == null ? null : ba.getEmail());
+            if(ba.getContactInformation() != null) {
+                dto.setEmail(ba.getContactInformation().getEmail() == null ? null : ba.getContactInformation().getEmail());
+            }
             dto.setTradingCountryCode(ba.getTradingCountry() == null ? null : ba.getTradingCountry().getCountryCode());
             dto.setTradingLanguageCode(ba.getTradingLanguage() == null ? null : ba.getTradingLanguage().getLanguageCode());
             if (ba.getCfValues() != null) {

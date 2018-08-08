@@ -25,7 +25,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -50,7 +49,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.shared.ContactInformation;
 
 /**
  * Customer Account entity.
@@ -109,9 +107,6 @@ public class CustomerAccount extends AccountEntity {
 	@Column(name = "date_dunning_level")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDunningLevel;
-
-	@Embedded
-	private ContactInformation contactInformation;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")
@@ -193,14 +188,6 @@ public class CustomerAccount extends AccountEntity {
 
 	public void setAccountOperations(List<AccountOperation> accountOperations) {
 		this.accountOperations = accountOperations;
-	}
-
-	public ContactInformation getContactInformation() {
-		return contactInformation;
-	}
-
-	public void setContactInformation(ContactInformation contactInformation) {
-		this.contactInformation = contactInformation;
 	}
 
 	public void setDunningLevel(DunningLevelEnum dunningLevel) {
@@ -489,7 +476,7 @@ public class CustomerAccount extends AccountEntity {
     @Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		contactInformation.anonymize(code);
+		getContactInformation().anonymize(code);
 		if (getBillingAccounts() != null) {
 			for (BillingAccount ba : getBillingAccounts()) {
 				ba.anonymize(code);

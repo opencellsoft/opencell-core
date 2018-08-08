@@ -537,6 +537,7 @@ public interface AccountWs extends IBaseWs {
    	 * as a zipped file along with the pdf invoices.
    	 * 
      * @param customerCode the code of the customer
+     * @return ActionStatus action status.
      */
     @WebMethod
 	ActionStatus exportCustomerHierarchy(@WebParam(name = "customerCode") String customerCode);

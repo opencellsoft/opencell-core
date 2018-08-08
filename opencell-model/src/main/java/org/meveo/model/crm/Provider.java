@@ -66,6 +66,7 @@ import org.meveo.model.communication.postalmail.GdprConfiguration;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.InterBankTitle;
 
@@ -227,6 +228,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     
     @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
     private GdprConfiguration gdprConfiguration;
+    
+    @Embedded
+    private RumSequence rumSequence = new RumSequence();
 
     public String getCode() {
         return code;
@@ -583,5 +587,13 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 		}
 
 		return gdprConfiguration;
+	}
+
+    public RumSequence getRumSequence() {
+		return rumSequence;
+	}
+
+	public void setRumSequence(RumSequence rumSequence) {
+		this.rumSequence = rumSequence;
 	}
 }

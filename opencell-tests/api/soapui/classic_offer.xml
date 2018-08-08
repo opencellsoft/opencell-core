@@ -40922,7 +40922,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_ADMIN Reseller 1" id="9bb0cda1-dcdf-4cef-b8b0-a94ce880aeaa" disabled="true">
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 1" id="9bb0cda1-dcdf-4cef-b8b0-a94ce880aeaa">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -40938,11 +40938,11 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:createExternalUser>
          <user>
-            <username>eric.canneva</username>
-            <email>eric.canneva@opencellsoft.com</email>
-            <firstName>Eric</firstName>
-            <lastName>Canneva</lastName>
-            <password>eric.canneva</password>
+            <username>rick.canella</username>
+            <email>rick.canella@opencellsoft.com</email>
+            <firstName>Rick</firstName>
+            <lastName>Canella</lastName>
+            <password>rick.canella</password>
             <userRoles>
                <userRole>CUSTOMER_CARE_USER</userRole>
                <userRole>PC_ADMIN</userRole>
@@ -41030,7 +41030,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 1" id="e296deb3-84d8-48ff-83be-e6d6981577bb" disabled="true">
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 1" id="e296deb3-84d8-48ff-83be-e6d6981577bb">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41289,7 +41289,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_ADMIN Reseller 2" id="283f8109-611c-4466-911a-a102a73fd0a2" disabled="true">
+      <con:testStep type="request" name="Create User PC_ADMIN Reseller 2" id="283f8109-611c-4466-911a-a102a73fd0a2">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -41397,7 +41397,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 2" id="38f178cc-c83f-476a-8d3a-0a7b4e1eaf8a" disabled="true">
+      <con:testStep type="request" name="Create User PC_LEVEL2 Reseller 2" id="38f178cc-c83f-476a-8d3a-0a7b4e1eaf8a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -42326,7 +42326,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#THIS_MONTH}-01</invoicingDate>
             <lastTransactionDate>${#TestSuite#THIS_MONTH}-02</lastTransactionDate>
 		  <generateXML>true</generateXML>
@@ -43020,7 +43021,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#THIS_MONTH}-01</invoicingDate>
             <lastTransactionDate>${#TestSuite#THIS_MONTH}-02</lastTransactionDate>
 		  <generateXML>true</generateXML>
@@ -43488,7 +43490,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#LAST_MONTH}-01</invoicingDate>
             <lastTransactionDate>${#TestSuite#LAST_MONTH}-01</lastTransactionDate>
 		  <generateXML>true</generateXML>
@@ -43835,7 +43838,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#THIS_MONTH}-01</invoicingDate>
             <lastTransactionDate>${#TestSuite#THIS_MONTH}-01</lastTransactionDate>
 		  <generateXML>true</generateXML>
@@ -44966,7 +44970,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#LAST_MONTH}-01</invoicingDate>
             <lastTransactionDate>${#TestSuite#LAST_MONTH}-02</lastTransactionDate>
 		  <generateXML>true</generateXML>
@@ -45247,7 +45252,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#THIS_MONTH}-01</invoicingDate>
             <lastTransactionDate>${#TestSuite#THIS_MONTH}-02</lastTransactionDate>
 		  <generateXML>true</generateXML>
@@ -45335,7 +45341,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#END_MONTH}-15</invoicingDate>
             <lastTransactionDate>${=new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date())}</lastTransactionDate>
 		  <generateXML>true</generateXML>
@@ -51081,7 +51088,8 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <billingAccountCode>${#TestSuite#CUST}</billingAccountCode>
+            <targetCode>${#TestSuite#CUST}</targetCode>
+            <targetType>BILLINGACCOUNT</targetType>
             <invoicingDate>${#TestSuite#INVOICING_DATE}</invoicingDate>
             <lastTransactionDate>${#TestSuite#INVOICING_DATE}</lastTransactionDate>
             <generateXML>true</generateXML>

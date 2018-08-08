@@ -79,11 +79,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Column(name = "status_date")
     private Date statusDate = new Date();
 
-    @Column(name = "email", length = 255)
-    @Size(max = 255)
-    // @Pattern(regexp = ".+@.+\\..{2,4}")
-    private String email;
-
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
     private Boolean electronicBilling = false;
@@ -172,10 +167,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
-    @Column(name = "phone", length = 50)
-    @Size(max = 50)
-    protected String phone;
-    
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
@@ -229,14 +220,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     public void setElectronicBilling(Boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Date getNextInvoiceDate() {
@@ -412,14 +395,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.invoicingThreshold = invoicingThreshold;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
@@ -439,8 +414,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Override
 	public void anonymize(String code) {
 		super.anonymize(code);
-		setEmail(code + "@opencellsoft.com");
-		setPhone(code);
+		getContactInformation().anonymize(code);
 		if (getUsersAccounts() != null) {
 			for (UserAccount ua : getUsersAccounts()) {
 				ua.anonymize(code);

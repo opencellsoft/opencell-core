@@ -18,7 +18,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * @LastModifiedVersion 5.2
  */
 @Stateless
-public class GpdrService extends BaseService {
+public class GdprService extends BaseService {
 
 	@Inject
 	private CustomerService customerService;

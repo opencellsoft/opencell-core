@@ -34,6 +34,7 @@ import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.communication.postalmail.GdprConfiguration;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RumSequence;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.Param;
@@ -100,6 +101,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         	gdprConfiguration.setProvider(entity);
         	entity.setGdprConfiguration(gdprConfiguration);
         }
+        
+        if(entity.getRumSequence() == null) {
+        	entity.setRumSequence(new RumSequence());
+    	}
 
         return entity;
     }
