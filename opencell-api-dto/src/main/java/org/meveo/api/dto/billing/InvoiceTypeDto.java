@@ -93,14 +93,14 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode() : null;
         this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
         this.occTemplateNegativeCodeEl = invoiceType.getOccTemplateNegativeCodeEl();
-        this.sequenceDto = new SequenceDto(invoiceType.getSequence());
+        this.sequenceDto = new SequenceDto(invoiceType.getInvoiceSequence());
         if (invoiceType.getAppliesTo() != null) {
             for (InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()) {
                 this.getAppliesTo().add(tmpInvoiceType.getCode());
             }
         }
         for (InvoiceTypeSellerSequence seq : invoiceType.getSellerSequence()) {
-            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getSequence()));
+            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getInvoiceSequence()));
         }
         this.matchingAuto = invoiceType.isMatchingAuto();
         this.billingTemplateName = invoiceType.getBillingTemplateName();

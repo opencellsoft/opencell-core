@@ -29,6 +29,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.Sequence;
@@ -63,6 +64,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
     private Integer sequenceSize = 9;
     private Long currentInvoiceNb = 0L;
     private String invoiceTypeCode;
+    private InvoiceSequence invoiceSequence;
     private boolean editSellerSequence = false;
 
     /**
@@ -122,6 +124,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
         // }
     }
 
+    /*
     public void saveOrUpdateSequence() throws BusinessException {
         if (getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceTypeCode).longValue()) {
             messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
@@ -151,6 +154,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
         }
         resetSequenceField();
     }
+    */
 
     public void deleteSellerSequence(InvoiceType invoiceType) {
 
@@ -163,6 +167,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
         messages.info(new BundleKey("messages", "seller.sequence.deleted"));
     }
 
+    /*
     public void getSequenceSelected(InvoiceTypeSellerSequence invoiceTypeSellerSequence) {
         this.selectedInvoiceTypeSellerSequence = invoiceTypeSellerSequence;
         invoiceTypeCode = invoiceTypeSellerSequence.getInvoiceType().getCode();
@@ -171,9 +176,9 @@ public class SellerBean extends CustomFieldBean<Seller> {
         currentInvoiceNb = invoiceTypeSellerSequence.getSequence().getCurrentInvoiceNb();
         editSellerSequence = true;
     }
-
+*/
     public void resetSequenceField() {
-        this.selectedInvoiceTypeSellerSequence = null;
+        this.selectedInvoiceTypeSellerSequence = new InvoiceTypeSellerSequence();
         invoiceTypeCode = null;
         prefixEl = "";
         sequenceSize = 9;
@@ -220,5 +225,21 @@ public class SellerBean extends CustomFieldBean<Seller> {
     public void setEditSellerSequence(boolean editSellerSequence) {
         this.editSellerSequence = editSellerSequence;
     }
+
+	public InvoiceSequence getInvoiceSequence() {
+		return invoiceSequence;
+	}
+
+	public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
+		this.invoiceSequence = invoiceSequence;
+	}
+
+	public InvoiceTypeSellerSequence getSelectedInvoiceTypeSellerSequence() {
+		return selectedInvoiceTypeSellerSequence;
+	}
+
+	public void setSelectedInvoiceTypeSellerSequence(InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence) {
+		this.selectedInvoiceTypeSellerSequence = selectedInvoiceTypeSellerSequence;
+	}
 
 }

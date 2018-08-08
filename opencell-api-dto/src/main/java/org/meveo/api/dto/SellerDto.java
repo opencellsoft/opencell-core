@@ -97,7 +97,7 @@ public class SellerDto extends BusinessEntityDto {
         super(seller);
         if (seller.getInvoiceTypeSequence() != null) {
             for (InvoiceTypeSellerSequence seq : seller.getInvoiceTypeSequence()) {
-                invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getSequence()));
+                invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getInvoiceSequence()));
             }
         }
 

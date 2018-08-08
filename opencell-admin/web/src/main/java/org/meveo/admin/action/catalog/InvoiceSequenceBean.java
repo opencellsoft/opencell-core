@@ -25,18 +25,21 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
-public class InvoiceTypeBean extends BaseBean<InvoiceType> {
+public class InvoiceSequenceBean extends BaseBean<InvoiceSequence> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,41 +50,54 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
 	
+	@Inject
+	private InvoiceSequenceService invoiceSequenceService;
+
 	private DualListModel<InvoiceType> invoiceTypesDM;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public InvoiceTypeBean() {
-		super(InvoiceType.class);
+	public InvoiceSequenceBean() {
+		super(InvoiceSequence.class);
 	}
 
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         log.trace("saving new InvoiceType={}", entity.getCode());
-        getEntity().getAppliesTo().clear();
-        getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
-        return super.saveOrUpdate(killConversation);
+        /*
+        getEntity().getInvoiceTypes().clear();
+        getEntity().getInvoiceTypes().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
+        
+        if (entity.getCurrentInvoiceNb() != null
+                && entity.getCurrentInvoiceNb().longValue() < invoiceSequenceService.getMaxCurrentInvoiceNumber(entity.getCode()).longValue()) {
+            messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
+            return null;
+        }
+        */
+        
+        super.saveOrUpdate(killConversation);
+        return getListViewName();
     }
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<InvoiceType> getPersistenceService() {
-		return invoiceTypeService;
+	protected IPersistenceService<InvoiceSequence> getPersistenceService() {
+		return invoiceSequenceService;
 	}
 
 	@Override
 	protected String getListViewName() {
-		return "invoiceTypes";
+		return "invoiceSequences";
 	}
 
 	@Override
 	public String getNewViewName() {
-		return "invoiceTypeDetail";
+		return "invoiceSequenceDetail";
 	}
 
 	@Override
@@ -97,11 +113,8 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
     public DualListModel<InvoiceType> getDualListModel() {
         if (invoiceTypesDM == null) {
             List<InvoiceType> perksSource = invoiceTypeService.listActive();
-            
             List<InvoiceType> perksTarget = new ArrayList<InvoiceType>();
-            if (getEntity().getAppliesTo() != null) {
-                perksTarget.addAll(getEntity().getAppliesTo());
-            }
+            perksTarget.addAll(getEntity().getInvoiceTypes());
             perksSource.removeAll(perksTarget);
             invoiceTypesDM = new DualListModel<InvoiceType>(perksSource, perksTarget);
         }
@@ -112,11 +125,5 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
         this.invoiceTypesDM = invoiceTypesDM;
     }
         
-    public String getAdjustmentCode() {
-		return invoiceTypeService.getAdjustementCode();
-	}
     
-    public String getCommercialCode() {
-		return invoiceTypeService.getCommercialCode();
-	}
 }

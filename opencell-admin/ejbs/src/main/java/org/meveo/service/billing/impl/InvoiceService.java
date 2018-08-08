@@ -70,7 +70,6 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
@@ -90,10 +89,11 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -355,11 +355,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
         Seller seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
 
-        Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
+        InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
 
-        String prefix = sequence.getPrefixEL();
         int sequenceSize = sequence.getSequenceSize();
-
+        String prefix = invoiceType.getPrefixEL();
+        if(invoiceTypeSellerSequence != null) {
+        	prefix = invoiceTypeSellerSequence.getPrefixEL();
+        }
         if (prefix != null && !StringUtils.isBlank(prefix)) {
             prefix = evaluatePrefixElExpression(prefix, invoice);
         }
@@ -379,7 +382,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
-        String prefix = invoicesToNumberInfo.getNumberingSequence().getPrefixEL();
+    	InvoiceType invoiceType = invoice.getInvoiceType();
+        String prefix = invoiceType.getPrefixEL();
+        
+        //TODO: 3508
+        Seller seller = null;
+        if(invoice.getBillingAccount() != null && invoice.getBillingAccount().getCustomerAccount() != null
+        		&& invoice.getBillingAccount().getCustomerAccount().getCustomer() != null
+        		&& invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller()  != null) {
+        	seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+        
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+        if(invoiceTypeSellerSequence != null) {
+        	prefix = invoiceTypeSellerSequence.getPrefixEL();
+        }
+        
         if (prefix != null && !StringUtils.isBlank(prefix)) {
             prefix = evaluatePrefixElExpression(prefix, invoice);
         }
