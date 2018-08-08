@@ -42,6 +42,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
@@ -321,6 +322,25 @@ public class SubscriptionService extends BusinessService<Subscription> {
     	
     	
     	return null;
+    }
+ 
+    /**
+     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date > n years.
+     * @param nYear age of the subscription
+     * @return Filtered list of subscriptions
+     */
+    @SuppressWarnings("unchecked")
+	public List<Subscription> listInactiveSubscriptions(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
+    	qb.startOrClause();
+    	qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED);
+    	qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE);
+    	qb.endOrClause();
+    	
+    	return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
     }
 
 }

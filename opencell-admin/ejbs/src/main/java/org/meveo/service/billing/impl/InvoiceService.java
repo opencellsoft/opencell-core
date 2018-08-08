@@ -70,7 +70,6 @@ import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
@@ -2043,5 +2042,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return result;
+    }
+    
+    /**
+     * Return all invoices with now - invoiceDate date > n years.
+     * @param nYear age of the invoices
+     * @return Filtered list of invoices
+     */
+    @SuppressWarnings("unchecked")
+	public List<Invoice> listInactiveInvoice(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Invoice.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound);
+    	
+    	return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
     }
 }
