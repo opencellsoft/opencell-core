@@ -1343,4 +1343,78 @@
         <dropColumn tableName="ar_customer_account" columnName="phone" />
     </changeSet>
 
+    <changeSet id="#3511_20180803 - paymennt schedule" author="anasseh">
+        <createTable tableName="ar_payment_schedule">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_schedule_pkey" />
+            </column>
+            <column name="version" type="int4" />
+           <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />            
+            <column name="calendar_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="service_template_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="start_date" type="datetime">
+                <constraints nullable="false" />
+            </column>            
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="day_in_month" type="int" >
+                <constraints nullable="false" />
+            </column>   
+            <column name="number_payments" type="int" >
+                <constraints nullable="false" />
+            </column>              
+            <column name="payment_label" type="varchar(2000)" >
+                <constraints nullable="false" />
+            </column> 
+			<column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}"/>    
+            <column name="occ_template_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+                                             
+        </createTable>
+        <createSequence sequenceName="ar_payment_schedule_seq" />
+        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="ar_payment_schedule" constraintName="fk_ps_calendar" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="ar_payment_schedule" constraintName="fk_ps_service_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+         <addForeignKeyConstraint baseColumnNames="occ_template_id" baseTableName="ar_payment_schedule" constraintName="fk_ps_occ_template" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />                                 
+        <addColumn tableName="ar_account_operation">
+            <column name="payment_schedule_id" type="bigint" />
+        </addColumn>  
+         <addForeignKeyConstraint baseColumnNames="payment_schedule_id" baseTableName="ar_account_operation" constraintName="fk_ao_ps" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_schedule" />
+                                       
+     </changeSet>
+     
+     <changeSet id="#3511_20180803_2 - paymennt schedule" author="anasseh" dbms="mysql">
+       <createTable tableName="ar_payment_schedule_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="payment_history_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_payment_history_seq values(1)</sql>                                 
+    </changeSet>
 </databaseChangeLog>
