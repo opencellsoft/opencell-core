@@ -1140,10 +1140,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
         }
-        
-        if(entity instanceof BillingAccount || entity instanceof Subscription) {
-            billingAccountService.createMinAmountsRT(entity, invoicingDate);
-        }
     }
 
     /**
