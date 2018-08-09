@@ -12,7 +12,7 @@ import org.meveo.model.billing.InvoiceSequence;
  * 
  * @author abdelmounaim akadid
  */
-@XmlRootElement(name = "InvoiceType")
+@XmlRootElement(name = "InvoiceSequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceSequenceDto extends BusinessEntityDto {
 
@@ -34,9 +34,9 @@ public class InvoiceSequenceDto extends BusinessEntityDto {
     }
 
     /**
-     * Instantiates a new invoice type dto.
+     * Instantiates a new invoice sequence dto.
      *
-     * @param invoiceType the invoice type
+     * @param invoiceSequence the invoice sequence
      */
     public InvoiceSequenceDto(InvoiceSequence invoiceSequence) {
         super(invoiceSequence);

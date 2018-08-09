@@ -32,6 +32,7 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Edward Legaspi
+ * @author akadid abdelmounaim
  * @lastModifiedVersion 5.2
  */
 @Singleton
@@ -43,6 +44,9 @@ public class ServiceSingleton {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+
+    @Inject
+    private InvoiceSequenceService invoiceSequenceService;
 
     @Inject
     private OCCTemplateService oCCTemplateService;
@@ -101,6 +105,8 @@ public class ServiceSingleton {
             sequence = new InvoiceSequence();
             sequence.setCurrentInvoiceNb(0L);
             sequence.setSequenceSize(9);
+            sequence.setCode(invoiceType.getCode());
+            invoiceSequenceService.create(sequence);
             invoiceType.setInvoiceSequence(sequence);
         }
 
@@ -116,8 +122,6 @@ public class ServiceSingleton {
                 //invoiceType = invoiceTypeService.update(invoiceType);
             } else {
                 InvoiceSequence sequenceGlobal = new InvoiceSequence();
-                //TODO
-                //sequenceGlobal.setPrefixEL(sequence.getPrefixEL());
                 sequenceGlobal.setSequenceSize(sequence.getSequenceSize());               
                 
                 previousInvoiceNb = invoiceTypeService.getCurrentGlobalInvoiceBb();
@@ -127,7 +131,7 @@ public class ServiceSingleton {
                 return sequenceGlobal;
             }
         }
-
+        
         // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
 

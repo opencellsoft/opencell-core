@@ -54,6 +54,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
@@ -177,6 +178,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = true)
+    private Seller seller;
 
     @Transient
     private List<RatedTransaction> minRatedTransactions;
@@ -494,6 +499,14 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
 		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
 	}
+	
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 
     /**
      * Is subscription active

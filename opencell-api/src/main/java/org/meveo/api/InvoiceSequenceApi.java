@@ -1,6 +1,5 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,16 +7,14 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.billing.InvoiceSequenceDto;
+import org.meveo.api.dto.billing.InvoiceSequencesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
 
 /**
  * The CRUD Api for InvoiceSequence Entity.
@@ -26,18 +23,10 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
  */
 @Stateless
 public class InvoiceSequenceApi extends BaseApi {
-
-    /** The invoice type service. */
-    @Inject
-    private InvoiceTypeService invoiceTypeService;
     
     /** The invoice sequence service. */
     @Inject
     private InvoiceSequenceService invoiceSequenceService;
-
-    /** The seller service. */
-    @Inject
-    private SellerService sellerService;
 
     /**
      * Handle parameters.
@@ -80,7 +69,7 @@ public class InvoiceSequenceApi extends BaseApi {
     /**
      * Update the InvoiceSequence.
      *
-     * @param invoiceTypeDto the invoice type dto
+     * @param invoiceSequenceDto the invoice type dto
      * @return the action status
      * @throws MeveoApiException the meveo api exception
      * @throws BusinessException the business exception
@@ -103,29 +92,46 @@ public class InvoiceSequenceApi extends BaseApi {
         invoiceSequenceService.update(invoiceSequence);
         return result;
     }
+    
+    /**
+     * Creates the or update the InvoiceType.
+     *
+     * @param invoiceSequenceDto the invoice sequence dto
+     * @throws MeveoApiException the meveo api exception
+     * @throws BusinessException the business exception
+     */
+    public void createOrUpdate(InvoiceSequenceDto invoiceSequenceDto) throws MeveoApiException, BusinessException {
+        InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(invoiceSequenceDto.getCode());
+
+        if (invoiceSequence == null) {
+            create(invoiceSequenceDto);
+        } else {
+            update(invoiceSequenceDto);
+        }
+    }
 
 
     /**
      * Find the InvoiceSequence.
      *
      * @param invoiceSequenceCode the invoice sequence code
-     * @return the sequence Dto
+     * @return the invoice sequence Dto
      * @throws MeveoApiException the meveo api exception
      */
-    public SequenceDto find(String invoiceSequenceCode) throws MeveoApiException {
+    public InvoiceSequenceDto find(String invoiceSequenceCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(invoiceSequenceCode)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        SequenceDto result = new SequenceDto();
+        InvoiceSequenceDto result = new InvoiceSequenceDto();
 
         InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(invoiceSequenceCode);
         if (invoiceSequence == null) {
             throw new EntityDoesNotExistsException(InvoiceSequence.class, invoiceSequenceCode);
         }
-        result = new SequenceDto(invoiceSequence);
+        result = new InvoiceSequenceDto(invoiceSequence);
         return result;
     }
 
@@ -133,21 +139,21 @@ public class InvoiceSequenceApi extends BaseApi {
     /**
      * List InvoiceSequences.
      *
-     * @return the invoice types dto
+     * @return the invoice sequences dto
      * @throws MeveoApiException the meveo api exception
      */
-    public List<SequenceDto> list() throws MeveoApiException {
-    	List<SequenceDto> invoiceTypeesDto = new ArrayList<SequenceDto>();
-
+    public InvoiceSequencesDto list() throws MeveoApiException {
+        InvoiceSequencesDto invoiceSequencesDto = new InvoiceSequencesDto();
+        
         List<InvoiceSequence> invoiceSeuqences = invoiceSequenceService.list();
         if (invoiceSeuqences != null && !invoiceSeuqences.isEmpty()) {
             for (InvoiceSequence invSeq : invoiceSeuqences) {
-            	SequenceDto invoiceTypeDto = new SequenceDto(invSeq);
-                invoiceTypeesDto.add(invoiceTypeDto);
+                InvoiceSequenceDto invoiceSequenceDto = new InvoiceSequenceDto(invSeq);
+            	invoiceSequencesDto.getInvoiceSequences().add(invoiceSequenceDto);
             }
         }
 
-        return invoiceTypeesDto;
+        return invoiceSequencesDto;
     }
     
 }

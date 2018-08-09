@@ -77,9 +77,9 @@ public class InvoiceType extends BusinessEntity {
     @JoinTable(name = "billing_invoice_type_applies_to", joinColumns = @JoinColumn(name = "invoice_type_id"), inverseJoinColumns = @JoinColumn(name = "applies_to_id"))
     private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "invoice_sequence_id")
-    private InvoiceSequence invoiceSequence = new InvoiceSequence();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_sequence_id", nullable = true)
+    private InvoiceSequence invoiceSequence;
     
     @Column(name = "prefix_el", length = 2000)
     @Size(max = 2000)

@@ -141,6 +141,21 @@
 			updateField=":subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId :subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId_text">
 		</hftl:entityPopup>
 		
+		<hftl:entityPopup id="sellerPopup"
+			header="#{messages['seller.popup.header']}"
+			backingBean="#{subscriptionBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{subscriptionBean.entity.seller}"
+			dataModel="#{subscriptionBean.listSellers()}"
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:sellerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_text">
+		</hftl:entityPopup>
+		
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -417,6 +432,9 @@
 										
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
+                            				
+                            			<hftl:formField id="sellerSelectId" label="#{messages['seller']}" field="seller" valueLabelField="code" popup="true" componentWidth="30"
+                            				popupId="sellerPopup" />
 										
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"

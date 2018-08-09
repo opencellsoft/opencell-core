@@ -54,14 +54,14 @@ public class InvoiceSequenceService extends BusinessService<InvoiceSequence> {
     /**
      * Gets the max current invoice number.
      *
-     * @param invoiceTypeCode the invoice type code
+     * @param invoiceSequenceCode the invoice sequence code
      * @return the max current invoice number
      * @throws BusinessException the business exception
      */
-    public Long getMaxCurrentInvoiceNumber(String invoiceTypeCode) throws BusinessException {
-        Long max = getEntityManager().createNamedQuery("InvoiceType.currentInvoiceNb", Long.class)
+    public Long getMaxCurrentInvoiceNumber(String invoiceSequenceCode) throws BusinessException {
+        Long max = getEntityManager().createNamedQuery("InvoiceSequence.currentInvoiceNb", Long.class)
 
-            .setParameter("invoiceTypeCode", invoiceTypeCode).getSingleResult();
+            .setParameter("invoiceSequenceCode", invoiceSequenceCode).getSingleResult();
 
         return max == null ? 0 : max;
 

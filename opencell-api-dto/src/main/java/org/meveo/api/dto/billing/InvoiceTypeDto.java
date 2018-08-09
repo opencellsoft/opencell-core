@@ -100,14 +100,14 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
         this.occTemplateNegativeCodeEl = invoiceType.getOccTemplateNegativeCodeEl();
         this.customInvoiceXmlScriptInstanceCode = invoiceType.getCustomInvoiceXmlScriptInstance() == null ? null : invoiceType.getCustomInvoiceXmlScriptInstance().getCode();
-        this.sequenceDto = new SequenceDto(invoiceType.getInvoiceSequence());
+        this.sequenceDto = new SequenceDto(invoiceType.getInvoiceSequence(), invoiceType.getPrefixEL());
         if (invoiceType.getAppliesTo() != null) {
             for (InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()) {
                 this.getAppliesTo().add(tmpInvoiceType.getCode());
             }
         }
         for (InvoiceTypeSellerSequence seq : invoiceType.getSellerSequence()) {
-            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getInvoiceSequence()));
+            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getInvoiceSequence(), seq.getPrefixEL()));
         }
         this.matchingAuto = invoiceType.isMatchingAuto();
         this.billingTemplateName = invoiceType.getBillingTemplateName();

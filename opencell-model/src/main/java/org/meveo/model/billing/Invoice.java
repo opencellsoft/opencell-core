@@ -53,6 +53,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
@@ -218,6 +219,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     
     @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal dueBalance;
+    
+    @Transient
+    private Seller seller;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -697,4 +701,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	public void setDueBalance(BigDecimal dueBalance) {
 		this.dueBalance = dueBalance;
 	}
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+	
 }
