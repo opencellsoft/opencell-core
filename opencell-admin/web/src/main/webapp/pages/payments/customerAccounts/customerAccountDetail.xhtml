@@ -14,10 +14,16 @@
     </ui:define>
 
     <ui:define name="body">
+    
+    	 <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" 
+        		updateField=":parentTab:formCustomerAccount:childTab:customerSelectId :parentTab:formCustomerAccount:childTab:customerSelectId_text" selection="#{customerAccountBean.entity.customer}"
+        		backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
+            	column1Label="#{messages['customer.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
 
         <p:importEnum type="org.meveo.model.payments.CustomerAccountStatusEnum" var="CustomerAccountStatusEnum" />
         <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
-
+        
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
@@ -26,11 +32,6 @@
                 <p:menuitem value="#{messages['menu.customerAccount']} - #{customerAccountBean.entity.code}" disabled="true" rendered="#{!customerAccountBean.entity.transient}" />
             </p:breadCrumb>
         </h:form>
-
-        <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
-            column1Label="#{messages['customer.code']}" column1="code" selection="#{customerAccountBean.entity.customer}"
-            updateField=":parentTab:formCustomerAccount:childTab:customerSelectId :parentTab:formCustomerAccount:childTab:customerSelectId_text">
-        </hftl:entityPopup>
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
@@ -44,10 +45,10 @@
                             <p:tabView id="childTab" activeIndex="#{customerAccountBean.activeTab}">
                                 <p:tab id="tab0" title="#{messages['customerAccount.tab.account']}">
 
-                                    <hftl:formField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" required="true" popup="true"
-                                        popupId="searchCustomerPopup" allowEdit="false" displayOneLine="true" componentWidth="100" />
-
                                     <p:fieldset legend="#{messages['customerAccount.form']}" styleClass="clearLeft">
+                                    
+                                    	<hftl:formField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" required="true" popup="true"
+                                        popupId="searchCustomerPopup" allowEdit="true" componentWidth="200"/>
 
                                         <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
                                         <hftl:formField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" valueLabelField="code" listBean="#{providerContactBean}" />

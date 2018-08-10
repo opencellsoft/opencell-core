@@ -1214,6 +1214,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
+    
+    public Long countNotInvoicedRTByCA(CustomerAccount customerAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByCA").setParameter("customerAccount", customerAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotInvoiced RT by CA", e);
+            return null;
+        }
+    }
 
     /**
      * Find the rated transaction by wallet operation id.
