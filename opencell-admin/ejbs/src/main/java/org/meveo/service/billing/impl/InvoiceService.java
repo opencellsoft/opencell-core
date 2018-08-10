@@ -352,8 +352,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         InvoiceType invoiceType = invoiceTypeService.findById(invoice.getInvoiceType().getId());
         
-        Seller seller = null;
-        if(invoice.getSeller() == null) {
+        Seller seller = invoice.getSeller();
+        if(seller == null) {
             seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
         }
 
@@ -549,6 +549,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Seller seller = null;
                 if(rt.getSubscription() != null) {
                    seller = rt.getSubscription().getSeller();
+                }
+                if(seller == null) {
+                    seller = rt.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
                 }
                 if(mapSellerRT.get(seller) == null) {
                     mapSellerRT.put(seller, new ArrayList<RatedTransaction>());
@@ -1737,7 +1740,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws InvoiceExistException the invoice exist exception
      * @throws ImportInvoiceException the import invoice exception
      */
-    public Invoice generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
+    public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft)
             throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
@@ -1771,15 +1774,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
         entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions());
         
-        Invoice invoice = invoices.get(0);
+       // Invoice invoice = invoices.get(0);
         if (!isDraft) {
-            assignInvoiceNumber(invoice);
+            for(Invoice invoice: invoices) {
+                assignInvoiceNumber(invoice);
+            }
         }
         
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         commit();
-        return invoice;
+        return invoices;
     }
 
     /**
@@ -1831,7 +1836,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *                use generateInvoice(BillingAccount, GenerateInvoiceRequestDto) + produceFilesAndAO(boolean, boolean, boolean, Invoice) instead.
      */
     @Deprecated
-    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
+    public List<Invoice> generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
             boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
         GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
@@ -1843,10 +1848,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         generateInvoiceRequestDto.setLastTransactionDate(lastTransactionDate);
         generateInvoiceRequestDto.setOrderNumber(orderNumber);
         
-        Invoice invoice = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
-        this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+        List<Invoice> invoices = this.generateInvoice(billingAccount, generateInvoiceRequestDto, ratedTxFilter, isDraft);
+        for(Invoice invoice : invoices) {
+            this.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+        }
         
-        return invoice;
+        return invoices;
     }
 
     /**

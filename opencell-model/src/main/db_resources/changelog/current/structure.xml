@@ -1386,6 +1386,14 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+                                 
+        <addColumn tableName="billing_invoice">
+            <column name="seller_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+        
+         
      </changeSet>
 
 </databaseChangeLog>

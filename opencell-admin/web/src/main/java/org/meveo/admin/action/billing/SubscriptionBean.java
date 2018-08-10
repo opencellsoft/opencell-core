@@ -1068,10 +1068,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	}
     
     public List<Seller> listSellers() {
-        if(entity.getOffer().getSellers().size() > 0) {
-            return entity.getOffer().getSellers();
+        if(entity.getOffer() != null) {
+            if(entity.getOffer().getSellers().size() > 0) {
+                return entity.getOffer().getSellers();
+            } else {
+                return sellerService.list();
+            }
         } else {
-            return sellerService.list();
+            return new ArrayList<Seller>();
         }
     }
 }
