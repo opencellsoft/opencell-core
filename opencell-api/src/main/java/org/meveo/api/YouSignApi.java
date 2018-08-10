@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
 import javax.ws.rs.client.Entity;
@@ -49,6 +50,12 @@ public class YouSignApi extends BaseApi {
     
     /** The Constant YOUSIGN_API_URL_PROPERTY_KEY. */
     private static final String YOUSIGN_API_URL_PROPERTY_KEY = "yousign.api.url";
+    
+    /** The Constant SIGN_OBJECT_POSITION_PATTERN. */
+    private static final Pattern SIGN_OBJECT_POSITION_PATTERN = Pattern.compile("[0-9]+,[0-9]+,[0-9]+,[0-9]+");
+    
+    /** The Constant EXT_MEMBER_PHONE_PATTERN. */
+    private static final Pattern EXT_MEMBER_PHONE_PATTERN = Pattern.compile("(\\+)([0-9]+)");
  
 
     /**
@@ -68,27 +75,30 @@ public class YouSignApi extends BaseApi {
         try {
             boolean withInternalMember = postData.isWithInternalMember();
             
-            // The list of files to sign cannot be empty :  
-            List<SignFileRequestDto> filesToSign = postData.getFilesToSign();
-            this.checkFilesToSign(filesToSign, withInternalMember);
-            
-            // Uploading files to Yousign platform :
-            this.uploadFilesToSign(filesToSign, YOU_SIGN_REST_URL, YOU_SIGN_AUTH_TOKEN);
-            
+            // Checking procedure body :
             SignProcedureDto procedure = postData.getProcedure();
             if (procedure == null) {
                 throw new MeveoApiException(" Error : procedure body is missing !");
             }
             
             // Checking members :
-            this.checkAndPrepareMembers(filesToSign, procedure, withInternalMember);
+            this.checkMembers(procedure.getMembers(), withInternalMember);
+            
+            // The list of files to sign cannot be empty :  
+            List<SignFileRequestDto> filesToSign = postData.getFilesToSign();
+            this.checkFilesToSign(filesToSign, withInternalMember);
+           
+            
+            // Uploading files to Yousign platform :
+            this.uploadFilesToSign(filesToSign, YOU_SIGN_REST_URL, YOU_SIGN_AUTH_TOKEN);
+            
+            // Preparing members :
+            this.prepareMembers(filesToSign, procedure.getMembers(), withInternalMember);
             
             // Creating procedureusing  Yousign platform API :
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/procedures"));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).post(Entity.json(postData.getProcedure()));
-            
-            
             
             if (isSuccessResponse(response)) {
                 // reading results :
@@ -97,8 +107,6 @@ public class YouSignApi extends BaseApi {
                 throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
             }
 
-           
-            
         } catch (MeveoApiException mve) {
             LOG.error(" Error on createProcedure : {} ", mve.getMessage());
             throw mve;
@@ -208,24 +216,45 @@ public class YouSignApi extends BaseApi {
         }
         return paramValue;
     }
+    
+    /**
+     * Check members.
+     *
+     * @param filesToSign the files to sign
+     * @param members the members
+     * @param withInternalMember the with internal member
+     * @throws MeveoApiException the meveo api exception
+     */
+    private void checkMembers(List<SignMemberRequestDto> members, boolean withInternalMember) throws MeveoApiException {
+
+        if (CollectionUtils.isEmpty(members)) { 
+            throw new MeveoApiException(" members cannot be empty !"); 
+        } 
+        if (withInternalMember) {
+            members.add(this.getInternalMember());
+        }
+        
+        for (SignMemberRequestDto member : members) {
+            if (!BooleanUtils.isTrue(member.getInternal())) {
+                String phone = member.getPhone();
+                if (StringUtils.isEmpty(phone)) { 
+                    throw new MeveoApiException(" Phone of external member cannot be empty !"); 
+                } else if (!EXT_MEMBER_PHONE_PATTERN.matcher(phone).matches()) {
+                    throw new MeveoApiException(" Phone of external member format is not valid !");
+                } 
+            }
+        }
+    }
 
     /**
      * Check and prepare members.
      *
      * @param filesToSign the files to sign
-     * @param procedure the procedure
+     * @param members the members
      * @param withInternalMember the with internal member
      * @throws MeveoApiException the meveo api exception
      */
-    private void checkAndPrepareMembers(List<SignFileRequestDto> filesToSign, SignProcedureDto procedure, boolean withInternalMember) throws MeveoApiException {
-        List<SignMemberRequestDto> members = procedure.getMembers();
-        if (CollectionUtils.isEmpty(members)) { 
-            throw new MeveoApiException(" members cannot be empty !"); 
-        } 
-        
-        if (withInternalMember) {
-            members.add(this.getInternalMember());
-        }
+    private void prepareMembers(List<SignFileRequestDto> filesToSign, List<SignMemberRequestDto> members, boolean withInternalMember) throws MeveoApiException {
         
         for (SignMemberRequestDto member : members) {
            List<SignFileObjectRequestDto> fileObjects = new ArrayList<>();
@@ -326,13 +355,17 @@ public class YouSignApi extends BaseApi {
                 String internalPosition = file.getInternalPosition();
                 if (StringUtils.isEmpty(internalPosition)) {
                     this.missingParameters.add("fileToSign -> internalPosition");
-                }                
+                } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(internalPosition).matches()) {
+                    this.missingParameters.add("fileToSign -> internalPosition");
+                }
             }
             
             String externalPosition = file.getExternalPosition();
             if (StringUtils.isEmpty(externalPosition)) {
                 this.missingParameters.add("fileToSign -> externalPosition");
-            }  
+            } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(externalPosition).matches()) {
+                this.missingParameters.add("fileToSign -> externalPosition");
+            }
             
             this.handleMissingParameters();
             
