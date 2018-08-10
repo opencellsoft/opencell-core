@@ -77,10 +77,10 @@ public class WalletInstance extends BusinessEntity {
     @Column(name = "low_balance_level", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal lowBalanceLevel;
 
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<WalletOperation> operations;
 
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<RatedTransaction> ratedTransactions;
 
     public WalletTemplate getWalletTemplate() {

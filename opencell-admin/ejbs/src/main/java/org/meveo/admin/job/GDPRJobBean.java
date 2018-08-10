@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -14,16 +13,18 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.communication.postalmail.GdprConfiguration;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -52,37 +53,70 @@ public class GDPRJobBean extends BaseJobBean {
 
 	@Inject
 	private OrderService orderService;
-	
+
 	@Inject
 	private InvoiceService invoiceService;
+
+	@Inject
+	private AccountOperationService accountOperationService;
 
 	@JpaAmpNewTx
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter) {
-		Date now = new Date();
 
 		MeveoUser lastCurrentUser = currentUser.unProxy();
+
 		Provider provider = providerService.findById(appProvider.getId());
 		GdprConfiguration gdprConfiguration = provider.getGdprConfigurationNullSafe();
 
-		// TODO: check for inactive subscription
-		List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveOrderLife());
-		log.debug("Found {} inactive subscriptions", inactiveSubscriptions.size());
+		try {
+			if (gdprConfiguration.isDeleteSubscription()) {
+				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveOrderLife());
+				log.debug("Found {} inactive subscriptions", inactiveSubscriptions.size());
+				if (!inactiveSubscriptions.isEmpty()) {
+					subscriptionService.bulkDelete(inactiveSubscriptions);
+				}
+			}
 
-		// TODO: check for inactive order
-		List<Order> inactiveOrders = orderService.listInactiveOrders(gdprConfiguration.getInactiveOrderLife());
-		log.debug("Found {} inactive subscriptions", inactiveSubscriptions.size());
+			if (gdprConfiguration.isDeleteOrder()) {
+				List<Order> inactiveOrders = orderService.listInactiveOrders(gdprConfiguration.getInactiveOrderLife());
+				log.debug("Found {} inactive orders", inactiveOrders.size());
+				if (!inactiveOrders.isEmpty()) {
+					orderService.bulkDelete(inactiveOrders);
+				}
+			}
 
-		// TODO: check for old invoice
-		List<Invoice> inactiveInvoices = invoiceService.listInactiveInvoice(gdprConfiguration.getInvoiceLife());
+			if (gdprConfiguration.isDeleteInvoice()) {
+				List<Invoice> inactiveInvoices = invoiceService.listInactiveInvoice(gdprConfiguration.getInvoiceLife());
+				log.debug("Found {} inactive invoices", inactiveInvoices.size());
+				if (!inactiveInvoices.isEmpty()) {
+					invoiceService.bulkDelete(inactiveInvoices);
+				}
+			}
 
-		// TODO: check for old accounting
+			if (gdprConfiguration.isDeleteAccounting()) {
+				List<AccountOperation> inactiveAccountOps = accountOperationService.listInactiveAccountOperations(gdprConfiguration.getAccountingLife());
+				log.debug("Found {} inactive accountOperations", inactiveAccountOps.size());
+				if (!inactiveAccountOps.isEmpty()) {
+					accountOperationService.bulkDelete(inactiveAccountOps);
+				}
+			}
 
-		// TODO: check for old customer prospect
+			if (gdprConfiguration.isDeleteAoCheckUnpaidLife()) {
+				List<AccountOperation> unpaidAccountOperations = accountOperationService.listUnpaidAccountOperations(gdprConfiguration.getAoCheckUnpaidLife());
+				log.debug("Found {} unpaid accountOperations", unpaidAccountOperations.size());
+				if (!unpaidAccountOperations.isEmpty()) {
+					accountOperationService.bulkDelete(unpaidAccountOperations);
+				}
+			}
 
-		// TODO: check for mailing
+			// TODO: check for old customer prospect
 
-		// TODO: check for unpaid ao
+			// TODO: check for mailing
+		} catch (Exception e) {
+			log.error("Failed to run GDPR data erasure job", e);
+			result.registerError(e.getMessage());
+		}
 	}
 }

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -55,6 +56,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -103,21 +105,20 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "subscribed_till_date")
     private Date subscribedTillDate;
 
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
+    private List<ServiceInstance> serviceInstances = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ProductInstance> productInstances = new ArrayList<ProductInstance>();
+    private List<ProductInstance> productInstances = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    private List<Access> accessPoints = new ArrayList<Access>();
+    private List<Access> accessPoints = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EDR> edrs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id", nullable = false)

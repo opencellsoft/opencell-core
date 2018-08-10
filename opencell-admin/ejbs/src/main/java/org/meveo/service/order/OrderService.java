@@ -141,4 +141,10 @@ public class OrderService extends BusinessService<Order> {
     	
     	return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
     }
+
+	public void bulkDelete(List<Order> inactiveOrders) throws BusinessException {
+		for (Order e : inactiveOrders) {
+			remove(e);
+		}
+	}
 }

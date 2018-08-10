@@ -57,12 +57,12 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
-import org.meveo.service.account.GdprService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.dwh.GdprService;
 import org.primefaces.model.SortOrder;
 
 import com.thoughtworks.xstream.XStream;

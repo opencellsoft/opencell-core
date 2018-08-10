@@ -317,30 +317,22 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
      */
-    public List<Subscription> listInactiveSubscription(int nYear) {
-    	QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
-    	
-    	
-    	return null;
-    }
- 
-    /**
-     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date > n years.
-     * @param nYear age of the subscription
-     * @return Filtered list of subscriptions
-     */
     @SuppressWarnings("unchecked")
 	public List<Subscription> listInactiveSubscriptions(int nYear) {
     	QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
     	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
     	
     	qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
-    	qb.startOrClause();
-    	qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED);
-    	qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE);
-    	qb.endOrClause();
+    	qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>");
+    	qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>");
     	
     	return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
     }
+
+	public void bulkDelete(List<Subscription> inactiveSubscriptions) throws BusinessException {
+		for (Subscription e : inactiveSubscriptions) {
+			remove(e);
+		}
+	}
 
 }

@@ -2059,4 +2059,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     	
     	return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
     }
+
+	public void bulkDelete(List<Invoice> inactiveInvoices) throws BusinessException {
+		for (Invoice e : inactiveInvoices) {
+			remove(e);
+		}
+	}
 }

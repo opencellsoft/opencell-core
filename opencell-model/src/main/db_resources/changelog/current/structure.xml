@@ -1365,6 +1365,27 @@
     		<column name="customer_profile_life" type="int4" defaultValueNumeric="3"></column>
     		<column name="mailing_life" type="int4" defaultValueNumeric="3"></column>
     		<column name="ao_check_unpaid_life" type="int4" defaultValueNumeric="3"></column>
+    		<column name="delete_sub" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_order" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_invoice" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_accounting" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_cust_prospect" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_mailing_life" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_ao_check_unpaid" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
     	</createTable>
     	
     	<createSequence sequenceName="adm_gdpr_configuration_seq" startValue="1" />
