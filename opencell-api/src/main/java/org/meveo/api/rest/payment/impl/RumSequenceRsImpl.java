@@ -5,8 +5,8 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.payment.RumSequenceDto;
-import org.meveo.api.dto.response.payment.RumSequenceValueResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.RumSequenceApi;
 import org.meveo.api.rest.impl.BaseRs;
@@ -24,7 +24,7 @@ public class RumSequenceRsImpl extends BaseRs implements RumSequenceRs {
 	private RumSequenceApi rumSequenceApi;
 
 	@Override
-	public ActionStatus update(RumSequenceDto postData) {
+	public ActionStatus update(GenericSequenceDto postData) {
 		ActionStatus result = new ActionStatus();
 
 		try {
@@ -37,8 +37,8 @@ public class RumSequenceRsImpl extends BaseRs implements RumSequenceRs {
 	}
 
 	@Override
-	public RumSequenceValueResponseDto getNextMandateNumber() {
-		RumSequenceValueResponseDto result = new RumSequenceValueResponseDto();
+	public GenericSequenceValueResponseDto getNextMandateNumber() {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
 		try {
 			result = rumSequenceApi.getNextMandateNumber();
