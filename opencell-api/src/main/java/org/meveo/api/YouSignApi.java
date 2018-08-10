@@ -211,7 +211,7 @@ public class YouSignApi extends BaseApi {
      */
     private String getMondatoryYousignParam (String paramKey) throws MeveoApiException {
         String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, null);
-        if (paramValue == null) {
+        if (StringUtils.isEmpty(paramValue)) {
             throw new MeveoApiException(" Mondatory Yousign param not configured : " + paramKey); 
         }
         return paramValue;
