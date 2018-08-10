@@ -22,17 +22,17 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.api.dto.document.sign.CreateProcedureRequestDto;
-import org.meveo.api.dto.document.sign.CreateProcedureResponseDto;
 import org.meveo.api.dto.document.sign.SignFileObjectRequestDto;
 import org.meveo.api.dto.document.sign.SignFileRequestDto;
+import org.meveo.api.dto.document.sign.SignFileResponseDto;
 import org.meveo.api.dto.document.sign.SignMemberRequestDto;
 import org.meveo.api.dto.document.sign.SignProcedureDto;
+import org.meveo.api.dto.document.sign.SignProcedureResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 /**
  * API encapsulating interactions with Yousign platform.
@@ -42,7 +42,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class YouSignApi extends BaseApi {
     
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(YouSignApi.class); 
+    private static final Logger LOG = LoggerFactory.getLogger(YouSignApi.class);
+    
+    /** The Constant YOUSIGN_API_TOKEN_PROPERTY_KEY. */
+    private static final String YOUSIGN_API_TOKEN_PROPERTY_KEY = "yousign.api.token";
+    
+    /** The Constant YOUSIGN_API_URL_PROPERTY_KEY. */
+    private static final String YOUSIGN_API_URL_PROPERTY_KEY = "yousign.api.url";
+ 
 
     /**
      * Creates the procedure.
@@ -51,12 +58,12 @@ public class YouSignApi extends BaseApi {
      * @return the sign procedure response dto
      * @throws MeveoApiException the meveo api exception
      */
-    public CreateProcedureResponseDto createProcedure(CreateProcedureRequestDto postData) throws MeveoApiException {
+    public SignProcedureResponseDto createProcedure(CreateProcedureRequestDto postData) throws MeveoApiException {
        
-        CreateProcedureResponseDto result = new CreateProcedureResponseDto();
+        SignProcedureResponseDto result = new SignProcedureResponseDto();
         
-        final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam("yousign.api.url");
-        final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam("yousign.api.token");
+        final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+        final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
         
         try {
             boolean withInternalMember = postData.isWithInternalMember();
@@ -80,16 +87,111 @@ public class YouSignApi extends BaseApi {
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/procedures"));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).post(Entity.json(postData.getProcedure()));
-
-            // reading results :
-            result = response.readEntity(CreateProcedureResponseDto.class);
-//            SignProcedureDto createdProcedure = response.readEntity(SignProcedureDto.class);
             
+            
+            
+            if (isSuccessResponse(response)) {
+                // reading results :
+                result = response.readEntity(SignProcedureResponseDto.class);
+            } else {
+                throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
+            }
+
+           
+            
+        } catch (MeveoApiException mve) {
+            LOG.error(" Error on createProcedure : {} ", mve.getMessage());
+            throw mve;
         } catch (Exception e) {
             LOG.error(" Error on createProcedure : {} ", e.getMessage(), e);
             throw new MeveoApiException(" Error on createProcedure " + e.getMessage());
         }
         return result;
+    }
+    
+    /**
+     * Gets the file by id.
+     *
+     * @param id the id
+     * @return the file by id
+     * @throws MeveoApiException the meveo api exception
+     */
+    public SignFileResponseDto downloadFileById(String id) throws MeveoApiException {
+        
+        SignFileResponseDto result = new SignFileResponseDto();
+        try {
+            final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+            final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+            
+            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/files/".concat(id).concat("/download")));
+            Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).get();
+            
+            if (isSuccessResponse(response)) {
+                byte[] fileContent = response.readEntity(byte[].class); 
+                result = new SignFileResponseDto(id, fileContent);
+            } else {
+                throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
+            }
+
+        } catch (MeveoApiException mve) {
+            LOG.error(" Error on downloadFileById : {} , id = {}", mve.getMessage(), id);
+            throw mve;
+        } catch (Exception e) {
+            LOG.error(" Error on downloadFileById : {} , id = {} ", e.getMessage(), id);
+            throw new MeveoApiException(" Error on downloadFileById, id =  {} " + id + " : " +  e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * Gets the procedure by id.
+     *
+     * @param id the id
+     * @return the procedure by id
+     * @throws MeveoApiException the meveo api exception
+     */
+    public SignProcedureResponseDto getProcedureById(String id) throws MeveoApiException {
+        
+        SignProcedureResponseDto result = new SignProcedureResponseDto();
+        try {
+            final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+            final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+            
+            ResteasyClient client = new ResteasyClientBuilder().build();
+            ResteasyWebTarget target = client.target( YOU_SIGN_REST_URL.concat("/procedures/".concat(id)) );
+            Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).get();
+            
+            if (isSuccessResponse(response)) {
+                result = response.readEntity(SignProcedureResponseDto.class); 
+            } else {
+                throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
+            }
+
+        } catch (MeveoApiException mve) {
+            LOG.error(" Error on getProcedureById : {} , id = {}", mve.getMessage(), id);
+            throw mve;
+        } catch (Exception e) {
+            LOG.error(" Error on getProcedureById : {} , id = {} ", e.getMessage(), id);
+            throw new MeveoApiException(" Error on getProcedureById, id =  {} " + id + " : " +  e.getMessage());
+        }
+        return result;
+    }
+    
+    /**
+     * Gets the procedure status by id.
+     *
+     * @param id the id
+     * @return the procedure status by id
+     * @throws MeveoApiException the meveo api exception
+     */
+    public String getProcedureStatusById(String id) throws MeveoApiException {
+        SignProcedureResponseDto responseDto = this.getProcedureById(id);
+        if (responseDto != null) {
+            return responseDto.getStatus();
+        } else {
+            throw new MeveoApiException(" Error on getProcedureStatusById , id =  {} " + id + " : Procedure Not Found ! ");
+        }
     }
     
     /**
@@ -112,6 +214,7 @@ public class YouSignApi extends BaseApi {
      *
      * @param filesToSign the files to sign
      * @param procedure the procedure
+     * @param withInternalMember the with internal member
      * @throws MeveoApiException the meveo api exception
      */
     private void checkAndPrepareMembers(List<SignFileRequestDto> filesToSign, SignProcedureDto procedure, boolean withInternalMember) throws MeveoApiException {
@@ -159,6 +262,8 @@ public class YouSignApi extends BaseApi {
      * We assume that filesToSign is not empty.
      *
      * @param filesToSign the files to sign
+     * @param url the url
+     * @param token the token
      * @throws MeveoApiException the meveo api exception
      */
     @SuppressWarnings("unchecked")
@@ -174,19 +279,27 @@ public class YouSignApi extends BaseApi {
             for (SignFileRequestDto file :filesToSign ) {
                 
                 Response response =  resBuilder.post(Entity.json(file)); 
-                String json =  response.readEntity(String.class);
                 
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, String> fielFields = mapper.readValue(json, HashMap.class);
-                
-                String signableFileId = fielFields.get("id");
-                if (signableFileId == null) {
-                    throw new MeveoApiException(" Error creating file on Yousign " + file.getName());
+                if (isSuccessResponse(response)) {
+                    String json =  response.readEntity(String.class);
+                    
+                    ObjectMapper mapper = new ObjectMapper();
+                    Map<String, String> fielFields = mapper.readValue(json, HashMap.class);
+                    
+                    String signableFileId = fielFields.get("id");
+                    if (signableFileId == null) {
+                        throw new MeveoApiException(" Error creating file on Yousign " + file.getName());
+                    }
+                    file.setId(signableFileId);
+                } else {
+                    throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
                 }
-                file.setId(signableFileId);
             }
             LOG.debug(" End uploading files to Yousign ... ");
             
+        } catch (MeveoApiException mve) {
+            LOG.error(" Error on uploadFilesToSign : {} ", mve.getMessage());
+            throw mve;
         } catch (Exception e) {
             LOG.error(" Error on uploadFilesToSign : {} ", e.getMessage(), e);
             throw new MeveoApiException(" Error on uploadFilesToSign " + e.getMessage());
@@ -197,6 +310,7 @@ public class YouSignApi extends BaseApi {
      * Check files to sign.
      *
      * @param filesToSign the files to sign
+     * @param withInternalMember the with internal member
      * @throws MeveoApiException the meveo api exception
      * @throws FileNotFoundException the file not found exception
      */
@@ -235,8 +349,16 @@ public class YouSignApi extends BaseApi {
         }
     } 
     
+    /**
+     * Checks if is success response.
+     *
+     * @param response the response
+     * @return true, if is success response
+     */
+    private boolean isSuccessResponse(Response response) {
+        return Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily();
+    } 
     
-  
     /**
      * TODO : Externalize this method to a generic  helper
      * 
@@ -264,6 +386,6 @@ public class YouSignApi extends BaseApi {
             LOG.error("Error reading file {} contents", filePath, e); 
         }  
         return null; 
-    } 
-    
+    }
+
 }

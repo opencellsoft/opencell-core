@@ -1,6 +1,6 @@
 package org.meveo.api.dto.document.sign;
 
-import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.response.BaseResponse;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -8,10 +8,27 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * DTO Class for a File informations : response from Yousign document.
  */
 @JsonIgnoreProperties (ignoreUnknown = true)
-public class SignFileResponseDto extends BaseEntityDto {
+public class SignFileResponseDto extends BaseResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L; 
+    
+    /**
+     * Instantiates a new sign file response dto.
+     */
+    public SignFileResponseDto () {
+    }
+    
+    /**
+     * Instantiates a new sign file response dto.
+     *
+     * @param id the id
+     * @param content the content
+     */
+    public SignFileResponseDto (String id, byte[] content) {
+        this.id = id;
+        this.content = content;
+    }
     
     /** The id. */
     private String id;
@@ -21,6 +38,9 @@ public class SignFileResponseDto extends BaseEntityDto {
     
     /** The description. */
     private String description;
+    
+    /** The content. */
+    private byte[] content;
     
     /**
      * Gets the id.
@@ -74,6 +94,24 @@ public class SignFileResponseDto extends BaseEntityDto {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Gets the content.
+     *
+     * @return the content
+     */
+    public byte[] getContent() {
+        return content;
+    }
+
+    /**
+     * Sets the content.
+     *
+     * @param content the content to set
+     */
+    public void setContent(byte[] content) {
+        this.content = content;
     }
 
 }

@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @author Said Ramli
  */ 
 @JsonIgnoreProperties (ignoreUnknown = true)
-public class CreateProcedureResponseDto extends BaseResponse { 
+public class SignProcedureResponseDto extends BaseResponse { 
     
     /** The Constant serialVersionUID. */ 
     private static final long serialVersionUID = 1L; 
