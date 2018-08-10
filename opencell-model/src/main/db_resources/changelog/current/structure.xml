@@ -1297,7 +1297,7 @@
      	</addColumn>
      </changeSet>
      
-      <changeSet id="#3225_22062018" author="SaidRamli">
+    <changeSet id="#3225_22062018" author="SaidRamli">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="cf_protectable" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
@@ -1357,6 +1357,21 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_type" constraintName="fk_invoice_type_script_instance" deferrable="false" initiallyDeferred="false"
              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance"  />
+    </changeSet>
+    
+    <changeSet id="#3455_26062018" author="SaidRamli">
+        <addColumn tableName="billing_subscription">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_service_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_offer_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="billing_service_instance">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>
