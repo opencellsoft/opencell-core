@@ -105,6 +105,9 @@ public class OrderItem extends BaseEntity {
 
     @Embedded
     private Address shippingAddress = new Address();
+    
+    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderHistory> orderHistories = new ArrayList<>();
 
     @Transient
     private Object orderItemDto;
@@ -266,4 +269,12 @@ public class OrderItem extends BaseEntity {
 
         return StringUtils.compare(getItemId(), other.getItemId()) == 0;
     }
+
+	public List<OrderHistory> getOrderHistories() {
+		return orderHistories;
+	}
+
+	public void setOrderHistories(List<OrderHistory> orderHistories) {
+		this.orderHistories = orderHistories;
+	}
 }
