@@ -1080,6 +1080,8 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
+        dto.setAutoEndOfEngagement(subscription.getAutoEndOfEngagement());
+        
         return dto;
     }
 
