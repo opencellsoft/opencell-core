@@ -39,8 +39,8 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "invoicecategory")
     private InvoiceCategory invoiceCategory;
 
-    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
+    @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<>();
 
     public CategoryInvoiceAgregate() {
 

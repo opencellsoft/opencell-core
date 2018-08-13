@@ -95,7 +95,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "recorded_invoice_id")
     private RecordedInvoice recordedInvoice;
 
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @Column(name = "invoice_number", length = 50)
@@ -157,7 +157,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     @Column(name = "comment", length = 1200)
