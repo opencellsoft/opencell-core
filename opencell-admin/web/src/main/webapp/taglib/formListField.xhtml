@@ -179,6 +179,62 @@
             </c:if>
         </c:if>
 
+		<!--  As a select checkbox -->
+        <c:if test="#{listType=='selectCheckboxTree'}">
+			
+			<c:if test="#{edit}"> 
+				<!-- 
+				<p:remoteCommand autoRun="true" action="#{listBean.initTreeCategories(fieldItem)}" name="initTreeCategories" update="#{id}" />
+				 -->
+				<h:inputHidden id="treeHiddenId" value="#{listBean.initTreeCategories(fieldItem)}" disabled="true"/>
+				
+                
+				<p:tree id="#{id}" required="#{required}"
+					value="#{listBean.treeCategories}"
+					var="offerTemplateCategory" selectionMode="checkbox"
+					propagateSelectionUp="false" propagateSelectionDown="false"
+					selection="#{listBean.selectedCategories}">
+					<p:ajax event="select" listener="#{listBean.onNodeCategorySelect}" update="@([id$=#{id}_selectedItemPanel])"></p:ajax>
+	                <p:ajax event="unselect" listener="#{listBean.onNodeCategoryUnselect}" update="@([id$=#{id}_selectedItemPanel])"></p:ajax>
+					<p:treeNode>
+						<h:outputText
+							value="#{offerTemplateCategory.descriptionOrCode}" />
+					</p:treeNode>
+				</p:tree>
+                
+                <p:panel id="#{id}_selectedItemPanel" >
+                    <h:panelGroup styleClass="field-value">
+                        <ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
+                            <c:if test="#{not empty(valueLabelField2)}">
+                                #{elem[valueLabelField]} #{elem[valueLabelField2]}
+                            </c:if>
+                            <c:if test="#{empty(valueLabelField2)}">
+                                #{elem[valueLabelField]}
+                            </c:if>
+                            <h:outputText value="#{!loop.last ? ', ' : ''}" />
+                        </ui:repeat>
+                    </h:panelGroup>
+                </p:panel>
+
+            </c:if>
+            
+            <c:if test="#{!edit}">
+                <h:panelGroup id="#{id}" styleClass="field-value">
+                    <ui:repeat value="#{fieldItem}" var="elem" varStatus="loop">
+                        <c:if test="#{not empty(valueLabelField2)}">
+                            #{elem[valueLabelField]} #{elem[valueLabelField2]}
+                        </c:if>
+                        <c:if test="#{empty(valueLabelField2)}">
+                            #{elem[valueLabelField]}
+                        </c:if>
+                        <h:outputText value="#{!loop.last ? ', ' : ''}" />
+                    </ui:repeat>
+                </h:panelGroup>
+            </c:if>
+            
+        </c:if>
+
+
         <!--  As a comma separated list of values -->
         <c:if test="#{listType=='commaSeparated'}">
 
@@ -198,6 +254,7 @@
             </c:if>
 
         </c:if>
+    
     </hftl:decorateFormField>
 </ui:composition>
 
