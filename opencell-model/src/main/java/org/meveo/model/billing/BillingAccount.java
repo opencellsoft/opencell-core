@@ -54,7 +54,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 
 @Entity
-@CustomFieldEntity(cftCodePrefix = "BA", inheritCFValuesFrom="customerAccount")
+@CustomFieldEntity(cftCodePrefix = "BA", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
@@ -126,6 +126,13 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
+
+    /**
+     * A derived value from tradingLanguage.language.languageCode field
+     */
+    @Column(name = "trading_language_code", length = 3)
+    @Size(max = 3)
+    private String tradingLanguageCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
@@ -333,6 +340,20 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.tradingLanguage = tradingLanguage;
     }
 
+    /**
+     * @return A derived value from tradingLanguage.language.languageCode field
+     */
+    public String getTradingLanguageCode() {
+        return tradingLanguageCode;
+    }
+
+    /**
+     * @param tradingLanguageCode A derived value from tradingLanguage.language.languageCode field
+     */
+    public void setTradingLanguageCode(String tradingLanguageCode) {
+        this.tradingLanguageCode = tradingLanguageCode;
+    }
+
     public SubscriptionTerminationReason getTerminationReason() {
         return terminationReason;
     }
@@ -443,7 +464,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
      */
     public String getMinimumAmountElSpark() {
         return minimumAmountElSpark;
-}
+    }
 
     /**
      * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
