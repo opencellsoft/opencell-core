@@ -167,12 +167,13 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         return reportExtract;
     }
 
-    public void runReportExtract(RunReportExtractDto postData) throws BusinessException, EntityDoesNotExistsException, ReportExtractExecutionException {
+    public ReportExtractExecutionResultDto runReportExtract(RunReportExtractDto postData) throws BusinessException, EntityDoesNotExistsException, ReportExtractExecutionException {
         ReportExtract reportExtract = reportExtractService.findByCode(postData.getCode());
         if (reportExtract == null) {
             throw new EntityDoesNotExistsException(ReportExtract.class, postData.getCode());
         }
-        reportExtractService.runReport(reportExtract, postData.getParams(), ReportExtractExecutionOrigin.API);
+        
+        return new ReportExtractExecutionResultDto(reportExtractService.runReport(reportExtract, postData.getParams(), ReportExtractExecutionOrigin.API));
     }
 
     public ReportExtractExecutionResultsResponseDto listReportExtractRunHistory(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {

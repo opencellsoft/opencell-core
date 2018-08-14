@@ -1297,11 +1297,19 @@
      	</addColumn>
      </changeSet>
      
-      <changeSet id="#3225_22062018" author="SaidRamli">
+    <changeSet id="#3225_22062018" author="SaidRamli">
         <addColumn tableName="crm_custom_field_tmpl">
-            <column name="cf_protectable" type="${type.boolean}" />
+            <column name="cf_protectable" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#3575_20180803 - Customer No Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="cust_no_prefix" type="varchar(15)" />
+            <column name="cust_no_sequence_size" type="bigint" />
+			<column name="cust_no_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
 
     <changeSet id="#3217_20180725 - Field migration from Customer, BA and CA to AccountEntity " author="AbdelmounaimAkadid">
         <addColumn tableName="account_entity">
@@ -1341,6 +1349,29 @@
         <dropColumn tableName="ar_customer_account" columnName="fax" />
         <dropColumn tableName="ar_customer_account" columnName="mobile" />
         <dropColumn tableName="ar_customer_account" columnName="phone" />
+    </changeSet>
+
+    <changeSet id="#3545_20180725" author="MounirBahije">
+        <addColumn tableName="billing_invoice_type">
+            <column name="script_instance_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_type" constraintName="fk_invoice_type_script_instance" deferrable="false" initiallyDeferred="false"
+             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance"  />
+    </changeSet>
+    
+    <changeSet id="#3455_26062018" author="SaidRamli">
+        <addColumn tableName="billing_subscription">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_service_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_offer_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="billing_service_instance">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

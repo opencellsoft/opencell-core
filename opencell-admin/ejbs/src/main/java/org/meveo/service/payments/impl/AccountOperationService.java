@@ -142,4 +142,19 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return null;
         }
     }
+    
+    /**
+     * Count unmatched AOs by CA.
+     * 
+     * @param customerAccount Customer Account.
+     * @return count of unmatched AOs.
+     */
+    public Long countUnmatchedAOByCA(CustomerAccount customerAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("AccountOperation.countUnmatchedAOByCA").setParameter("customerAccount", customerAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countUnmatchedAOs by CA", e);
+            return null;
+        }
+    }
 }

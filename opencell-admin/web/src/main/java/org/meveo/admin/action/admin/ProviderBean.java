@@ -33,12 +33,16 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RumSequence;
+import org.meveo.model.sequence.GenericSequence;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Named
 @ViewScoped
 public class ProviderBean extends CustomFieldBean<Provider> {
@@ -95,8 +99,12 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         }
         
         if(entity.getRumSequence() == null) {
-        	entity.setRumSequence(new RumSequence());
-    	}
+        	entity.setRumSequence(new GenericSequence());
+		}
+
+		if (entity.getCustomerNoSequence() == null) {
+			entity.setCustomerNoSequence(new GenericSequence());
+		}
 
         return entity;
     }

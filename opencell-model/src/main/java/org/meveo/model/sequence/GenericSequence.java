@@ -1,4 +1,4 @@
-package org.meveo.model.payments;
+package org.meveo.model.sequence;
 
 import java.io.Serializable;
 
@@ -9,44 +9,44 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * Sequence class use when generating RUM.
+ * Class use for storing sequence data. This sequence is use by RUM and to generate customer number.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
 @Embeddable
-public class RumSequence implements Serializable {
+public class GenericSequence implements Serializable {
 
 	private static final long serialVersionUID = -1964277428044516118L;
 
 	/**
-	 * Prefix of RUM.
+	 * Prefix of sequence.
 	 */
 	@Pattern(regexp = "^[\\p{Upper}-]{1,16}$")
-	@Column(name = "rum_prefix", length = 15)
+	@Column(name = "prefix", length = 15)
 	@Size(max = 15)
 	private String prefix = "";
 
 	/**
-	 * Size of the sequence. Maximum allowable for RUM is 35. That means 35 -
+	 * Size of the sequence. Maximum allowable for the sequence is 35. That means 35 -
 	 * prefix.length.
 	 */
-	@Column(name = "rum_sequence_size")
+	@Column(name = "sequence_size")
 	@Max(20L)
 	private Long sequenceSize = 20L;
 
 	/**
 	 * Current value of the sequence. This field is readonly and lock read. Updated only when a next sequence value is requested.
 	 */
-	@Column(name = "rum_current_sequence_nb")
+	@Column(name = "current_sequence_nb")
 	@Size(max = 35)
 	private Long currentSequenceNb = 0L;
 
-	public RumSequence() {
+	public GenericSequence() {
 
 	}
 
-	public RumSequence(String prefix, Long sequenceSize, Long currentSequenceNb) {
+	public GenericSequence(String prefix, Long sequenceSize, Long currentSequenceNb) {
 		super();
 		this.prefix = prefix;
 		this.sequenceSize = sequenceSize;

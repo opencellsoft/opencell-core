@@ -1,21 +1,21 @@
-package org.meveo.api.dto.payment;
+package org.meveo.api.dto.sequence;
 
 import java.io.Serializable;
 
 import javax.validation.constraints.Pattern;
 
 /**
- * RUM Sequence value DTO representation.
+ * Sequence value DTO representation.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
-public class RumSequenceDto implements Serializable {
+public class GenericSequenceDto implements Serializable {
 
 	private static final long serialVersionUID = 3562570307981875698L;
 
 	/**
-	 * Prefix of RUM.
+	 * Prefix of sequence.
 	 */
 	@Pattern(regexp = "^[\\p{Upper}-]{1,16}$")
 	private String prefix = "";

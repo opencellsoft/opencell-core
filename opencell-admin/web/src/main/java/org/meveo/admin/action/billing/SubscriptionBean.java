@@ -33,6 +33,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -85,8 +86,8 @@ import org.primefaces.component.datatable.DataTable;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Named
 @ViewScoped
@@ -526,6 +527,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                 }
                 serviceInstance.setQuantity(quantity);
+                if (BooleanUtils.isTrue(serviceInstance.getAutoEndOfEngagement())) {
+                    serviceInstance.setEndAgreementDate(serviceInstance.getSubscribedTillDate());
+                }
                 serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                 serviceInstances.add(serviceInstance);
                 serviceTemplates.remove(serviceTemplate);
@@ -1043,6 +1047,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
      */
     public void updateSubscribedTillDate() {
         entity.updateSubscribedTillAndRenewalNotifyDates();
+    }
+    
+    /**
+     * Auto update end of engagement date.
+     */
+    public void  autoUpdateEndOfEngagementDate() {
+        entity.autoUpdateEndOfEngagementDate();
     }
 
     /**

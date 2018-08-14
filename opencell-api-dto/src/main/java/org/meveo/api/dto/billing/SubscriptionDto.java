@@ -108,6 +108,10 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The billing cycle. */
     @XmlElement(required = true)
     private String billingCycle;
+    
+    
+    /** The auto end of engagement. */
+    private Boolean autoEndOfEngagement;
 
     /**
      * Instantiates a new subscription dto.
@@ -524,6 +528,21 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public void setBillingCycle(String billingCycle) {
         this.billingCycle = billingCycle;
+    }
+    
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 
     @Override
