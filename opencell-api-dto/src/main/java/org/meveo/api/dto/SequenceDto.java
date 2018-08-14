@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.Sequence;
 
 /**
@@ -57,11 +58,11 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @param sequence the sequence
      */
-    public SequenceDto(Sequence sequence) {
+    public SequenceDto(InvoiceSequence sequence, String prefixEl) {
         if (sequence != null) {
-            this.prefixEL = sequence.getPrefixEL();
             this.sequenceSize = sequence.getSequenceSize();
             this.currentInvoiceNb = sequence.getCurrentInvoiceNb();
+            this.prefixEL = prefixEl;
         }
     }
 
@@ -70,9 +71,8 @@ public class SequenceDto extends BaseEntityDto {
      *
      * @return the sequence
      */
-    public Sequence fromDto() {
-        Sequence sequence = new Sequence();
-        sequence.setPrefixEL(getPrefixEL());
+    public InvoiceSequence fromDto() {
+    	InvoiceSequence sequence = new InvoiceSequence();
         sequence.setSequenceSize(getSequenceSize());
         sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
         return sequence;
@@ -84,10 +84,7 @@ public class SequenceDto extends BaseEntityDto {
      * @param sequence the sequence
      * @return the sequence
      */
-    public Sequence updateFromDto(Sequence sequence) {
-        if (!StringUtils.isBlank(getPrefixEL())) {
-            sequence.setPrefixEL(getPrefixEL());
-        }
+    public InvoiceSequence updateFromDto(InvoiceSequence sequence) {
         if (getSequenceSize() != null) {
             sequence.setSequenceSize(getSequenceSize());
         }

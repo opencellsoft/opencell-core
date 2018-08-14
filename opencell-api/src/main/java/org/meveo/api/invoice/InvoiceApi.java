@@ -493,12 +493,12 @@ public class InvoiceApi extends BaseApi {
      * @throws ImportInvoiceException import invoice exception
      * @throws InvoiceExistException invoice exist exception
      */
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
+    public List<GenerateInvoiceResultDto> generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
             throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
         return generateInvoice(generateInvoiceRequestDto, false);
     }
 
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft)
+    public List<GenerateInvoiceResultDto> generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft)
             throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
 
         if (generateInvoiceRequestDto == null) {
@@ -565,17 +565,21 @@ public class InvoiceApi extends BaseApi {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-
-        Invoice invoice = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
-        this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
-        invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
- 
-        GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
-        if (isDraft) {
-            invoiceService.cancelInvoice(invoice);
+        List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<GenerateInvoiceResultDto>();
+        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
+        for(Invoice invoice : invoices) {
+            this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+            invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+            
+            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
+            invoicesDtos.add(generateInvoiceResultDto);
+            if (isDraft) {
+                invoiceService.cancelInvoice(invoice);
+            }
+            
         }
-
-        return generateInvoiceResultDto;
+        
+        return invoicesDtos;
     }
     
     public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf) throws BusinessException {

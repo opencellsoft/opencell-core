@@ -1,10 +1,14 @@
 package org.meveo.api.ws.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
@@ -62,8 +66,10 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
     public GenerateInvoiceResponseDto generateInvoiceData(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
         GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
         try {
-
-            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto));
+            GenerateInvoiceResultDto generateInvoiceResultDto = invoiceApi.generateInvoice(generateInvoiceRequestDto);
+            List<GenerateInvoiceResultDto> generateInvoiceResultDtoList = new ArrayList<GenerateInvoiceResultDto>();
+            generateInvoiceResultDtoList.add(generateInvoiceResultDto);
+            result.setGenerateInvoiceResultDto(generateInvoiceResultDtoList);
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {

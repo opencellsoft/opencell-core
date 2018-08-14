@@ -16,6 +16,7 @@ import org.meveo.api.CountryApi;
 import org.meveo.api.CurrencyApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.InvoiceCategoryApi;
+import org.meveo.api.InvoiceSequenceApi;
 import org.meveo.api.InvoiceSubCategoryApi;
 import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.InvoiceTypeApi;
@@ -55,6 +56,7 @@ import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.account.ProviderContactDto;
+import org.meveo.api.dto.billing.InvoiceSequenceDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
@@ -68,6 +70,8 @@ import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
+import org.meveo.api.dto.response.GetInvoiceSequenceResponse;
+import org.meveo.api.dto.response.GetInvoiceSequencesResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceTypeResponse;
@@ -167,6 +171,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private InvoiceTypeApi invoiceTypeApi;
+    
+    @Inject
+    private InvoiceSequenceApi invoiceSequenceApi;
 
     @Inject
     private ProviderContactApi providerContactApi;
@@ -1578,13 +1585,70 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-
+    
     @Override
     public GetInvoiceTypesResponse listInvoiceTypes() {
         GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
         result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
         try {
             result.setInvoiceTypesDto(invoiceTypeApi.list());
+        } catch (Exception e) {
+            super.processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+    
+    @Override
+    public ActionStatus createInvoiceSequence(InvoiceSequenceDto invoiceSequenceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceSequenceApi.create(invoiceSequenceDto);
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateInvoiceSequence(InvoiceSequenceDto invoiceSequenceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceSequenceApi.update(invoiceSequenceDto);
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public GetInvoiceSequenceResponse findInvoiceSequence(String invoiceSequenceCode) {
+        GetInvoiceSequenceResponse result = new GetInvoiceSequenceResponse();
+        result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+        try {
+            result.setInvoiceSequenceDto(invoiceSequenceApi.find(invoiceSequenceCode));
+        } catch (Exception e) {
+            super.processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+    
+    @Override
+    public ActionStatus createOrUpdateInvoiceSequence(InvoiceSequenceDto invoiceSequenceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceSequenceApi.createOrUpdate(invoiceSequenceDto);
+        } catch (Exception e) {
+            super.processException(e, result);
+        }
+        return result;
+    }
+    
+    @Override
+    public GetInvoiceSequencesResponse listInvoiceSequences() {
+        GetInvoiceSequencesResponse result = new GetInvoiceSequencesResponse();
+        result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+        try {
+            result.setInvoiceSequencesDto(invoiceSequenceApi.list());
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
         }

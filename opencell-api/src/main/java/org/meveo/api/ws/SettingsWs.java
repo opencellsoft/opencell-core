@@ -28,6 +28,7 @@ import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.account.ProviderContactDto;
+import org.meveo.api.dto.billing.InvoiceSequenceDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
@@ -41,6 +42,8 @@ import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
+import org.meveo.api.dto.response.GetInvoiceSequenceResponse;
+import org.meveo.api.dto.response.GetInvoiceSequencesResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceTypeResponse;
@@ -672,6 +675,22 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceTypesResponse listInvoiceTypes();
+    
+    // InvoiceSequence
+    @WebMethod
+    ActionStatus createInvoiceSequence(@WebParam(name = "invoiceSequence") InvoiceSequenceDto invoiceSequenceDto);
+
+    @WebMethod
+    ActionStatus updateInvoiceSequence(@WebParam(name = "invoiceSequence") InvoiceSequenceDto invoiceSequenceDto);
+
+    @WebMethod
+    GetInvoiceSequenceResponse findInvoiceSequence(@WebParam(name = "invoiceSequenceCode") String invoiceSequenceCode);
+
+    @WebMethod
+    ActionStatus createOrUpdateInvoiceSequence(@WebParam(name = "invoiceSequence") InvoiceSequenceDto invoiceSequenceDto);
+
+    @WebMethod
+    GetInvoiceSequencesResponse listInvoiceSequences();
 
     /**
      * create a providerContact by dto
