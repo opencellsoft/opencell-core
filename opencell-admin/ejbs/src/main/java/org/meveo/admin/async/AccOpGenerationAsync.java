@@ -18,10 +18,12 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.script.ScriptInterface;
 
 /**
  * @author anasseh
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  */
 
 @Stateless
@@ -43,11 +45,12 @@ public class AccOpGenerationAsync {
      * @param result Job Execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @param script script to execute        
      * @return Future String
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser, ScriptInterface script) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -55,7 +58,7 @@ public class AccOpGenerationAsync {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
-            unitAccountOperationsGenerationJobBean.execute(result, id);
+            unitAccountOperationsGenerationJobBean.execute(result, id, script);
         }
         return new AsyncResult<String>("OK");
     }
