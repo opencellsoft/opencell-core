@@ -18,6 +18,7 @@
  */
 package org.meveo.model.crm;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.AccountEntity;
@@ -38,6 +40,8 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.intcrm.AdditionalDetails;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
@@ -52,6 +56,11 @@ public class Customer extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
+
+    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "address_book_id")
+    private AddressBook addressbook;
+    
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
@@ -75,8 +84,30 @@ public class Customer extends AccountEntity {
     
     @Column(name = "registration_no", length = 100)
     private String registrationNo;
+    
+    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "additional_details_id")
+    private AdditionalDetails additionalDetails;
+    
+    
+    
+    public AddressBook getAddressbook() {
+		return addressbook;
+	}
 
-    public Customer() {
+	public void setAddressbook(AddressBook addressbook) {
+		this.addressbook = addressbook;
+	}
+
+	public AdditionalDetails getAdditionalDetails() {
+		return additionalDetails;
+	}
+
+	public void setAdditionalDetails(AdditionalDetails additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
+
+	public Customer() {
         accountType = ACCOUNT_TYPE;
     }
 

@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+    
+	<ui:define name="body">
+		<div style="margin: 10%">
+			<H1>BUTTON BELLOW</H1>
+			<h:form>
+				<p:panel>
+					<p:commandButton id="test1" value=" Create" action="#{addressBookBean.createAddressBook}"></p:commandButton>
+				</p:panel>
+			</h:form>
+			<h:form>
+				<p:panel>
+					<p:commandButton id="test2" value="Find AddressBook" action="#{addressBookBean.findAddressBookByCode}"></p:commandButton>
+				</p:panel>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

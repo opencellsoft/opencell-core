@@ -235,4 +235,5 @@ public interface CustomerRs extends IBaseRs {
     @GET
     @Path("/exportCustomerHierarchy")
     ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
+
 }

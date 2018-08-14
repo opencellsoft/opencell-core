@@ -35,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -50,6 +51,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.ContactInformation;
 
 /**
@@ -73,6 +75,10 @@ public class CustomerAccount extends AccountEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "crm_address_book_id")
+	private AddressBook addressbook;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
@@ -129,6 +135,14 @@ public class CustomerAccount extends AccountEntity {
 
 	public CustomerAccount() {
 		accountType = ACCOUNT_TYPE;
+	}
+	
+	public AddressBook getAddressbook() {
+		return addressbook;
+	}
+
+	public void setAddressbook(AddressBook addressbook) {
+		this.addressbook = addressbook;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
