@@ -289,13 +289,13 @@
             </column>
             <column name="sql_query" type="varchar(2000)" />
             <column name="script_instance_id" type="bigint" />
-        </createTable>
-        
-        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="dwh_report_extract" constraintName="fk_report_extract_script_instance" deferrable="false" initiallyDeferred="false"
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="dwh_report_extract" constraintName="fk_report_extract_script_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-        <createSequence sequenceName="dwh_report_extract_seq" />
-        
-        <createTable tableName="dwh_report_extract_params">
+		<createSequence sequenceName="dwh_report_extract_seq" />
+		
+		<createTable tableName="dwh_report_extract_params">
             <column name="reportextract_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -457,38 +457,38 @@
     <changeSet id="#1705_20180220-migration" author="EdwardPLegaspi" dbms="postgresql">
         <sql>
             <![CDATA[
-            insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-                select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-                from 
-                    (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
-                    and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
-            ]]>
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
         </sql>
         <sql>
             <![CDATA[
-            update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
-            ]]>
+			update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
+			]]>
         </sql>
         <sql>
             <![CDATA[
-            insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-                select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-                from 
-                    (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
-                    and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
-            ]]>
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
         </sql>
         <sql>
             <![CDATA[update ${db.schema.adapted}billing_tax set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
         </sql>
         <sql>
             <![CDATA[
-            insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-                select a.account_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-                from 
-                    (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
-                    and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
-            ]]>
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.account_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
+			]]>
         </sql>
         <sql>
             <![CDATA[update ${db.schema.adapted}ar_occ_template set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
@@ -514,38 +514,38 @@
     <changeSet id="#1705_20180220-migration-M" author="EdwardPLegaspi" dbms="mysql">
         <sql>
             <![CDATA[
-            insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-                select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-                from 
-                    (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
-                    and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
-            ]]>
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
         </sql>
         <sql>
             <![CDATA[
-            update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
-            ]]>
+			update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
+			]]>
         </sql>
         <sql>
             <![CDATA[
-            insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-                select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-                from 
-                    (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
-                    and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
-            ]]>
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
         </sql>
         <sql>
             <![CDATA[update ${db.schema.adapted}billing_tax set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
         </sql>
         <sql>
             <![CDATA[
-            insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-                select a.account_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
-                from 
-                    (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
-                    and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
-            ]]>
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.account_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
+			]]>
         </sql>
         <sql>
             <![CDATA[update ${db.schema.adapted}ar_occ_template set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
@@ -959,44 +959,44 @@
 
     <changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
         <sql splitStatements="false" stripComments="false"><![CDATA[
-           CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
-                 BEGIN
-                    RETURN  translate($1,
-                                     'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
-                                     'cCaaAAeeeEEEiIuUoO');
-                END;
-                $$ LANGUAGE plpgsql;
-            ]]></sql>
+		   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
+		         BEGIN
+		         	RETURN  translate($1,
+		   							 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ',
+		   							 'cCaaAAeeeEEEiIuUoO');
+		        END;
+				$$ LANGUAGE plpgsql;
+			]]></sql>
     </changeSet>
     <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
         <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
         <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
         <sql splitStatements="false" stripComments="false"><![CDATA[
-                create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
-                                returns varchar(2000)
-                                begin               
-                                    set @textvalue =  input_text;
-                                    set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
-                                    set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
-                                    set @count = length(@withaccents);
-                                    
-                                    while @count > 0 do
-                                        set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
-                                        set @count = @count - 1;
-                                    end while;                  
-                                    return @textvalue;              
-                end;
-            ]]></sql>
+				create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
+								returns varchar(2000)
+								begin				
+									set @textvalue =  input_text;
+									set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
+									set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
+									set @count = length(@withaccents);
+									
+									while @count > 0 do
+									    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+									    set @count = @count - 1;
+									end while;					
+									return @textvalue;				
+				end;
+			]]></sql>
 
-    </changeSet>
-    <changeSet id="#2870_20180129 - Convert to EnableBussEntity" author="EdwardLegaspi">
-        <addColumn tableName="dwh_report_extract">
-            <column name="uuid" type="varchar(60)"/>
+	</changeSet>
+	<changeSet id="#2870_20180129 - Convert to EnableBussEntity" author="EdwardLegaspi">
+		<addColumn tableName="dwh_report_extract">
+			<column name="uuid" type="varchar(60)"/>
             <column name="cf_values" type="${type.json}"/>            
-        </addColumn>
+		</addColumn>
         <sql>update ${db.schema.adapted}dwh_report_extract set uuid=concat('dre_',id)</sql>
         <addNotNullConstraint tableName="dwh_report_extract" columnName="uuid" columnDataType="varchar(60)"/>
-    </changeSet>
+	</changeSet>
 
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
@@ -1243,10 +1243,10 @@
      </changeSet>
      
      <changeSet id="#3239_20180511" author="AbdelmounaimAkadid">
-        <addColumn tableName="cat_product_charge_templ">
+    	<addColumn tableName="cat_product_charge_templ">
             <column name="filter_expression" type="varchar(2000)"  />           
         </addColumn>
-    </changeSet>
+	</changeSet>
 
     <changeSet id="#3288_20180503" author="AbdelmounaimAkadid">
         <addColumn tableName="billing_invoice_type">
@@ -1256,21 +1256,21 @@
     </changeSet>
     
     <changeSet id="#3461_20180602" author="AbdelmounaimAkadid">
-        <addColumn tableName="billing_cycle">
-            <column name="script_instance_id" type="bigint" />
-        </addColumn>
-        <addColumn tableName="billing_rated_transaction">
-            <column name="subscription_id" type="bigint" />
-        </addColumn>
-        <addColumn tableName="billing_wallet_operation">
-            <column name="subscription_id" type="bigint" />
-        </addColumn>
-        <addColumn tableName="billing_subscription">
-            <column name="billing_run" type="bigint" />
-        </addColumn>
-        <addColumn tableName="ord_order">
-            <column name="billing_run" type="bigint" />
-        </addColumn>
+    	<addColumn tableName="billing_cycle">
+    		<column name="script_instance_id" type="bigint" />
+    	</addColumn>
+    	<addColumn tableName="billing_rated_transaction">
+    		<column name="subscription_id" type="bigint" />
+    	</addColumn>
+    	<addColumn tableName="billing_wallet_operation">
+    		<column name="subscription_id" type="bigint" />
+    	</addColumn>
+    	<addColumn tableName="billing_subscription">
+    		<column name="billing_run" type="bigint" />
+    	</addColumn>
+    	<addColumn tableName="ord_order">
+    		<column name="billing_run" type="bigint" />
+    	</addColumn>
     </changeSet>
 
     <changeSet author="MounirBahije" id="#3493_20180706">
@@ -1290,18 +1290,26 @@
     </changeSet>
     
     <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
-        <addColumn tableName="crm_provider">
-            <column name="rum_prefix" type="varchar(15)" />
+     	<addColumn tableName="crm_provider">
+    		<column name="rum_prefix" type="varchar(15)" />
             <column name="rum_sequence_size" type="bigint" />
-            <column name="rum_current_sequence_nb" type="bigint" />
-        </addColumn>
+			<column name="rum_current_sequence_nb" type="bigint" />
+     	</addColumn>
      </changeSet>
      
-      <changeSet id="#3225_22062018" author="SaidRamli">
+    <changeSet id="#3225_22062018" author="SaidRamli">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="cf_protectable" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#3575_20180803 - Customer No Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="cust_no_prefix" type="varchar(15)" />
+            <column name="cust_no_sequence_size" type="bigint" />
+			<column name="cust_no_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
 
     <changeSet id="#3217_20180725 - Field migration from Customer, BA and CA to AccountEntity " author="AbdelmounaimAkadid">
         <addColumn tableName="account_entity">
@@ -1314,21 +1322,21 @@
         </addColumn>
         <sql><![CDATA[
         update account_entity e set email = (select email from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        update account_entity e set fax = (select fax from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        update account_entity e set mobile = (select mobile from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        update account_entity e set phone = (select phone from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        
-        update account_entity e set email = (select email from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
-        update account_entity e set phone = (select phone from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
-        
-        update account_entity e set email = (select email from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        update account_entity e set fax = (select fax from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        update account_entity e set mobile = (select mobile from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        update account_entity e set phone = (select phone from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        
-        update account_entity e set registration_no = (select registration_no from crm_customer c where c.id=e.id);
-        update account_entity e set vat_no = (select vat_no from crm_customer c where c.id=e.id);
-        ]]></sql>
+		update account_entity e set fax = (select fax from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		update account_entity e set mobile = (select mobile from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		update account_entity e set phone = (select phone from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		
+		update account_entity e set email = (select email from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+		update account_entity e set phone = (select phone from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+		
+		update account_entity e set email = (select email from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update account_entity e set fax = (select fax from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update account_entity e set mobile = (select mobile from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update account_entity e set phone = (select phone from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		
+		update account_entity e set registration_no = (select registration_no from crm_customer c where c.id=e.id);
+		update account_entity e set vat_no = (select vat_no from crm_customer c where c.id=e.id);
+		]]></sql>
         <dropColumn tableName="crm_customer" columnName="email" />
         <dropColumn tableName="crm_customer" columnName="fax" />
         <dropColumn tableName="crm_customer" columnName="mobile" />
@@ -1349,6 +1357,21 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_type" constraintName="fk_invoice_type_script_instance" deferrable="false" initiallyDeferred="false"
              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance"  />
+    </changeSet>
+    
+    <changeSet id="#3455_26062018" author="SaidRamli">
+        <addColumn tableName="billing_subscription">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_service_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_offer_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="billing_service_instance">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
     </changeSet>
 
     <changeSet id="#3508_20180806 - Invoice Sequence entity" author="AbdelmounaimAkadid">

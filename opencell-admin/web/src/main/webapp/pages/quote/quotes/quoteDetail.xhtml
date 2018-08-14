@@ -107,7 +107,6 @@
                         </p:fieldset>
 
                         <div class="clearLeft"></div>
-                        <hftl:customFields prefix="quote" backingBean="#{quoteBean}" messagesId=":quoteForm:messages" />
 
                     </hf:namingContainer>
                 </p:tab>
@@ -452,6 +451,7 @@
                         </p:panel>
                     </h:panelGroup>
                 </p:tab>
+                <hftl:customFields prefix="quote" backingBean="#{quoteBean}" messagesId=":quoteForm:messages" />
                 <hftl:displayWorkflowsHistory entity="#{quoteBean.entity}" />
             </p:tabView>
 

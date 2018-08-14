@@ -20,7 +20,8 @@ import org.meveo.model.billing.Sequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.RumSequence;
+import org.meveo.model.sequence.GenericSequence;
+import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -219,19 +220,22 @@ public class ServiceSingleton {
         return invoiceType;
     }
 
-    @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public RumSequence getNextMandateNumberSequence() {
-    	RumSequence rumSequence = appProvider.getRumSequence();
-    	
-    	if(rumSequence == null) {
-    		rumSequence = new RumSequence();
-    	}
-    	
-    	rumSequence.setCurrentSequenceNb(rumSequence.getCurrentSequenceNb() + 1L);
-    	
-    	return rumSequence;
+	@Lock(LockType.WRITE)
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
+		GenericSequence sequence = appProvider.getRumSequence();
+		if (type == SequenceTypeEnum.CUSTOMER_NO) {
+			sequence = appProvider.getCustomerNoSequence();
+		}
+
+		if (sequence == null) {
+			sequence = new GenericSequence();
+		}
+
+		sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
+
+		return sequence;
 	}
 
 }

@@ -45,6 +45,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -62,6 +63,8 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Subscription
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Entity
 @ObservableEntity
@@ -138,6 +141,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "auto_end_of_engagement")
+    private Boolean autoEndOfEngagement = Boolean.FALSE;
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
@@ -420,6 +427,15 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
         return subscribedTillDate != null && DateUtils.setTimeToZero(subscribedTillDate).compareTo(DateUtils.setTimeToZero(new Date())) <= 0;
     }
+    
+    /**
+     * Auto update end of engagement date.
+     */
+    public void autoUpdateEndOfEngagementDate() {
+        if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
+            this.setEndAgreementDate(this.subscribedTillDate);
+        } 
+    }
 
     /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
@@ -451,6 +467,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 		} else {
 			setNotifyOfRenewalDate(null);
 		}
+		this.autoUpdateEndOfEngagementDate();
 	} 
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
@@ -515,5 +532,19 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
      */
     public boolean isActive() {
         return SubscriptionStatusEnum.ACTIVE == status;
+    }
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 }

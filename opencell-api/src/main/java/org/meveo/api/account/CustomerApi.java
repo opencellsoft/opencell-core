@@ -35,6 +35,8 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -46,6 +48,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.sequence.GenericSequenceApi;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
@@ -54,14 +57,17 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.model.SortOrder;
 
 import com.thoughtworks.xstream.XStream;
@@ -102,6 +108,9 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private InvoiceService invoiceService;
+    
+    @Inject
+    private ProviderService providerService;
 
     public void create(CustomerDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -740,4 +749,25 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
     }
+
+	public void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
+		if (postData.getSequenceSize() > 20) {
+			throw new MeveoApiException("sequenceSize must be <= 20.");
+		}
+
+		Provider provider = providerService.findById(appProvider.getId());
+		provider.setCustomerNoSequence(GenericSequenceApi.toGenericSequence(postData, provider.getCustomerNoSequence()));
+		providerService.update(provider);		
+	}
+
+	public GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+		GenericSequence genericSequence = providerService.getNextCustomerNumber();
+		String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
+		result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
+		result.setValue(genericSequence.getPrefix() + sequenceNumber);
+
+		return result;
+	}
 }

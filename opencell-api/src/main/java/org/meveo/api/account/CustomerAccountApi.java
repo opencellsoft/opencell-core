@@ -18,6 +18,7 @@ import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -42,8 +43,11 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -82,6 +86,15 @@ public class CustomerAccountApi extends AccountEntityApi {
     
     @Inject
     private BillingAccountApi billingAccountApi;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
 
     public void create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -241,8 +254,19 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (customer == null) {
                 throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
             } else if (!customerAccount.getCustomer().equals(customer)) {
-                throw new InvalidParameterException(
-                    "Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
+                // a safeguard to allow this only if all the WO/RT have been invoiced.
+                Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(customerAccount);
+                if(countNonTreatedWO > 0) {
+                    throw new BusinessApiException("Can not change the parent account. Customer account have non treated WO");
+                }
+                Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(customerAccount);
+                if(countNonInvoicedRT > 0) {
+                    throw new BusinessApiException("Can not change the parent account. Customer account have non invoiced RT");
+                }
+                Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(customerAccount);
+                if(countUnmatchedAO > 0) {
+                    throw new BusinessApiException("Can not change the parent account. Customer account have unmatched AO");
+                }
             }
             customerAccount.setCustomer(customer);
         }

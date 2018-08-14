@@ -156,7 +156,6 @@
                             </p:outputPanel>
                         </p:fieldset>
                         <div class="clearLeft"></div>
-                        <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
 
                     </hf:namingContainer>
                 </p:tab>
@@ -594,6 +593,7 @@
                         </p:panel>
                     </h:panelGroup>
                 </p:tab>
+                <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
                 <hftl:displayWorkflowsHistory entity="#{orderBean.entity}" />
             </p:tabView>
 
