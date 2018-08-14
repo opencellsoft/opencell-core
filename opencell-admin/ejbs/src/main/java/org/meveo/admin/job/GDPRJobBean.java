@@ -65,8 +65,6 @@ public class GDPRJobBean extends BaseJobBean {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter) {
 
-		MeveoUser lastCurrentUser = currentUser.unProxy();
-
 		Provider provider = providerService.findById(appProvider.getId());
 		GdprConfiguration gdprConfiguration = provider.getGdprConfigurationNullSafe();
 
