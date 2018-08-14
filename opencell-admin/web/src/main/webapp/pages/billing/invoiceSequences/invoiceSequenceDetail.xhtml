@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{invoiceSequenceBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem outcome="invoiceSequences" value="#{messages['menu.invoiceSequences']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['invoiceSequence']}" disabled="true" rendered="#{invoiceSequenceBean.entity.transient}" />
+                <p:menuitem value="#{messages['invoiceSequence']} - #{invoiceSequenceBean.entity.code}" disabled="true" rendered="#{!invoiceSequenceBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:formPanel formId="formInvoiceSequence" edit="#{invoiceSequenceBean.edit}" label="#{messages['invoiceSequence.panel']}" backingBean="#{invoiceSequenceBean}" showDeleteButton="false">
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
+            <hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" />
+            <hftl:formField label="#{messages['invoiceSequence.sequenceSize']}" field="sequenceSize" id="sequenceSize" />
+            <hftl:formField label="#{messages['invoiceSequence.currentInvoiceNb']}" field="currentInvoiceNb" id="currentInvoiceNb" />
+        </hftl:formPanel>
+    </ui:define>
+</ui:composition>

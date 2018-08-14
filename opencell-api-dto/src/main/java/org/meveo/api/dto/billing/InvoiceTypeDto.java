@@ -21,6 +21,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
  *
  * @author anasseh
  * @author Mounir Bahije
+ * @author akadid abdelmounaim
  * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "InvoiceType")
@@ -99,14 +100,14 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
         this.occTemplateNegativeCodeEl = invoiceType.getOccTemplateNegativeCodeEl();
         this.customInvoiceXmlScriptInstanceCode = invoiceType.getCustomInvoiceXmlScriptInstance() == null ? null : invoiceType.getCustomInvoiceXmlScriptInstance().getCode();
-        this.sequenceDto = new SequenceDto(invoiceType.getSequence());
+        this.sequenceDto = new SequenceDto(invoiceType.getInvoiceSequence(), invoiceType.getPrefixEL());
         if (invoiceType.getAppliesTo() != null) {
             for (InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()) {
                 this.getAppliesTo().add(tmpInvoiceType.getCode());
             }
         }
         for (InvoiceTypeSellerSequence seq : invoiceType.getSellerSequence()) {
-            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getSequence()));
+            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getInvoiceSequence(), seq.getPrefixEL()));
         }
         this.matchingAuto = invoiceType.isMatchingAuto();
         this.billingTemplateName = invoiceType.getBillingTemplateName();

@@ -42,6 +42,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -63,6 +64,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
@@ -142,6 +144,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+    
+    @Inject
+    private SellerService sellerService;
+
 
     private ServiceInstance selectedServiceInstance;
 
@@ -1071,4 +1077,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
 		return (si == null || si.isEmpty()) ? true : false;
 	}
+    
+    public List<Seller> listSellers() {
+        if(entity.getOffer() != null) {
+            if(entity.getOffer().getSellers().size() > 0) {
+                return entity.getOffer().getSellers();
+            } else {
+                return sellerService.list();
+            }
+        } else {
+            return new ArrayList<Seller>();
+        }
+    }
 }

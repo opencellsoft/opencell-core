@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.Sequence;
 
 /**
@@ -37,7 +38,7 @@ public class InvoicesToNumberInfo {
     /**
      * A numbering sequence containing rules how to compose an invoice number
      */
-    private Sequence numberingSequence;
+    private InvoiceSequence numberingSequence;
 
     /**
      * A last invoice number assigned.It gets incremented by 1 with every call to
@@ -67,12 +68,12 @@ public class InvoicesToNumberInfo {
         return nrOfInvoices;
     }
 
-    public void setNumberingSequence(Sequence numberingSequence) {
+    public void setNumberingSequence(InvoiceSequence numberingSequence) {
         this.numberingSequence = numberingSequence;
         this.lastInvoiceNumber = numberingSequence.getPreviousInvoiceNb();
     }
 
-    public Sequence getNumberingSequence() {
+    public InvoiceSequence getNumberingSequence() {
         return numberingSequence;
     }
 
