@@ -1373,22 +1373,6 @@
     	</addColumn>
     </changeSet>
     
-    <changeSet author="MounirBahije" id="#3493_20180706">
-        <createTable tableName="crm_custom_field_tmpl_val_pos">
-            <column name="customfieldtemplate_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="gui_position" type="varchar(255)" defaultValue="0" >
-                <constraints nullable="false" />
-            </column>
-            <column name="key" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="label" type="varchar(255)"/>
-        </createTable>
-        <addPrimaryKey columnNames="customfieldtemplate_id, key" constraintName="crm_custom_field_tmpl_val_pos_pkey" tableName="crm_custom_field_tmpl_val_pos" />
-    </changeSet>
-    
     <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
      	<addColumn tableName="crm_provider">
     		<column name="rum_prefix" type="varchar(15)" />
