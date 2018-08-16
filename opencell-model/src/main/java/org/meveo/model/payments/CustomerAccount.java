@@ -25,6 +25,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -34,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -49,6 +51,8 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.shared.ContactInformation;
 
 /**
  * Customer Account entity.
@@ -71,6 +75,10 @@ public class CustomerAccount extends AccountEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "crm_address_book_id")
+	private AddressBook addressbook;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
@@ -106,6 +114,9 @@ public class CustomerAccount extends AccountEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDunningLevel;
 
+	@Embedded
+	private ContactInformation contactInformation;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
@@ -124,6 +135,14 @@ public class CustomerAccount extends AccountEntity {
 
 	public CustomerAccount() {
 		accountType = ACCOUNT_TYPE;
+	}
+	
+	public AddressBook getAddressbook() {
+		return addressbook;
+	}
+
+	public void setAddressbook(AddressBook addressbook) {
+		this.addressbook = addressbook;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -186,6 +205,14 @@ public class CustomerAccount extends AccountEntity {
 
 	public void setAccountOperations(List<AccountOperation> accountOperations) {
 		this.accountOperations = accountOperations;
+	}
+
+	public ContactInformation getContactInformation() {
+		return contactInformation;
+	}
+
+	public void setContactInformation(ContactInformation contactInformation) {
+		this.contactInformation = contactInformation;
 	}
 
 	public void setDunningLevel(DunningLevelEnum dunningLevel) {

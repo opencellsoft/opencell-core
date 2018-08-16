@@ -11,14 +11,12 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -36,6 +34,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
@@ -47,6 +46,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -57,7 +57,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * @author Edward P. Legaspi
  * @author anasseh
  * 
- * @lastModifiedVersion willBeSetHere
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -95,6 +95,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private AccountOperationService accountOperationService;
+
+	@Inject
+	private AddressBookService addressBookService;
 
     public void create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -211,21 +214,26 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw e;
         }
 
+		AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
+		addressBookService.create(addressBook);
+		
+		customerAccount.setAddressbook(addressBook);
+
         customerAccountService.create(customerAccount);
 
         return customerAccount;
     }
 
-    public void update(CustomerAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
+    public void update(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         update(postData, true);
     }
 
-    public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
+    public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
         return update(postData, true, null);
     }
 
     public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel)
-            throws MeveoApiException, DuplicateDefaultAccountException {
+            throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -254,19 +262,8 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (customer == null) {
                 throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
             } else if (!customerAccount.getCustomer().equals(customer)) {
-                // a safeguard to allow this only if all the WO/RT have been invoiced.
-                Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(customerAccount);
-                if(countNonTreatedWO > 0) {
-                    throw new BusinessApiException("Can not change the parent account. Customer account have non treated WO");
-                }
-                Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(customerAccount);
-                if(countNonInvoicedRT > 0) {
-                    throw new BusinessApiException("Can not change the parent account. Customer account have non invoiced RT");
-                }
-                Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(customerAccount);
-                if(countUnmatchedAO > 0) {
-                    throw new BusinessApiException("Can not change the parent account. Customer account have unmatched AO");
-                }
+                throw new InvalidParameterException(
+                    "Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
             }
             customerAccount.setCustomer(customer);
         }
@@ -393,6 +390,12 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw e;
         }
 
+        if (customerAccount.getAddressbook() == null) {
+			AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
+			addressBookService.create(addressBook);
+			customerAccount.setAddressbook(addressBook);
+		}
+         
         try {
             customerAccount = customerAccountService.update(customerAccount);
         } catch (BusinessException e1) {

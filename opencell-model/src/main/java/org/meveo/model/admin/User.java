@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
@@ -43,6 +44,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -62,6 +64,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
@@ -91,6 +94,10 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
     @Size(max = 50)
     private String userName;
 
+    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "crm_address_book_id")
+    private AddressBook addressbook;
+    
     @Column(name = "email", length = 100)
     @Size(max = 100)
     private String email;
@@ -129,8 +136,16 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
 
     public User() {
     }
+    
+    public AddressBook getAddressbook() {
+		return addressbook;
+	}
 
-    public Set<Role> getRoles() {
+	public void setAddressbook(AddressBook addressbook) {
+		this.addressbook = addressbook;
+	}
+
+	public Set<Role> getRoles() {
         return roles;
     }
 

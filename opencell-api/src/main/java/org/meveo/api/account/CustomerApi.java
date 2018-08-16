@@ -59,6 +59,8 @@ import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.intcrm.AdditionalDetails;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.shared.ContactInformation;
@@ -68,6 +70,8 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.intcrm.impl.AdditionalDetailsService;
+import org.meveo.service.intcrm.impl.AddressBookService;
 import org.primefaces.model.SortOrder;
 
 import com.thoughtworks.xstream.XStream;
@@ -108,6 +112,12 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private InvoiceService invoiceService;
+    
+    @Inject
+	private AddressBookService addressBookService;
+
+	@Inject
+	private AdditionalDetailsService additionalDetailsService;
     
     @Inject
     private ProviderService providerService;
@@ -195,6 +205,20 @@ public class CustomerApi extends AccountEntityApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        AddressBook addressBook = new AddressBook("C_" + customer.getCode());
+		addressBookService.create(addressBook);
+
+		AdditionalDetails additionalDetails = new AdditionalDetails();
+		if (postData.getAdditionalDetails() != null) {
+			additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
+			additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
+			additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
+		}
+		additionalDetailsService.create(additionalDetails);
+
+		customer.setAdditionalDetails(additionalDetails);
+		customer.setAddressbook(addressBook);
 
         customerService.create(customer);
 
@@ -305,6 +329,27 @@ public class CustomerApi extends AccountEntityApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        if (customer.getAddressbook() == null) {
+			AddressBook addressBook = new AddressBook("C_" + customer.getCode());
+			addressBookService.create(addressBook);
+			customer.setAddressbook(addressBook);
+		}
+
+		if (customer.getAdditionalDetails() == null) {
+			AdditionalDetails additionalDetails = new AdditionalDetails();
+			if (!StringUtils.isBlank(postData.getAdditionalDetails().getCompanyName())) {
+				additionalDetails.setCompanyName(postData.getAdditionalDetails().getCompanyName());
+			}
+			if (!StringUtils.isBlank(postData.getAdditionalDetails().getPosition())) {
+				additionalDetails.setPosition(postData.getAdditionalDetails().getPosition());
+			}
+			additionalDetailsService.create(additionalDetails);
+			if (!StringUtils.isBlank(postData.getAdditionalDetails().getInstantMessengers())) {
+				additionalDetails.setInstantMessengers(postData.getAdditionalDetails().getInstantMessengers());
+			}
+			customer.setAdditionalDetails(additionalDetails);
+		}
 
         customer = customerService.update(customer);
 

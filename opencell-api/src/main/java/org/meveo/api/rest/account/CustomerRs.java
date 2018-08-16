@@ -257,4 +257,5 @@ public interface CustomerRs extends IBaseRs {
 	@POST
 	@Path("customerNumberSequence")
 	GenericSequenceValueResponseDto getNextCustomerNumber();
+
 }
