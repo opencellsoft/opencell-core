@@ -30,6 +30,10 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TitleService;
 
+
+import org.meveo.admin.exception.BusinessException;
+
+
 @Named
 @ViewScoped
 public class TitleBean extends BaseBean<Title> {
@@ -47,7 +51,6 @@ public class TitleBean extends BaseBean<Title> {
      */
     public TitleBean() {
         super(Title.class);
-       
     }
 
     /**

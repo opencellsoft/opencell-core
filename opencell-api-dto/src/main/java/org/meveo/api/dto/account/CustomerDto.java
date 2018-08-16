@@ -7,7 +7,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.crm.AdditionalDetailsDto;
+import org.meveo.api.dto.crm.AddressBookDto;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.intcrm.AdditionalDetails;
 
 /**
  * The Class CustomerDto.
@@ -53,7 +56,10 @@ public class CustomerDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
-
+    
+    private AdditionalDetailsDto additionalDetails = new AdditionalDetailsDto();
+    
+    
     /**
      * Instantiates a new customer dto.
      */
@@ -86,6 +92,10 @@ public class CustomerDto extends AccountDto {
 
 		if (e.getContactInformation() != null) {
 			setContactInformation(new ContactInformationDto(e.getContactInformation()));
+		}
+		
+		if (e.getAdditionalDetails() != null) {
+			setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
 		}
 	}
 
@@ -143,7 +153,7 @@ public class CustomerDto extends AccountDto {
         this.customerBrand = customerBrand;
     }
 
-    /**
+	/**
      * Gets the customer accounts.
      *
      * @return the customer accounts
@@ -250,8 +260,17 @@ public class CustomerDto extends AccountDto {
     public void setVatNo(String vatNo) {
         this.vatNo = vatNo;
     }
+   
+    public AdditionalDetailsDto getAdditionalDetails() {
+		return additionalDetails;
+	}
 
-    @Override
+	public void setAdditionalDetails(AdditionalDetailsDto additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
+
+
+	@Override
     public String toString() {
         return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
                 + ", mandateDate=" + mandateDate + ", contactInformation=" + contactInformation + ", customerAccounts=" + customerAccounts + "]";

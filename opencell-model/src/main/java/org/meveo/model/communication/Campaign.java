@@ -20,7 +20,6 @@ package org.meveo.model.communication;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -39,13 +38,14 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "com_campaign", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_campaign_seq"), })
+@ExportIdentifier({ "campaign" })
+@Table(name = "com_campaign", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+		@Parameter(name = "sequence_name", value = "com_campaign_seq")})
 public class Campaign extends BusinessEntity {
 
 	private static final long serialVersionUID = -5865150907978275819L;
-
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "schedule_date")
 	private Date scheduleDate;
@@ -73,8 +73,8 @@ public class Campaign extends BusinessEntity {
 	@Size(max = 255)
 	private String subMedia;
 
-	@Type(type="numeric_boolean")
-    @Column(name = "use_any_media")
+	@Type(type = "numeric_boolean")
+	@Column(name = "use_any_media")
 	private Boolean useAnyMedia;
 
 	@Enumerated(EnumType.STRING)
@@ -83,7 +83,7 @@ public class Campaign extends BusinessEntity {
 
 	@OneToMany(mappedBy = "campaign")
 	private List<Message> messages;
-
+	
 	public Date getScheduleDate() {
 		return scheduleDate;
 	}

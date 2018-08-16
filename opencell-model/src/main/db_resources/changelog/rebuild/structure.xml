@@ -1978,15 +1978,15 @@
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-163">
-        <createTable tableName="bi_report_emails">
-            <column name="report_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="email_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addPrimaryKey columnNames="report_id, email_id" constraintName="bi_report_emails_pkey" tableName="bi_report_emails" />
+            <createTable tableName="bi_report_emails">
+                <column name="report_id" type="bigint">
+                    <constraints nullable="false" />
+                </column>
+                <column name="email_id" type="bigint">
+                    <constraints nullable="false" />
+                </column>
+            </createTable>
+            <addPrimaryKey columnNames="report_id, email_id" constraintName="bi_report_emails_pkey" tableName="bi_report_emails" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-164">
         <createTable tableName="billing_billing_account">

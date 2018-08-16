@@ -22,10 +22,6 @@
             <p:column rendered="#{edit}" headerText="#{messages['commons.actions']}">
                 <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this #{id}" update="#{id}"
                                  actionListener="#{backingBean.removeMapTypeFieldValue(field, mapValues)}" />
-                <p:commandButton id="blankUp" icon="ui-icon-blank" rendered="#{!backingBean.renderMoveUp(field, mapValues)}" />
-                <p:commandButton id="moveUpFBtnCF" icon="ui-icon-arrowthick-1-n" action="#{backingBean.moveUp(field, mapValues)}" update="#{id}" rendered="#{backingBean.renderMoveUp(field, mapValues)}" />
-                <p:commandButton id="moveDownFBtnCF" icon="ui-icon-arrowthick-1-s" action="#{backingBean.moveDown(field, mapValues)}" update="#{id}" rendered="#{backingBean.renderMoveDown(field, mapValues)}" />
-                <p:commandButton id="blankDown" icon="ui-icon-blank" rendered="#{!backingBean.renderMoveDown(field, mapValues)}" />
             </p:column>
             <f:facet name="footer">
                 <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this #{id}" update="#{id}"
