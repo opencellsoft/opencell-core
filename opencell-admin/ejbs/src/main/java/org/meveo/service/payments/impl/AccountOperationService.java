@@ -29,7 +29,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -185,4 +184,19 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 			remove(e);
 		}
 	}
+    
+    /**
+     * Count unmatched AOs by CA.
+     * 
+     * @param customerAccount Customer Account.
+     * @return count of unmatched AOs.
+     */
+    public Long countUnmatchedAOByCA(CustomerAccount customerAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("AccountOperation.countUnmatchedAOByCA").setParameter("customerAccount", customerAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countUnmatchedAOs by CA", e);
+            return null;
+        }
+    }
 }

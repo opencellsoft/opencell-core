@@ -141,6 +141,21 @@
 			updateField=":subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId :subscriptionTab:subscriptionFormId:informationTab:billingCycleSelectId_text">
 		</hftl:entityPopup>
 		
+		<hftl:entityPopup id="sellerPopup"
+			header="#{messages['seller.popup.header']}"
+			backingBean="#{subscriptionBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{subscriptionBean.entity.seller}"
+			dataModel="#{subscriptionBean.listSellers()}"
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:sellerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_text">
+		</hftl:entityPopup>
+		
 		<p:panel>
 			<h:form id="crumbmenuForm">
 				<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -417,6 +432,9 @@
 										
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
+                            				
+                            			<hftl:formField id="sellerSelectId" label="#{messages['seller']}" field="seller" valueLabelField="code" popup="true" componentWidth="30"
+                            				popupId="sellerPopup" />
 										
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
@@ -425,6 +443,10 @@
                                         <h:panelGroup id="subscriptionAndRenewalDates">
                                         <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup, subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" />
                                         	<hftl:formField label="#{messages['subscription.initialTermType']}" field="subscriptionRenewal" childField="initialTermType" listenerUpdate="termType"></hftl:formField>
+                                        	<hftl:formField
+											label="#{messages['subscription.autoEndOfEngagement']}"
+											field="autoEndOfEngagement" actionListenerBean="#{subscriptionBean}" actionListenerMethod="autoUpdateEndOfEngagementDate"
+											listenerUpdate="subscriptionAndRenewalDates" newLine="true" />
                                         	<h:panelGroup id="termType">
 	                                            <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="subscriptionRenewal" childField="initialyActiveFor" size="2" minValue="1" componentWidth="15" disabled="#{subscriptionBean.entity.renewed}" listenerUpdate="subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" rendered="#{subscriptionBean.entity.subscriptionRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}"/>
 	                                            <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="subscriptionRenewal" childField="initialyActiveForUnit" required="#{subscriptionBean.entity.subscriptionRenewal.initialyActiveFor!=null}" disabled="#{subscriptionBean.entity.subscriptionRenewal.initialyActiveFor==null || subscriptionBean.entity.renewed}" listenerUpdate="subscriptionAndRenewalDates" actionListenerBean="#{subscriptionBean}" actionListenerMethod="updateSubscribedTillDate" rendered="#{subscriptionBean.entity.subscriptionRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}" />
@@ -442,7 +464,7 @@
                                                 <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="subscriptionRenewal" childField="terminationReason" required="true" rendered="#{subscriptionBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode" listBean="#{subscriptionTerminationReasonBean}"/>
 
                                             </h:panelGroup>
-                                            <hftl:formField label="#{messages['subscription.endAgreementDate']}" field="endAgreementDate" />
+                                            <hftl:formField label="#{messages['subscription.endAgreementDate']}" disabled="#{subscriptionBean.entity.autoEndOfEngagement}"  field="endAgreementDate" />
                                             
                                             <hftl:formField label="#{messages['serviceInstance.status']}" field="status" edit="false" newLine="true" doNotShowOnNew="true"/>
                                             <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" edit="false" doNotShowOnNew="true"/>

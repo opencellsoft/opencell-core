@@ -18,50 +18,234 @@
  */
 package org.meveo.model.communication.contact;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
+import org.hibernate.annotations.Type;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
-import org.meveo.model.crm.Provider;
+import org.meveo.model.intcrm.AddressBook;
 
 @Entity
-@ExportIdentifier({ "contactCode"})
-@Table(name = "com_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "contact_code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_contact_seq"), })
-public class Contact extends BaseEntity {
+@ExportIdentifier({ "code" })
+@Table(name = "com_contact")
+@DiscriminatorValue(value = "ACCT_CTACT")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+		@Parameter(name = "sequence_name", value = "com_contact_seq"), })
+public class Contact extends AccountEntity {
 
 	private static final long serialVersionUID = 3772773449495155646L;
+	
+	 public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Contact.class.getAnnotation(DiscriminatorValue.class)).value();
 
-	// It is provider resposibility to create contacts with unique codes
-	@Column(name = "contact_code", length = 50)
+	@Column(name = "email", length = 255)
+	@Size(max = 255)
+	private String email;
+
+	@Column(name = "assistant_name", length = 50)
 	@Size(max = 50)
-	private String contactCode;
+	private String assistantName;
+
+	@Column(name = "assistant_phone", length = 15)
+	@Size(max = 15)
+	private String assistantPhone;
+
+	@Column(name = "position", length = 200)
+	@Size(max = 200)
+	private String position;
+	
+	@Column(name = "company", length = 200)
+	@Size(max = 200)
+	private String company;
+	
+	@Column(name = "mobile", length = 15)
+	@Size(max = 15)
+	private String mobile;
+	
+	@Column(name = "phone", length = 15)
+	@Size(max = 15)
+	private String phone;
+		
+	@Column(name = "website_url", length = 255)
+	@Size(max = 255)
+	private String websiteUrl;
+
+	@Column(name = "imported_from", length = 50)
+	@Size(max = 50)
+	private String importedFrom;
+
+	@Column(name = "imported_by", length = 50)
+	@Size(max = 50)
+	private String importedBy;
+
+	@Column(name = "social_identifier", length = 2000)
+	@Size(max = 2000)
+	private String socialIdentifier;
+
+	@Type(type = "numeric_boolean")
+	@Column(name = "is_vip", columnDefinition = "tinyint default false")
+	private boolean isVip;
+
+	@Type(type = "numeric_boolean")
+	@Column(name = "is_prospect", columnDefinition = "tinyint default yes")
+	private boolean isProspect;
+
+	@Type(type = "numeric_boolean")
+	@Column(name = "agreed_ua", columnDefinition = "tinyint default false")
+	private boolean agreedToUA;
+
 
 	@Embedded
 	private CommunicationPolicy contactPolicy;
 
-	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL)
 	private List<Message> messages;
 
-	public String getContactCode() {
-		return contactCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "address_book_id")
+	private AddressBook addressBook;
+	
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "com_contact_tag", joinColumns =
+	@JoinColumn(name = "contact_id"))
+	@Column(name = "tag")
+	private Set<String> tags = new HashSet<String>();
+	
+	public Contact() {
+		accountType = ACCOUNT_TYPE;
 	}
 
-	public void setContactCode(String contactCode) {
-		this.contactCode = contactCode;
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getAssistantName() {
+		return assistantName;
+	}
+
+	public void setAssistantName(String assistantName) {
+		this.assistantName = assistantName;
+	}
+
+	public String getAssistantPhone() {
+		return assistantPhone;
+	}
+
+	public void setAssistantPhone(String assistantPhone) {
+		this.assistantPhone = assistantPhone;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getWebsiteUrl() {
+		return websiteUrl;
+	}
+
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
+	}
+
+	public String getImportedFrom() {
+		return importedFrom;
+	}
+
+	public void setImportedFrom(String importedFrom) {
+		this.importedFrom = importedFrom;
+	}
+
+	public String getImportedBy() {
+		return importedBy;
+	}
+
+	public void setImportedBy(String importedBy) {
+		this.importedBy = importedBy;
+	}
+
+	public String getSocialIdentifier() {
+		return socialIdentifier;
+	}
+
+	public void setSocialIdentifier(String socialIdentifier) {
+		this.socialIdentifier = socialIdentifier;
+	}
+
+	public boolean isVip() {
+		return isVip;
+	}
+
+	public void setVip(boolean isVip) {
+		this.isVip = isVip;
+	}
+
+	public boolean isProspect() {
+		return isProspect;
+	}
+
+	public void setProspect(boolean isProspect) {
+		this.isProspect = isProspect;
+	}
+
+	public boolean isAgreedToUA() {
+		return agreedToUA;
+	}
+
+	public void setAgreedToUA(boolean agreedToUA) {
+		this.agreedToUA = agreedToUA;
 	}
 
 	public CommunicationPolicy getContactPolicy() {
@@ -80,30 +264,24 @@ public class Contact extends BaseEntity {
 		this.messages = messages;
 	}
 
-    @Override
-    public boolean equals(Object obj) {
+	public AddressBook getAddressBook() {
+		return addressBook;
+	}
 
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof Provider)) {
-            return false;
-        }
+	public void setAddressBook(AddressBook addressBook) {
+		this.addressBook = addressBook;
+	}
 
-        Contact other = (Contact) obj;
+	
+	public Set<String> getTags() {
+		return tags;
+	}
 
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-             return true;
-        }
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
 
-        if (contactCode == null) {
-            if (other.getContactCode() != null) {
-                return false;
-            }
-        } else if (!contactCode.equals(other.getContactCode())) {
-            return false;
-        }
-        return true;
-    }
+	public String toString() {
+		return this.getName().toString() + " code:" + this.getCode();
+	}
 }

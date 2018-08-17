@@ -15,6 +15,8 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -281,4 +283,30 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 		return result;
 	}
 
+	@Override
+	public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.updateCustomerNumberSequence(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public GenericSequenceValueResponseDto getNextCustomerNumber() {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+		try {
+			result = customerApi.getNextCustomerNumber();
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+	
 }

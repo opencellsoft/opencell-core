@@ -50,6 +50,8 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -551,4 +553,42 @@ public interface AccountWs extends IBaseWs {
      */
     @WebMethod
 	ActionStatus anonymizeGpdr(@WebParam(name = "customerCode") String customerCode);
+	
+	// Sequences
+	
+	/**
+	 * Update the Provider's RUM sequence configuration.
+	 * 
+	 * @param postData
+	 *            DTO
+	 * @return status of the operation
+	 */
+	@WebMethod
+	ActionStatus updateMandateNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
+
+	/**
+	 * Calculates and returns the next value of the mandate number.
+	 * 
+	 * @return next mandate value
+	 */
+	@WebMethod
+	GenericSequenceValueResponseDto getNextMandateNumberSequence();
+	
+	/**
+	 * Update the Provider's customer number sequence configuration.
+	 * 
+	 * @param postData
+	 *            DTO
+	 * @return status of the operation
+	 */
+	@WebMethod
+	ActionStatus updateCustomerNumberSequence(@WebParam(name = "sequence") GenericSequenceDto postData);
+	
+	/**
+	 * Calculates and returns the next value of the mandate number.
+	 * 
+	 * @return next customer no value
+	 */
+	@WebMethod
+	GenericSequenceValueResponseDto getNextCustomerNumberSequence();
 }

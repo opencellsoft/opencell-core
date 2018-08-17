@@ -1,23 +1,18 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -26,62 +21,27 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class BillingRunExtensionService extends PersistenceService<BillingRun> {
 
-    @Inject
-    private BillingAccountService billingAccountService;
-
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateBRAmounts(Long billingRunId) throws BusinessException {
+    public void updateBRAmounts(Long billingRunId, List<IBillableEntity> entites) throws BusinessException {
 
         log.debug("updateBRAmounts for billingRun {} in new transaction", billingRunId);
-
+        BigDecimal amountWithoutTax = BigDecimal.ZERO;
+        BigDecimal amountWithTax = BigDecimal.ZERO;
+        BigDecimal amountTax = BigDecimal.ZERO;
+        
         BillingRun billingRun = findById(billingRunId);
-
-        BillingCycle billingCycle = billingRun.getBillingCycle();
-
-        Object[] ratedTransactionsAmounts = null;
-        if (billingCycle != null) {
-            Date startDate = billingRun.getStartDate();
-            Date endDate = billingRun.getEndDate();
-
-            if (startDate != null && endDate == null) {
-                endDate = new Date();
-            }
-
-            if (startDate != null) {
-                ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByCycle")
-                    .setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingCycle", billingCycle).setParameter("startDate", startDate)
-                    .setParameter("endDate", endDate).setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).getSingleResult();
-            } else {
-                ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByCycleNoDate")
-                    .setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingCycle", billingCycle)
-                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).getSingleResult();
-            }
-
-        } else {
-
-            List<BillingAccount> bas = new ArrayList<BillingAccount>();
-            String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
-
-            for (String id : Arrays.asList(baIds)) {
-                bas.add(billingAccountService.findById(Long.valueOf(id)));
-            }
-
-            ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByList")
-                .setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingAccountList", bas)
-                .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).getSingleResult();
+        
+        for(IBillableEntity entity : entites) {
+        	amountTax = amountTax.add(entity.getTotalInvoicingAmountTax());
+        	amountWithoutTax = amountWithoutTax.add(entity.getTotalInvoicingAmountWithoutTax());
+        	amountWithTax = amountWithTax.add(entity.getTotalInvoicingAmountWithTax());
         }
-
-        if (ratedTransactionsAmounts != null) {
-            billingRun.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
-            billingRun.setPrAmountWithTax((BigDecimal) ratedTransactionsAmounts[1]);
-            billingRun.setPrAmountTax((BigDecimal) ratedTransactionsAmounts[2]);
-        } else {
-            billingRun.setPrAmountWithoutTax(BigDecimal.ZERO);
-            billingRun.setPrAmountWithTax(BigDecimal.ZERO);
-            billingRun.setPrAmountTax(BigDecimal.ZERO);
-        }
-
+            
+        billingRun.setPrAmountWithoutTax(amountWithoutTax);
+        billingRun.setPrAmountWithTax(amountWithTax);
+        billingRun.setPrAmountTax(amountTax);
+        
         billingRun = updateNoCheck(billingRun);
     }
 

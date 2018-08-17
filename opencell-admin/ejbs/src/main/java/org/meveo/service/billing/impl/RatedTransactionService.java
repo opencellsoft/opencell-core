@@ -1140,10 +1140,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
         }
-        
-        if(entity instanceof BillingAccount || entity instanceof Subscription) {
-            billingAccountService.createMinAmountsRT(entity, invoicingDate);
-        }
     }
 
     /**
@@ -1215,6 +1211,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByUA").setParameter("userAccount", userAccount).getSingleResult();
         } catch (NoResultException e) {
             log.warn("failed to countNotInvoiced RT by UA", e);
+            return null;
+        }
+    }
+    
+    public Long countNotInvoicedRTByCA(CustomerAccount customerAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByCA").setParameter("customerAccount", customerAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotInvoiced RT by CA", e);
             return null;
         }
     }

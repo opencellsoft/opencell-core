@@ -21,6 +21,8 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
@@ -246,4 +248,25 @@ public interface CustomerRs extends IBaseRs {
     @GET
     @Path("/anonymizeGpdr")
     ActionStatus anonymizeGpdr(@QueryParam("customerCode") String customerCode);
+
+    /**
+	 * Update the Provider's customer number sequence configuration.
+	 * 
+	 * @param postData
+	 *            DTO
+	 * @return status of the operation
+	 */
+	@PUT
+	@Path("customerNumberSequence")
+	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
+	
+    /**
+	 * Calculates and returns the next value of the mandate number.
+	 * 
+	 * @return next customer no value
+	 */
+	@POST
+	@Path("customerNumberSequence")
+	GenericSequenceValueResponseDto getNextCustomerNumber();
+
 }

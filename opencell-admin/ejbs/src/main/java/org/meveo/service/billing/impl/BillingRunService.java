@@ -51,12 +51,12 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
-import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -731,7 +731,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
-            Sequence sequence = serviceSingleton.reserveInvoiceNumbers(invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
+            InvoiceSequence sequence = serviceSingleton.reserveInvoiceNumbers(invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
                 invoicesToNumberInfo.getInvoiceDate(), invoicesToNumberInfo.getNrOfInvoices());
             invoicesToNumberInfo.setNumberingSequence(sequence);
         }
@@ -853,51 +853,47 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         List<? extends IBillableEntity> entities = getEntities(billingRun);
-
-        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-
-            billingRunExtensionService.updateBRAmounts(billingRun.getId());
-
-            log.info("Nb entities to process={}", (entities != null ? entities.size() : 0));
-            if (entities != null && entities.size() > 0) {
-                int billableEntities = 0;
-                SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
-                List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
-                MeveoUser lastCurrentUser = currentUser.unProxy();
-                while (subListCreator.isHasNext()) {
-                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<IBillableEntity>)subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
-                        lastCurrentUser);
-                    asyncReturns.add(count);
-                    try {
-                        Thread.sleep(waitingMillis);
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-
-                if(billingRun.getBillingCycle().getType() == BillingEntityTypeEnum.BILLINGACCOUNT) {
-                    for (Future<Integer> futureItsNow : asyncReturns) {
-                        billableEntities += futureItsNow.get().intValue();
-                    }
-                } else {
-                    billableEntities = entities.size();
-                }
-
-                log.info("Total billable entities:" + billableEntities);
-                billingRunExtensionService.updateBillingRun(billingRun.getId(), entities.size(), billableEntities, BillingRunStatusEnum.PREINVOICED, new Date());
-
-                if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
-                    log.info("Will proceed to create aggregates and invoice");
-                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, entities);
-                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
-                }
-            }
-
-        } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, entities);
+        List<IBillableEntity> billableEntities = new ArrayList<>();
+        
+        if (!BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+	        log.info("Nb entities to process={}", (entities != null ? entities.size() : 0));
+	        if (entities != null && entities.size() > 0) {
+	            SubListCreator subListCreator = new SubListCreator(entities, (int) nbRuns);
+	            List<Future<List<IBillableEntity>>> asyncReturns = new ArrayList<Future<List<IBillableEntity>>>();
+	            MeveoUser lastCurrentUser = currentUser.unProxy();
+	            while (subListCreator.isHasNext()) {
+	            	Future<List<IBillableEntity>> billableEntitiesAsynReturn = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<IBillableEntity>)subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
+	                    lastCurrentUser);
+	                asyncReturns.add(billableEntitiesAsynReturn);
+	                try {
+	                    Thread.sleep(waitingMillis);
+	                } catch (InterruptedException e) {
+	                    log.error("", e);
+	                }
+	            }
+	
+	            for (Future<List<IBillableEntity>> futureItsNow : asyncReturns) {
+	            	billableEntities.addAll(futureItsNow.get());
+	            }
+	        }
+	
+	        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+	            log.info("Total billable entities:" + billableEntities.size());
+	            billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableEntities);
+	            billingRunExtensionService.updateBillingRun(billingRun.getId(), entities.size(), billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
+	        }
+        }
+        
+        boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || 
+        		(BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) 
+        				&& (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()));
+        
+        if (proceedToPostInvoicing) {
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
-
-        } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+        } 
+        
+        if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
         }

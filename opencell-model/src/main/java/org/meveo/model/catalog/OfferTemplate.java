@@ -40,6 +40,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
@@ -92,6 +93,10 @@ public class OfferTemplate extends ProductOffering {
 
     @Transient
     private String transientCode;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "auto_end_of_engagement")
+    private Boolean autoEndOfEngagement = Boolean.FALSE;
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -279,5 +284,19 @@ public class OfferTemplate extends ProductOffering {
 
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 }

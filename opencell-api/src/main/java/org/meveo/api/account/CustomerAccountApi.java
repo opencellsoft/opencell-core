@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -35,6 +34,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
@@ -42,8 +42,12 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.intcrm.impl.AddressBookService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -53,7 +57,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * @author Edward P. Legaspi
  * @author anasseh
  * 
- * @lastModifiedVersion willBeSetHere
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -82,6 +86,18 @@ public class CustomerAccountApi extends AccountEntityApi {
     
     @Inject
     private BillingAccountApi billingAccountApi;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
+
+    @Inject
+    private AccountOperationService accountOperationService;
+
+	@Inject
+	private AddressBookService addressBookService;
 
     public void create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -198,21 +214,26 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw e;
         }
 
+		AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
+		addressBookService.create(addressBook);
+		
+		customerAccount.setAddressbook(addressBook);
+
         customerAccountService.create(customerAccount);
 
         return customerAccount;
     }
 
-    public void update(CustomerAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
+    public void update(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
         update(postData, true);
     }
 
-    public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
+    public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
         return update(postData, true, null);
     }
 
     public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel)
-            throws MeveoApiException, DuplicateDefaultAccountException {
+            throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -369,6 +390,12 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw e;
         }
 
+        if (customerAccount.getAddressbook() == null) {
+			AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
+			addressBookService.create(addressBook);
+			customerAccount.setAddressbook(addressBook);
+		}
+         
         try {
             customerAccount = customerAccountService.update(customerAccount);
         } catch (BusinessException e1) {

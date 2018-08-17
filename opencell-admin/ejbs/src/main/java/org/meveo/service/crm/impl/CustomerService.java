@@ -127,6 +127,16 @@ public class CustomerService extends AccountService<Customer> {
         return true;
     }
     
+    public Customer findByCompanyName(String companyName) {
+    	QueryBuilder qb = new QueryBuilder(Customer.class, "c");
+        qb.addCriterion("c.additionalDetails.companyName", "=", companyName, true);
+        try {
+            return (Customer) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
 	public void deleteGPDR(Customer entity, String randomCode) {
     	entity.anonymize(randomCode);
 	}
