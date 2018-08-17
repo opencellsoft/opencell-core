@@ -572,23 +572,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 log.debug("subcat " + invoiceAgregateSubcat.getAccountingCode() + " ht=" + invoiceAgregateSubcat.getAmountWithoutTax() + " ->"
                         + invoiceAgregateSubcat.getAmountWithoutTax().setScale(rounding, getRoundingMode(roundingMode)));
                 invoiceAgregateSubcat.setAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax().setScale(rounding, getRoundingMode(roundingMode)));
-                // add it to taxAggregate and CategoryAggregate
-
+                
                 // add it to taxAggregate and CategoryAggregate
                 Set<Tax> subCategoryTaxes = invoiceAgregateSubcat.getSubCategoryTaxes();
                 if(invoiceAgregateSubcat.getSubCategoryTaxesTransient() != null && !invoiceAgregateSubcat.getSubCategoryTaxesTransient().isEmpty()) {
                     subCategoryTaxes = invoiceAgregateSubcat.getSubCategoryTaxesTransient();
                 }
-                
-                for (Tax tax : invoiceAgregateSubcat.getSubCategoryTaxes()) {
-                	// TODO[Edward] Replace !isExonerated by calculateTax
-                    //if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !isExonerated) {
-                    if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && calculateTax) {
-                        TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
-                        taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
-                        taxInvoiceAgregate.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax().setScale(rounding, getRoundingMode(roundingMode)));
-                        log.info("  tax " + tax.getPercent() + " ht ->" + taxInvoiceAgregate.getAmountWithoutTax());
-                    }
+
+                if(!subCategoryTaxes.isEmpty()) {
+	                for (Tax tax : subCategoryTaxes) {
+	                	// TODO[Edward] Replace !isExonerated by calculateTax
+	                    //if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !isExonerated) {
+	                    if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && calculateTax) {
+	                        TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
+	                        taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
+	                        taxInvoiceAgregate.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax().setScale(rounding, getRoundingMode(roundingMode)));
+	                        log.info("  tax " + tax.getPercent() + " ht ->" + taxInvoiceAgregate.getAmountWithoutTax());
+	                    }
+	                }
                 }
 
                 invoiceAgregateSubcat.getCategoryInvoiceAgregate().addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
