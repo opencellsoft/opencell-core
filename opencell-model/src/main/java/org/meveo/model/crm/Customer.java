@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -42,7 +40,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.ContactInformation;
 
 /**
  * @author Edward P. Legaspi
@@ -75,19 +72,9 @@ public class Customer extends AccountEntity {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
-    @Embedded
-    private ContactInformation contactInformation;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
-    
-
-    @Column(name = "vat_no", length = 100)
-    private String vatNo;
-    
-    @Column(name = "registration_no", length = 100)
-    private String registrationNo;
     
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")
