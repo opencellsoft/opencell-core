@@ -210,8 +210,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private UserAccountService userAccountService;
     
     @Inject
+    private BillingRunService billingRunService;
+    
+    @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
+    /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
 
     /** folder for adjustment pdf. */

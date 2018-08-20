@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -20,6 +21,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
  * The Class InvoiceTypeDto.
  *
  * @author anasseh
+ * @author Edward P. Legaspi
  * @author Mounir Bahije
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.2
@@ -53,10 +55,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     /** The seller sequences. */
     @XmlElementWrapper
     @XmlElement(name = "sellerSequence")
-    private Map<String, SequenceDto> sellerSequences = new HashMap<String, SequenceDto>();
+    private Map<String, SequenceDto> sellerSequences = new HashMap<>();
 
     /** The applies to. */
-    private List<String> appliesTo = new ArrayList<String>();
+    private List<String> appliesTo = new ArrayList<>();
 
     /** The matching auto. */
     private boolean matchingAuto = false;
@@ -76,6 +78,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The billing template name EL. */
     private String billingTemplateNameEL;
+    
+    private CustomFieldsDto customFields;
 
     /** The use Self Sequence . */
     private boolean useSelfSequence = true;
@@ -92,7 +96,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      *
      * @param invoiceType the invoice type
      */
-    public InvoiceTypeDto(InvoiceType invoiceType) {
+    public InvoiceTypeDto(InvoiceType invoiceType, CustomFieldsDto customFieldInstances) {
         super(invoiceType);
 
         this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode() : null;
@@ -114,6 +118,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
+        
+        customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
 
@@ -295,6 +301,14 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      */
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 
     /**

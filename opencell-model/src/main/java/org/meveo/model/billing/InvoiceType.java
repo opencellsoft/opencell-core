@@ -38,15 +38,17 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 
 
 /**
- *
+ * @author Edward P. Legaspi
  * @author Bahije Mounir
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.2
@@ -55,9 +57,10 @@ import org.meveo.model.scripts.ScriptInstance;
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@CustomFieldEntity(cftCodePrefix = "INVOICE_TYPE")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_type_seq"), })
-public class InvoiceType extends BusinessEntity {
+public class InvoiceType extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -117,6 +120,10 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
+    
+    @ManyToOne()
+    @JoinColumn(name = "tax_script_instance_id")
+    private ScriptInstance taxScript;
 
     @Column(name = "occ_template_code_el", length = 2000)
     @Size(max = 2000)
@@ -227,6 +234,20 @@ public class InvoiceType extends BusinessEntity {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
+
+    public ScriptInstance getTaxScript() {
+        return taxScript;
+    }
+
+    public void setTaxScript(ScriptInstance taxScript) {
+        this.taxScript = taxScript;
+    }
+    
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
+    
 
     /**
      * @return the useSelfSequence

@@ -307,9 +307,9 @@
 		rendered="#{!empty(customEntityTemplateBean.listAll()) and currentUser.hasRole('administrationVisualization')}">
 		<c:set var="cetIndex" value="0" />
 		<c:forEach items="#{customEntityTemplateBean.listAll()}" var="cet">
-			<c:if test="#{currentUser.hasRole(cet.readPermission) }">
-				<p:menuitem id="cet_#{cetIndex}" outcome="customEntities"
-					value="#{cet.name}">
+			<c:if
+				test="#{currentUser.hasRole(cet.readPermission) || currentUser.hasRole('ReadAllCE')}">
+				<p:menuitem id="cet_#{cetIndex}" outcome="customEntities" value="#{cet.name}">
 					<f:param name="cet" value="#{cet.code}"></f:param>
 				</p:menuitem>
 				<c:set var="cetIndex" value="#{cetIndex + 1}" />

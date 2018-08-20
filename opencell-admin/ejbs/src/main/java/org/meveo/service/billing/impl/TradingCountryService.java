@@ -19,15 +19,12 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 
-import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@Named
 public class TradingCountryService extends PersistenceService<TradingCountry> {
 
     /**
@@ -45,4 +42,5 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
             return null;
         }
     }
+
 }

@@ -69,6 +69,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Column(name = "discount_plan_item_code", length = 50)
     @Size(max = 50)
     private String discountPlanItemCode;
+	
+	@Transient
+	private Set<Tax> subCategoryTaxesTransient;
 
     @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountPercent;
@@ -239,5 +242,22 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         return "SubCategoryInvoiceAgregate [id=" + id + ",invoiceSubCategory=" + (invoiceSubCategory == null ? null : invoiceSubCategory.getCode()) + ", oldAmountWithoutTax="
                 + oldAmountWithoutTax + ", oldAmountWithTax=" + oldAmountWithTax + "]";
     }
+
+	public Set<Tax> getSubCategoryTaxesTransient() {
+		return subCategoryTaxesTransient;
+	}
+
+	public void setSubCategoryTaxesTransient(Set<Tax> subCategoryTaxesTransient) {
+		this.subCategoryTaxesTransient = subCategoryTaxesTransient;
+	}
+	
+	public void addSubCategoryTaxTransient(Tax subCategoryTax) {
+		if (subCategoryTaxesTransient == null) {
+			subCategoryTaxesTransient = new HashSet<>();
+		}
+		if (subCategoryTax != null) {
+			subCategoryTaxesTransient.add(subCategoryTax);
+		}
+	}
 
 }

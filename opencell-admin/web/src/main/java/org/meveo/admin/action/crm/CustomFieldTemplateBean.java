@@ -32,11 +32,6 @@ import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
 
-/**
- *
- * @author Mounir Bahije
- * @lastModifiedVersion 5.2
- */
 
 @Named
 @ViewScoped
@@ -84,7 +79,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
         if (entity.getFieldType() == CustomFieldTypeEnum.LIST) {
             entity.setListValues(new TreeMap<String, String>());
-            updateListTypeFieldInEntity(entity.getListOrderedValues(), "listValues");
+            updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
         }
 
         CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo());

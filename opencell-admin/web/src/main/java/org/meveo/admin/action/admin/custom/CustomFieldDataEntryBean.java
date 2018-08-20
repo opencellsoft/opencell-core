@@ -872,11 +872,14 @@ public class CustomFieldDataEntryBean implements Serializable {
             
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
-            Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
+			Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
+
+            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
+                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
 
             } else {
                 messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
@@ -916,6 +919,9 @@ public class CustomFieldDataEntryBean implements Serializable {
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
+
+            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
 
             } else {
                 messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());

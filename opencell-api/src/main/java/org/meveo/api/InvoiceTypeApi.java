@@ -14,7 +14,9 @@ import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.billing.InvoiceTypesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
@@ -23,6 +25,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -53,7 +56,10 @@ public class InvoiceTypeApi extends BaseApi {
     /** The seller service. */
     @Inject
     private SellerService sellerService;
-
+    
+    @Inject
+    protected EntityToDtoConverter entityToDtoConverter;
+    
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
@@ -166,6 +172,19 @@ public class InvoiceTypeApi extends BaseApi {
         invoiceType.setBillingTemplateNameEL(postData.getBillingTemplateNameEL());
         invoiceType.setPdfFilenameEL(postData.getPdfFilenameEL());
         invoiceType.setXmlFilenameEL(postData.getXmlFilenameEL());
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), invoiceType, true, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        
         invoiceTypeService.create(invoiceType);
         return result;
     }
@@ -178,7 +197,8 @@ public class InvoiceTypeApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      * @throws BusinessException the business exception
      */
-    public ActionStatus update(InvoiceTypeDto invoiceTypeDto) throws MeveoApiException, BusinessException {
+    @SuppressWarnings("unlikely-arg-type")
+	public ActionStatus update(InvoiceTypeDto invoiceTypeDto) throws MeveoApiException, BusinessException {
 
         handleParameters(invoiceTypeDto);
         ActionStatus result = new ActionStatus();
@@ -312,6 +332,19 @@ public class InvoiceTypeApi extends BaseApi {
         }
         
         invoiceType.setUseSelfSequence(invoiceTypeDto.isUseSelfSequence());
+        
+        // populate customFields
+        try {
+            populateCustomFields(invoiceTypeDto.getCustomFields(), invoiceType, false, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        
         invoiceTypeService.update(invoiceType);
         return result;
     }
@@ -336,7 +369,7 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
         }
-        result = new InvoiceTypeDto(invoiceType);
+        result = new InvoiceTypeDto(invoiceType, entityToDtoConverter.getCustomFieldsDTO(invoiceType, true));
         return result;
     }
 
@@ -391,7 +424,7 @@ public class InvoiceTypeApi extends BaseApi {
         List<InvoiceType> invoiceTypees = invoiceTypeService.list();
         if (invoiceTypees != null && !invoiceTypees.isEmpty()) {
             for (InvoiceType t : invoiceTypees) {
-                InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto(t);
+                InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto(t, entityToDtoConverter.getCustomFieldsDTO(t, true));
                 invoiceTypeesDto.getInvoiceTypes().add(invoiceTypeDto);
             }
         }

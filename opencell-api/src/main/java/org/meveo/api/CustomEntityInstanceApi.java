@@ -57,7 +57,7 @@ public class CustomEntityInstanceApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
         }
 
-        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode()))) {
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode())) && !currentUser.hasRole("ModifyAllCE")) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCetCode()) + "'");
         }
 
@@ -97,7 +97,7 @@ public class CustomEntityInstanceApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
         }
 
-        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode()))) {
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode())) && !currentUser.hasRole("ModifyAllCE")) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCetCode()) + "'");
         }
 
@@ -132,7 +132,7 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(cetCode))) {
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(cetCode)) && !currentUser.hasRole("ModifyAllCE")) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(cetCode) + "'");
         }
 
@@ -153,8 +153,8 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))) {
+        
+        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode)) && !currentUser.hasRole("ReadAllCE")) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
         }
 
@@ -173,7 +173,7 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))) {
+        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))  && !currentUser.hasRole("ReadAllCE")) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
         }
 
