@@ -147,14 +147,6 @@ public class Customer extends AccountEntity {
         this.customerAccounts = customerAccounts;
     }
 
-    public ContactInformation getContactInformation() {
-        return contactInformation;
-    }
-
-    public void setContactInformation(ContactInformation contactInformation) {
-        this.contactInformation = contactInformation;
-    }
-
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { seller };
@@ -179,22 +171,6 @@ public class Customer extends AccountEntity {
 				ca.anonymize(code);
 			}
 		}
-	}
-
-	public String getRegistrationNo() {
-		return registrationNo;
-	}
-
-	public void setRegistrationNo(String registrationNo) {
-		this.registrationNo = registrationNo;
-	}
-
-	public String getVatNo() {
-		return vatNo;
-	}
-
-	public void setVatNo(String vatNo) {
-		this.vatNo = vatNo;
 	}
 
 }
