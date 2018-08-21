@@ -3,11 +3,7 @@ package org.meveo.api.rest.payment;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.rest.IBaseRs;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -21,14 +17,15 @@ import javax.ws.rs.core.MediaType;
 public interface IBanRs extends IBaseRs {
 
     /**
-     * validate the iban
+     * validate the iban and/or bic
      *
      * @param iban
-     * @return validation status
+     * @param bic
+     * @return
      */
 
     @GET
     @Path("/validate")
-    ActionStatus validate(@QueryParam("iban") String iban);
+    ActionStatus validate(@QueryParam("iban") String iban, @QueryParam("bic") String bic);
 
 }

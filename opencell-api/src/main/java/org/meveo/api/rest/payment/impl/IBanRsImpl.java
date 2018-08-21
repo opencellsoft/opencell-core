@@ -24,17 +24,12 @@ public class IBanRsImpl extends BaseRs implements IBanRs {
     private IBanApi ibanApi;
 
     @Override
-    public ActionStatus validate(String iban) {
+    public ActionStatus validate(String iban, String bic) {
 
         ActionStatus result = new ActionStatus();
 
-        try {
-
-            ibanApi.validate(iban);
-
-        } catch (Exception e) {
+        if (!ibanApi.validate(iban, bic)) {
             result.setStatus(ActionStatusEnum.FAIL);
-            e.printStackTrace();
         }
 
         return result;
