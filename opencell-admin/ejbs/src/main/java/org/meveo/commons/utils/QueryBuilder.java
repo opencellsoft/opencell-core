@@ -43,8 +43,10 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
  * billingStatus).addCriterionEnum("a.networkStatus", networkStatus).addCriterionEntity("a.terminalInstance", terminalInstance) .addPaginationConfiguration(configuration);
  * 
  * @author Richard Hallier
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 public class QueryBuilder {
 
@@ -318,16 +320,14 @@ public class QueryBuilder {
         Object nvalue = value;
 
         if (caseInsensitive && (value instanceof String)) {
-            sql.append("fn_unaccent(lower(" + field + "))");
-        } else if ((value instanceof String)) {
-            sql.append("fn_unaccent(" + field + ")");
+            sql.append("lower(" + field + ")");
         } else {
             sql.append(field);
         }
         sql.append(operator + ":" + param);
 
         if (caseInsensitive && (value instanceof String)) {
-            nvalue = (StringUtils.enleverAccent((String) value)).toLowerCase();
+            nvalue = ((String) value).toLowerCase();
         }
 
         return addSqlCriterion(sql.toString(), param, nvalue);

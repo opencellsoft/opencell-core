@@ -774,4 +774,48 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return serviceInstances;
     }
+    
+    /**
+     * Find a list of service instance by subscription entity, service template codes and service instance status list.
+     * 
+     * @param codes the service template codes
+     * @param subscription the subscription entity
+     * @param statuses service instance statuses
+     * @return the ServiceInstance list found
+     */
+    @SuppressWarnings("unchecked")
+	public List<ServiceInstance> findByCodeSubscriptionAndStatus(List<String> codes, String subscriptionCode, InstanceStatusEnum... statuses) {
+        List<ServiceInstance> serviceInstances = null;
+        try {
+            log.debug("start of find {} by code and subscription/status (code={}) ..", "ServiceInstance", codes);
+            QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+            
+            qb.startOrClause();
+            if (codes != null && !codes.isEmpty()) {
+                for (String code: codes) {
+                	qb.addCriterion("c.code", "=", code, true);
+                }
+            }
+            qb.endOrClause();
+            
+            qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+            qb.startOrClause();
+            if (statuses != null && statuses.length > 0) {
+                for (InstanceStatusEnum status : statuses) {
+                    qb.addCriterionEnum("c.status", status);
+                }
+            }
+            qb.endOrClause();
+
+            serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by code and subscription/status (code={}). Result found={}.", "ServiceInstance", codes,
+                serviceInstances != null && !serviceInstances.isEmpty());
+        } catch (NoResultException nre) {
+            log.debug("findByCodeAndSubscription : no service has been found");
+        } catch (Exception e) {
+            log.error("findByCodeAndSubscription error={} ", e);
+        }
+
+        return serviceInstances;
+    }
 }
