@@ -4357,4 +4357,43 @@ order by edr.STATUS, edr.id DESC
             <column name="params" value="%"></column>
         </insert>
 	</changeSet>
+
+    <changeSet author="MounirBahije" id="#3545_13082018">
+        <sql>
+            update ${db.schema.adapted}billing_invoice_type set script_instance_id = (select id from ${db.schema.adapted}meveo_script_instance where code =  (select substring(
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) ))) )
+            )
+            for
+
+            (select 	position('"' in
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) )) + 1) ))
+            )
+            )
+            )))
+        </sql>
+        <sql>
+            update ${db.schema.adapted}crm_provider set cf_values =
+            (select replace(
+            (select replace(
+            (select replace(
+            (select replace( (select cf_values from ${db.schema.adapted}crm_provider  where id = 1),
+            (select '"PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"' ||
+            (select substring(
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) ))) )
+            )
+            for
+            (select 	position('"' in
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) )) + 1) ))
+            )
+            )
+            ))
+            || '"}]') , '')),'{,','{')), '],,"', '],"')),',}','}'))
+        </sql>
+    </changeSet>
+
+    
 </databaseChangeLog>
