@@ -179,9 +179,16 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     /**
      * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
      */
-    @Column(name = "rating_el", length = 2000)
+    @Column(name = "rating_el_with_tax", length = 2000)
     @Size(max = 2000)
-    private String ratingEL;
+    private String ratingELWithTax;
+    
+    /**
+     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     */
+    @Column(name = "rating_el_without_tax", length = 2000)
+    @Size(max = 2000)
+    private String ratingELWithoutTax;
 
     @Column(name = "minimum_amount_without_tax_el", length = 2000)
     @Size(max = 2000)
@@ -550,14 +557,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.woDescriptionEL = woDescriptionEL;
     }
 
-    public String getRatingEL() {
-        return ratingEL;
-    }
-
-    public void setRatingEL(String ratingEL) {
-        this.ratingEL = ratingEL;
-    }
-
     public String getMinimumAmountWithoutTaxEl() {
         return minimumAmountWithoutTaxEl;
     }
@@ -581,6 +580,22 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     public void setInvoiceSubCategoryEL(String invoiceSubCategoryEL) {
         this.invoiceSubCategoryEL = invoiceSubCategoryEL;
     }
+
+	public String getRatingELWithTax() {
+		return ratingELWithTax;
+	}
+
+	public void setRatingELWithTax(String ratingELWithTax) {
+		this.ratingELWithTax = ratingELWithTax;
+	}
+
+	public String getRatingELWithoutTax() {
+		return ratingELWithoutTax;
+	}
+
+	public void setRatingELWithoutTax(String ratingELWithoutTax) {
+		this.ratingELWithoutTax = ratingELWithoutTax;
+	}
  
 
 }
