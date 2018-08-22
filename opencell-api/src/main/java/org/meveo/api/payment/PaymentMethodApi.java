@@ -11,6 +11,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -61,7 +62,8 @@ public class PaymentMethodApi extends BaseApi {
      * @throws EntityDoesNotExistsException the entity does not exists exception
      * @throws BusinessException the business exception
      */
-    public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    @SuppressWarnings("deprecation")
+	public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
         validate(paymentMethodDto, true);
 
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
@@ -70,6 +72,9 @@ public class PaymentMethodApi extends BaseApi {
         }
 
         PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, currentUser);
+        if(paymentMethodDto instanceof CardPaymentMethodDto) {
+        	paymentMethod.setTokenId(paymentMethodDto.getTokenId());
+        }
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
     }
