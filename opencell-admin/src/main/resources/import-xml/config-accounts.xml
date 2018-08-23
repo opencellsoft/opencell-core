@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
-    <schemaSystemId>file:/Users/babyfooter/Documents/svn/Meveo/meveo-admin/config/src/main/resources/import-xml/ACCOUNTS.xsd</schemaSystemId>
+    <schemaSystemId>file:/Users/babyfooter/Documents/svn/Meveo/opencell-admin/config/src/main/resources/import-xml/ACCOUNTS.xsd</schemaSystemId>
     <documentRoot>billingAccounts</documentRoot>
-    <outputFolder>/Users/babyfooter/Documents/svn/Meveo/meveo-admin/config/src/main/resources/import-xml</outputFolder>
+    <outputFolder>/Users/babyfooter/Documents/svn/Meveo/opencell-admin/config/src/main/resources/import-xml</outputFolder>
     <filenamePrefix>accounts</filenamePrefix>
     <filenameExtension>xml</filenameExtension>
     <noOfInstances>1</noOfInstances>
