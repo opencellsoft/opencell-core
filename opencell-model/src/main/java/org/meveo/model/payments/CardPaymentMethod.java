@@ -26,9 +26,6 @@ public class CardPaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8726571628074346184L;
 
-    @Column(name = "token_id")
-    private String tokenId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
     @NotNull
@@ -86,14 +83,6 @@ public class CardPaymentMethod extends PaymentMethod {
         this.yearExpiration = yearExpiration;
         this.monthExpiration = monthExpiration;
         this.cardType = cardType;
-    }
-
-    public String getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(String tokenId) {
-        this.tokenId = tokenId;
     }
 
     public CreditCardTypeEnum getCardType() {
@@ -185,7 +174,7 @@ public class CardPaymentMethod extends PaymentMethod {
         setPreferred(otherPaymentMethod.isPreferred());
 
         // The rest of information is not updatable if token was generated already
-        if (tokenId != null) {
+        if (getTokenId() != null) {
             return;
         }
         setCardNumber(otherPaymentMethod.getCardNumber());

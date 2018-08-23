@@ -12,8 +12,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.IncorrectServiceInstanceException;
-import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -785,7 +783,7 @@ public class OrderApi extends BaseApi {
     }
 
     private void extractServices(SubscriptionDto subscriptionDto, List<Product> services)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
+            throws MeveoApiException {
 
         for (Product serviceProduct : services) {
 
@@ -798,6 +796,9 @@ public class OrderApi extends BaseApi {
 
             serviceInstanceDto.setId(serviceId);
             serviceInstanceDto.setCode(serviceCode);
+            
+            // list of service for activation
+            List<String> serviceCodesForActivation = new ArrayList<>();
 
             if (terminationDate != null) {
                 if (StringUtils.isBlank(serviceCode) && serviceId == null) {
@@ -814,22 +815,7 @@ public class OrderApi extends BaseApi {
                     throw new MissingParameterException("serviceCode");
                 }
                 
-                // check if service is activated on a given subscription
-                List<ServiceInstance> serviceFound = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscriptionDto.getCode(), InstanceStatusEnum.ACTIVE);
-                if (serviceFound != null && !serviceFound.isEmpty()) {
-                    continue;
-                }
-
-                serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
-                    OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
-                serviceInstanceDto.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-                    Date.class, DateUtils.setTimeToZero(new Date())));
-                serviceInstanceDto.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
-                    Date.class, DateUtils.setTimeToZero(new Date())));
-
-                serviceInstanceDto.setEndAgreementDate(
-                    (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
-                serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
+                serviceCodesForActivation.add(serviceCode);
 
                 // Service will be updated
             } else if (serviceId != null) {
@@ -838,6 +824,36 @@ public class OrderApi extends BaseApi {
                 serviceInstanceDto.setEndAgreementDate(
                     (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
             }
+            
+            // do the query in 1 go
+			if (!serviceCodesForActivation.isEmpty()) {
+				// check if service is activated on a given subscription
+				Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode());
+
+				boolean found = false;
+				
+				if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
+					for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+						if (serviceCodesForActivation.contains(serviceInstance.getCode()) && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+							found = true;
+							break;
+						}
+					}
+				}
+				
+				if(!found) {
+					serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
+							OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
+					serviceInstanceDto.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+							Date.class, DateUtils.setTimeToZero(new Date())));
+					serviceInstanceDto.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
+							Date.class, DateUtils.setTimeToZero(new Date())));
+	
+					serviceInstanceDto.setEndAgreementDate(
+							(Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+					serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
+				}
+			}
             
             subscriptionDto.getServices().addServiceInstance(serviceInstanceDto);
         }
