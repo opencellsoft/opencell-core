@@ -830,7 +830,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public List<WalletTemplate> findWalletTemplatesForOneShot() {
 
-        if (prepaidWalletTemplates == null) {
+        if (prepaidWalletTemplates == null && !entity.isTransient()) {
             prepaidWalletTemplates = walletTemplateService.findBySubscription(entity);
         }
 
