@@ -255,7 +255,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         try {
             log.debug("closeCustomerAccount  update customerAccount ok");
-            // ParamBean param = ParamBean.getInstance("meveo-admin.properties");
             ParamBean param = paramBeanFactory.getInstance();
             String codeOCCTemplate = param.getProperty("occ.codeOccCloseAccount", "CLOSE_ACC");
             BigDecimal balanceDue = customerAccountBalanceDue(customerAccount, new Date());

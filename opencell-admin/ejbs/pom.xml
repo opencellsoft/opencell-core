@@ -54,7 +54,7 @@
 										<include>messages*.properties</include>
 										<include>external-authentication-config.xml</include>
 										<include>saml-entities.xml</include>
-										<include>meveo-admin.properties</include>
+										<include>opencell-admin.properties</include>
 									</includes>
 								</resource>
 								<resource>
