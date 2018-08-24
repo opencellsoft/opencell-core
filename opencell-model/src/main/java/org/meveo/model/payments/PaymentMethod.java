@@ -74,6 +74,9 @@ public abstract class PaymentMethod extends EnableEntity {
 
     @Column(name = "INFO_5", columnDefinition = "TEXT")
     private String info5;
+    
+    @Column(name = "token_id")
+    private String tokenId;
 
     public PaymentMethod() {
     }
@@ -163,6 +166,14 @@ public abstract class PaymentMethod extends EnableEntity {
 
     public void setInfo5(String info5) {
         this.info5 = info5;
+    }
+
+    public String getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
     }
 
     public abstract void updateWith(PaymentMethod otherPaymentMethod);

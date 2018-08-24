@@ -16,7 +16,7 @@
     </modules>
 
     <properties>
-        <manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
+        <manaty.filterFile>opencell-admin-filter-${env}.properties</manaty.filterFile>
     </properties>
 
     <build>
