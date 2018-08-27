@@ -49,12 +49,13 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.payments.PaymentSchedule;
+import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
-import org.meveo.service.payments.impl.PaymentScheduleService;
+import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
+import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
@@ -105,10 +106,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     ServiceTemplateService serviceTemplateService;
     
     /**
-     * PaymentScheduleService
+     * PaymentScheduleInstanceService
      */
     @Inject
-    private PaymentScheduleService paymentScheduleService;
+    private PaymentScheduleInstanceService paymentScheduleInstanceService;
+    
+    /**
+     * PaymentScheduleTemplateService
+     */
+    @Inject
+    private PaymentScheduleTemplateService paymentScheduleTemplateService;
     
     
     ParamBean paramBean = ParamBean.getInstance();
@@ -465,9 +472,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
         }
         
-        PaymentSchedule paymentSchedule = paymentScheduleService.findByServiceTemplate(serviceInstance.getServiceTemplate());
-        if(paymentSchedule != null) {
-            paymentScheduleService.start(paymentSchedule, subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount());
+        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
+        if(paymentScheduleTemplate != null) {
+            paymentScheduleInstanceService.instanciate(paymentScheduleTemplate,serviceInstance);
         }
     }
 

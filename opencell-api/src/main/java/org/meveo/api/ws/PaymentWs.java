@@ -21,6 +21,7 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
@@ -32,8 +33,9 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * The Interface PaymentWs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2
  */
+@SuppressWarnings("deprecation")
 @WebService
 public interface PaymentWs extends IBaseWs {
 
@@ -339,5 +341,33 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentHistoriesDto listHistory(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
-
+    
+    /************************************************************************************************/
+    /****                           Payment Schedules                                            ****/
+    /************************************************************************************************/
+    /**
+     * Create or update payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus createOrUpdatePaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateDto") PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    /**
+     * Create  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus createPaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateDto") PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    
+    /**
+     * Update  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus updatePaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateDto") PaymentScheduleTemplateDto paymentScheduleTemplateDto);
 }

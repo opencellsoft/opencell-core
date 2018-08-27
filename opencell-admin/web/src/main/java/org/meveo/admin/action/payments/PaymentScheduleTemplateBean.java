@@ -32,33 +32,33 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.payments.PaymentSchedule;
+import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.PaymentScheduleService;
+import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 
 
 /**
- * Standard backing bean for {@link PaymentSchedule} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * Standard backing bean for {@link PaymentScheduleTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
-public class PaymentScheduleBean extends CustomFieldBean<PaymentSchedule> {
+public class PaymentScheduleTemplateBean extends CustomFieldBean<PaymentScheduleTemplate> {
     private static final long serialVersionUID = 1L;
     /**
-     * Injected @{link PaymentSchedule} service. Extends {@link PersistenceService}.
+     * Injected @{link PaymentScheduleTemplate} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private PaymentScheduleService paymentScheduleeService;
+    private PaymentScheduleTemplateService paymentScheduleeService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public PaymentScheduleBean() {
-        super(PaymentSchedule.class);
+    public PaymentScheduleTemplateBean() {
+        super(PaymentScheduleTemplate.class);
     }
 
     /**
@@ -67,12 +67,8 @@ public class PaymentScheduleBean extends CustomFieldBean<PaymentSchedule> {
      * 
      */
     @Override
-    public PaymentSchedule initEntity() {
-        super.initEntity();
-        if (entity.getId() == null) {
-            entity.setStatus(PaymentScheduleStatusEnum.NEW);
-            entity.setStatusDate(new Date());
-        }
+    public PaymentScheduleTemplate initEntity() {
+        super.initEntity();       
         return entity;
     }
 
@@ -100,7 +96,7 @@ public class PaymentScheduleBean extends CustomFieldBean<PaymentSchedule> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<PaymentSchedule> getPersistenceService() {
+    protected IPersistenceService<PaymentScheduleTemplate> getPersistenceService() {
         return paymentScheduleeService;
     }
 

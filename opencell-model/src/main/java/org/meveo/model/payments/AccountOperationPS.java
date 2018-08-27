@@ -27,27 +27,29 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @DiscriminatorValue(value = "PS")
-public class AccountOperationPS extends AccountOperation {
+public class AccountOperationPS extends Payment {
 
     private static final long serialVersionUID = 1L;
    
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_schedule_id")
+    @JoinColumn(name = "pay_schdl_inst_item_id")
     @NotNull
-    private PaymentSchedule paymentSchedule;
+    private PaymentScheduleInstanceItem paymentScheduleInstanceItem;
 
     /**
-     * @return the paymentSchedule
+     * @return the paymentScheduleInstanceItem
      */
-    public PaymentSchedule getPaymentSchedule() {
-        return paymentSchedule;
+    public PaymentScheduleInstanceItem getPaymentScheduleInstanceItem() {
+        return paymentScheduleInstanceItem;
     }
 
     /**
-     * @param paymentSchedule the paymentSchedule to set
+     * @param paymentScheduleInstanceItem the paymentScheduleInstanceItem to set
      */
-    public void setPaymentSchedule(PaymentSchedule paymentSchedule) {
-        this.paymentSchedule = paymentSchedule;
+    public void setPaymentScheduleInstanceItem(PaymentScheduleInstanceItem paymentScheduleInstanceItem) {
+        this.paymentScheduleInstanceItem = paymentScheduleInstanceItem;
     }
+
+   
     
 }

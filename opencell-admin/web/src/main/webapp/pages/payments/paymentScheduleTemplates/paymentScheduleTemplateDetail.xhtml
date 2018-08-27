@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{paymentScheduleTemplateBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+        <hftl:entityPopup id="searchInvoiceTypePopup" header="#{messages['paymentScheduleTemplate.advancePaymentInvoiceType']}" updateField=":formPaymentScheduleTemplate:tabView:invoiceTypeSelectedId :formPaymentScheduleTemplate:tabView:invoiceTypeSelectedId_text"
+            selection="#{paymentScheduleTemplateBean.entity.advancePaymentInvoiceType}" backingBean="#{invoiceTypeBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchServiceTemplatePopup" header="#{messages['paymentScheduleTemplate.serviceTemplate']}" updateField=":formPaymentScheduleTemplate:tabView:serviceTemplateSelectedId :formPaymentScheduleTemplate:tabView:serviceTemplateSelectedId_text"
+            selection="#{paymentScheduleTemplateBean.entity.serviceTemplate}" backingBean="#{serviceTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>        
+        
+        <hftl:entityPopup id="searchSubCatPopup" header="#{messages['paymentScheduleTemplate.advancePaymentInvoiceSubCategory']}" updateField=":formPaymentScheduleTemplate:tabView:subCatSelectedId :formPaymentScheduleTemplate:tabView:subCatSelectedId_text"
+            selection="#{paymentScheduleTemplateBean.entity.advancePaymentInvoiceSubCategory}" backingBean="#{invoiceSubCategoryBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>         
+	    
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.paymentSchedules']}" outcome="paymentScheduleTemplates" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['paymentScheduleTemplate.title']}"
+					disabled="true" rendered="#{paymentScheduleTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['paymentScheduleTemplate.title']} - #{paymentScheduleTemplateBean.entity.code}"
+					disabled="true" rendered="#{!paymentScheduleTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+		
+     				
+				
+		<hftl:formPanel label="#{messages['paymentScheduleTemplate.title']}" backingBean="#{paymentScheduleTemplateBean}"  formId="formPaymentScheduleTemplate" showEnableDisableButton="true" >
+			<p:tabView id="tabView" activeIndex="#{paymentScheduleTemplateBean.activeTab}">
+				<p:tab  title="#{messages['commons.tab.information']}" >
+					<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />						
+					
+					<hftl:formField  id="calendarId" label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar" required="true" valueLabelField="code" listBean="#{calendarBean}" componentWidth="10" />
+					<hftl:formField label="#{messages['paymentScheduleTemplate.serviceTemplate']}" id="serviceTemplateSelectedId" field="serviceTemplate"  required="true" valueLabelField="code" popup="true" popupId="searchServiceTemplatePopup"  />					
+					<hftl:formField label="#{messages['paymentScheduleTemplate.startDate']}" field="startDate" required="true"/>
+					<hftl:formField label="#{messages['paymentScheduleTemplate.amount']}" field="amount" required="true"/>
+					<hftl:formField label="#{messages['paymentScheduleTemplate.numberPayments']}" field="numberPayments" required="true"/>
+					<hftl:formField label="#{messages['paymentScheduleTemplate.paymentLabel']}" field="paymentLabel" required="true"/>
+					<hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dayInMonth" required="true"/>
+					<hftl:formField label="#{messages['paymentScheduleTemplate.advancePaymentInvoiceType']}" id="invoiceTypeSelectedId" field="advancePaymentInvoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
+                required="true" />
+                    <hftl:formField label="#{messages['paymentScheduleTemplate.advancePaymentInvoiceSubCategory']}" id="subCatSelectedId" field="advancePaymentInvoiceSubCategory" valueLabelField="code" popup="true" popupId="searchSubCatPopup"
+                required="true" />
+                
+
+				</p:tab>
+				<hftl:customFields backingBean="#{paymentScheduleTemplateBean}" messagesId=":formPaymentScheduleTemplate:messages" />
+			</p:tabView>								
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

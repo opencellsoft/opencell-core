@@ -4,15 +4,12 @@
 package org.meveo.model.payments;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,9 +21,11 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ModuleItem;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
 
@@ -37,27 +36,15 @@ import org.meveo.model.catalog.ServiceTemplate;
  * @lastModifiedVersion 5.2
  */
 @Entity
-@ModuleItem
 @CustomFieldEntity(cftCodePrefix = "PAYMENT_SCH")
-@Table(name = "ar_payment_schedule")
+@Table(name = "ar_payment_schedule_tmpl")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ar_payment_schedule_seq"), })
-public class PaymentSchedule extends EnableBusinessCFEntity {
+        @Parameter(name = "sequence_name", value = "ar_payment_schedule_tmpl_seq"), })
+public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 612388141736383814L;
-
-    /** The status. */
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private PaymentScheduleStatusEnum status;
     
-    @Column(name = "status_date")  
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
-    private Date statusDate;
-
     @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
@@ -80,49 +67,32 @@ public class PaymentSchedule extends EnableBusinessCFEntity {
     @NotNull
     private String paymentLabel;
     
-    @Column(name = "day_in_month")
+    @Column(name = "due_date_days")
     @NotNull
-    private Integer dayInMonth;
+    private Integer dueDateDays;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     @NotNull
     private ServiceTemplate serviceTemplate;
+   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adv_pay_inv_type_id")
+    @NotNull
+    private InvoiceType advancePaymentInvoiceType;
     
-    @OneToMany(mappedBy = "paymentSchedule", cascade = CascadeType.ALL)   
-    private List<AccountOperationPS> accountOperationPSs;
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_generate_adv_pay_inv", nullable = false)
+    @NotNull
+    private boolean generateAdvancePaymentInvoice;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "occ_template_id")
-    private OCCTemplate occTemplate;
-
-    /**
-     * @return the status
-     */
-    public PaymentScheduleStatusEnum getStatus() {
-        return status;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setStatus(PaymentScheduleStatusEnum status) {
-        this.status = status;
-    }
-
-    /**
-     * @return the statusDate
-     */
-    public Date getStatusDate() {
-        return statusDate;
-    }
-
-    /**
-     * @param statusDate the statusDate to set
-     */
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
+    @JoinColumn(name = "adv_pay_sub_cat_id")
+    @NotNull
+    private InvoiceSubCategory advancePaymentInvoiceSubCategory;
+    
+    @OneToMany(mappedBy = "paymentScheduleTemplate", cascade = CascadeType.ALL)   
+    private List<PaymentScheduleInstance> paymentScheduleInstances;
 
     /**
      * @return the startDate
@@ -195,17 +165,17 @@ public class PaymentSchedule extends EnableBusinessCFEntity {
     }
 
     /**
-     * @return the dayInMonth
+     * @return the dueDateDays
      */
-    public Integer getDayInMonth() {
-        return dayInMonth;
+    public Integer getDueDateDays() {
+        return dueDateDays;
     }
 
     /**
-     * @param dayInMonth the dayInMonth to set
+     * @param dueDateDays the dueDateDays to set
      */
-    public void setDayInMonth(Integer dayInMonth) {
-        this.dayInMonth = dayInMonth;
+    public void setDueDateDays(Integer dueDateDays) {
+        this.dueDateDays = dueDateDays;
     }
 
     /**
@@ -223,34 +193,59 @@ public class PaymentSchedule extends EnableBusinessCFEntity {
     }
 
     /**
-     * @return the accountOperationPSs
+     * @return the advancePaymentInvoiceType
      */
-    public List<AccountOperationPS> getAccountOperationPSs() {
-        if(accountOperationPSs == null) {
-            accountOperationPSs = new ArrayList<AccountOperationPS>();
-        }
-        return accountOperationPSs;
+    public InvoiceType getAdvancePaymentInvoiceType() {
+        return advancePaymentInvoiceType;
     }
 
     /**
-     * @param accountOperationPSs the accountOperationPSs to set
+     * @param advancePaymentInvoiceType the advancePaymentInvoiceType to set
      */
-    public void setAccountOperationPSs(List<AccountOperationPS> accountOperationPSs) {
-        this.accountOperationPSs = accountOperationPSs;
+    public void setAdvancePaymentInvoiceType(InvoiceType advancePaymentInvoiceType) {
+        this.advancePaymentInvoiceType = advancePaymentInvoiceType;
     }
 
     /**
-     * @return the occTemplate
+     * @return the generateAdvancePaymentInvoice
      */
-    public OCCTemplate getOccTemplate() {
-        return occTemplate;
+    public boolean isGenerateAdvancePaymentInvoice() {
+        return generateAdvancePaymentInvoice;
     }
 
     /**
-     * @param occTemplate the occTemplate to set
+     * @param generateAdvancePaymentInvoice the generateAdvancePaymentInvoice to set
      */
-    public void setOccTemplate(OCCTemplate occTemplate) {
-        this.occTemplate = occTemplate;
+    public void setGenerateAdvancePaymentInvoice(boolean generateAdvancePaymentInvoice) {
+        this.generateAdvancePaymentInvoice = generateAdvancePaymentInvoice;
     }
-    
+
+    /**
+     * @return the advancePaymentInvoiceSubCategory
+     */
+    public InvoiceSubCategory getAdvancePaymentInvoiceSubCategory() {
+        return advancePaymentInvoiceSubCategory;
+    }
+
+    /**
+     * @param advancePaymentInvoiceSubCategory the advancePaymentInvoiceSubCategory to set
+     */
+    public void setAdvancePaymentInvoiceSubCategory(InvoiceSubCategory advancePaymentInvoiceSubCategory) {
+        this.advancePaymentInvoiceSubCategory = advancePaymentInvoiceSubCategory;
+    }
+
+    /**
+     * @return the paymentScheduleInstances
+     */
+    public List<PaymentScheduleInstance> getPaymentScheduleInstances() {
+        return paymentScheduleInstances;
+    }
+
+    /**
+     * @param paymentScheduleInstances the paymentScheduleInstances to set
+     */
+    public void setPaymentScheduleInstances(List<PaymentScheduleInstance> paymentScheduleInstances) {
+        this.paymentScheduleInstances = paymentScheduleInstances;
+    }
+  
 }

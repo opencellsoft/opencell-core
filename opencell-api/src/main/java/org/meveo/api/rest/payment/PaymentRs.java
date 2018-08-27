@@ -24,6 +24,7 @@ import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -37,6 +38,7 @@ import org.meveo.api.rest.IBaseRs;
  * @lastModifiedVersion 5.1
  */
 
+@SuppressWarnings("deprecation")
 @Path("/payment")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -343,5 +345,24 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Path("/history/list")
     PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * Create or update payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentScheduleTemplate/createOrUpdate")
+    public ActionStatus createOrUpdatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    /**
+     * Create  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @POST
+    @Path("/paymentScheduleTemplate")
+    public ActionStatus createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
 
 }
