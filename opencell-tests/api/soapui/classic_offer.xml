@@ -54434,11 +54434,7 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
             <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54476,11 +54472,7 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1aa741c6-5935-4c05-9753-24ab5b8d9538"/>
             <con:assertion type="Simple Contains" id="2a7a2018-96da-4bf5-aa78-fc718da5135c" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54518,11 +54510,7 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1aa741c6-5935-4c05-9753-24ab5b8d9538"/>
             <con:assertion type="Simple Contains" id="2a7a2018-96da-4bf5-aa78-fc718da5135c" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54562,11 +54550,7 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/>
             <con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54600,7 +54584,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="c003fdb3-7fb4-424e-b7d1-342d46f90023" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54632,7 +54616,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="1523f787-3ee4-4a64-b365-6ef6b7dd00d6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54664,7 +54648,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="44ce5ea3-e47d-48ff-ac6d-b3d42f45aaa0" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54696,7 +54680,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="afe3114c-7b12-4849-9c52-6613f3638f59" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54728,7 +54712,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="297bd9c0-69b3-447c-99e4-c139594934ac" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54760,7 +54744,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="d76c242e-cacd-4548-8aa6-d581d49c90e0" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54792,7 +54776,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="e464406a-2d3b-467f-b6b8-cd92d9161478" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54824,7 +54808,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="69e671b8-d5c5-4ac9-8a14-eab9811bfea9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54856,7 +54840,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="4ea0a4a4-9edd-4376-8d8b-9b4a1c895db4" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54888,7 +54872,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="b4926909-5640-4886-abd3-8a3e1a6d9d43" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54920,7 +54904,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="d58ebe89-7c57-4a05-aa72-7bed7fee0536" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54952,7 +54936,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="298fef5c-1a9e-45ea-8a4b-a07f23a13e52" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54984,7 +54968,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="4280a845-66bb-48e1-a73b-b6413ca2fa12" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55016,7 +55000,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="84c2525a-726b-4eee-a239-3fc82c3259fc" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55048,7 +55032,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="a451337e-4eb2-46de-9c59-63e381104381" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55080,7 +55064,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="a685b98f-61f3-40f0-8c7f-d48c5bfb4ed8" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55112,7 +55096,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="242fde10-32e2-48e9-aad0-6243c9b58f7d" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55144,7 +55128,7 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="edea2cb3-7b33-4411-aba5-466382c75c04" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55405,11 +55389,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ae5dbeab-753f-42a2-9d2d-9d38a7c023f0"/>
             <con:assertion type="Simple Contains" id="4c68ede5-ad83-44c9-b8a5-91a50d7f6431" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -55443,11 +55423,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a6b29958-f25b-4ddb-8432-0ef3f0f03ea4"/>
             <con:assertion type="Simple Contains" id="951d3257-26ba-4e17-bee3-35968bfdca41" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -55590,7 +55566,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="608a427b-6ffb-4405-b428-a2ec58e33cfe" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55640,7 +55616,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="3bb03a71-bc17-4ca9-a2bf-801d71075473" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55690,7 +55666,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="bb12f3df-f1f3-4249-9eb4-4dea118ba41e" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55740,7 +55716,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:credentials>
+            <con:assertion type="Simple Contains" id="eb0305d4-96f2-4427-acc1-13fd8cca5791" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55772,11 +55748,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/>
             <con:assertion type="Simple Contains" id="1efb2d04-be3a-463b-8400-92ddd5cafea3" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -55820,11 +55792,7 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/>
             <con:assertion type="Simple Contains" id="1efb2d04-be3a-463b-8400-92ddd5cafea3" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -55879,11 +55847,7 @@ http://<server>:<port>/opencell/inbound/DEMO/payment-callback?STATUS=<STATUS>&PA
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/>
             <con:assertion type="Simple Contains" id="1efb2d04-be3a-463b-8400-92ddd5cafea3" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
+              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
