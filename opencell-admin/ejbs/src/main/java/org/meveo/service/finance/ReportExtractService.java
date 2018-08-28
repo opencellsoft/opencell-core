@@ -56,7 +56,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     }
 
     @SuppressWarnings("rawtypes")
-    public void runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
+    public ReportExtractExecutionResult runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
         Map<String, Object> context = new HashMap<>();
 
         // use params parameter if set, otherwise use the set from entity
@@ -148,6 +148,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         if (be != null) {
             throw be;
         }
+        
+        return reportExtractExecutionResult;
     }
 
     @SuppressWarnings("rawtypes")

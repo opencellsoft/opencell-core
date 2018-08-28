@@ -16,9 +16,11 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * CRUD API for managing {@link InvoiceSubCategory}.
@@ -37,6 +39,9 @@ public class InvoiceSubCategoryApi extends BaseApi {
     
     @Inject
     private AccountingCodeService accountingCodeService;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     public void create(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -69,6 +74,12 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
             }
             invoiceSubCategory.setAccountingCode(accountingCode);
+        }
+        if(!StringUtils.isBlank(postData.getTaxScriptScode())) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getTaxScriptScode());
+            if(scriptInstance != null) {
+                invoiceSubCategory.setTaxScript(scriptInstance);
+            }
         }
 
         // populate customFields
@@ -118,6 +129,12 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
             }
             invoiceSubCategory.setAccountingCode(accountingCode);
+        }
+        if(!StringUtils.isBlank(postData.getTaxScriptScode())) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getTaxScriptScode());
+            if(scriptInstance != null) {
+                invoiceSubCategory.setTaxScript(scriptInstance);
+            }
         }
 
         if (postData.getLanguageDescriptions() != null) {

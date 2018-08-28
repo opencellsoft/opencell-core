@@ -38,6 +38,7 @@
 	
  -->
 
+
 <page-access path="/pages">
 
 	<!-- PAGE RULES FOR ADMIN PAGES -->
@@ -58,6 +59,11 @@
 	<page view-id=".+\/admin\/providers\/provider.*">
 		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
 	</page>
+	
+	<page view-id=".+\/tradingCountries\/tradingCountry.*">
+		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
+	</page>
+    
 	
 	<page view-id=".+\/admin\/sellers\/.*">
 		<constraint>currentUser.hasRole('catalogManagement')</constraint>
@@ -312,6 +318,12 @@
     <page view-id=".+\/quote\/.+" >
         <constraint>currentUser.hasRole('quoteManagement')</constraint>
         <constraint type="READ">currentUser.hasRole('quoteVisualization')</constraint>
-    </page>    
+    </page>
+    
+    <!-- PAGE RULES FOR INTCRM PAGES -->
+	<page view-id=".+\/intcrm\/.*">
+		<constraint>currentUser.hasRole('administrationManagement')
+		</constraint>
+	</page>
     
 </page-access>

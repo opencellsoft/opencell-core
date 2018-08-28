@@ -41,6 +41,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -177,18 +178,20 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     private String minimumAmountEl;
 
     /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+
+    /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
 
-    /**
-     * Expression to determine minimum amount value - for Spark
-     */
-    @Column(name = "minimum_amount_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String minimumAmountElSpark;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
@@ -196,6 +199,19 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
+
+    @Transient
+    private List<RatedTransaction> minRatedTransactions;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountWithoutTax;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountWithTax;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountTax;
+
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -465,6 +481,9 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     public String getMinimumAmountElSpark() {
         return minimumAmountElSpark;
     }
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		minRatedTransactions = ratedTransactions;
+	}
 
     /**
      * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
@@ -486,4 +505,34 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     public void setMinimumLabelElSpark(String minimumLabelElSpark) {
         this.minimumLabelElSpark = minimumLabelElSpark;
     }
+
+
+	public List<RatedTransaction> getMinRatedTransactions() {
+		return minRatedTransactions;
+	}
+
+	public BigDecimal getTotalInvoicingAmountWithoutTax() {
+		return totalInvoicingAmountWithoutTax;
+	}
+
+	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+	}
+
+	public BigDecimal getTotalInvoicingAmountWithTax() {
+		return totalInvoicingAmountWithTax;
+	}
+
+	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+	}
+
+	public BigDecimal getTotalInvoicingAmountTax() {
+		return totalInvoicingAmountTax;
+	}
+
+	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+	}
+
 }

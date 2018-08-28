@@ -36,6 +36,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -122,4 +123,11 @@ public class Tax extends BusinessCFEntity {
         }
         return descriptionI18n;
     }
+
+
+	
+	public String getIdOrCode() {
+		return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
+	}
+
 }

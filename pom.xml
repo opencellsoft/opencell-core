@@ -5,7 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>5.2-SNAPSHOT</version>
+	<version>5.1.1-SNAPSHOT</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -16,7 +16,7 @@
 		<module>opencell-admin</module>
 		<module>opencell-api</module>
 		<module>opencell-client</module>
-	</modules>
+  </modules>
 
 	<properties>
 		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific 
@@ -25,10 +25,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<version.keycloak>2.5.5.Final</version.keycloak>
-
+        <version.pdfbox>2.0.11</version.pdfbox> 
+        <version.barcode>2.1</version.barcode>
 		<dbtype>generic</dbtype>
 	</properties>
-
+	
 	<scm>
 		<connection>scm:git:https://git.assembla.com/meveo.git</connection>
 		<url>https://git.assembla.com/meveo.git</url>
@@ -464,6 +465,12 @@
 				<scope>provided</scope>
 			</dependency>
 
+			<dependency>
+				<groupId>org.iban4j</groupId>
+				<artifactId>iban4j</artifactId>
+				<version>3.2.1</version>
+			</dependency>
+
 			<!-- For testing -->
 			<dependency>
 				<groupId>org.hsqldb</groupId>
@@ -479,8 +486,17 @@
 				<scope>test</scope>
 			</dependency>
 			
+			<dependency>
+			    <groupId>org.apache.pdfbox</groupId>
+			    <artifactId>pdfbox</artifactId>
+			    <version>${version.pdfbox}</version>
+			</dependency>
+			<dependency>
+			    <groupId>net.sf.barcode4j</groupId> 
+			    <artifactId>barcode4j</artifactId> 
+			    <version>${version.barcode}</version>
+			</dependency>
 			
-
 			<!-- <dependency> -->
 			<!-- <groupId>org.jboss.arquillian.extension</groupId> -->
 			<!-- <artifactId>arquillian-rest-client-impl-3x</artifactId> -->
@@ -618,7 +634,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute />
+										<execute/>
 									</action>
 								</pluginExecution>
 								<pluginExecution>

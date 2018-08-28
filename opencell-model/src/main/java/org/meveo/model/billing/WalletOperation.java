@@ -94,7 +94,9 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount=:userAccount") })
+                + " AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
+                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount") })
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -246,9 +248,6 @@ public class WalletOperation extends BusinessEntity {
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithTax;
 
-    @Transient
-    private BillingAccount billingAccount;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
@@ -256,6 +255,9 @@ public class WalletOperation extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
+
+    @Transient
+    private BillingAccount billingAccount;
 
     @Transient
     private BillingRun billingRun;
@@ -480,10 +482,16 @@ public class WalletOperation extends BusinessEntity {
         this.subscriptionDate = subscriptionDate;
     }
 
+    /**
+     * @return Seller associated to wallet operation
+     */
     public Seller getSeller() {
         return seller;
     }
 
+    /**
+     * @param seller Seller associated to wallet operation
+     */
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
@@ -568,10 +576,16 @@ public class WalletOperation extends BusinessEntity {
         return result;
     }
 
+    /**
+     * @return Billing account associated to wallet operation
+     */
     public BillingAccount getBillingAccount() {
         return billingAccount;
     }
 
+    /**
+     * @param billingAccount Billing account associated to wallet operation
+     */
     public void setBillingAccount(BillingAccount billingAccount) {
         this.billingAccount = billingAccount;
     }

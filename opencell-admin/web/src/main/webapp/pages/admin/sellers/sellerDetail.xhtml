@@ -9,6 +9,18 @@
     </ui:define>
 
     <ui:define name="body">
+    
+    	<hftl:entityPopup id="searchInvoiceSequencePopup" header="#{messages['invoiceTypeSellerSequence.invoiceSequence']}"
+            updateField=":sellerFormId:tabView:invoiceSequenceSelectedId :sellerFormId:tabView:invoiceSequenceSelectedId_text" selection="#{sellerBean.invoiceSequence}"
+            backingBean="#{invoiceSequenceListBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchInvoiceTypePopup" header="#{messages['invoiceTypeSellerSequence.invoiceType']}"
+            updateField=":sellerFormId:tabView:invoiceTypeSelectedId :sellerFormId:tabView:invoiceTypeSelectedId_text" selection="#{sellerBean.invoiceType}"
+            backingBean="#{invoiceTypeListBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -36,25 +48,38 @@
                             <p:column headerText="#{messages['invoiceType.panel']}">
                                 <h:outputText value="#{invoiceTypeSeq.invoiceType.descriptionAndCode}" />
                             </p:column>
-                            <p:column headerText="#{messages['seller.currentInvoiceNb']}">
-                                <h:outputText value="#{invoiceTypeSeq.sequence.currentInvoiceNb}" />
-                            </p:column>
-                            <p:column headerText="#{messages['seller.invoiceSequenceSize']}">
-                                <h:outputText value="#{invoiceTypeSeq.sequence.sequenceSize}" />
+                            <p:column headerText="#{messages['seller.invoiceSequence']}">
+                                <h:outputText value="#{invoiceTypeSeq.invoiceSequence.descriptionAndCode}" />
                             </p:column>
                             <p:column headerText="#{messages['invoiceType.sequence.prefixEl']}">
-                                <h:outputText value="#{invoiceTypeSeq.sequence.prefixEL}" />
+                                <h:outputText value="#{invoiceTypeSeq.prefixEL}" />
                             </p:column>
                             <p:column width="60px;" headerText="#{messages['commons.actions']}">
-                                <p:commandButton action="#{sellerBean.getSequenceSelected(invoiceTypeSeq)}" oncomplete="PF('dlg_sellerSequenceChgPopup').show()" update=":sellerSequenceChgPopup"
-                                    icon="ui-icon-document" />
+                                <p:commandButton action="#{sellerBean.getSequenceSelected(invoiceTypeSeq)}" update=":sellerFormId:tabView:invoiceTypeSellerSequenceServiceDetails"
+                                    icon="ui-icon-document" immediate="true" />
                                 <p:commandButton action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.invoiceType)}" icon="ui-icon-trash" update="@form" />
                             </p:column>
                         </p:dataTable>
-                        <p:commandButton oncomplete="PF('dlg_sellerSequenceChgPopup').show()" value="#{messages['commons.addNew']}" update=":sellerSequenceChgPopup"
-                            action="#{sellerBean.resetSequenceField}">
+                        <p:commandButton value="#{messages['commons.addNew']}" update=":sellerFormId:tabView:invoiceTypeSellerSequenceServiceDetails"
+                            action="#{sellerBean.newInvoiceTypeSellerSequence}">
                         </p:commandButton>
                     </h:panelGroup>
+                    
+                    <h:panelGroup id="invoiceTypeSellerSequenceServiceDetails">
+			        	 <p:panel header="#{messages['seller.newInvoiceTypeSellerSequence']}" rendered="#{sellerBean.selectedInvoiceTypeSellerSequence!=null}">
+			                <p:outputPanel styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
+			                   	<hftl:formField label="#{messages['invoiceType.sequence.prefixEl']}" entity="#{sellerBean}" field="prefixEl" required="true" />
+			                   	<hftl:formField label="#{messages['invoiceTypeSellerSequence.invoiceSequence']}" id="invoiceSequenceSelectedId" entity="#{sellerBean}" field="invoiceSequence" valueLabelField="code" popup="true" popupId="searchInvoiceSequencePopup"
+			                required="true" />
+			                	<hftl:formField label="#{messages['invoiceTypeSellerSequence.invoiceType']}" id="invoiceTypeSelectedId" entity="#{sellerBean}" field="invoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
+			                required="true" />
+			                </p:outputPanel>
+			                <h:panelGroup layout="block" styleClass="form-panel-actions">
+			                    <p:commandButton action="#{sellerBean.saveOrUpdateSequence}" value="#{messages['action.save']}" update="@form :sellerFormId:tabView:sellerSequenceTable :sellerFormId:messages" />
+			                	<p:commandButton action="#{sellerBean.resetSequenceField}" value="#{messages['action.cancel']}" update="@form :sellerFormId:tabView:sellerSequenceTable" immediate="true" />
+			                </h:panelGroup>
+			        	</p:panel>
+			        </h:panelGroup>
 
                 </p:tab>
                 
@@ -93,35 +118,6 @@
             </p:tabView>
         </hftl:formPanel>
 
-        <p:dialog header="#{messages['seller.sellerSequence']}" widgetVar="dlg_sellerSequenceChgPopup" modal="true" width="90%" closeOnEscape="true">
-
-            <h:form id="sellerSequenceChgPopup">
-                <p:messages id="messages" />
-                <p:outputPanel styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
-                    <hftl:decorateFormField label="#{messages['invoiceType.panel']}" componentWidth="20">
-                        <p:selectOneMenu label="#{messages['invoiceType.name']}" value="#{sellerBean.invoiceTypeCode}" disabled="#{sellerBean.editSellerSequence}">
-                            <f:selectItem itemLabel="#{messages['commons.select']}" />
-                            <f:selectItems value="#{invoiceTypeBean.listAll()}" var="item" itemLabel="#{item.descriptionAndCode}" itemValue="#{item.code}" />
-                        </p:selectOneMenu>
-                    </hftl:decorateFormField>
-                    <hftl:decorateFormField label="#{messages['seller.currentInvoiceNb']}" componentWidth="20">
-                        <p:spinner value="#{sellerBean.currentInvoiceNb}" min="0" size="15" />
-                    </hftl:decorateFormField>
-
-                    <hftl:decorateFormField label="#{messages['invoiceType.sequenceSize']}" componentWidth="15">
-                        <p:spinner value="#{sellerBean.sequenceSize}" min="0" size="2" />
-                    </hftl:decorateFormField>
-
-                    <hftl:decorateFormField label="#{messages['invoiceType.sequence.prefixEl']}">
-                        <p:inputTextarea rows="1" cols="80" value="#{sellerBean.prefixEl}" maxlength="2000" />
-                    </hftl:decorateFormField>
-                </p:outputPanel>
-                <h:panelGroup layout="block" styleClass="form-panel-actions">
-                    <p:commandButton action="#{sellerBean.saveOrUpdateSequence}" value="#{messages['action.save']}" update="@form :sellerFormId:tabView:sellerSequenceTable :sellerFormId:messages"
-                        oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_sellerSequenceChgPopup').hide()" />
-                </h:panelGroup>
-            </h:form>
-        </p:dialog>
     </ui:define>
 
 </ui:composition>

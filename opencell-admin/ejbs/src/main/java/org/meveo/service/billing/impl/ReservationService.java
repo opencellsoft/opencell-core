@@ -160,7 +160,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		walletReservation.setParameter2(param2);
 		walletReservation.setParameter3(param3);
 		walletReservation.setChargeInstance(null);
-		walletReservation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+		walletReservation.setSeller(seller);
 		walletReservation.setWallet(wallet);
 		walletReservation.setQuantity(new BigDecimal(1));
 		walletReservation.setStartDate(null);

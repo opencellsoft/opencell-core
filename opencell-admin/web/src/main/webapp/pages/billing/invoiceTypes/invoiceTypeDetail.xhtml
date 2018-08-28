@@ -17,7 +17,16 @@
             backingBean="#{occTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
-
+        <hftl:entityPopup id="searchInvoiceSequencePopup" header="#{messages['invoiceType.invoiceSequence']}"
+            updateField=":formInvoiceType:invoiceSequenceSelectedId :formInvoiceType:invoiceSequenceSelectedId_text" selection="#{invoiceTypeBean.entity.invoiceSequence}"
+            backingBean="#{invoiceSequenceBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="invoiceTypeScriptPopup" header="#{messages['scriptInstance.popup.header']}"
+            updateField=":formInvoiceType:customInvoiceXmlScriptId :formInvoiceType:customInvoiceXmlScriptId_text" selection="#{invoiceTypeBean.entity.customInvoiceXmlScriptInstance}"
+            backingBean="#{scriptInstanceBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -37,9 +46,10 @@
                 popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false" />
             <hftl:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" required="false" />
             <hftl:formField label="#{messages['invoiceType.billingTemplateNameEL']}" field="billingTemplateNameEL" />
-            <hftl:formField label="#{messages['invoiceType.prefix']}" field="sequence" childField="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
-            <hftl:formField label="#{messages['invoiceType.sequenceSize']}" field="sequence" childField="sequenceSize" id="sequenceSize" />
-            <hftl:formField label="#{messages['seller.currentInvoiceNb']}" field="sequence" childField="currentInvoiceNb" id="currentInvoiceNb" />
+            <hftl:formField id="customInvoiceXmlScriptId" label="#{messages['invoiceType.customInvoiceXmlScript']}" field="customInvoiceXmlScriptInstance" valueLabelField="code" required="false" popup="true" popupId="invoiceTypeScriptPopup" showResetButton="true" />
+            <hftl:formField label="#{messages['invoiceType.prefix']}" field="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
+            <hftl:formField label="#{messages['invoiceType.invoiceSequence']}" id="invoiceSequenceSelectedId" field="invoiceSequence" valueLabelField="code" popup="true" popupId="searchInvoiceSequencePopup"
+                required="true" />
             <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" newLine="true"
                 id="appliesTo" />
             <hftl:formField label="#{messages['invoiceType.pdfFilenameEl']}" field="pdfFilenameEL" textArea="true" rows="1" maxlength="2000" />
@@ -55,18 +65,17 @@
                     <p:column headerText="#{messages['seller.title']}">
                         <h:outputText value="#{sellerSeq.seller.code}" />
                     </p:column>
+                    <p:column headerText="#{messages['seller.invoiceSequence']}">
+                        <h:outputText value="#{sellerSeq.invoiceSequence.descriptionAndCode}" />
+                    </p:column>
                     <p:column headerText="#{messages['invoiceType.sequence.prefixEl']}">
-                        <h:outputText value="#{sellerSeq.sequence.prefixEL}" />
-                    </p:column>
-                    <p:column headerText="#{messages['seller.currentInvoiceNb']}">
-                        <h:outputText value="#{sellerSeq.sequence.currentInvoiceNb}" />
-                    </p:column>
-                    <p:column headerText="#{messages['seller.invoiceSequenceSize']}">
-                        <h:outputText value="#{sellerSeq.sequence.sequenceSize}" />
+                        <h:outputText value="#{sellerSeq.prefixEL}" />
                     </p:column>
                 </p:dataTable>
             </h:panelGroup>
             
+            <hftl:customFields backingBean="#{invoiceTypeBean}" messagesId="formInvoiceType:messages" />
         </hftl:formPanel>
+        
     </ui:define>
 </ui:composition>

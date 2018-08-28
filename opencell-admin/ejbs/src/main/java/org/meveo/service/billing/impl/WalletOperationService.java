@@ -1602,5 +1602,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             return null;
         }
     }
+    
+    public Long countNonTreatedWOByCA(CustomerAccount customerAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByCA").setParameter("customerAccount", customerAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNonTreated WO by CA", e);
+            return null;
+        }
+    }
 
 }

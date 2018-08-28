@@ -314,6 +314,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             ratedTransaction.setOrderNumber(orderNumber);
             ratedTransaction.setInvoice(entity);
             ratedTransaction.setInvoiceSubCategory(selectInvoiceSubCat);
+            ratedTransaction.setSeller(ratedTransaction.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 
             agregateHandler.addRT(ratedTransaction, selectInvoiceSubCat.getDescription(), getFreshUA());
             updateAmountsAndLines(getFreshBA());
@@ -486,6 +487,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
        
     /**
      * Allow generating draft invoice
+     * 
+     * @throws BusinessException General Business Exception
      * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
@@ -684,6 +687,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                         newRT.setEndDate(rt.getEndDate());
                         newRT.setOrderNumber(rt.getOrderNumber());
                         newRT.setInvoice(entity);
+                        newRT.setSeller(rt.getSeller());
                         agregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
                         updateAmountsAndLines(getFreshBA());
                     }

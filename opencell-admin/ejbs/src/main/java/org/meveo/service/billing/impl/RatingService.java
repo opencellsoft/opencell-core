@@ -455,8 +455,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                 throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
             }
 
-            pricePlan = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency,
-                bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
+            pricePlan = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency);
             if (pricePlan == null || (pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise())
                     || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
                 throw new NoPricePlanException("No price plan matched (" + (pricePlan == null) + ") or does not contain amounts for charge code " + bareWalletOperation.getCode());
@@ -673,20 +672,19 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param bareOperation operation
      * @param countryId county id
      * @param tcurrency trading currency
-     * @param sellerId seller's id
      * @return matrix of price plan
      * @throws BusinessException business exception
      */
-    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId)
+    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency)
             throws BusinessException {
         // FIXME: the price plan properties could be null !
         // log.info("ratePrice rate " + bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
             Seller seller = pricePlan.getSeller();
-            boolean sellerAreEqual = seller == null || seller.getId().equals(sellerId);
+            boolean sellerAreEqual = seller == null || seller.getId().equals(bareOperation.getSeller().getId());
             if (!sellerAreEqual) {
-                log.debug("The seller of the customer {} is not the same as pricePlan seller {}", sellerId, seller.getId());
+                log.debug("The seller of the customer {} is not the same as pricePlan seller {}", bareOperation.getSeller().getId(), seller.getId());
                 continue;
             }
 

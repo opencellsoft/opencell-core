@@ -1,15 +1,17 @@
 package org.meveo.admin.action.finance;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -23,7 +25,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.ReportExtractService;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Controller to manage detail view of {@link ReportExtract}.
@@ -128,7 +129,11 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
         try {
             String filePath = reportExtractService.getReporFile(entity);
-            stream = new FileInputStream(new File(filePath));
+            File file = new File(filePath);
+            byte[] data = new byte[(int) file.length()];
+            FileUtils.writeByteArrayToFile(new File(filePath), data);
+            stream = new ByteArrayInputStream(data); 
+            
             String mimeType = "text/csv";
             if (!FilenameUtils.getExtension(filePath).equals("csv")) {
                 mimeType = "text/html";
@@ -136,7 +141,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
             return new DefaultStreamedContent(stream, mimeType, filePath.substring(filePath.lastIndexOf(File.separator)));
 
-        } catch (BusinessException | FileNotFoundException e) {
+        } catch (BusinessException | IOException e) {
             log.error("Failed loading repor file={}", e.getMessage());
             return null;
         } finally {

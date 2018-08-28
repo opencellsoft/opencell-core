@@ -212,11 +212,11 @@ public class SubscriptionApi extends BaseApi {
         }
 
         Subscription subscription = new Subscription();
+        
         subscription.setCode(postData.getCode());
         subscription.setDescription(postData.getDescription());
         subscription.setUserAccount(userAccount);
         subscription.setOffer(offerTemplate);
-
         if (!StringUtils.isBlank(postData.getBillingCycle())) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
             if (billingCycle == null) {
@@ -224,14 +224,25 @@ public class SubscriptionApi extends BaseApi {
             }
             subscription.setBillingCycle(billingCycle);
         }
-
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
-        subscription.setEndAgreementDate(postData.getEndAgreementDate());
         if (postData.getRenewalRule() == null) {
             subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), null, false));
         } else {
             subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(null, postData.getRenewalRule(), false));
+        }
+        
+        Boolean subscriptionAutoEndOfEngagement = postData.getAutoEndOfEngagement();
+        if (subscriptionAutoEndOfEngagement == null) {
+            subscription.setAutoEndOfEngagement(offerTemplate.getAutoEndOfEngagement());
+        } else {
+            subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
+        }
+        
+        subscription.updateSubscribedTillAndRenewalNotifyDates();
+        // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
+        if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
+            subscription.setEndAgreementDate(postData.getEndAgreementDate());
         }
 
         // populate customFields
@@ -246,6 +257,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscriptionService.create(subscription);
+        
 
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
@@ -322,11 +334,15 @@ public class SubscriptionApi extends BaseApi {
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
-        subscription.setEndAgreementDate(postData.getEndAgreementDate());
+        
         subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed()));
         subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
         subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-
+        
+        if (postData.getAutoEndOfEngagement() != null) {
+            subscription.setAutoEndOfEngagement(postData.getAutoEndOfEngagement());
+            subscription.updateSubscribedTillAndRenewalNotifyDates();
+        } 
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);
@@ -337,9 +353,11 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
         subscription = subscriptionService.update(subscription);
-
+        // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
+        if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
+            subscription.setEndAgreementDate(postData.getEndAgreementDate());
+        }
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
                 if (StringUtils.isBlank(productDto.getCode())) {
@@ -1062,6 +1080,8 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
+        dto.setAutoEndOfEngagement(subscription.getAutoEndOfEngagement());
+        
         return dto;
     }
 
@@ -1116,6 +1136,10 @@ public class SubscriptionApi extends BaseApi {
 
             if (subscriptionDto.getRenewalRule() != null) {
                 existedSubscriptionDto.setRenewalRule(subscriptionDto.getRenewalRule());
+            }
+            
+            if (subscriptionDto.getAutoEndOfEngagement() != null) {
+                existedSubscriptionDto.setAutoEndOfEngagement(subscriptionDto.getAutoEndOfEngagement());
             }
 
             update(existedSubscriptionDto);

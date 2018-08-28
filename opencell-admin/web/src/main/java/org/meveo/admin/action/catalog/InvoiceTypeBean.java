@@ -25,8 +25,8 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InvoiceType;
@@ -37,7 +37,7 @@ import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
-public class InvoiceTypeBean extends BaseBean<InvoiceType> {
+public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,11 +64,6 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
         log.trace("saving new InvoiceType={}", entity.getCode());
         getEntity().getAppliesTo().clear();
         getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
-        if (entity.getSequence() != null && entity.getSequence().getCurrentInvoiceNb() != null
-                && entity.getSequence().getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(entity.getCode()).longValue()) {
-            messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
-            return null;
-        }
         return super.saveOrUpdate(killConversation);
     }
 

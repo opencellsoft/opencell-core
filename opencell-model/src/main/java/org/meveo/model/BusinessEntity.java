@@ -148,10 +148,11 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
         }
 
         BusinessEntity other = (BusinessEntity) obj;
+        
+		if (id != null && other.getId() != null && getClass().equals(other.getClass()) && id.equals(other.getId())) {
+			return true;
+		}
 
-        if (id != null && other.getId() != null && id.equals(other.getId())) {
-            return true;
-        }
         if (code == null) {
             if (other.getCode() != null) {
                 return false;

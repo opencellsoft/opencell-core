@@ -6,12 +6,13 @@
         <groupId>com.opencellsoft</groupId>
         <artifactId>opencell</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>5.2-SNAPSHOT</version>
+        <version>5.1.1-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-api</artifactId>
     <name>Opencell API</name>
 
     <dependencies>
+
 
         <dependency>
             <groupId>com.opencellsoft</groupId>
@@ -32,6 +33,15 @@
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-tmforum</artifactId>
         </dependency>
+
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.barcode4j</groupId>
+			<artifactId>barcode4j</artifactId>
+		</dependency>
 
         <!-- Libraries included in JBoss -->
 
@@ -93,12 +103,20 @@
             <scope>provided</scope>
         </dependency>
 
+
+
         <!-- End of libraries provided in Jboss -->
 
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.iban4j</groupId>
+            <artifactId>iban4j</artifactId>
+        </dependency>
+
 
 
         <!-- <dependency> -->

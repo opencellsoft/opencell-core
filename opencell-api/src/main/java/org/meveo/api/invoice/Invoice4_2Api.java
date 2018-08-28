@@ -29,6 +29,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -154,6 +155,7 @@ public class Invoice4_2Api extends BaseApi {
 
         // FIXME : store that in SubCategoryInvoiceAgregateDto
 
+        Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
         Invoice invoice = new Invoice();
         invoice.setBillingAccount(billingAccount);
 
@@ -287,10 +289,10 @@ public class Invoice4_2Api extends BaseApi {
             invoiceAgregateService.create(subCategoryInvoiceAgregate);
 
             for (RatedTransactionDto ratedTransaction : subCategoryInvoiceAgregateDTO.getRatedTransactions()) {
-                RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
+                RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                     ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(),
                     ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax(), RatedTransactionStatusEnum.BILLED, null, billingAccount, invoiceSubCategory, null, null,
-                    null, null, null, null, ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription(), ratedTransaction.getStartDate(), ratedTransaction.getEndDate());
+                    null, null, null, null, ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription(), ratedTransaction.getStartDate(), ratedTransaction.getEndDate(), seller);
 
                 meveoRatedTransaction.setInvoice(invoice);
                 meveoRatedTransaction.setWallet(billingAccountUserAccount.getWallet());

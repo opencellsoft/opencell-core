@@ -18,6 +18,7 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,10 +40,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -52,6 +55,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
@@ -59,6 +63,8 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Subscription
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Entity
 @ObservableEntity
@@ -136,6 +142,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "auto_end_of_engagement")
+    private Boolean autoEndOfEngagement = Boolean.FALSE;
+
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
@@ -196,6 +206,22 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = true)
+    private Seller seller;
+
+    @Transient
+    private List<RatedTransaction> minRatedTransactions;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountWithoutTax;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountWithTax;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountTax;
+    
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -463,6 +489,15 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     }
 
     /**
+     * Auto update end of engagement date.
+     */
+    public void autoUpdateEndOfEngagementDate() {
+        if (BooleanUtils.isTrue(this.autoEndOfEngagement)) {
+            this.setEndAgreementDate(this.subscribedTillDate);
+        } 
+    }
+
+    /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
      */
     public void updateSubscribedTillAndRenewalNotifyDates() {
@@ -492,6 +527,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
+		this.autoUpdateEndOfEngagementDate();
     }
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
@@ -509,6 +545,46 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.billingRun = billingRun;
     }
 
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		minRatedTransactions = ratedTransactions;
+	}
+
+	public List<RatedTransaction> getMinRatedTransactions() {
+		return minRatedTransactions;
+	}
+
+	public BigDecimal getTotalInvoicingAmountWithoutTax() {
+		return totalInvoicingAmountWithoutTax;
+	}
+
+	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+	}
+
+	public BigDecimal getTotalInvoicingAmountWithTax() {
+		return totalInvoicingAmountWithTax;
+	}
+
+	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+	}
+
+	public BigDecimal getTotalInvoicingAmountTax() {
+		return totalInvoicingAmountTax;
+	}
+
+	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+	}
+	
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
     /**
      * Is subscription active
      * 
@@ -516,5 +592,19 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
      */
     public boolean isActive() {
         return SubscriptionStatusEnum.ACTIVE == status;
+    }
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
     }
 }

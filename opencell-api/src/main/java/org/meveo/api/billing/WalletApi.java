@@ -104,7 +104,7 @@ public class WalletApi extends BaseApi {
 
     @Inject
     private CurrencyService currencyService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
 
@@ -473,7 +473,8 @@ public class WalletApi extends BaseApi {
             // walletOperation.setOfferCode(subscription.getOffer().getCode()); offerCode is set in walletOperation.setOfferTemplate
             walletOperation.setOfferTemplate(subscription.getOffer());
         }
-        walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+
+        walletOperation.setSeller(chargeInstance.getSeller());
         walletOperation.setCurrency(currency);
         walletOperation.setWallet(walletInstance);
         walletOperation.setChargeInstance(chargeInstance);

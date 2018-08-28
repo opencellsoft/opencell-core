@@ -138,8 +138,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
 
             cardPaymentMethod.setTokenId(tockenID);
-        } else {
-            cardPaymentMethod.setTokenId(null);
         }
         cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
     }

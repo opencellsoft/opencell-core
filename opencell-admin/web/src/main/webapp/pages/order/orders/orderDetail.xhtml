@@ -156,7 +156,6 @@
                             </p:outputPanel>
                         </p:fieldset>
                         <div class="clearLeft"></div>
-                        <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
 
                     </hf:namingContainer>
                 </p:tab>
@@ -594,15 +593,16 @@
                         </p:panel>
                     </h:panelGroup>
                 </p:tab>
+                <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
                 <hftl:displayWorkflowsHistory entity="#{orderBean.entity}" />
             </p:tabView>
 
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
-
-
                 <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form" process="@this" ajax="false"
                     rendered="#{!orderBean.entity.transient and orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                <p:commandButton value="#{messages['order.revertToDraft']}" action="#{orderBean.updateStatus(OrderStatusEnum.IN_CREATION)}" update=":orderForm:messages @form" process="@this" ajax="false"
+                    rendered="#{!orderBean.entity.transient and orderBean.entity.status eq OrderStatusEnum.ACKNOWLEDGED}" />
             </ui:define>
 
         </hftl:formPanel>

@@ -195,7 +195,7 @@ public class GenerateImportXml {
 				Accesses accessPoints = new Accesses();
 				sub.setAccesses(accessPoints);
 
-				// check meveo-admin.properties for meveo.dateFormat, which is
+				// check opencell-admin.properties for meveo.dateFormat, which is
 				// the default
 				Access access1 = new Access();
 				access1.setAccessUserId("MSISDN" + i);

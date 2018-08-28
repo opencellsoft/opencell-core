@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -45,18 +45,24 @@ public class InvoiceTypeSellerSequence implements IEntity {
     @NotNull
     private Seller seller;
 
-    @Embedded
-    private Sequence sequence = new Sequence();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "invoice_sequence_id")
+    private InvoiceSequence invoiceSequence;
+    
+    @Column(name = "prefix_el", length = 2000)
+    @Size(max = 2000)
+    private String prefixEL = "";
 
     public InvoiceTypeSellerSequence() {
 
     }
 
-    public InvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller, Sequence sequence) {
+    public InvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller, InvoiceSequence invoiceSequence, String prefixEL) {
         super();
         this.invoiceType = invoiceType;
         this.seller = seller;
-        this.sequence = sequence;
+        this.invoiceSequence = invoiceSequence;
+        this.prefixEL = prefixEL;
     }
 
     @Override
@@ -90,15 +96,23 @@ public class InvoiceTypeSellerSequence implements IEntity {
         this.seller = seller;
     }
 
-    public Sequence getSequence() {
-        return sequence;
-    }
+    public InvoiceSequence getInvoiceSequence() {
+		return invoiceSequence;
+	}
 
-    public void setSequence(Sequence sequence) {
-        this.sequence = sequence;
-    }
+	public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
+		this.invoiceSequence = invoiceSequence;
+	}
+	
+	public String getPrefixEL() {
+		return prefixEL;
+	}
 
-    @Override
+	public void setPrefixEL(String prefixEL) {
+		this.prefixEL = prefixEL;
+	}
+
+	@Override
     public boolean equals(Object obj) {
 
         if (this == obj) {

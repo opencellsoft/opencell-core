@@ -38,7 +38,8 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.RumSequence;
+import org.meveo.model.sequence.GenericSequence;
+import org.meveo.model.sequence.SequenceTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 
@@ -207,12 +208,21 @@ public class ProviderService extends PersistenceService<Provider> {
         }
     }
 
-	public RumSequence getNextMandateNumber() throws BusinessException {		
-		RumSequence rumSequence = serviceSingleton.getNextMandateNumberSequence();
+    public GenericSequence getNextMandateNumber() throws BusinessException {		
+		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
 		Provider provider = findById(appProvider.getId());
-		provider.setRumSequence(rumSequence);
+		provider.setRumSequence(genericSequence);
 		update(provider);
 		
-		return rumSequence;
+		return genericSequence;
+	}
+    
+    public GenericSequence getNextCustomerNumber() throws BusinessException {		
+		GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
+		Provider provider = findById(appProvider.getId());
+		provider.setCustomerNoSequence(genericSequence);
+		update(provider);
+		
+		return genericSequence;
 	}
 }

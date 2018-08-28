@@ -33,6 +33,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -41,6 +42,7 @@ import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -62,6 +64,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
@@ -85,8 +88,8 @@ import org.primefaces.component.datatable.DataTable;
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.1
  */
 @Named
 @ViewScoped
@@ -141,6 +144,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+    
+    @Inject
+    private SellerService sellerService;
+
 
     private ServiceInstance selectedServiceInstance;
 
@@ -526,6 +533,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                 }
                 serviceInstance.setQuantity(quantity);
+                if (BooleanUtils.isTrue(serviceInstance.getAutoEndOfEngagement())) {
+                    serviceInstance.setEndAgreementDate(serviceInstance.getSubscribedTillDate());
+                }
                 serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                 serviceInstances.add(serviceInstance);
                 serviceTemplates.remove(serviceTemplate);
@@ -1044,6 +1054,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void updateSubscribedTillDate() {
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
+    
+    /**
+     * Auto update end of engagement date.
+     */
+    public void  autoUpdateEndOfEngagementDate() {
+        entity.autoUpdateEndOfEngagementDate();
+    }
 
     /**
      * Copy subscription renewal information from offer
@@ -1060,4 +1077,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
 		return (si == null || si.isEmpty()) ? true : false;
 	}
+    
+    public List<Seller> listSellers() {
+        if(entity.getOffer() != null) {
+            offerTemplateService.retrieveIfNotManaged(entity.getOffer());
+            if(entity.getOffer().getSellers().size() > 0) {
+                return entity.getOffer().getSellers();
+            } else {
+                return sellerService.list();
+            }
+        } else {
+            return new ArrayList<Seller>();
+        }
+    }
 }

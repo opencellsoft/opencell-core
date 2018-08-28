@@ -35,6 +35,8 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    private String taxScriptScode;
 
     /**
      * Instantiates a new invoice sub category dto.
@@ -54,6 +56,9 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
         invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
         if (invoiceSubCategory.getAccountingCode() != null) {
             accountingCode = invoiceSubCategory.getAccountingCode().getCode();
+        }
+        if(invoiceSubCategory.getTaxScript() != null) {
+            taxScriptScode = invoiceSubCategory.getTaxScript().getCode();
         }
         customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
@@ -131,13 +136,18 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
         this.customFields = customFields;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
-    public String toString() {
-        return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode
-                + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
-    }
+	public String toString() {
+		return "InvoiceSubCategoryDto [invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions
+				+ ", customFields=" + customFields + ", taxScriptScode=" + taxScriptScode + "]";
+	}
+
+	public String getTaxScriptScode() {
+		return taxScriptScode;
+	}
+
+	public void setTaxScriptScode(String taxScriptScode) {
+		this.taxScriptScode = taxScriptScode;
+	}
 
 }

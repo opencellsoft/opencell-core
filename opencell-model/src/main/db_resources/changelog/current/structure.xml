@@ -635,6 +635,106 @@
 	            constraintName="uk_payment_gateway"
 	            tableName="ar_payment_gateway"/>	           
 	</changeSet>
+
+     <changeSet author="FranckValot" id="#3148_20180411 - Add new fields for crm">
+        <createTable tableName="crm_additional_details">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_additional_details_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="company_name" type="varchar(200)"/>
+            <column name="position" type="varchar(200)"/>
+            <column name="instant_messengers" type="varchar(2000)"/>
+        </createTable>
+        <createSequence sequenceName="crm_additional_details_seq" />
+        
+        <addColumn tableName="com_contact">
+            <column name="email" type="varchar(255)">
+        		<constraints nullable="false" />
+        	</column>
+            <column name="assistant_name" type="varchar(50)"/>
+            <column name="assistant_phone" type="varchar(15)"/>
+            <column name="position" type="varchar(200)"/>
+            <column name="company" type="varchar(200)"/>
+            <column name="phone" type="varchar(15)"/>
+            <column name="mobile" type="varchar(15)"/>
+            <column name="imported_from" type="varchar(50)"/>
+            <column name="imported_by" type="varchar(50)"/>
+            <column name="social_identifier" type="varchar(2000)"/>
+            <column name="is_vip" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="is_prospect" type="${type.boolean}" defaultValueNumeric="1"/>
+            <column name="website_url" type="varchar(255)"/>
+            <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="address_book_id" type="bigint"/>
+        </addColumn>
+		
+		<addUniqueConstraint columnNames="email" constraintName="com_contact_email" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact" />
+		
+		       
+        <createTable tableName="crm_address_book">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_address_book_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+        
+        <createSequence sequenceName="crm_address_book_seq" />
+
+        <createTable tableName="com_communication_entity">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_communication_entity_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="name" type="varchar(50)"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="type" type="varchar(50)"/>
+        </createTable>
+        
+        <createSequence sequenceName="com_communication_entity_seq" />
+
+        <addColumn tableName="crm_customer">
+            <column name="additional_details_id" type="bigint"/>
+            <column name="address_book_id" type="bigint"/>
+        </addColumn>
+        
+        <addColumn tableName="ar_customer_account">
+            <column name="crm_address_book_id" type="bigint" />
+        </addColumn>
+
+        <createTable tableName="com_campaign_crm_contact_tag">
+            <column name="campaign_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="tag" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="campaign_id, tag" constraintName="com_campaign_crm_contact_tag_pkey" tableName="com_campaign_crm_contact_tag" />
+
+        <addColumn tableName="adm_user">
+            <column name="crm_address_book_id" type="bigint" />
+        </addColumn>
+        
+        <createTable tableName="com_contact_tag">
+        	<column name="contact_id" type="bigint" />
+        	<column name="tag" type="varchar(100)"/>
+        </createTable>
+        <addPrimaryKey columnNames="contact_id, tag" constraintName="com_contact_tag_pkey" tableName="com_contact_tag" />
+        
+    	<dropColumn tableName="com_contact" columnName="contact_code"/>
+
+    </changeSet>
+
 	<changeSet id="perf_mediation_20180404" author="Wassim" dbms="postgresql">
 		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}rating_edr_index</sql>
         <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>
@@ -1273,22 +1373,6 @@
     	</addColumn>
     </changeSet>
     
-    <changeSet author="MounirBahije" id="#3493_20180706">
-        <createTable tableName="crm_custom_field_tmpl_val_pos">
-            <column name="customfieldtemplate_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="gui_position" type="varchar(255)" defaultValue="0" >
-                <constraints nullable="false" />
-            </column>
-            <column name="key" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="label" type="varchar(255)"/>
-        </createTable>
-        <addPrimaryKey columnNames="customfieldtemplate_id, key" constraintName="crm_custom_field_tmpl_val_pos_pkey" tableName="crm_custom_field_tmpl_val_pos" />
-    </changeSet>
-    
     <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
      	<addColumn tableName="crm_provider">
     		<column name="rum_prefix" type="varchar(15)" />
@@ -1302,6 +1386,14 @@
             <column name="cf_protectable" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+
+    <changeSet id="#3575_20180803 - Customer No Sequence" author="EdwardLegaspi">
+     	<addColumn tableName="crm_provider">
+    		<column name="cust_no_prefix" type="varchar(15)" />
+            <column name="cust_no_sequence_size" type="bigint" />
+			<column name="cust_no_current_sequence_nb" type="bigint" />
+     	</addColumn>
+     </changeSet>
 
     <changeSet id="#3217_20180725 - Field migration from Customer, BA and CA to AccountEntity " author="AbdelmounaimAkadid">
         <addColumn tableName="account_entity">
@@ -1343,6 +1435,92 @@
         <dropColumn tableName="ar_customer_account" columnName="phone" />
     </changeSet>
 
+    <changeSet id="#3545_20180725" author="MounirBahije">
+        <addColumn tableName="billing_invoice_type">
+            <column name="script_instance_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="billing_invoice_type" constraintName="fk_invoice_type_script_instance" deferrable="false" initiallyDeferred="false"
+             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance"  />
+    </changeSet>
+    
+    <changeSet id="#3455_26062018" author="SaidRamli">
+        <addColumn tableName="billing_subscription">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_service_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="cat_offer_template">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+         <addColumn tableName="billing_service_instance">
+            <column name="auto_end_of_engagement" type="${type.boolean}" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#3508_20180806 - Invoice Sequence entity" author="AbdelmounaimAkadid">
+        <createSequence sequenceName="bill_seq_invoice_seq" />
+        <createTable tableName="billing_seq_invoice">
+            <column name="id" type="bigint" autoIncrement="${id.auto}" />
+            <column name="sequence_size" type="int4" />
+            <column name="current_invoice_nb" type="bigint" />
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+        </createTable>
+        <addPrimaryKey columnNames="id" constraintName="pk_billing_seq_invoice" tableName="billing_seq_invoice" />
+        <addColumn tableName="billing_seq_invtyp_sell">
+            <column name="invoice_sequence_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_sequence_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_billing_seq_invtyp_sell_billing_seq_invoice" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_seq_invoice" />
+        <addColumn tableName="billing_invoice_type">
+            <column name="invoice_sequence_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_sequence_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_billing_seq_invoice" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_seq_invoice" />
+                                 
+        <addColumn tableName="billing_subscription">
+            <column name="seller_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+                                 
+        <addColumn tableName="billing_invoice">
+            <column name="seller_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+        
+         
+     </changeSet>
+
+    <changeSet id="#2741_20170816" author="EdwardLegaspi">
+    	<addColumn tableName="billing_invoice_sub_cat">
+    		<column name="tax_script_instance_id" type="bigint"></column>
+    	</addColumn>
+    	<addColumn tableName="billing_invoice_type">
+    		<column name="tax_script_instance_id" type="bigint"></column>
+    	</addColumn>
+    </changeSet>
+    
+     <changeSet id="#2741_20170816 Convert InvoiceType to BusinessCFEntity" author="EdwardLegaspi">
+     	<addColumn tableName="billing_invoice_type">
+     		<column name="uuid" type="varchar(60)"></column>
+     		<column name="cf_values" type="${type.json}"/>   
+     	</addColumn>
+     	<sql><![CDATA[update billing_invoice_type set uuid=concat('InvoiceType-',code)]]></sql>
+     	<addNotNullConstraint tableName="billing_invoice_type" columnName="uuid"/>
+     </changeSet>
+     
     <changeSet id="#3464_20180522" author="AndriusKarpavicius">
         <addColumn tableName="crm_provider">
             <column name="cf_values_accum" type="${type.json}"></column>
@@ -1425,6 +1603,10 @@
         <addColumn tableName="dwh_report_extract">
             <column name="cf_values_accum" type="${type.json}"></column>
         </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        
         <sql>update ${db.schema.adapted}crm_provider set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}account_entity set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}adm_user set cf_values_accum=cf_values</sql>
@@ -1452,6 +1634,7 @@
         <sql>update ${db.schema.adapted}ar_payment_gateway set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}billing_billing_run set cf_values_accum=cf_values</sql>
         <sql>update ${db.schema.adapted}dwh_report_extract set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_type set cf_values_accum=cf_values</sql>
     </changeSet>
     
     <changeSet id="#3464_20180701" author="AndriusKarpavicius">
@@ -1504,6 +1687,7 @@
         </addColumn>  
         <addColumn tableName="billing_rated_transaction">
             <column name="charge_instance_id" type="bigint" />
+            <column name="seller_id" type="bigint" />
         </addColumn>
         <addColumn tableName="billing_cycle">     
             <column name="due_date_delay_el_sp" type="varchar(2000)" />
@@ -1514,20 +1698,24 @@
         </addColumn>
         <addDefaultValue columnName="rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
         <addDefaultValue columnName="invoice_rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
-        <addDefaultValue columnName="rating_rounding" tableName="crm_provider" defaultValueNumeric="2"/>
-        <addDefaultValue columnName="invoice_rounding" tableName="crm_provider" defaultValueNumeric="2"/>
         <addColumn tableName="billing_billing_account">
             <column name="trading_language_code" type="varchar(3)"/>
         </addColumn>        
         <addColumn tableName="billing_wallet_operation">
             <column name="tax_id" type="bigint"/>
-        </addColumn>
-        
-        
+        </addColumn>   
+        <sql>update ${db.schema.adapted}crm_provider set rounding_mode='NEAREST' where rounding_mode is null</sql>
+        <sql>update ${db.schema.adapted}crm_provider set invoice_rounding_mode='NEAREST' where invoice_rounding_mode is null</sql>
+        <sql>update ${db.schema.adapted}crm_provider set rating_rounding=2 where rating_rounding is null</sql>
+        <sql>update ${db.schema.adapted}crm_provider set invoice_rounding=2 where invoice_rounding is null</sql>
+        <addNotNullConstraint tableName="crm_provider" columnName="rounding_mode" columnDataType="varchar(50)"/>
+        <addNotNullConstraint tableName="crm_provider" columnName="invoice_rounding_mode" columnDataType="varchar(50)"/>
+        <addNotNullConstraint tableName="crm_provider" columnName="rating_rounding" columnDataType="int4"/>
+        <addNotNullConstraint tableName="crm_provider" columnName="invoice_rounding" columnDataType="int4"/>
     </changeSet>
     
     <changeSet id="#3577_20180727_migration_P" author="AndriusKarpavicius" dbms="postgresql">
-        <sql>update ${db.schema.adapted}billing_rated_transaction set charge_instance_id = billing_wallet_operation.charge_instance_id from ${db.schema.adapted}billing_wallet_operation where
+        <sql>update ${db.schema.adapted}billing_rated_transaction set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id from ${db.schema.adapted}billing_wallet_operation where
             billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id and
             billing_rated_transaction.wallet_operation_id is not null
         </sql>
@@ -1538,8 +1726,13 @@
     </changeSet>
 
     <changeSet id="#3577_20180727_migration_M" author="AndriusKarpavicius" dbms="mysql">
-        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id set charge_instance_id = billing_wallet_operation.charge_instance_id where billing_rated_transaction.wallet_operation_id is not null</sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id where billing_rated_transaction.wallet_operation_id is not null</sql>
         <sql>update ${db.schema.adapted}billing_billing_account join ${db.schema.adapted}billing_trading_language on billing_billing_account.trading_language_id=billing_trading_language.id join adm_language on billing_trading_language.language_id = adm_language_id set trading_language_code = adm_language.language_code</sql>
+    </changeSet>
+    
+    <changeSet id="#3577_20180827" author="AndriusKarpavicius">
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="seller_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="seller_id" columnDataType="bigint"/>
     </changeSet>
     
 </databaseChangeLog> 
