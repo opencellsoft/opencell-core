@@ -82,8 +82,8 @@ public class YouSignApi extends BaseApi {
        
         SignProcedureResponseDto result = new SignProcedureResponseDto();
         
-        final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
-        final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+        final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+        final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
         
         try {
             boolean withInternalMember = postData.isWithInternalMember();
@@ -135,7 +135,7 @@ public class YouSignApi extends BaseApi {
     
     private SignProcedureConfigDto getWebhookConfig() throws MeveoApiException {
         
-        String url = this.getMondatoryYousignParam(YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY);
+        String url = this.getMandatoryYousignParam(YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY);
         List<SignEventWebhookDto> webkooks = new ArrayList<>();
         webkooks.add(new SignEventWebhookDto(url, "PUT"));
         
@@ -187,8 +187,8 @@ public class YouSignApi extends BaseApi {
         
         SignFileResponseDto result = new SignFileResponseDto();
         try {
-            final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
-            final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+            final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+            final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/files/".concat(id).concat("/download")));
@@ -221,8 +221,8 @@ public class YouSignApi extends BaseApi {
         
         SignProcedureResponseDto result = new SignProcedureResponseDto();
         try {
-            final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
-            final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+            final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+            final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target( YOU_SIGN_REST_URL.concat("/procedures/".concat(id)) );
@@ -267,10 +267,10 @@ public class YouSignApi extends BaseApi {
      * @return the mondatory yousign param
      * @throws MeveoApiException the meveo api exception
      */
-    private String getMondatoryYousignParam (String paramKey) throws MeveoApiException {
-        String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, null);
+    private String getMandatoryYousignParam (String paramKey) throws MeveoApiException {
+        String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, "");
         if (StringUtils.isEmpty(paramValue)) {
-            throw new MeveoApiException(" Mondatory Yousign param not configured : " + paramKey); 
+            throw new MeveoApiException(" Mandatory Yousign param not configured : " + paramKey); 
         }
         return paramValue;
     }
@@ -340,7 +340,7 @@ public class YouSignApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      */
     private SignMemberRequestDto getInternalMember() throws MeveoApiException {
-        String internalMemberId = this.getMondatoryYousignParam("yousign.api.user");
+        String internalMemberId = this.getMandatoryYousignParam("yousign.api.user");
         return new SignMemberRequestDto(internalMemberId);
     }
 
