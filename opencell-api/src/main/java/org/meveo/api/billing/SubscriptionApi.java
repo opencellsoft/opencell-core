@@ -1736,4 +1736,27 @@ public class SubscriptionApi extends BaseApi {
         }
         return result;
     }
+    
+    /**
+	 * Activates all instantiated services of a given subscription.
+	 * 
+	 * @param subscriptionCode
+	 *            The subscription code
+     * @throws BusinessException 
+	 * @throws MissingParameterException
+	 */
+	public void activateSubscription(String subscriptionCode) throws MeveoApiException, BusinessException {
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+		}
+
+		handleMissingParameters();
+
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+		}
+		
+		subscriptionService.activateInstantiatedService(subscription);
+	}
 }

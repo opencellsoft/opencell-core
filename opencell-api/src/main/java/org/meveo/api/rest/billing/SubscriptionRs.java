@@ -300,5 +300,9 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/rate")
     RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData);
+    
+    @POST
+    @Path("/activate")
+    ActionStatus activate(String subscriptionCode);
 
 }
