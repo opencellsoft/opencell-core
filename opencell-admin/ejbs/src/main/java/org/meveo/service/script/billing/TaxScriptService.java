@@ -20,7 +20,6 @@ import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
- * @created 16 Aug 2017
  */
 @Singleton
 @Startup

@@ -843,13 +843,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	}
 	
 	/**
-     * Find a list of service instance by subscription entity, service template codes and service instance status list.
-     * 
-     * @param codes the service template codes
-     * @param subscription the subscription entity
-     * @param statuses service instance statuses
-     * @return the ServiceInstance list found
-     */
+	 * Find a list of service instance by subscription entity, service template codes and service instance status list.
+	 * 
+	 * @param codes the service template codes
+	 * @param subscriptionCode the code of subscription entity
+	 * @param statuses service instance statuses
+	 * @return the ServiceInstance list found
+	 */
     @SuppressWarnings("unchecked")
 	public List<ServiceInstance> findByCodeSubscriptionAndStatus(List<String> codes, String subscriptionCode, InstanceStatusEnum... statuses) {
         List<ServiceInstance> serviceInstances = null;

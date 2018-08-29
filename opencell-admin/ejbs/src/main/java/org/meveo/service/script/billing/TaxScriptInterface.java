@@ -9,7 +9,6 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 
 /**
  * @author Edward P. Legaspi
- * @created 16 Aug 2017
  */
 public interface TaxScriptInterface {
 
@@ -35,7 +34,7 @@ public interface TaxScriptInterface {
 	/**
 	 * Computes the tax aggregate map.
 	 * 
-	 * @param methodContext values: invoice, Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap, SubCategoryInvoiceAgregate
+	 * @param methodContext values: invoice, Map&lt;Long, CategoryInvoiceAgregate&gt; catInvoiceAgregateMap, SubCategoryInvoiceAgregate
 	 * @return
 	 * @throws BusinessException
 	 */

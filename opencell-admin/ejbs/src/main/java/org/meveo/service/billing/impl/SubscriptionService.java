@@ -332,5 +332,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
+    
+	public void activateInstantiatedService(Subscription sub) throws BusinessException {
+		for (ServiceInstance si : sub.getServiceInstances()) {
+			if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+				serviceInstanceService.serviceActivation(si, null, null);
+			}
+		}
+	}
 
 }

@@ -1521,4 +1521,11 @@
      	<addNotNullConstraint tableName="billing_invoice_type" columnName="uuid"/>
      </changeSet>
      
+     <changeSet id="#2449_20180822" author="EdwardPLegaspi">
+     	<renameColumn tableName="cat_price_plan_matrix" oldColumnName="rating_el" newColumnName="rating_el_without_tax"/>
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="rating_el_with_tax" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+     
 </databaseChangeLog>

@@ -192,6 +192,9 @@
                         <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithoutTax']} EL" field="minimumAmountWithoutTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
                         <hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithTax']} EL" field="minimumAmountWithTaxEl" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
 
+						<hftl:formField rendered="#{appProvider.entreprise}" label="#{messages['pricePlanMatrix.ratingElWithoutTax']}" field="ratingELWithoutTax" />
+						<hftl:formField rendered="#{!appProvider.entreprise}" label="#{messages['pricePlanMatrix.ratingElWithTax']}" field="ratingELWithTax" />
+                    
                     <hftl:formField id="scriptSelectId"
     							label="#{messages['pricePlanMatrix.scriptCode']}"
     							field="scriptInstance" valueLabelField="code" required="false"

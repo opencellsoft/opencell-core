@@ -15,8 +15,7 @@ import com.google.common.io.BaseEncoding;
 /**
  * Base class for external tax scripts.
  * 
- * @author Edward P. Legaspi 16
- * @created 16 Aug 2017
+ * @author Edward P. Legaspi
  */
 public class TaxScript extends ModuleScript implements TaxScriptInterface {
 

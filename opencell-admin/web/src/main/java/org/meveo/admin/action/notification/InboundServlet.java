@@ -126,6 +126,12 @@ public class InboundServlet extends HttpServlet {
                     res.addHeader(headerName, inReq.getResponseHeaders().get(headerName));
                 }
 
+                if (inReq.getResponseStatus() != null) {
+                    res.setStatus(inReq.getResponseStatus());
+                } else {
+                    res.setStatus(200);
+                }
+
                 if (inReq.getResponseBody() != null) {
                     try (PrintWriter out = res.getWriter()) {
                         out.print(inReq.getResponseBody());
@@ -133,11 +139,6 @@ public class InboundServlet extends HttpServlet {
                         log.error("Failed to produce the response", e);
                         res.setStatus(500);
                     }
-                }
-                if (inReq.getResponseStatus() != null) {
-                    res.setStatus(inReq.getResponseStatus());
-                } else {
-                    res.setStatus(200);
                 }
             }
 
