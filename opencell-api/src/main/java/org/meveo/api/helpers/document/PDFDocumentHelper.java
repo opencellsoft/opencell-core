@@ -6,42 +6,54 @@ import java.io.FileNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.meveo.api.dto.document.PDFContractRequestDto;
+import org.meveo.api.dto.document.PDFDocumentRequestDto;
 import org.meveo.api.dto.document.PDFTemplateDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A business delegate class to generate pdf contract file.
+ * A business delegate class to generate pdf document file.
  * This will prevent the client code from dealing with the implementation or the libs used to achieve the said pdf file generation.
  * @author Said Ramli
  */
-public class PDFContractHelper {
+public class PDFDocumentHelper {
     
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(PDFContractHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PDFDocumentHelper.class);
     
     /**
-     * Generate PDF contract.
+     * Generate PDF document.
      *
      * @param postData the post data
      * @return the string
      * @throws Exception the exception
      */
-    public static String generatePDFContract(PDFContractRequestDto postData) throws Exception {
+    public static String generatePDF(PDFDocumentRequestDto postData, String rootDir) throws Exception {
         
-        String contractDir = StringUtils.defaultIfEmpty(postData.getContractDestinationDir(), ".");
-        String contarctNamePrefix = StringUtils.defaultIfEmpty(postData.getContarctNamePrefix(), "contract");
+        String documentDir = postData.getDocumentDestinationDir();
+        if (!postData.isAbsolutePaths()) {
+            documentDir = rootDir + documentDir;
+        }
+        if ( !new File(documentDir).exists() ) {
+            throw new FileNotFoundException(documentDir + " (No such directory) ");
+        }
+        String documentNamePrefix = StringUtils.defaultIfEmpty(postData.getDocumentNamePrefix(), "doc");
         
         try (PDDocument mainTemplateDoc = new PDDocument() ) {
             
-            PDFBuilder pdfBuilder = PDFBuilder.newInstance(contractDir, contarctNamePrefix, mainTemplateDoc);
+            
+            PDFBuilder pdfBuilder = PDFBuilder.newInstance(documentDir, documentNamePrefix, mainTemplateDoc);
             String pdfFilePath = null;
             
              //  postData.getListTemplates size should be already verified
             for (PDFTemplateDto templateDto : postData.getListTemplates()) {
                 
-                File templateFile = new File(templateDto.getTemplatePath());
+                String templatePath = templateDto.getTemplatePath();
+                if (!postData.isAbsolutePaths()) {
+                    templatePath = rootDir +  templatePath;
+                }
+                
+                File templateFile = new File(templatePath);
                 try ( PDDocument templateDoc = PDDocument.load(templateFile) ) {
                     
                     pdfBuilder.withFormFieds(templateDto.getTemplateFields())
@@ -55,7 +67,7 @@ public class PDFContractHelper {
             return pdfFilePath;
             
         } catch (Exception e) {
-            LOG.error("error on generatePDFContract {} ", e.getMessage(), e);
+            LOG.error("error on generatePDF {} ", e.getMessage(), e);
             throw e;
         }
     }
@@ -71,7 +83,7 @@ public class PDFContractHelper {
         
         File pdfFile = new File(pdfFilePath);
         if (!pdfFile.exists()) {
-            throw new FileNotFoundException("Contract PDF was not found ! pdfFilePath :  " + pdfFilePath);
+            throw new FileNotFoundException("PDF document not found ! pdfFilePath :  " + pdfFilePath);
         }
         try (FileInputStream fileInputStream = new FileInputStream(pdfFile)) {
             long fileSize = pdfFile.length();
@@ -82,7 +94,7 @@ public class PDFContractHelper {
             fileInputStream.read(fileBytes);
             return fileBytes;
         } catch (Exception e) {
-            LOG.error("Error reading contract PDF file {} contents", pdfFilePath, e);
+            LOG.error("Error reading PDF document file {} contents", pdfFilePath, e);
         } 
         return null;
     }
