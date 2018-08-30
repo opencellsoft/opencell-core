@@ -30,6 +30,18 @@ public class SignFileResponseDto extends BaseResponse {
         this.content = content;
     }
     
+    /**
+     * Instantiates a new sign file response dto.
+     *
+     * @param id the id
+     * @param name the name
+     * @param content the content
+     */
+    public SignFileResponseDto (String id,String name, byte[] content) {
+       this(id, content);
+       this.name = name;
+    }
+    
     /** The id. */
     private String id;
     
