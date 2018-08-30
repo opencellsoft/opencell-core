@@ -23,7 +23,7 @@ import javax.inject.Named;
 
 @Named
 @ConversationScoped
-public class DdRequestLOTListBean extends DdRequestLOTBean {
+public class DdRequestLOTListBean extends DDRequestLOTBean {
 
     private static final long serialVersionUID = -3037867704912788049L;
 }

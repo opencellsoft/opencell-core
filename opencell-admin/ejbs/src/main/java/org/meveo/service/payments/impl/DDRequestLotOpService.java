@@ -26,7 +26,7 @@ import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.payments.DDRequestFileFormatEnum;
+import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -35,15 +35,15 @@ import org.meveo.service.base.PersistenceService;
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
 	@SuppressWarnings("unchecked")
-	public List<DDRequestLotOp> getDDRequestOps(DDRequestFileFormatEnum fileFormat) {
+	public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder) {
 		List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
 
 		try {
 			ddrequestOps = (List<DDRequestLotOp>) getEntityManager() 
 					.createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:status and "
-							+ "p.fileFormat=:fileFormatIN")
+							+ "p.ddRequestBuilder=:builderIN")
 					.setParameter("status", DDRequestOpStatusEnum.WAIT)
-					.setParameter("fileFormatIN", fileFormat)
+					.setParameter("builderIN", ddRequestBuilder)
 					.getResultList();
 		} catch (Exception e) {
 			log.error("failed to get DDRequestOps",e);

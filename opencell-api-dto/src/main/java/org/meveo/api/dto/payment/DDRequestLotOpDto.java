@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AuditableEntityDto;
-import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
@@ -45,7 +44,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     
     /** The file format. */
     @XmlElement(required = true)
-    private DDRequestFileFormatEnum fileFormat;
+    private String paymentGatewayCode;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -66,7 +65,7 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.ddrequestOp = ddrequestLotOp.getDdrequestOp();
         this.status = ddrequestLotOp.getStatus();
         this.errorCause = ddrequestLotOp.getErrorCause();
-        this.fileFormat = ddrequestLotOp.getFileFormat();
+      //  this.paymentGatewayCode = ddrequestLotOp.getPaymentGateway() != null ? ddrequestLotOp.getPaymentGateway().getCode() : null;
     }
 
     /**
@@ -160,27 +159,24 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
-     * Gets the file format.
-     *
-     * @return the file format
+     * @return the paymentGatewayCode
      */
-    public DDRequestFileFormatEnum getFileFormat() {
-        return fileFormat;
+    public String getPaymentGatewayCode() {
+        return paymentGatewayCode;
     }
 
     /**
-     * Sets the file format.
-     *
-     * @param fileFormat the new file format
+     * @param paymentGatewayCode the paymentGatewayCode to set
      */
-    public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
-        this.fileFormat = fileFormat;
+    public void setPaymentGatewayCode(String paymentGatewayCode) {
+        this.paymentGatewayCode = paymentGatewayCode;
     }
 
     @Override
     public String toString() {
         return "DDRequestLotOpDto [fromDueDate=" + fromDueDate + ", toDueDate=" + toDueDate + ", ddrequestOp=" + ddrequestOp + ", status=" + status + ", errorCause=" + errorCause
-                + ", fileFormat=" + fileFormat + "]";
+                + ", paymentGatewayCode=" + paymentGatewayCode + "]";
     }
 
+    
 }

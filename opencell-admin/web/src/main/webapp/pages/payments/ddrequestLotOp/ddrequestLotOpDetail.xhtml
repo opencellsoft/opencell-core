@@ -23,11 +23,17 @@
 			</p:breadCrumb>
 		</h:form>
 		
+		<hftl:entityPopup id="dDRequestBuilderPopup" header="#{messages['dDRequestBuilder.title']}" backingBean="#{dDRequestBuilderBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{ddRequestLotOpBean.entity.ddRequestBuilder}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
+			updateField=":FormId:builderSelectId :FormId:builderSelectId_text">
+		</hftl:entityPopup>
+		
 		<hftl:formPanel formId="FormId"  label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}">
 		 
 			<hftl:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate" required="true" isMessage="true"/>
 			<hftl:formField label="#{messages['ddrequestLotOp.toDueDate']}"  field="toDueDate" required="true" isMessage="true"/> 
-			<hftl:formField label="#{messages['ddrequestLot.fileFormat']}"  field="fileFormat" required="true" isMessage="true"/> 
+			<hftl:formField label="#{messages['dDRequestBuilder.title']}"  field="ddRequestBuilder" required="true" id="builderSelectId" valueLabelField="code" popup="true" popupId="dDRequestBuilderPopup" /> 
 			<hftl:formField label="#{messages['ddrequestLotOp.status']}" field="status"  isMessage="true" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
 			<hftl:formField label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" rendered="#{not empty ddRequestLotOpBean.entity.id}" edit="false"/>
 			 

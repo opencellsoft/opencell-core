@@ -10,7 +10,7 @@ import org.meveo.service.script.Script;
  * The Class PaymentScript.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 public class PaymentScript extends Script implements PaymentScriptInterface {
 
@@ -125,6 +125,7 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     /** The Constant RESULT_BANK_NAME. */
     public static final String RESULT_BANK_NAME = "RESULT_BANK_NAME";
 
+
     @Override
     public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {
     }
@@ -163,7 +164,5 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     
     @Override
     public void checkMandat(Map<String, Object> methodContext) throws BusinessException {
-    }
-    
-    
+    }   
 }

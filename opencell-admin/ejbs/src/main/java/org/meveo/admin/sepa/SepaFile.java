@@ -3,9 +3,7 @@ package org.meveo.admin.sepa;
 import java.io.File;
 import java.math.RoundingMode;
 import java.util.Date;
-import java.util.Map;
 
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.jaxb.Pain008;
@@ -34,89 +32,83 @@ import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.LclInstrm;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.SvcLvl;
 import org.meveo.admin.util.ArConfig;
-import org.meveo.api.dto.payment.MandatInfoDto;
-import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.JAXBUtils;
-import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.payments.impl.GatewayPaymentInterface;
-import org.meveo.util.ApplicationProvider;
-import org.meveo.util.PaymentGatewayClass;
+import org.meveo.service.payments.impl.DDRequestBuilderInterface;
+import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author anasseh
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  *
  */
-@PaymentGatewayClass
-public class SepaFile implements GatewayPaymentInterface {
+@DDRequestBuilderClass
+public class SepaFile implements DDRequestBuilderInterface { 
     Logger log = LoggerFactory.getLogger(SepaFile.class);
 
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
+    @Override
+    public String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+        try {
+            ParamBean paramBean =  ParamBean.getInstanceByProvider(appProvider.getCode());
+            String fileName = ArConfig.getDDRequestFileNamePrefix() + ddRequestLot.getId();
+            fileName = fileName + "_" + appProvider.getCode();
+            fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
 
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
+            String outputDir = paramBean.getChrootDir(appProvider.getCode());
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
+            outputDir = outputDir + File.separator + ArConfig.getDDRequestOutputDirectory();
+            outputDir = outputDir.replaceAll("\\..", "");
 
-    public String getDDFileName(DDRequestLOT ddRequestLot) {
-        String fileName = ArConfig.getDDRequestFileNamePrefix() + ddRequestLot.getId();
-        fileName = fileName + "_" + appProvider.getCode();
-        fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
-
-        String outputDir = paramBeanFactory.getChrootDir();
-
-        outputDir = outputDir + File.separator + ArConfig.getDDRequestOutputDirectory();
-        outputDir = outputDir.replaceAll("\\..", "");
-
-        log.info("DDRequest output directory=" + outputDir);
-        File dir = new File(outputDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        return outputDir + File.separator + fileName;
-    }
-
-    public void exportDDRequestLot(DDRequestLOT ddRequestLot) throws Exception {
-        Pain008 document = new Pain008();
-        CstmrDrctDbtInitn Message = new CstmrDrctDbtInitn();
-        document.setCstmrDrctDbtInitn(Message);
-        document.setXmlns("urn:iso:std:iso:20022:tech:xsd:pain.008.001.02");
-        addHeader(Message, ddRequestLot);
-        for (DDRequestItem ddrequestItem : ddRequestLot.getDdrequestItems()) {
-            if (!ddrequestItem.hasError()) {
-                addPaymentInformation(Message, ddrequestItem);
+            log.info("DDRequest output directory=" + outputDir);
+            File dir = new File(outputDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
+            return outputDir + File.separator + fileName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(e.getMessage());
         }
-        String schemaLocation = paramBeanFactory.getInstance().getProperty("sepa.schemaLocation.pain008",
-            "https://github.com/w2c/sepa-sdd-xml-generator/blob/master/validation_schemes/pain.008.001.02.xsd");
-        JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()), schemaLocation);
+    }
+
+    @Override
+    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+        try {
+            ParamBean paramBean =  ParamBean.getInstanceByProvider(appProvider.getCode());
+            Pain008 document = new Pain008();
+            CstmrDrctDbtInitn message = new CstmrDrctDbtInitn();
+            document.setCstmrDrctDbtInitn(message);
+            document.setXmlns("urn:iso:std:iso:20022:tech:xsd:pain.008.001.02");
+            addHeader(message, ddRequestLot,appProvider);
+            for (DDRequestItem ddrequestItem : ddRequestLot.getDdrequestItems()) {
+                if (!ddrequestItem.hasError()) {
+                    addPaymentInformation(message, ddrequestItem,appProvider);
+                }
+            }
+            String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008",
+                "https://github.com/w2c/sepa-sdd-xml-generator/blob/master/validation_schemes/pain.008.001.02.xsd");
+            JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()), schemaLocation);
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
 
     }
 
-    private void addHeader(CstmrDrctDbtInitn Message, DDRequestLOT ddRequestLOT) throws Exception {
+    private void addHeader(CstmrDrctDbtInitn message, DDRequestLOT ddRequestLOT,Provider appProvider) throws Exception {
         GrpHdr groupHeader = new GrpHdr();
-        Message.setGrpHdr(groupHeader);
+        message.setGrpHdr(groupHeader);
         groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + "-" + ddRequestLOT.getId());
         groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
         groupHeader.setNbOfTxs(ddRequestLOT.getDdrequestItems().size());
@@ -127,14 +119,14 @@ public class SepaFile implements GatewayPaymentInterface {
 
     }
 
-    private void addPaymentInformation(CstmrDrctDbtInitn Message, DDRequestItem dDRequestItem) throws Exception {
+    private void addPaymentInformation(CstmrDrctDbtInitn Message, DDRequestItem dDRequestItem,Provider appProvider) throws Exception {
 
         log.info("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
-
+        ParamBean paramBean =  ParamBean.getInstanceByProvider(appProvider.getCode());
         PmtInf PaymentInformation = new PmtInf();
         Message.getPmtInf().add(PaymentInformation);
         PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + "-" + dDRequestItem.getId());
-        PaymentInformation.setPmtMtd(paramBeanFactory.getInstance().getProperty("sepa.PmtMtd", "TRF"));
+        PaymentInformation.setPmtMtd(paramBean.getProperty("sepa.PmtMtd", "TRF"));
         PaymentInformation.setNbOfTxs(1);
         PaymentInformation.setCtrlSum(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
         PmtTpInf PaymentTypeInformation = new PmtTpInf();
@@ -144,7 +136,7 @@ public class SepaFile implements GatewayPaymentInterface {
         ServiceLevel.setCd("SEPA");
         LclInstrm LocalInstrument = new LclInstrm();
         PaymentTypeInformation.setLclInstrm(LocalInstrument);
-        LocalInstrument.setCd(paramBeanFactory.getInstance().getProperty("sepa.LclInstrm", "CORE"));
+        LocalInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", "CORE"));
         PaymentTypeInformation.setSeqTp("FRST");
 
         PaymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
@@ -222,73 +214,5 @@ public class SepaFile implements GatewayPaymentInterface {
         DebtorAccount.setId(Identification);
 
     }
-
-    @Override
-    public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
-            CreditCardTypeEnum cardType) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
-            CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void cancelPayment(String paymentID) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
-            CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    /*
-     * private String enleverAccent(String value) { if (StringUtils.isBlank(value)) { return value; } return Normalizer.normalize(value,
-     * Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", ""); }
-     */
 
 }

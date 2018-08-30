@@ -25,7 +25,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.DDRequestFileFormatEnum;
+import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.MatchingAmount;
@@ -67,7 +67,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
     @Inject
     private MatchingCodeService matchingCodeService;
 
-    public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestFileFormatEnum ddRequestFileFormatEnum) throws BusinessEntityException, Exception {
+    public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestBuilder ddRequestBuilder) throws BusinessEntityException, Exception {
         log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
 
 		if (fromDueDate == null) {
@@ -89,7 +89,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         DDRequestLOT ddRequestLOT = new DDRequestLOT();
-        ddRequestLOT.setFileFormat(ddRequestFileFormatEnum);
+        ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
         ddRequestLOT.setInvoicesNumber(Integer.valueOf(recordedInvoices.size()));
         dDRequestLOTService.create(ddRequestLOT);
         List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();

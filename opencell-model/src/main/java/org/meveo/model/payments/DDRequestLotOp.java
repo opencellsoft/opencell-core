@@ -68,9 +68,9 @@ public class DDRequestLotOp extends AuditableEntity {
     @Size(max = 255)
     private String errorCause;
 
-    @Column(name = "file_format")
-    @Enumerated(EnumType.STRING)
-    private DDRequestFileFormatEnum fileFormat;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ddrequest_builder_id")
+    private DDRequestBuilder ddRequestBuilder;
 
     /**
      * @return the fromDueDate
@@ -151,17 +151,19 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
-     * @return the fileFormat
+     * @return the ddRequestBuilder
      */
-    public DDRequestFileFormatEnum getFileFormat() {
-        return fileFormat;
+    public DDRequestBuilder getDdRequestBuilder() {
+        return ddRequestBuilder;
     }
 
     /**
-     * @param fileFormat the fileFormat to set
+     * @param ddRequestBuilder the ddRequestBuilder to set
      */
-    public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
-        this.fileFormat = fileFormat;
+    public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
+        this.ddRequestBuilder = ddRequestBuilder;
     }
 
+   
+   
 }

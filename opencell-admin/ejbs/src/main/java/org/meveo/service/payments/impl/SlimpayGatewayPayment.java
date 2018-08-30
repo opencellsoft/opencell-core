@@ -41,7 +41,7 @@ import com.slimpay.hapiclient.util.EntityConverter;
 /**
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  *
  */
 @PaymentGatewayClass
@@ -368,12 +368,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
-    }
+    }   
 }
