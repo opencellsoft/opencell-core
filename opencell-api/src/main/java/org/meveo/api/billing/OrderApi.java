@@ -826,13 +826,13 @@ public class OrderApi extends BaseApi {
             }
             
             // do the query in 1 go
-			if (!serviceCodesForActivation.isEmpty()) {
+			if (!serviceCodesForActivation.isEmpty()) {				
+				boolean found = false;
+				
 				// check if service is activated on a given subscription
 				Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode());
 
-				boolean found = false;
-				
-				if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
+				if (subscription != null && subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
 					for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
 						if (serviceCodesForActivation.contains(serviceInstance.getCode()) && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
 							found = true;
