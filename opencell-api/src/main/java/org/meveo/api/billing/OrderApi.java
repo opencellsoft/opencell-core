@@ -837,11 +837,13 @@ public class OrderApi extends BaseApi {
 
 				boolean found = false;
 				
-				if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
-					for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-						if (serviceCodesForActivation.contains(serviceInstance.getCode()) && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-							found = true;
-							break;
+				if(subscription != null) {
+					if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
+						for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+							if (serviceCodesForActivation.contains(serviceInstance.getCode()) && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+								found = true;
+								break;
+							}
 						}
 					}
 				}
