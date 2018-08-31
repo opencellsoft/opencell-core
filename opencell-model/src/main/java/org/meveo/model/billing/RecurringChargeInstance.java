@@ -92,7 +92,7 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.recurringChargeTemplate = recurringChargeTemplate;
         this.setQuantity(quantity == null ? BigDecimal.ONE : quantity);
         this.setSubscription(subscription);
-        this.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        this.setSeller(subscription.getSeller());
         this.country = tradingCountry;
         this.currency = tradingCurrency;
     }

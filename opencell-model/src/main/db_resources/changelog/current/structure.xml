@@ -1500,8 +1500,18 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+  
+        <addColumn tableName="billing_product_instance">
+            <column name="seller_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_product_instance" constraintName="fk_billing_product_instance_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
         
-         
+        <addColumn tableName="billing_rated_transaction">
+            <column name="seller_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
      </changeSet>
 
     <changeSet id="#2741_20170816" author="EdwardLegaspi">
@@ -1641,6 +1651,17 @@
 				JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
 				JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
 				JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE sub.id = subu.id
+			) WHERE seller_id IS NULL;
+		]]>
+		</sql>			
+		
+		<sql><![CDATA[
+			UPDATE ${db.schema.adapted}billing_product_instance bpiu SET seller_id = (
+				SELECT c.seller_id FROM ${db.schema.adapted}billing_product_instance bpi 
+				JOIN ${db.schema.adapted}billing_user_account ua ON bpi.user_account_id = ua.id 
+				JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
+				JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
+				JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE bpi.id = bpiu.id
 			) WHERE seller_id IS NULL;
 		]]>
 		</sql>			

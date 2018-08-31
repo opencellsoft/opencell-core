@@ -665,6 +665,11 @@ public class OrderApi extends BaseApi {
         String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class, null);
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber);
+        if(subscription != null) {
+        	productInstance.setSeller(subscription.getSeller());
+        } else {
+        	productInstance.setSeller(orderItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        }
 
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);

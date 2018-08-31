@@ -379,8 +379,7 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
     }
 
-
-    @Override
+	@Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
                 + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto

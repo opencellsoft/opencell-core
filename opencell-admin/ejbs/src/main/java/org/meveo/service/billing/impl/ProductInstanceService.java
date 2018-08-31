@@ -152,6 +152,10 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
             productChargeInstance.setCriteria1(criteria1);
             productChargeInstance.setCriteria2(criteria2);
             productChargeInstance.setCriteria3(criteria3);
+            if(productChargeInstance.getSeller() == null && productChargeInstance.getSubscription() != null) {
+            	productChargeInstance.setSeller(productChargeInstance.getSubscription().getSeller());
+            }
+            
             productChargeInstance.setOrderNumber(productInstance.getOrderNumber());
             if (!isVirtual) {
                 productChargeInstanceService.create(productChargeInstance);
