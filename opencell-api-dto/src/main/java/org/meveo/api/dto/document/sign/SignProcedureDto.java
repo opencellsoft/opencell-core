@@ -26,8 +26,8 @@ public class SignProcedureDto  extends BaseEntityDto {
     /** The description. */
     private String description;
     
-    /** The start. */
-    private boolean start;
+    /** The start. default value is true*/
+    private boolean start = true;
     
     /** The members. */
     private List<SignMemberRequestDto> members;

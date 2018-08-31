@@ -24,6 +24,8 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
     private SignProcedureDto procedure;
     
     /**
+     * Gets the procedure.
+     *
      * @return the procedure
      */
     public SignProcedureDto getProcedure() {
@@ -31,6 +33,8 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
     }
 
     /**
+     * Sets the procedure.
+     *
      * @param procedure the procedure to set
      */
     public void setProcedure(SignProcedureDto procedure) {
@@ -38,6 +42,8 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
     }
 
     /**
+     * Gets the files to sign.
+     *
      * @return the filesToSign
      */
     public List<SignFileRequestDto> getFilesToSign() {
@@ -45,6 +51,8 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
     }
 
     /**
+     * Sets the files to sign.
+     *
      * @param filesToSign the filesToSign to set
      */
     public void setFilesToSign(List<SignFileRequestDto> filesToSign) {
@@ -52,6 +60,8 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
     }
 
     /**
+     * Checks if is with internal member.
+     *
      * @return the withInternalMember
      */
     public boolean isWithInternalMember() {
@@ -59,6 +69,8 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
     }
 
     /**
+     * Sets the with internal member.
+     *
      * @param withInternalMember the withInternalMember to set
      */
     public void setWithInternalMember(boolean withInternalMember) {
