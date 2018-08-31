@@ -1,6 +1,9 @@
 package org.meveo.service.payments.impl;
 
+import java.io.File;
+
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestLOT;
 
@@ -13,21 +16,45 @@ public interface DDRequestBuilderInterface {
 
        
    /**
-    * Generate the ddRequest file for a given DDRequestLot and paymentGateway.
+    * Generate the ddRequest file for a given DDRequestLot.
     * 
     * @param ddRequestLot The DDRequestLot to process.
-    * @throws BusinessException
+    * @throws BusinessException the BusinessException.
     */
     public void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
     
     /**
-     * Build the file name for a given DDRequestLot and paymentGateway.
+     * Build the file name for a given DDRequestLot.
      * 
      * @param ddRequestLot The DDRequestLot to process.
-     * @return The payment file name
-     * @throws BusinessException the BusinessException
+     * @return The payment file name.
+     * @throws BusinessException the BusinessException.
      */
     public String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
+    
+    /**
+     * Return the prefix for the DD reject file.
+     * 
+     * @return The prefix.
+     * @throws BusinessException the BusinessException.
+     */
+    public String getDDRejectFilePrefix() throws BusinessException;
+    
+    /**
+     * Return the extension for the DD reject file.
+     * 
+     * @return The extension.
+     * @throws BusinessException the BusinessException.
+     */
+    public String getDDRejectFileExtension() throws BusinessException;
+    
+    /**
+     * Process the dd reject file.
+     * 
+     * @param file The dd reject file to process.
+     * @throws BusinessException the BusinessException.
+     */
+    public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException;
 
    
 }

@@ -99,7 +99,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                 }
                 try {
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-                        DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), ddRequestBuilder);
+                        DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), ddRequestBuilder,ddrequestLotOp.getFilter());
                         if (ddRequestLOT.getInvoicesNumber() > ddRequestLOT.getRejectedInvoices()) { 
                             ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT,appProvider));
                             ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT,appProvider);

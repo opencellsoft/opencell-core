@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.filter.Filter;
 
 @Entity
 @Table(name = "ar_ddrequest_lot_op")
@@ -71,6 +72,10 @@ public class DDRequestLotOp extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
     private DDRequestBuilder ddRequestBuilder;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "filter_id")
+    private Filter filter;    
 
     /**
      * @return the fromDueDate
@@ -162,6 +167,20 @@ public class DDRequestLotOp extends AuditableEntity {
      */
     public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
         this.ddRequestBuilder = ddRequestBuilder;
+    }
+
+    /**
+     * @return the filter
+     */
+    public Filter getFilter() {
+        return filter;
+    }
+
+    /**
+     * @param filter the filter to set
+     */
+    public void setFilter(Filter filter) {
+        this.filter = filter;
     }
 
    

@@ -1,8 +1,10 @@
 package org.meveo.service.script.payment;
 
+import java.io.File;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.service.script.ScriptInterface;
 
 /**
@@ -19,7 +21,7 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
      * @param methodContext the method context
      * @throws BusinessException the business exception
      */
-    void generateDDRequestLotFile(Map<String, Object> methodContext) throws BusinessException ;
+    public void generateDDRequestLotFile(Map<String, Object> methodContext) throws BusinessException ;
 
   
     /**
@@ -28,6 +30,30 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
      * @param methodContext the method context
      * @throws BusinessException the business exception
      */
-    void getDDFileName(Map<String, Object> methodContext) throws BusinessException;
+    public void getDDFileName(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Return the prefix for the DD reject file.
+     * 
+     * @return The prefix.
+     * @throws BusinessException the BusinessException.
+     */
+    public String getDDRejectFilePrefix(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Return the extension for the DD reject file.
+     * 
+     * @return The extension.
+     * @throws BusinessException the BusinessException.
+     */
+    public String getDDRejectFileExtension(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Process the dd reject file.
+     * 
+     * @param file The dd reject file to process.
+     * @throws BusinessException the BusinessException.
+     */
+    public DDRejectFileInfos processDDRejectedFile(Map<String, Object> methodContext) throws BusinessException;
 
 }

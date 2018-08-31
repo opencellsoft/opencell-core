@@ -4,9 +4,13 @@ import java.io.File;
 import java.math.RoundingMode;
 import java.util.Date;
 
-
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.sepa.jaxb.Pain002;
 import org.meveo.admin.sepa.jaxb.Pain008;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr.InitgPty;
@@ -55,13 +59,13 @@ import org.slf4j.LoggerFactory;
  *
  */
 @DDRequestBuilderClass
-public class SepaFile implements DDRequestBuilderInterface { 
+public class SepaFile implements DDRequestBuilderInterface {
     Logger log = LoggerFactory.getLogger(SepaFile.class);
 
     @Override
-    public String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+    public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         try {
-            ParamBean paramBean =  ParamBean.getInstanceByProvider(appProvider.getCode());
+            ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
             String fileName = ArConfig.getDDRequestFileNamePrefix() + ddRequestLot.getId();
             fileName = fileName + "_" + appProvider.getCode();
             fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
@@ -84,17 +88,17 @@ public class SepaFile implements DDRequestBuilderInterface {
     }
 
     @Override
-    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         try {
-            ParamBean paramBean =  ParamBean.getInstanceByProvider(appProvider.getCode());
+            ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
             Pain008 document = new Pain008();
             CstmrDrctDbtInitn message = new CstmrDrctDbtInitn();
             document.setCstmrDrctDbtInitn(message);
             document.setXmlns("urn:iso:std:iso:20022:tech:xsd:pain.008.001.02");
-            addHeader(message, ddRequestLot,appProvider);
+            addHeader(message, ddRequestLot, appProvider);
             for (DDRequestItem ddrequestItem : ddRequestLot.getDdrequestItems()) {
                 if (!ddrequestItem.hasError()) {
-                    addPaymentInformation(message, ddrequestItem,appProvider);
+                    addPaymentInformation(message, ddrequestItem, appProvider);
                 }
             }
             String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008",
@@ -106,7 +110,57 @@ public class SepaFile implements DDRequestBuilderInterface {
 
     }
 
-    private void addHeader(CstmrDrctDbtInitn message, DDRequestLOT ddRequestLOT,Provider appProvider) throws Exception {
+    @Override
+    public String getDDRejectFilePrefix() throws BusinessException {
+        return "Pain002_";
+    }
+
+    @Override
+    public String getDDRejectFileExtension() throws BusinessException {
+        return "xml";
+    }
+
+    @Override
+    public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException {
+        DDRejectFileInfos ddRejectFileInfos = new DDRejectFileInfos();
+        try {
+            ddRejectFileInfos.setFileName(file.getName());
+            Pain002 pain002 = (Pain002) JAXBUtils.unmarshaller(Pain002.class, file);
+
+            CstmrPmtStsRpt cstmrPmtStsRpt = pain002.getCstmrPmtStsRpt();
+
+            OrgnlGrpInfAndSts orgnlGrpInfAndSts = cstmrPmtStsRpt.getOrgnlGrpInfAndSts();
+
+            if (orgnlGrpInfAndSts == null) {
+                throw new BusinessException("OriginalGroupInformationAndStatus tag doesn't exist");
+            }
+            
+            String dDRequestLOTref = orgnlGrpInfAndSts.getOrgnlMsgId();
+            if (dDRequestLOTref == null || dDRequestLOTref.indexOf("-") < 0) {
+                throw new BusinessException("Unknown dDRequestLOTref:" + dDRequestLOTref);
+            }
+            String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
+            
+            ddRejectFileInfos.setDdRequestLotId(dDRequestLOTrefSplited[1]);
+            
+            if (orgnlGrpInfAndSts.getGrpSts() != null && "RJCT".equals(orgnlGrpInfAndSts.getGrpSts())) {
+                ddRejectFileInfos.setTheDDRequestFileWasRejected(true);
+                ddRejectFileInfos.setReturnStatusCode(orgnlGrpInfAndSts.getStsRsnInf().getRsn().getCd());
+                return ddRejectFileInfos;
+            }
+            OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
+            for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
+                if ("RJCT".equals(txInfAndSts.getTxSts())) {
+                    ddRejectFileInfos.getListInvoiceRefsRejected().put(txInfAndSts.getOrgnlEndToEndId(),"RJCT");                    
+                }
+            }
+            
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+        return ddRejectFileInfos;
+    }
+    private void addHeader(CstmrDrctDbtInitn message, DDRequestLOT ddRequestLOT, Provider appProvider) throws Exception {
         GrpHdr groupHeader = new GrpHdr();
         message.setGrpHdr(groupHeader);
         groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + "-" + ddRequestLOT.getId());
@@ -119,10 +173,10 @@ public class SepaFile implements DDRequestBuilderInterface {
 
     }
 
-    private void addPaymentInformation(CstmrDrctDbtInitn Message, DDRequestItem dDRequestItem,Provider appProvider) throws Exception {
+    private void addPaymentInformation(CstmrDrctDbtInitn Message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
 
         log.info("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
-        ParamBean paramBean =  ParamBean.getInstanceByProvider(appProvider.getCode());
+        ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
         PmtInf PaymentInformation = new PmtInf();
         Message.getPmtInf().add(PaymentInformation);
         PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + "-" + dDRequestItem.getId());
@@ -214,5 +268,4 @@ public class SepaFile implements DDRequestBuilderInterface {
         DebtorAccount.setId(Identification);
 
     }
-
 }

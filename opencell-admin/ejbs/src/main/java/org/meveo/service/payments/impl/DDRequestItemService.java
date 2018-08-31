@@ -1,26 +1,21 @@
 package org.meveo.service.payments.impl;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.sepa.jaxb.Pain002;
-import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt;
-import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts;
-import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts;
-import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts;
+import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.admin.util.ArConfig;
-import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -38,10 +33,13 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.filter.FilterService;
 
-/*
+/**
+ * @author anasseh
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * 
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class DDRequestItemService extends PersistenceService<DDRequestItem> {
@@ -67,22 +65,30 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
     @Inject
     private MatchingCodeService matchingCodeService;
 
-    public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestBuilder ddRequestBuilder) throws BusinessEntityException, Exception {
-        log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
+    @Inject
+    private FilterService filterService;
 
-		if (fromDueDate == null) {
-			throw new BusinessEntityException("fromDuDate is empty");
-		}
-		if (toDueDate == null) {
-			throw new BusinessEntityException("toDueDate is empty");
-		}
-		if (fromDueDate.after(toDueDate)) {
-			throw new BusinessEntityException("fromDueDate is after toDueDate");
-		}
-		List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getInvoicesToPay(fromDueDate, toDueDate,PaymentMethodEnum.DIRECTDEBIT);
-		if ((recordedInvoices == null) || (recordedInvoices.isEmpty())) {
-			throw new BusinessEntityException("no invoices!");
-		}
+    public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestBuilder ddRequestBuilder, Filter filter) throws BusinessEntityException, Exception {
+        log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
+        List<RecordedInvoice> recordedInvoices = null;
+        if (filter == null) {
+            if (fromDueDate == null) {
+                throw new BusinessEntityException("fromDuDate is empty");
+            }
+            if (toDueDate == null) {
+                throw new BusinessEntityException("toDueDate is empty");
+            }
+            if (fromDueDate.after(toDueDate)) {
+                throw new BusinessEntityException("fromDueDate is after toDueDate");
+            }
+            recordedInvoices = recordedInvoiceService.getInvoicesToPay(fromDueDate, toDueDate, PaymentMethodEnum.DIRECTDEBIT);
+        } else {
+            recordedInvoices = (List<RecordedInvoice>) filterService.filteredListAsObjects(filter);
+        }
+        
+        if ((recordedInvoices == null) || (recordedInvoices.isEmpty())) {
+            throw new BusinessEntityException("no invoices!");
+        }
 
         log.info("number invoices: {}", recordedInvoices.size());
 
@@ -271,49 +277,34 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         matchingCodeService.unmatching(recordedInvoice.getMatchingAmounts().get(0).getMatchingCode().getId());
 
         automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
+        automatedPayment.setComment(rejectCause);
         automatedPaymentService.updateNoCheck(automatedPayment);
     }
 
-    // TODO remove coupling between busines rules and file format
-    public void processRejectFile(File file, String fileName) throws JAXBException, Exception {
-        Pain002 pain002 = (Pain002) JAXBUtils.unmarshaller(Pain002.class, file);
-
-        CstmrPmtStsRpt cstmrPmtStsRpt = pain002.getCstmrPmtStsRpt();
-
-        OrgnlGrpInfAndSts orgnlGrpInfAndSts = cstmrPmtStsRpt.getOrgnlGrpInfAndSts();
-
-        if (orgnlGrpInfAndSts == null) {
-            throw new Exception("OriginalGroupInformationAndStatus tag doesn't exist");
+    public void processRejectFile(DDRejectFileInfos ddRejectFileInfos) throws BusinessException {
+        DDRequestLOT dDRequestLOT = null;
+        if (!StringUtils.isBlank(ddRejectFileInfos.getDdRequestLotId())) {
+            dDRequestLOT = dDRequestLOTService.findById(Long.valueOf(ddRejectFileInfos.getDdRequestLotId()));
         }
-        String dDRequestLOTref = orgnlGrpInfAndSts.getOrgnlMsgId();
-        if (dDRequestLOTref == null || dDRequestLOTref.indexOf("-") < 0) {
-            throw new Exception("Unknown dDRequestLOTref:" + dDRequestLOTref);
-        }
-        String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
-        DDRequestLOT dDRequestLOT = dDRequestLOTService.findById(Long.valueOf(dDRequestLOTrefSplited[1]));
         if (dDRequestLOT == null) {
-            throw new Exception("DDRequestLOT doesn't exist. id=" + dDRequestLOTrefSplited[1]);
+            throw new BusinessException("DDRequestLOT doesn't exist. id=" + ddRejectFileInfos.getDdRequestLotId());
         }
-        if (orgnlGrpInfAndSts.getGrpSts() != null && "RJCT".equals(orgnlGrpInfAndSts.getGrpSts())) {
-            // original message rejected at protocol level control
 
+        if (ddRejectFileInfos.isTheDDRequestFileWasRejected()) {
+            // original message rejected at protocol level control
             for (DDRequestItem ddRequestItem : dDRequestLOT.getDdrequestItems()) {
                 if (!ddRequestItem.hasError()) {
                     rejectPayment(ddRequestItem.getRecordedInvoice(), "RJCT");
                 }
             }
-
-            dDRequestLOT.setReturnStatusCode(orgnlGrpInfAndSts.getStsRsnInf().getRsn().getCd());
+            dDRequestLOT.setReturnStatusCode(ddRejectFileInfos.getReturnStatusCode());
         } else {
-            OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
-            for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
-                if ("RJCT".equals(txInfAndSts.getTxSts())) {
-                    RecordedInvoice invoice = recordedInvoiceService.getRecordedInvoice(txInfAndSts.getOrgnlEndToEndId());
-                    rejectPayment(invoice, "RJCT");
-                }
+            for (Entry<String, String> entry : ddRejectFileInfos.getListInvoiceRefsRejected().entrySet()) {
+                RecordedInvoice invoice = recordedInvoiceService.getRecordedInvoice(entry.getKey());
+                rejectPayment(invoice, entry.getValue());
             }
         }
-        dDRequestLOT.setReturnFileName(file.getName());
+        dDRequestLOT.setReturnFileName(ddRejectFileInfos.getFileName());
         dDRequestLOTService.updateNoCheck(dDRequestLOT);
     }
 

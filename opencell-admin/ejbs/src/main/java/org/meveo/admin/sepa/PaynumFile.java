@@ -10,6 +10,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -29,13 +30,13 @@ import org.slf4j.LoggerFactory;
 @DDRequestBuilderClass
 public class PaynumFile implements DDRequestBuilderInterface {
     Logger log = LoggerFactory.getLogger(PaynumFile.class);
-  
+
     @Override
-    public String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
-        ParamBean paramBean =  ParamBean.getInstanceByProvider(appProvider.getCode());
+    public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+        ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
         String fileName = null;
         String codeCreancier_paramKey = "paynum.codeCreancier";
-        String codeCreancier =  paramBean.getProperty(codeCreancier_paramKey, null);
+        String codeCreancier = paramBean.getProperty(codeCreancier_paramKey, null);
         fileName = DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
                 + "_" + (ddRequestLot.getInvoicesNumber() - ddRequestLot.getRejectedInvoices()) + "_" + (ddRequestLot.getInvoicesAmount()
                     .setScale((appProvider.getRounding() == null ? 2 : appProvider.getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())
@@ -55,7 +56,7 @@ public class PaynumFile implements DDRequestBuilderInterface {
     }
 
     @Override
-    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         try {
             CsvBuilder csvBuilder = new CsvBuilder(";", false);
             for (DDRequestItem ddrequestItem : ddRequestLot.getDdrequestItems()) {
@@ -70,6 +71,37 @@ public class PaynumFile implements DDRequestBuilderInterface {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
+    }
+
+    @Override
+    public String getDDRejectFilePrefix() throws BusinessException {
+        return "*";
+    }
+
+    @Override
+    public String getDDRejectFileExtension() throws BusinessException {
+        return "csv";
+    }
+
+    @Override
+    public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException {
+        DDRejectFileInfos ddRejectFileInfos = new DDRejectFileInfos();
+        try {
+            ddRejectFileInfos.setFileName(file.getName());
+            CsvReader csvReader = new CsvReader(file.getAbsolutePath(), ';');
+            while (csvReader.readRecord()) {
+                String fields[] = csvReader.getValues();
+                String ddRequestLotId = fields[1];
+                String codeFacture = fields[3];
+                String causeRejet = fields[12];
+
+                ddRejectFileInfos.setDdRequestLotId(ddRequestLotId);
+                ddRejectFileInfos.getListInvoiceRefsRejected().put(codeFacture, causeRejet);
+            }
+        } catch (Exception e) {            
+            throw new BusinessException(e.getMessage());
+        }
+        return ddRejectFileInfos;
     }
 
     private String[] ddRequestItemToRecord(DDRequestItem ddrequestItem) throws Exception {
@@ -107,33 +139,10 @@ public class PaynumFile implements DDRequestBuilderInterface {
         return lineAsArray;
     }
 
-    public void processRejectFile(File currentFile, String fileName) throws Exception {
-        // TODO (PaymentRun) this class should just handle the file format and not the opencell entities
-
-        // CsvReader csvReader = new CsvReader(currentFile.getAbsolutePath(), ';');
-        //
-        // while (csvReader.readRecord()) {
-        // String fields[] = csvReader.getValues();
-        //
-        // String codeFacture = fields[3];
-        // String causeRejet = fields[12];
-        // RecordedInvoice recordedInvoice = recordedInvoiceService.getRecordedInvoice(codeFacture);
-        // if (recordedInvoice.getPayedDDRequestItem() != null) {
-        // ddRequestItemService.rejectPayment(recordedInvoice, causeRejet);
-        // DDRequestLOT dDRequestLOT = recordedInvoice.getPayedDDRequestItem().getDdRequestLOT();
-        // dDRequestLOT.setReturnFileName(fileName);
-        // dDRequestLOTService.updateNoCheck(dDRequestLOT);
-        // }
-        // }
-
-    }
-
-    public static String getSecretCode(CustomerAccount customerAccount) throws Exception {
+    private static String getSecretCode(CustomerAccount customerAccount) throws Exception {
         String code = customerAccount.getContactInformation().getEmail();
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(code.getBytes("UTF-8"));
         return Base64.encodeBase64URLSafeString(hash);
     }
-
-   
 }

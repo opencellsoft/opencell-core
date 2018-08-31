@@ -1568,9 +1568,14 @@
         	<addColumn tableName="ar_ddrequest_lot_op">
      		<column name="ddrequest_builder_id" type="bigint"></column>     		
      	</addColumn>
+     	<addColumn tableName="ar_ddrequest_lot_op">
+     		<column name="filter_id" type="bigint"></column>     		
+     	</addColumn>
      	 <dropColumn tableName="ar_ddrequest_lot_op" columnName="file_format" />
      	 <addForeignKeyConstraint baseColumnNames="ddrequest_builder_id" baseTableName="ar_ddrequest_lot_op" constraintName="fk_op_ddreq_builder_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_builder" />
+         <addForeignKeyConstraint baseColumnNames="filter_id" baseTableName="ar_ddrequest_lot_op" constraintName="fk_op_ddreq_filter_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter" />                                 
      	<addColumn tableName="ar_ddrequest_lot">
      		<column name="ddrequest_builder_id" type="bigint"></column>     		
      	</addColumn>
