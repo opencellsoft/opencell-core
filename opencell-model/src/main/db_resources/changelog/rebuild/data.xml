@@ -6673,10 +6673,10 @@
             <column name="bank_code" value="SGMB" />
             <column name="bank_id" value="11" />
             <column name="bank_name" value="SGMB" />
-            <column name="bic" value="11" />
+            <column name="bic" value="DADEFRPPCCT" />
             <column name="branch_code" value="12345" />
-            <column name="iban" value="11" />
-            <column name="ics" />
+            <column name="iban" value="FR763000600001123456790189" />
+            <column name="ics" value="FRXXZZZ123456"/>
             <column name="issuer_name" value="DEMO" />
             <column name="issuer_number" value="1111" />
             <column name="hash_key" value="11" />
