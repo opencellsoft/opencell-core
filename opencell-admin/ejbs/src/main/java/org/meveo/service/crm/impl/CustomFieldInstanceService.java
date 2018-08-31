@@ -33,6 +33,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.ReferenceIdentifierCode;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -114,17 +115,28 @@ public class CustomFieldInstanceService extends BaseService {
      * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;:"
      * @param wildcode Filter by entity code
      * @return A list of entities
+     * @throws ClassNotFoundException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     @SuppressWarnings("unchecked") // TODO review location
-    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode) {
+    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Query query = null;
+        
+        Class<?> clazz = Class.forName(classNameAndCode);
+        
         if (classNameAndCode.startsWith(CustomEntityTemplate.class.getName())) {
             String cetCode = CustomFieldTemplate.retrieveCetCode(classNameAndCode);
             query = getEntityManager().createQuery("select e from CustomEntityInstance e where cetCode=:cetCode and lower(e.code) like :code");
             query.setParameter("cetCode", cetCode);
 
-        } else {
+        } else if (clazz.isInstance(BusinessEntity.class)) {
             query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code");
+            
+        } else {
+        	ReferenceIdentifierCode referenceIdentifier = clazz.getAnnotation(ReferenceIdentifierCode.class);
+        	String field = referenceIdentifier.value(); 
+			query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e." + field + ") like :code");
         }
 
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");

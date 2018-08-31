@@ -94,18 +94,18 @@
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
         <c:if test="#{! edit}">
-            <h:outputText value="#{field.code}" />
+            <h:outputText value="#{field.referenceCode}" />
         </c:if>
         <c:if test="#{edit}">
             <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
                 converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" queryDelay="1000" var="e"
-                itemLabel="#{e.code}" itemValue="#{e}">
+                itemLabel="#{e.referenceCode}" itemValue="#{e}">
                 <f:attribute name="classname" value="#{cft.entityClazz}" />
                 <p:column width="50" headerText="#{messages['BusinessEntity.code']}">
-                    <h:outputText value="#{e.code}" />
+                    <h:outputText value="#{e.referenceCode}" />
                 </p:column>
                 <p:column width="50" headerText="#{messages['BusinessEntity.description']}">
-                    <h:outputText value="#{e.description}" />
+                    <h:outputText value="#{e.referenceDescription}" />
                 </p:column>
             </p:autoComplete>
         </c:if>
