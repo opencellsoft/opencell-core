@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<!-- Entity select popup. -->
+		<c:set var="filtersMap" value="#{billingCycleBean.filters}" />
+		<c:set var="field" value="billingCycle" />
+
+		<hftl:entityPopup id="searchBillingCyclePopup"
+			header="#{messages['customerAccount.popup.header']}"
+			backingBean="#{billingCycleBean}"
+			searchField1Label="#{messages['billingCycle.id']}" searchField1="id"
+			searchField2Label="#{messages['billingCycle.billingFrequency']}"
+			searchField2="billingFrequency"
+			column1Label="#{messages['billingCycle.id']}" column1="id"
+			column2Label="#{messages['billingCycle.billingFrequency']}"
+			column2="billingFrequency">
+
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="formId" action="#{filtersMap.put(field, entity)}"
+				oncomplete="Richfaces.hideModalPanel('searchBillingCyclePopup')">
+			</a:commandLink>
+		</hftl:entityPopup>
+
+		<hftl:searchPanel label="#{messages['invoiceTasks.search']}"
+			backingBean="#{invoiceTaskBean}">
+			<hftl:searchField label="#{messages['invoiceTask.executionTime']}"
+				field="executionTime" />
+			<hftl:searchField label="#{messages['invoiceTask.taskStatus']}"
+				field="taskStatus" />
+			<hftl:searchField label="#{messages['invoiceTask.processName']}"
+				field="processName" />
+			<hftl:searchField label="#{messages['invoiceTask.accountFilter']}"
+				field="accountFilter" />
+			<hftl:searchField label="#{messages['invoiceTask.walletFilter']}"
+				field="walletFilter" />
+			<hftl:searchField 
+				label="#{messages['invoiceTask.billingCycle']}" field="billingCycle"
+				valueLabelField="billingFrequency" popup="true"
+				popupId="searchBillingCyclePopup" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['invoiceTasks.title']}"
+			backingBean="#{invoiceTaskBean}">
+			<hftl:column label="#{messages['invoiceTask.executionTime']}"
+				field="executionTime" />
+			<hftl:column label="#{messages['invoiceTask.processName']}"
+				field="processName" />
+			<hftl:column label="#{messages['invoiceTask.accountFilter']}"
+				field="accountFilter" />
+			<hftl:column label="#{messages['invoiceTask.walletFilter']}"
+				field="walletFilter" />
+			<hftl:column label="#{messages['invoiceTask.taskStatus']}"
+				field="taskStatus.label" isMessage="true" />
+			<hftl:column label="#{messages['invoiceTask.billingCycle']}"
+				field="billingCycle.billingFrequency" />
+
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('billingManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

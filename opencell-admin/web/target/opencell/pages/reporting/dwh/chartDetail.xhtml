@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{chartBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+					<p:menuitem outcome="charts"
+						value="#{messages['menu.charts']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+		<hftl:entityPopup id="searchMeasurableQuantity"
+			header="#{messages['measurableQuantity.popup.header']}"
+			updateField=":formChat:measurableQuantityId :formChat:measurableQuantityId_text"
+			selection="#{chartBean.entity.measurableQuantity}"
+			backingBean="#{measurableQuantityBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" />
+
+		<hftl:entityPopup id="searchRole"
+			header="#{messages['role.userRolePanel']}"
+			updateField=":formChat:roleId :formChat:roleId_text"
+			selection="#{chartBean.entity.role}" backingBean="#{userRoleBean}"
+			searchField1Label="#{messages['commons.name']}" searchField1="name"
+			column1Label="#{messages['commons.name']}" column1="name"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" />
+
+		<hftl:formPanel id="chartFormPanel" formId="formChat"
+			label="#{messages['chart.panel']}" backingBean="#{chartBean}">
+
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
+
+			<hftl:formField id="measurableQuantityId"
+				label="#{messages['chart.measurableQuantity']}"
+				field="measurableQuantity" valueLabelField="code" required="true"
+				popup="true" popupId="searchMeasurableQuantity" />
+
+			<hftl:formField id="roleId" label="#{messages['chart.role']}"
+				field="role" valueLabelField="name" required="false" popup="true"
+				popupId="searchRole" />
+
+			<hftl:formField label="#{messages['chart.style']}" field="style" />
+			<hftl:formField label="#{messages['chart.styleClass']}"
+				field="styleClass" />
+			<hftl:formField label="#{messages['chart.extender']}" field="extender" />
+
+			<h:panelGroup 
+				rendered="#{not chartBean.entity.isTransient()}"
+				styleClass="form-panel">
+				<hftl:decorateFormField fieldId="dateSelect" label="#{messages['page.chart.filterDate']}" >
+					<p:calendar id="dateSelect" value="#{chartBean.selectedDate}"
+						pattern="MMMM yyyy">
+						<p:ajax event="dateSelect" listener="#{chartBean.getChartModel()}"
+							update="chartPanel" />
+					</p:calendar>
+				</hftl:decorateFormField>
+
+				<p:outputPanel id="chartPanel">
+					<p:chart type="bar" id="stats" model="#{chartBean.chartModel}"
+						legendPosition="e" fill="true" widgetVar="lineChart1"
+						rendered="#{chartBean.selectedDate != null}" />
+				</p:outputPanel>
+			</h:panelGroup>
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

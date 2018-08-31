@@ -1,0 +1,9 @@
+org\meveo\client\CommonContentTypeEnum.class
+org\meveo\client\MillisDate.class
+org\meveo\client\HttpMethodsEnum.class
+org\meveo\client\MeveoConnectionFactory.class
+org\meveo\client\ProxyInfos.class
+org\meveo\client\AuthentificationModeEnum.class
+org\meveo\client\InboundServletClient.class
+org\meveo\client\ApiExecutor.class
+org\meveo\client\JsonUtils.class

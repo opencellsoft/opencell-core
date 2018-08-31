@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+	xmlns:f="http://xmlns.jcp.org/jsf/core" 
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui" 
+    xmlns:hftl="http://hftl.org" 
+    template="/layout/template.xhtml" >
+
+    <ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{crmAccountListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+    <ui:define name="body">
+        <hftl:searchPanel label="#{messages['crmAccount.search']}" backingBean="#{crmAccountListBean}" renderNewButton="false">
+            <hftl:searchField label="#{messages['crmAccount.account.name']}" field="code" />
+            <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
+        </hftl:searchPanel>
+
+        <hftl:dataList backingBean="#{crmAccountListBean}" sortBy="code">
+		   	<hftl:column label="#{messages['crmAccount.account.name']}" field="code" editView="#{crmAccountListBean.getView(entity['accountType'])}" propagateConversation="false"
+                objectIdParamName="#{crmAccountBean.getIdParameterName(entity['accountType'])}" />
+            <hftl:column label="#{messages['crmAccount.type']}" field="accountType" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['address.city']}" field="address.city" />
+            <hftl:column label="#{messages['address.country']}" field="address.country" />
+            <hftl:column label="#{messages['crmAccount.name']}" field="name" titleWithMessage="true" />
+            
+			<hftl:actionsColumn permission="#{currentUser.hasRole('accountManagement')}" 
+					backingBean="#{crmAccountBean}"
+					editView="#{crmAccountListBean.getView(entity['accountType'])}" renderDeleteLink="false"
+					renderEditLink="true"/>
+					
+        </hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

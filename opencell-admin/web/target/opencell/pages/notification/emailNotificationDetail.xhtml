@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{emailNotificationBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="emailNotifications" value="#{messages['menu.emailNotifications']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['menu.emailNotification']}"
+					disabled="true" rendered="#{emailNotificationBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['menu.emailNotification']} - #{emailNotificationBean.entity.code}"
+					disabled="true" rendered="#{!emailNotificationBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+        <hftl:entityPopup id="scriptInstancePopup" header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{emailNotificationBean.entity.scriptInstance}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
+            updateField=":emailNotificationFormId:scriptInstanceSelectId :emailNotificationFormId:scriptInstanceSelectId_text">
+        </hftl:entityPopup>
+
+        <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}" updateField=":emailNotificationFormId:counterTemplateSelectedId :emailNotificationFormId:counterTemplateSelectedId_text"
+            selection="#{emailNotificationBean.entity.counterTemplate}" backingBean="#{counterTemplateBean}" searchField1Label="#{messages['businessEntity.code']}"
+            searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+            dataModel="#{counterTemplateBean.getLazyDataModel('NOTIFICATION')}">
+        </hftl:entityPopup>
+
+        <hftl:formPanel id="emailNotificationForm" formId="emailNotificationFormId" label="#{messages['menu.emailNotification']}" backingBean="#{emailNotificationBean}" columns="2"
+            showEnableDisableButton="true">
+            <hftl:formField label="#{messages['entity.code']}" field="code" required="true" />
+
+            <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
+                autocompleteBean="#{emailNotificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" listenerUpdate="eventTypeFilter"/>
+            <hftl:formField id="eventTypeFilter" label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" listValues="#{emailNotificationBean.getNotificationEventTypeFilters()}"/>
+            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code"
+                required="false" popup="true" popupId="scriptInstancePopup" newLine="true"/>
+            <hftl:formField label="#{messages['entity.notification.params']}" field="params" componentWidth="100" />
+            <hftl:formField label="#{messages['entity.emailNotification.emailFrom']}" field="emailFrom" textArea="true" rows="1" maxlength="1000" required="true" componentWidth="50" />
+            <hftl:formField label="#{messages['entity.emailNotification.emailToEl']}" field="emailToEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['entity.emailNotification.emails']}" field="emails" showButtonAddNew="true" componentWidth="50" />
+            <hftl:formField label="#{messages['entity.emailNotification.subject']}" field="subject" required="true" size="100" />
+            <hftl:formField label="#{messages['entity.emailNotification.body']}" field="body" textArea="true" maxlength="20000" componentWidth="100" />
+            <hftl:formField label="#{messages['entity.emailNotification.htmlBody']}" field="htmlBody" textArea="true" maxlength="20000" componentWidth="100" />
+            <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"
+                popupId="searchCounterTemplatePopup" showResetButton="true" required="false" />
+
+            <hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!emailNotificationBean.entity.transient}">
+            	<h:outputText value="#{emailNotificationBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
+        </hftl:formPanel>
+
+<!--         <p:panel rendered="#{not empty emailNotificationBean.entity.id}"> -->
+<!--             <hftl:dataList backingBean="#{notificationHistoryBean}" dataModel="#{notificationHistoryBean.getLazyDataModel(emailNotificationBean.entity.id)}"> -->
+<!--                 <hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.notificationType']}" field="entityClassName" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification']}" field="notification.code" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.retryNr']}" field="nbRetry" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.result']}" field="result" /> -->
+<!--                 <p:column headerText="#{messages['entity.notification.inboundRequest']}"> -->
+<!--                     <h:link value="#{entity.inboundRequest.code}" outcome="inboundRequestDetail" rendered="#{entity.inboundRequest != null}"> -->
+<!--                         <f:param name="objectId" value="#{entity.inboundRequest.id}" /> -->
+<!--                     </h:link> -->
+<!--                 </p:column> -->
+<!--                 <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" /> -->
+<!--             </hftl:dataList> -->
+<!--         </p:panel> -->
+
+    </ui:define>
+
+</ui:composition>

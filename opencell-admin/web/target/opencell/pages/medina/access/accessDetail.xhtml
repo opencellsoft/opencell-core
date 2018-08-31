@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{accessBean.preRenderView}" />
+
+            <f:viewParam name="accessId" value="#{accessBean.objectId}" />
+            <f:viewParam name="subscriptionId" value="#{accessBean.subscriptionId}" />
+            <f:viewParam name="subscriptionId" value="#{subscriptionBean.objectId}" />
+            <f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+            <f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+            <f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+            <f:viewParam name="customerId" value="#{customerBean.objectId}" />
+            <f:viewParam name="mainTab" value="#{accessBean.activeMainTab}" />
+            <f:viewParam name="tab" value="#{accessBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="access" value="#{messages['menu.accessPoints']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['access.accessPanel']}"
+					disabled="true" rendered="#{accessBeanBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['access.accessPanel']} - #{acccessBeanBean.entity.accessUserId}"
+					disabled="true" rendered="#{!accessBeanBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>	
+
+		<hftl:entityPopup id="searchSubscriptionPopup"
+			header="#{messages['access.subscription']}"
+			updateField=":formId:tabView:subscriptionId :formId:tabView:subscriptionId_text"
+			selection="#{accessBean.entity.subscription}"
+			backingBean="#{subscriptionBean}"
+			searchField1Label="#{messages['subscription.code']}"
+			searchField1="code" column1Label="#{messages['subscription.code']}"
+			column1="code" column2Label="#{messages['subscription.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		
+		
+		<h:panelGroup styleClass="col2-set">
+            <h:panelGroup styleClass="col1">
+					<hf:hierarchyPanel
+						treeBean="#{customerTreeBean}"
+						entity="#{accessBean.entity}" />
+            </h:panelGroup>
+		<h:panelGroup styleClass="col2">
+			<hftl:formPanel backingBean="#{accessBean}" label="#{messages['access.accessPanel']}" showEnableDisableButton="true" ajaxSubmit="true"
+				 submitPartialProcess=":formId:tabView" showFormButtons="#{empty accessBean.subscriptionId}">
+				<p:tabView id="tabView" activeIndex="#{accessBean.activeTab}">
+					<p:tab title="#{messages['customer.tab.information']}">
+							<hftl:formField label="#{messages['access.accessUserId']}"
+								field="accessUserId" required="true" />
+							<hftl:formField id="subscriptionId"
+								label="#{messages['access.subscription']}" field="subscription"
+								valueLabelField="code" popup="true" popupId="searchSubscriptionPopup"
+								required="true" allowEdit="false" />
+							<hftl:formField label="#{messages['access.startDate']}"
+								field="startDate" />
+							<hftl:formField label="#{messages['access.endDate']}"
+								field="endDate" />
+							<hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true"
+								field="disabled" isMessage="true"/>
+				     </p:tab>
+
+					<hftl:customFields backingBean="#{accessBean}" messagesId=":formId:messages"/>
+
+				</p:tabView>
+				<hf:formButtons killConversationOnSave="false" killConversationOnBack="false" ajaxSubmit="true" edit="true" backingBean="#{accessBean}" showEnableDisableButton="false" showDeleteButton="false"
+					 showBackButton="false" rendered="#{not empty accessBean.subscriptionId}">
+						<p:commandButton value="#{messages['commons.disable']}"
+							rendered="#{backingBean.entity.active}"
+							action="#{backingBean.disable}" update="@form" >
+							<f:param name="subscriptionId" value="#{accessBean.subscriptionId}"/>
+						</p:commandButton>
+						<p:commandButton value="#{messages['commons.enable']}"
+							action="#{backingBean.enable}" update="@form" rendered="#{not backingBean.entity.active}">
+							<f:param name="subscriptionId" value="#{accessBean.subscriptionId}"/>
+						</p:commandButton>
+						<!-- 
+						<p:commandButton id="saveAccessBackSubDetail"
+							value="#{messages['action.save']}"
+							action="#{accessBean.saveOrUpdate(false)}"
+							icon="ui-icon-check" update="@form">
+							<f:param name="subscriptionId" value="#{accessBean.subscriptionId}"/>
+							<f:setPropertyActionListener value="5" target="#{subscriptionBean.activeMainTab}"/>
+						</p:commandButton>
+						 -->
+						<p:button id="backSubFromAccessDetail" value="#{messages['action.back']}"
+							outcome="#{backingBean.back()}" includeViewParams="true">
+								<f:param name="mainTab" value="5"/>
+						</p:button>
+					</hf:formButtons>
+			</hftl:formPanel>
+		</h:panelGroup >
+    </h:panelGroup>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<p:panel>
+			<f:facet name="header">#{messages['customerAccount.import']}</f:facet>
+			<h:panelGrid columns="2">
+				<h:form id="customerAccountImportForm">
+					<a:queue />
+					<p:outputPanel id="importcustomerAccounts">
+						<f:facet name="header">
+								#{messages['customerAccount.importFiles']}
+							</f:facet>
+						<p:fileUpload id="fileUpload"
+							addControlLabel="#{messages['customerAccount.addImportFile']}"
+							maxFilesQuantity="5" immediateUpload="true" autoclear="true"
+							fileUploadListener="#{customerAccountImportAction.uploadListener}"
+							transferErrorLabel="#{messages['customerAccount.addImportFileError']}"
+							ajaxSingle="true" allowFlash="true" acceptedTypes="xls"
+							listHeight="50">
+							<a:support event="onuploadcomplete"
+								reRender="importcustomerAccounts,buttons" />
+						</p:fileUpload>
+						<h:panelGrid columns="1" id="parseId"
+							rendered="#{not empty customerAccountImportAction.filename}">
+							<h:outputText
+								value="#{messages['commons.filename']} : #{customerAccountImportAction.filename}" />
+							<h:outputText
+								value="#{messages['customerAccount.totalDetected']} : #{customerAccountImportAction.customerAccountsTotal}" />
+						</h:panelGrid>
+					</p:outputPanel>
+					<h:panelGroup style="actionButtons" id="buttons">
+						<h:commandButton value="#{messages['commons.import']}"
+							action="#{customerAccountImportAction.doImport}" />
+					</h:panelGroup>
+
+				</h:form>
+			</h:panelGrid>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

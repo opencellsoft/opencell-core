@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{meveoInstanceBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem outcome="meveoInstances" value="#{messages['menu.meveoInstance']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['meveoInstance.panel']}" disabled="true" rendered="#{meveoInstanceBean.entity.transient}" />
+                <p:menuitem value="#{messages['meveoInstance.panel']} - #{meveoInstanceBean.entity.code}" disabled="true" rendered="#{!meveoInstanceBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:entityPopup id="searchUserPopup" header="#{messages['meveoInstance.panel']}" backingBean="#{userBean}" updateField=":meveoInstanceForm:userSelectedId"
+            selection="#{meveoInstanceBean.entity.user}" searchField1Label="#{messages['user.userName']}" searchField1="userName" column1Label="#{messages['user.userName']}" column1="userName">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchCustomerPopup" header="#{messages['meveoInstance.panel']}" backingBean="#{customerBean}" updateField=":meveoInstanceForm:customerSelectedId"
+            selection="#{meveoInstanceBean.entity.customer}" searchField1Label="#{messages['meveoInstance.code']}" searchField1="code" searchField2Label="#{messages['meveoInstance.description']}"
+            searchField2="description" column1Label="#{messages['meveoInstance.code']}" column1="code" column2Label="#{messages['meveoInstance.description']}" column2="description">
+        </hftl:entityPopup>
+
+        <hftl:formPanel id="formPanel" label="#{messages['meveoInstance.panel']}" formId="meveoInstanceForm" backingBean="#{meveoInstanceBean}" columns="1">
+            <hftl:formField label="#{messages['meveoInstance.code']}" field="code" required="true" />
+            <hftl:formField label="#{messages['meveoInstance.url']}" field="url" required="true" size="255" componentWidth="125" />
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:formField label="#{messages['meveoInstance.authUsername']}" field="authUsername" size="30" />
+            <hftl:formField label="#{messages['meveoInstance.authPassword']}" field="authPassword" size="30" />
+        </hftl:formPanel>
+
+    </ui:define>
+
+</ui:composition>

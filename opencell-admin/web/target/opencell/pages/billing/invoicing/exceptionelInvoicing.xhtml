@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />								
+		        <p:menuitem value="#{messages['commons.new']} #{messages['menu.exceptionalInvoicing']}"
+					disabled="true" rendered="#{billingRunBean.entity.transient}" />			
+			</p:breadCrumb>
+		</h:form>
+		<ui:define name="metadata">
+			<f:metadata>
+				<f:event type="preRenderView"
+					listener="#{billingAccountBean.preRenderView}" />
+			</f:metadata>
+		</ui:define>
+
+		<hftl:searchPanel label="#{messages['billingAccount.search']}"
+			backingBean="#{billingAccountBean}" renderNewButton="false">
+			<hftl:searchField label="#{messages['businessEntity.code']}"
+				field="code" />
+			<hftl:searchField
+				label="#{messages['billingAccount.subscriptionDate']}"
+				field="subscriptionDate" />
+			<hftl:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
+				field="nextInvoiceDate" />
+            <hftl:searchField
+                label="#{messages['billingAccount.electronicBilling']}"
+                field="electronicBilling" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['billingRun.exceptionelInvoicing']}"
+			backingBean="#{billingAccountBean}">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" 
+				propagateConversation="false" entityView="billingAccountDetail"
+				objectIdParamName="billingAccountId" backView="exceptionelInvoicing"/>
+			<hftl:column label="#{messages['billingAccount.status']}"
+				field="status.label" isMessage="true" />
+			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" isDate="true"
+				field="subscriptionDate" />
+			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" isDate="true"
+				field="nextInvoiceDate" />
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['name.title']}" />
+				</f:facet>
+				<e:cell>
+					<h:outputText rendered="#{entity.name.title != null}"
+						value="#{entity.name.title.description}" />
+				</e:cell>
+			</p:column>
+			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
+			<hftl:column label="#{messages['address.address1']}" field="address.address1" />
+
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('administrationManagement')}"
+				renderEditLink="false" renderDeleteLink="false"
+				editView="billingAccountDetail" />
+			<ui:define name="add-on-buttons">
+                <hftl:decorateFormField fieldId="invoiceDate" label="#{messages['billingRun.invoiceDate']}" 
+                	rendered="#{billingAccountBean.canUserUpdateEntity()}">
+                    <p:calendar id="invoiceDate" value="#{billingAccountBean.exceptionalInvoicingDate}" 
+                    	pattern="#{paramBean.dateFormat}"
+                        required="true" />
+                </hftl:decorateFormField>
+    			<hftl:decorateFormField fieldId="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}" 
+    				rendered="#{billingAccountBean.canUserUpdateEntity()}">
+    				<p:calendar id="lastTransactionDate"
+    				value="#{billingAccountBean.exceptionalLastTransactionDate}"
+    				 pattern="#{paramBean.dateFormat}"
+    				required="true" />
+    			</hftl:decorateFormField>
+                <h:panelGroup layout="block" styleClass="form-panel-actions">               
+    				<p:commandButton
+    					action="#{billingAccountBean.launchExceptionalInvoicing}"
+    					rendered="#{billingAccountBean.canUserUpdateEntity()}"
+    					ajax="false" value="#{messages['button.launchInvoicing']}"/>
+                </h:panelGroup>
+			</ui:define>
+		</hftl:dataList>
+		
+		<!-- <hftl:formPanel id="formPanel" edit="true"
+			label=""
+			backingBean="#{billingAccountBean}" showFormButtons="false">
+			
+		</hftl:formPanel>-->
+	</ui:define>
+
+</ui:composition>

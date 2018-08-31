@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{walletListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    
+	<ui:define name="body">
+		<!-- Entity select popup. -->
+		<c:set var="filtersMap" value="#{walletListBean.filters}" />
+		<c:set var="field" value="userAccount" />
+
+		<hftl:entityPopup id="searchUserAccountPopup"
+			header="#{messages['customerAccount.popup.header']}"
+			backingBean="#{userAccountBean}"
+			searchField1Label="#{messages['userAccount.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['userAccount.name']}"
+			searchField2="name" column1Label="#{messages['userAccount.code']}"
+			column1="code" column2Label="#{messages['userAccount.name']}"
+			column2="name">
+
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="formId" action="#{filtersMap.put(field, entity)}"
+				oncomplete="Richfaces.hideModalPanel('searchUserAccountPopup')">
+			</a:commandLink>
+
+		</hftl:entityPopup>
+
+		<hftl:searchPanel backingBean="#{walletListBean}"
+			label="#{messages['wallet.search']}"
+			newButtonView="/pages/billing/wallets/walletDetail.xhtml">
+			<hftl:searchField label="#{messages['wallet.userAccount']}"
+				field="userAccount" valueLabelField="code" popup="true"
+				popupId="searchUserAccountPopup" />
+			<hftl:searchField label="#{messages['wallet.name']}" field="name" />
+			<hftl:searchField label="#{messages['wallet.walletType']}"
+				field="walletType" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['wallet.title']}"
+			backingBean="#{walletListBean}" pdf="true">
+			<hftl:column label="#{messages['wallet.userAccount']}"
+				field="userAccount.code" />
+			<hftl:column label="#{messages['wallet.name']}" field="name" />
+			<hftl:column label="#{messages['wallet.walletType']}"
+				field="walletType.label" isMessage="true" />
+
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('billingManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

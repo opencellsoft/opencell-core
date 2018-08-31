@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" 
+    xmlns:hftl="http://hftl.org"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{customerListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="customers" value="#{messages['menu.customers']}" />
+			</p:breadCrumb>
+		</h:form>    
+
+        <hftl:searchPanel label="#{messages['customer.search']}" backingBean="#{customerListBean}">
+            <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['businessEntity.description']}" id="description" field="description" componentWidth="75" size="100" />
+            <hftl:searchField id="customerCategoryField" label="#{messages['customer.customerCategory']}" field="customerCategory" valueLabelField="descriptionOrCode"
+                listBean="#{customerCategoryBean}" />
+            <hftl:searchField id="seller" label="#{messages['seller.parent']}" field="seller" listBean="#{sellerBean}" valueLabelField="descriptionOrCode" />
+            <hftl:searchField id="customerBrandField" label="#{messages['customer.customerBrand']}" field="customerBrand" valueLabelField="descriptionOrCode"
+                listBean="#{customerBrandBean}" />
+        </hftl:searchPanel>
+
+        <hftl:dataList label="#{messages['customer.search']}" sortBy="code" backingBean="#{customerListBean}">
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
+            <hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory.descriptionOrCode" isMessage="false" />
+            <hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand.descriptionOrCode" isMessage="false" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['seller.title']}" field="seller.descriptionOrCode" valueIdField="seller.id" entityView="sellerDetail" />
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('accountManagement')}" />
+        </hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

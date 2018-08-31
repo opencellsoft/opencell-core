@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{ratedTransactionBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['ratedTransaction.panel']}"
+					disabled="true" rendered="#{ratedTransactionBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['ratedTransaction.panel']} - #{ratedTransactionBean.entity.code}"
+					disabled="true" rendered="#{!ratedTransactionBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+		<hftl:formPanel id="formPanel" label="#{messages['ratedTransaction.panel']}" backingBean="#{ratedTransactionBean}" showDeleteButton="false" showBackButton="true"
+            showFormButtons="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null ? false : true}">
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField id="priceplanSelectId" label="#{messages['ratedTransaction.pricePlan']}" field="priceplan" childField="code" disabled="true" />
+            <hftl:formField id="walletId" label="#{messages['ratedTransaction.wallet']}" field="wallet" childField="code"  disabled="true" />
+            <hftl:formField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" childField="invoiceNumber" disabled="true" />
+            <hftl:formField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" childField="code" disabled="true" />
+            <hftl:formField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" childField="id"  disabled="true" />
+            <hftl:formField label="#{messages['ratedTransaction.edr']}" id="edrId" field="edr" childField="id" disabled="true" />
+            <hftl:formField label="#{messages['ratedTransaction.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter"
+                disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.unitAmountTax']}" field="unitAmountTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.quantity']}" field="quantity" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.status']}" field="status" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.param1']}" field="parameter1" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.param2']}" field="parameter2" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.usageDate']}" field="usageDate" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.unityDescription']}" field="unityDescription" disabled="#{ratedTransactionBean.isBilled()}" />
+            <hftl:formField label="#{messages['ratedTransaction.doNotTriggerInvoicing']}" field="doNotTriggerInvoicing" disabled="#{ratedTransactionBean.isBilled()}" />
+
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+                <p:button id="backButton" value="#{messages['action.back']}" outcome="#{ratedTransactionBean.back()}"
+                    rendered="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null}">
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </p:button>
+            </ui:define>
+        </hftl:formPanel>
+    </ui:define>
+
+</ui:composition>

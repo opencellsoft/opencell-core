@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:e="http://jboss.com/products/seam/excel" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{jobInstanceListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+    	<p:importEnum type="org.meveo.cache.JobRunningStatusEnum" var="JobRunningStatusEnum" />
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
+			</p:breadCrumb>
+		</h:form>     
+        <hftl:searchPanel label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">
+            <hftl:decorateFormField label="#{messages['timer.jobCategory']}">
+                <p:selectOneMenu id="jobCategory" value="#{jobInstanceListBean.filters['jobCategoryEnum']}">
+                    <f:selectItem itemLabel="" />
+                    <f:selectItems value="#{jobInstanceListBean.jobCategoryEnumValues}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+                    <f:converter converterId="enumConverter" />
+                </p:selectOneMenu>
+            </hftl:decorateFormField>
+        </hftl:searchPanel>
+
+        <h:panelGroup id="resultsDatatable">
+            <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results" sortBy="code">
+                <p:column headerText="#{messages['timer.name']}" sortBy="#{entity.code}">
+                    <h:link outcome="jobInstanceDetail" value="#{entity.code}">
+                        <f:param name="objectId" value="#{entity.id}" />
+                        <f:param name="edit" value="true" />
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    </h:link>
+                </p:column>
+                <hftl:column label="#{messages['timer.jobName']}" field="jobTemplate" />
+                <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
+                <hftl:column label="#{messages['timer.schedule']}" field="timerEntity.code" />
+                <hftl:column label="#{messages['timer.active']}" field="disabled" isDisabledMessage="true"/>
+                <p:column headerText="#{messages['timer.isRunning']}">
+                    <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.this']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
+                    <h:outputText styleClass="ui-icon ui-icon-check" title="#{messages['timer.isRunning.other']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_OTHER}" />
+                </p:column>
+                <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="true" />
+            </hftl:dataList>
+        </h:panelGroup>
+        <h:form>
+            <p:poll interval="5" update=":resultsDatatable" widgetVar="jobStatusPoll" onerror="PF('jobStatusPoll').stop()" />
+        </h:form>
+    </ui:define>
+</ui:composition>

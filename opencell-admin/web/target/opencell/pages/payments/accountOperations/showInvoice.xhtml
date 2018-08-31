@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{recordedInvoiceBean.objectId}" />
+            <f:viewParam name="tab" value="#{recordedInvoiceBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<hftl:formPanel  edit="#{true}" formId="formOccInvoice"
+			label="#{messages['accountOperation_I.form']}" 
+			backingBean="#{recordedInvoiceBean}" showDeleteButton="false" showEditButton="true" showBackButton="false"  >
+			<p:tabView id="tabView" activeIndex="#{recordedInvoiceBean.activeTab}"  >
+				<p:tab title="#{messages['customer.tab.information']}"> 
+				<hftl:formField
+					label="#{messages['accountOperation.transactionDate']}"
+					field="transactionDate" disabled="true" />
+				<hftl:formField label="#{messages['accountOperation.matchingStatus']}"
+					field="matchingStatus" isMessage="true" disabled="true" />
+				<hftl:formField label="#{messages['accountOperation.invoiceNumber']}"
+					field="reference" disabled="true" />
+				<hftl:formField label="#{messages['order.number']}"
+					field="orderNumber" disabled="true"  />											
+				<hftl:formField label="#{messages['accountOperation.invoiceDate']}"
+					field="invoiceDate" disabled="true" />
+				<hftl:formField label="#{messages['accountOperation.dueDate']}"
+					field="dueDate" disabled="true" />
+
+				<hftl:formField label="#{messages['accountOperation.occDescription']}"
+					field="occDescription" size="50" disabled="true" />
+
+				<hftl:formField label="#{messages['accountOperation.amountTTC']}"
+					field="amount" disabled="true" converter="bigDecimal4DigitsConverter"/>
+				<hftl:formField label="#{messages['accountOperation.amountHT']}"
+					field="amountWithoutTax" disabled="true" converter="bigDecimal4DigitsConverter" />
+				<hftl:formField label="#{messages['accountOperation.amountTax']}"
+					field="taxAmount" disabled="true" converter="bigDecimal4DigitsConverter"/>
+				<hftl:formField label="#{messages['paymentMethod.type']}"
+					field="paymentMethod" disabled="#{recordedInvoiceBean.entity.matchingStatus.name() ne 'O'}"  />	
+			</p:tab>
+				<hftl:customFields backingBean="#{recordedInvoiceBean}" messagesId=":formOccInvoice:messages" />
+			</p:tabView>	
+               
+               <ui:param name="buttons" value="true"/>
+               <ui:define name="buttons"> 		   
+			   <p:commandButton action="#{recordedInvoiceBean.addLitigation()}" id="addLitigation"
+					value="#{messages['accountOperation_I.buttonAddLitigation']}"
+					rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" update="@all">
+                        <p:confirm header="#{messages['commons.confirmationHeader']}"
+						message="#{messages['message.confirm.litigation']}"
+						icon="ui-icon-alert"/>
+					</p:commandButton> 					
+				<p:commandButton action="#{recordedInvoiceBean.cancelLitigation()}"
+					value="#{messages['accountOperation_I.buttonCancelLitigation']}"
+					rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" update="@all">
+					<p:confirm header="#{messages['commons.confirmationHeader']}"
+						message="#{messages['message.confirm.cancelLitigation']}"
+						icon="ui-icon-alert"/>
+				</p:commandButton> 
+                <p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
+                    <f:param name="customerAccountId" value="#{recordedInvoice.getCustomerAccount().getId()}" />
+                    <f:param name="edit" value="false" />
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </p:button> 
+			</ui:define>
+		</hftl:formPanel>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    template="/layout/template.xhtml">
+        
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['matchingCode.title']}" backingBean="#{matchingCodeListBean}">
+    	
+    		<custom:searchPanel label="#{messages['matchingCode.search']}" new="#{false}">    			
+    			<custom:searchField label="#{messages['matchingCode.matchingType']}" field="matchingType" />
+    		</custom:searchPanel>
+
+	    	<custom:dataList dataModel="#{matchingCodes}" >				
+				<custom:column label="#{messages['matchingCode.matchingType']}" field="matchingType" childField="label" isMessage="true" />
+				<custom:column label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit" />
+				<custom:column label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit" />
+				<custom:column label="#{messages['matchingCode.date']}" field="matchingDate" />
+				<custom:actionsColumn editView="/pages/payments/matchingCode/matchingCodeDetail.xhtml" noEdit="true" noDelete="true"/>    	
+		    </custom:dataList>
+		    
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

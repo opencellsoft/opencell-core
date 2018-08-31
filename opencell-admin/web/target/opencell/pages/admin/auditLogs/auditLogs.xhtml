@@ -1,0 +1,85 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{auditLogListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.auditLog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.auditLogs']}" disabled="true" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['auditLog.search']}" columns="3"
+			backingBean="#{auditLogListBean}" renderNewButton="false">
+			<hftl:searchField label="#{messages['auditLog.actor']}" field="actor" />
+			<hftl:searchField label="#{messages['auditLog.action']}"
+				field="action" />
+			<hftl:searchField label="#{messages['auditLog.origin']}"
+				field="origin" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['auditLog']}"
+			backingBean="#{auditLogListBean}">
+			<hftl:column label="#{messages['auditLog.created']}" field="created" />
+			<hftl:column label="#{messages['auditLog.actor']}" field="actor" />
+			<hftl:column label="#{messages['auditLog.origin']}" field="origin" />
+			<hftl:column label="#{messages['auditLog.action']}" field="action" />
+			<hftl:column label="#{messages['auditLog.entity']}" field="entity" />
+			<hftl:column label="#{messages['auditLog.parameters']}"
+				field="parameters" />
+
+			<p:column style="width:150px;text-align: center">
+				<p:commandButton update=":#{p:component('auditLogDetail')}"
+					oncomplete="PF('auditLog').show()" icon="ui-icon-search"
+					title="#{messages['commons.view']}">
+					<f:setPropertyActionListener value="#{entity}"
+						target="#{auditLogBean.entity}" />
+				</p:commandButton>
+			</p:column>
+		</hftl:dataList>
+
+		<h:form>
+			<p:panel>
+				<p:commandButton action="#{auditLogBean.purge()}"
+					update=":#{p:component('results_panel')}"
+					value="#{messages['action.purge']}"></p:commandButton>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="#{messages['auditLog']}" widgetVar="auditLog"
+			modal="true" width="80%">
+			<p:outputPanel id="auditLogDetail">
+				<hftl:formPanel backingBean="#{auditLogBean}" edit="false"
+					showFormButtons="false" entity="#{auditLogBean.entity}"
+					rendered="#{auditLogBean.entity != null}">
+					<hftl:formField label="#{messages['auditLog.created']}"
+						field="created" />
+					<hftl:formField label="#{messages['auditLog.actor']}" field="actor" />
+					<hftl:formField label="#{messages['auditLog.origin']}"
+						field="origin" />
+					<hftl:formField label="#{messages['auditLog.action']}"
+						field="action" />
+					<hftl:formField label="#{messages['auditLog.entity']}"
+						field="entity" />
+					<hftl:formField label="#{messages['auditLog.parameters']}"
+						field="parameters" />
+				</hftl:formPanel>
+			</p:outputPanel>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

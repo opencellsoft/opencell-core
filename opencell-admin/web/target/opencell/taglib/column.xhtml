@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+    xmlns:pe="http://primefaces.org/ui/extensions">
+
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to enhance p:column component.
+        
+    Can be used inside any p:datatable type component including hftl:datalist 
+    
+    Attributes
+        backingbean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
+        entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
+        field - a name of a field in an entity
+        isList - is field value is a collection - supports both List and Set type fields.
+        isMap - is field value a map - prints a map's values
+        isDate - is entity field or a list value item field is a date
+        isDateRange - is entity field a range of dates
+        sort - is column sortable
+        rendered - should a column be rendered
+        exportable - is value exportable
+        width - column width e.g 20% 
+        style - style to apply to the p:column
+        styleClass - style class to apply to the p:column
+        noLinkToView - should field (in case of code field) not be displayed as a link to a detail view
+        
+    Additional attributes for text type fields
+        showTruncated - show truncated text in column and show full text when clicking on the text "..."  
+        
+    Additional attributes for list type fields
+        valueLabelField - used along with isList="true". Specifies a name of a field in list value item.
+        
+                
+    Additional attributes for date and date period type values
+        datePattern - date pattern to apply in date value output. If not provided, time attribute is consulted whether to add time part to a date 
+        time - should a date selection be time specific.  
+        
+
+    Additional attributes for other type values
+        isMessage - should field or valueLabelField value be treated as message key. In case of boolean, boolean value is converted to translatable commons.yes/no value.
+        messagePrefix - a prefix to append to value to form a full message key.
+        converter - converter to apply
+    
+    Additional attributes to render a link to an entity        
+        entityView - render a link to an entity when isList="false" or list value item  when isList="true". Specifies view outcome.
+        valueIdField - used along with entityView attribute. Specifies a field in an entity when isList="false" or in a list value item when isList="true" to obtain entity identifier value
+        propagateConversation - propagate conversation id in a link to an entity view 
+        renderLinkInEdit - should a link to an entity view open edit mode
+        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+    
+    Note: field, valueLabelField and valueIdField can be a single field name or a field name hierarchy containing "." (unlimited) (e.g. address.email)
+    
+-->
+
+
+<ui:composition>
+
+    <c:if test="${empty isMessage}">
+        <c:set var="isMessage" value="false" />
+    </c:if>
+    
+    <c:if test="${empty isDiabledMessage}">
+        <c:set var="isDiabledMessage}" value="false" />
+    </c:if>
+
+    <c:if test="${!empty messagePrefix}">
+        <c:set var="messagePrefix" value="${messagePrefix.concat('.')}" />
+    </c:if>
+
+    <c:if test="${empty show}">
+        <c:set var="show" value="true" />
+    </c:if>
+
+    <c:if test="${empty isDate}">
+        <c:set var="isDate" value="false" />
+    </c:if>
+
+    <c:if test="${empty isDateRange}">
+        <c:set var="isDateRange" value="false" />
+    </c:if>
+
+    <c:if test="${empty time}">
+        <c:set var="time" value="false" />
+    </c:if>
+
+    <c:if test="${time}">
+        <c:set var="datePattern" value="#{paramBean.dateTimeFormat}" />
+    </c:if>
+
+    <c:if test="${!time}">
+        <c:set var="datePattern" value="#{paramBean.dateFormat}" />
+    </c:if>
+
+    <c:if test="${empty isList}">
+        <c:set var="isList" value="false" />
+    </c:if>
+    <c:if test="${isList}">
+        <c:set var="sort" value="false" />
+    </c:if>
+
+    <c:if test="${empty isMap}">
+        <c:set var="isMap" value="false" />
+    </c:if>
+
+    <c:if test="${empty sort}">
+        <c:set var="sort" value="true" />
+    </c:if>
+
+    <c:if test="${empty rendered}">
+        <c:set var="rendered" value="true" />
+    </c:if>
+
+    <c:if test="${empty showTruncated}">
+        <c:set var="showTruncated" value="false" />
+    </c:if>
+
+    <c:if test="${empty exportable}">
+        <c:set var="exportable" value="true" />
+        <c:if test="${isList}">
+            <!-- List columns are not exportable, because its ui:reapeat component. -->
+            <c:set var="exportable" value="false" />
+        </c:if>
+    </c:if>
+
+    <c:if test="${empty propagateConversation}">
+        <c:set var="propagateConversation" value="true" />
+    </c:if>
+    <c:if test="${empty renderEditLink}">
+        <c:set var="renderEditLink" value="true" />
+    </c:if>
+    <c:if test="${empty objectIdParamName}">
+        <c:set var="objectIdParamName" value="objectId" />
+    </c:if>
+    <c:if test="${useCustomIdParam}">
+        <c:set var="objectIdParamName" value="#{backingBean.idParameterName}" />
+    </c:if>
+    <c:if test="${empty editView}">
+        <c:set var="editView" value="#{backingBean.getEditViewName()}" />
+    </c:if>
+    <c:if test="${empty edit}">
+        <c:set var="edit" value="true" />
+    </c:if>
+    <c:if test="#{field eq 'code' and empty(noLinkToView)}">
+        <c:set var="entityView" value="#{editView}" />
+        <c:set var="valueIdField" value="id" />
+    </c:if>
+
+    <c:if test="#{empty showSortLinks}">
+        <c:set var="showSortLinks" value="true" />
+    </c:if>
+
+    <p:column exportable="#{exportable}" rendered="#{rendered}" filterable="false">
+        <f:facet name="header">
+            <h:outputText value="#{label}" />
+        </f:facet>
+
+        <c:set var="valueField" value="#{entity}" />
+        <c:forEach var="valueFieldVar" items="#{field.split('\\.')}">
+            <c:set var="valueField" value="#{valueField[valueFieldVar]}" />
+        </c:forEach>
+
+        <c:if test="#{! empty(width)}">
+            <f:attribute name="width" value="#{width}" />
+        </c:if>
+        
+        <c:if test="#{sort and !empty(field)}">
+            <f:attribute name="field" value="#{field}" />
+            <f:attribute name="sortable" value="#{true}" />
+            <f:attribute name="sortBy" value="#{valueField}" />
+        </c:if>
+        
+        <c:if test="#{! empty(styleClasss)}">
+            <f:attribute name="styleClasss" value="#{styleClasss}" />
+        </c:if>
+        <c:if test="#{! empty(style)}">
+            <f:attribute name="style" value="#{style}" />
+        </c:if>
+
+        <c:if test="#{not empty entityView}">
+            <c:set var="attrId" value="#{field.replaceAll('\\.','\\_')}_#{valueIdField.replaceAll('\\.','\\_')}" />
+        </c:if>
+
+        <c:set var="fieldId" value="#{field.replaceAll('\\.','\\_')}" />
+
+        <!-- If field is not list, then it means it is either another entity or enum. -->
+        <c:if test="#{not isList}">
+            <c:if test="#{empty entityView}">
+                <!--  fix for order by active column for disabled field in EnableEntity -->
+                <c:if test="#{isDisabledMessage}">
+                    <h:outputText rendered="#{valueField != null and valueField.toString() == 'true'}" value="#{messages['commons.no']}" />
+                    <h:outputText rendered="#{valueField != null and valueField.toString() == 'false'}" value="#{messages['commons.yes']}" />
+                </c:if>
+                <!-- end of fix -->
+                <c:if test="#{isMessage}">
+                    <h:outputText rendered="#{valueField != null and valueField.toString() == 'true'}" value="#{messages['commons.yes']}" />
+                    <h:outputText rendered="#{valueField != null and valueField.toString() == 'false'}" value="#{messages['commons.no']}" />
+                    <h:outputText rendered="#{valueField != null and valueField.toString() != 'true' and valueField.toString() != 'false'}"
+                        value="#{messages[''.concat(messagePrefix).concat(valueField)]}" />
+                </c:if>
+                <c:if test="#{not isMessage and not isMap and not isDisabledMessage}">
+                    <!-- If there is date field, show date in specified pattern 
+                 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
+                 -->
+                    <c:set var="converter" value="#{getConverter.forType(valueField, converterParam)}" />
+                    <c:if test="${!isDate and !isDatePeriod and not time}">
+                        <c:if test="${!showTruncated}">
+                            <h:outputText value="#{valueField}" rendered="#{show}" converter="#{converter}" />
+                        </c:if>
+                        <c:if test="${showTruncated}">
+
+                            <h:outputText value="#{valueField}" rendered="#{show and valueField.length() &lt;=50}" converter="#{converter}" />
+                            <p:lightBox rendered="#{show and valueField.length()>50}">
+                                <h:outputLink value="#">
+                                    <h:outputText value="#{fn:substring(valueField,0,50)} ..." rendered="#{show}" converter="#{converter}" />
+                                </h:outputLink>
+
+                                <f:facet name="inline">
+                                    <p:scrollPanel mode="native" style="width:1000px;max-height:600px">
+                                        <h:outputText value="#{valueField.replaceAll('\\n','&lt;BR/&gt;')}" escape="false" />
+                                    </p:scrollPanel>
+                                </f:facet>
+                            </p:lightBox>
+
+                            <!--  This is an alternative to lightbox -->
+                            <!--                             <h:outputText id="${fieldId}_truncatedText" value="#{fn:substring(valueField,0,50)} #{valueField.length()>50?'...':''}" rendered="#{show}" /> -->
+                            <!--                             <p:overlayPanel id="${fieldId}_truncatedTextDetails" for="${fieldId}_truncatedText" hideEffect="fade" rendered="#{show and valueField.length()>50}" style="width: 1020px" -->
+                            <!--                                 dismissable="true" showCloseIcon="true" showEvent="mouseover" hideEvent="mousedown"> -->
+
+                            <!--                                 <p:scrollPanel mode="native" style="width:1000px;max-height:600px"> -->
+                            <!--                                     <p:inputTextarea value="#{valueField}" cols="180" /> -->
+                            <!--                                 </p:scrollPanel> -->
+                            <!--                             </p:overlayPanel> -->
+                        </c:if>
+                    </c:if>
+                    <c:if test="${isDate or time}">
+                        <h:outputText value="#{valueField}">
+                            <f:convertDateTime pattern="#{datePattern}" />
+                        </h:outputText>
+                    </c:if>
+                    <c:if test="${isDatePeriod and !valueField.isEmpty()}">
+                        <h:outputText value="#{valueField.from}">
+                            <f:convertDateTime pattern="#{datePattern}" />
+                        </h:outputText>
+                        <h:outputText value="-" style="padding:5px" />
+                        <h:outputText value="#{valueField.to}">
+                            <f:convertDateTime pattern="#{datePattern}" />
+                        </h:outputText>
+                    </c:if>
+                </c:if>
+                <!-- If its map then run through it and show results. -->
+                <c:if test="#{isMap}">
+                    <c:set var="map" value="#{valueField}" />
+                    <ui:repeat value="#{map.keySet().toArray()}" var="key">
+                        <h:outputText value="#{key}" /> = <h:outputText value="#{map[key]}" />
+                        <br />
+                    </ui:repeat>
+                </c:if>
+            </c:if>
+
+            <c:if test="#{not empty entityView}">
+                <c:set var="valueId" value="#{entity}" />
+                <c:forEach var="valueIdVar" items="#{valueIdField.split('\\.')}">
+                    <c:set var="valueId" value="#{valueId[valueIdVar]}" />
+                </c:forEach>
+                <h:link id="#{attrId}_message_link" value="#{valueField}" outcome="#{entityView}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;">
+                    <f:param name="#{objectIdParamName}" value="#{valueId}" />
+                    <f:param name="edit" value="#{edit}" />
+                    <c:if test="${propagateConversation}">
+                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                    </c:if>
+                    <c:if test="${not empty backView}">
+                        <f:param name="backView" value="#{backView}" />
+                    </c:if>
+                </h:link>
+                <!--                <p:tooltip rendered="#{empty popupFields and not empty popupValue}" -->
+                <!--                    for="#{attrId}_message_link" showEffect="slide" hideEffect="slide"> -->
+                <!--                    <h:outputText style="white-space:nowrap" value="#{popupValue}" /> -->
+                <!--                </p:tooltip> -->
+            </c:if>
+        </c:if>
+
+        <!-- If its list then run through it and show results. -->
+        <c:if test="#{isList}">
+            <!--            <c:set var="list" value="#{entity[field]}" /> -->
+            <ui:repeat value="#{valueField.toArray()}" var="c">
+                <c:set var="valueLabel" value="#{c}" />
+                <c:forEach var="valueLabelVar" items="#{valueLabelField.split('\\.')}">
+                    <c:set var="valueLabel" value="#{valueLabel[valueLabelVar]}" />
+                </c:forEach>
+                <c:if test="#{empty entityView}">
+                    <c:if test="#{isMessage}">
+                        <h:outputText rendered="#{valueLabel != null and valueLabel.toString() == 'true'}" value="#{messages['commons.yes']}" />
+                        <h:outputText rendered="#{valueLabel != null and valueLabel.toString() == 'false'}" value="#{messages['commons.no']}" />
+                        <h:outputText rendered="#{valueLabel != null and valueLabel.toString() != 'true' and valueLabel.toString() != 'false'}" value="#{messages[valueLabel]}" />
+                    </c:if>
+                    <h:outputText rendered="#{not isMessage}" value="#{valueLabel}" />
+                </c:if>
+                <!-- If entityView provided then show link to childField entity page. -->
+                <c:if test="#{not empty entityView}">
+
+                    <c:set var="valueId" value="#{c}" />
+                    <c:forEach var="valueIdVar" items="#{valueIdField.split('\\.')}">
+                        <c:set var="valueId" value="#{valueId[valueIdVar]}" />
+                    </c:forEach>
+                    <c:set var="attrId" value="#{field.replaceAll('\\.','\\_')}_#{attrId}" />
+                    <hf:linkToEntity linkId="#{attrId}_message_link" objectIdParamName="#{objectIdParamName}" rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}" popupFields="#{popupFields}"
+                        value="#{valueLabel}" propagateConversation="${propagateConversation}" view="#{entityView}" backView="#{backView}" />
+                    <hf:linkToEntity linkId="#{attrId}_message_link" rendered="#{not isMessage}" entity="#{c}" objectIdParamName="#{objectIdParamName}" popupFields="#{popupFields}"
+                        entityId="#{valueId}" propagateConversation="${propagateConversation}" value="#{valueLabel}" view="#{entityView}" backView="#{backView}" />
+                </c:if>
+                <br />
+            </ui:repeat>
+        </c:if>
+        <ui:insert />
+    </p:column>
+
+</ui:composition>
+
+</html>

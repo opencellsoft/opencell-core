@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{digitalResourceListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel label="#{messages['digitalResource.search']}"
+			backingBean="#{digitalResourceListBean}">
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['BusinessEntity.description']}"
+				id="description" field="description" />
+			<hftl:searchField label="#{messages['digitalResource.mimeType']}"
+				id="mimeType" field="mimeType" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}"
+				field="disabled" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['digitalResource.title']}"
+			backingBean="#{digitalResourceListBean}" sortBy="code">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			<hftl:column label="#{messages['digitalResource.mimeType']}"
+				field="mimeType" />
+			<hftl:column label="#{messages['digitalResource.uri']}" field="uri" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

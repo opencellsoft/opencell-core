@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{tradingCurrencyBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
+
+	<ui:define name="body">
+
+		<c:if test="#{tradingCurrencyBean.edit}">
+			<hftl:entityPopup id="currencyPopup"
+				header="#{messages['currency.popup.header']}"
+				updateField=":currenciesFormId:currencySelectedId :currenciesFormId:currencySelectedId_text :currenciesFormId:prDescription"
+				selection="#{tradingCurrencyBean.entity.currency}"
+				backingBean="#{currencyBean}"
+				searchField1Label="#{messages['currency.currencyCode']}"
+				searchField1="currencyCode"
+				column1Label="#{messages['currency.currencyCode']}"
+				column1="currencyCode"
+				column2Label="#{messages['tradingCurrency.prDescription']}"
+				column2="descriptionEn" selectionListenerBean="#{tradingCurrencyBean}" selectionListenerMethod="onCurrencySelect">
+			</hftl:entityPopup>
+		</c:if>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="tradingCurrencies"
+					value="#{messages['menu.tradingCurrencies']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['tradingCurrency']}"
+					disabled="true" rendered="#{tradingCurrencyBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['tradingCurrency']} - #{tradingCurrencyBean.entity.prDescription}"
+					disabled="true" rendered="#{!tradingCurrencyBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel id="formPanel" formId="currenciesFormId"
+			edit="#{tradingCurrencyBean.edit}"
+			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
+			backingBean="#{tradingCurrencyBean}" showEnableDisableButton="true">
+
+			<hftl:formField id="currencySelectedId"
+				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
+				valueLabelField="currencyCode" popup="true" popupId="currencyPopup"
+				required="true" showPopupOnlyOnNew="true" />
+
+			<hftl:formField label="#{messages['tradingCurrency.prDescription']}"
+				field="prDescription" id="prDescription" />
+			<hftl:formField label="#{messages['tradingCurrency.prCurrencyToThis']}"
+				field="prCurrencyToThis">
+			</hftl:formField>
+			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+				field="disabled" isMessage="true" />
+
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

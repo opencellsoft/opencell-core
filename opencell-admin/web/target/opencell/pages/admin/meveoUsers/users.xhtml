@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
+	template="/layout/template.xhtml" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{userListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.users']}" outcome="users" />
+            </p:breadCrumb>
+        </h:form>
+		                
+        <hftl:searchPanel backingBean="#{userListBean}" renderNewButton="false">
+			<hftl:searchField label="#{messages['user.userName']}" field="userName" />
+
+			<ui:define name="buttons">
+				<p:button href="#{authenticationProvider.getAccountUrl()}"
+					value="#{messages['commons.new']}" target="_blank" />
+			</ui:define>
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['user.title']}"
+			backingBean="#{userListBean}" sortBy="userName" dataModel="#{userListBean.filteredLazyDataModel}">
+			<hftl:column label="#{messages['user.userName']}" field="userName" entityView="userDetail" valueIdField="id"/>
+            <hftl:column label="#{messages['user.name']}" field="name.fullName"/>
+            <hftl:column label="#{messages['user.userGroupLevel']}" field="userLevel.descriptionOrCode"/>
+			<hftl:column label="#{messages['user.roles']}" field="roles"
+				valueLabelField="name" isList="true" sort="false" />            
+
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('userManagement')}" />
+		</hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

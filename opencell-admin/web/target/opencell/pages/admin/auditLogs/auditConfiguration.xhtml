@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.auditLog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.auditConfiguration']}"
+					disabled="true" />
+			</p:breadCrumb>
+		</h:form>
+
+		<h:form>
+			<h:panelGroup layout="block" styleClass="form-panel">
+				<p:messages id="messages"></p:messages>
+
+				<h:panelGroup styleClass="form-panel-fields">
+
+					<p:panel>
+						<hftl:decorateFormField label="#{messages['enableEntity.active']}"
+							fieldId="enabled">
+							<p:selectBooleanCheckbox id="enabled"
+								value="#{auditConfigurationBean.auditConfiguration.enabled}">
+							</p:selectBooleanCheckbox>
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField label="#{messages['auditLog.handlers']}"
+							fieldId="handlerSelection">
+							<p:pickList id="handlerSelection"
+								value="#{auditConfigurationBean.handlers}" var="handler"
+								itemLabel="#{handler}" itemValue="#{handler}" />
+						</hftl:decorateFormField>
+					</p:panel>
+
+					<p:panel id="classSelection">
+						<hftl:decorateFormField label="#{messages['auditLog.classes']}"
+							fieldId="classes" newLine="true">
+							<p:selectOneMenu id="classes" filter="true"
+								filterMatchMode="startsWith"
+								value="#{auditConfigurationBean.selectedClass}"
+								converter="omnifaces.SelectItemsConverter">
+								<p:ajax listener="#{auditConfigurationBean.onClassChange()}"
+									update="methods messages" />
+								<f:selectItem itemLabel="#{messages['commons.select']}"
+									itemValue="" noSelectionOption="true" />
+								<f:selectItems value="#{auditConfigurationBean.serviceClasses}"
+									var="e" itemLabel="#{e.simpleName}" />
+							</p:selectOneMenu>
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField label="#{messages['auditLog.methods']}"
+							fieldId="methods">
+							<p:pickList id="methods"
+								value="#{auditConfigurationBean.methods}" var="m"
+								itemLabel="#{m.methodName}" itemValue="#{m}">
+								<o:converter converterId="omnifaces.ListConverter"
+									list="#{auditConfigurationBean.methods.source}" />
+							</p:pickList>
+						</hftl:decorateFormField>
+
+						<h:panelGroup layout="block" styleClass="formFieldGroup">
+							<p:commandButton id="addClass"
+								value="#{messages['action.addClass']}"
+								update=":#{p:component('classSelection')} :#{p:component('classAndMethodsPanel')} :#{p:component('messages')}"
+								actionListener="#{auditConfigurationBean.addClass}" />
+						</h:panelGroup>
+
+					</p:panel>
+
+					<p:panel id="classAndMethodsPanel" width="100">
+						<p:dataTable id="classAndMethods" var="c"
+							value="#{auditConfigurationBean.selectedClassAndMethods}">
+							<p:column headerText="#{messages['auditLog.className']}">
+								<h:outputText value="#{c.className}" />
+							</p:column>
+							<p:column headerText="#{messages['auditLog.methods']}">
+								<ul>
+									<p:repeat value="#{c.methods}" var="m">
+										<li><h:outputText value="#{m} " /></li>
+									</p:repeat>
+								</ul>
+							</p:column>
+							<p:column headerText="#{messages['commons.actions']}"
+								style="width: 100px; text-align: center">
+								<p:commandButton
+									update=":#{p:component('classAndMethodsPanel')} :#{p:component('messages')}"
+									icon="fa fa-remove" title="#{messages['action.remove']}"
+									action="#{auditConfigurationBean.removeClassAndMethods}">
+									<f:setPropertyActionListener value="#{c}"
+										target="#{auditConfigurationBean.selectedClassAndMethod}"></f:setPropertyActionListener>
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+					<p:panel>
+						<h:outputText value="#{messages['auditLog.message1']}"
+							styleClass="Red" />
+						<h:panelGroup layout="block" styleClass="form-panel-actions">
+							<p:commandButton value="#{messages['action.save']}"
+								update=":#{p:component('messages')}"
+								actionListener="#{auditConfigurationBean.saveOrUpdate}" />
+						</h:panelGroup>
+					</p:panel>
+
+				</h:panelGroup>
+
+			</h:panelGroup>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

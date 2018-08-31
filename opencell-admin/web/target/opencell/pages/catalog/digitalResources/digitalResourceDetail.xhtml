@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+            <f:viewParam name="objectId" value="#{digitalResourceBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<p:panel>
+			<h:form id="crumbmenuForm">
+				<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+					<p:menuitem outcome="digitalResources"
+						value="#{messages['menu.digitalResources']}" />
+				</p:breadCrumb>
+			</h:form>
+		</p:panel>
+
+		<hftl:formPanel label="#{messages['menu.digitalResources']}"
+			backingBean="#{digitalResourceBean}" showEnableDisableButton="true">
+
+			<hftl:formField label="#{messages['businessEntity.code']}"
+				field="code" required="true" validateUnique="true" />
+			<hftl:formField label="#{messages['businessEntity.description']}"
+				field="description" id="description" />
+			<hftl:formField label="#{messages['digitalResource.mimeType']}"
+				field="mimeType" id="mimeType" />
+			<hftl:formField label="#{messages['digitalResource.uri']}"
+				field="uri" id="uri" />
+			<hftl:formField label="#{messages['enableEntity.disabled']}"
+				doNotShowOnNew="true" allowEdit="false" field="disabled"
+				isMessage="true" newLine="true" />
+		</hftl:formPanel>
+
+	</ui:define>
+</ui:composition>

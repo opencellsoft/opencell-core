@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{tradingLanguageListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="tradingLanguages"
+					value="#{messages['menu.comLanguages']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel backingBean="#{tradingLanguageListBean}"
+			label="#{messages['tradingLanguage.search']}">
+			<hftl:searchField id="language"
+				label="#{messages['tradingLanguage.languageCode']}"
+				field="language.languageCode" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['comLanguage.title']}"
+			backingBean="#{tradingLanguageListBean}">
+			<hftl:column label="#{messages['tradingLanguage.languageCode']}"
+				field="language.languageCode" width="10%"
+				entityView="tradingLanguagesDetail" valueIdField="id" />
+			<hftl:column label="#{messages['tradingLanguage.prDescription']}"
+				field="prDescription" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" width="10%" />
+
+			<hftl:actionsColumn renderEnableLink="true"
+				permission="#{currentUser.hasRole('administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

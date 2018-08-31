@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+
+
+        <!-- Show a popup to select entity from a list -->
+        <c:if test="#{popup}">
+            <h:panelGroup id="#{id}_entity">
+                <c:if test="#{edit}">
+                    <c:if test="#{empty fieldItem}">
+                        <p:inputText id="#{id}_text" value="#{fieldItem}" disabled="true" />
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" />
+                    </c:if>
+                    <c:if test="#{! empty fieldItem}">
+                        <p:inputText id="#{id}_text" value="#{fieldItem[valueLabelField]}" size="#{size}" disabled="true" />
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem[valueLabelField]}" required="#{required}" />
+                    </c:if>
+                    <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_selectLink"
+                        onclick="PF('dlg_#{popupId}').show()" icon="ui-icon-search" type="button" />
+
+                    <c:if test="#{createEditPopup}">
+                        <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled and fieldItem!=null}"
+                            id="#{id}_viewEditLink" oncomplete="PF('#{createEditPopupId}').show()" icon="ui-icon-document"
+                            actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" />
+                        <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_addLink"
+                            oncomplete="PF('#{createEditPopupId}').show()" icon="ui-icon-plus" actionListener="#{createEditPopupListenerBean[createEditPopupListenerNewMethod]}"
+                            update="#{createEditPopupListenerUpdate}" />
+                    </c:if>
+                    <p:commandButton immediate="true" rendered="#{showResetButton}" id="#{id}_resetLink" update="#{id}_entity" icon="ui-icon-close">
+                        <f:setPropertyActionListener target="#{fieldItem}" value="#{null}"/>    
+                    </p:commandButton>
+
+                </c:if>
+
+                <c:if test="#{! edit}">
+                    <c:if test="#{empty fieldItem}">
+                        <h:outputText id="#{id}" value="" styleClass="field-value" />
+                    </c:if>
+                    <c:if test="#{! empty fieldItem}">
+                        <c:if test="#{!createEditPopup}">
+                            <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+                        </c:if>
+
+                        <c:if test="#{createEditPopup}">
+                            <p:commandLink id="#{id}" value="#{fieldItem[valueLabelField]}" immediate="true" oncomplete="PF('#{createEditPopupId}').show()"
+                                actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" styleClass="field-value" />
+                        </c:if>
+                    </c:if>
+                </c:if>
+            </h:panelGroup>
+        </c:if>
+
+
+        <!-- Select entity from a picklist and store a entity itself OR store only a code value -->
+        <c:if test="#{!popup}">
+            <c:if test="#{ edit}">
+                <c:if test="#{listElements==null}">
+                    <c:set var="elements" value="#{listBean.listAll()}" />
+                </c:if>
+                <c:if test="#{listElements!=null}">
+                    <c:set var="elements" value="#{listElements}" />
+                </c:if>
+
+                <p:selectOneMenu id="#{id}" value="#{fieldItem}" required="#{required}" disabled="#{disabled}">
+                    <f:selectItem itemLabel="" itemValue="" />
+                    <!-- store a entity itself -->
+                    <c:if test="#{! fkToEntity}">
+                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{listBean.getTranslation(elem[valueLabelField])}" itemValue="#{elem}" />
+                    </c:if>
+                    <!-- store only a code value -->
+                    <c:if test="#{fkToEntity}">
+                        <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem[valueField]}" />
+                    </c:if>
+                    <hftl:objectConverter />
+                    <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" event="valueChange" />
+                    </c:if>
+                    <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="valueChange" />
+                    </c:if>
+                </p:selectOneMenu>
+            </c:if>
+            <c:if test="#{! edit}">
+                <c:if test="#{! fkToEntity}">
+                    <h:outputText id="#{id}" value="#{listBean.getTranslation(fieldItem[valueLabelField])}" styleClass="field-value" />
+                </c:if>
+                <c:if test="#{fkToEntity}">
+                    <h:outputText id="#{id}" value="#{listBean.persistenceService.findByCode(fieldItem)[valueLabelField]}" styleClass="field-value" />
+                </c:if>
+            </c:if>
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+
+</html>

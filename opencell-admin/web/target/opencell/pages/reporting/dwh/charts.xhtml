@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{chartListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="charts" value="#{messages['menu.charts']}" />
+			</p:breadCrumb>
+		</h:form>	
+
+		<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+	
+	
+		<hftl:entityPopup id="searchUserPopup"
+	        selection="#{chartListBean.filters['user']}"
+			header="#{messages['user.search']}" 
+			backingBean="#{userBean}"
+			searchField1Label="#{messages['user.userName']}"
+			searchField1="userName" column1Label="#{messages['user.userName']}"
+			column1="userName" 
+			updateField=":searchForm:user">
+		</hftl:entityPopup> 
+		
+<!-- 		<hftl:entityPopup id="searchRolePopup" -->
+<!-- 	        selection="#{chartListBean.filters['role']}" -->
+<!-- 			header="#{messages['role.search']}"  -->
+<!-- 			backingBean="#{userRoleBean}" -->
+<!-- 			searchField1Label="#{messages['role.name']}" -->
+<!-- 			searchField2Label="#{messages['role.description']}" -->
+<!-- 			searchField2="description" -->
+<!-- 			 column2Label="#{messages['role.description']}" -->
+<!-- 			 searchField1="name" column1Label="#{messages['role.name']}" -->
+<!-- 			column1="name" -->
+<!-- 			column2="description"  -->
+<!-- 			updateField=":searchForm:role"> -->
+<!-- 		</hftl:entityPopup>  -->
+		
+		<hftl:searchPanel label="#{messages['menu.charts']}" columns="3"
+			backingBean="#{chartListBean}" renderNewButton="false">
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
+			
+			<hftl:searchField id="user" label="#{messages['user.userPanel']}"
+				field="user" valueLabelField="userName" popup="true"
+				popupId="searchUserPopup" /> 
+				
+			<hftl:searchField id="role" label="#{messages['role.name']}"
+				field="role" valueLabelField="descriptionOrName" listBean="#{userRoleBean}" /> 
+<!--                 popup="true" popupId="searchRolePopup" />  -->
+                
+			<hftl:searchField
+				label="#{messages['entity.measuredvalue.measurableQuantity']}"
+				field="measurableQuantity.code" />
+            </hftl:searchPanel>
+             <p:panel styleClass="action-buttons" rendered="#{chartListBean.canUserUpdateEntity()}">
+    			<p:button id="buttonNewBar"
+    				value="#{messages['entity.barChart.new']}" outcome="barChartDetail">
+    				<f:param name="cid"
+    					value="#{javax.enterprise.context.conversation.id}" />
+    				<f:param name="edit" value="true" />
+    			</p:button>
+    			<p:button id="buttonNewPie"
+    				value="#{messages['entity.pieChart.new']}" outcome="pieChartDetail">
+    				<f:param name="cid"
+    					value="#{javax.enterprise.context.conversation.id}" />
+    				<f:param name="edit" value="true" />
+    			</p:button>
+    			<p:button id="buttonNewLine"
+    				value="#{messages['entity.lineChart.new']}"
+    				outcome="lineChartDetail">
+    				<f:param name="cid"
+    					value="#{javax.enterprise.context.conversation.id}" />
+    				<f:param name="edit" value="true" />
+    			</p:button>
+			  </p:panel>
+
+		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
+
+		<hftl:dataList backingBean="#{chartListBean}" editView="#{chartListBean.getEditView(entity)}" >
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['user.userPanel']}" field="auditable.creator" />
+			<hftl:column label="#{messages['role.userRolePanel']}" field="role.descriptionOrName" />
+			<hftl:column
+				label="#{messages['entity.measuredvalue.measurableQuantity']}"
+				field="measurableQuantity.code" />
+
+			<hftl:actionsColumn editView="#{chartListBean.getEditView(entity)}"
+				permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
+		</hftl:dataList>
+	</ui:define>
+</ui:composition>

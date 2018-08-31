@@ -1,0 +1,12 @@
+{
+	"realm": "${opencell.keycloak.realm}",
+	"auth-server-url": "${opencell.keycloak.url:http://localhost:8080/auth}",
+	"ssl-required": "${opencell.keycloak.ssl:none}",
+	"resource": "${opencell.keycloak.client:opencell-web}",
+	"credentials": {
+		"secret": "${opencell.keycloak.secret}"
+	},
+	"use-resource-role-mappings": true,
+	"enable-basic-auth": "${opencell.keycloak.basic-auth:true}",
+	"principal-attribute": "preferred_username"
+}

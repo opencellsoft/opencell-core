@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<cc:interface>
+	<cc:attribute name="treeBean" required="true" />
+	<cc:attribute name="entity" required="true" />
+	<cc:attribute name="treeValue" default="#{cc.attrs.treeBean.buildAccountsHierarchy(cc.attrs.entity)}" />
+	<!-- valid values are PANEL, TOGGLE and OVERLAY -->
+	<cc:attribute name="mode" required="false" default="TOGGLE"/>
+	<cc:attribute name="menuPanel" required="false" default=".col1" />
+	<cc:attribute name="menuWidthMin" required="false" default="3%" />
+	<cc:attribute name="menuWidthMax" required="false" default="25%" />
+	<cc:attribute name="contentPanel" required="false" default=".col2" />
+	<cc:attribute name="contentWidthMin" required="false" default="75%" />
+	<cc:attribute name="contentWidthMax" required="false" default="97%" />
+</cc:interface>
+
+<cc:implementation>
+
+	<ui:fragment>
+		<!-- Default size -->
+
+        <h:form styleClass="formNoBottomBorder">
+          <c:if test="#{cc.attrs.mode eq 'PANEL'}">
+		  	<p:panel styleClass="#{cc.attrs.id}_grid" header="#{messages['customer.tree']}" >
+		  		<hf:hierarchyPanelTreeContent treeValue="#{cc.attrs.treeValue}" />
+		  	</p:panel>
+		  </c:if>
+          <c:if test="#{cc.attrs.mode eq 'TOGGLE'}">
+		  	<p:panel styleClass="#{cc.attrs.id}_grid" header="#{messages['customer.tree']}" >
+		  		<hf:hierarchyPanelTreeContent treeValue="#{cc.attrs.treeValue}" />
+		  	</p:panel>
+		  	<p:remoteCommand name="toggleVisibility" actionListener="#{cc.attrs.treeBean.toggleVisibility}" />
+		  </c:if>
+		  <c:if test="#{cc.attrs.mode eq 'OVERLAY'}">
+		  	<p:commandButton id="customerHierarchyBtn" icon="fa fa-bars" style="cursor:pointer"
+				 type="button" />
+			<p:overlayPanel for="customerHierarchyBtn" showEvent="mouseover"
+				dismissable="true" showCloseIcon="true" 
+				styleClass="#{cc.attrs.id}_grid">
+				<hf:hierarchyPanelTreeContent treeValue="#{cc.attrs.treeValue}" />
+			</p:overlayPanel>
+		  </c:if>
+	    </h:form>
+	    
+	    <c:if test="${cc.attrs.mode eq 'TOGGLE'}">
+	    <script>
+	    jQuery((function ($) {
+	    	var toggleButton = $("#{cc.attrs.menuPanel} .ui-panel-titlebar #toggle-button")[0];
+	    	if(!toggleButton){
+	    		$("#{cc.attrs.menuPanel} .ui-panel-titlebar").append('<a href="#" id="toggle-button" class="ui-panel-titlebar-icon ui-corner-all ui-state-default" style="display: block;"><span class="ui-icon ui-icon-plusthick"></span></a>');
+	    		toggleButton = $("#{cc.attrs.menuPanel} .ui-panel-titlebar #toggle-button")[0];
+	    		$(toggleButton).data("visible", #{cc.attrs.treeBean.visible});
+	    		showMenuPanel($(toggleButton).children().first(), $(toggleButton).data("visible"));
+	    	}
+	        $(toggleButton).on("click", function (e) {
+	            var icon = $(this).children().first();
+	            $(this).data("visible", !$(this).data("visible"));
+	            toggleVisibility();
+	            showMenuPanel(icon, $(this).data("visible"));
+	        });
+	        function showMenuPanel(icon, show){
+	        	if(show){
+	        		icon.removeClass("fa fa-fw fa-bars");
+	        		icon.removeClass("ui-icon-plusthick");
+	                icon.addClass("ui-icon-minusthick");
+	                $("#{cc.attrs.menuPanel} .ui-panel-title").show();
+	                $("#{cc.attrs.menuPanel} .ui-panel-content").show();
+	                $("#{cc.attrs.menuPanel}").css("width", "#{cc.attrs.menuWidthMax}");
+	                $("#{cc.attrs.contentPanel}").css("width", "#{cc.attrs.contentWidthMin}");
+	        	} else {
+	        		icon.removeClass("ui-icon-minusthick");
+	        		icon.removeClass("ui-icon-plusthick");
+	                icon.addClass("fa fa-fw fa-bars");
+	                $("#{cc.attrs.menuPanel} .ui-panel-title").hide();
+	                $("#{cc.attrs.menuPanel} .ui-panel-content").hide();
+	                $("#{cc.attrs.menuPanel}").css("width", "#{cc.attrs.menuWidthMin}");
+	                $("#{cc.attrs.contentPanel}").css("width", "#{cc.attrs.contentWidthMax}");
+	        	}
+	        	
+	        }
+	    }(jQuery)));
+	    </script>
+	    </c:if>
+
+	</ui:fragment>
+</cc:implementation>
+
+</html>

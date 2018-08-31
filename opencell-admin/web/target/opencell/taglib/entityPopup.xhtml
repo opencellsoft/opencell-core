@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org">
+
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to create a dialog component to search and select an entity. 
+        
+    Used in conjunction with searchField and formFields of type entity with popup="true" attribute. 
+    
+    Attributes
+        id - popup identifier
+        backingBean - backing bean for data search. 
+        dataModel - data search result model. Defaults to backingBean.lazyDataModel.
+        lazy - is data model lazy loaded
+        header - dialog header
+        width - dialog width
+        selectionListenerBean and selectionListenerMethod - action listener bean and method to execute when value is selected from a list.
+        searchField(1-4) and searchField(1-4)Label - a search field name and a label - up to 4 fields. Allows a use of "." in a fieldname
+        searchField(1-4)Converter - up to 4 value converters (id) for corresponding search field
+        isAutocomplete(1-4), autocompleteBean(1-4) and autocompleteMethod(1-4) - up to 4 autocomplete beans and their methods for field value autocompletion
+        column(1-7) and column(1-7)Child - name of a field and child field in case of field hierarchy  of up to 7 columns in search results datatable
+        column(1-7)Label - up to 7 column labels 
+        column(1-7)Converter - up to 7 value converters (short name - see GetConverter.java for appropriate names) for corresponding search results datatable columns
+        selection - a variable to hold selected item from a search results datatable - An alternative to selectionListenerBean.selectionListenerMethod(). If selectionListenerBean.selectionListenerMethod() is used, method is called after the value is set to field identified by selection attribute. 
+        updateField - a list of component ids to update separated by a comma
+-->
+
+<ui:composition>
+
+    <!-- No id is set. -->
+    <c:if test="${empty id}">
+        <c:set var="id" value="popup"/>
+    </c:if>
+    <c:if test="${empty width}">
+        <c:set var="width" value="600"/>
+    </c:if>
+    <c:if test="${dataModel == null}">
+        <c:set var="dataModel" value="#{backingBean.lazyDataModel}"/>
+    </c:if>
+    <c:if test="${empty lazy}">
+        <c:set var="lazy" value="true"></c:set>
+    </c:if>
+
+    <c:if test="${empty(isAutocomplete1)}">
+        <c:set var="isAutocomplete1" value="false"/>
+    </c:if>
+    <c:if test="${empty(isAutocomplete2)}">
+        <c:set var="isAutocomplete2" value="false"/>
+    </c:if>
+    <c:if test="${empty(isAutocomplete3)}">
+        <c:set var="isAutocomplete3" value="false"/>
+    </c:if>
+    <c:if test="${empty(isAutocomplete4)}">
+        <c:set var="isAutocomplete4" value="false"/>
+    </c:if>
+
+
+    <p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="#{width}" appendTo="@(body)">
+        <h:form id="#{id}popupForm">
+            <c:if test="#{not empty searchField1}">
+                <h:panelGroup layout="block" styleClass="search-panel">
+                    <p:messages/>
+                    <p:outputPanel styleClass="search-panel-fields">
+                        <hftl:searchField id="searchField1" label="#{searchField1Label}" backingBean="#{backingBean}" field="#{searchField1}" isAutocomplete="#{isAutocomplete1}"
+                                          autocompleteBean="#{autocompleteBean1}" autocompleteMethod="#{autocompleteMethod1}" converter="#{searchField1Converter}"/>
+                        <c:if test="#{not empty searchField2}">
+                            <hftl:searchField id="searchField2" label="#{searchField2Label}" backingBean="#{backingBean}" field="#{searchField2}"
+                                              isAutocomplete="#{isAutocomplete2}" autocompleteBean="#{autocompleteBean2}" autocompleteMethod="#{autocompleteMethod2}"
+                                              converter="#{searchField2Converter}"/>
+                        </c:if>
+                        <c:if test="#{not empty searchField3}">
+                            <hftl:searchField id="searchField3" label="#{searchField3Label}" backingBean="#{backingBean}" field="#{searchField3}"
+                                              isAutocomplete="#{isAutocomplete3}" autocompleteBean="#{autocompleteBean3}" autocompleteMethod="#{autocompleteMethod3}"
+                                              converter="#{searchField3Converter}"/>
+                        </c:if>
+                        <c:if test="#{not empty searchField4}">
+                            <hftl:searchField id="searchField4" label="#{searchField4Label}" backingBean="#{backingBean}" field="#{searchField4}"
+                                              isAutocomplete="#{isAutocomplete4}" autocompleteBean="#{autocompleteBean4}" autocompleteMethod="#{autocompleteMethod4}"
+                                              converter="#{searchField4Converter}"/>
+                        </c:if>
+                    </p:outputPanel>
+                    <h:panelGroup layout="block" styleClass="search-panel-actions">
+                        <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="@form"/>
+                        <p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm"/>
+                        <p:commandButton id="buttonAll" action="#{backingBean.back}" value="#{messages['commons.all']}"/>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </c:if>
+
+            <p:dataTable id="#{id}datatable" var="e" paginator="true" resizableColumns="true" value="#{dataModel}" rows="10" selection="#{selection}" selectionMode="single"
+                         rowKey="#{e.id}" lazy="#{lazy}">
+                <c:if test="#{empty selectionListenerBean}">
+                    <p:ajax event="rowSelect" oncomplete="PF('dlg_#{id}').hide()" update="#{updateField}"/>
+                </c:if>
+                <c:if test="#{not empty selectionListenerBean}">
+                    <p:ajax event="rowSelect" listener="#{selectionListenerBean[selectionListenerMethod]}" oncomplete="PF('dlg_#{id}').hide()" update="#{updateField}"/>
+                </c:if>
+                <c:if test="#{not empty column1}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{column1Label}"/>
+                        </f:facet>
+                        <c:if test="#{not empty column1Child}">
+                            <c:if test="#{not empty column1Converter}">
+                                <c:set var="converter1" value="#{getConverter.forType(e[column1][column1Child], column1Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column1][column1Child]}" converter="#{converter1}"/>
+                        </c:if>
+                        <c:if test="#{empty column1Child}">
+                            <c:if test="#{not empty column1Converter}">
+                                <c:set var="converter1" value="#{getConverter.forType(e[column1], column1Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column1]}" converter="#{converter1}"/>
+                        </c:if>
+                    </p:column>
+                </c:if>
+                <c:if test="#{not empty column2}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{column2Label}"/>
+                        </f:facet>
+                        <c:if test="#{not empty column2Child}">
+                            <c:if test="#{not empty column2Converter}">
+                                <c:set var="converter2" value="#{getConverter.forType(e[column2][column2Child], column2Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column2][column2Child]}" converter="#{converter2}"/>
+                        </c:if>
+                        <c:if test="#{empty column2Child}">
+                            <c:if test="#{not empty column2Converter}">
+                                <c:set var="converter2" value="#{getConverter.forType(e[column2], column2Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column2]}" converter="#{converter2}"/>
+                        </c:if>
+                    </p:column>
+                </c:if>
+                <c:if test="#{not empty column3}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{column3Label}"/>
+                        </f:facet>
+                        <c:if test="#{not empty column3Child}">
+                            <c:if test="#{not empty column3Converter}">
+                                <c:set var="converter3" value="#{getConverter.forType(e[column3][column3Child], column3Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column3][column3Child]}" converter="#{converter3}"/>
+                        </c:if>
+                        <c:if test="#{empty column3Child}">
+                            <c:if test="#{not empty column3Converter}">
+                                <c:set var="converter3" value="#{getConverter.forType(e[column3], column3Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column3]}" converter="#{converter3}"/>
+                        </c:if>
+                    </p:column>
+                </c:if>
+                <c:if test="#{not empty column4}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{column4Label}"/>
+                        </f:facet>
+                        <c:if test="#{not empty column4Child}">
+                            <c:if test="#{not empty column4Converter}">
+                                <c:set var="converter4" value="#{getConverter.forType(e[column4][column4Child], column4Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column4][column4Child]}" converter="#{converter4}"/>
+                        </c:if>
+                        <c:if test="#{empty column4Child}">
+                            <c:if test="#{not empty column4Converter}">
+                                <c:set var="converter4" value="#{getConverter.forType(e[column4], column4Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column4]}" converter="#{converter4}"/>
+                        </c:if>
+                    </p:column>
+                </c:if>
+                <c:if test="#{not empty column5}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{column5Label}"/>
+                        </f:facet>
+                        <c:if test="#{not empty column5Child}">
+                            <c:if test="#{not empty column5Converter}">
+                                <c:set var="converter5" value="#{getConverter.forType(e[column5][column5Child], column5Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column5][column5Child]}" converter="#{converter5}"/>
+                        </c:if>
+                        <c:if test="#{empty column5Child}">
+                            <c:if test="#{not empty column5Converter}">
+                                <c:set var="converter5" value="#{getConverter.forType(e[column5], column5Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column5]}" converter="#{converter5}"/>
+                        </c:if>
+                    </p:column>
+                </c:if>
+                <c:if test="#{not empty column6}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{column6Label}"/>
+                        </f:facet>
+                        <c:if test="#{not empty column6Child}">
+                            <c:if test="#{not empty column6Converter}">
+                                <c:set var="converter6" value="#{getConverter.forType(e[column6][column6Child], column6Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column6][column6Child]}" converter="#{converter6}"/>
+                        </c:if>
+                        <c:if test="#{empty column6Child}">
+                            <c:if test="#{not empty column6Converter}">
+                                <c:set var="converter6" value="#{getConverter.forType(e[column6], column6Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column6]}" converter="#{converter6}"/>
+                        </c:if>
+                    </p:column>
+                </c:if>
+                <c:if test="#{not empty column7}">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{column7Label}"/>
+                        </f:facet>
+                        <c:if test="#{not empty column7Child}">
+                            <c:if test="#{not empty column7Converter}">
+                                <c:set var="converter7" value="#{getConverter.forType(e[column7][column7Child], column7Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column7][column7Child]}" converter="#{converter7}"/>
+                        </c:if>
+                        <c:if test="#{empty column7Child}">
+                            <c:if test="#{not empty column7Converter}">
+                                <c:set var="converter7" value="#{getConverter.forType(e[column7], column7Converter)}"></c:set>
+                            </c:if>
+                            <h:outputText value="#{e[column7]}" converter="#{converter7}"/>
+                        </c:if>
+                    </p:column>
+                </c:if>
+            </p:dataTable>
+        </h:form>
+    </p:dialog>
+</ui:composition>
+
+</html>

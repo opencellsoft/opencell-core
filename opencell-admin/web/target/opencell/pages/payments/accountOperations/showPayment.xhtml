@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{paymentBean.objectId}" />
+			<f:viewParam name="tab" value="#{paymentBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
+    <ui:define name="body">
+        <hftl:formPanel  edit="#{true}" label="#{messages['accountOperation_P.form']}" backingBean="#{paymentBean}" showDeleteButton="false" showEditButton="true" showBackButton="false" formId="apFormId">
+				<p:tabView id="tabView" activeIndex="#{paymentBean.activeTab}"  >
+				<p:tab title="#{messages['customer.tab.information']}"> 
+            <hftl:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.reference']}" field="reference" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.depositDate']}" field="depositDate" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.dueDate']}" field="dueDate" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.paymentMethod']}" field="paymentMethod" isMessage="true" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.bankLot']}" field="bankLot" size="50" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" disabled="true" />
+           
+     		<hftl:decorateFormField fieldId="amount_text" label="#{messages['accountOperation.amount']}">
+			<h:outputText id="amount_text" disabled="true"
+			rendered="#{true}"
+			value="#{paymentBean.entity.amount}"
+			 converter="bigDecimalConverter" />
+					</hftl:decorateFormField>            
+            
+     		<hftl:decorateFormField fieldId="fees_text" label="#{messages['accountOperation.fees']}">
+			<h:outputText id="fees_text" disabled="true"
+			rendered="#{true}"
+			value="#{paymentBean.entity.fees}"
+			 converter="bigDecimalConverter" />
+					</hftl:decorateFormField>
+            <hftl:formField label="#{messages['accountOperation.order']}" field="paymentOrder" disabled="true" />
+            <hftl:formField label="#{messages['accountOperation.comment']}" field="comment" disabled="true" />
+         </p:tab>
+				<hftl:customFields backingBean="#{paymentBean}" messagesId=":apFormId:messages" />
+			</p:tabView>
+        </hftl:formPanel>  
+		<p:button outcome="customerAccountDetail" value="#{messages['action.back']}">
+			<f:param name="customerAccountId" value="#{paymentBean.entity.getCustomerAccount().getId()}" />
+			<f:param name="edit" value="false" />
+			<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+		</p:button> 
+    </ui:define>
+</ui:composition>

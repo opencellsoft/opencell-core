@@ -1,0 +1,385 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <script type="application/javascript" src="./js/Chart.min.js"></script>
+
+        <div class="no-border-radius ui-grid-responsive">
+            <div class="chart-row">
+                <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                    <div class="box-title">#{messages['marketingManager.home.mrrLabel']}
+                        <span id="mrrTrend" title="#{messages['marketingManager.home.mrrTrendLabel']}" class="trend" />
+                    </div>
+                    <div class="draw">
+                        <canvas id="mrr"/>
+                    </div>
+                </div>
+                <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                    <div class="box-title">#{messages['marketingManager.home.churnLabel']}
+                        <span id="churnTrend" title="#{messages['marketingManager.home.churnTrendLabel']}" class="trend" />
+                    </div>
+                    <div class="draw">
+                        <canvas id="churn"/>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-row">
+                <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                    <div class="box-title">#{messages['marketingManager.home.mrrPerOfferLabel']}
+                        <span id="mrrPerOfferTrend" title="#{messages['marketingManager.home.mrrPerOfferTrendLabel']}" class="trend" />
+                    </div>
+                    <div class="draw">
+                        <canvas id="mrrPerOffer"/>
+                    </div>
+                </div>
+                <div class="text-center box no-border no-border-radius ui-grid-col-6">
+                    <div class="box-title">#{messages['marketingManager.home.ordersByStatusLabel']}
+                        <span id="ordersByStatusTrend" title="#{messages['marketingManager.home.ordersByStatusTrendLabel']}" class="trend"/>
+                    </div>
+                    <div class="draw">
+                        <canvas id="ordersByStatus" style="height: 100px;"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+			//<![CDATA[
+
+            function populateMRR(mrrOnSubscriptionsValues) {
+
+				var regular = {
+					type: 'bar',
+					label: 'Regular',
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.regular || [],
+					backgroundColor: 'rgba(  0, 32, 80, 0.8)',
+					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.9)',
+					borderWidth: 0
+				};
+
+				var newSubscriptions = {
+					type: 'bar',
+					label: 'New',
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets["new"] || [],
+					backgroundColor: 'rgba(  64, 192, 64, 0.8)',
+					hoverBackgroundColor: 'rgba( 32, 128, 32, 0.9)',
+					borderWidth: 0
+				};
+
+				var upsell = {
+					type: 'bar',
+					label: 'Upsell',
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.upsell || [],
+					backgroundColor: 'rgba( 64, 192, 64, 0.6)',
+					hoverBackgroundColor: 'rgba( 32, 128, 32, 0.7)',
+					borderWidth: 0
+				};
+
+				var cancelled = {
+					type: 'bar',
+					label: 'Cancelled',
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.cancelled || [],
+					backgroundColor: 'rgba(231, 61, 59, 0.6)',
+					hoverBackgroundColor: 'rgba(128, 32, 32, 0.7)',
+					borderWidth: 0
+				};
+
+				var mrrData = {
+					labels: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.chartLabels || [],
+					datasets: [
+						regular,
+						cancelled,
+						upsell,
+                        newSubscriptions
+					]
+				};
+
+				var mrrOptions = {
+					scales: {
+						xAxes: [{
+							stacked: true
+						}],
+						yAxes: [{
+							stacked: true,
+							ticks: {
+								beginAtZero: true
+							}
+						}]
+					}
+				};
+
+				var mrrCanvas = document.getElementById("mrr");
+				new Chart(mrrCanvas, {
+						type: 'bar',
+						data: mrrData,
+						options: mrrOptions
+					}
+				);
+            }
+
+            function populateChurn(churnValues) {
+
+            	var subscriptions = {
+					type: 'bar',
+					label: 'Subscriptions',
+					data: churnValues && churnValues.datasets && churnValues.datasets.subscriptions || [],
+					backgroundColor: 'rgba(  0, 32, 80, 0.6)',
+					hoverBackgroundColor: 'rgba(  0, 32, 80, 0.8)',
+					borderColor: 'rgba(  0, 32, 80, 1)',
+					borderWidth: 0
+				};
+
+				var terminations = {
+					type: 'bar',
+					label: 'Terminations',
+					data: churnValues && churnValues.datasets && churnValues.datasets.terminations || [],
+					backgroundColor: 'rgba(231, 61, 59, 0.6)',
+					hoverBackgroundColor: 'rgba(231, 61, 59, 0.8)',
+					borderColor: 'rgba(231, 61, 59, 1)',
+					borderWidth: 0
+				};
+				var trend = {
+					type: 'line',
+					label: "Trend",
+					fill: false,
+					lineTension: 0.3,
+					backgroundColor: "rgba(  0, 32, 80,0)",
+					borderColor: "rgba(  0, 32, 80,1)",
+					borderCapStyle: 'butt',
+					borderJoinStyle: 'miter',
+					pointBorderColor: "rgba(  0, 32, 80,1)",
+					pointBackgroundColor: "#fff",
+					pointBorderWidth: 1,
+					pointHoverRadius: 6,
+					pointHoverBackgroundColor: "rgba(  0, 32, 80,1)",
+					pointHoverBorderColor: "rgba(  0, 32, 80,1)",
+					pointHoverBorderWidth: 2,
+					pointRadius: 3,
+					pointHitRadius: 6,
+					data: churnValues && churnValues.datasets && churnValues.datasets.trend || [],
+					spanGaps: true
+				};
+
+				var churnData = {
+					labels: churnValues && churnValues.chartLabels || [],
+					datasets: [
+						subscriptions,
+						terminations,
+						trend
+					]
+				};
+				var churnOptions = {
+					scales: {
+						xAxes: [{
+							stacked: true
+						}],
+						yAxes: [{
+							ticks: {
+								beginAtZero:true
+							}
+						}]
+					}
+				};
+
+				var churnCanvas = document.getElementById("churn");
+				new Chart(churnCanvas, {
+						type: 'bar',
+						data: churnData,
+						options: churnOptions
+					}
+				);
+				var churnTrend = document.getElementById("churnTrend");
+				churnTrend.innerHTML = formatTrendValue(churnValues.trendValue);
+            }
+
+            function populateMRRPerOffer(mrrPerOffer) {
+
+            	var mrrPerOfferLabels = mrrPerOffer && mrrPerOffer.legendLabels || [];
+
+				var mrrOffer1 = {
+					type: 'bar',
+					label: mrrPerOfferLabels[0],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer1 || [],
+					backgroundColor: 'rgba(  0, 32, 80, 0.8)',
+					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.9)',
+					borderColor: 'rgba(  0, 32, 80, 1)',
+					borderWidth: 0
+				};
+				var mrrOffer2 = {
+					type: 'bar',
+					label: mrrPerOfferLabels[1],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer2 || [],
+					backgroundColor: 'rgba(  0, 32, 80, 0.6)',
+					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.7)',
+					borderColor: 'rgba(  0, 32, 80, 1)',
+					borderWidth: 0
+				};
+				var mrrOffer3 = {
+					type: 'bar',
+					label: mrrPerOfferLabels[2],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer3 || [],
+					backgroundColor: 'rgba(  0, 32, 80, 0.4)',
+					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.5)',
+					borderColor: 'rgba(  0, 32, 80, 1)',
+					borderWidth: 0
+				};
+				var mrrOffer4 = {
+					type: 'bar',
+					label: mrrPerOfferLabels[3],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer4 || [],
+					backgroundColor: 'rgba(  0, 32, 80, 0.2)',
+					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.3)',
+					borderColor: 'rgba(  0, 32, 80, 1)',
+					borderWidth: 0
+                };
+				var mrrOthers = {
+					type: 'bar',
+					label: mrrPerOfferLabels[4],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.others || [],
+					backgroundColor: 'rgba(  0, 32, 80, 0.1)',
+					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.2)',
+					borderColor: 'rgba(  0, 32, 80, 1)',
+					borderWidth: 0
+                };
+				var mrrTotal = {
+					type: 'line',
+					label: "Total",
+					fill: false,
+					lineTension: 0.3,
+					backgroundColor: "rgba(  0, 32, 80,0)",
+					borderColor: "rgba(  0, 32, 80,1)",
+					borderCapStyle: 'butt',
+					borderJoinStyle: 'miter',
+					pointBorderColor: "rgba(  0, 32, 80,1)",
+					pointBackgroundColor: "#fff",
+					pointBorderWidth: 1,
+					pointHoverRadius: 6,
+					pointHoverBackgroundColor: "rgba(  0, 32, 80,1)",
+					pointHoverBorderColor: "rgba(  0, 32, 80,1)",
+					pointHoverBorderWidth: 2,
+					pointRadius: 3,
+					pointHitRadius: 6,
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.total || [],
+					spanGaps: true
+                };
+
+				var mrrPerOfferData = {
+					labels: mrrPerOffer && mrrPerOffer.chartLabels || [],
+					datasets: [
+						mrrOffer1,
+						mrrOffer2,
+						mrrOffer3,
+                        mrrOffer4,
+                        mrrOthers,
+                        mrrTotal
+					]
+				};
+				var mrrPerOfferOptions = {
+					scales: {
+						xAxes: [{
+							stacked: true
+						}],
+						yAxes: [{
+							stacked: true,
+							ticks: {
+								beginAtZero:true
+							}
+						}]
+					}
+				};
+
+				var mrrPerOfferCanvas = document.getElementById("mrrPerOffer");
+				new Chart(mrrPerOfferCanvas, {
+						type: 'bar',
+						data: mrrPerOfferData,
+						options: mrrPerOfferOptions
+					}
+				);
+
+				var mrrTrend = document.getElementById("mrrTrend");
+				mrrTrend.innerHTML = formatTrendValue(mrrPerOffer.trendValue);
+				var mrrPerOfferTrend = document.getElementById("mrrPerOfferTrend");
+				mrrPerOfferTrend.innerHTML = formatTrendValue(mrrPerOffer.trendValue);
+            }
+
+            function populateOrdersByStatus(ordersByStatus) {
+				// Orders by status
+				var ordersByStatusDataSet = {
+					type: 'pie',
+					label: "Orders by Status",
+					fill: false,
+					backgroundColor: [
+						"rgba(  0,  32,  80, 0.8)",
+						"rgba(  0,  32,  80, 0.6)",
+						"rgba( 64, 192,  64, 0.6)",
+						"rgba(231,  61,  59, 0.6)"
+					],
+					borderColor: "white",
+					hoverBackgroundColor: [
+						"rgba(  0,  24, 64, 0.9)",
+						"rgba(  0,  24, 64, 0.7)",
+						"rgba( 32, 128, 32, 0.7)",
+						"rgba(128,  32, 32, 0.7)",
+					],
+					hoverBorderColor: "white",
+					data: ordersByStatus && ordersByStatus.datasets && ordersByStatus.datasets.data || []
+				};
+				var ordersByStatusData = {
+					labels: ordersByStatus && ordersByStatus.legendLabels || [],
+					datasets: [
+						ordersByStatusDataSet
+					]
+				};
+				var ordersByStatusOptions = {
+					display: false,
+					cutoutPercentage: 70,
+					circumference: 5,
+					rotation: 0.6,
+					animation: {
+						animateScale: true
+					},
+					legend: {
+						position: "right",
+					}
+				};
+
+				var ordersByStatusCanvas = document.getElementById("ordersByStatus");
+				new Chart(ordersByStatusCanvas, {
+						type: 'pie',
+						data: ordersByStatusData,
+						options: ordersByStatusOptions
+					}
+				);
+				var ordersByStatusTrend = document.getElementById("ordersByStatusTrend");
+				ordersByStatusTrend.innerHTML = formatTrendValue(ordersByStatus.trendValue);
+            }
+
+            function formatTrendValue(trend){
+				var arrow = "-";
+				switch(Math.sign(trend)){
+					case -1:
+						arrow = "↘";
+						break;
+					case +1:
+						arrow = "↗";
+						break;
+					default:
+						arrow = "→";
+						break;
+				}
+				return arrow + " " + trend + "%";
+			}
+
+            populateMRR(#{chartBean.mrrOnSubscriptionsValues});
+            populateChurn(#{chartBean.churnValues});
+            populateMRRPerOffer(#{chartBean.mrrOnOffers});
+            populateOrdersByStatus(#{chartBean.ordersByStatus});
+
+			//]]>
+        </script>
+    </ui:define>
+</ui:composition>

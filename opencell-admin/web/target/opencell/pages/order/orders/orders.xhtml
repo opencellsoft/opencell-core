@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{orderListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <!-- Entity select popup. -->
+        <hftl:entityPopup id="searchUAPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+            selection="#{orderListBean.filters['userAccount']}" updateField=":searchForm:userAccount">
+        </hftl:entityPopup>
+
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.orders']}" disabled="true" />
+                <p:menuitem outcome="orders" value="#{messages['menu.orders']}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:searchPanel backingBean="#{orderListBean}">
+            <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
+            <!--             <hftl:searchField label="#{messages['order.userAccount']}" field="userAccount" id="userAccount" valueLabelField="code" popup="true" popupId="searchUAPopup" /> -->
+            <hftl:searchField label="#{messages['order.orderDate']}" field="orderDate" />
+            <hftl:searchField label="#{messages['commons.status']}" field="status" />
+            <hftl:decorateFormField fieldId="showMyOrdersOnly" label="#{messages['orders.showMyOrdersOnly']}"
+                rendered="#{currentUser.hasRole('administrationVisualization')}">
+                <p:selectBooleanCheckbox id="showMyOrdersOnly" value="#{orderListBean.showMyOrdersOnly}" />
+            </hftl:decorateFormField>
+        </hftl:searchPanel>
+
+        <hftl:dataList label="#{messages['orders.title']}" sortBy="orderDate" sortOrder="DESCENDING" backingBean="#{orderListBean}">
+            <hftl:column label="#{messages['order.orderDate']}" field="orderDate" isDate="true" />
+            <hftl:column label="#{messages['order.userAccount']}" field="userAccounts" isList="true" valueLabelField="descriptionOrCode" />
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['commons.status']}" field="status" isMessage="true" messagePrefix="OrderStatusEnum" />
+            <hftl:column label="#{messages['order.completionDate']}" field="completionDate" isDate="true"/>
+            <hftl:column label="#{messages['order.receivedFromApp']}" field="receivedFromApp" />
+            <hftl:column label="#{messages['order.routedTo']}" field="routedToUserGroup.descriptionOrCode" />
+            <hftl:actionsColumn permission="#{currentUser.hasRole('orderManagement')}" />
+        </hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="businessOfferModelId" value="#{businessOfferModelBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+
+        <hftl:entityPopup id="offerTemplatePopup" header="#{messages['offerTemplate.title']}" updateField=":moduleForm:offerSelectId_entity :businessServiceTemplates"
+            selection="#{businessOfferModelBean.entity.offerTemplate}" backingBean="#{offerTemplateListBean}" dataModel="#{offerTemplateListBean.lazyDataModelNoBSM}" width="1000"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+            searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from" searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+            column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from" column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to">
+        </hftl:entityPopup>
+
+        <h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="businessOfferModels"
+					value="#{messages['menu.businessOffers']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['businessOfferModel']}"
+					disabled="true" rendered="#{businessOfferModelBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['businessOfferModel']} #{messages['commons.configuration']} - #{businessOfferModelBean.entity.code}"
+					disabled="true" rendered="#{!businessOfferModelBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<ui:include src="../../admin/module/modulePopups.xhtml">
+            <ui:param name="backingBean" value="#{businessOfferModelBean}" />
+        </ui:include>
+
+        <hftl:formPanel formId="moduleForm" label="#{messages['businessOffer.title']}" backingBean="#{businessOfferModelBean}" showFormButtons="false"
+            edit="#{!businessOfferModelBean.entity.downloaded}">
+
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
+
+            <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" required="true" popup="true"
+                popupId="offerTemplatePopup" rendered="#{!businessOfferModelBean.entity.downloaded}" />
+
+            <hftl:decorateFormField fieldId="offerId" label="#{messages['pricePlanMatrix.offerCode']}" required="true" rendered="#{businessOfferModelBean.entity.downloaded}">
+                <h:outputText id="offerId" value="#{businessOfferModelBean.offerTemplateCodeFromModuleSource}" styleClass="field-value" />
+            </hftl:decorateFormField>
+
+            <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
+                createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessOfferModelBean}" createEditPopupListenerViewMethod="viewEditScript"
+                createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
+            <hftl:decorateFormField fiedlId="status" label="#{messages['commons.status']}" rendered="#{businessOfferModelBean.entity.downloaded}" newLine="true">
+                <h:outputText
+                    value="#{messages[!businessOfferModelBean.entity.installed?'meveoModule.downloaded':businessOfferModelBean.entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+                    styleClass="field-value" rendered="#{businessOfferModelBean.entity.downloaded}" />
+            </hftl:decorateFormField>
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
+                rendered="#{!businessOfferModelBean.entity.downloaded}" />
+
+            <ui:include src="../../admin/module/moduleTree.xhtml">
+                <ui:param name="backingBean" value="#{businessOfferModelBean}" />
+            </ui:include>
+
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+                <hf:formButtons killConversationOnSave="false" killConversationOnBack="false" backingBean="#{businessOfferModelBean}" edit="true" showEditButton="#{!businessOfferModelBean.entity.downloaded}"
+                    showEnableDisableButton="#{!businessOfferModelBean.entity.downloaded}" showDeleteButton="#{!businessOfferModelBean.entity.downloaded}" formId="moduleId"
+                    useCustomIdParam="true">
+
+                    <p:commandButton value="#{messages['meveoModule.install']}" action="#{businessOfferModelBean.install}" update="@all"
+                        rendered="#{businessOfferModelBean.entity.downloaded and !businessOfferModelBean.entity.installed}" />
+                    <p:commandButton value="#{messages['meveoModule.uninstall']}" action="#{businessOfferModelBean.uninstall}" update="@all"
+                        rendered="#{businessOfferModelBean.entity.downloaded and businessOfferModelBean.entity.installed}">
+                        <p:confirm header="#{messages['meveoModule.uninstall']}" message="#{messages['meveoModule.confirmUninstall']}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{messages['commons.disable']}"
+                        rendered="#{businessOfferModelBean.entity.downloaded and businessOfferModelBean.entity.installed and businessOfferModelBean.entity.active}"
+                        action="#{businessOfferModelBean.disable}" update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmDisableAllModule']}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="#{messages['commons.enable']}"
+                        rendered="#{businessOfferModelBean.entity.downloaded and businessOfferModelBean.entity.installed and businessOfferModelBean.entity.disabled}"
+                        action="#{businessOfferModelBean.enable}" update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmEnableAllModule']}" />
+                    </p:commandButton>
+
+                </hf:formButtons>
+            </ui:define>
+        </hftl:formPanel>
+
+        <h:form id="businessServiceTemplates">
+            <p:panel width="100" header="#{messages['serviceTemplate.title']}">
+                <p:dataTable id="businessServiceTemplates" var="entity" value="#{businessOfferModelBean.bomServices}" paginator="true" rows="10" sortBy="#{entity.code}"
+                    paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                    rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
+                    <p:column headerText="#{messages['BusinessEntity.code']}">
+                        <h:outputText value="#{entity.code}" />
+                    </p:column>
+                    <p:column headerText="#{messages['BusinessEntity.description']}">
+                        <h:outputText value="#{entity.description}" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+
+<!--         <h:panelGroup layout="block" styleClass="form-panel-actions" -->
+<!--             rendered="#{!businessOfferModelBean.entity.isTransient() and (!businessOfferModelBean.entity.downloaded or businessOfferModelBean.entity.installed)}"> -->
+<!--             <p:commandButton actionListener="#{businessOfferModelBean.createOfferFromBOMPopup()}" icon="ui-icon-extlink" value="#{messages['action.createOfferFromBOM']}"> -->
+<!--                 <f:param name="objectId" value="#{businessOfferModelBean.entity.id}"></f:param> -->
+<!--                 <p:ajax event="dialogReturn" listener="#{businessOfferModelBean.onBOMOfferCreation}" update=":moduleForm:messages" /> -->
+<!--             </p:commandButton> -->
+<!--         </h:panelGroup> -->
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <f:metadata>
+        <!--        <f:event type="preRenderView" listener="#{cacheBean.preRenderView}" /> -->
+    </f:metadata>
+
+
+    <ui:define name="body">
+        <p:panel  header="#{messages['cache.caches']}">
+            <p:messages />
+
+            <h:form>
+                <p:dataTable id="datatable_caches" var="cacheInfo" value="#{cacheBean.summaryOfCaches}" paginator="true" rows="10" resizableColumns="true"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="5,10,15"
+                    lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex">
+                    <p:column headerText="#{messages['cache.name']}" sortBy="#{cacheInfo['name']}">
+                        <h:link outcome="cacheDetail" value="#{cacheInfo['name']}">
+                            <f:param name="cacheName" value="#{cacheInfo['name']}" />
+                        </h:link>
+                    </p:column>
+                    <p:column headerText="#{messages['cache.itemsInCache']}">
+                        <h:outputText value="#{cacheInfo['count']}" />
+                    </p:column>
+                    <p:column style="width: 100px;" headerText="#{messages['commons.actions']}">
+                        <!--                         <p:tooltip for="viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" /> -->
+                        <!--                         <p:button id="viewlink" outcome="cacheDetail" icon="ui-icon-search"> -->
+                        <!--                             <f:param name="cacheName" value="#{cacheInfo['name']}" /> -->
+                        <!--                         </p:button> -->
+
+                        <p:commandButton id="refreshlink" icon="ui-icon-refresh" action="#{cacheBean.refresh(cacheInfo['name'])}" update="@all" >
+                            <p:confirm header="" message="#{messages['cache.confirmReload']}"/>
+                        </p:commandButton>
+
+                    </p:column>
+                </p:dataTable>
+
+                <p:commandButton value="#{messages['commons.refresh']}" update="@all" />
+
+                <p:commandButton value="#{messages['cache.reload']}" action="#{cacheBean.refresh(null)}" update="@all">
+                    <p:confirm header="" message="#{messages['cache.confirmReloadAll']}"/>
+                </p:commandButton>
+
+            </h:form>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{currencyListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel label="#{messages['country.search']}" columns="3"
+			backingBean="#{countryListBean}">
+			<hftl:searchField label="#{messages['country.code']}"
+				field="countryCode" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['country.title']}"		backingBean="#{countryListBean}">
+			<hftl:column label="#{messages['country.code']}" 	field="countryCode" width="10%" entityView="countryDetail" valueIdField="id"/>
+			<hftl:column label="#{messages['country.name']}"	field="description" />
+			<hftl:column label="#{messages['currency.currencyCode']}" field="currency.currencyCode" />
+			<hftl:column label="#{messages['language.languageCode']}" field="language.languageCode" />
+			<hftl:actionsColumn	permission="#{currentUser.hasRole('superAdminManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

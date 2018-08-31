@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{businessProductModelListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="businessProductModels" value="#{messages['menu.businessProductModels']}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:searchPanel label="#{messages['businessProductModel.search']}" backingBean="#{businessProductModelListBean}" columns="1">
+            <hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" size="100" />
+        </hftl:searchPanel>
+
+        <hftl:dataList label="#{messages['businessProductModel.title']}" backingBean="#{businessProductModelListBean}" sortBy="code">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" useCustomIdParam="true" />
+            <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+
+            <p:column headerText="#{messages['businessOfferModels']}">
+                <ui:repeat value="#{businessProductModelBean.getBusinessOfferModels(entity)}" var="c">
+                    <hf:linkToEntity linkId="bom_message_link" entity="#{c}" objectIdParamName="businessOfferModelId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
+                        view="businessOfferModelDetail" backView="businessProductModels" />
+                    <br />
+                </ui:repeat>
+            </p:column>
+
+            <p:column headerText="#{messages['commons.status']}">
+                <h:outputText value="#{messages[!entity.installed?'meveoModule.downloaded':entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+                    rendered="#{entity.downloaded}" />
+                <h:outputText value="#{messages[entity.active?'enableEntity.active':'enableEntity.disabled']}" rendered="#{!entity.downloaded}" />
+            </p:column>
+
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('catalogManagement')}" />
+        </hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

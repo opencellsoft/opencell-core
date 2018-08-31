@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{occTemplateBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="occTemplates"
+					value="#{messages['menu.occTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['occTemplate']}"
+					disabled="true" rendered="#{occTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['occTemplate']} - #{occTemplateBean.entity.code}"
+					disabled="true" rendered="#{!occTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:formField label="#{messages['accountingCode']}" field="accountingCode" valueLabelField="code" listBean="#{accountingCodeListBean}" listenerUpdate="@this" required="true" />
+			<hftl:formField label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
+			<hftl:formField label="#{messages['occTemplate.occCategory']}" field="occCategory" required="true"/>
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

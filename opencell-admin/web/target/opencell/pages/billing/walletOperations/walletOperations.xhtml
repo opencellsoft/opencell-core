@@ -1,0 +1,214 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml" 
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                listener="#{walletOperationBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">  
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+                <p:menuitem outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
+            </p:breadCrumb>
+        </h:form>   
+     
+<!--    <hftl:entityPopup id="searchSellerPopup" -->
+<!--            header="#{messages['seller.search']}" -->
+<!--            updateField=":searchForm:seller" -->
+<!--            selection="#{walletOperationBean.filters['seller']}" -->
+<!--            backingBean="#{sellerBean}" -->
+<!--            searchField1Label="#{messages['BusinessEntity.code']}" -->
+<!--            searchField1="code" column1Label="#{messages['BusinessEntity.code']}" -->
+<!--            column1="code" -->
+<!--            column2Label="#{messages['BusinessEntity.description']}" -->
+<!--            column2="description"> -->
+<!--        </hftl:entityPopup>  -->
+        
+        <hftl:entityPopup id="searchChargeInstancePopup"
+            header="#{messages['walletOperation.chargeInstance']}"
+            updateField=":searchForm:chargeInstance"
+            selection="#{walletOperationBean.filters['chargeInstance']}"
+            backingBean="#{chargeTemplateBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}"
+            searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+            column1="code"
+            column2Label="#{messages['BusinessEntity.description']}"
+            column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchCounterInstancePopup"
+            header="#{messages['counterTemplate.title']}"
+            updateField=":searchForm:counter"
+            selection="#{walletOperationBean.filters['counter']}"
+            backingBean="#{counterTemplateBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}"
+            searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+            column1="code"
+            column2Label="#{messages['BusinessEntity.description']}"
+            column2="description">
+        </hftl:entityPopup>
+            <hftl:entityPopup id="searchWalletInstancePopup"
+            header="#{messages['walletTemplate.title']}"
+            updateField=":searchForm:wallet"
+            selection="#{walletOperationBean.filters['wallet']}"
+            backingBean="#{walletTemplateBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}"
+            searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+            column1="code"
+            column2Label="#{messages['BusinessEntity.description']}"
+            column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchPricePlanPopup"
+            header="#{messages['pricePlan.title']}"
+            backingBean="#{pricePlanMatrixBean}"
+            searchField1Label="#{messages['pricePlanMatrix.table.eventCode']}"
+            searchField1="code" 
+            column1Label="#{messages['BusinessEntity.code']}" column1="code" 
+            selection="#{walletOperationBean.filters['priceplan']}" 
+            updateField=":searchForm:priceplan">
+        </hftl:entityPopup> 
+        
+        <hftl:entityPopup id="billingAccountPopup"
+            header="#{messages['billingAccount.popup.header']}"
+            backingBean="#{billingAccountBean}"
+            searchField1Label="#{messages['billingAccount.code']}"
+            searchField1="code" 
+            searchField2Label="#{messages['invoiceSubCategory.description']}"
+            searchField2="description"
+            column1Label="#{messages['billingAccount.code']}"
+            column1="code"
+            column2Label="#{messages['invoiceSubCategory.description']}"
+            column2="description" 
+            selection="#{walletOperationBean.filters['billingAccount']}"
+            updateField=":searchForm:billingAccountId">
+        </hftl:entityPopup>
+        
+<!--        <hftl:entityPopup id="searchInvoiceSubCategoryPopup" -->
+<!--            header="#{messages['invoiceSubCategory.panel']}" -->
+<!--            backingBean="#{invoiceSubCategoryBean}" -->
+<!--            updateField=":searchForm" -->
+<!--            selection="#{walletOperationBean.filters['invoiceSubCategory']}" -->
+<!--            searchField1Label="#{messages['invoiceSubCategory.code']}" -->
+<!--            searchField1="code" -->
+<!--            searchField2Label="#{messages['invoiceSubCategory.description']}" -->
+<!--            searchField2="description" -->
+<!--            column1Label="#{messages['invoiceSubCategory.code']}" column1="code" -->
+<!--            column2Label="#{messages['invoiceSubCategory.description']}" -->
+<!--            column2="description"> -->
+<!--          </hftl:entityPopup> -->
+          
+          <hftl:entityPopup id="searchBillingRunPopup"
+            header="#{messages['billingRun.search']}"
+            backingBean="#{billingRunBean}"
+            updateField=":searchForm"
+            selection="#{walletOperationBean.filters['billingRun']}"
+            searchField1Label="#{messages['role.id']}"
+            searchField1="id" 
+            searchField2Label="#{messages['billingRun.status']}"
+            searchField2="status" 
+            column1Label="#{messages['role.id']}" column1="id"
+            column2Label="#{messages['billingRun.status']}" column2="status"
+            column3Label="#{messages['billingRun.processDate']}" column3="processDate">
+          </hftl:entityPopup>
+          
+          <hftl:entityPopup id="searchOfferPopup"
+            header="#{messages['offerTemplate.search']}"
+            backingBean="#{offerTemplateBean}" dataModel="#{offerTemplateBean.listActive()}"
+            updateField=":searchForm" width="1000"            
+            selection="#{walletOperationBean.filters['offerTemplate']}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" >
+          </hftl:entityPopup>
+
+        <hftl:searchPanel label="#{messages['walletOperation.search']}" backingBean="#{walletOperationBean}" renderNewButton="false">
+
+            <hftl:decorateFormField fieldId="currency" label="#{messages['currency.codeCurrency']}" style="width:105px">
+            <p:selectOneMenu id="currency" value="#{walletOperationBean.filters['currency.currencyCode']}">
+                <f:selectItem itemValue="" itemLabel="" />
+                <f:selectItems value="#{walletOperationBean.listCurrency}" />
+            </p:selectOneMenu>
+            </hftl:decorateFormField>
+
+            <hftl:searchField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" valueLabelField="id" popup="true" popupId="searchBillingRunPopup"
+                renderNewButton="false" />
+            <hftl:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true"
+                popupId="billingAccountPopup" />
+            <hftl:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId" field="invoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" />
+<!--             popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
+            <hftl:searchField label="#{messages['walletOperation.offer']}" id="offerCodeId" field="offerTemplate" valueLabelField="code" popup="true" popupId="searchOfferPopup" /> 
+            <hftl:searchField label="#{messages['walletOperation.chargeInstance']}" id="chargeInstance" field="chargeInstance" valueLabelField="code" popup="true"
+                popupId="searchChargeInstancePopup" />
+            <hftl:searchField label="#{messages['counterTemplate.title']}" id="counter" field="counter" valueLabelField="code" popup="true" popupId="searchCounterInstancePopup" />
+            <hftl:searchField label="#{messages['pricePlan.title']}" id="priceplan" field="priceplan" valueLabelField="code" popup="true" popupId="searchPricePlanPopup" />
+            <hftl:searchField id="seller" label="#{messages['seller.title']}" field="seller" valueLabelField="descriptionOrCode" listBean="#{sellerBean}"/>
+<!--             popup="true" popupId="searchSellerPopup" /> -->
+            <hftl:searchField label="#{messages['operation.wallet']}" id="wallet" field="wallet" valueLabelField="code" popup="true" popupId="searchWalletInstancePopup" />           
+            <hftl:searchField label="#{messages['walletOperation.status']}" field="status" />
+            <hftl:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
+            <hftl:searchField label="#{messages['walletOperation.param2']}" field="parameter2" />
+            <hftl:searchField label="#{messages['walletOperation.param3']}" field="parameter3" />
+            <hftl:searchField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
+            <hftl:searchField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
+            <hftl:searchField label="#{messages['walletOperation.startDate']}" field="startDate" />
+            <hftl:searchField label="#{messages['walletOperation.endDate']}" field="endDate" />
+            <hftl:searchField label="#{messages['walletOperation.quantity']}" field="quantity" />
+            <hftl:searchField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax"/>
+            <hftl:searchField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" />
+            <hftl:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
+            <hftl:searchField label="#{messages['invoice.amountWithTax']}" field="amountWithTax"/>
+
+        </hftl:searchPanel>
+        <hftl:dataList label="#{messages['walletOperations.title']}"
+            backingBean="#{walletOperationBean}" sortBy="operationDate" sortOrder="DESCENDING" deleteManyButton="false">
+            
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['userAccount']}" field="wallet.userAccount.code" entityView="userAccountDetail" valueIdField="wallet.userAccount.id" objectIdParamName="userAccountId" backView="walletOperations" />
+            <hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" isDate="true" />
+            <hftl:column label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance.code" />
+            <hftl:column label="#{messages['walletOperation.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
+            <hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true"/>
+            <hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
+            <hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" />
+                 <p:column  width="50px"> 
+            <f:facet name="header">
+            <h:outputText value="Actions" />
+        </f:facet>
+            <hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
+                permission="#{currentUser.hasRole('billingManagement')}" />
+                <p:commandButton id="updateWallet" icon="ui-icon-play"
+                    actionListener="#{walletOperationBean.updatedToRerate(entity)}"
+                    rendered="#{walletOperationBean.canUserUpdateEntity()}"
+                    update="@all">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}"
+                        message="#{messages['message.confirm.walletOperation.update']}"
+                        icon="ui-icon-alert" />
+                </p:commandButton>
+                </p:column>
+                </hftl:dataList>
+            <p:panel styleClass="action-buttons"
+                rendered="#{walletOperationBean.canUserUpdateEntity()}">
+            <p:commandButton id="massUpdateWallet"
+            value="#{messages['action.massRerate']}"
+            action="#{walletOperationBean.massToRerate()}" 
+            icon="ui-icon-check">
+            <p:confirm header="#{messages['commons.confirmationHeader']}"
+                message="#{messages['message.confirm.walletOperation.update']}"
+                icon="ui-icon-alert" />
+           </p:commandButton> 
+            </p:panel>
+
+    </ui:define>
+
+</ui:composition>

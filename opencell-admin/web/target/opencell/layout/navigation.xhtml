@@ -1,0 +1,38 @@
+<h:form id="menu" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="Container">
+		<div class="Container5 NoIndent">
+			<h:link outcome="indexPage" styleClass="fa fw fa-home fa-3x"/>
+		</div>
+
+		<div class="Container95 NoIndent">
+			<c:if
+				test="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE'}">
+
+				<!-- Mobile Navigation -->
+				<ui:include src="mobileNavigation.xhtml" />
+			</c:if>
+			<c:if
+				test="#{facesContext.viewRoot.renderKitId ne 'PRIMEFACES_MOBILE'}">
+
+				<!-- Desktop Navigation -->
+				<ui:include src="desktopNavigation.xhtml" />
+			</c:if>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".mmOffersSM").bind("click",function(){ window.location="#{request.contextPath}/pages/catalog/offers/offers.jsf?tab=0"; });
+			$(".mmProductsSM").bind("click",function(){ window.location="#{request.contextPath}/pages/catalog/products/products.jsf?tab=0"; });
+			$(".mmCustomersSM").bind("click",function(){ window.location="#{request.contextPath}/pages/order/workflows/workflows.jsf"; });
+			$(".mmSettingsSM").bind("click",function(){ window.location="#{request.contextPath}/pages/catalog/offerTemplateCategories/offerTemplateCategories.jsf"; });
+        });
+	</script>
+</h:form>

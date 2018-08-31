@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+            <f:viewParam name="objectId" value="#{bundleTemplateBean.objectId}" />
+			<f:viewParam name="newVersion" value="#{bundleTemplateBean.newVersion}" />
+        </f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="bundleTemplates"
+					value="#{messages['menu.bundleTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['bundleTemplate']}"
+					disabled="true" rendered="#{bundleTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['bundleTemplate']} #{messages['commons.configuration']} - #{bundleTemplateBean.entity.code}"
+					disabled="true" rendered="#{!bundleTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel label="#{messages['menu.bundleTemplates']}"
+			backingBean="#{bundleTemplateBean}" showEnableDisableButton="true">
+
+			<ui:include src="../productTemplates/productTemplateDetailCommon.xhtml">
+				<ui:param name="backingBean" value="#{bundleTemplateBean}" />
+				<ui:param name="mode" value="BUNDLE" />
+				<ui:param name="idPath" value=":formId" />
+			</ui:include>
+			
+		</hftl:formPanel>
+
+		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
+			modal="true" appendTo="@(body)" closeOnEscape="true">
+			<h:form id="addBundleProductForm">
+				<p:panel id="headerPanel">
+					<p:dataTable id="productTemplatesTable" var="prodT"
+						value="#{productTemplateBean.listProductsForBundle(bundleTemplateBean.entity, bundleTemplateBean.entity.bundleProducts)}"
+						paginator="true" rows="5" paginatorPosition="top"
+						paginatorAlwaysVisible="true"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						lazy="true" styleClass="ui-panelgrid-blank">
+						<p:column>
+							<p:graphicImage id="productImage"
+								value="#{defaultImageStreamer.image}" cache="false" width="100"
+								height="100">
+								<f:param name="providerCode"
+									value="#{appProvider.code}"></f:param>
+								<f:param name="fileName" value="#{prodT.imagePath}"></f:param>
+								<f:param name="pictureGroupName" value="product"></f:param>
+							</p:graphicImage>
+						</p:column>
+						<hftl:column label="#{messages['commons.name']}" entity="#{prodT}" field="name" />
+						<hftl:column label="#{messages['BusinessEntity.description']}" entity="#{prodT}" field="description" />
+
+			            <hftl:column label="#{messages['offerTemplate.validity']}" entity="#{prodT}" field="validity" isDatePeriod="true" width="11%"/>    						
+						
+						<p:column headerText="#{messages['commons.actions']}">
+							<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
+								action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
+								update=":#{p:component('bundleTemplateList')} :#{p:component('messages')} :selectProduct"
+								oncomplete="PF('selectProduct').hide()">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

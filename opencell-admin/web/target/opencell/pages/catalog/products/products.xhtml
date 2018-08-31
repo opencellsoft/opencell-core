@@ -1,0 +1,414 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{productAndBundleTemplateListBean.preRenderView}" />
+			<f:viewParam name="tab" value="#{productAndBundleTemplateListBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true"
+					styleClass="no-text-decoration" />
+				<p:menuitem value="#{messages['menu.productTemplates']}"
+					outcome="mm_products" />
+			</p:breadCrumb>
+		</h:form>
+
+		<div class="ui-fluid">
+			<p:panel styleClass="no-border-radius">
+				<p:panel styleClass="Wid55 Responsive100">
+					<p:panelGrid id="left-controls" columns="2"
+						styleClass="ui-panelgrid-blank">
+						<p:panel id="top-button-container">
+							<h:form>
+								<ul class="list-unstyled">
+									<li class="button-item">
+										<div class="btn-wrapper">
+											<i class="fa fa-plus text-blue"></i>
+											<p:link styleClass="no-text-decoration"
+                                                    outcome="mm_productTemplates"
+                                                    value=" #{messages['productTemplate.newProduct']}">
+                                                <f:param name="backView" value="mm_products"/>
+                                            </p:link>
+										</div> <!-- / btn-wrapper -->
+									</li>
+									<li class="button-item">
+										<div class="btn-wrapper">
+											<i class="fa fa-plus text-blue"></i>
+											<p:link styleClass="no-text-decoration"
+												outcome="mm_bundleTemplateDetail"
+												value=" #{messages['productTemplate.createBundle']}">
+												<f:param name="cid"
+													value="#{javax.enterprise.context.conversation.id}" />
+												<f:param name="edit" value="true" />
+												<f:param name="editMode" value="edit" />
+												<f:param name="backView" value="mm_products" />
+											</p:link>
+										</div> <!-- / btn-wrapper -->
+									</li>
+								</ul>
+
+							</h:form>
+						</p:panel>
+
+						<p:panel id="top-details-container">
+							<ul class="list-unstyled">
+								<li><i class="fa fa-check-square-o text-blue"></i>
+									#{productAndBundleTemplateListBean.activeCount}
+									#{messages['productTemplate.activeProductsNum']}</li>
+								<li><i class="fa fa-close text-blue"></i>
+									#{productAndBundleTemplateListBean.inactiveCount}
+									#{messages['productTemplate.deactivatedProductsNum']}</li>
+								<li><i class="fa fa-exclamation-circle text-blue"></i>
+									#{productAndBundleTemplateListBean.almostExpiredCount}
+									#{messages['productTemplate.expiringProductsNum']}</li>
+							</ul>
+						</p:panel>
+					</p:panelGrid>
+				</p:panel>
+				<p:panel id="ptToExport" styleClass="Wid45 Responsive100 VAlignTop">
+					<h:panelGrid columns="2"
+						columnClasses="Wid60 VAlignTop, Wid40 VAlignTop"
+						styleClass="Wid90 Responsive100 FRight VAlignTop">
+						<p:panel>
+							<h:form>
+								<h:panelGrid
+									styleClass="VAlignTop Wid100 ui-panelgrid-blank NoPadding"
+									columnClasses="Wid95, Wid5" columns="2">
+									<p:inputText placeholder="#{messages['action.search']}"
+										value="#{productAndBundleTemplateListBean.filters['fullText']}" />
+									<p:commandLink styleClass="Padding3 fa fa-search"
+										update=":#{p:component('productTemplateList')}"></p:commandLink>
+								</h:panelGrid>
+								<!-- / search-wrapper -->
+							</h:form>
+						</p:panel>
+						<p:panel>
+							<p:panel columns="1" styleClass="export-panel no-border-radius"
+								id="productForExportPanel">
+								<ul class="list-unstyled">
+									<li class="text-left"><p:commandLink
+											onclick="PF('exportablePTs').show();">
+											<i class="fa fa-share-square-o" />
+											<h:outputText
+												value=" #{productAndBundleTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}" />
+										</p:commandLink></li>
+									<li class="text-left">
+										<div class="text-left">
+											<p:commandLink
+												update=":#{p:component('exportParametersDialog')}"
+												oncomplete="PF('exportParametersDialog').show()">
+												<i class="fa fa-play" />
+												<h:outputText value=" #{messages['page.catalog.exportTo']}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.dataModelToExport}"
+													value="#{productAndBundleTemplateListBean.getLazyDataModel()}" />
+												<f:setPropertyActionListener
+													target="#{entityExportImportBean.selectedEntitiesToExport}"
+													value="#{productAndBundleTemplateListBean.ptToExport}" />
+											</p:commandLink>
+										</div>
+									</li>
+								</ul>
+							</p:panel>
+						</p:panel>
+					</h:panelGrid>
+				</p:panel>
+
+				<p:messages id="main_messages"></p:messages>
+				<p:tabView id="tabView" styleClass="no-border-radius offer-wrapper"
+					activeIndex="#{productAndBundleTemplateListBean.activeTab}">
+					<p:tab
+						title="#{messages['marketingManager.catalog.view.detailed']}">
+						<h:form id="productTemplateForm">
+							<p:dataGrid id="productTemplateList"
+								value="#{productAndBundleTemplateListBean.getLazyDataModel()}" var="prod"
+								paginator="true" rows="10" columns="1" layout="grid"
+								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+								lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
+								rowsPerPageTemplate="10,15,20,50" rowKey="#{prod.id}">
+								<p:panel styleClass="Wid50 Responsive100 VAlignTop">
+									<p:panelGrid columns="3"
+										styleClass="panelGrid ui-panelgrid-blank"
+										columnClasses="Wid10 VAlignTop Responsive100, Wid56 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop">
+										<p:panel>
+											<p:graphicImage value="#{defaultImageStreamer.image}"
+												cache="false" width="100" height="100" rendered="#{prod ne null}">
+												<f:param name="providerCode"
+													value="#{appProvider.code}"></f:param>
+												<f:param name="fileName" value="#{prod.imagePath}"></f:param>
+												<f:param name="pictureGroupName" value="product"></f:param>
+											</p:graphicImage>
+										</p:panel>
+
+										<p:panel>
+											<p>
+												<h:outputText id="nameOrCode" styleClass="FontBold"
+													value="#{of:abbreviate(prod.nameOrCode, 25)}"></h:outputText>
+											</p>
+											<p>
+												<ui:repeat value="#{prod.offerTemplateCategories.toArray()}"
+													var="c" varStatus="status">
+													<c:set var="valueLabel" value="#{c}" />
+													<c:set var="valueLabel"
+														value="#{valueLabel['descriptionOrCode']}" />
+													<h:outputText value="#{valueLabel}" />
+													<h:outputText value=", " rendered="#{not status.last}" />
+												</ui:repeat>
+											</p>
+											<p>
+												<h:outputText value="#{prod.businessProductModel.code}"
+													rendered="#{prod.businessProductModel != null}"></h:outputText>
+											</p>
+											<p:separator></p:separator>
+											<p:panelGrid columns="1">
+                                                <p:panelGrid columns="1" rendered="#{prod.validity !=null}">
+													<h:outputText value="#{messages['commons.valid']}: " />
+													<h:panelGroup>
+														<h:outputText value="#{prod.validity.from}">
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+														</h:outputText>
+														<h:outputText value="-" style="padding:5px" />
+														<h:outputText value="#{prod.validity.to}">
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+														</h:outputText>
+													</h:panelGroup>
+												</p:panelGrid>
+											</p:panelGrid>
+										</p:panel>
+
+										<p:panel>
+											<p:outputPanel>
+												<p:panel styleClass="switch-wrapper">
+													<h:outputText value="#{messages['commons.status']}: " />
+													<h:outputText value="#{prod.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', prod.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(prod) ? 'GreenDark' : 'GrayDark'}" />
+												</p:panel>
+											</p:outputPanel>
+											<p:panel styleClass="text-center" style="width: 180px;">
+												<ul class="list-inline">
+													<li><p:link id="viewLink"
+															outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}"
+															styleClass="fa fa-search-plus fa-2x no-text-decoration text-blue">
+															<f:param name="cid"
+																value="#{javax.enterprise.context.conversation.id}" />
+															<f:param name="objectId" value="#{prod.id}"></f:param>
+															<f:param name="edit" value="false"></f:param>
+															<f:param name="backView" value="mm_products"></f:param>
+															<f:param name="tab" value="0"></f:param>
+														</p:link></li>
+													<li><p:link id="editLink"
+															styleClass="fa fa-edit fa-2x no-text-decoration text-blue"
+															outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}">
+															<f:param name="objectId" value="#{prod.id}" />
+															<f:param name="cid"
+																value="#{javax.enterprise.context.conversation.id}" />
+															<f:param name="edit" value="true" />
+															<f:param name="editMode" value="edit" />
+															<f:param name="backView" value="mm_products"></f:param>
+														</p:link></li>
+													<li><p:link id="newVersionLinkProd" title="#{messages['commons.newVersion']}"
+                                                                styleClass="fa fa-plus no-text-decoration text-blue fa-2x"
+                                                                outcome="mm_productTemplateDetail" rendered="#{not productTemplateBean.isBundleTemplate(prod)}">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{prod.id}"/>
+                                                        <f:param name="edit" value="true"/>
+                                                        <f:param name="backView" value="mm_products"/>
+                                                        <f:param name="tab" value="0"/>                                                        
+                                                        <f:param name="newVersion" value="true" />
+                                                        </p:link>
+                                                        <p:link id="newVersionLinkBndl" title="#{messages['commons.newVersion']}"
+                                                                styleClass="fa fa-plus no-text-decoration text-blue fa-2x"
+                                                                outcome="mm_bundleTemplateDetail" rendered="#{productTemplateBean.isBundleTemplate(prod)}">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{prod.id}"/>
+                                                        <f:param name="edit" value="true"/>
+                                                        <f:param name="backView" value="mm_products"/>
+                                                        <f:param name="tab" value="0"/>                                                        
+                                                        <f:param name="newVersion" value="true" />
+                                                        </p:link></li>
+                                                	<li><p:link id="duplicateLinkBndl"
+															rendered="#{productTemplateBean.isBundleTemplate(prod)}"
+															styleClass="fa fa-copy fa-2x text-blue" outcome="mm_bundleTemplateDetail">
+															<f:param name="tab" value="0"></f:param>
+															<f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+	                                                        <f:param name="objectId" value="#{prod.id}"/>
+	                                                        <f:param name="edit" value="true"/>
+	                                                        <f:param name="backView" value="mm_products"/>
+	                                                        <f:param name="tab" value="0"/>                                                        
+	                                                        <f:param name="duplicateBundle" value="true" />
+														</p:link>
+														<p:link id="duplicateLinkProd"
+															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
+															styleClass="fa fa-copy fa-2x text-blue" outcome="mm_productTemplateDetail">
+														  	<f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+	                                                        <f:param name="objectId" value="#{prod.id}"/>
+	                                                        <f:param name="edit" value="true"/>
+	                                                        <f:param name="backView" value="mm_products"/>
+	                                                        <f:param name="tab" value="0"/>                                                        
+	                                                        <f:param name="duplicateProduct" value="true" />
+														</p:link></li>
+													<li><p:commandLink id="addToExportLink"
+															styleClass="fa fa-share-square-o fa-2x text-blue"
+															action="#{productAndBundleTemplateListBean.addProductTemplateToExport(prod)}"
+															update=":ptToExport :exportablePTs">
+														</p:commandLink></li>
+												</ul>
+											</p:panel>
+										</p:panel>
+									</p:panelGrid>
+								</p:panel>
+							
+								<p:panel styleClass="Wid25 Responsive100 VAlignTop">
+									<f:facet name="header">
+										<h:outputText
+											value="#{messages['productTemplate.productCharges']}"
+											rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size()>0}" />
+									</f:facet>
+									<p:dataList styleClass="dataList" paginatorPosition="bottom"
+										paginatorAlwaysVisible="false"
+										value="#{prod.productChargeTemplates}"
+										var="ct" type="ordered"
+										rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size()>0}">
+										<h:outputText value="#{ct.descriptionOrCode}" />
+									</p:dataList>
+								</p:panel>
+							</p:dataGrid>
+						</h:form>
+					</p:tab>
+
+					<p:tab id="tab1"
+						title="#{messages['marketingManager.catalog.view.condensed']}">
+						<hftl:dataList id="dataList"
+							backingBean="#{productAndBundleTemplateListBean}"
+							dataModel="#{productAndBundleTemplateListBean.getLazyDataModel()}"
+							checkMany="false" exportToCsv="false" exportToXml="false"
+							exportXlsxButton="false" sortOrder="DESCENDING"
+							styleClass="DataListCenter">
+							<hftl:column label="#{messages['commons.nameOrCode']}"
+								field="nameOrCode">
+							</hftl:column>
+							<hftl:column label="#{messages['commons.category']}"
+								field="offerTemplateCategories" isList="true"
+								valueLabelField="descriptionOrCode">
+							</hftl:column>
+							<hftl:column label="#{messages['commons.validFrom']}"
+								field="validity.from" isDate="true">
+							</hftl:column>
+							<hftl:column label="#{messages['commons.validTo']}"
+								field="validity.to" isDate="true">
+							</hftl:column>
+							<p:column>
+								<f:facet name="header">#{messages['commons.status']}</f:facet>
+								<h:outputText value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
+														styleClass="field-value #{productTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}" />
+							</p:column>
+							<p:column>
+								<ul class="list-inline">
+									<li><p:link outcome="mm_productTemplateDetail"
+											styleClass="fa fa-search-plus fa-2x no-text-decoration text-blue">
+											<f:param name="cid"
+												value="#{javax.enterprise.context.conversation.id}" />
+											<f:param name="objectId" value="#{entity.id}"></f:param>
+											<f:param name="edit" value="false"></f:param>
+											<f:param name="backView" value="mm_products"></f:param>
+											<f:param name="tab" value="1"></f:param>
+										</p:link></li>
+									<li
+										class="#{not productTemplateBean.isBundleTemplate(entity) ? '' : 'hidden'}"><p:link
+											styleClass="fa fa-edit fa-2x no-text-decoration text-blue"
+											outcome="mm_productTemplateDetail"
+											rendered="#{not productTemplateBean.isBundleTemplate(entity)}">
+											<f:param name="objectId" value="#{prod.id}">
+											</f:param>
+											<f:param name="cid"
+												value="#{javax.enterprise.context.conversation.id}" />
+											<f:param name="edit" value="true" />
+											<f:param name="editMode" value="edit" />
+											<f:param name="backView" value="mm_products"></f:param>
+										</p:link></li>
+									<li
+										class="#{productTemplateBean.isBundleTemplate(entity) ? '' : 'hidden'}"><p:link
+											styleClass="fa fa-edit fa-2x no-text-decoration text-blue"
+											outcome="mm_bundleTemplateDetail"
+											rendered="#{productTemplateBean.isBundleTemplate(entity)}">
+											<f:param name="objectId" value="#{entity.id}"></f:param>
+											<f:param name="cid"
+												value="#{javax.enterprise.context.conversation.id}" />
+											<f:param name="edit" value="true" />
+											<f:param name="editMode" value="edit" />
+											<f:param name="backView" value="mm_products"></f:param>
+										</p:link></li>
+									<li><p:commandLink
+											rendered="#{not productTemplateBean.isBundleTemplate(entity)}"
+											styleClass=""
+											action="#{productTemplateBean.duplicate()}" update=":tabView">
+											<i class="fa fa-copy fa-2x no-text-decoration text-blue"/>
+											<f:param name="tab" value="1"></f:param>
+											<f:setPropertyActionListener value="#{entity}"
+												target="#{productTemplateBean.entity}"></f:setPropertyActionListener>
+											<p:confirm header="#{messages['commons.duplicate']}"
+												message="#{messages['commons.confirmDuplicate']}" />
+										</p:commandLink> <p:commandLink
+											rendered="#{productTemplateBean.isBundleTemplate(entity)}"
+											styleClass=""
+											action="#{bundleTemplateBean.duplicate()}" update=":tabView">
+											<i class="fa fa-copy fa-2x no-text-decoration text-blue"/>
+											<f:param name="tab" value="1"></f:param>
+											<f:setPropertyActionListener value="#{entity}"
+												target="#{bundleTemplateBean.entity}"></f:setPropertyActionListener>
+											<p:confirm header="#{messages['commons.duplicate']}"
+												message="#{messages['commons.confirmDuplicate']}" />
+										</p:commandLink></li>
+									<li><p:commandLink
+											styleClass=""
+											action="#{productAndBundleTemplateListBean.addProductTemplateToExport(entity)}"
+											update=":ptToExport :exportablePTs">
+											<i class="fa fa-share-square-o fa-2x no-text-decoration text-blue"/>
+										</p:commandLink></li>
+								</ul>
+							</p:column>
+						</hftl:dataList>
+					</p:tab>
+				</p:tabView>
+
+				<hftl:exportToXmlDialogs
+					messagesId=":#{p:component('main_messages')}" />
+			</p:panel>
+		</div>
+
+		<p:dialog id="exportablePTs"
+			header="#{messages['productTemplates.title']}"
+			widgetVar="exportablePTs" minHeight="40" width="800" dynamic="true"
+			modal="true" appendTo="@(body)">
+			<h:form id="dlgPTExport">
+				<p:dataTable id="offers"
+					value="#{productAndBundleTemplateListBean.ptToExport}" var="e">
+					<p:column headerText="#{messages['offerTemplate.name']}">#{e.name}</p:column>
+					<p:column headerText="#{messages['BusinessEntity.code']}">#{e.code}</p:column>
+					<p:column headerText="#{messages['BusinessEntity.description']}">#{e.description}</p:column>
+					<p:column>
+						<p:commandButton icon="fa fa-close"
+							title="#{messages['button.closeButton']}"
+							update="dlgPTExport :ptToExport"
+							action="#{productAndBundleTemplateListBean.deleteForExport(e)}">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

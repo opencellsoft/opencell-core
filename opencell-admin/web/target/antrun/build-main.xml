@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <copy file="../lib/flatworm-3.0.2.jar" tofile="E:\OpenCell-IDE\workspace\branches\integration\meveo\opencell-admin\web\target/opencell/WEB-INF/lib/flatworm-3.0.2.jar"/>
+</target>
+</project>

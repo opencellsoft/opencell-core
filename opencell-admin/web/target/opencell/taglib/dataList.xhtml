@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org"
+    xmlns:l="http://www.lapis.com/jsf/exporter">
+
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to enhance p:datatable component.
+        
+    Attributes
+        backingBean - a backing bean associated to datatable
+        dataModel - datamodel. Use lazyDataModel from a backingBean if one not provided
+        formId - id of a form that wraps the datatable
+        resultsId - id assigned to a datatable with "datatable_" prefix        
+        editable and editMode - are values in datatable are inline editable and in what mode
+        scrollable - is datatable scrolable
+        checkMany - show multiple item checkboxes
+        deleteManyButton - show delete multiple items button
+        exportButton - show "export to xls" button
+        exportXlsxButton - show "export to xlsx" button
+        exportToXml - show "export to xml" button. Defaults to True if any of the export buttons are enabled
+        exportToCsv - show "export to Csv" button
+        importCsv - show "import from Csv" button
+        sortBy and sortOrder - a default field to sort by and a default sort order
+        rowsPerPage - possible paging sizes separated by a comma
+        showFullTextSearch - shall a "global search" filter be visible in the header
+        styleClass = custom style for the datalist
+        paginatorPosition - allows to specify if the paginator appears on the table's top, bottom or both
+        prePaginatorControls - allows to set custom controls that appear just before the paginator.  To set it up correctly, enter a facet name e.g.
+        		<hftl:dataList prePaginatorControls="{CustomControls}">
+        			<f:facet name="{CustomControls}">
+        				...
+        			</f:facet>
+        			...
+        		</hftl:datalist>
+         
+-->
+
+<ui:composition>
+
+    <!--     <c:if test="${empty pdf}"> -->
+    <!--         <c:set var="pdf" value="false" /> -->
+    <!--     </c:if> -->
+    <c:if test="${empty editable}">
+        <c:set var="editable" value="false" />
+    </c:if>
+    <c:if test="${empty scrollable}">
+        <c:set var="scrollable" value="false" />
+    </c:if>
+    <c:if test="${editable}">
+        <c:if test="${empty editMode}">
+            <c:set var="editMode" value="cell" />
+        </c:if>
+    </c:if>
+    <c:if test="${empty styleClass}">
+        <c:set var="styleClass" value=" " />
+    </c:if>
+    <!-- 	<c:if test="${empty edit}"> -->
+    <!-- 		<c:set var="edit" value="true" /> -->
+    <!-- 	</c:if> -->
+
+    <c:if test="${empty checkMany}">
+        <c:set var="checkMany" value="true" />
+    </c:if>
+    <c:if test="${empty deleteManyButton}">
+        <c:set var="deleteManyButton" value="false" />
+    </c:if>
+
+    <c:if test="${empty exportButton}">
+        <c:set var="exportButton" value="false" />
+    </c:if>
+    <c:if test="${empty exportXlsxButton}">
+        <c:set var="exportXlsxButton" value="true" />
+    </c:if>
+
+    <c:if test="${empty fileName}">
+        <c:set var="fileName" value="exportData" />
+    </c:if>
+
+    <c:if test="${empty exportToCsv}">
+        <c:set var="exportToCsv" value="false" />
+    </c:if>
+
+    <c:if test="${empty importCsv}">
+        <c:set var="importCsv" value="false" />
+    </c:if>
+
+    <c:if test="${empty exportToXml}">
+        <c:set var="exportToXml" value="#{exportButton or exportXlsxButton or exportToCsv}" />
+    </c:if>
+
+    <c:if test="${empty importStrategy}">
+        <c:set var="importStrategy" value="false" />
+    </c:if>
+
+    <c:if test="${empty resultsId}">
+        <c:set var="resultsId" value="results" />
+    </c:if>
+
+    <c:if test="${empty formId}">
+        <c:set var="formId" value="#{resultsId}_form" />
+    </c:if>
+
+    <c:if test="${dataModel==null}">
+        <c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
+    </c:if>
+
+    <c:if test="${empty sortBy}">
+        <c:set var="sortBy" value="#{null}" />
+    </c:if>
+
+    <c:if test="${empty sortOrder}">
+        <c:set var="sortOrder" value="ASCENDING" />
+    </c:if>
+    <c:if test="${empty rowsPerPage}">
+        <c:set var="rowsPerPage" value="10,15,20,50" />
+    </c:if>
+    <c:if test="${empty showFullTextSearch}">
+        <c:set var="showFullTextSearch" value="false" />
+    </c:if>
+
+    <c:if test="${empty paginatorPosition}">
+        <c:set var="paginatorPosition" value="both" />
+    </c:if>
+
+    <p:panel id="#{resultsId}_panel" width="100">
+
+        <h:form id="#{formId}" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
+            <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"
+                widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
+                paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}"
+                reflow="true" paginatorPosition="#{paginatorPosition}">
+                <p:ajax event="page" listener="#{backingBean.onPageChange}" />
+                <p:ajax event="toggleSelect" update="@this" process="@this" />
+                <p:ajax event="rowSelectCheckbox" />
+                <p:ajax event="rowUnselectCheckbox" />
+                <p:ajax event="rowSelect" />
+                <p:ajax event="rowUnselect" />
+                <c:if test="#{editable}">
+                    <p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}" />
+                </c:if>
+
+                <c:if test="${showFullTextSearch}">
+                    <f:facet name="header">
+                        <p:outputPanel>
+                            <p:inputText id="globalFilter" onkeyup="if (event.keyCode == 13) { PF('cellEntity_#{resultsId}').filter();return false;}" style="width:150px"
+                                placeholder="#{messages['commons.search']}" />
+                        </p:outputPanel>
+                    </f:facet>
+                </c:if>
+                <p:column id="multiSelect" selectionMode="multiple" width="4%" rendered="#{checkMany}" exportable="false" toggleable="false" />
+                <ui:insert />
+            </p:dataTable>
+
+            <h:panelGroup rendered="#{dataModel !=null and dataModel.size()>0}">
+                <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{deleteManyButton}" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
+                    onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" update="@form" />
+
+                <p:commandButton id="#{formId}buttonExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportButton}">
+                    <p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
+                </p:commandButton>
+                <p:commandButton id="#{formId}buttonXlsxExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportXlsxButton}">
+                    <pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true" selectionOnly="#{backingBean.selectedEntities.size()>0}" />
+                </p:commandButton>
+                <p:commandButton value="#{messages['commons.importCsv']}" rendered="#{importCsv and backingBean.canUserUpdateEntity()}" type="button" onclick="PF('csvDialog').show();" />
+                <p:commandButton id="#{formId}buttonCsvExport" value="#{messages['commons.exportCsv']}" ajax="false" rendered="#{exportToCsv}">
+                    <l:dataExporter fileType="csv" source="datatable_#{resultsId}" fileName="#{fileName}" fileOptions="#{backingBean.csvOptions()}" />
+                </p:commandButton>
+                <c:if test="#{exportToXml}">
+                    <p:commandButton id="#{formId}exportToXml" value="#{messages['export.exportToXml']}" update=":#{p:component('exportParametersDialog')}"
+                        oncomplete="PF('exportParametersDialog').show()">
+                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{null}" />
+                        <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{dataModel}" />
+                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{backingBean.selectedEntities}" />
+                    </p:commandButton>
+                </c:if>
+
+            </h:panelGroup>
+
+            <p:dialog header="#{messages['commons.importCsv']}" id="#{formId}_strategyDlg" widgetVar="csvDialog" modal="true" closeOnEscape="true">
+                <p:messages autoUpdate="true" />
+                <hftl:decorateFormField fieldId="#{formId}_strategy" label="#{messages['notification.strategyImportType']}" rendered="#{importStrategy}">
+                    <p:selectOneMenu id="#{formId}_strategy" value="#{backingBean.strategyImportType}">
+                        <f:selectItem itemLabel="#{messages['commons.select']}" />
+                        <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.UPDATED']}" itemValue="UPDATED" />
+                        <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECTE_IMPORT']}" itemValue="REJECTE_IMPORT" />
+                        <f:selectItem itemLabel="#{messages['enum.strategyImportTypeEnum.REJECT_EXISTING_RECORDS']}" itemValue="REJECT_EXISTING_RECORDS" />
+                        <p:ajax event="valueChange" update="@this"></p:ajax>
+                    </p:selectOneMenu>
+                </hftl:decorateFormField>
+                <div class="clearLeft">
+                    <p:fileUpload fileUploadListener="#{backingBean.handleFileUpload}" update="datatable_#{resultsId}" rendered="#{importCsv}" multiple="true" mode="advanced" dragDropSupport="true"
+                        fileLimit="5" process="@this #{formId}_strategy" />
+                </div>
+            </p:dialog>
+            <p:panel styleClass="buttons-set-data-table">
+                <ui:insert name="add-on-buttons" />
+            </p:panel>
+
+            <p:blockUI block="datatable_#{resultsId}" trigger="datatable_#{resultsId}">
+        		LOADING<br />
+                <p:graphicImage name="ajax-loader1.gif" library="img" />
+            </p:blockUI>
+
+            <p:panelGrid id="blockUIContentDataTable_#{resultsId}" columns="2" style="display:none;">
+                <h:graphicImage library="img" name="ajax-loader1.gif" style="margin-right: 12px; vertical-align: middle;" />
+                <h:outputText value="#{messages['message.loading.data']}" style="white-space: nowrap;" />
+            </p:panelGrid>
+
+        </h:form>
+
+        <c:if test="#{exportToXml}">
+            <hftl:exportToXmlDialogs messagesId=":#{p:component('search_messages')}" />
+        </c:if>
+    </p:panel>
+
+</ui:composition>
+
+</html>

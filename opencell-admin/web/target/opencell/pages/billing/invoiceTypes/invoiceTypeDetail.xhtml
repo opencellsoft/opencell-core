@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{invoiceTypeBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <hftl:entityPopup id="searchOccTemplatePopup" header="#{messages['invoiceType.occTemplate']}" updateField=":formInvoiceType:occTemplateSelectedId :formInvoiceType:occTemplateSelectedId_text"
+            selection="#{invoiceTypeBean.entity.occTemplate}" backingBean="#{occTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchOccTemplateNegativePopup" header="#{messages['invoiceType.occTemplate']}"
+            updateField=":formInvoiceType:occTemplateNegativeSelectedId :formInvoiceType:occTemplateNegativeSelectedId_text" selection="#{invoiceTypeBean.entity.occTemplateNegative}"
+            backingBean="#{occTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem outcome="invoiceTypes" value="#{messages['menu.invoiceTypes']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['invoiceType']}" disabled="true" rendered="#{invoiceTypeBean.entity.transient}" />
+                <p:menuitem value="#{messages['invoiceType']} - #{invoiceTypeBean.entity.code}" disabled="true" rendered="#{!invoiceTypeBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:formPanel formId="formInvoiceType" edit="#{invoiceTypeBean.edit}" label="#{messages['invoiceType.panel']}" backingBean="#{invoiceTypeBean}">
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
+            <hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" />
+            <hftl:formField label="#{messages['invoiceType.useSelfSequence']}" field="useSelfSequence"  />
+            <hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" popup="true" popupId="searchOccTemplatePopup"
+                required="true" />
+            <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code" popup="true"
+                popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false" />
+            <hftl:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" required="false" />
+            <hftl:formField label="#{messages['invoiceType.billingTemplateNameEL']}" field="billingTemplateNameEL" />
+            <hftl:formField label="#{messages['invoiceType.prefix']}" field="sequence" childField="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
+            <hftl:formField label="#{messages['invoiceType.sequenceSize']}" field="sequence" childField="sequenceSize" id="sequenceSize" />
+            <hftl:formField label="#{messages['seller.currentInvoiceNb']}" field="sequence" childField="currentInvoiceNb" id="currentInvoiceNb" />
+            <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" newLine="true"
+                id="appliesTo" />
+            <hftl:formField label="#{messages['invoiceType.pdfFilenameEl']}" field="pdfFilenameEL" textArea="true" rows="1" maxlength="2000" />
+            <hftl:formField label="#{messages['invoiceType.xmlFilenameEl']}" field="xmlFilenameEL" textArea="true" rows="1" maxlength="2000" />
+            
+            <hftl:formField label="#{messages['invoiceType.occTemplateEL']}" field="occTemplateCodeEl" textArea="true" rows="1" maxlength="2000" />
+            <hftl:formField label="#{messages['invoiceType.occTemplateNegativeEL']}" field="occTemplateNegativeCodeEl" textArea="true" rows="1" maxlength="2000" />
+            
+            <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">
+                <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;" value="#{invoiceTypeBean.entity.sellerSequence}"
+                    var="sellerSeq" paginator="false" resizableColumns="true">
+                    <f:facet name="header">#{messages['invoiceType.sellerSequences']}</f:facet>
+                    <p:column headerText="#{messages['seller.title']}">
+                        <h:outputText value="#{sellerSeq.seller.code}" />
+                    </p:column>
+                    <p:column headerText="#{messages['invoiceType.sequence.prefixEl']}">
+                        <h:outputText value="#{sellerSeq.sequence.prefixEL}" />
+                    </p:column>
+                    <p:column headerText="#{messages['seller.currentInvoiceNb']}">
+                        <h:outputText value="#{sellerSeq.sequence.currentInvoiceNb}" />
+                    </p:column>
+                    <p:column headerText="#{messages['seller.invoiceSequenceSize']}">
+                        <h:outputText value="#{sellerSeq.sequence.sequenceSize}" />
+                    </p:column>
+                </p:dataTable>
+            </h:panelGroup>
+            
+        </hftl:formPanel>
+    </ui:define>
+</ui:composition>

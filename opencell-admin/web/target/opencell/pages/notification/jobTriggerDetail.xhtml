@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{jobTriggerBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="jobTriggers" value="#{messages['menu.jobTriggers']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['jobTrigger.title']}"
+					disabled="true" rendered="#{jobTriggerBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['jobTrigger.title']} - #{jobTriggerBean.entity.code}"
+					disabled="true" rendered="#{!jobTriggerBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+
+        <hftl:entityPopup id="jobInstancePopup" header="#{messages['jobInstance.title']}" backingBean="#{jobInstanceBean}" searchField1Label="#{messages['BusinessEntity.code']}"
+            searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code" selection="#{jobTriggerBean.entity.jobInstance}"
+            column2Label="#{messages['BusinessEntity.description']}" column2="description" updateField=":jobTriggerForm:jobInstanceSelectId :jobTriggerForm:jobInstanceSelectId_text">
+        </hftl:entityPopup>
+
+        <hftl:entityPopup id="scriptInstancePopup" header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{jobTriggerBean.entity.scriptInstance}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
+            updateField=":jobTriggerForm:scriptInstanceSelectId :jobTriggerForm:scriptInstanceSelectId_text">
+        </hftl:entityPopup>
+
+        <hftl:formPanel formId="jobTriggerForm" label="#{messages['jobTrigger.title']}" backingBean="#{jobTriggerBean}" showEnableDisableButton="true">
+            <hftl:formField label="#{messages['entity.code']}" field="code" required="true" />
+            <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
+                autocompleteBean="#{jobTriggerBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" listenerUpdate="eventTypeFilter" />
+            <hftl:formField id="eventTypeFilter" label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true"  listValues="#{jobTriggerBean.getNotificationEventTypeFilters()}"/>
+            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
+
+            <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code" required="false"
+                popup="true" popupId="scriptInstancePopup" newLine="true" />
+
+            <hftl:formField label="#{messages['entity.notification.params']}" field="params" componentWidth="100" />
+
+            <hftl:formField id="jobInstanceSelectId" label="#{messages['entity.notification.jobInstance']}" field="jobInstance" valueLabelField="code" required="true" popup="true"
+                popupId="jobInstancePopup" newLine="true"/>
+
+            <hftl:formField label="#{messages['entity.notification.jobParams']}" field="jobParams" componentWidth="100"/>
+
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+
+
+        </hftl:formPanel>
+
+    </ui:define>
+
+</ui:composition>

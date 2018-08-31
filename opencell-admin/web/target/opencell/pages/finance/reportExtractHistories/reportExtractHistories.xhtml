@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:hftl="http://hftl.org"
+	xmlns:f="http://xmlns.jcp.org/jsf/core" template="/layout/template.xhtml"
+			xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{revenueScheduleListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="reportExtractHistories" value="#{messages['menu.reportExtractHistories']}" />
+			</p:breadCrumb>
+		</h:form>	
+
+		<hftl:searchPanel label="#{messages['reportExtractHistories.search']}" backingBean="#{reportExtractExecutionResultListBean}">
+			<hftl:searchField label="#{messages['commons.status']}" field="status" />
+			<hftl:searchField label="#{messages['reportExtract.origin']}" field="origin" />
+			<hftl:searchField label="#{messages['businessEntity.code']}" field="reportExtract.code" />
+			<hftl:searchField label="#{messages['reportExtract.category']}" field="reportExtract.category" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{reportExtractExecutionResultListBean}" label="#{messages['reportExtractHistories']}" sortBy="endDate" sortOrder="DESCENDING">
+			<hftl:column label="#{messages['businessEntity.code']}" field="reportExtract.code" />
+			<hftl:column label="#{messages['reportExtract.category']}" field="reportExtract.category" />
+			<hftl:column label="#{messages['jobExecution.startDate']}" field="startDate" time="true" />
+			<hftl:column label="#{messages['jobExecution.endDate']}" field="endDate" time="true"  />
+			<hftl:column label="#{messages['reportExtract.filePath']}" field="filePath" />
+			<hftl:column label="#{messages['reportExtract.lineCount']}" field="lineCount" />
+			<hftl:column label="#{messages['reportExtract.origin']}" field="origin" />
+			<hftl:column label="#{messages['reportExtract.errorMessage']}" field="errorMessage" />
+			<hftl:column label="#{messages['commons.status']}" field="status" />
+			<p:column>
+				<p:commandButton rendered="#{entity.lineCount>0}" value="#{messages['commons.download']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+			        <p:fileDownload value="#{reportExtractBean.getReportFile(entity.reportExtract)}" />
+			    </p:commandButton>
+			</p:column>
+		</hftl:dataList>
+	</ui:define>
+	
+	<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+	    <p:graphicImage name="loading.gif" library="img" />
+	</p:dialog>	
+	
+	<script type="text/javascript">
+		function start() {
+		    PF('statusDialog').show();
+		}
+		
+		function stop() {
+		    PF('statusDialog').hide();
+		}
+	</script>
+
+</ui:composition>

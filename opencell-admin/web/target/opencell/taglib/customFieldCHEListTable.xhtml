@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+    xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" >
+
+<!-- 
+    A tag displaying a list of child entities for custom field value of child entities type
+    Makes part of custom field management tag group 
+
+    Attributes
+        cft - custom field template containing field definition
+        edit - should value be displayed, or edit control be shown
+        field - field storing a value - CustomFieldValue type variable only
+        datePattern - date pattern for date entry/display
+        dateTimePattern - date time pattern for period date display
+        required - if a value is required
+        entity - entity, custom fields are related to
+        messagesId - messages id tag to update for general errors
+        updateOnAddEdit - ids of controlls to update uppon data changes (value edit/create/delete)
+        disabled - is field non-editable
+        prefix - prefix for component to distinguish when used multiple times in the same page (for different entities)
+        clientGuiId - current component's ID
+ -->
+
+<ui:composition>
+
+
+    <o:importFunctions type="org.meveo.model.crm.custom.CustomFieldValue" var="cfv" />
+    <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
+
+    <h:outputText value="#{''}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
+    <c:set var="fieldPrefix" value="#{prefix}_#{fn:replace(cft.code, ' ','_')}_" />
+
+    <hftl:decorateFormField label="#{cft.description}#{cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">
+
+        <p:dataTable id="childEntityTable" lazy="false" value="#{field.childEntityValuesForGUI}" var="childEntityValueHolder" reflow="true" resizableColumns="true"
+            rowIndexVar="rowIndex">
+
+
+            <p:columns value="#{cft.childEntityFieldsAsList}" var="fieldCode">
+                <f:facet name="header">
+                    <h:outputText value="#{messages['businessEntity.'.concat(fieldCode)]}" rendered="#{fieldCode eq 'code' or fieldCode eq 'description'}" />
+                    <h:outputText value="#{customFieldDataEntryBean.getChildEntityField(cft, fieldCode).description}"
+                        rendered="#{fieldCode ne 'code' and fieldCode ne 'description'}" />
+                </f:facet>
+                <h:outputText value="#{childEntityValueHolder.entity.code}" rendered="#{fieldCode eq 'code'}" />
+                <h:outputText value="#{childEntityValueHolder.entity.description}" rendered="#{fieldCode eq 'description'}" />
+                <h:outputText value="#{cfv:getShortRepresentationOfValueObj(childEntityValueHolder.getFirstValue(fieldCode).value, datePattern)}"
+                    rendered="#{fieldCode ne 'code' and fieldCode ne 'description'}" />
+
+                <!--                 <h:outputText value="#{childEntityValueHolder.getFirstValue(fieldCode).getShortRepresentationOfValue(column, datePattern)}" /> -->
+            </p:columns>
+            <!--             <p:column headerText="#{messages['businessEntity.code']}"> -->
+            <!--                 <h:outputText value="#{childEntityValueHolder.entity.code}" /> -->
+            <!--             </p:column> -->
+
+            <!--             <p:column headerText="#{messages['businessEntity.description']}"> -->
+            <!--                 <h:outputText value="#{childEntityValueHolder.entity.description}" /> -->
+            <!--             </p:column> -->
+
+            <!--             <p:columns value="#{customFieldDataEntryBean.getChildEntityColumnsForList(cft)}" var="column" headerText="#{column.description}"> -->
+            <!--                 <h:outputText value="#{childEntityValueHolder.getFirstValue(column.code).getShortRepresentationOfValue(column, datePattern)}" /> -->
+            <!--             </p:columns> -->
+
+            <p:column headerText="#{messages['commons.actions']}" width="15%">
+                <!-- update="periodFields"  -->
+                <p:commandButton icon="ui-icon-search" immediate="true" update=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm #{messagesId}"
+                    action="#{customFieldDataEntryBean.editChildEntity(cfValueHolder, childEntityValueHolder)}" onsuccess="PF('#{fieldPrefix}childEntityDialogWidget').show()">
+                    <p:resetInput target=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm" />
+                </p:commandButton>
+                <p:commandButton action="#{customFieldDataEntryBean.removeChildEntity(field, childEntityValueHolder)}" partialSubmit="true" process="@this" icon="ui-icon-trash"
+                    update="childEntityTable #{messagesId}" rendered="#{edit and !disabled}">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                </p:commandButton>
+            </p:column>
+
+            <c:if test="#{edit and !disabled}">
+                <f:facet name="footer">
+                    <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this"
+                        update=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm #{messagesId}"
+                        actionListener="#{customFieldDataEntryBean.newChildEntity(cfValueHolder, field, cft)}" oncomplete="PF('#{fieldPrefix}childEntityDialogWidget').show()">
+                        <p:resetInput target=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm" />
+                    </p:commandButton>
+                </f:facet>
+            </c:if>
+        </p:dataTable>
+
+    </hftl:decorateFormField>
+
+    <p:dialog widgetVar="#{fieldPrefix}childEntityDialogWidget" header="#{cft.description}" closeOnEscape="true" modal="true" dynamic="true" appendTo="@(body)" width="90%">
+
+        <hftl:decorateFormPanel formId="#{fieldPrefix}dlg_childEntityForm" edit="#{edit}" label="" autoupdateMessages="false">
+            <ui:define name="fields">
+                <hftl:customFieldsCHE edit="#{edit}" disabled="#{disabled}" childEntityCft="#{cft}" entity="#{cfValueHolder.selectedChildEntity.entity}"
+                    messagesId=":#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm:messages" datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
+                    prefix="#{fieldPrefix}" />
+            </ui:define>
+            <ui:define name="buttons">
+                <p:commandButton value="#{messages['action.save']}" process="@this :#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm:tabView" partialSubmit="true"
+                    partialSubmitFilter=":not([name*='omitFromSubmit'])" update="@form #{messagesId} :#{clientGuiId}:childEntityTable"
+                    oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{fieldPrefix}childEntityDialogWidget').hide()"
+                    action="#{customFieldDataEntryBean.saveChildEntity(cfValueHolder, field, cft)}" rendered="#{edit and !disabled}" />
+                <p:commandButton value="#{messages['commons.close']}" update="@this :#{clientGuiId}:childEntityTable"
+                    oncomplete="PF('#{fieldPrefix}childEntityDialogWidget').hide()">
+                    <p:resetInput target="@form" />
+                </p:commandButton>
+                <c:if test="#{!cfValueHolder.selectedChildEntity.entity.transient and ! empty customFieldDataEntryBean.getCustomActions(cfValueHolder.selectedChildEntity.entity)}">
+                    <ui:repeat var="customAction" value="#{customFieldDataEntryBean.getCustomActions(cfValueHolder.selectedChildEntity.entity)}">
+                        <p:commandButton value="#{customAction.label}"
+                            action="#{customFieldDataEntryBean.executeCustomActionOnChildEntity(cfValueHolder.entity,cfValueHolder.selectedChildEntity.entity, customAction, null)}"
+                            process="@this :#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm:tabView" partialSubmit="true" partialSubmitFilter=":not([name*='omitFromSubmit'])"
+                            update="@form" rendered="#{edit and !disabled and exp:evaluateToBooleanOneVariable(customAction.applicableOnEl,'entity',cfValueHolder.selectedChildEntity.entity)}">
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customFieldInstance.childEntity.customAction.confirmExecute']}" />
+                        </p:commandButton>
+                    </ui:repeat>
+                </c:if>
+            </ui:define>
+        </hftl:decorateFormPanel>
+    </p:dialog>
+
+</ui:composition>
+</html>

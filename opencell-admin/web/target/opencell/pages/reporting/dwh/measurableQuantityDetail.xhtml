@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+            <f:viewParam name="objectId" value="#{measurableQuantityBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+				<p:menuitem outcome="measurableQuantities" value="#{messages['menu.measurableQuantities']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['measurableQuantity.popup.header']}"
+					disabled="true" rendered="#{measurableQuantityBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['measurableQuantity.popup.header']} - #{measurableQuantityBean.entity.code}"
+					disabled="true" rendered="#{!measurableQuantityBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel backingBean="#{measurableQuantityBean}" columns="1">
+			<hftl:formField label="#{messages['entity.measurablequantity.code']}"
+				field="code" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.description']}"
+				field="description" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.dimension1']}"
+				field="dimension1" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.dimension2']}"
+				field="dimension2" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.dimension3']}"
+				field="dimension3" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.dimension4']}"
+				field="dimension4" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.sqlQuery']}"
+				field="sqlQuery" textArea="true" maxlength="5000"
+				componentWidth="100" />
+			<hftl:formField
+				label="#{messages['entity.measuredvalue.measurementPeriod']}"
+				field="measurementPeriod" required="true" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.lastMeasureDate']}"
+				field="lastMeasureDate" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.editable']}"
+				field="editable" />
+			<hftl:formField
+				label="#{messages['entity.measurablequantity.additive']}"
+				field="additive" />
+			<hftl:decorateFormField
+				label="#{messages['meveoModule.partOfModules']}"
+				rendered="#{!measurableQuantityBean.entity.transient}"
+				newLine="true">
+				<h:outputText value="#{measurableQuantityBean.getPartOfModules()}" />
+			</hftl:decorateFormField>
+
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

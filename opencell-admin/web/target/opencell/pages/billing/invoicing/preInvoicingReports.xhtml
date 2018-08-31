@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:e="http://jboss.com/products/seam/excel">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{billingRunBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />				
+				<p:menuitem
+					value="#{messages['billingRun.panel']} - #{billingRunBean.entity.id}"
+					disabled="true" rendered="#{!billingRunBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>	
+		<hftl:formPanel formId="form3" edit="false"
+			label="#{messages['preInvoicingReport.title']}"
+			backingBean="#{billingRunBean}" showFormButtons="false">
+
+			<p:tabView id="tabView" activeIndex="#{billingRunBean.activeTab}">
+                <p:tab title="#{messages['customer.tab.information']}">
+ 
+				<hftl:formField
+					label="#{messages['billingAccount.billingCycle']}"
+					field="preInvoicingReports" childField="billingCycleCode"
+					displayOneLine="true" labelWidth="50" />
+
+				<hftl:formField
+					label="#{messages['preInvoicingReport.noOfAccounts']} "
+					field="preInvoicingReports" childField="billingAccountNumber"
+					displayOneLine="true" labelWidth="50" />
+
+				<hftl:formField
+					label="#{messages['billingRun.lastTransactionDate']}"
+					field="preInvoicingReports" childField="lastTransactionDate"
+					displayOneLine="true"  labelWidth="50"/>
+
+				<hftl:formField
+					label="#{messages['billingRun.invoiceDate']}"
+					field="preInvoicingReports" childField="invoiceDate" 
+					displayOneLine="true" labelWidth="50" />
+
+				<hftl:formField
+					label="#{messages['preInvoicingReport.noOfAccountNoCharged']}"
+					field="preInvoicingReports"
+					childField="billableBillingAccountNumber" displayOneLine="true"  labelWidth="70"/>
+
+				<hftl:formField
+					label="#{messages['preInvoicingReport.amountHT']}"
+					field="preInvoicingReports" childField="amoutWitountTax"
+					displayOneLine="true"  labelWidth="50"/>
+
+            <p:fieldset legend="#{messages['preInvoicingReport.noOfBillingAccountInBillingCyclePerPaymentMode']}" styleClass="clearLeft">
+
+				<hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"  
+					field="preInvoicingReports" childField="checkBANumber"
+					displayOneLine="true" />
+
+				<hftl:formField label="#{messages['PaymentMethodEnum.DIRECTDEBIT']}"  
+					field="preInvoicingReports" childField="directDebitBANumber"
+					displayOneLine="true" />
+
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"  
+					field="preInvoicingReports" childField="wiretransferBANumber"
+					displayOneLine="true" />
+					
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.CARD']}" 
+					field="preInvoicingReports" childField="creditDebitCardBANumber"
+					displayOneLine="true" />
+						
+            </p:fieldset>
+			<p:fieldset legend="#{messages['preInvoicingReport.noOfBillingAccountToInvoicePerPaymentMode']}" styleClass="clearLeft">
+
+
+				<hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
+					field="preInvoicingReports" childField="checkBillableBANumber"
+					displayOneLine="true" />
+
+				<hftl:formField label="#{messages['PaymentMethodEnum.DIRECTDEBIT']}"
+					field="preInvoicingReports"
+					childField="directDebitBillableBANumber" displayOneLine="true" />
+
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
+					field="preInvoicingReports"
+					childField="wiretransferBillableBANumber" displayOneLine="true" />
+					
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.CARD']}"
+					field="preInvoicingReports" childField="creditDebitCardBillableBANumber"
+					displayOneLine="true" />
+            </p:fieldset>
+
+
+			<p:fieldset legend="#{messages['preInvoicingReport.totalAmountWithoutTaxByPaymentMethod']}" styleClass="clearLeft">
+
+				<hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
+					field="preInvoicingReports" childField="checkBillableBAAmountHT"
+					displayOneLine="true" />
+
+				<hftl:formField label="#{messages['PaymentMethodEnum.DIRECTDEBIT']}"
+					field="preInvoicingReports"
+					childField="directDebitBillableBAAmountHT" displayOneLine="true" />
+
+
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
+					field="preInvoicingReports"
+					childField="wiretransferBillableBAAmountHT" displayOneLine="true" />
+					
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.CARD']}"
+					field="preInvoicingReports"
+					childField="creditDebitCardBillableBAAmountHT" displayOneLine="true" />
+						
+            </p:fieldset>
+            
+            </p:tab>
+                <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
+            </p:tabView>
+
+		</hftl:formPanel>
+
+
+		<h:form id="operationsForm" rendered="#{!edit}">
+			<h:panelGroup layout="block" styleClass="form-panel-actions">
+				<p:commandButton action="#{billingRunBean.confirmInvoicing()}"
+					value="#{messages['action.confirm']}" />
+				<p:commandButton action="#{billingRunBean.cancelInvoicing()}"
+					value="#{messages['action.cancel']}"
+					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
+				<p:button id="backButton" value="#{messages['action.back']}"
+					outcome="billingRuns" includeViewParams="true">
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
+			</h:panelGroup>
+		</h:form>
+	</ui:define>
+</ui:composition>

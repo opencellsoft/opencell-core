@@ -1,0 +1,94 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <hftl:decorateFormPanel formId="reindexForm" label="#{messages['indexing.indexPanel']}">
+            <ui:define name="fields">
+
+                <h:panelGroup rendered="#{!indexingBean.enabled}">
+                    <div class="ui-messages ui-widget">
+                        <div class="ui-messages-info ui-corner-all">
+                            <span class="ui-messages-info-warn"></span>
+                            <ul>
+                                <li><h:outputText value="#{messages['indexing.notEnabled']}" styleClass="ui-messages-warn-summary" /></li>
+                            </ul>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{indexingBean.enabled}">
+                    <h:panelGroup id="reindexSummary">
+                        <h:panelGroup rendered="#{indexingBean.reindexingFuture!=null}">
+
+                            <p:poll interval="5" update="reindexSummary" stop="#{indexingBean.reindexingFuture!=null and indexingBean.reindexingFuture.isDone()}"
+                                widgetVar="reindexStatusPoll" onerror="PF('reindexStatusPoll').stop()" />
+
+                            <h:panelGroup rendered="#{indexingBean.reindexingFuture!=null}">
+                                <h:panelGroup rendered="#{!indexingBean.reindexingFuture.isDone()}">
+                                    <div class="ui-messages ui-widget">
+                                        <div class="ui-messages-info ui-corner-all">
+                                            <span class="ui-messages-info-icon"></span>
+                                            <ul>
+                                                <li><h:outputText value="#{messages['indexing.reindexingInProgress']}" styleClass="ui-messages-info-summary" /></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{indexingBean.reindexingFuture.isDone()}">
+
+                                    <h:panelGroup rendered="#{indexingBean.reindexingFuture.get().exception == null}">
+                                        <div class="ui-messages ui-widget">
+                                            <div class="ui-messages-info ui-corner-all">
+                                                <span class="ui-messages-info-icon"></span>
+                                                <ul>
+                                                    <li><h:outputText value="#{messages['indexing.finished']}" styleClass="ui-messages-info-summary" /></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <p:dataTable lazy="false" value="#{indexingBean.reindexingFuture.get().recordsProcessed.entrySet()}" var="stats">
+                                            <p:column headerText="#{messages['indexing.stats.entityClass']}">
+                                                <h:outputText value="#{stats.key}" />
+                                            </p:column>
+                                            <p:column headerText="#{messages['indexing.stats.numberTotal']}">
+                                                <h:outputText value="#{stats.value.total}" />
+                                            </p:column>
+                                            <p:column headerText="#{messages['indexing.stats.numberOK']}">
+                                                <h:outputText value="#{stats.value.successfull}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{indexingBean.reindexingFuture.get().exception != null}">
+                                        <div class="ui-messages ui-widget">
+                                            <div class="ui-messages-error ui-corner-all">
+                                                <span class="ui-messages-error-icon"></span>
+                                                <ul>
+                                                    <li><h:outputText value="#{messages['indexing.reindexingFailed']}" styleClass="ui-messages-error-summary" /></li>
+                                                    <li><h:outputText value="&amp;nbsp;" escape="false" /></li>
+                                                    <li><h:outputText value="#{indexingBean.reindexingFuture.get().exception.message}" /></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </ui:define>
+            <ui:define name="buttons">
+                <p:remoteCommand name="updateIndexSummary" update=":reindexForm:messages :reindexForm:reindexSummary" />
+                <p:commandButton action="#{indexingBean.cleanAndReindex}" value="#{messages['indexing.reindex']}" process="@this" update=":reindexForm:messages"
+                    oncomplete="updateIndexSummary()" rendered="#{indexingBean.enabled and (indexingBean.reindexingFuture ==null or indexingBean.reindexingFuture.isDone())}">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['indexing.confirmReindex']}" icon="ui-icon-alert" />
+                </p:commandButton>
+                <p:commandButton value="#{messages['commons.refresh']}" update="messages reindexSummary"
+                    rendered="#{indexingBean.reindexingFuture !=null and !indexingBean.reindexingFuture.isDone()}" />
+            </ui:define>
+        </hftl:decorateFormPanel>
+
+    </ui:define>
+</ui:composition>

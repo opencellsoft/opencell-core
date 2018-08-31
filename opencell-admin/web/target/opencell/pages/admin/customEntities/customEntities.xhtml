@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{customEntityInstanceListBean.preRenderView}" />
+            <f:viewParam name="cet" value="#{customEntityInstanceListBean.customEntityTemplateCode}" />
+            <f:viewParam name="cet" value="#{customEntityInstanceBean.customEntityTemplateCode}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="customEntities" value="#{customEntityInstanceBean.customEntityTemplate.name}" />
+			</p:breadCrumb>
+		</h:form>
+
+        <hftl:searchPanel label="#{customEntityInstanceListBean.customEntityTemplate.name} #{messages['customEntityInstance.search']}" backingBean="#{customEntityInstanceListBean}">
+            <hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
+            <hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+        </hftl:searchPanel>
+
+        <hftl:dataList label="#{messages['customEntityInstance.title']}" noClose="false" backingBean="#{customEntityInstanceListBean}">
+            <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+            <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+            <hftl:actionsColumn permission="#{currentUser.hasRole(customEntityInstanceListBean.customEntityTemplate.modifyPermission)}" renderEnableLink="true" />
+        </hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

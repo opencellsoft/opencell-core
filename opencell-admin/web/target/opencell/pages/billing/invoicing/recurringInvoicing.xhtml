@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{billingRunBean.preRenderView}" />
+            <f:viewParam name="objectId" value="#{billingRunBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="billingRuns" value="#{messages['menu.billingRuns']}" />								
+		        <p:menuitem value="#{messages['commons.new']} #{messages['billingRun.panel']}"
+					disabled="true" rendered="#{billingRunBean.entity.transient}" />			
+			</p:breadCrumb>
+		</h:form>	
+
+		<hftl:entityPopup id="billingCyclePopup"
+			header="#{messages['billingCycle.popup.header']}"
+			backingBean="#{billingCycleBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{billingRunBean.billingCycle}"
+			updateField=":formId :formId:tabView:billingCycleId :formId:tabView:billingCycleId_text">
+
+		</hftl:entityPopup>
+
+		<hftl:formPanel edit="true" formId="formId" label="#{messages['billingRun.panel']}" backingBean="#{billingRunBean}" showFormButtons="false" submitPartialProcess=":formId:tabView">
+            <p:tabView id="tabView" activeIndex="#{billingRunBean.activeTab}">
+                <p:tab title="#{messages['customer.tab.information']}">
+                    <hftl:formField id="billingCycleId"
+						label="#{messages['billingRun.billingCycle']}" field="billingCycle"
+						valueLabelField="code" required="true" popup="true"
+						popupId="billingCyclePopup" />
+					<hftl:formField label="#{messages['billingRun.type']}"
+						field="processType" required="true" noSelectionLabel="false"
+						disabled="false" />
+					<hftl:formField label="#{messages['billingRun.startDate']}"
+						field="startDate" />
+					<hftl:formField label="#{messages['billingRun.endDate']}"
+						field="endDate" />
+					<hftl:formField id="invoiceDateId" label="#{messages['billingRun.invoiceDate']}"
+						field="invoiceDate" />
+					<hftl:formField id="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}"
+						field="lastTransactionDate" />
+					
+                </p:tab>
+                <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
+            </p:tabView>
+            	<p:commandButton style="margin-top: 20px;" action="#{billingRunBean.launchRecurringInvoicing}"
+		    				rendered="#{billingRunBean.canUserUpdateEntity()}"
+		    				value="#{messages['button.launchInvoicing']}" update=":formId " />
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>
+

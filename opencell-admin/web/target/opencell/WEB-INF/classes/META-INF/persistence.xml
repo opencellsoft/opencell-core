@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
+    <persistence-unit name="MeveoAdmin">
+        <jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
+        <!-- <jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
+        <jar-file>lib/opencell-model-5.1.1.jar</jar-file>
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+        <properties>
+            <property name="hibernate.archive.autodetection" value="class" />
+            <property name="hibernate.hbm2ddl.auto" value="validate" /> <!-- DB structure is managed by liquibase, not hibernate -->
+            <property name="hibernate.show_sql" value="false" />
+            <property name="format_sql" value="false"></property>
+            <property name="use_sql_comments" value="false"></property>
+            <!-- <property name="hibernate.default_schema" value="public" /> Disable for Mysql/mariaDB instalation -->
+            <property name="hibernate.cache.use_second_level_cache" value="true" />
+            <property name="hibernate.cache.use_query_cache" value="true" />
+            <property name="hibernate.cache.use_minimal_puts" value="true" />
+            <property name="hibernate.cache.default_cache_concurrency_strategy" value="read-write" />
+            <property name="hibernate.generate_statistics" value="false" />
+            <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
+            <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
+        </properties>
+    </persistence-unit>
+
+    <persistence-unit name="MeveoAdminMultiTenant">
+        <jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
+        <!-- <jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
+        <!-- <jar-file>C:\\project\\git\\meveo\\opencell-model\\target\\opencell-model-5.1.1.jar</jar-file> -->
+        <jar-file>C:\\mvn_repository\\com\\opencellsoft\\opencell-model\\5.0.1-SNAPSHOT\\opencell-model-5.1.1.jar</jar-file>
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+        <properties>
+            <property name="hibernate.archive.autodetection" value="class" />
+            <property name="hibernate.show_sql" value="false" />
+            <property name="format_sql" value="false"></property>
+            <property name="use_sql_comments" value="false"></property>
+            <property name="hibernate.cache.use_second_level_cache" value="true" />
+            <property name="hibernate.cache.use_query_cache" value="true" />
+            <!-- <property name="hibernate.default_schema" value="public" /> -->
+            <property name="hibernate.cache.use_minimal_puts" value="true" />
+            <property name="hibernate.cache.default_cache_concurrency_strategy" value="read-write" />
+            <property name="hibernate.cache.region.factory_class" value="org.jboss.as.jpa.hibernate5.infinispan.SharedInfinispanRegionFactory" />
+            <property name="hibernate.generate_statistics" value="false" />
+            <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
+            <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
+        </properties>
+    </persistence-unit>
+
+</persistence>

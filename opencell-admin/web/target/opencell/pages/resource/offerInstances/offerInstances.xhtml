@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['offerInstance.title']}" backingBean="#{offerInstanceBean}">
+    	
+    		<custom:searchPanel label="#{messages['offerInstance.search']}" newButtonView="/pages/resource/offerInstances/fferInstanceDetail.xhtml">
+    			<custom:searchField label="#{messages['offerInstance.code']}" field="code" />
+    			<custom:searchField label="#{messages['offerInstance.name']}" field="name" />
+    			<custom:searchField label="#{messages['offerInstance.termDuration']}" field="termDuration" />
+    		</custom:searchPanel>	
+
+    		<custom:dataList dataModel="#{offerInstances}" pdf="true">
+    			<custom:column label="#{messages['offerInstance.code']}" field="code" />
+    			<custom:column label="#{messages['offerInstance.name']}" field="name" />
+    			<custom:column label="#{messages['offerInstance.termDuration']}" field="termDuration" />
+    			<custom:column label="#{messages['offerInstance.serviceGroups']}" field="serviceGroups" isList="true" childField="name" childFieldId="id" view="/pages/crm/serviceGroups/serviceGroupDetail.xhtml" backView="/pages/crm/offers/offerInstanceDetail.xhtml"/>
+    			<custom:actionsColumn editView="/pages/crm/offers/offerInstanceDetail.xhtml"/>
+		    </custom:dataList>
+		   
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

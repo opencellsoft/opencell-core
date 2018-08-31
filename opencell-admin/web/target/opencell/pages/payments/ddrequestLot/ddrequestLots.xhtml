@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+    	<f:metadata>
+    		<f:event type="preRenderView"
+    			listener="#{ddRequestLOTListBean.preRenderView}" />
+    	</f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
+			</p:breadCrumb>
+		</h:form>	
+
+		<hftl:searchPanel
+			label="#{messages['ddrequestLot.panel']}"
+			backingBean="#{ddRequestLOTListBean}" renderNewButton="false">
+			<hftl:searchField label="#{messages['ddrequestLot.fileName']}"
+				field="fileName" />
+			<hftl:searchField label="#{messages['ddrequestLot.sendDate']}"
+				field="sendDate" />
+			<hftl:searchField label="#{messages['ddrequestLot.paymentCreated']}"
+				field="paymentCreated" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{ddRequestLOTListBean}" deleteManyButton="false">
+			<hftl:column label="#{messages['ddrequestLot.fileName']}"
+				field="fileName" />
+			<hftl:column label="#{messages['ddrequestLot.sendDate']}"
+				field="sendDate" />
+			<hftl:column label="#{messages['ddrequestLot.invoicesNumber']}"
+				field="invoicesNumber" />
+			<hftl:column label="#{messages['ddrequestLot.invoicesAmount']}"
+				field="invoicesAmount" />
+			<hftl:column label="#{messages['ddrequestLot.paymentCreated']}"
+				field="paymentCreated" isMessage="true" />
+			<hftl:column label="#{messages['ddrequestLot.rejectedInvoices']}"
+				field="rejectedInvoices" />				
+			<hftl:actionsColumn renderDeleteLink="false" renderViewLink="true"
+				permission="#{currentUser.hasRole('billingManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

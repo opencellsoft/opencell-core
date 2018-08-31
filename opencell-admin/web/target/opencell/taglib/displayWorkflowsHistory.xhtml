@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<!--
+    A tag to display workflow history of an entity
+   
+    
+    Attributes      
+        entity - the businesEntity     
+        tabLabel - the tab label . If not provided a messages['workflowHistory.tabLabel'] will be used
+-->
+
+<ui:composition>
+
+	<c:if test="${empty(tabLabel)}">
+		<c:set var="tabLabel" value="${messages['workflowHistory.tabLabel']}" />
+	</c:if>
+
+	<c:set var="edit" value="#{false}" />
+	
+	<p:tab title="${tabLabel}" rendered="${!empty(workflowHistoryBean.getWorkflowHistory(entity))}">
+		<h:panelGroup id="wfHistoId">
+                    <p:dataTable id="actionsAndReportsData" var="histo" backingBean="#{workflowHistoryBean}" value="#{workflowHistoryBean.getWorkflowHistory(entity)}" paginator="true" rows="10" 
+                        sortField="#{'actionDate'}" sortBy="#{histo.actionDate}" sortOrder="DESCENDING" paginatorAlwaysVisible="false"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20"
+                        lazy="false" styleClass="custom-grid" reflow="true">
+                        <hftl:column label="#{messages['workflowHistory.actionDate']}" field="actionDate" entity="${histo}" time="true" isDate="true"/>
+<!--                         <hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus"  entity="${histo}" /> -->
+<!--                         <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus"  entity="${histo}" /> -->
+                        <hftl:column label="#{messages['workflowHistory.action']}" field="transitionName"  entity="${histo}" />
+<!--                         <hftl:column label="#{messages['workflow.title']}" field="workflow.code" entity="${histo}" />   -->
+                        <hftl:column label="#{messages['workflowHistory.creator']}" field="auditable.creator" entity="${histo}"/> 
+                    </p:dataTable>
+               
+                
+		</h:panelGroup>
+	</p:tab>
+</ui:composition>
+</html>

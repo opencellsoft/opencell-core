@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{webHookBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="webHooks" value="#{messages['menu.webHooks']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['menu.webHook']}"
+					disabled="true" rendered="#{webHookBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['menu.webHook']} - #{webHookBeann.entity.code}"
+					disabled="true" rendered="#{!webHookBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>    
+
+        <hftl:entityPopup id="searchCounterTemplatePopup" header="#{messages['counterTemplate.title']}" updateField=":webHookFormId:counterTemplateSelectedId :webHookFormId:counterTemplateSelectedId_text"
+            selection="#{webHookBean.entity.counterTemplate}" backingBean="#{counterTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+            dataModel="#{counterTemplateBean.getLazyDataModel('NOTIFICATION')}">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="scriptInstancePopup" header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{webHookBean.entity.scriptInstance}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
+            updateField=":webHookFormId:scriptInstanceSelectId :webHookFormId:scriptInstanceSelectId_text">
+        </hftl:entityPopup>
+
+        <hftl:formPanel formId="webHookFormId" label="#{messages['menu.webHook']}" backingBean="#{webHookBean}" columns="4" showEnableDisableButton="true">
+
+            <hftl:formField label="#{messages['entity.code']}" field="code" required="true" />
+            <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60" maxlength="255"
+                autocompleteBean="#{webHookBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" listenerUpdate="eventTypeFilter"/>
+            <hftl:formField id="eventTypeFilter" label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" listValues="#{webHookBean.getNotificationEventTypeFilters()}"/>
+            <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
+
+            <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"
+                popupId="searchCounterTemplatePopup" showResetButton="true" required="false" />
+
+			<hftl:formField label="#{messages['entity.webHook.protocol']}" field="httpProtocol" />
+            <hftl:formField label="#{messages['entity.webHook.host']}" field="host" required="true" size="100" />
+            <hftl:formField label="#{messages['entity.webHook.port']}" field="port" maxValue="65535" spinner="false"/>
+            <hftl:formField label="#{messages['entity.webHook.page']}" field="page" size="100" required="true" />
+            <hftl:formField label="#{messages['entity.webHook.httpMethod']}" field="httpMethod" required="true" />
+            <hftl:formField label="#{messages['entity.webHook.username']}" field="username" size="40" newLine="true" />
+            <hftl:formField label="#{messages['entity.webHook.password']}" field="password" size="40" />
+
+            <hftl:formField label="#{messages['entity.webHook.headers']}" field="headers" componentWidth="100" />
+            <hftl:formField label="#{messages['entity.webHook.params']}" field="webhookParams" componentWidth="100" />
+
+            <hftl:formField label="#{messages['entity.webHook.bodyEL']}" field="bodyEL" textArea="true" maxlength="2000" componentWidth="100" />
+
+            <hftl:formField id="scriptInstanceSelectId" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" valueLabelField="code"
+                required="false" popup="true" popupId="scriptInstancePopup" newLine="true" />
+            <hftl:formField label="#{messages['entity.notification.params']}" field="params" componentWidth="100" />
+
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!webHookBean.entity.transient}">
+            	<h:outputText value="#{webHookBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
+        </hftl:formPanel>
+
+<!--         <p:panel rendered="#{not empty webHookBean.entity.id}"> -->
+<!--             <hftl:dataList backingBean="#{notificationHistoryBean}" dataModel="#{notificationHistoryBean.getLazyDataModel(webHookBean.entity.id)}"> -->
+<!--                 <hftl:column label="#{messages['commons.date']}" field="auditable.updated" isDate="true" time="true" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.notificationType']}" field="entityClassName" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification']}" field="notification.code" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.retryNr']}" field="nbRetry" /> -->
+<!--                 <hftl:column label="#{messages['entity.notification.result']}" field="result" /> -->
+<!--                 <p:column headerText="#{messages['entity.notification.inboundRequest']}"> -->
+<!--                     <h:link value="#{entity.inboundRequest.code}" outcome="inboundRequestDetail" rendered="#{entity.inboundRequest != null}"> -->
+<!--                         <f:param name="objectId" value="#{entity.inboundRequest.id}" /> -->
+<!--                     </h:link> -->
+<!--                 </p:column> -->
+<!--                 <hftl:column label="#{messages['commons.status']}" field="status.label" isMessage="true" /> -->
+<!--             </hftl:dataList> -->
+<!--         </p:panel> -->
+
+    </ui:define>
+
+</ui:composition>

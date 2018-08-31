@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}" style="#{style}"
+        labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}" inputWidth="#{inputWidth}">
+
+        <c:if test="#{datePeriod}">
+            <c:if test="#{edit}">
+                <h:panelGrid columns="4">
+                    <p:calendar id="#{id}" value="#{fieldItem.from}" pattern="#{datePattern}" disabled="#{disabled}" placeholder="#{messages['commons.dateFrom']}" />
+                    <h:outputText value="-" style="padding:5px" />
+                    <p:calendar id="#{id}_toRange" value="#{fieldItem.to}" pattern="#{datePattern}" disabled="#{disabled}" placeholder="#{messages['commons.dateTill']}" label="" />
+                    <o:validateMultiple components="#{id} #{id}_toRange" validator="#{dateRangeValidator.validateDateRange}" message="#{messages['validator.dateRange.incorrectOrder']}">
+                        <f:attribute name="datePattern" value="#{datePattern}" />
+                    </o:validateMultiple>
+                </h:panelGrid>
+            </c:if>
+            <c:if test="#{! edit}">
+                <h:outputText id="#{id}" value="#{fieldItem.from}" styleClass="field-value">
+                    <f:convertDateTime type="date" pattern="#{datePattern}" />
+                </h:outputText>
+                <h:outputText value="-" style="padding:5px" />
+                <h:outputText id="#{id}_toRange" value="#{fieldItem.to}" styleClass="field-value">
+                    <f:convertDateTime type="date" pattern="#{datePattern}" />
+                </h:outputText>
+            </c:if>
+        </c:if>
+
+        <c:if test="#{empty(datePeriod)}">
+
+            <c:if test="#{edit}">
+				<p:calendar id="#{id}" value="#{fieldItem}" disabled="#{disabled}" pattern="#{datePattern}" required="#{required}">
+                    <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" event="dateSelect" />
+                    </c:if>
+                    <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="dateSelect" />
+                    </c:if>
+                </p:calendar>
+            </c:if>
+            <c:if test="#{! edit}">
+                <h:outputText id="#{id}" value="#{fieldItem}" styleClass="field-value">
+                    <f:convertDateTime type="date" pattern="#{datePattern}" />
+                </h:outputText>
+            </c:if>
+        </c:if>
+
+    </hftl:decorateFormField>
+</ui:composition>
+</html>

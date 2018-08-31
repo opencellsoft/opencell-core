@@ -1,0 +1,85 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{filterBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="filters" value="#{messages['menu.filters']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['filter.title']}"
+					disabled="true" rendered="#{filterBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['filter.title']} - #{filterBean.entity.code}"
+					disabled="true" rendered="#{!filterBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:panel header="#{messages['menu.filters']}">
+
+			<p:tabView id="tabView">
+				<p:tab title="#{messages['filter.info']}">
+
+					<hftl:formPanel backingBean="#{filterBean}" columns="1"
+						showEnableDisableButton="true">
+
+						<hftl:formField label="#{messages['BusinessEntity.code']}"
+							field="code" required="true" validateUnique="true"
+							disabled="#{!filterBean.entity.transient and !filterBean.entity.auditable.isCreator(currentUser)}" />
+						<hftl:formField label="#{messages['BusinessEntity.description']}"
+							field="description" useConverter="false"
+							size="50"
+							disabled="#{!filterBean.entity.transient and !filterBean.entity.auditable.isCreator(currentUser)}" />
+
+						<hftl:formField
+							showOnlyOnNew="true"
+							rendered="#{filterBean.entity != null and !filterBean.entity.auditable.isCreator(currentUser)}"
+							field="shared" label="#{messages['filter.shared']}"/>
+						<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!filterBean.entity.transient}">
+                			<h:outputText value="#{filterBean.partOfModules}" />
+               			</hftl:decorateFormField>
+
+						<hftl:decorateFormField fieldId="inputXml"
+							label="#{messages['filter.inputXml']}" newLine="true" required="true">
+							<pe:codeMirror id="inputXml" mode="javascript" theme="eclipse"
+								value="#{filterBean.entity.inputXml}" lineNumbers="true" required="true"
+								readonly="#{!filterBean.entity.transient and !filterBean.entity.auditable.isCreator(currentUser)}" />
+						</hftl:decorateFormField>
+
+						<p:dataTable id="filterParameters"
+									 lazy="false"
+									 value="#{filterBean.parameters}"
+									 var="parameter"
+									 reflow="false"
+									 resizableColumns="true"
+									 rowIndexVar="rowIndex"
+									 rendered="${!filterBean.entity.transient}" >
+							<p:column headerText="#{messages['businessEntity.code']}">
+								<h:outputText value="#{parameter.code}"/>
+							</p:column>
+							<p:column headerText="#{messages['businessEntity.description']}">
+								<h:outputText value="#{parameter.description}"/>
+							</p:column>
+							<p:column headerText="#{messages['customFieldTemplate.fieldType']}">
+								<h:outputText value="#{parameter.fieldType}"/>
+							</p:column>
+						</p:dataTable>
+					</hftl:formPanel>
+
+				</p:tab>
+			</p:tabView>
+
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

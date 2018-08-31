@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{tradingCountryBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<hftl:entityPopup header="#{messages['tradingCountry.popup.header']}"
+			updateField=":formCountries:countrySelectedId :formCountries:countrySelectedId_text :formCountries:prDescription" 
+			selection="#{tradingCountryBean.entity.country}"
+			backingBean="#{countryBean}"
+			searchField1Label="#{messages['country.countryCode']}"
+			searchField1="countryCode"
+			column1Label="#{messages['country.countryCode']}"
+			column1="countryCode"
+			column2Label="#{messages['tradingLanguage.prDescription']}"
+			column2="description" selectionListenerBean="#{tradingCountryBean}" selectionListenerMethod="onCountrySelect">
+		</hftl:entityPopup>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="tradingCountries"
+					value="#{messages['menu.tradingCountries']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['tradingCountry']}"
+					disabled="true" rendered="#{tradingCountryBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['tradingCountry']} - #{tradingCountryBean.entity.prDescription}"
+					disabled="true" rendered="#{!tradingCountryBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel formId="formCountries" 
+			label="#{messages['tradingCountry.tradingCountryPanel']}"
+			backingBean="#{tradingCountryBean}" showEnableDisableButton="true">
+
+			<hftl:formField id="countrySelectedId"
+				label="#{messages['tradingCountry.countryCode']}" field="country"
+				valueLabelField="countryCode" popup="true" required="true" showPopupOnlyOnNew="true" />
+
+			<hftl:formField label="#{messages['tradingCountry.prDescription']}"
+				field="prDescription" id="prDescription"/>
+			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+				field="disabled" isMessage="true"/>
+
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

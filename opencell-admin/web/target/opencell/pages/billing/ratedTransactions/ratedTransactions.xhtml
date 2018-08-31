@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	
+	 xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{ratedTransactionListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">   
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.invoicing']}" disabled="true" />
+				<p:menuitem outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
+			</p:breadCrumb>
+		</h:form>		 
+			<hftl:entityPopup id="searchWalletInstancePopup"
+			header="#{messages['walletTemplate.title']}"
+			updateField=":searchForm:wallet"
+			selection="#{ratedTransactionListBean.filters['wallet']}"
+			backingBean="#{walletTemplateBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="searchPricePlanPopup"
+			header="#{messages['pricePlan.title']}"
+			backingBean="#{pricePlanMatrixBean}"
+			searchField1Label="#{messages['pricePlanMatrix.table.eventCode']}"
+			searchField1="code" 
+			column1Label="#{messages['BusinessEntity.code']}" column1="code" 
+			selection="#{ratedTransactionListBean.filters['priceplan']}" 
+			updateField=":searchForm:priceplan">
+		</hftl:entityPopup> 
+		
+		<hftl:entityPopup id="billingAccountPopup"
+			header="#{messages['billingAccount.popup.header']}"
+			backingBean="#{billingAccountBean}"
+			searchField1Label="#{messages['billingAccount.code']}"
+			searchField1="code" 
+			searchField2Label="#{messages['invoiceSubCategory.description']}"
+			searchField2="description"
+			column1Label="#{messages['billingAccount.code']}"
+			column1="code"
+			column2Label="#{messages['invoiceSubCategory.description']}"
+			column2="description" 
+			selection="#{ratedTransactionListBean.filters['billingAccount']}"
+            updateField=":searchForm">
+		</hftl:entityPopup>  
+		  
+		  <hftl:entityPopup id="searchBillingRunPopup"
+			header="#{messages['billingRun.search']}"
+			backingBean="#{billingRunBean}"
+			updateField=":searchForm"
+			selection="#{ratedTransactionListBean.filters['billingRun']}"
+			searchField1Label="#{messages['role.id']}"
+			searchField1="id" 
+			searchField2Label="#{messages['billingRun.status']}"
+			searchField2="status" 
+			column1Label="#{messages['role.id']}" column1="id"
+			column2Label="#{messages['billingRun.status']}" column2="status"
+			column3Label="#{messages['billingRun.processDate']}" column3="processDate">
+		  </hftl:entityPopup>
+
+		 
+
+       <hftl:entityPopup id="searchInvoicePopup"
+			header="#{messages['invoice.search']}"
+			backingBean="#{invoiceBean}"
+			searchField1="invoiceNumber" 
+			searchField2Label="#{messages['invoice.invoiceNumber']}"
+			updateField=":#{p:component('invoice')}"
+			selection="#{ratedTransactionListBean.filters['invoice']}"   
+			formField1="invoiceNumber" column1Label="#{messages['invoice.invoiceNumber']}"
+			column1="invoiceNumber">
+		  </hftl:entityPopup>		  
+
+        <hftl:searchPanel label="#{messages['ratedTransaction.search']}" backingBean="#{ratedTransactionListBean}" renderNewButton="false">
+            <hftl:searchField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" valueLabelField="id" popup="true" popupId="searchBillingRunPopup" renderNewButton="false" />
+            <hftl:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true" popupId="billingAccountPopup" />
+            <hftl:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId" field="invoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
+            <hftl:searchField label="#{messages['ratedTransaction.pricePlan']}" id="priceplan" field="priceplan" valueLabelField="code" popup="true" popupId="searchPricePlanPopup" />  
+            <hftl:searchField label="#{messages['operation.wallet']}" id="wallet" field="wallet" valueLabelField="code" popup="true" popupId="searchWalletInstancePopup" />
+            <hftl:searchField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" valueLabelField="invoiceNumber" popup="true" popupId="searchInvoicePopup" />
+            <hftl:searchField label="#{messages['ratedTransaction.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
+            <hftl:searchField label="#{messages['ratedTransaction.unitAmountWithTax']}" field="unitAmountWithTax" />
+            <hftl:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />	
+            <hftl:searchField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
+			<hftl:searchField label="#{messages['ratedTransaction.status']}" field="status" />
+			<hftl:searchField label="#{messages['ratedTransaction.param1']}" field="parameter1" />
+			<hftl:searchField label="#{messages['ratedTransaction.param2']}" field="parameter2" />
+			<hftl:searchField label="#{messages['ratedTransaction.param3']}" field="parameter3" />
+			<hftl:searchField label="#{messages['ratedTransaction.usageDate']}" field="usageDate" />
+
+        </hftl:searchPanel>
+        <hftl:dataList backingBean="#{ratedTransactionListBean}" deleteManyButton="false" exportButton="true" exportXlsxButton="false">
+			<hftl:column  label="#{messages['BusinessEntity.code']}" field="code" /> 
+			<hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true"/>
+			 <p:column width="100">
+				<f:facet name="header">
+					<h:outputText value="#{messages['ratedTransaction.walletOperation']}" />
+				</f:facet> 
+					<h:outputText 
+						value="#{ratedTransactionListBean.getWalletOperationCode(entity.walletOperationId)}" />  
+			</p:column>
+			<hftl:column label="#{messages['ratedTransaction.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />			
+			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
+			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber"  /> 
+			<hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60"
+				permission="#{currentUser.hasRole('billingVisualization')}"/>
+				</hftl:dataList>  
+	</ui:define>
+
+</ui:composition>

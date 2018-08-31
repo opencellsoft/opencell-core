@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{tradingLanguageBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<c:if test="#{tradingLanguageBean.edit}">
+			<hftl:entityPopup id="languagePopup"
+				header="#{messages['tradingLanguage.popup.header']}"
+				updateField=":languagesFormId:languageSelectedId :languagesFormId:languageSelectedId_text :languagesFormId:prDescription"
+				selection="#{tradingLanguageBean.entity.language}"
+				backingBean="#{languageBean}"
+				searchField1Label="#{messages['language.languageCode']}"
+				searchField1="languageCode"
+				column1Label="#{messages['language.languageCode']}"
+				column1="languageCode"
+				column2Label="#{messages['tradingLanguage.prDescription']}"
+				column2="descriptionEn" selectionListenerBean="#{tradingLanguageBean}" selectionListenerMethod="onLanguageSelect">
+			</hftl:entityPopup>
+		</c:if>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="tradingLanguages"
+					value="#{messages['menu.comLanguages']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['tradingLanguage']}"
+					disabled="true" rendered="#{tradingLanguageBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['tradingLanguage']} - #{tradingLanguageBean.entity.prDescription}"
+					disabled="true" rendered="#{!tradingLanguageBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel formId="languagesFormId"
+			label="#{messages['tradingLanguage.tradingLanguagePanel']}"
+			backingBean="#{tradingLanguageBean}" showEnableDisableButton="true">
+
+			<hftl:formField id="languageSelectedId"
+				label="#{messages['tradingLanguage.languageCode']}" field="language"
+				valueLabelField="languageCode" popup="true" popupId="languagePopup"
+				required="true" showPopupOnlyOnNew="true" />
+			<hftl:formField label="#{messages['tradingLanguage.prDescription']}"
+				field="prDescription" id="prDescription" />
+			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+				field="disabled" isMessage="true" />
+
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

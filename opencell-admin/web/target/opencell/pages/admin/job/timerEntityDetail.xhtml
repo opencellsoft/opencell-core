@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{timerEntityBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+					<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+					<p:menuitem outcome="timerEntities" value="#{messages['menu.timerEntities']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['timer.panel']}"
+					disabled="true" rendered="#{timerEntityBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['timer.panel']} - #{timerEntityBean.entity.code}"
+					disabled="true" rendered="#{!timerEntityBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+		<hftl:formPanel label="#{messages['timer.panel']}"
+			backingBean="#{timerEntityBean}" columns="1">
+			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />			
+			<hftl:formField label="#{messages['BusinessEntity.description']}" field="description"  />
+			<p:fieldset legend="#{messages['timer.schedule']}" layout="block" styleClass="clearLeft">
+                    <hftl:formField label="#{messages['timer.hour']}" field="hour" required="true" />
+                    <hftl:formField label="#{messages['timer.minute']}" field="minute" required="true" />
+                    <hftl:formField label="#{messages['timer.second']}" field="second" required="true" />
+                    <hftl:formField label="#{messages['timer.year']}" field="year" required="true" />
+                    <hftl:formField label="#{messages['timer.month']}" field="month" required="true" />
+                    <hftl:formField label="#{messages['timer.dayOfMonth']}" field="dayOfMonth" required="true" />
+                    <hftl:formField label="#{messages['timer.dayOfWeek']}" field="dayOfWeek" required="true" />                   
+            </p:fieldset>
+			
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

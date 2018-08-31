@@ -1,0 +1,469 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+    	<f:metadata>
+    		<f:event type="preRenderView"
+    			listener="#{pricePlanMatrixListBean.preRenderView}" />
+    	</f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+        <hftl:entityPopup id="offerPopup" header="#{messages['offer.search']}" backingBean="#{offerTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{pricePlanMatrixListBean.filters['offerTemplate']}" width="1000" lazy="false"
+            dataModel="#{offerTemplateBean.listActive()}" updateField=":searchForm:offer">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchSellerPopup"
+			header="#{messages['seller.search']}" backingBean="#{sellerBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			selection="#{pricePlanMatrixListBean.filters['seller']}" lazy="false"
+			dataModel="#{sellerBean.listAll()}"
+			updateField=":searchForm:seller">
+		</hftl:entityPopup>
+<!-- 		<hftl:entityPopup id="searchTradingCountryPopup" -->
+<!-- 			header="#{messages['country.search']}" -->
+<!-- 			backingBean="#{tradingCountryBean}" -->
+<!-- 			searchField1Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			searchField1="prDescription" -->
+<!-- 			column1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			column1="countryCode" -->
+<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			column2="prDescription" -->
+<!-- 			selection="#{pricePlanMatrixListBean.filters['tradingCountry']}" -->
+<!-- 			lazy="false" dataModel="#{tradingCountryBean.listAll()}" -->
+<!-- 			updateField=":searchForm:tradingCountry"> -->
+<!-- 		</hftl:entityPopup> -->
+<!-- 		<hftl:entityPopup id="searchTradingCurrencyPopup" -->
+<!-- 			header="#{messages['currency.search']}" -->
+<!-- 			backingBean="#{tradingCurrencyBean}" -->
+<!-- 			searchField1Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			searchField1="prDescription" -->
+<!-- 			column1Label="#{messages['BusinessEntity.code']}" -->
+<!-- 			column1="currencyCode" -->
+<!-- 			column2Label="#{messages['BusinessEntity.description']}" -->
+<!-- 			column2="prDescription" -->
+<!-- 			selection="#{pricePlanMatrixListBean.filters['tradingCurrency']}" -->
+<!-- 			lazy="false" dataModel="#{tradingCurrencyBean.listAll()}" -->
+<!-- 			updateField=":searchForm:tradingCurrency"> -->
+<!-- 		</hftl:entityPopup> -->
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="pricePlanMatrixes"
+					value="#{messages['menu.pricePlanMatrixes']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel columns="3"
+			label="#{messages['pricePlanMatrix.search']}"
+			backingBean="#{pricePlanMatrixListBean}"
+			renderAdvancedLink="#{!pricePlanMatrixListBean.advanced}"
+			renderHideAdvancedLink="#{pricePlanMatrixListBean.advanced}">
+			<hftl:searchField label="#{messages['BusinessEntity.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['pricePlanMatrix.eventCode']}"
+				field="eventCode" />
+			<hftl:searchField id="offer"
+				label="#{messages['pricePlanMatrix.offerCode']}"
+				field="offerTemplate" valueLabelField="code" 
+                popup="true" popupId="offerPopup" /> 
+			<hftl:searchField id="seller" label="#{messages['seller.title']}"
+				field="seller" valueLabelField="descriptionOrCode" popup="true"
+				popupId="searchSellerPopup" />
+			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
+				<hftl:searchField id="tradingCountry"
+					label="#{messages['tradingCountry.tradingCountry']}"
+					field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />
+<!--                     popup="true" popupId="searchTradingCountryPopup" /> -->
+				<hftl:searchField id="tradingCurrency"
+					label="#{messages['currency.codeCurrency']}"
+					field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />
+<!--                     popup="true" popupId="searchTradingCurrencyPopup" /> -->
+				<hftl:searchMinMaxField
+					label="#{messages['pricePlanMatrix.quantity']}"
+					minField="minQuantity" maxField="maxQuantity" />
+				<hftl:searchLikeCriteriasField
+					label="#{messages['pricePlanMatrix.criteriaValue']}"
+					fields="criteria1Value,criteria2Value,criteria3Value" />
+				<hftl:searchMinMaxField
+					label="#{messages['pricePlanMatrix.subscriptionDate']}"
+					minField="startSubscriptionDate" maxField="endSubscriptionDate" />
+				<hftl:searchMinMaxField
+					label="#{messages['pricePlanMatrix.ratingDate']}"
+					minField="startRatingDate" maxField="endRatingDate" />
+				<hftl:searchMinMaxField
+					label="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}"
+					minField="minSubscriptionAgeInMonth"
+					maxField="maxSubscriptionAgeInMonth" />
+			</h:panelGroup>
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['pricePlanMatrix.title']}" rowsPerPage="5,10"
+			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size()==0?'true':'false'}"
+			exportButton="false" exportXlsxButton="true"
+			backingBean="#{pricePlanMatrixListBean}">
+
+			<f:facet name="header">
+				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size()==0?'true':'false'}"
+					icon="ui-icon-calculator"/>
+				<p:columnToggler datasource="datatable_results" trigger="toggler" >
+<!-- 					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" /> -->
+				</p:columnToggler>
+			</f:facet>
+			<p:column exportable="true" toggleable="false">
+				<f:facet name="header">
+					<h:outputText value="#{messages['BusinessEntity.code']}" />
+				</f:facet>
+				<h:link id="pp_detail" value="#{entity.code}" outcome="pricePlanMatrixDetail">
+                    <f:param name="objectId" value="#{entity.id}" />
+                    <f:param name="edit" value="true" />
+                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                </h:link>
+<!-- 				<p:cellEditor> -->
+<!-- 					<f:facet name="output"> -->
+<!-- 						<h:outputText value="#{entity.code}" /> -->
+<!-- 					</f:facet> -->
+<!-- 					<f:facet name="input"> -->
+<!-- 						<p:inputText value="#{entity.code}" required="true" maxlength="60" -->
+<!-- 							size="20" /> -->
+<!-- 					</f:facet> -->
+<!-- 				</p:cellEditor> -->
+			</p:column>
+			<p:column exportable="true" toggleable="false">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.eventCode']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.eventCode}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.eventCode}" style="width:75%"
+							required="true">
+							<f:selectItems value="#{chargeTemplateBean.listAll()}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item.code}" />
+							<hftl:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" toggleable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[4]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['BusinessEntity.description']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.description}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.description}" 
+							maxlength="100" size="20" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[5]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.offerCode']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.offerTemplate.code}  #{entity.offerTemplate.validity.toString(paramBean.dateFormat)}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.offerTemplate}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{offerTemplateBean.listAll()}" var="item"
+								itemLabel="#{item.code}  #{item.validity.toString(paramBean.dateFormat)}" itemValue="#{item}" />
+							<hftl:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[6]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['seller.title']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.seller.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.seller}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{sellerBean.listAll()}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item}" />
+							<hftl:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+            <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[7]}">
+                <f:facet name="header">
+                    <h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!appProvider.entreprise}" />
+                    <h:outputText value="#{messages['pricePlanMatrix.amountWithoutTax']}" rendered="#{appProvider.entreprise}" />
+                </f:facet>
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputText value="#{entity.amountWithTax}" converter="bigDecimal4DigitsConverter" rendered="#{!appProvider.entreprise}" />
+                        <h:outputText value="#{entity.amountWithoutTax}" converter="bigDecimal4DigitsConverter" rendered="#{appProvider.entreprise}" />
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputText value="#{entity.amountWithTax}" required="true" converter="bigDecimal4DigitsConverter" size="6" rendered="#{!appProvider.entreprise}" />
+                        <p:inputText value="#{entity.amountWithoutTax}" required="true" converter="bigDecimal4DigitsConverter" size="6" rendered="#{appProvider.entreprise}" />
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[8]}">
+                <f:facet name="header">
+                    <h:outputText value="#{messages['pricePlanMatrix.amountWithTax']} EL" rendered="#{!appProvider.entreprise}"/>
+                    <h:outputText value="#{messages['pricePlanMatrix.amountWithoutTax']} EL" rendered="#{appProvider.entreprise}" />
+                </f:facet>
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputText value="#{entity.amountWithTaxEL}" rendered="#{!appProvider.entreprise}"/>
+                        <h:outputText value="#{entity.amountWithoutTaxEL}" rendered="#{appProvider.entreprise}" />
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputText value="#{entity.amountWithTaxEL}" size="20" maxlength="2000" rendered="#{!appProvider.entreprise}"/>
+                        <p:inputText value="#{entity.amountWithoutTaxEL}" size="20" maxlength="2000" rendered="#{appProvider.entreprise}" />
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[9]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.ratingDate']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.startRatingDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.dateFormat}" />
+						</h:outputText>
+						<h:outputText value=" - "
+							rendered="#{not empty entity.startRatingDate or not empty entity.endRatingDate}" />
+						<h:outputText value="#{entity.endRatingDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.dateFormat}" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:calendar value="#{entity.startRatingDate}"
+							pattern="#{paramBean.dateFormat}"
+							size="10" showOn="button" />
+						<h:outputText value=" - " />
+						<p:calendar value="#{entity.endRatingDate}"
+							pattern="#{paramBean.dateFormat}"
+							size="10" showOn="button" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[10]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteriaEL']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteriaEL}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteriaEL}" size="20"
+							maxlength="2000" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[11]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['tradingCountry.tradingCountry']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.tradingCountry.countryCode}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.tradingCountry}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{tradingCountryBean.listAll()}" var="item"
+								itemLabel="#{item.countryCode}" itemValue="#{item}" />
+							<hftl:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[12]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['currency.codeCurrency']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.tradingCurrency.currencyCode}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.tradingCurrency}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{tradingCurrencyBean.listAll()}" var="item"
+								itemLabel="#{item.currencyCode}" itemValue="#{item}" />
+							<hftl:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[13]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteria1Value']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteria1Value}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteria1Value}" size="20"
+							maxlength="255" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[14]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteria2Value']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteria2Value}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteria2Value}" size="20"
+							maxlength="255" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[15]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.criteria3Value']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.criteria3Value}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.criteria3Value}" size="20"
+							maxlength="255" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[16]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.priority']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.priority}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.priority}" size="6" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[17]}">
+				<f:facet name="header">
+					<h:outputText value="#{messages['pricePlanMatrix.quantity']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.minQuantity}" converter="bigDecimal4DigitsConverter"/>
+						<h:outputText value=" - " />
+						<h:outputText value="#{entity.maxQuantity}" converter="bigDecimal4DigitsConverter"/>
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.minQuantity}" size="6" converter="bigDecimal4DigitsConverter"/>
+						<h:outputText value=" - " />
+						<p:inputText value="#{entity.maxQuantity}" size="6" converter="bigDecimal4DigitsConverter"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[18]}">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.subscriptionDate']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.startSubscriptionDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.dateFormat}" />
+						</h:outputText>
+						<h:outputText value=" - " />
+						<h:outputText value="#{entity.endSubscriptionDate}">
+							<f:convertDateTime
+								pattern="#{paramBean.dateFormat}" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input">
+						<p:calendar value="#{entity.startSubscriptionDate}"
+							pattern="#{paramBean.dateFormat}"
+							size="10" showOn="button" />
+						<h:outputText value=" - " />
+						<p:calendar value="#{entity.endSubscriptionDate}"
+							pattern="#{paramBean.dateFormat}"
+							size="10" showOn="button" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[19]}">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.subscriptionAgeInMonth']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.minSubscriptionAgeInMonth} - " />
+						<h:outputText value="#{entity.maxSubscriptionAgeInMonth}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{entity.minSubscriptionAgeInMonth}" size="4" maxlength="4"/>
+						<h:outputText value=" - " />
+						<p:inputText value="#{entity.maxSubscriptionAgeInMonth}" size="4" maxlength="4"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[20]}">
+				<f:facet name="header">
+					<h:outputText
+						value="#{messages['pricePlanMatrix.validityCalendar']}" />
+				</f:facet>
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{entity.validityCalendar.code}"/>
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{entity.validityCalendar}" style="width:75%">
+							<f:selectItem itemLabel="" itemValue="" />
+							<f:selectItems value="#{calendarBean.listAll()}" var="item"
+								itemLabel="#{item.code}" itemValue="#{item}" />
+							<hftl:objectConverter />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<hftl:actionsColumn renderEditLink="true" renderDuplicateLink="true"
+				permission="#{currentUser.hasRole('catalogManagement')}" />
+		</hftl:dataList>
+	</ui:define>
+</ui:composition>

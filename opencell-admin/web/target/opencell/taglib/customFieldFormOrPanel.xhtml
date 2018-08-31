@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+<!--
+    A tag to manage custom field values of an entity
+    Makes part of custom field management tag group 
+    
+    Attributes
+        cfTab - list of GroupedCustomField
+        prefix - prefix for component to distinguish when used multiple times in save page
+        entity - entity, custom fields are related to
+        edit - edit mode. Inherited from formPanel otherwise
+        datePattern - date pattern for date entry/display
+        dateTimePattern - date time pattern for period date display
+        messagesId - an ID of messages component for validation messages
+        cft - custom field template
+        cfValueHolder - contains the set of custom field values for a given entity uuid
+        
+-->
+
+<ui:composition>
+
+    <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
+        <c:if test="#{cfFieldOrFg.type == 'field'}">
+            <c:set var="cft" value="#{cfFieldOrFg.data}" />
+            <c:if
+                test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
+                <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+            </c:if>
+        </c:if>
+        <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
+            <c:if test="${cfFieldOrFg.hasVisibleCustomFields(entity, cfValueHolder)}">
+                <p:fieldset legend="#{cfFieldOrFg.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}">
+                    <c:forEach items="${cfFieldOrFg.children}" var="cfField">
+                        <c:set var="cft" value="#{cfField.data}" />
+                        <c:if
+                            test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
+                            <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
+                                prefix="#{prefix}" />
+                        </c:if>
+                    </c:forEach>
+                </p:fieldset>
+            </c:if>
+        </c:if>
+    </c:forEach>
+
+    <p:dialog id="#{prefix}dlg_periodValues" widgetVar="#{prefix}periodValuesDialogWidget" header="#{messages['customFieldTemplate.periodValues']}" closeOnEscape="true" modal="true" appendTo="@(body)"
+        width="1100" position="center">
+
+        <p:panel>
+            <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
+                <hftl:decorateFormField fieldId="#{prefix}period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
+                    <h:outputText id="#{prefix}period_start_date" value="#{cfValueHolder.selectedValuePeriod.period.from}">
+                        <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+                    </h:outputText>
+                </hftl:decorateFormField>
+                <hftl:decorateFormField fieldId="#{prefix}period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
+                    <h:outputText id="#{prefix}period_end_date" value="#{cfValueHolder.selectedValuePeriod.period.to}">
+                        <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+                    </h:outputText>
+                </hftl:decorateFormField>
+                <p:remoteCommand name="updateMasterTable" update="#{cfValueHolder.selectedValuePeriodId}" process="@this" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
+                <!--  only customFieldListTable as for simple values no need to show a periodvalue dialog -->
+                <hftl:customFieldListTable edit="#{cfValueHolder.selectedValuePeriodEdit}" cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}" field="#{cfValueHolder.selectedValuePeriod}"
+                    updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}" messagesId="#{messagesId}" popupWidgetVar="#{prefix}periodValuesDialogWidget" prefix="#{prefix}"
+                    datePattern="#{datePattern}" componentWidth="100" />
+
+            </h:panelGroup>
+        </p:panel>
+    </p:dialog>
+
+</ui:composition>
+</html>

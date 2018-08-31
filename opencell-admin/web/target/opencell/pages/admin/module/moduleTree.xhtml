@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:of="http://omnifaces.org/functions"
+    xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+
+    <o:importFunctions type="org.meveo.commons.utils.ReflectionUtils" var="ref" />
+
+    <hftl:decorateFormField label="#{messages['meveoModule.items']}" componentWidth="100" displayOneLine="false" newLine="true">
+        <p:treeTable id="moduleItems" lazy="false" value="#{backingBean.root}" var="item" nodeVar="node" reflow="false" resizableColumns="true" rowIndexVar="rowIndex"
+            rendered="#{!backingBean.entity.downloaded}">
+            <p:column headerText="#{messages['businessEntity.code']}">
+                <h:outputText value="#{node.data}" styleClass="field-value" rendered="#{node.type ne 'item'}" />
+                <h:outputText value="#{item.itemEntity.code}" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['businessEntity.description']}">
+                <h:outputText value="#{item.itemEntity.description}" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['commons.validFrom']}" width="12%">
+                <h:outputText value="#{item.validity.from}" rendered="#{node.type eq 'item'}">
+                    <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="#{messages['commons.validTo']}" width="12%">
+                <h:outputText value="#{item.validity.to}" rendered="#{node.type eq 'item'}">
+                    <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
+                <h:outputText value="#{item.appliesTo}" converter="customFieldAppliesToConverter" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['commons.actions']}">
+                <p:commandButton icon="ui-icon-minus" partialSubmit="true" process="@this" update="moduleItems" action="#{backingBean.removeTreeNode(node)}" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <f:facet name="footer" layout="block">
+                <p:commandButton value="#{messages['meveoModuleItem.add']}" partialSubmit="true" process="@this" oncomplete="PF('dlg_addModuleItem').show()" />
+            </f:facet>
+        </p:treeTable>
+
+        <p:treeTable id="moduleItemsDto" lazy="false" value="#{backingBean.root}" var="item" nodeVar="node" reflow="false" resizableColumns="true" rowIndexVar="rowIndex"
+            rendered="#{backingBean.entity.downloaded}">
+            <p:column headerText="#{messages['businessEntity.code']}">
+                <h:outputText value="#{node.data}" styleClass="field-value" rendered="#{node.type ne 'item'}" />
+                <h:outputText value="#{item.code} #{item.class}" rendered="#{node.type eq 'item'}" />
+            </p:column>
+            <p:column headerText="#{messages['businessEntity.description']}">
+                <h:outputText value="#{item.description}" rendered="#{node.type eq 'item' and ref:hasField(item, 'description')}" />
+            </p:column>
+            <p:column headerText="#{messages['commons.validFrom']}" width="15%">
+                <h:outputText value="#{item.validity.from}" rendered="#{node.type eq 'item' and ref:hasField(item, 'validity')}">
+                    <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="#{messages['commons.validTo']}" width="15%">
+                <h:outputText value="#{item.validity.to}" rendered="#{node.type eq 'item' and ref:hasField(item, 'validity')}">
+                    <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="#{messages['meveoModuleItem.appliesTo']}">
+                <h:outputText value="#{item.appliesTo}" converter="customFieldAppliesToConverter" rendered="#{node.type eq 'item' and ref:hasField(item, 'appliesTo')}" />
+            </p:column>
+        </p:treeTable>
+
+    </hftl:decorateFormField>
+
+</ui:composition>
+
+</html>

@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    template="/layout/template.xhtml">
+        
+    <ui:define name="body">
+
+		
+		
+		<p:panel>
+			<f:facet name="header">
+				<h:outputText value="#{messages['bordereauRemiseCheque.bordereauRemiseChequePanel']}" />
+			</f:facet>
+			
+			<h:form id="bordereauRemiseChequeForm" styleClass="mainForm" render="datatable">
+				<s:validateAll>		
+				<h:panelGrid columns="1" styleClass="formPanelGrid">
+    	
+			
+			<s:decorate template="/layout/edit.xhtml">
+				<ui:define name="label">
+					<h:outputText value="#{messages['bordereauRemiseCheque.date']}" />
+				</ui:define>
+				<p:calendar value="#{bordereauRemiseChequeBean.date}" popup="true" showApplyButton="false" cellWidth="24px"
+					cellHeight="22px" style="width:200px" required="true" />
+				<ui:insert />
+			</s:decorate>
+			
+<h:commandButton  id="executeReportNow" value="#{messages['report.generateReport']}" action="#{bordereauRemiseChequeBean.generateReport()}"/>
+				</h:panelGrid>
+				</s:validateAll>
+			</h:form>
+		</p:panel>
+       
+    </ui:define>
+    
+</ui:composition>

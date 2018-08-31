@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml">
+        
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{usageTypeBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
+    <ui:define name="body">
+    
+    	<!-- Entity select popup. -->
+		<custom:entityPopup id="usageTypePopup" header="#{messages['usageType.popup.header']}" 
+			backingBean="#{usageTypeBean}" dataModel="#{usageTypes}" parentEntity="#{matrix}"
+			searchField1Label="#{messages['usageType.code']}" searchField1="code" 
+			searchField2Label="#{messages['usageType.name']}" searchField2="name" 
+			searchField3Label="#{messages['usageType.metricName']}" searchField3="metricName"
+			column1Label="#{messages['usageType.code']}" column1="code"
+			column2Label="#{messages['usageType.name']}" column2="name"
+			column3Label="#{messages['usageType.metricName']}" column3="metricName">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}" render="formId" 
+				action="#{matrix.setUsageType(entity)}"
+				oncomplete="Richfaces.hideModalPanel('usageTypePopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+			
+		<hftl:formPanel label="#{messages['matrixDefinition.matrixPanel']}" backingBean="#{matrixBean}" showEnableDisableButton="true">
+			<hftl:formField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+			<hftl:formField label="#{messages['matrixDefinition.activated']}" field="activated" />
+			<hftl:formField label="#{messages['matrixDefinition.name']}" field="name" required="true" size="60"/>
+			<hftl:formField label="#{messages['matrixDefinition.dimension']}" field="dimension" required="true" />
+			<hftl:formField label="#{messages['matrixDefinition.usageType']}" field="usageType" valueLabelField="code" popup="false" service="#{usageTypeService}" />
+			<hftl:formField label="#{messages['matrixDefinition.startDate']}" field="startDate" />
+			<hftl:formField label="#{messages['matrixDefinition.endDate']}" field="endDate" />
+    		<hftl:formField label="#{messages['matrixDefinition.entry']}" field="matrixEntries" showFields="matrixEntry.coordinates,coordinates;matrixEntry.value,value" deleteButton="false" />
+			<hftl:formField label="#{messages['matrixDefinition.entryType']}" field="entryType" required="true" />
+		
+			<!-- 
+			<rich:dataTable id="matrixEntries" value="#{matrix.entries.keySet}" var="key"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				reRender="scroller" rows="5">
+				<rich:column>
+					<h:outputText value="#{key}" />
+				</rich:column>
+				<rich:column>
+					<h:outputText value="#{matrix.entries.key}" />
+				</rich:column>
+			</rich:dataTable>
+			 -->
+		</hftl:formPanel>
+		
+    </ui:define>
+    
+</ui:composition>

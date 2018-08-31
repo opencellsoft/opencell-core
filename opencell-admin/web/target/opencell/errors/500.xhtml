@@ -1,0 +1,5 @@
+<ui:composition template="/layout/errorTemplate.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="contentTitle">#{requestScope['javax.servlet.error.exception'].message==null or !requestScope['javax.servlet.error.exception'].message.contains('conversation')?"You got a RuntimeException! There's a BUG somewhere!":messages['error.sessionExpired']}</ui:define>
+
+</ui:composition>

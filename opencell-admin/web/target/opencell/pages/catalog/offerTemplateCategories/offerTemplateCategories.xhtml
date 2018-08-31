@@ -1,0 +1,179 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.catalog.offerCategories']}"
+					outcome="mm_offerTemplateCategories" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:panel>
+			<p:messages id="messages" />
+			<h:panelGroup layout="block" styleClass="col2-set">
+				<h:panelGroup id="offerCategoryPanel" layout="block"
+					styleClass="col1">
+					<p:panel>
+						<p:outputPanel style="height: 100%;overflow: auto;display: block">
+							<p:tree style="height: 450px; width: 95%"
+								value="#{offerTemplateCategoryBean.rootOfferTemplateCategory}"
+								var="offerTemplateCategory" selectionMode="single"
+								draggable="true" droppable="true"
+								rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount > 0}">
+								<p:ajax event="select"
+									listener="#{offerTemplateCategoryBean.onNodeSelect}"
+									update="offerTemplateCategoryDetailPanel buttons" />
+								<p:ajax event="dragdrop"
+									listener="#{offerTemplateCategoryBean.onDragDrop}"
+									update="offerCategoryPanel offerTemplateCategoryDetailPanel buttons" />
+								<p:treeNode>
+									<h:outputText
+										value="#{offerTemplateCategory.descriptionOrCode}" />
+								</p:treeNode>
+							</p:tree>
+							<h:outputText
+								value="#{messages['offerTemplateCategory.noOfferTemplateCategory']}"
+								rendered="#{offerTemplateCategoryBean.rootOfferTemplateCategory.childCount==0}" />
+						</p:outputPanel>
+					</p:panel>
+					<p:panel>
+						<h:outputLabel value="#{messages['message.dragAndDrop.UpDown']}"
+							styleClass="Blue"></h:outputLabel>
+					</p:panel>
+				</h:panelGroup>
+				<h:panelGroup layout="block" styleClass="col2">
+					<p:panel styleClass="form-panel">
+						<h:panelGrid columns="1" id="buttons" styleClass="clearLeft">
+							<h:panelGrid columns="2">
+								<p:commandButton id="addOfferTemplateCategoryRootBtn"
+									icon="fa fa-home"
+									action="#{offerTemplateCategoryBean.newOfferTemplateCategoryRoot()}"
+									update="messages offerTemplateCategoryDetailPanel buttons"
+									style="padding-right:5px">
+								</p:commandButton>
+								<p:outputLabel
+									value="#{messages['offerTemplateCategory.addOfferTemplateCategoryRoot']}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"
+								rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
+								<p:commandButton id="addOfferTemplateCategoryBtn"
+									icon="fa fa-plus"
+									action="#{offerTemplateCategoryBean.newOfferTemplateCategory()}"
+									update="messages offerTemplateCategoryDetailPanel buttons">
+								</p:commandButton>
+								<p:outputLabel
+									value="#{messages['offerTemplateCategory.addOfferTemplateCategory']}" />
+							</h:panelGrid>
+							<!--                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}"> -->
+							<!--                                 <p:commandButton id="moveUpOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-n" action="#{offerTemplateCategoryBean.moveUp()}" -->
+							<!--                                     update="messages offerCategoryPanel buttons" ajax="true" /> -->
+							<!--                                 <p:outputLabel value="#{messages['offerTemplateCategory.moveUp']}" /> -->
+							<!--                             </h:panelGrid> -->
+							<!--                             <h:panelGrid columns="2" rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}"> -->
+							<!--                                 <p:commandButton id="moveDownOfferTemplateCategoryBtn" icon="ui-icon-arrowthick-1-s" action="#{offerTemplateCategoryBean.moveDown()}" -->
+							<!--                                     update="messages offerCategoryPanel buttons" ajax="true" /> -->
+							<!--                                 <p:outputLabel value="#{messages['offerTemplateCategory.moveDown']}" /> -->
+							<!--                             </h:panelGrid> -->
+							<h:panelGrid columns="2"
+								rendered="#{offerTemplateCategoryBean.selectedOfferTemplateCategory != null}">
+								<p:commandButton id="deleteOfferTemplateCategory"
+									icon="ui-icon-trash"
+									action="#{offerTemplateCategoryBean.removeOfferTemplateCategory()}"
+									update="messages offerCategoryPanel offerTemplateCategoryDetailPanel buttons"
+									ajax="true">
+									<p:confirm header="#{messages['commons.confirmationHeader']}"
+										message="#{messages['offerTemplateCategory.confirmDelete']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								<p:outputLabel
+									value="#{messages['offerTemplateCategory.deleteOfferTemplateCategory']}" />
+							</h:panelGrid>
+
+							<h:panelGroup layout="block"
+								id="offerTemplateCategoryDetailPanel">
+								<hftl:formPanel ajaxSubmit="true"
+									submitPartialProcess=":formId:tabView" label=""
+									showBackButton="false" showDeleteButton="false"
+									submitUpdate="@form offerCategoryPanel messages buttons"
+									backingBean="#{offerTemplateCategoryBean}" showMessages="false"
+									showEnableDisableButton="true" enctype="multipart/form-data">
+
+									<p:tabView id="tabView" style="margin-left: -30px;"
+										activeIndex="#{offerTemplateCategoryBean.activeTab}">
+										<p:tab title="#{messages['customer.tab.information']}">
+											<hftl:formField label="#{messages['commons.image']}"
+												field="imagePath" required="false"
+												pictureGroupName="offerCategory" />
+											<hftl:formField label="#{messages['BusinessEntity.code']}"
+												field="code" required="true" validateUnique="true" />
+											<hftl:formField label="#{messages['commons.name']}"
+												field="name" required="true" />
+											<hftl:formField
+												label="#{messages['BusinessEntity.description']}"
+												field="description" useConverter="false" id="description" />
+											<hftl:formField label="#{messages['enableEntity.disabled']}"
+												doNotShowOnNew="true" allowEdit="false" field="disabled"
+												isMessage="true" />
+										</p:tab>
+
+										<hftl:customFields backingBean="#{offerTemplateCategoryBean}"
+											messagesId=":messages" />
+									</p:tabView>
+								</hftl:formPanel>
+								<h:form>
+									<h:panelGroup layout="block" styleClass="form-panel-actions">
+										<p:commandButton value="#{messages['action.export']}"
+											ajax="false"
+											onclick="PrimeFaces.monitorDownload(startExport, stopExport);"
+											icon="fa fa-arrow-down" immediate="true">
+											<p:fileDownload value="#{offerTemplateCategoryBean.download()}" />
+										</p:commandButton>
+										<p:commandButton value="#{messages['action.import']}"
+											onclick="PF('importDialog').show()"
+											icon="fa fa-arrow-up" type="button">											
+										</p:commandButton>
+									</h:panelGroup>
+								</h:form>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGroup>
+			</h:panelGroup>
+		</p:panel>
+
+		<h:form enctype="multipart/form-data">
+			<p:dialog modal="true" widgetVar="importDialog" header="#{messages['offerTemplateCategory.importCategory']}"
+				draggable="false" closable="true" resizable="false" width="250px">
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<p:fileUpload id="fileUpload"
+						value="#{offerTemplateCategoryBean.importFile}" mode="simple"
+						skinSimple="true" label="#{messages['action.selectFile']}" allowTypes="/(\.|\/)(csv)$/"
+						immediate="true" />
+					<p:commandButton value="#{messages['action.import']}"
+						actionListener="#{offerTemplateCategoryBean.uploadForImport}"
+						ajax="false" action="offerTemplateCategories"></p:commandButton>
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="#{messages['commons.status']}" appendTo="@(body)"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage library="img" name="ajax-loader1.gif" />
+		</p:dialog>
+
+		<script type="text/javascript">
+		function startExport() {
+		    PF('statusDialog').show();
+		}
+		 
+		function stopExport() {
+		    PF('statusDialog').hide();
+		}
+		</script>
+	</ui:define>
+
+</ui:composition>

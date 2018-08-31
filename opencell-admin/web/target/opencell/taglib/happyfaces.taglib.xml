@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE facelet-taglib PUBLIC
+	"-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN"
+	"facelet-taglib_1_0.dtd">
+
+<facelet-taglib>
+
+    <namespace>http://hftl.org</namespace>
+
+    <tag>
+        <tag-name>dataList</tag-name>
+        <source>dataList.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>column</tag-name>
+        <source>column.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>actionsColumn</tag-name>
+        <source>actionsColumn.xhtml</source>
+    </tag>
+
+    <tag>
+        <tag-name>entityPopup</tag-name>
+        <source>entityPopup.xhtml</source>
+    </tag>
+    
+    <tag>
+        <tag-name>genericEntityPopup</tag-name>
+        <source>genericEntityPopup.xhtml</source>
+    </tag>
+
+    <tag>
+        <tag-name>panelGroup</tag-name>
+        <source>panelGroup.xhtml</source>
+    </tag>
+
+    <tag>
+        <tag-name>decorateFormPanel</tag-name>
+        <source>decorateFormPanel.xhtml</source>
+    </tag>
+
+    <tag>
+        <tag-name>decorateFormField</tag-name>
+        <source>decorateFormField.xhtml</source>
+    </tag>
+
+    <tag>
+        <tag-name>customFieldValueField</tag-name>
+        <source>customFieldValueField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldValueMuteField</tag-name>
+        <source>customFieldValueMuteField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldListTable</tag-name>
+        <source>customFieldListTable.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldCHEListTable</tag-name>
+        <source>customFieldCHEListTable.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>exportToXmlDialogs</tag-name>
+        <source>exportToXmlDialogs.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFields</tag-name>
+        <source>customFields.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldFormOrPanel</tag-name>
+        <source>customFieldFormOrPanel.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldPeriods</tag-name>
+        <source>customFieldPeriods.xhtml</source>
+    </tag>    
+    <tag>
+        <tag-name>customFieldsCHE</tag-name>
+        <source>customFieldsCHE.xhtml</source>
+    </tag>    
+    <tag>
+        <tag-name>searchPanel</tag-name>
+        <source>searchPanel.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchField</tag-name>
+        <source>searchField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchBooleanField</tag-name>
+        <source>searchBooleanField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchDateField</tag-name>
+        <source>searchDateField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchEntityField</tag-name>
+        <source>searchEntityField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchEnumField</tag-name>
+        <source>searchEnumField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchNumberField</tag-name>
+        <source>searchNumberField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchTextField</tag-name>
+        <source>searchTextField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchLikeCriteriasField</tag-name>
+        <source>searchLikeCriteriasField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>searchMinMaxField</tag-name>
+        <source>searchMinMaxField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formPanel</tag-name>
+        <source>formPanel.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formField</tag-name>
+        <source>formField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formTextField</tag-name>
+        <source>formTextField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formEntityField</tag-name>
+        <source>formEntityField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formEnumField</tag-name>
+        <source>formEnumField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formBooleanField</tag-name>
+        <source>formBooleanField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formNumberField</tag-name>
+        <source>formNumberField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formDateField</tag-name>
+        <source>formDateField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formMapField</tag-name>
+        <source>formMapField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formListField</tag-name>
+        <source>formListField.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formLanguageFields</tag-name>
+        <source>formLanguageFields.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>formImageField</tag-name>
+        <source>formImageField.xhtml</source>
+    </tag>
+    <tag>
+     <tag-name>displayWorkflowsHistory</tag-name>
+        <source>displayWorkflowsHistory.xhtml</source>
+    </tag>    
+    <tag>
+        <tag-name>getFieldInformation</tag-name>
+        <handler-class>org.meveo.util.view.GetFieldInformationHandler</handler-class>
+    </tag>
+    
+    <tag>
+        <description><![CDATA[Menu is a navigation component for Opencell Layout.]]></description>
+		<tag-name>menu</tag-name>
+		<component>
+			<component-type>org.primefaces.component.OpencellMenu</component-type>
+			<renderer-type>org.primefaces.component.OpencellMenuRenderer</renderer-type>
+		</component>
+		<attribute>
+			<description><![CDATA[Unique identifier of the component in a namingContainer.]]></description>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Boolean value to specify the rendering of the component, when set to false component will not be rendered.]]></description>
+			<name>rendered</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[An el expression referring to a server side UIComponent instance in a backing bean.]]></description>
+			<name>binding</name>
+			<required>false</required>
+			<type>javax.faces.component.UIComponent</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Name of the client side widget.]]></description>
+			<name>widgetVar</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[A menu model instance to create menu programmatically.]]></description>
+			<name>model</name>
+			<required>false</required>
+			<type>org.primefaces.model.menu.MenuModel</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Inline style of the main container element.]]></description>
+			<name>style</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Style class of the main container element.]]></description>
+			<name>styleClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+	<tag>
+        <description>
+            This component is a generic converter which allows for basic conversion between objects and an auto incremented id.
+            The converter is conversation scoped, so the same objects should be available throughout a full conversation.
+        </description>
+        <tag-name>objectConverter</tag-name>
+        <converter>
+            <converter-id>org.jboss.seam.faces.conversion.ObjectConverter</converter-id>
+        </converter>
+    </tag>
+</facelet-taglib>

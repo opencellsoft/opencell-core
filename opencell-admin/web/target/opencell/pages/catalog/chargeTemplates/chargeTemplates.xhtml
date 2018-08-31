@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"> 
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{chargeTemplateListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="chargeTemplates"
+					value="#{messages['menu.chargeTemplates']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['chargeTemplate.search']}" renderNewButton="false"
+			backingBean="#{chargeTemplateListBean}">
+			<hftl:searchField label="#{messages['chargeTemplate.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['chargeTemplate.description']}"
+				id="description" field="description" />
+			<hftl:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['chargeTemplate.title']}"
+		     backingBean="#{chargeTemplateListBean}" sortBy="code" dataModel="#{chargeTemplateListBean.getChargeTemplates()}">
+			
+			<p:column width="25%">
+			<f:facet name="header">
+				<h:outputText value="#{messages['chargeTemplate.code']}" />
+			</f:facet>
+		   <p:commandLink 
+			action="#{chargeTemplateBean.getChargeTemplateDetail(entity)}" value="#{entity.code}"> 
+		  </p:commandLink>
+		   </p:column>
+		   
+			<hftl:column label="#{messages['chargeTemplate.description']}"
+				field="description" />
+			
+			<hftl:column label="#{messages['charge.subCategory']}"
+				field="invoiceSubCategory.code" valueIdField="invoiceSubCategory.id"
+				entityView="invoiceSubCategoryDetail" propagateConversation="false"
+				backView="invoiceCategories" />
+				
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+			
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

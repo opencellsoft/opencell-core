@@ -1,0 +1,6 @@
+org\meveo\security\keycloak\CurrentUserProvider.class
+org\meveo\security\keycloak\MeveoUserKeyCloakImpl.class
+org\meveo\security\CurrentUser.class
+org\meveo\security\keycloak\CurrentUserProvider$1.class
+org\meveo\security\keycloak\AuthenticationProvider.class
+org\meveo\security\UserAuthTimeProducer.class

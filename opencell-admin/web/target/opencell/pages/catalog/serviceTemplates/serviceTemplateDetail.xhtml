@@ -1,0 +1,563 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core" 
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{serviceTemplateBean.objectId}" />
+			<f:viewParam name="mainTab"
+				value="#{serviceTemplateBean.activeMainTab}" />
+			<f:viewParam name="tab" value="#{serviceTemplateBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+        <o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
+ 		<p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+        
+        <hftl:entityPopup id="searchRecurringChargeTemplatePopup"
+			header="#{messages['serviceTemplate.recurringCharges']}"
+			updateField=":tabView:formRecurringCharge:recurringChargeTemplateSelectedId :tabView:formRecurringCharge:recurringChargeTemplateSelectedId_text"
+			selection="#{serviceTemplateBean.serviceChargeTemplateRecurring.chargeTemplate}"
+			backingBean="#{recurringChargeTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<hftl:entityPopup id="searchSubscriptionChargeTemplatePopup"
+			header="#{messages['serviceTemplate.subscriptionCharges']}"
+			updateField=":tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId :tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId_text"
+			selection="#{serviceTemplateBean.serviceChargeTemplateSubscription.chargeTemplate}"
+			backingBean="#{subscriptionChargeTemplateBean}"
+			dataModel="#{subscriptionChargeTemplateBean.subscriptionCharges}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<hftl:entityPopup id="searchTerminationChargeTemplatePopup"
+			header="#{messages['serviceTemplate.terminationCharges']}"
+			updateField=":tabView:formTerminationCharge:terminationChargeTemplateSelectedId :tabView:formTerminationCharge:terminationChargeTemplateSelectedId_text"
+			selection="#{serviceTemplateBean.serviceChargeTemplateTermination.chargeTemplate}"
+			backingBean="#{terminationChargeTemplateBean}"
+			dataModel="#{subscriptionChargeTemplateBean.terminationCharges}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<hftl:entityPopup id="searchUsageChargeTemplatePopup"
+			header="#{messages['usageChargeTemplate.title']}"
+			updateField=":tabView:formUsageCharge:usageChargeTemplateSelectedId :tabView:formUsageCharge:usageChargeTemplateSelectedId_text"
+			selection="#{serviceTemplateBean.serviceChargeTemplateUsage.chargeTemplate}"
+			backingBean="#{usageChargeTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<hftl:entityPopup id="searchCounterTemplatePopup"
+			header="#{messages['counterTemplate.title']}"
+			updateField=":tabView:formUsageCharge:counterTemplateSelectedId :tabView:formUsageCharge:counterTemplateSelectedId_text"
+			selection="#{serviceChargeTemplateUsage.counterTemplate}"
+			backingBean="#{counterTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="serviceTemplates"
+					value="#{messages['menu.serviceTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['serviceTemplate']}"
+					disabled="true" rendered="#{serviceTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['serviceTemplate']} #{messages['commons.configuration']} - #{serviceTemplateBean.entity.code}"
+					disabled="true" rendered="#{!serviceTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:panel>
+			<p:tabView id="tabView"
+				activeIndex="#{serviceTemplateBean.activeMainTab}">
+				<p:tab title="#{messages['serviceUsageChargeTemplate.info']}">
+					<p:outputPanel autoUpdate="false">
+						<hftl:formPanel backingBean="#{serviceTemplateBean}"
+							showEnableDisableButton="true"
+							updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
+							ajaxSubmit="true"
+							submitPartialProcess=":tabView:formId #{cfde:getCFComponentIds(':tabView:cf_form_group_',':form_panel', customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).children.size())}"
+							enctype="multipart/form-data">
+
+							<hftl:formField label="#{messages['commons.image']}"
+								field="imagePath" required="false" pictureGroupName="service" />
+							<hftl:formField label="#{messages['serviceTemplate.code']}"
+								field="code" required="true" validateUnique="true" />
+							<hftl:formField label="#{messages['enableEntity.disabled']}"
+								doNotShowOnNew="true" allowEdit="false" field="disabled"
+								isMessage="true" />
+							<hftl:formField
+								label="#{messages['serviceTemplate.description']}"
+								field="description" useConverter="false" size="50"
+								/>
+							
+							<hftl:formField
+								label="#{messages['serviceTemplate.longDescription']}"
+								field="longDescription" textArea="true" id="longDescription"
+								rows="1" />
+								
+								
+							<hftl:formField label="#{messages['serviceTemplate.calendar']}"
+								field="invoicingCalendar" valueLabelField="code"
+								required="false" popup="false" listBean="#{calendarBean}" />
+								
+							<c:choose> 
+                                   <c:when test="${appProvider.entreprise}">
+							        <c:set var="minimumAmountLabel" value="#{messages['serviceTemplate.minimumAmountWithoutTax']} EL" />
+							    </c:when>
+							    <c:otherwise>
+							    	<c:set var="minimumAmountLabel" value="#{messages['serviceTemplate.minimumAmountWithTax']} EL" />
+							    </c:otherwise>
+							</c:choose>   
+								
+							<hftl:formField label="#{messages['serviceTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" />   
+	                        <hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" />	
+							
+							<p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
+			                    <h:panelGroup id="serviceRenewal">
+		                            <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="serviceRenewal" childField="initialyActiveFor" size="2" minValue="1"
+                                    	componentWidth="15" listenerUpdate="serviceRenewal" actionListenerBean="#{serviceTemplateBean.entity.serviceRenewal}"
+                                    	actionListenerMethod="setDefaultInitialyActiveForUnit" />
+	                                <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="serviceRenewal" childField="initialyActiveForUnit"
+	                                    required="#{serviceTemplateBean.entity.serviceRenewal.initialyActiveFor!=null}"
+	                                    disabled="#{serviceTemplateBean.entity.serviceRenewal.initialyActiveFor==null}" listenerUpdate="serviceRenewal" />
+	                                <h:panelGroup rendered="#{serviceTemplateBean.entity.serviceRenewal.initialyActiveFor!=null}">
+			                            <hftl:formField label="#{messages['subscription.autoRenew']}" field="serviceRenewal" childField="autoRenew" required="true"
+			                                listenerUpdate="serviceRenewal" newLine="true" />
+			                            <hftl:formField label="#{messages['subscription.renewFor']}" field="serviceRenewal" childField="renewFor" size="2" required="true"
+			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}" listenerUpdate="serviceRenewal"
+			                                actionListenerBean="#{serviceTemplateBean.entity.serviceRenewal}" actionListenerMethod="setDefaultRenewForUnit" />
+			                            <hftl:formField label="#{messages['subscription.renewForUnit']}" field="serviceRenewal" childField="renewForUnit" required="true"
+			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}" listenerUpdate="serviceRenewal" />
+			                            <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="serviceRenewal" childField="daysNotifyRenewal" size="2" minValue="1"
+			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}" />
+			                            <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="serviceRenewal" childField="extendAgreementPeriodToSubscribedTillDate"
+			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.autoRenew}" />
+			                            <hftl:formField label="#{messages['subscription.endOfTermAction']}" field="serviceRenewal" childField="endOfTermAction" required="true"
+			                                listenerUpdate="serviceRenewal" />
+			                            <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="serviceRenewal" childField="terminationReason" required="true"
+			                                rendered="#{serviceTemplateBean.entity.serviceRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="code"
+			                                listBean="#{subscriptionTerminationReasonBean}" listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+			                        </h:panelGroup>
+			                    </h:panelGroup>
+			                </p:fieldset>
+						</hftl:formPanel>
+					</p:outputPanel>
+				</p:tab>
+
+				<hftl:customFields backingBean="#{serviceTemplateBean}"
+					messagesId=":tabView:formId:messages" renderForm="true" />
+
+				<p:tab title="#{messages['serviceTemplate.recurringCharges']}"
+					id="tab2" rendered="#{serviceTemplateBean.entity.id!=null}">
+					<p:outputPanel id="invoiceRecurringCountries_MSG_panel">
+						<h:graphicImage value="/img/msgerror.png" style="border:0"
+							rendered="#{validation.failed}" />
+						<h:outputText value="#{messages['validation.validationFailure']}"
+							rendered="#{validation.failed}" styleClass="errorMessage" />
+					</p:outputPanel>
+					<p:panel styleClass="form-panel">
+						<hftl:decorateFormField fieldId="recServiceTemplateCode"
+							label="#{messages['access.serviceInstance']}">
+							<h:outputText id="recServiceTemplateCode"
+								value="#{serviceTemplateBean.entity.code}" disabled="true"
+								style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+						<hftl:decorateFormField fieldId="recServiceTemplateDescription"
+							label="#{messages['invoiceSubCategory.description']}">
+							<h:outputText id="recServiceTemplateDescription"
+								value="#{serviceTemplateBean.entity.description}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+					</p:panel>
+
+					<h:panelGroup id="serviceRecurringChargeTempalte_panel">
+						<p:outputPanel autoUpdate="true">
+							<hftl:dataList
+								backingBean="#{serviceChargeTemplateRecurringBean}"
+								dataModel="#{serviceTemplateBean.entity.serviceRecurringCharges}"
+								resultsId="serviceRecurringCharges_results" exportToXml="false">
+								<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+									field="chargeTemplate.code" valueIdField="chargeTemplate.id"
+									entityView="recurringChargeTemplateDetail" />
+								<hftl:column label="#{messages['menu.wallets']}"
+									field="walletTemplates" valueLabelField="code" isList="true" />
+								<p:column styleClass="actions-column"
+									rendered="#{serviceTemplateBean.edit}">
+									<f:facet name="header">
+										<h:outputText value="#{messages['commons.actions']}" />
+									</f:facet>
+									<p:commandButton update=":tabView:formRecurringCharge"
+										action="#{serviceTemplateBean.editServiceRecurringChargeTemplate(entity)}"
+										icon="ui-icon-document" />
+									<p:commandButton
+										action="#{serviceTemplateBean.deleteServiceRecurringChargeTemplate(entity.getId())}"
+										icon="ui-icon-trash" update=":tabView:formRecurringCharge" />
+								</p:column>
+							</hftl:dataList>
+						</p:outputPanel>
+					</h:panelGroup>
+					<p:panel id="serviceRecurringChargediv"
+						rendered="#{serviceTemplateBean.edit}">
+						<hftl:formPanel formId="formRecurringCharge"
+							edit="#{serviceTemplateBean.edit}"
+							backingBean="#{serviceTemplateBean}"
+							entity="#{serviceTemplateBean.serviceChargeTemplateRecurring}"
+							showFormButtons="false" ajaxSubmit="true">
+							<hftl:formField id="recurringChargeTemplateSelectedId"
+								label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate" valueLabelField="code" popup="true"
+								popupId="searchRecurringChargeTemplatePopup"
+								required="true"
+								disabled="#{!serviceTemplateBean.serviceChargeTemplateRecurring.transient}" />
+							<hftl:formField label="#{messages['menu.wallets']}"
+								listType="pickUpList" field="walletTemplates"
+								valueLabelField="code"
+								dualListModel="#{serviceTemplateBean.recurringDualListModel}" />
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{serviceRecurringChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:serviceRecurringChargediv" />
+								<p:commandButton
+									rendered="#{serviceRecurringChargeTemplate.id!=null}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
+									value="#{messages['serviceRecurringChargeTemplate.modifyServiceRecurringCharge']}"
+									update=":tabView:serviceRecurringChargediv" />
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{serviceTemplateBean.newServiceChargeTemplateRecurring}"
+									update=":tabView:serviceRecurringChargediv" />
+								<p:button id="buttonBack" value="#{messages['action.back']}"
+									outcome="#{serviceTemplateBean.back()}"
+									includeViewParams="true">
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
+							</ui:define>
+						</hftl:formPanel>
+					</p:panel>
+
+				</p:tab>
+
+				<p:tab title="#{messages['serviceTemplate.subscriptionCharges']}"
+					id="tab3" rendered="#{serviceTemplateBean.entity.id!=null}">
+					<p:outputPanel id="invoiceSubscriptionCountries_MSG_panel">
+						<h:graphicImage value="/img/msgerror.png" style="border:0"
+							rendered="#{validation.failed}" />
+						<h:outputText value="#{messages['validation.validationFailure']}"
+							rendered="#{validation.failed}" styleClass="errorMessage" />
+					</p:outputPanel>
+					<p:panel styleClass="form-panel">
+						<hftl:decorateFormField fieldId="subsServiceTemplateCode"
+							label="#{messages['access.serviceInstance']}">
+							<h:outputText id="subsServiceTemplateCode"
+								value="#{serviceTemplateBean.entity.code}" disabled="true"
+								style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+						<hftl:decorateFormField fieldId="subsServiceTemplateDescription"
+							label="#{messages['invoiceSubCategory.description']}">
+							<h:outputText id="subsServiceTemplateDescription"
+								value="#{serviceTemplateBean.entity.description}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+					</p:panel>
+
+					<h:panelGroup id="serviceSubscriptionChargeTempalte_panel">
+						<p:outputPanel autoUpdate="true">
+							<hftl:dataList
+								backingBean="#{serviceChargeTemplateSubscriptionBean}"
+								dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
+								resultsId="serviceSubscriptionCharges_results"
+								exportToXml="false">
+								<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+									field="chargeTemplate.code" valueIdField="chargeTemplate.id"
+									entityView="oneShotChargeTemplateDetail" />
+								<hftl:column label="#{messages['menu.wallets']}"
+									field="walletTemplates" valueLabelField="code" isList="true" />
+								<p:column styleClass="actions-column"
+									rendered="#{serviceTemplateBean.edit}">
+									<f:facet name="header">
+										<h:outputText value="#{messages['commons.actions']}" />
+									</f:facet>
+									<p:commandButton update=":tabView:formSubscriptionCharge"
+										action="#{serviceTemplateBean.editServiceSubscriptionChargeTemplate(entity)}"
+										icon="ui-icon-document" />
+									<p:commandButton
+										action="#{serviceTemplateBean.deleteServiceSubscriptionChargeTemplate(entity.getId())}"
+										icon="ui-icon-trash" update=":tabView:formSubscriptionCharge" />
+								</p:column>
+							</hftl:dataList>
+						</p:outputPanel>
+					</h:panelGroup>
+					<p:panel id="serviceSubscriptionChargediv"
+						rendered="#{serviceTemplateBean.edit}">
+						<hftl:formPanel formId="formSubscriptionCharge"
+							edit="#{serviceTemplateBean.edit}"
+							backingBean="#{serviceTemplateBean}"
+							entity="#{serviceTemplateBean.serviceChargeTemplateSubscription}"
+							showFormButtons="false" ajaxSubmit="true">
+							<hftl:formField id="subscriptionChargeTemplateSelectedId"
+								label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate" valueLabelField="code" popup="true"
+								popupId="searchSubscriptionChargeTemplatePopup"
+								required="true"
+								disabled="#{!serviceTemplateBean.serviceChargeTemplateSubscription.transient}" />
+							<hftl:formField label="#{messages['menu.wallets']}"
+								listType="pickUpList" field="walletTemplates"
+								valueLabelField="code"
+								dualListModel="#{serviceTemplateBean.subscriptionDualListModel}" />
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{serviceSubscriptionChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:serviceSubscriptionChargediv" />
+								<p:commandButton
+									rendered="#{serviceSubscriptionChargeTemplate.id!=null}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
+									value="#{messages['serviceSubscriptionChargeTemplate.modifyServiceSubscriptionCharge']}"
+									update=":tabView:serviceSubscriptionChargediv" />
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{serviceTemplateBean.newServiceChargeTemplateSubscription}"
+									update=":tabView:serviceSubscriptionChargediv" />
+								<p:button id="buttonBack3" value="#{messages['action.back']}"
+									outcome="#{serviceTemplateBean.back()}"
+									includeViewParams="true">
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
+							</ui:define>
+						</hftl:formPanel>
+					</p:panel>
+				</p:tab>
+				<p:tab title="#{messages['serviceTemplate.terminationCharges']}"
+					id="tab4" rendered="#{serviceTemplateBean.entity.id!=null}">
+					<p:outputPanel id="invoiceTerminationCountries_MSG_panel">
+						<h:graphicImage value="/img/msgerror.png" style="border:0"
+							rendered="#{validation.failed}" />
+						<h:outputText value="#{messages['validation.validationFailure']}"
+							rendered="#{validation.failed}" styleClass="errorMessage" />
+					</p:outputPanel>
+					<p:panel styleClass="form-panel">
+						<hftl:decorateFormField fieldId="termServiceTemplateCode"
+							label="#{messages['access.serviceInstance']}">
+							<h:outputText id="termServiceTemplateCode"
+								value="#{serviceTemplateBean.entity.code}" disabled="true"
+								style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+						<hftl:decorateFormField fieldId="termServiceTemplateDescription"
+							label="#{messages['invoiceSubCategory.description']}">
+							<h:outputText id="termServiceTemplateDescription"
+								value="#{serviceTemplateBean.entity.description}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+					</p:panel>
+					<h:panelGroup id="serviceTerminationChargeTempalte_panel">
+						<p:outputPanel autoUpdate="true">
+							<hftl:dataList
+								backingBean="#{serviceChargeTemplateTerminationBean}"
+								dataModel="#{serviceTemplateBean.entity.serviceTerminationCharges}"
+								resultsId="serviceTerminationCharges_results"
+								exportToXml="false">
+								<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+									field="chargeTemplate.code" valueIdField="chargeTemplate.id"
+									entityView="oneShotChargeTemplateDetail" />
+								<hftl:column label="#{messages['menu.wallets']}"
+									field="walletTemplates" valueLabelField="code" isList="true" />
+								<p:column styleClass="actions-column"
+									rendered="#{serviceTemplateBean.edit}">
+									<f:facet name="header">
+										<h:outputText value="#{messages['commons.actions']}" />
+									</f:facet>
+									<p:commandButton update=":tabView:formTerminationCharge"
+										action="#{serviceTemplateBean.editServiceTerminationChargeTemplate(entity)}"
+										icon="ui-icon-document" />
+									<p:commandButton
+										action="#{serviceTemplateBean.deleteServiceTerminationChargeTemplate(entity.getId())}"
+										icon="ui-icon-trash" update=":tabView:formTerminationCharge" />
+								</p:column>
+							</hftl:dataList>
+						</p:outputPanel>
+					</h:panelGroup>
+					<p:panel id="serviceTerminationChargediv"
+						rendered="#{serviceTemplateBean.edit}">
+						<hftl:formPanel formId="formTerminationCharge"
+							edit="#{serviceTemplateBean.edit}"
+							backingBean="#{serviceTemplateBean}"
+							entity="#{serviceTemplateBean.serviceChargeTemplateTermination}"
+							showFormButtons="false" ajaxSubmit="true">
+							<hftl:formField id="terminationChargeTemplateSelectedId"
+								label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate" valueLabelField="code" popup="true"
+								popupId="searchTerminationChargeTemplatePopup"
+								required="true"
+								disabled="#{!serviceTemplateBean.serviceChargeTemplateTermination.transient}" />
+							<hftl:formField label="#{messages['menu.wallets']}"
+								listType="pickUpList" field="walletTemplates"
+								valueLabelField="code"
+								dualListModel="#{serviceTemplateBean.terminationDualListModel}" />
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{serviceTerminationChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:serviceTerminationChargediv" />
+								<p:commandButton
+									rendered="#{serviceTerminationChargeTemplate.id!=null}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
+									value="#{messages['serviceTerminationChargeTemplate.modifyServiceTerminationCharge']}"
+									update=":tabView:serviceTerminationChargediv" />
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{serviceTemplateBean.newServiceChargeTemplateTermination}"
+									update=":tabView:serviceTerminationChargediv" />
+								<p:button id="buttonBack3" value="#{messages['action.back']}"
+									outcome="#{serviceTemplateBean.back()}"
+									includeViewParams="true">
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
+							</ui:define>
+						</hftl:formPanel>
+					</p:panel>
+
+				</p:tab>
+
+				<p:tab title="#{messages['serviceTemplate.usageCharges']}" id="tab5"
+					rendered="#{serviceTemplateBean.entity.id!=null}">
+					<p:outputPanel id="invoiceSubCategoryCountries_MSG_panel">
+						<h:graphicImage value="/img/msgerror.png" style="border:0"
+							rendered="#{validation.failed}" />
+						<h:outputText value="#{messages['validation.validationFailure']}"
+							rendered="#{validation.failed}" styleClass="errorMessage" />
+					</p:outputPanel>
+					<p:panel styleClass="form-panel">
+						<hftl:decorateFormField fieldId="usageServiceTemplateCode"
+							label="#{messages['access.serviceInstance']}">
+							<h:outputText id="usageServiceTemplateCode"
+								value="#{serviceTemplateBean.entity.code}" disabled="true"
+								style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+						<hftl:decorateFormField fieldId="usageServiceTemplateDescription"
+							label="#{messages['invoiceSubCategory.description']}">
+							<h:outputText id="usageServiceTemplateDescription"
+								value="#{serviceTemplateBean.entity.description}"
+								disabled="true" style="font-weight:bold;" />
+							<h:inputHidden rendered="#{serviceTemplateBean.edit}" />
+						</hftl:decorateFormField>
+					</p:panel>
+					<h:panelGroup id="serviceUsageChargeTempalte_panel">
+						<p:outputPanel autoUpdate="true">
+							<hftl:dataList backingBean="#{serviceChargeTemplateUsageBean}"
+								dataModel="#{serviceTemplateBean.entity.serviceUsageCharges}"
+								resultsId="serviceUsageCharges_results" exportToXml="false">
+								<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
+									field="chargeTemplate.code" valueIdField="chargeTemplate.id"
+									entityView="usageChargeTemplateDetail" />
+								<hftl:column label="#{messages['menu.wallets']}"
+									field="walletTemplates" valueLabelField="code" isList="true" />
+								<hftl:column label="#{messages['counterTemplate.title']}"
+									field="counterTemplate.code" />
+								<p:column styleClass="actions-column"
+									rendered="#{serviceTemplateBean.edit}">
+									<f:facet name="header">
+										<h:outputText value="#{messages['commons.actions']}" />
+									</f:facet>
+									<p:commandButton update=":tabView:formUsageCharge"
+										action="#{serviceTemplateBean.editServiceUsageChargeTemplate(entity)}"
+										icon="ui-icon-document" />
+									<p:commandButton
+										action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity.getId())}"
+										icon="ui-icon-trash"
+										update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge" />
+								</p:column>
+							</hftl:dataList>
+						</p:outputPanel>
+					</h:panelGroup>
+					<p:panel id="serviceUsageChargediv"
+						rendered="#{serviceTemplateBean.edit}">
+						<hftl:formPanel formId="formUsageCharge"
+							edit="#{serviceTemplateBean.edit}"
+							backingBean="#{serviceTemplateBean}"
+							entity="#{serviceTemplateBean.serviceChargeTemplateUsage}"
+							showFormButtons="false" ajaxSubmit="true">
+							<hftl:formField id="usageChargeTemplateSelectedId"
+								label="#{messages['pricePlanMatrix.eventCode']}"
+								field="chargeTemplate" valueLabelField="code" popup="true"
+								popupId="searchUsageChargeTemplatePopup"
+								required="true"
+								disabled="#{!serviceTemplateBean.serviceChargeTemplateUsage.transient}" />
+							<hftl:formField label="#{messages['menu.wallets']}"
+								listType="pickUpList" field="walletTemplates"
+								valueLabelField="code"
+								dualListModel="#{serviceTemplateBean.usageDualListModel}" />
+							<hftl:formField id="counterTemplateSelectedId"
+								label="#{messages['counterTemplate.title']}"
+								field="counterTemplate" valueLabelField="code" popup="true"
+								popupId="searchCounterTemplatePopup" showResetButton="true"
+								required="false" />
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{serviceUsageChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
+									value="#{messages['action.addSave']}"
+									update=":tabView:serviceUsageChargediv" />
+								<p:commandButton
+									rendered="#{serviceUsageChargeTemplate.id!=null}"
+									action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
+									value="#{messages['serviceUsageChargeTemplate.modifyServiceUsageCharge']}"
+									update=":tabView:serviceUsageChargediv" />
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{serviceTemplateBean.newServiceChargeTemplateUsage}"
+									update=":tabView:serviceUsageChargediv" />
+								<p:button id="buttonBack5" value="#{messages['action.back']}"
+									outcome="#{serviceTemplateBean.back()}"
+									includeViewParams="true">
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
+							</ui:define>
+						</hftl:formPanel>
+					</p:panel>
+				</p:tab>
+			</p:tabView>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

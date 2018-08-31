@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<!--
+    A tag to manage custom field values of an entity
+    Makes part of custom field management tag group 
+    
+    Attributes
+        childEntityCft - Field containing child entity, definition
+        entity - entity associated with custom fields. If not provided a backingBean.entity will be used
+        edit - edit mode
+        disabled - is field non-editable
+        datePattern - date pattern for date entry/display
+        dateTimePattern - date time pattern for period date display
+        messagesId - an ID of messages component for validation messages
+        prefix - prefix for component to distinguish multiple child entity fields on one page
+        
+-->
+
+<ui:composition>
+
+    <c:set var="newEntity" value="#{entity.transient}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
+
+    <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
+
+    <!--     <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" /> -->
+
+    <c:set var="cheIndex" value="0" />
+    <p:tabView id="tabView">
+        <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab">
+
+            <p:tab title="#{cfTab.data eq 'Custom fields'? messages['customFieldTemplate.cfValues']: cfTab.data}">
+
+                <c:if test="#{cheIndex==0}">
+                    <hftl:formField entity="#{entity}" label="#{messages['businessEntity.code']}" field="code" required="true" />
+                    <hftl:formField entity="#{entity}" label="#{messages['businessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" />
+                    <hftl:formField entity="#{entity}" label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" edit="false"/>
+                    <div class="clearLeft"/>
+                </c:if>
+
+                <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
+                    <c:if test="#{cfFieldOrFg.type == 'field'}">
+                        <c:set var="cft" value="#{cfFieldOrFg.data}" />
+                        <c:if
+                            test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
+                            <hf:customFieldCHE entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
+                                dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+                        </c:if>
+                    </c:if>
+                    <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
+                        <p:panel header="#{cfFieldOrFg.data}">
+                            <c:forEach items="${cfFieldOrFg.children}" var="cfField">
+                                <c:set var="cft" value="#{cfField.data}" />
+                                <c:if
+                                    test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
+                                    <hf:customFieldCHE entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
+                                        dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+                                </c:if>
+                            </c:forEach>
+                        </p:panel>
+                    </c:if>
+                </c:forEach>
+
+
+                <c:if test="#{cheIndex==0}">
+                    <p:dialog id="#{prefix}dlg_periodValues" widgetVar="#{prefix}periodValuesDialogWidget" header="#{messages['customFieldTemplate.periodValues']}"
+                        closeOnEscape="true" modal="true" appendTo="@(body)" rendered="#{edit}" width="900">
+
+                        <p:panel>
+                            <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
+                                <hftl:decorateFormField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
+                                    <h:outputText id="period_start_date" value="#{cfValueHolder.selectedValuePeriod.period.from}">
+                                        <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+                                    </h:outputText>
+                                </hftl:decorateFormField>
+                                <hftl:decorateFormField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
+                                    <h:outputText id="period_end_date" value="#{cfValueHolder.selectedValuePeriod.period.to}">
+                                        <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+                                    </h:outputText>
+                                </hftl:decorateFormField>
+                                <p:remoteCommand name="updateMasterTable" update="#{cfValueHolder.selectedValuePeriodId}" process="@this" partialSubmit="true"
+                                    partialSubmitFilter=":not([name*='addNewFields'])" />
+                                <!--                                                  only customFieldListTable as for simple values no need to show a periodvalue dialog -->
+                                <hftl:customFieldListTable edit="#{edit}" cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}"
+                                    field="#{cfValueHolder.selectedValuePeriod}" updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}" messagesId="#{messagesId}"
+                                    popupWidgetVar="#{prefix}periodValuesDialogWidget" prefix="#{prefix}" datePattern="#{datePattern}" componentWidth="100" />
+
+                            </h:panelGroup>
+                        </p:panel>
+                    </p:dialog>
+                </c:if>
+
+            </p:tab>
+            <c:set var="cheIndex" value="#{cheIndex+1}" />
+        </c:forEach>
+
+    </p:tabView>
+
+</ui:composition>
+</html>

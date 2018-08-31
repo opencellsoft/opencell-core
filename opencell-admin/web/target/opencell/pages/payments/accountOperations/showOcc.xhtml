@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+	
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{accountOperationBean.objectId}" />
+            <f:viewParam name="tab" value="#{accountOperationBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+	
+    <ui:define name="body">
+	
+        <hftl:formPanel edit="#{true}" label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}" showDeleteButton="false" showEditButton="true" showBackButton="false"
+            formId="showOccFormId" submitPartialProcess=":showOccFormId:tabView">
+            <p:tabView id="tabView" activeIndex="#{accountOperationBean.activeTab}">
+				<p:tab title="#{messages['customer.tab.information']}">
+            <hftl:formField label="#{messages['accountOperation.type']}" field="type" edit="false"/>
+  			<hftl:formField label="#{messages['accountOperation.customerAccount']}" field="customerAccount" valueLabelField="code" edit="false" />
+	       	<hftl:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />
+	      	<hftl:formField label="#{messages['accountOperation.accountCode']}" field="accountCode" edit="false" />			       
+	      	<hftl:formField label="#{messages['accountOperation.occDescription']}" field="occDescription" edit="false" useConverter="false" size="45" />         						      
+  			<hftl:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" edit="false" />
+  			<hftl:formField label="#{messages['accountOperation.reference']}" field="reference" edit="false" />
+  			<hftl:formField label="#{messages['accountOperation.amount']}" field="amount" converter="bigDecimal4DigitsConverter" edit="false" />
+   			<hftl:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" edit="false" />
+  			<hftl:formField label="#{messages['accountOperation.dueDate']}" required="true" field="dueDate" edit="false" />
+  			<hftl:formField label="#{messages['accountOperation.unMatchingAmount']}" converter="bigDecimal4DigitsConverter" field="unMatchingAmount" edit="false" />
+   			<hftl:formField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" fieldValueLabel="label" edit="false" />
+   			<hftl:formField label="#{messages['accountOperation.excludedFromDunning']}" field="excludedFromDunning" edit="false" isMessage="true"/>
+			</p:tab>
+				<hftl:customFields backingBean="#{accountOperationBean}" messagesId=":showOccFormId:messages" />
+			</p:tabView>
+        </hftl:formPanel>  
+		<p:button outcome="customerAccountDetailOperationsTab" value="#{messages['action.back']}">
+			<f:param name="customerAccountId" value="#{accountOperationBean.entity.getCustomerAccount().getId()}" />
+			<f:param name="edit" value="false" />
+			<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+		</p:button> 
+    </ui:define>
+</ui:composition>

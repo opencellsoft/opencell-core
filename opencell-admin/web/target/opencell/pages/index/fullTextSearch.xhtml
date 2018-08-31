@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{fullTextSearchBean.preRenderView}" />
+            <f:viewParam name="search" value="#{fullTextSearchBean.filters['fullText']}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+
+        <hftl:decorateFormPanel label="#{messages['indexing.fullTextPanel']}">
+            <ui:define name="fields">
+                <hftl:decorateFormField fieldId="ftField" label="#{messages['indexing.fullTextField']}">
+                    <h:inputText id="ftField" value="#{fullTextSearchBean.filters['fullText']}" size="50" maxlength="100" />
+                </hftl:decorateFormField>
+            </ui:define>
+            <ui:define name="buttons">
+                <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update=":ftForm:ftSearchResults" />
+                <p:commandButton value="#{messages['commons.clean']}" process="@this" update="@form" action="#{fullTextSearchBean.clean}">
+                    <f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+                </p:commandButton>
+            </ui:define>
+        </hftl:decorateFormPanel>
+
+        <p:panel width="100">
+            <h:form id="ftForm">
+                <p:dataTable id="ftSearchResults" value="#{fullTextSearchBean.esDataModel}" var="entity" lazy="true" widgetVar="esTable"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" paginator="true" rows="10"
+                    rowsPerPageTemplate="10,15,20,50" resizableColumns="true" styleClass="custom-grid" reflow="true">
+                    <p:column headerText="code" sortBy="#{code}">
+                        <ui:param name="viewInfo" value="#{fullTextSearchBean.getViewAndId(entity['_type'], entity['code'])}" />
+                        <h:link value="#{entity['code']}" outcome="#{viewInfo[0]}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;">
+                            <f:param name="objectId" value="#{viewInfo[1]}" />
+                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                            <f:param name="backView" value="fullTextSearch" />
+                        </h:link>
+                    </p:column>
+                    <p:column headerText="description" sortBy="#{description}">
+                        <h:outputText value="#{entity['description']}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

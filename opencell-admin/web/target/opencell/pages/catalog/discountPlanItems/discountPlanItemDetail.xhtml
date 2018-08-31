@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{discountPlanItemBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+
+		<c:if test="#{discountPlanItemBean.edit}">
+			<hftl:entityPopup id="popupDiscountPlans"
+				header="#{messages['commons.search']}"
+				selection="#{discountPlanItemBean.entity.discountPlan}"
+				backingBean="#{discountPlanBean}"
+				searchField1Label="#{messages['BusinessEntity.code']}"
+				searchField1="code"
+				column1Label="#{messages['BusinessEntity.code']}" column1="code"
+				column2Label="#{messages['BusinessEntity.description']}"
+				column2="description"
+				updateField=":formDiscountPlanItem:discountPlan :formDiscountPlanItem:discountPlan_text">
+			</hftl:entityPopup>
+
+			<hftl:entityPopup id="popupChargeTemplates"
+				header="#{messages['commons.search']}"
+				selection="#{discountPlanItemBean.entity.chargeTemplate}"
+				backingBean="#{chargeTemplateBean}"
+				searchField1Label="#{messages['BusinessEntity.code']}"
+				searchField1="code"
+				column1Label="#{messages['BusinessEntity.code']}" column1="code"
+				column2Label="#{messages['BusinessEntity.description']}"
+				column2="description"
+				updateField=":formDiscountPlanItem:chargeTemplate :formDiscountPlanItem:chargeTemplate_text">
+			</hftl:entityPopup>
+		</c:if>
+
+		<hftl:formPanel edit="#{edit}" id="discountPlanItemFormPanel"
+			formId="formDiscountPlanItem"
+			label="#{messages['discountPlanItem.title']}"
+			backingBean="#{discountPlanItemBean}">
+
+			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"
+				required="true" />
+
+			<hftl:formField id="discountPlan"
+				label="#{messages['discountPlan.title']}" field="discountPlan"
+				valueLabelField="code" required="true" popup="true"
+				popupId="popupDiscountPlans" />
+
+			<hftl:formField id="invoiceCategory"
+				label="#{messages['discountPlanItem.invoiceCategory']}"
+				field="invoiceCategory" valueLabelField="code" required="false"
+				listBean="#{invoiceCategoryBean}" />
+
+			<hftl:formField id="invoiceSubCategory"
+				label="#{messages['discountPlanItem.invoiceSubCategory']}"
+				field="invoiceSubCategory" valueLabelField="code" required="false"
+				listBean="#{invoiceSubCategoryBean}" />
+
+			<hftl:formField id="chargeTemplate"
+				label="#{messages['discountPlanItem.chargeTemplate']}"
+				field="chargeTemplate" valueLabelField="code" required="false"
+				popup="true" popupId="popupChargeTemplates" />
+
+			<hftl:formField label="#{messages['discountPlanItem.expressionEl']}"
+				field="expressionEl" textArea="true" maxlength="2000" rows="1" />
+
+			<hftl:formField label="#{messages['discountPlanItem.percent']}"
+				field="percent" required="true" minValue="-100" maxValue="100" />
+
+			<hftl:formField label="#{messages['discountPlanItem.percent']} EL"
+				field="discountPercentEl" textArea="true" maxlength="2000" rows="1"  />
+
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.userGroupHierarchy']}" outcome="userGroupHierarchy" />
+            </p:breadCrumb>
+        </h:form>
+
+        <p:panel>
+            <p:messages id="messages" />
+            <h:panelGroup layout="block" styleClass="col2-set">
+                <h:panelGroup id="userGroupPanel" layout="block" styleClass="col1 Responsive100">
+                    <p:panel>
+                        <p:outputPanel style="height: 100%;overflow: auto;display: block">
+                            <p:tree style="height: 375px; width: 95%" value="#{userHierarchyLevelBean.rootNode}" var="userGroupLevel" selectionMode="single"
+                                    draggable="true" droppable="true" dragdropScope="userGroups" rendered="#{userHierarchyLevelBean.rootNode.childCount>0}">
+                                <p:ajax event="select" listener="#{userHierarchyLevelBean.onNodeSelect}" update="messages buttons userGroupLevelDetailPanel" />
+                                <p:ajax event="dragdrop" listener="#{userHierarchyLevelBean.onDragDrop}"/>
+                                <p:treeNode>
+                                    <h:outputText value="#{userGroupLevel.descriptionOrCode}" />
+                                </p:treeNode>
+                            </p:tree>
+                            <h:outputText value="#{messages['userGroupHierarchy.noGroups']}" rendered="#{userHierarchyLevelBean.rootNode.childCount==0}" />
+                        </p:outputPanel>
+                    </p:panel>
+                    <p:panel>
+                    	<h:outputLabel value="#{messages['message.dragAndDrop.UpDown']}" styleClass="Blue"></h:outputLabel>
+                   	</p:panel>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="col2 Responsive">
+                    <p:panel styleClass="form-panel">
+                        <h:panelGrid columns="1" id="buttons" styleClass="clearLeft">
+                            <h:panelGrid columns="2">
+                                <p:commandButton id="addUserHierarchyRootBtn" icon="fa fa-home" action="#{userHierarchyLevelBean.newUserHierarchyRoot()}"
+                                    update="messages userGroupLevelDetailPanel buttons" style="padding-right:5px">
+                                </p:commandButton>
+                                <p:outputLabel value="#{messages['userGroupHierarchy.addUserGroupRoot']}" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
+                                <p:commandButton id="addUserHierarchyLevelBtn" icon="fa fa-plus" action="#{userHierarchyLevelBean.newUserHierarchyLevel()}"
+                                    update="messages userGroupLevelDetailPanel buttons">
+                                </p:commandButton>
+                                <p:outputLabel value="#{messages['userGroupHierarchy.addUserGroupLevel']}" />
+                            </h:panelGrid>
+<!--                             <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}"> -->
+<!--                                 <p:commandButton id="moveUpUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-n" action="#{userHierarchyLevelBean.moveUp()}" -->
+<!--                                     update="messages userGroupPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['userGroupHierarchy.moveUp']}" /> -->
+<!--                             </h:panelGrid> -->
+<!--                             <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}"> -->
+<!--                                 <p:commandButton id="moveDownUserHierarchyLevelBtn" icon="ui-icon-arrowthick-1-s" action="#{userHierarchyLevelBean.moveDown()}" -->
+<!--                                     update="messages userGroupPanel buttons" ajax="true" /> -->
+<!--                                 <p:outputLabel value="#{messages['userGroupHierarchy.moveDown']}" /> -->
+<!--                             </h:panelGrid> -->
+                            <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
+                                <p:commandButton id="deleteUserHierarchyLevellink" icon="ui-icon-trash" action="#{userHierarchyLevelBean.removeUserHierarchyLevel()}"
+                                    update="messages userGroupPanel buttons userGroupLevelDetailPanel" ajax="true">
+                                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['userGroupHierarchy.confirmDelete']}" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:outputLabel value="#{messages['userGroupHierarchy.deleteUserGroupLevel']}" />
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <p:fieldset legend="#{messages['userGroupHierarchy.configureUserGroupLevel']}" styleClass="clearLeft">
+                            <h:panelGroup id="userGroupLevelDetailPanel">
+                                <hftl:formPanel formId="userGroupHierarchyDetail" backingBean="#{userHierarchyLevelBean}" showBackButton="false" showDeleteButton="false"
+                                    ajaxSubmit="true" submitUpdate="@form userGroupPanel messages buttons" showMessages="false">
+                                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" size="50" />
+                                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" newLine="true" size="80" />
+                                </hftl:formPanel>
+                            </h:panelGroup>
+                        </p:fieldset>
+                    </p:panel>
+                </h:panelGroup>
+            </h:panelGroup>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

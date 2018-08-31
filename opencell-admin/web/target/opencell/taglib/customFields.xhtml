@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+<!--
+    A tag to manage custom field values of an entity
+    Makes part of custom field management tag group 
+    
+    Attributes
+        prefix - prefix for component to distinguish when used multiple times in save page
+        backingBean - backing bean associated with entity
+        entity - entity associated with custom fields. If not provided a backingBean.entity will be used
+        edit - edit mode. Inherited from formPanel otherwise
+        datePattern - date pattern for date entry/display
+        dateTimePattern - date time pattern for period date display
+        messagesId - an ID of messages component for validation messages
+        defaultTabLabel - a default tab label if it was not set during entity customization. If not provided a messages['customFieldTemplate.cfValues'] will be used
+        renderForm - adds a form inside the tab
+        
+-->
+
+<ui:composition>
+
+    <c:if test="${empty(formLevelEdit)}">
+        <c:set var="formLevelEdit" value="${backingBean.edit}" />
+    </c:if>
+    <c:if test="${empty(edit)}">
+        <c:set var="edit" value="#{formLevelEdit}" />
+    </c:if>
+    <c:if test="${empty(datePattern)}">
+        <c:set var="datePattern" value="#{paramBean.dateFormat}" />
+    </c:if>
+    <c:if test="${empty(dateTimePattern)}">
+        <c:set var="dateTimePattern" value="#{paramBean.dateTimeFormat}" />
+    </c:if>
+    <c:if test="${empty(messagesId)}">
+        <c:set var="messagesId" value=":formPanel:formId:messages" />
+    </c:if>
+    <c:if test="${empty(prefix)}">
+        <c:set var="prefix" value="cf" />
+    </c:if>
+    <c:if test="${empty(entity)}">
+        <c:set var="entity" value="#{backingBean.entity}" />
+    </c:if>
+    <c:if test="${empty(defaultTabLabel)}">
+        <c:set var="defaultTabLabel" value="#{messages['customFieldTemplate.cfValues']}" />
+    </c:if>
+    <c:set var="newEntity" value="#{entity.transient}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
+    <c:set var="edit" value="#{edit and backingBean.canUserUpdateEntity()}" />
+
+    <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
+
+    <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" />
+
+    <c:if test="${empty(renderForm)}">
+        <c:set var="renderForm" value="false" />
+    </c:if>
+
+    <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
+
+        <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}" ></c:set>
+        <c:set var="renderTab" value="#{cfTab.hasVisibleCustomFields(entity, cfValueHolder)}" />
+
+        <p:tab title="#{tabLabel}" rendered="#{renderTab}">
+        
+            <c:if test="#{renderForm}">
+                <h:form id="#{prefix}_form_group_#{cfTabStatus.index}">
+                    <h:panelGroup id="form_panel">
+                        <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
+                            dateTimePattern="#{dateTimePattern}" prefix="#{prefix}_form_#{cfTabStatus.index}" />
+                    </h:panelGroup>
+                </h:form>
+            </c:if>
+
+            <c:if test="#{!renderForm}">
+                <h:panelGroup id="#{prefix}_panel_group_#{cfTabStatus.index}">
+                    <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
+                        dateTimePattern="#{dateTimePattern}" prefix="#{prefix}_panel_#{cfTabStatus.index}" />
+                </h:panelGroup>
+            </c:if>
+
+        </p:tab>
+    </c:forEach>
+
+</ui:composition>
+</html>

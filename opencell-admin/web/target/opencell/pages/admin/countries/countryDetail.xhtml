@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{countryBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+    
+	<ui:define name="body">
+	
+	   <hftl:entityPopup id="popupForCurrency" header="#{messages['currency.popup.header']}"
+            updateField=":formCountry:currencySelectedId :formCountry:currencySelectedId_text" 
+            selection="#{countryBean.entity.currency}"
+            backingBean="#{currencyBean}"
+            searchField1Label="#{messages['currency.currencyCode']}"
+            searchField1="currencyCode"
+            column1Label="#{messages['currency.currencyCode']}"
+            column1="currencyCode"
+            column2Label="#{messages['tradingLanguage.prDescription']}"
+            column2="description">
+        </hftl:entityPopup>
+        
+        <hftl:entityPopup id="popupForLanguage" header="#{messages['language.popup.header']}"
+            updateField=":formCountry:languageSelectedId :formCountry:languageSelectedId_text" 
+            selection="#{countryBean.entity.language}"
+            backingBean="#{languageBean}"
+            searchField1Label="#{messages['language.languageCode']}"
+            searchField1="languageCode"
+            column1Label="#{messages['language.languageCode']}"
+            column1="languageCode"
+            column2Label="#{messages['tradingLanguage.prDescription']}"
+            column2="description">
+        </hftl:entityPopup>
+
+		<hftl:formPanel formId="formCountry"  label="#{messages['country.countryPanel']}"	backingBean="#{countryBean}">
+		
+			<hftl:formField label="#{messages['country.code']}"		field="countryCode" required="true" maxlength="3" />
+			
+			 <hftl:formLanguageFields field="description" />
+			
+			<hftl:formField id="currencySelectedId" label="#{messages['currency.currencyCode']}" field="currency" 
+			    valueLabelField="currencyCode"  required="true" popup="true"  popupId="popupForCurrency"/>
+			    
+			<hftl:formField id="languageSelectedId" label="#{messages['language.languageCode']}" field="language" 
+			    valueLabelField="languageCode"  required="true" popup="true"  popupId="popupForLanguage"/>
+			
+			    
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

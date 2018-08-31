@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{cacheBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <p:panel>
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.reporting']}" disabled="true" />
+                    <p:menuitem outcome="caches" value="#{messages['menu.cacheInfo']}" />
+                </p:breadCrumb>
+            </h:form>
+        </p:panel>
+        <p:panel header="#{messages['cache.cacheDetail.cacheName'].concat(cacheBean.cacheName)}" escape="false">
+
+            <h:form>
+                <p:dataTable id="datatable_caches" var="cacheItem" value="#{cacheBean.cacheContents}" paginator="true" rows="30" resizableColumns="true"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50" lazy="true"
+                    styleClass="custom-grid" rowIndexVar="rowIndex">
+                    <p:column headerText="#" width="5%">
+                        <h:outputText value="#{rowIndex+1}" />
+                    </p:column>
+                    <p:column headerText="#{messages['cache.key.'.concat(cacheBean.cacheName)]}" width="30%">
+                        <h:outputText value="#{cacheItem.key}" />
+                    </p:column>
+                    <p:column headerText="#{messages['cache.value.'.concat(cacheBean.cacheName)]}" width="70%">
+                        <h:outputText value="#{cacheItem.value}" rendered="#{cacheItem.value.getClass().getSimpleName() eq 'BigDecimal' || cacheItem.value.getClass().getSimpleName() eq 'Long'}" />
+                        <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem.value, true)}"
+                            rendered="#{cacheItem.value.getClass().getSimpleName() eq 'ArrayList' or cacheItem.value.getClass().getSimpleName() eq 'HashMap' or cacheItem.value.getClass().getSimpleName() eq 'TreeMap'}" />
+
+                        <p:lightBox
+                            rendered="#{cacheItem.value.getClass().getSimpleName() ne 'BigDecimal' and cacheItem.value.getClass().getSimpleName() ne 'Long' and cacheItem.value.getClass().getSimpleName() ne 'ArrayList' and cacheItem.value.getClass().getSimpleName() ne 'HashMap' and cacheItem.value.getClass().getSimpleName() ne 'TreeMap'}">
+                            <h:outputLink value="#">
+                                <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem.value, true)}" />
+                            </h:outputLink>
+
+                            <f:facet name="inline">
+                                <p:panel style="width: 1020px">
+                                    <p:scrollPanel mode="native" style="width:1000px">
+                                        <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem.value, true)}" style="white-space: normal" />
+                                    </p:scrollPanel>
+                                </p:panel>
+                            </f:facet>
+                        </p:lightBox>
+
+                    </p:column>
+                    <p:column headerText="#{messages['commons.actions']}" width="10%">
+
+                        <p:commandButton icon="ui-icon-search" oncomplete="PF('listDialog').show()" update=":listDialog" rendered="#{cacheItem.value.getClass().getSimpleName() eq 'ArrayList' }"
+                            title="#{messages['commons.view']}">
+                            <f:setPropertyActionListener target="#{cacheBean.selectedCacheItem}" value="#{cacheItem}" />
+                        </p:commandButton>
+
+                        <p:commandButton icon="ui-icon-search" oncomplete="PF('mapDialog').show()" update=":mapDialog"
+                            rendered="#{cacheItem.value.getClass().getSimpleName() eq 'HashMap' or cacheItem.value.getClass().getSimpleName() eq 'TreeMap' }" title="#{messages['commons.view']}">
+                            <f:setPropertyActionListener target="#{cacheBean.selectedCacheMapItem}" value="#{cacheItem}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:button id="backButton" value="#{messages['action.back']}" outcome="caches" />
+            </h:form>
+        </p:panel>
+
+
+        <p:dialog id="listDialog" dynamic="true"
+            header="#{messages['cache.cacheDetail.cacheName'].concat(cacheBean.cacheName)} / #{messages['cache.key.'.concat(cacheBean.cacheName)].concat(': ').concat(cacheBean.selectedCacheItem.key)}"
+            modal="true" closeOnEscape="true" maximizable="true" widgetVar="listDialog" width="90%">
+
+            <p:dataTable var="cacheItem" value="#{cacheBean.cacheItemContents}" paginator="true" rows="30" resizableColumns="true"
+                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50" lazy="true"
+                styleClass="custom-grid" rowIndexVar="rowIndex">
+                <p:column headerText="#" width="5%">
+                    <h:outputText value="#{rowIndex+1}" />
+                </p:column>
+                <p:column headerText="#{messages['cache.value.detail.'.concat(cacheBean.cacheName)]}">
+                    <!--                     <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" /> -->
+                    <p:lightBox>
+                        <h:outputLink value="#">
+                            <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" />
+                        </h:outputLink>
+
+                        <f:facet name="inline">
+                            <p:panel style="width: 1020px">
+                                <p:scrollPanel mode="native" style="width:1000px">
+                                    <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" style="white-space: normal" />
+                                </p:scrollPanel>
+                            </p:panel>
+                        </f:facet>
+                    </p:lightBox>
+                </p:column>
+            </p:dataTable>
+        </p:dialog>
+
+
+        <p:dialog id="mapDialog" dynamic="true"
+            header="#{messages['cache.cacheDetail.cacheName'].concat(cacheBean.cacheName)} / #{messages['cache.key.'.concat(cacheBean.cacheName)].concat(': ').concat(cacheBean.selectedCacheMapItem.key)}"
+            modal="true" closeOnEscape="true" maximizable="true" widgetVar="mapDialog" width="90%">
+
+            <p:dataTable var="cacheItem" value="#{cacheBean.cacheMapContents}" paginator="true" rows="30" resizableColumns="true"
+                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50" lazy="true"
+                styleClass="custom-grid" rowIndexVar="rowIndex" reflow="true">
+                <p:column headerText="#" width="5%">
+                    <h:outputText value="#{rowIndex+1}" />
+                </p:column>
+
+                <p:column headerText="#{messages['cache.map.key.'.concat(cacheBean.cacheName)]}" width="30%">
+                    <h:outputText value="#{cacheItem.key}" />
+                </p:column>
+                <p:column headerText="#{messages['cache.map.count.'.concat(cacheBean.cacheName)]}" width="10%">
+                    <h:outputText value="#{cacheItem.value.size()}" rendered="#{cacheItem.value.getClass().getSimpleName() eq 'ArrayList' }" />
+                </p:column>
+                <p:column headerText="#{messages['cache.map.value.'.concat(cacheBean.cacheName)]}">
+                    <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem.value, true)}" rendered="#{cacheItem.value.getClass().getSimpleName() eq 'ArrayList' }" />
+                    <p:lightBox rendered="#{cacheItem.value.getClass().getSimpleName() ne 'ArrayList' }">
+                        <h:outputLink value="#">
+                            <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem.value, true)}" />
+                        </h:outputLink>
+
+                        <f:facet name="inline">
+                            <p:panel style="width: 1020px">
+                                <p:scrollPanel mode="native" style="width:1000px">
+                                    <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem.value, true)}" style="white-space: normal" />
+                                </p:scrollPanel>
+                            </p:panel>
+                        </f:facet>
+                    </p:lightBox>
+
+                </p:column>
+                <p:column style="width: 60px;" headerText="#{messages['commons.actions']}">
+                    <p:commandButton icon="ui-icon-search" update=":cacheItemValueList" title="#{messages['commons.view']}" rendered="#{cacheItem.value.getClass().getSimpleName() eq 'ArrayList' }">
+                        <f:setPropertyActionListener target="#{cacheBean.selectedCacheItem}" value="#{cacheItem}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+
+            <h:panelGroup id="cacheItemValueList">
+
+                <p:panel styleClass="search-panel" header="#{messages['cache.map.key.'.concat(cacheBean.cacheName)].concat(': ').concat(cacheBean.selectedCacheItem.key)}"
+                    rendered="#{cacheBean.selectedCacheItem!=null}">
+
+                    <p:dataTable var="cacheItem" value="#{cacheBean.cacheItemContents}" paginator="true" rows="30" resizableColumns="true"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50" lazy="true"
+                        styleClass="custom-grid" rowIndexVar="rowIndex">
+                        <p:column headerText="#" width="5%">
+                            <h:outputText value="#{rowIndex+1}" />
+                        </p:column>
+                        <p:column headerText="#{messages['cache.map.value.detail.'.concat(cacheBean.cacheName)]}">
+                            <!--                             <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" /> -->
+
+                            <p:lightBox>
+                                <h:outputLink value="#">
+                                    <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" />
+                                </h:outputLink>
+
+                                <f:facet name="inline">
+                                    <p:panel style="width: 1020px">
+                                        <p:scrollPanel mode="native" style="width:1000px">
+                                            <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem, true)}" style="white-space: normal" />
+                                        </p:scrollPanel>
+                                    </p:panel>
+                                </f:facet>
+                            </p:lightBox>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:panelGroup>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

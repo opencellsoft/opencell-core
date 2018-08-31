@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:define name="metadata">
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{businessOfferModelBean.preRenderView}" />
+
+		<f:viewParam name="objectId" value="#{businessOfferModelBean.objectId}" />
+	</f:metadata>
+</ui:define>
+
+<h:head>
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/stylesheet/theme.xcss" />
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/stylesheet/theme.css" />
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/stylesheet/main.css" />
+</h:head>
+
+<h:body>
+	<h:form>
+		<p:panel>
+			<h1>#{messages['action.createOfferFromBOM']}</h1>
+			<p:messages id="popupMessages"></p:messages>			
+			<h:panelGroup layout="block" styleClass="form-panel">
+				<h:panelGroup layout="block" styleClass="formFieldGroup">
+					<p:outputLabel value="Prefix" for="prefix"></p:outputLabel>
+					<p:inputText id="prefix" required="true"
+						value="#{businessOfferModelBean.bomOfferInstancePrefix}"></p:inputText>
+				</h:panelGroup>
+
+				<h:panelGroup layout="block" styleClass="formFieldGroup">
+					<p:outputLabel value="#{messages['menu.serviceTemplates']}"
+						for="serviceTemplates"></p:outputLabel>
+					<p:pickList id="serviceTemplates" required="true"
+						value="#{businessOfferModelBean.serviceDualListModel}" var="st"
+						itemLabel="#{st.code}" itemValue="#{st}">
+						<hftl:objectConverter />
+					</p:pickList>
+				</h:panelGroup>
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" styleClass="form-panel-actions">
+				<p:commandButton value="#{messages['action.createOfferFromBOM']}"
+					action="#{businessOfferModelBean.createOfferFromBOM()}"
+					update="popupMessages"></p:commandButton>
+			</h:panelGroup>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

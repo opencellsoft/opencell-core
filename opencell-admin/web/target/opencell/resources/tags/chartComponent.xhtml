@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+
+<cc:interface componentType="formField">
+	<cc:attribute name="model" />
+	<cc:attribute name="chartBean" />
+	<cc:attribute name="index" />
+</cc:interface>
+
+<cc:implementation>
+
+	<ui:fragment>
+
+		<h:form rendered="#{cc.attrs.model.chart.visible}"
+			style="width:#{cc.attrs.model.chart.width};}">
+
+
+			<ui:fragment
+				rendered="#{(cc.attrs.model.chart.class.simpleName eq 'BarChart')}">
+				<hf:barChartComponent model="#{cc.attrs.model}" />
+			</ui:fragment>
+			<ui:fragment
+				rendered="#{cc.attrs.model.chart.class.simpleName eq 'LineChart'}">
+				<hf:lineChartComponent model="#{cc.attrs.model}" />
+			</ui:fragment>
+			<ui:fragment
+				rendered="#{cc.attrs.model.chart.class.simpleName eq 'PieChart'}">
+				<hf:pieChartComponent model="#{cc.attrs.model}" />
+			</ui:fragment>
+			<p:panelGrid columns="2">
+				<p:panelGrid columns="2">
+
+					<p:outputLabel for="filterFrom" value="#{messages['commons.date']}" />
+
+					<p:calendar id="filterFrom" value="#{cc.attrs.model.minDate}"
+						pattern="#{paramBean.dateFormat}">
+						<p:ajax event="dateSelect" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+					</p:calendar>
+
+				</p:panelGrid>
+
+
+				<p:panelGrid columns="2"
+					rendered="#{cc.attrs.model.dimension1List.size()>0}">
+
+					<p:outputLabel for="dimension1_list"
+						value="#{cc.attrs.model.chart.measurableQuantity.dimension1}"></p:outputLabel>
+
+					<p:selectOneMenu value="#{cc.attrs.model.dimension1}"
+						id="dimension1_list">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{cc.attrs.model.dimension1List}"
+							var="element" itemValue="#{element}" itemLabel="#{element}" />
+						<p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+
+				<p:panelGrid columns="2"
+					rendered="#{cc.attrs.model.dimension2List.size()>0}">
+
+					<p:outputLabel for="dimension2_list"
+						value="#{cc.attrs.model.chart.measurableQuantity.dimension2}"></p:outputLabel>
+
+					<p:selectOneMenu value="#{cc.attrs.model.dimension2}"
+						id="dimension2_list">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{cc.attrs.model.dimension2List}"
+							var="element" itemValue="#{element}" itemLabel="#{element}" />
+						<p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+
+				<p:panelGrid columns="2"
+					rendered="#{cc.attrs.model.dimension3List.size()>0}">
+					<p:outputLabel for="dimension3_list"
+						value="#{cc.attrs.model.chart.measurableQuantity.dimension3}"></p:outputLabel>
+					<p:selectOneMenu value="#{cc.attrs.model.dimension3}"
+						id="dimension3_list">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{cc.attrs.model.dimension3List}"
+							var="element" itemValue="#{element}" itemLabel="#{element}" />
+						<p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+
+				<p:panelGrid columns="2"
+					rendered="#{cc.attrs.model.dimension4List.size()>0}">
+					<p:outputLabel for="dimension4_list"
+						value="#{cc.attrs.model.chart.measurableQuantity.dimension4}"></p:outputLabel>
+					<p:selectOneMenu value="#{cc.attrs.model.dimension4}"
+						id="dimension4_list">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{cc.attrs.model.dimension4List}"
+							var="element" itemValue="#{element}" itemLabel="#{element}" />
+						<p:ajax event="valueChange" update="@form"
+							listener="#{chartBean.setModel(cc.attrs.index)}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+			</p:panelGrid>
+
+		</h:form>
+
+	</ui:fragment>
+
+</cc:implementation>
+
+</html>

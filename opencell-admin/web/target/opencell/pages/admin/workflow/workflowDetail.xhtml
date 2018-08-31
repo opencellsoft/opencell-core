@@ -1,0 +1,260 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:e="http://primefaces.org/extension" xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="workflowId" value="#{workflowBean.objectId}" />
+            <f:viewParam name="tab" value="#{workflowBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem outcome="workflows" value="#{messages['menu.workflow']}" />
+                <p:menuitem value="#{messages['workflow.new']}" disabled="true" rendered="#{workflowBean.entity.transient}" />
+                <p:menuitem value="#{messages['workflow.editView']} - #{workflowBean.entity.descriptionOrCode}" disabled="true" rendered="#{!workflowBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+        <p:panel>
+            <p:tabView id="tabView" activeIndex="#{workflowBean.activeTab}">
+                <p:tab title="#{messages['workflow.panel']}">
+                    <hftl:formPanel formId="workflowForm" backingBean="#{workflowBean}" showEnableDisableButton="true">
+                        <hftl:formField label="#{messages['businessEntity.code']}" field="code" allowEdit="false" required="true" validateUnique="true" />
+                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" />
+
+                        <hftl:formField label="#{messages['workflow.type']}" field="wfType" allowEdit="false" required="true" size="60"
+                            autocompleteBean="#{workflowBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+
+                        <hftl:formField label="#{messages['workflow.exportLot']}" field="exportLot" />
+                        <hftl:formField label="#{messages['workflow.enableHistory']}" field="enableHistory" />
+                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+                    </hftl:formPanel>
+                </p:tab>
+
+                <p:tab title="#{messages['dunningPlan.transitions']}" id="tab2" rendered="#{!workflowBean.entity.isTransient()}">
+                    <p:outputPanel id="dunningPlanTransition_panel">
+                        <p:messages id="messages" rendered="#{!workflowBean.showDetailPage}" />
+                        <hftl:dataList backingBean="#{wfTransitionBean}" dataModel="#{workflowBean.entity.transitions}" sortBy="fromStatus"
+                            resultsId="dunningPlanTransitions_results" exportXlsxButton="false">
+                            <hftl:column label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
+                            <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
+                            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+                            <hftl:column label="#{messages['dunningPlan.conditionEl']}" field="conditionEl" />
+
+                            <p:column styleClass="actions-column" rendered="#{workflowBean.edit}">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['commons.actions']}" />
+                                </f:facet>
+
+                                <p:commandButton id="editDunningPlanTransitionLink" update=":tabView:dunningPlanTransition_panel" action="#{workflowBean.editWfTransition(entity)}"
+                                    icon="ui-icon-document" />
+                                <p:commandButton id="duplicateDunningPlanTransitionLink" update=":tabView:dunningPlanTransition_panel" action="#{workflowBean.duplicateWfTransition(entity)}"
+                                    icon="ui-icon-plus" />
+                                <p:commandButton id="deleteDunningPlanTransitionLink" action="#{workflowBean.deleteWfTransition(entity)}" icon="ui-icon-trash" update=":tabView:workflowForm :tabView:dunningPlanTransition_panel" />
+                                <p:commandButton id="moveUpTransitionLink" icon="ui-icon-arrowthick-1-n" action="#{workflowBean.moveUpTransition(entity)}"
+                                    update=":tabView:dunningPlanTransition_panel" />
+                                <p:commandButton id="moveDownTransitionLink" icon="ui-icon-arrowthick-1-s" action="#{workflowBean.moveDownTransition(entity)}"
+                                    update=":tabView:dunningPlanTransition_panel" />
+                            </p:column>
+
+                        </hftl:dataList>
+                        <p:panel styleClass="clearLeft">
+                            <hftl:decorateFormField fieldId="addTransition">
+                                <p:commandButton id="addTransition" rendered="#{!workflowBean.showDetailPage}" action="#{workflowBean.newTransition}"
+                                    value="#{messages['dunningPlanTransition.addNew']}" update=":tabView:dunningPlanTransition_panel,:tabView:formDunningPlanTransition" />
+                            </hftl:decorateFormField>
+                        </p:panel>
+                        <p:panel rendered="#{workflowBean.showDetailPage}">
+                            <hftl:formPanel formId="formDunningPlanTransition" edit="#{workflowBean.edit}" label="" backingBean="#{wfTransitionBean}"
+                                entity="#{workflowBean.wfTransition}" showFormButtons="false" ajaxSubmit="true">
+                                <p:panel styleClass="clearLeft">
+                                    <hftl:formField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" required="true" isMessage="true"
+                                        edit="#{workflowBean.edit}" listValues="#{workflowBean.transitionStatusFromWorkflowType}" />
+                                    <hftl:formField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" required="true" isMessage="true"
+                                        listValues="#{workflowBean.transitionStatusFromWorkflowType}" edit="#{workflowBean.edit}" />
+
+                                    <hftl:formField label="#{messages['dunningPlan.conditionEl']}" field="conditionEl" textArea="true" rows="1" maxlength="2000"
+                                        edit="#{workflowBean.edit}" />
+
+                                    <hftl:formField label="#{messages['transition.description']}" field="description" required="true" edit="#{workflowBean.edit}" />
+                                </p:panel>
+                                <p:panel>
+                                    <p:tabView id="tabDetail">
+                                        <p:tab title="#{messages['transition.decisionRule.panel']}">
+                                            <p:panel id="decisionRulesPanel" styleClass="clearLeft">
+                                                <c:forEach items="#{workflowBean.selectedRules}" var="rule" varStatus="loopStatus">
+                                                    <p:panel id="decisionRulePanel#{loopStatus.index}" styleClass="clearLeft">
+                                                        <hftl:decorateFormField fieldId="decisionRuleOperationPanel#{loopStatus.index}" label="" componentWidth="10">
+                                                            <p:commandButton id="decisionRuleOperationPanel#{loopStatus.index}" style="margin-top: 15px;"
+                                                                action="#{workflowBean.deleteWfDecisionRule(loopStatus.index)}" icon="ui-icon-trash"
+                                                                process="decisionRuleOperationPanel#{loopStatus.index}"
+                                                                update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel" />
+
+                                                        </hftl:decorateFormField>
+                                                        <hftl:decorateFormField fieldId="decisionRuleName#{loopStatus.index}" label="#{messages['decisionRuleName.rule']}">
+                                                            <p:selectOneMenu id="decisionRuleName#{loopStatus.index}" value="#{rule.name}" required="true">
+                                                                <p:ajax listener="#{workflowBean.changedRuleName(loopStatus.index)}" process="decisionRuleName#{loopStatus.index}"
+                                                                    update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel" event="valueChange">
+                                                                </p:ajax>
+                                                                <f:selectItem itemLabel="#{messages['transition.selectRule']}" itemValue="" noSelectionOption="true" />
+                                                                <f:selectItems value="#{workflowBean.wfDecisionRulesName}" />
+                                                            </p:selectOneMenu>
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="decisionRuleValue#{loopStatus.index}" label="#{messages['decisionRuleValue.value']}"
+                                                            rendered="#{rule.name != null}">
+                                                            <p:selectOneListbox id="decisionRuleValue#{loopStatus.index}" value="#{rule.value}" required="true"
+                                                                converter="wfDecisionRuleConverter">
+                                                                <f:selectItems value="#{workflowBean.wfDecisionRulesByName[loopStatus.index]}" var="decisionRule"
+                                                                    itemLabel="#{decisionRule.value}" itemValue="#{decisionRule}" />
+                                                                <p:ajax partialSubmit="true" event="valueChange"
+                                                                    update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel"
+                                                                    process="decisionRuleValue#{loopStatus.index}" />
+                                                            </p:selectOneListbox>
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="decisionRuleTextValue#{loopStatus.index}" label="#{messages['decisionRuleNewValue.value']}"
+                                                            rendered="#{rule.value.model == true and rule.value.type == 'STRING'}">
+                                                            <p:inputText id="decisionRuleTextValue#{loopStatus.index}" value="#{rule.newValue}" required="true" size="20"
+                                                                maxlength="100" />
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="decisionRuleDateValue#{loopStatus.index}" label="#{messages['decisionRuleNewValue.value']}"
+                                                            rendered="#{rule.value.model == true and rule.value.type == 'DATE'}">
+                                                            <p:calendar id="decisionRuleDateValue#{loopStatus.index}" value="#{rule.newDate}" required="true" size="16"
+                                                                pattern="dd/MM/yyyy" />
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="decisionRuleNumberValue#{loopStatus.index}"
+                                                            label="#{messages['decisionRuleNewValue.value']}" rendered="#{rule.value.model == true and rule.value.type == 'NUMBER'}">
+                                                            <p:inputText id="decisionRuleNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
+                                                                required="true" converter="javax.faces.BigDecimal" />
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="decisionRuleFromStringValue#{loopStatus.index}"
+                                                            label="#{messages['DecisionRuleTypeEnum.range.string']}"
+                                                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}">
+                                                            <h:panelGrid columns="4">
+                                                                <p:outputLabel for="decisionRuleFromStringValue#{loopStatus.index}"
+                                                                    value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
+                                                                <p:inputText id="decisionRuleFromStringValue#{loopStatus.index}" value="#{rule.newValue}" size="16" maxlength="100" />
+                                                                <p:outputLabel for="decisionRuleFromStringValue#{loopStatus.index}_toRange"
+                                                                    value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
+                                                                <p:inputText id="decisionRuleFromStringValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="16"
+                                                                    maxlength="100" />
+                                                            </h:panelGrid>
+                                                        </hftl:decorateFormField>
+
+                                                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_STRING'}">
+                                                            <o:validateOneOrMore
+                                                                components="decisionRuleFromStringValue#{loopStatus.index} decisionRuleFromStringValue#{loopStatus.index}_toRange" />
+                                                        </h:panelGroup>
+
+                                                        <hftl:decorateFormField fieldId="decisionRuleFromNumberValue#{loopStatus.index}"
+                                                            label="#{messages['DecisionRuleTypeEnum.range.number']}"
+                                                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}">
+                                                            <h:panelGrid columns="4">
+                                                                <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}"
+                                                                    value="#{messages['decisionRuleFromValue.value']}" style="padding-right:5px" />
+                                                                <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}" value="#{rule.newValue}" size="10" maxlength="10"
+                                                                    converter="javax.faces.BigDecimal" />
+                                                                <p:outputLabel for="decisionRuleFromNumberValue#{loopStatus.index}_toRange"
+                                                                    value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
+                                                                <p:inputText id="decisionRuleFromNumberValue#{loopStatus.index}_toRange" value="#{rule.anotherValue}" size="10"
+                                                                    maxlength="10" converter="javax.faces.BigDecimal" />
+                                                            </h:panelGrid>
+                                                        </hftl:decorateFormField>
+
+                                                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_NUMBER'}">
+                                                            <o:validateOneOrMore
+                                                                components="decisionRuleFromNumberValue#{loopStatus.index} decisionRuleFromNumberValue#{loopStatus.index}_toRange" />
+                                                        </h:panelGroup>
+
+                                                        <hftl:decorateFormField fieldId="decisionRuleFromDateValue#{loopStatus.index}"
+                                                            label="#{messages['DecisionRuleTypeEnum.range.date']}"
+                                                            rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}">
+                                                            <h:panelGrid columns="4">
+                                                                <p:outputLabel for="decisionRuleFromDateValue#{loopStatus.index}" value="#{messages['decisionRuleFromValue.value']}"
+                                                                    style="padding-right:5px" />
+                                                                <p:calendar id="decisionRuleFromDateValue#{loopStatus.index}" value="#{rule.newDate}" size="16" pattern="dd/MM/yyyy" />
+                                                                <p:outputLabel for="decisionRuleFromDateValue#{loopStatus.index}_toRange"
+                                                                    value="#{messages['decisionRuleToValue.value']}" style="padding:5px" />
+                                                                <p:calendar id="decisionRuleFromDateValue#{loopStatus.index}_toRange" value="#{rule.anotherDate}" size="16"
+                                                                    pattern="dd/MM/yyyy" />
+                                                            </h:panelGrid>
+                                                        </hftl:decorateFormField>
+
+                                                        <h:panelGroup rendered="#{rule.value.model == true and rule.value.type == 'RANGE_DATE'}">
+                                                            <o:validateOneOrMore
+                                                                components="decisionRuleFromDateValue#{loopStatus.index} decisionRuleFromDateValue#{loopStatus.index}_toRange" />
+                                                        </h:panelGroup>
+
+                                                    </p:panel>
+                                                </c:forEach>
+                                            </p:panel>
+                                            <p:panel styleClass="clearLeft">
+                                                <p:commandButton id="addCriteriaBtn" action="#{workflowBean.addNewRule()}" process="@this,decisionRulesPanel"
+                                                    value="#{messages['decisionRule.add']}" ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus"
+                                                    update=":tabView:formDunningPlanTransition:tabDetail:decisionRulesPanel :tabView:formDunningPlanTransition:messages" />
+                                            </p:panel>
+                                        </p:tab>
+                                        <p:tab title="#{messages['dunningPlan.actions']}">
+                                            <p:panel id="transitionActionsPanel" styleClass="clearLeft">
+                                                <c:forEach items="#{workflowBean.wfActions}" var="action" varStatus="actionIndex">
+                                                    <p:panel id="transitionActionPanel#{actionIndex.index}" styleClass="clearLeft">
+                                                        <hftl:decorateFormField fieldId="transitionActionOperationPanel#{actionIndex.index}" label="" componentWidth="15">
+                                                            <p:commandButton id="moveUpAction#{actionIndex.index}" icon="ui-icon-arrowthick-1-n"
+                                                                action="#{workflowBean.moveUpAction(actionIndex.index)}"
+                                                                update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />
+                                                            <p:commandButton id="moveDownAction#{actionIndex.index}" icon="ui-icon-arrowthick-1-s"
+                                                                action="#{workflowBean.moveDownAction(actionIndex.index)}"
+                                                                update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />
+                                                            <p:commandButton id="transitionActionOperationPanel#{actionIndex.index}" style="margin-top: 15px;"
+                                                                action="#{workflowBean.deleteWfAction(actionIndex.index)}" icon="ui-icon-trash"
+                                                                process="transitionActionOperationPanel#{actionIndex.index}" ajaxSubmit="true" partialSubmit="true"
+                                                                update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />
+
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="actionEl#{actionIndex.index}" label="#{messages['dunningPlan.actionEl']}"
+                                                            componentWidth="75">
+                                                            <p:inputTextarea id="actionEl#{actionIndex.index}" value="#{action.actionEl}" required="true" autoResize="true"
+                                                                style="width:100%;" maxlength="2000" rows="1" />
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="conditionElAction#{actionIndex.index}" label="#{messages['dunningPlan.conditionEl']}"
+                                                            componentWidth="75">
+                                                            <p:inputTextarea id="conditionElAction#{actionIndex.index}" value="#{action.conditionEl}" autoResize="true"
+                                                                style="width:100%;" maxlength="2000" rows="1" />
+                                                        </hftl:decorateFormField>
+                                                    </p:panel>
+                                                </c:forEach>
+                                            </p:panel>
+                                            <p:panel styleClass="clearLeft">
+                                                <p:commandButton id="addActionBtn" action="#{workflowBean.addNewAction()}" process="@this,transitionActionsPanel"
+                                                    value="#{messages['dunningPlan.addNewActionPlanItem']}" ajaxSubmit="true" partialSubmit="true" icon="fa fa-plus"
+                                                    update=":tabView:formDunningPlanTransition:tabDetail:transitionActionsPanel" />
+                                            </p:panel>
+                                        </p:tab>
+                                    </p:tabView>
+                                </p:panel>
+                                <ui:param name="buttons" value="true" />
+                                <p:panel id="buttons">
+                                    <p:commandButton action="#{workflowBean.saveWfTransition}" value="#{messages['action.save']}" update=":tabView:dunningPlanTransition_panel" />
+
+                                    <p:commandButton value="#{messages['action.cancel']}" action="#{workflowBean.cancelTransitionDetail}" process="@this"
+                                        update=":tabView:dunningPlanTransition_panel" />
+
+                                </p:panel>
+                            </hftl:formPanel>
+                        </p:panel>
+                    </p:outputPanel>
+                </p:tab>
+            </p:tabView>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

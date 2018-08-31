@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="layout/template.xhtml" xmlns:hftl="http://hftl.org">
+
+	<ui:define name="body">
+
+		<div style="margin: auto; width: 500px; margin-top: 20px;">
+			<h1 class="TexAlCenter">Opencell Software</h1>
+			<hr style="width: 100%" />
+
+			<h:panelGrid columns="2" style="margin-top: 50px; width: 100%">
+				<h:outputText styleClass="Fs14"
+					value="#{messages['meveoInstance.productVersion']}" />
+				<h:outputText styleClass="Fs14" value="5.1.1" />
+				<h:outputText styleClass="Fs14"
+					value="#{messages['meveoInstance.buildId']}" />
+				<h:outputText styleClass="Fs14" value="0c636f3b9bc7f6366c2e894a27216fc6716cde49" />
+			</h:panelGrid>
+
+			<div>
+				<p class="Fs14">
+					#{messages['message.about.forMoreInformation']}: <a
+						href="https://opencellsoft.com">https://opencellsoft.com</a>
+				</p>
+			</div>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

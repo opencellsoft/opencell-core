@@ -1,0 +1,13 @@
+<page xmlns="http://jboss.com/products/seam/pages"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd">
+
+	 <navigation>
+   		<rule if-outcome="addNew">
+	   		<redirect view-id="/pages/rating/matrixEntries/matrixEntryDetail.xhtml">
+	     		<param name="matrixId" value="#{matrix.id}"/>
+     			<param name="backView" value="matrixDetail"/>
+    		</redirect>
+   		</rule>
+	  </navigation>
+</page>

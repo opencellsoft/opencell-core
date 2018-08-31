@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org">
+
+    <h:form>
+
+        <hftl:menu styleClass="marketingManagerNavigation" rendered="#{currentUser.hasRole('marketingCatalogManager')}">
+            <p:submenu label="#{messages['menu.offers']}">
+                <p:menuitem id="mmOffers" outcome="mm_offers" value="#{messages['menu.marketingManager.catalogList']}" />
+            </p:submenu>
+
+            <p:submenu label="#{messages['menu.marketingManager.products']}">
+                <p:menuitem id="mmProductTemplates" outcome="mm_productTemplates" value="#{messages['menu.marketingManager.productList']}" />
+            </p:submenu>
+
+            <p:submenu label="#{messages['menu.customers']}">
+                <p:menuitem id="workflows" value="#{messages['menu.marketingManager.workflowList']}" outcome="mm_workflows" />
+            </p:submenu>
+
+            <p:submenu label="#{messages['menu.myCompany']}">
+                <p:menuitem id="users" value="#{messages['menu.users']}" outcome="users" />
+                <p:menuitem id="mmUserGroups" outcome="userGroupHierarchy" value="#{messages['menu.userGroupHierarchy']}">
+                </p:menuitem>
+            </p:submenu>
+
+            <p:submenu id="settings" label="#{messages['menu.settings']}">
+                <p:menuitem id="mmOfferCategories" outcome="mm_offerTemplateCategories" value="#{messages['menu.marketingManager.manageCategories']}" />
+            </p:submenu>
+
+            <p:menuitem action="#{authenticationProvider.logout}" value="#{messages['menutop.logout']}" rendered="#{currentUser.authenticated}" immediate="true"/>
+        </hftl:menu>
+    </h:form>
+
+</ui:composition>

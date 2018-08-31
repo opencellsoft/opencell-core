@@ -1,0 +1,161 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:hftl="http://hftl.org"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{measurementBean.preRenderView}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+
+        <c:set var="renderDimension1" value="#{measurementBean.measurableQuantity.dimension1 != null and measurementBean.measurableQuantity.dimension1 != 'null'}"/>
+        <c:set var="renderDimension2" value="#{measurementBean.measurableQuantity.dimension2 != null and measurementBean.measurableQuantity.dimension2 != 'null'}"/>
+        <c:set var="renderDimension3" value="#{measurementBean.measurableQuantity.dimension3 != null and measurementBean.measurableQuantity.dimension3 != 'null'}"/>
+        <c:set var="renderDimension4" value="#{measurementBean.measurableQuantity.dimension4 != null and measurementBean.measurableQuantity.dimension4 != 'null'}"/>
+        <c:set var="measurableQuantity" value="#{measurementBean.measurableQuantity}"/>
+        <c:set var="hasCode" value="#{measurableQuantity.code != null}"/>
+        <c:set var="dataModel" value="#{measurementBean.lazyDataModel}"/>
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.reporting']}" disabled="true"/>
+                <p:menuitem outcome="measuredValueDetail" value="#{messages['menu.measuredValues']}"/>
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:searchPanel label="#{messages['page.title.measuredValue']}" backingBean="#{measurementBean}" renderNewButton="false">
+            <hftl:searchField label="#{messages['entity.measuredvalue.measurableQuantityCode']}" field="code" listValues="#{measurementBean.measurableQuantityCodes}"/>
+            <hftl:searchField label="#{messages['entity.measuredvalue.date']}" field="date" rangeSearch="true" pattern="MMM yyyy"/>
+        </hftl:searchPanel>
+
+        <p:panel id="results_panel" width="100">
+            <h:form id="searchResultForm" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
+                <p:dataTable id="datatable_results" var="entity" value="#{dataModel}" paginator="true" rows="30" editable="true" editMode="cell"
+                             widgetVar="cellEntity_results" selection="#{backingBean.selectedEntities}" sortBy="#{entity.date}" styleClass="custom-grid"
+                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                             rowsPerPageTemplate="20, 30, 50" lazy="true" resizableColumns="true" rowKey="#{entity.id}" first="#{measurementBean.dataTableFirstAttribute}"
+                             reflow="true" paginatorPosition="both" rendered="#{hasCode}">
+                    <p:ajax event="page" listener="#{measurementBean.onPageChange}"/>
+                    <p:ajax event="cellEdit" listener="#{measurementBean.onCellEdit}"/>
+
+                    <!--Date Column-->
+                    <p:column headerText="#{messages['entity.measuredvalue.date']}" exportable="true" filterable="false" sortBy="#{entity.date}" rendered="#{not measurableQuantity.editable}">
+                        <h:outputText value="#{entity.date}">
+                            <f:convertDateTime pattern="#{paramBean.dateFormat}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="#{messages['entity.measuredvalue.date']}" exportable="true" filterable="false" sortBy="#{entity.date}" rendered="#{measurableQuantity.editable}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.date}">
+                                    <f:convertDateTime pattern="#{paramBean.dateFormat}"/>
+                                </h:outputText>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:calendar id="date" value="#{entity.date}" pattern="#{paramBean.dateFormat}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <!--Value Column-->
+                    <hftl:column label="#{messages['entity.measuredvalue.value']}" field="value" rendered="#{not measurableQuantity.editable}"/>
+                    <p:column headerText="#{messages['entity.measuredvalue.value']}" exportable="true" filterable="false" sortBy="#{entity.value}" rendered="#{measurableQuantity.editable}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.value}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText id="value" value="#{entity.value}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <!--Dimension 1-->
+                    <hftl:column label="#{measurementBean.measurableQuantity.dimension1}" field="dimension1" rendered="#{renderDimension1 and (not measurableQuantity.editable)}"/>
+                    <p:column headerText="#{messages['entity.measuredvalue.value']}" exportable="true" filterable="false" sortBy="#{entity.value}"
+                              rendered="#{renderDimension1 and measurableQuantity.editable}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.dimension1}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText id="dimension1" value="#{entity.dimension1}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <!--Dimension 2-->
+                    <hftl:column label="#{measurementBean.measurableQuantity.dimension2}" field="dimension2" rendered="#{renderDimension2 and (not measurableQuantity.editable)}"/>
+                    <p:column headerText="#{messages['entity.measuredvalue.value']}" exportable="true" filterable="false" sortBy="#{entity.value}"
+                              rendered="#{renderDimension2 and measurableQuantity.editable}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.dimension2}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText id="dimension2" value="#{entity.dimension2}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <!--Dimension 3-->
+                    <hftl:column label="#{measurementBean.measurableQuantity.dimension3}" field="dimension3" rendered="#{renderDimension3 and (not measurableQuantity.editable)}"/>
+                    <p:column headerText="#{messages['entity.measuredvalue.value']}" exportable="true" filterable="false" sortBy="#{entity.value}"
+                              rendered="#{renderDimension3 and measurableQuantity.editable}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.dimension3}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText id="dimension3" value="#{entity.dimension3}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <!--Dimension 4-->
+                    <hftl:column label="#{measurementBean.measurableQuantity.dimension4}" field="dimension4" rendered="#{renderDimension4 and (not measurableQuantity.editable)}"/>
+                    <p:column headerText="#{messages['entity.measuredvalue.value']}" exportable="true" filterable="false" sortBy="#{entity.value}"
+                              rendered="#{renderDimension4 and measurableQuantity.editable}">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{entity.dimension4}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText id="dimension4" value="#{entity.dimension4}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                </p:dataTable>
+
+                <h:panelGroup rendered="#{dataModel !=null and dataModel.size()>0}">
+                    <p:commandButton id="searchResultFormbuttonXlsxExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false">
+                        <pe:exporter type="xlsx" target="datatable_results" fileName="data" pageOnly="false" skipComponents="true" selectionOnly="#{measurementBean.selectedEntities.size()>0}"/>
+                    </p:commandButton>
+                </h:panelGroup>
+
+                <p:blockUI block="datatable_results" trigger="datatable_results">
+                    LOADING<br/>
+                    <p:graphicImage name="ajax-loader1.gif" library="img"/>
+                </p:blockUI>
+
+                <p:panelGrid id="blockUIContentDataTable_results" columns="2" style="display:none;">
+                    <h:graphicImage library="img" name="ajax-loader1.gif" style="margin-right: 12px; vertical-align: middle;"/>
+                    <h:outputText value="#{messages['message.loading.data']}" style="white-space: nowrap;"/>
+                </p:panelGrid>
+
+            </h:form>
+
+        </p:panel>
+
+    </ui:define>
+
+</ui:composition>

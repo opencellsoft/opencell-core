@@ -1,0 +1,473 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:s="http://jboss.org/seam/faces"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{quoteBean.objectId}" />
+            <f:viewParam name="tab" value="#{quoteBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <p:importEnum type="org.meveo.model.quote.QuoteStatusEnum" var="QuoteStatusEnum" />
+        <p:importEnum type="org.meveo.api.order.OrderProductCharacteristicEnum" var="CharacteristicsEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.quotes']}" disabled="true" />
+                <p:menuitem outcome="quotes" value="#{messages['menu.quotes']}" />
+                <p:menuitem value="#{messages['quote.new']}" disabled="true" rendered="#{quoteBean.entity.transient}" />
+                <p:menuitem value="#{messages['quote.editView']} - #{quoteBean.entity.descriptionOrCode}" disabled="true" rendered="#{!quoteBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:entityPopup id="userAccountPopupQuote" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}" searchField1Label="#{messages['businessEntity.code']}"
+            searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['userAccount.name']}" column2="name" selection="#{quoteBean.entity.userAccount}"
+            updateField=":quoteForm:tabView:quoteInfo:userAccountQuote :quoteForm:tabView:quoteInfo:userAccountQuote_text">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}" searchField1Label="#{messages['businessEntity.code']}"
+            searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['userAccount.name']}" column2="name" selection="#{quoteBean.selectedQuoteItem.userAccount}"
+            updateField=":quoteForm:tabView:userAccount :quoteForm:tabView:userAccount_text">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="subscriptionPopup" header="#{messages['access.subscription']}"
+            updateField=":quoteForm:tabView:subscription :quoteForm:tabView:subscription_text :quoteForm:tabView:offerTree  :quoteForm:tabView:offerConfigurations" backingBean="#{subscriptionBean}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" selectionListenerBean="#{quoteBean}" selectionListenerMethod="onSubscriptionSet">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="offerPopup" header="#{messages['offer.popup.header']}" backingBean="#{productOfferingBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" lazy="false" dataModel="#{productOfferingBean.listActive()}" width="1000"
+            updateField=":quoteForm:tabView:offer  :quoteForm:tabView:offer_text :quoteForm:tabView:offerTree  :quoteForm:tabView:offerConfigurations" selectionListenerBean="#{quoteBean}"
+            selectionListenerMethod="onMainProductOfferingSet">
+        </hftl:entityPopup>
+
+        <hftl:formPanel formId="quoteForm" backingBean="#{quoteBean}" edit="#{quoteBean.quoteEditable}" showEditButton="#{quoteBean.quoteEditable}" ajaxSubmit="true"
+            submitPartialProcess=":quoteForm:tabView:quoteInfo">
+            <p:tabView id="tabView" activeIndex="#{quoteBean.activeTab}">
+                <p:tab title="#{messages['quote.tab.quote']}" id="tabQuote">
+                    <hf:namingContainer id="quoteInfo">
+                        <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" allowEdit="false" />
+                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+                        <hftl:formField label="#{messages['quote.quoteDate']}" field="quoteDate" doNotShowOnNew="true" allowEdit="false" />
+                        <hftl:formField label="#{messages['quote.validFrom']}" field="validity" childField="from" newLine="true" />
+                        <hftl:formField label="#{messages['quote.validTo']}" field="validity" childField="to" />
+                        <hftl:formField label="#{messages['quote.category']}" field="category" />
+
+                        <hftl:formField id="userAccountQuote" label="#{messages['quote.userAccount']}" field="userAccount" valueLabelField="code" popup="true" popupId="userAccountPopupQuote"
+                            showResetButton="true" />
+
+                        <hftl:formField label="#{messages['quote.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{quoteBean.entity.receivedFromApp!=null}" />
+                        <hftl:formField label="#{messages['quote.externalId']}" field="externalId" edit="false"
+                            rendered="#{quoteBean.entity.receivedFromApp!=null and quoteBean.entity.externalId!=null}" />
+
+                        <hftl:decorateFormField label="#{messages['quote.invoices']}" rendered="#{quoteBean.entity.invoices!=null and !quoteBean.entity.invoices.isEmpty()}">
+                            <c:forEach var="invoice" items="#{quoteBean.entity.invoices}">
+                                <p:link outcome="invoiceDetail" value="#{invoice.invoiceNumberOrTemporaryNumber}">
+                                    <f:param name="objectId" value="#{invoice.id}" />
+                                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                    <f:param name="backView" value="/pages/quote/quotes/quoteDetail?objectId=#{quoteBean.entity.id}" />
+                                </p:link>
+                                <h:outputText value="&lt;br/&gt;" escape="false" />
+                            </c:forEach>
+                        </hftl:decorateFormField>
+
+                        <hftl:decorateFormField label="#{messages['quote.order']}" rendered="#{quoteBean.entity.order!=null}">
+                            <p:link outcome="orderDetail" value="#{messages['quote.order']}">
+                                <f:param name="objectId" value="#{quoteBean.entity.order.id}" />
+                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                <f:param name="backView" value="/pages/quote/quotes/quoteDetail?objectId=#{quoteBean.entity.id}" />
+                            </p:link>
+                        </hftl:decorateFormField>
+
+
+                        <p:fieldset legend="#{messages['quote.processingInstructions']}" styleClass="clearBoth">
+                            <hftl:formField label="#{messages['quote.notificationContact']}" field="notificationContact" />
+                            <hftl:formField label="#{messages['quote.requestedCompletionDate']}" field="requestedCompletionDate" />
+                            <hftl:formField label="#{messages['quote.fulfillmentStartDate']}" field="fulfillmentStartDate" />
+                        </p:fieldset>
+                        <p:fieldset legend="#{messages['quote.processingStatus']}" styleClass="clearBoth"
+                            rendered="#{!quoteBean.workflowEnabled or (quoteBean.workflowEnabled and quoteBean.entity.status!=QuoteStatusEnum.IN_PROGRESS)}">
+                            <hftl:formField label="#{messages['commons.status']}" field="status" showOnNew="false" allowEdit="#{!quoteBean.workflowEnabled}" />
+                            <hftl:formField label="#{messages['quote.statusMessage']}" field="statusMessage" allowEdit="#{!quoteBean.workflowEnabled}"
+                                rendered="#{quoteBean.entity.statusMessage!=null}" />
+
+                            <hftl:formField label="#{messages['quote.routedTo']}" field="routedToUserGroup" edit="false" valueLabelField="descriptionOrCode"
+                                rendered="#{quoteBean.entity.routedToUserGroup!=null}" />
+                            <hftl:formField label="#{messages['quote.expectedCompletionDate']}" field="expectedCompletionDate" allowEdit="#{!quoteBean.workflowEnabled}" />
+                            <!--                                 rendered="#{quoteBean.entity.expectedCompletionDate!=null and quoteBean.entity.completionDate==null}" /> -->
+                            <hftl:formField label="#{messages['quote.completionDate']}" field="completionDate" allowEdit="#{!quoteBean.workflowEnabled}"
+                                rendered="#{quoteBean.entity.completionDate!=null}" />
+                        </p:fieldset>
+
+                        <div class="clearLeft"></div>
+                        <hftl:customFields prefix="quote" backingBean="#{quoteBean}" messagesId=":quoteForm:messages" />
+
+                    </hf:namingContainer>
+                </p:tab>
+                <p:tab title="#{messages['quote.tab.quoteItems']}" id="tabItems">
+
+
+                    <p:dataTable id="quoteItems" var="entity" value="#{quoteBean.entity.quoteItems}" paginator="false" rows="10" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex"
+                        resizableColumns="true" sortBy="#{entity.itemId}" sortField="itemId">
+
+                        <hftl:column label="#{messages['quote.itemId']}" field="itemId" />
+                        <hftl:column label="#{messages['quote.userAccount']}" field="userAccount.code" />
+                        <p:column headerText="#{messages['quote.productOfferings']}">
+                            <ui:repeat value="#{entity.quoteItemProductOfferings.toArray()}" var="c">
+                                <h:outputText value="#{c.productOffering.code}" />
+                                <br />
+                            </ui:repeat>
+                        </p:column>
+                        <p:column headerText="#{messages['commons.actions']}">
+                            <p:commandButton icon="ui-icon-document" action="#{quoteBean.editQuoteItem(entity)}"
+                                update=":quoteForm:messages :quoteForm:tabView:quoteItemMessages :quoteForm:tabView:quoteItemDetails" process="@this">
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-trash" update="quoteItems :quoteForm:tabView:quoteItemMessages :quoteForm:tabView:quoteItemDetails" rendered="#{quoteBean.quoteEditable}"
+                                process="@this">
+                                <p:collector value="#{entity}" removeFrom="#{quoteBean.entity.quoteItems}" />
+                                <f:setPropertyActionListener value="#{null}" target="#{quoteBean.selectedQuoteItem}" />
+                                <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton value="#{messages['commons.addNew']}" action="#{quoteBean.newQuoteItem()}"
+                                update=":quoteForm:tabView:quoteItemMessages :quoteForm:tabView:quoteItemDetails" rendered="#{quoteBean.quoteEditable}" process="@this" />
+                        </f:facet>
+                    </p:dataTable>
+
+                    <p:messages id="quoteItemMessages" redisplay="false" />
+
+                    <h:panelGroup id="quoteItemDetails">
+
+                        <p:separator rendered="#{quoteBean.selectedQuoteItem!=null}" />
+
+
+                        <p:panel header="#{messages['quote.quoteItemHeader']}" rendered="#{quoteBean.selectedQuoteItem!=null}">
+
+
+
+                            <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+
+                                <hftl:formField entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.itemId']}" field="itemId" edit="false" componentWidth="10" />
+                                <hftl:formField id="userAccount" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['quote.userAccount']}" field="userAccount" valueLabelField="code"
+                                    required="#{quoteBean.entity.userAccount==null}" popup="true" popupId="userAccountPopup" />
+                                <hftl:formField id="offer" entity="#{quoteBean.selectedQuoteItem}" label="#{messages['productTemplate.product']}" field="mainOffering" valueLabelField="code"
+                                    popup="true" popupId="offerPopup" required="true" edit="#{quoteBean.quoteEditable}" />
+
+
+                                <h:panelGroup id="offerTree">
+
+                                    <p:remoteCommand name="onTreeNodeSelection" action="#{quoteBean.onTreeNodeSelection}" update="offerConfigurations" process="offerTree" />
+
+                                    <hftl:decorateFormField label="#{messages['quote.servicesAndProducts']}" componentWidth="50"
+                                        rendered="#{quoteBean.selectedQuoteItem.mainOffering!=null and quoteBean.offerConfigurations.get(0).isOffer()}" required="true">
+
+                                        <p:tree value="#{quoteBean.offersTree}" var="node" nodeVar="treeNode" style="width: 100%">
+                                            <p:treeNode type="ServiceList">
+                                                <h:outputText value="#{messages['quote.serviceList']}" />
+                                            </p:treeNode>
+                                            <p:treeNode type="ProductList">
+                                                <h:outputText value="#{messages['quote.productList']}" />
+                                            </p:treeNode>
+                                            <p:treeNode type="OfferTemplate">
+                                                <h:outputText value="#{node.codeAndDescription}" />
+                                            </p:treeNode>
+                                            <p:treeNode type="ServiceTemplate">
+                                                <p:selectBooleanCheckbox value="#{node.selected}" onchange="onTreeNodeSelection()" disabled="#{node.mandatory}" rendered="#{quoteBean.quoteEditable}" />
+                                                <h:outputText value="#{node.codeAndDescription}" />
+                                            </p:treeNode>
+                                            <p:treeNode type="ProductTemplate">
+                                                <p:selectBooleanCheckbox value="#{node.selected}" onchange="onTreeNodeSelection()" disabled="#{node.mandatory}" rendered="#{quoteBean.quoteEditable}" />
+                                                <h:outputText value="#{node.codeAndDescription}" />
+                                            </p:treeNode>
+                                        </p:tree>
+                                    </hftl:decorateFormField>
+                                </h:panelGroup>
+
+
+                                <h:panelGroup id="offerConfigurations">
+
+                                    <p:panel header="#{messages[quoteBean.offerConfigurations.get(0).isOffer()?'quote.offerCharacteristics':'quote.productCharacteristics']}"
+                                        rendered="#{quoteBean.offerConfigurations!=null}">
+
+                                        <p:tabView id="configTab">
+
+                                            <c:forEach items="#{quoteBean.offerConfigurations}" var="itemConfiguration" varStatus="itemStatus">
+
+                                                <p:tab title="#{itemConfiguration.isOffer()?messages['quote.subscriptionTab']:itemConfiguration.codeAndDescription}">
+
+                                                    <hftl:decorateFormField fieldId="subscriptionDate_#{itemStatus.index}"
+                                                        label="#{messages['quote.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
+                                                        componentWidth="15">
+                                                        <p:calendar id="subscriptionDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
+                                                            required="#{itemConfiguration.isMain()}" rendered="#{quoteBean.quoteEditable}" pattern="#{paramBean.dateFormat}">
+                                                            <p:ajax event="dateSelect" listener="#{quoteBean.onMainCharacteristicsSet}"
+                                                                update="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                partialSubmitFilter=":not([name*='omitFromSubmit'])" />
+                                                            <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
+                                                            <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName}" />
+                                                        </p:calendar>
+
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}" styleClass="field-value"
+                                                            rendered="#{!(quoteBean.quoteEditable)}">
+                                                            <f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+                                                        </h:outputText>
+                                                    </hftl:decorateFormField>
+
+
+                                                    <h:panelGroup id="renewRulePanel" rendered="#{itemConfiguration.isOffer()}">
+
+                                                        <hftl:decorateFormField fieldId="initialyActiveFor_#{itemStatus.index}" label="#{messages['subscription.initialyActiveFor']}"
+                                                            componentWidth="10">
+                                                            <p:spinner id="initialyActiveFor_#{itemStatus.index}"
+                                                                value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]}" size="2" min="1"
+                                                                rendered="#{quoteBean.quoteEditable}">
+                                                                <p:ajax update="renewRulePanel" event="change" />
+                                                            </p:spinner>
+                                                            <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]}" styleClass="field-value"
+                                                                rendered="#{!(quoteBean.quoteEditable)}">
+                                                            </h:outputText>
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="initialyActiveForUnit_#{itemStatus.index}" label="#{messages['subscription.initialyActiveForUnit']}"
+                                                            componentWidth="10">
+                                                            <p:selectOneMenu id="initialyActiveForUnit_#{itemStatus.index}"
+                                                                value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT]}"
+                                                                required="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}"
+                                                                disabled="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]==null}"
+                                                                rendered="#{quoteBean.quoteEditable}">
+                                                                <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                    itemLabel="#{messages[enumElement.label]}" />
+                                                                <f:converter converterId="enumConverter" />
+                                                                <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" />
+                                                            </p:selectOneMenu>
+
+                                                            <h:outputText value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT].label]}"
+                                                                styleClass="field-value"
+                                                                rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT]!=null and !(quoteBean.quoteEditable)}">
+                                                            </h:outputText>
+                                                        </hftl:decorateFormField>
+
+
+                                                        <h:panelGroup id="autoRenewPanel" rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}">
+                                                            <hftl:decorateFormField fieldId="autoRenew_#{itemStatus.index}" label="#{messages['subscription.autoRenew']}" componentWidth="10">
+                                                                <p:selectBooleanCheckbox id="autoRenew_#{itemStatus.index}"
+                                                                    value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW]}" rendered="#{quoteBean.quoteEditable}">
+                                                                    <p:ajax update="autoRenewPanel" event="change" />
+                                                                </p:selectBooleanCheckbox>
+
+                                                                <h:outputText
+                                                                    value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW].toString()=='true'?'commons.yes':'commons.no']}"
+                                                                    styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}">
+                                                                </h:outputText>
+                                                            </hftl:decorateFormField>
+
+                                                            <h:panelGroup rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW]}">
+                                                                <hftl:decorateFormField fieldId="renewFor_#{itemStatus.index}" label="#{messages['subscription.renewFor']}" componentWidth="5">
+                                                                    <p:spinner id="renewFor_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR]}" size="2" min="1" required="true"
+                                                                        rendered="#{quoteBean.quoteEditable}">
+                                                                    </p:spinner>
+                                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR]}" styleClass="field-value"
+                                                                        rendered="#{!(quoteBean.quoteEditable)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+                                                                <hftl:decorateFormField fieldId="renewForUnit_#{itemStatus.index}" label="#{messages['subscription.renewForUnit']}" componentWidth="10">
+                                                                    <p:selectOneMenu id="renewForUnit_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR_UNIT]}" required="true"
+                                                                        rendered="#{quoteBean.quoteEditable}">
+                                                                        <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                            itemLabel="#{messages[enumElement.label]}" />
+                                                                        <f:converter converterId="enumConverter" />
+                                                                        <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" />
+                                                                    </p:selectOneMenu>
+
+                                                                    <h:outputText value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR_UNIT].label]}"
+                                                                        styleClass="field-value"
+                                                                        rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR_UNIT]!=null and !(quoteBean.quoteEditable)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+
+
+                                                                <hftl:decorateFormField fieldId="daysNotifyBeforeRenew_#{itemStatus.index}" label="#{messages['subscription.renewNotifyBefore']}"
+                                                                    componentWidth="15">
+                                                                    <p:spinner id="daysNotifyBeforeRenew_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL]}" size="2" min="1"
+                                                                        rendered="#{quoteBean.quoteEditable}">
+                                                                    </p:spinner>
+                                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL]}"
+                                                                        styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+
+                                                                <hftl:decorateFormField fieldId="extendEndAgreement_#{itemStatus.index}" label="#{messages['subscription.extendAgreementPeriod']}"
+                                                                    componentWidth="15">
+                                                                    <p:selectBooleanCheckbox id="extendEndAgreement_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD]}"
+                                                                        rendered="#{quoteBean.quoteEditable}">
+                                                                    </p:selectBooleanCheckbox>
+
+                                                                    <h:outputText
+                                                                        value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD].toString()=='true'?'commons.yes':'commons.no']}"
+                                                                        styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+                                                            </h:panelGroup>
+
+                                                            <hftl:decorateFormField fieldId="endOfTermAction_#{itemStatus.index}" label="#{messages['subscription.endOfTermAction']}"
+                                                                componentWidth="15">
+                                                                <p:selectOneMenu id="endOfTermAction_#{itemStatus.index}"
+                                                                    value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION]}" required="true"
+                                                                    rendered="#{quoteBean.quoteEditable}">
+                                                                    <f:selectItems value="#{EndOfTermActionEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                        itemLabel="#{messages[enumElement.label]}" />
+                                                                    <f:converter converterId="enumConverter" />
+                                                                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" />
+                                                                    <p:ajax update="renewTerminationReasonPanel" event="change" />
+                                                                </p:selectOneMenu>
+
+                                                                <h:outputText value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION].label]}"
+                                                                    styleClass="field-value"
+                                                                    rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION]!=null and !(quoteBean.quoteEditable)}">
+                                                                </h:outputText>
+                                                            </hftl:decorateFormField>
+
+                                                            <h:panelGroup id="renewTerminationReasonPanel">
+                                                                <hftl:decorateFormField fieldId="endOfTermReason_#{itemStatus.index}" label="#{messages['subscription.endOfTermTerminationReason']}"
+                                                                    componentWidth="15"
+                                                                    rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION]==EndOfTermActionEnum.TERMINATE}">
+                                                                    <p:selectOneMenu id="endOfTermReason_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON]}" required="true"
+                                                                        rendered="#{quoteBean.quoteEditable}">
+                                                                        <f:selectItem itemLabel="" itemValue="" />
+                                                                        <f:selectItems value="#{terminationReasonBean.listAll()}" var="elem" itemLabel="#{elem.descriptionOrCode}"
+                                                                            itemValue="#{elem.code}" />
+                                                                    </p:selectOneMenu>
+
+                                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON]}"
+                                                                        styleClass="field-value"
+                                                                        rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON]!=null and !(quoteBean.quoteEditable)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+                                                            </h:panelGroup>
+                                                        </h:panelGroup>
+
+                                                    </h:panelGroup>
+
+
+                                                    <hftl:decorateFormField fieldId="subscriptionEndDate_#{itemStatus.index}"
+                                                        label="#{messages['quote.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}">
+                                                        <p:calendar id="subscriptionEndDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
+                                                            pattern="#{paramBean.dateFormat}" rendered="#{quoteBean.quoteEditable}">
+                                                            <p:ajax event="dateSelect" listener="#{quoteBean.onMainCharacteristicsSet}"
+                                                                update="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                partialSubmitFilter=":not([name*='omitFromSubmit'])" />
+                                                            <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
+                                                            <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName}" />
+                                                        </p:calendar>
+
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}" styleClass="field-value"
+                                                            rendered="#{!(quoteBean.quoteEditable)}">
+                                                            <f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+                                                        </h:outputText>
+                                                    </hftl:decorateFormField>
+
+                                                    <hftl:decorateFormField fieldId="subscriptionCode_#{itemStatus.index}"
+                                                        label="#{messages['quote.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_CODE.characteristicName)]}" rendered="#{itemConfiguration.isOffer()}">
+                                                        <p:inputText id="subscriptionCode_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}"
+                                                            rendered="#{quoteBean.quoteEditable}">
+                                                            <p:ajax update=":quoteForm:tabView:configTab:cf_#{itemStatus.index}_panel"
+                                                                listener="#{quoteBean.updateCFEntityCode(itemConfiguration, CharacteristicsEnum.SUBSCRIPTION_CODE)}" event="change" partialSubmit="true"
+                                                                process="@this" />
+                                                        </p:inputText>
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}" styleClass="field-value"
+                                                            rendered="#{!quoteBean.quoteEditable}" />
+                                                    </hftl:decorateFormField>
+
+                                                    <hftl:decorateFormField fieldId="productInstanceCode_#{itemStatus.index}"
+                                                        label="#{messages['quote.config.'.concat(CharacteristicsEnum.PRODUCT_INSTANCE_CODE.characteristicName)]}"
+                                                        rendered="#{itemConfiguration.isProduct()}">
+                                                        <p:inputText id="productInstanceCode_#{itemStatus.index}"
+                                                            value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}" rendered="#{quoteBean.quoteEditable}">
+                                                            <p:ajax update=":quoteForm:tabView:configTab:cf_#{itemStatus.index}_panel"
+                                                                listener="#{quoteBean.updateCFEntityCode(itemConfiguration, CharacteristicsEnum.PRODUCT_INSTANCE_CODE)}" event="change"
+                                                                partialSubmit="true" process="@this" />
+                                                        </p:inputText>
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}" styleClass="field-value"
+                                                            rendered="#{!(quoteBean.quoteEditable)}" />
+                                                    </hftl:decorateFormField>
+
+                                                    <hftl:decorateFormField fieldId="quantity_#{itemStatus.index}"
+                                                        label="#{messages['quote.config.'.concat(CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY.characteristicName)]}"
+                                                        rendered="#{!itemConfiguration.isOffer()}">
+                                                        <p:inputText id="quantity_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY]}"
+                                                            converter="javax.faces.BigDecimal" required="true" rendered="#{quoteBean.quoteEditable}" />
+                                                        <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SERVICE_PRODUCT_QUANTITY]}" converter="javax.faces.BigDecimal"
+                                                            styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}" />
+                                                    </hftl:decorateFormField>
+
+                                                    <div class="clearLeft"></div>
+                                                    <h:panelGroup id="cf_#{itemStatus.index}_panel">
+                                                        <!-- custom fields -->
+                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) == 1}">
+                                                            <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                                messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
+                                                        </c:if>
+                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) > 1}">
+                                                            <p:tabView>
+                                                                <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                                    messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
+                                                            </p:tabView>
+                                                        </c:if>
+                                                    </h:panelGroup>
+                                                </p:tab>
+                                            </c:forEach>
+                                        </p:tabView>
+                                    </p:panel>
+                                </h:panelGroup>
+
+                            </p:outputPanel>
+
+
+                            <h:panelGroup layout="block" styleClass="form-panel-actions">
+                                <p:commandButton value="#{messages['quote.saveQuoteItem']}" action="#{quoteBean.saveQuoteItem()}"
+                                    update="quoteItemMessages :quoteForm:tabView:quoteItems :quoteForm:tabView:quoteItemDetails" rendered="#{quoteBean.quoteEditable}" process="@this quoteItemDetails"
+                                    partialSubmit="true" partialSubmitFilter=":not([name*='omitFromSubmit'])" />
+                                <p:commandButton value="#{messages['action.cancel']}" action="#{quoteBean.cancelQuoteItemEdit}"
+                                    update="quoteItemMessages :quoteForm:tabView:quoteItems :quoteForm:tabView:quoteItemDetails" rendered="#{quoteBean.quoteEditable}" process="@this" />
+                            </h:panelGroup>
+                        </p:panel>
+                    </h:panelGroup>
+                </p:tab>
+                <hftl:displayWorkflowsHistory entity="#{quoteBean.entity}" />
+            </p:tabView>
+
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+
+
+                <p:commandButton value="#{messages['quote.sendToProcess']}" action="#{quoteBean.sendToProcess()}" process="@this" immediate="true" update=":quoteForm:messages @form" ajax="false"
+                    rendered="#{quoteBean.workflowEnabled and !quoteBean.entity.transient and quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS}" />
+                <p:commandButton value="#{messages['quote.createInvoice']}" action="#{quoteBean.createInvoice()}" process="@this" immediate="true" update=":quoteForm:messages @form" ajax="false"
+                    rendered="#{!quoteBean.entity.transient and (quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS or quoteBean.entity.status==QuoteStatusEnum.PENDING)}" />
+                <p:commandButton value="#{messages['quote.placeOrder']}" action="#{quoteBean.placeOrder()}" process="@this" immediate="true" update=":quoteForm:messages @form" ajax="false"
+                    rendered="#{!quoteBean.entity.transient and (quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS or quoteBean.entity.status==QuoteStatusEnum.PENDING)}" />
+
+            </ui:define>
+
+        </hftl:formPanel>
+    </ui:define>
+</ui:composition>

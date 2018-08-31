@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
+    template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{scriptInstanceBean.objectId}" />
+            <f:event type="preRenderView" listener="#{scriptInstanceBean.initCompilationErrors}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="scriptInstances" value="#{messages['menu.scriptInstances']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['scriptInstance.panel']}"
+					disabled="true" rendered="#{scriptInstanceBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['scriptInstance.panel']} - #{scriptInstanceBean.entity.code}"
+					disabled="true" rendered="#{!scriptInstanceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+            <a href='https://www.assembla.com/spaces/meveo-enterprise/wiki/Scripts' target='_blank'>Help ?</a>
+        </p:panel>
+        <hftl:formPanel label="#{messages['scriptInstance.panel']}" formId="scriptInstanceForm" backingBean="#{scriptInstanceBean}" showFormButtons="false">
+            <h:panelGroup rendered="#{scriptInstanceBean.entity.isError()}">
+                <div class="ui-messages ui-widget">
+                    <div class="ui-messages-error ui-corner-all">
+                        <span class="ui-messages-error-icon"></span>
+                        <ul>
+                            <li><h:outputText value="#{messages['scriptInstance.compilationFailed']}" styleClass="ui-messages-error-summary" /></li>
+                        </ul>
+                    </div>
+                </div>
+            </h:panelGroup>
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" componentWidth="35" size="60" doNotShowOnNew="true" disabled="true" />
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:formField label="#{messages['scriptInstanceCategory']}" field="scriptInstanceCategory" valueLabelField="code" listBean="#{scriptInstanceCategoryListBean}" />
+            <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" componentWidth="15" required="true" />
+            <hftl:decorateFormField label="#{messages['scriptInstance.script']}" fieldId="codeMirror" componentWidth="100">
+                <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}" lineNumbers="true" required="true" />
+                <h:panelGroup layout="block" styleClass="form-panel-actions">
+                    <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{scriptInstanceBean.testCompilation}" update="@form" />
+                </h:panelGroup>
+            </hftl:decorateFormField>
+            <h:panelGroup id="scriptErrors">
+                <hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true"
+                    rendered="#{scriptInstanceBean.entity.isError()}">
+                    <p:dataTable id="entityActions" var="entity" value="#{scriptInstanceBean.entity.scriptErrors}" paginator="true" rows="10" sortBy="#{entity.lineNumber}"
+                        sortField="lineNumber" paginatorAlwaysVisible="false"
+                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10"
+                        lazy="false" styleClass="custom-grid" reflow="true">
+                        <hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%"/>
+                        <hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" width="15%" />
+                        <hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
+                    </p:dataTable>
+                </hftl:decorateFormField>
+            </h:panelGroup>
+            <hftl:formField label="#{messages['scriptInstance.executionRoles']}" field="executionRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.execRolesDM}"
+                valueLabelField="name" componentWidth="50" />
+            <hftl:formField label="#{messages['scriptInstance.sourcingRoles']}" field="sourcingRoles" listType="pickUpList" dualListModel="#{scriptInstanceBean.sourcRolesDM}"
+                valueLabelField="name" componentWidth="50" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!scriptInstanceBean.entity.transient and scriptInstanceBean.getPartOfModules() != null and scriptInstanceBean.getPartOfModules() != ''}">
+                <h:outputText value="#{scriptInstanceBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
+            
+            <hf:formButtons backingBean="#{scriptInstanceBean}" edit="#{scriptInstanceBean.edit}" ajaxSubmit="true"
+                execute="#{scriptInstanceBean.entity.id!=null and !scriptInstanceBean.entity.error}" executeLabel="#{messages['action.execute']}" killConversationOnSave="false" killConversationOnBack="false" />
+        </hftl:formPanel>
+        <p:dataTable var="log" value="#{scriptInstanceBean.getLogs()}" rendered="#{!empty(scriptInstanceBean.getLogs())}">
+            <p:column headerText="Logs">
+                <h:outputText value="#{log}" />
+            </p:column>
+        </p:dataTable>
+    </ui:define>
+</ui:composition>

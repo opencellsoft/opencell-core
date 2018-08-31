@@ -1,0 +1,170 @@
+/* Menu Button */
+#menu-button {
+	height: 21px;
+}
+
+#menu-button i {
+	font-size: 20px;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+	display: inline-block;
+}
+
+/*Fixed Topbar Menu Button*/
+.FixedTopbar #menu-button {
+	float: left;
+	display: inline-block;
+	padding: 16px 20px 15px;
+	margin: -15px 0 -15px 10px;
+	border-right: solid 1px #2f5582;
+	color: green;
+	cursor: pointer;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.FixedTopbar #menu-button:hover, .FixedTopbar #menu-button:active {
+	background-color: #0d2542;
+}
+
+.FixedTopbar #menu-button.active i {
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	transform: rotate(180deg);
+	color: #cd2026;
+}
+
+.FixedTopbar #menu-button.active {
+	background-color: #0d2542;
+}
+
+/* MENU ----------------------------------------------------------------------------------*/
+/* OpencellMega Menu */
+/*Layout Menu Cover */
+.OpencellMegaMenu #layout-menu-cover {
+	overflow: hidden;
+	/*margin: 0 -25px 0px -25px;*/
+	clear: both;
+	height: 0;
+	/*display: block;*/
+}
+
+.OpencellMegaMenu #layout-menu-cover.active {
+	background-color: #002050;
+	height: auto;
+	max-height: 470px;
+	overflow-y: auto;
+	padding: 0 15px 10px 15px;
+	border-top: 1px solid rgba(0, 33, 82, .1);
+	border-bottom: 1px solid rgba(0, 33, 82, .1);
+}
+
+/*Layout Menu */
+.OpencellMegaMenu .layout-menu {
+	width: auto;
+	height: auto;
+	margin: 0;
+	display: block;
+	padding: 0 12px;
+	float: left;
+	opacity: 0;
+	-webkit-transition: all 0.7s ease;
+	-moz-transition: all 0.7s ease;
+	-ms-transition: all 0.7s ease;
+	-o-transition: all 0.7s ease;
+	transition: all 0.7s ease;
+}
+
+.OpencellMegaMenu #layout-menu-cover.active .layout-menu {
+	opacity: 1;
+	margin-top: 25px;
+}
+
+/* first node */
+.OpencellMegaMenu .layout-menu > li {
+	width: 210px;
+	float: left;
+	margin: 0 40px 20px 0;
+	overflow: hidden;
+}
+
+.OpencellMegaMenu .layout-menu > li > a {
+	width: 210px;
+	padding: 10px 0;
+	display: block;
+	font-family: "Roboto", 'Source Sans Pro', "Arial", sans-serif;
+	color: #fff;
+	font-size: 18px;
+	font-weight: 700;
+	text-transform: uppercase;
+	text-decoration: none;
+	border-bottom: solid 1px rgba(0, 0, 0, 0.3);
+	margin-bottom: 8px;
+	cursor: pointer;
+}
+
+.OpencellMegaMenu .layout-menu > li > a i {
+	font-size: 16px;
+	float: left;
+	margin-right: 10px;
+}
+
+/* second node */
+.OpencellMegaMenu .layout-menu > li ul {
+	margin: 0;
+	padding: 0;
+}
+
+.OpencellMegaMenu .layout-menu > li ul li {
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+
+.OpencellMegaMenu .layout-menu > li ul li a {
+	color: #fff;
+	font-size: 16px;
+	font-family: "Roboto", 'Source Sans Pro', "Arial", sans-serif;
+	text-decoration: none;
+	padding: 4px 0 2px;
+	display: inline-block;
+	border-bottom: solid 1px transparent;
+	cursor: pointer;
+}
+
+.OpencellMegaMenu .layout-menu > li ul li a:hover,
+.OpencellMegaMenu .layout-menu > li ul li a:focus {
+	border-bottom: dotted 1px rgba(0, 0, 0, 0.1);
+}
+
+.OpencellMegaMenu .layout-menu > li ul li a i {
+	float: left;
+	margin-right: 10px;
+	font-size: 15px;
+	width: 15px;
+}
+
+/* third and more nodes */
+.OpencellMegaMenu .layout-menu > li ul li ul {
+	margin-left: 4px;
+	padding-left: 12px;
+	border-left: dotted 1px rgba(0, 0, 0, 0.1);
+	height: 0;
+	overflow: hidden;
+}
+
+.OpencellMegaMenu .layout-menu > li ul li ul.active-menu {
+	height: auto;
+}
+
+#layout-topbar {
+	padding-bottom: 10px !important;
+}

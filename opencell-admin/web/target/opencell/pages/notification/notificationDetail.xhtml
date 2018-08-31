@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{scriptNotificationBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="notifications" value="#{messages['menu.notifications']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['entity.notification']}"
+					disabled="true" rendered="#{scriptNotificationBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['entity.notification']} - #{scriptNotificationBean.entity.code}"
+					disabled="true" rendered="#{!scriptNotificationBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+		
+		<hftl:entityPopup id="scriptInstancePopup"
+			header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{scriptNotificationBean.entity.scriptInstance}"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":notificationForm:scriptInstanceSelectId :notificationForm:scriptInstanceSelectId_text">
+		</hftl:entityPopup>
+		
+		<hftl:formPanel formId="notificationForm"
+			label="#{messages['menu.notification']}"
+			backingBean="#{scriptNotificationBean}" columns="2" showEnableDisableButton="true">
+			<hftl:formField label="#{messages['entity.code']}" field="code"
+				required="true" />
+			<hftl:formField
+				label="#{messages['entity.notification.classNameFilter']}"
+				field="classNameFilter" required="true" size="60" maxlength="255" listenerUpdate="eventTypeFilter"
+                autocompleteBean="#{scriptNotificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
+			<hftl:formField id="eventTypeFilter" 
+				label="#{messages['entity.notification.eventTypeFilter']}"
+				field="eventTypeFilter" required="true" listValues="#{scriptNotificationBean.getNotificationEventTypeFilters()}"/>
+			<hftl:formField label="#{messages['entity.notification.elFilter']}"
+				field="elFilter" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>
+			<hftl:formField label="#{messages['notification.priority']}"
+							field="priority" />
+			<hftl:formField id="scriptInstanceSelectId"
+										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
+										valueLabelField="code" required="true" popup="true"
+										popupId="scriptInstancePopup" />
+										
+			<hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />  
+				
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+                field="disabled" isMessage="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!scriptNotificationBean.entity.transient}">
+               <h:outputText value="#{scriptNotificationBean.getPartOfModules()}" />
+            </hftl:decorateFormField>    
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

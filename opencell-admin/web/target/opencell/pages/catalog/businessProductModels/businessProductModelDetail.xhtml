@@ -1,0 +1,138 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="businessProductModelId"
+				value="#{businessProductModelBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<hftl:entityPopup id="productTemplatePopup"
+			header="#{messages['productTemplate.title']}"
+			updateField=":moduleForm:productSelectId_entity"
+			selection="#{businessProductModelBean.entity.productTemplate}"
+			backingBean="#{productTemplateListBean}"
+			dataModel="#{productTemplateListBean.lazyDataModelNoBPM}"
+			width="1000" searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="businessProductModels"
+					value="#{messages['menu.businessProductModels']}" />
+				<p:menuitem
+					value="#{messages['commons.new']} #{messages['businessProductModel']}"
+					disabled="true"
+					rendered="#{businessProductModelBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['businessProductModel']} #{messages['commons.configuration']} - #{businessProductModelBean.entity.code}"
+					disabled="true"
+					rendered="#{!businessProductModelBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<ui:include src="../../admin/module/modulePopups.xhtml">
+			<ui:param name="backingBean" value="#{businessProductModelBean}" />
+		</ui:include>
+
+		<hftl:formPanel formId="moduleForm"
+			label="#{messages['businessProductModel.title']}"
+			backingBean="#{businessProductModelBean}" showFormButtons="false"
+			edit="#{!businessProductModelBean.entity.downloaded}">
+
+			<hftl:formField label="#{messages['BusinessEntity.code']}"
+				field="code" required="true" validateUnique="true" />
+			<hftl:formField label="#{messages['BusinessEntity.description']}"
+				field="description" useConverter="false" id="description" />
+
+			<hftl:formField id="productSelectId"
+				label="#{messages['productTemplate.productCode']}"
+				field="productTemplate" valueLabelField="code" required="true"
+				popup="true" popupId="productTemplatePopup"
+				rendered="#{!businessProductModelBean.entity.downloaded}" />
+
+			<hftl:decorateFormField fieldId="offerId"
+				label="#{messages['productTemplate.productCode']}" required="true"
+				rendered="#{businessProductModelBean.entity.downloaded}">
+				<h:outputText id="offerId"
+					value="#{businessProductModelBean.productTemplateCodeFromModuleSource}"
+					styleClass="field-value" />
+			</hftl:decorateFormField>
+
+			<hftl:formField id="script" label="#{messages['meveoModule.script']}"
+				field="script" valueLabelField="code" componentWidth="30"
+				popup="true" popupId="moduleScriptPopup" createEditPopup="true"
+				createEditPopupId="scriptDialog"
+				createEditPopupListenerBean="#{businessProductModelBean}"
+				createEditPopupListenerViewMethod="viewEditScript"
+				createEditPopupListenerNewMethod="newScript"
+				createEditPopupListenerUpdate=":scriptForm" />
+			<hftl:decorateFormField fiedlId="status"
+				label="#{messages['commons.status']}"
+				rendered="#{businessProductModelBean.entity.downloaded}"
+				newLine="true">
+				<h:outputText
+					value="#{messages[!businessProductModelBean.entity.installed?'meveoModule.downloaded':businessProductModelBean.entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+					styleClass="field-value"
+					rendered="#{businessProductModelBean.entity.downloaded}" />
+			</hftl:decorateFormField>
+			<hftl:formField label="#{messages['enableEntity.disabled']}"
+				doNotShowOnNew="true" allowEdit="false" field="disabled"
+				isMessage="true"
+				rendered="#{!businessProductModelBean.entity.downloaded}" />
+
+			<ui:include src="../../admin/module/moduleTree.xhtml">
+				<ui:param name="backingBean" value="#{businessProductModelBean}" />
+			</ui:include>
+
+			<ui:param name="buttons" value="true" />
+			<ui:define name="buttons">
+				<hf:formButtons killConversationOnSave="false" killConversationOnBack="false" backingBean="#{businessProductModelBean}"
+					edit="true"
+					showEditButton="#{!businessProductModelBean.entity.downloaded}"
+					showEnableDisableButton="#{!businessProductModelBean.entity.downloaded}"
+					showDeleteButton="#{!businessProductModelBean.entity.downloaded}"
+					formId="moduleId" useCustomIdParam="true">
+
+					<p:commandButton value="#{messages['meveoModule.install']}"
+						action="#{businessProductModelBean.install}" update="@all"
+						rendered="#{businessProductModelBean.entity.downloaded and !businessProductModelBean.entity.installed}" />
+					<p:commandButton value="#{messages['meveoModule.uninstall']}"
+						action="#{businessProductModelBean.uninstall}" update="@all"
+						rendered="#{businessProductModelBean.entity.downloaded and businessProductModelBean.entity.installed}">
+						<p:confirm header="#{messages['meveoModule.uninstall']}"
+							message="#{messages['meveoModule.confirmUninstall']}" />
+					</p:commandButton>
+					<p:commandButton value="#{messages['commons.disable']}"
+						rendered="#{businessProductModelBean.entity.downloaded and businessProductModelBean.entity.installed and businessProductModelBean.entity.active}"
+						action="#{businessProductModelBean.disable}" update="@form">
+						<p:confirm header="#{messages['commons.disable']}"
+							message="#{messages['meveoModule.confirmDisableAllModule']}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{messages['commons.enable']}"
+						rendered="#{businessProductModelBean.entity.downloaded and businessProductModelBean.entity.installed and businessProductModelBean.entity.disabled}"
+						action="#{businessProductModelBean.enable}" update="@form">
+						<p:confirm header="#{messages['commons.disable']}"
+							message="#{messages['meveoModule.confirmEnableAllModule']}" />
+					</p:commandButton>
+
+				</hf:formButtons>
+			</ui:define>
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

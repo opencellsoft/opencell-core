@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces"
+    xmlns:cc="http://xmlns.jcp.org/jsf/composite" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org">
+
+
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a search field with a label and a data entry control for search between two fields 
+    
+    Must be located inside a searchPanel component or have the following attributes provided if used as standalone: backingBean
+    
+    An applicable input control is determined automatically based on a field, of an entity type associated to a backing bean, type. The following field types are supported:
+        Number -  as regular text entry
+        Date - as a calendar
+
+     Attributes applicable to all types of fields
+        backingBean - backing bean associated with search. If not provided a backing bean passed to a parent searchPanel will be used.
+        label - a label
+        minField and maxField - value search between two fields. Can NOT (currently) contain "." for hierarchy of fields e.g. address.email
+        disabled - is data entry control disabled        
+       
+     Attributes applicable to Text type fields
+        size - a size attribute of inputText control
+        maxlength - a maxlength attribute of inputText control
+ 
+      Attributes applicable to Date type fields
+        datePattern - date pattern to use
+-->
+
+<ui:composition>
+    <o:importConstants type="org.meveo.util.view.FieldInformation.FieldTypeEnum" />
+
+    <c:if test="${empty(id)}">
+        <c:set var="id" value="#{minField.concat('_').concat(maxField).concat('_minmaxRange')}" />
+    </c:if>
+
+    <c:if test="${empty(disabled)}">
+        <c:set var="disabled" value="false" />
+    </c:if>
+
+    <c:if test="${empty(size)}">
+        <c:set var="size" value="20" />
+    </c:if>
+
+    <c:if test="${empty(maxlength)}">
+        <c:set var="maxlength" value="40" />
+    </c:if>
+
+    <c:if test="${empty(datePattern)}">
+        <c:set var="datePattern" value="${paramBean.dateFormat}" />
+    </c:if>
+
+    <c:if test="${empty(componentWidth)}">
+        <c:set var="componentWidth" value="${size>40?50:25}" />
+    </c:if>
+
+    <hftl:getFieldInformation backingBean="${backingBean}" fieldName="${minField}" var="fieldInfo" />
+
+    <hftl:decorateFormField fieldId="${id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+        inputWidth="#{inputWidth}">
+
+        <!--  If the value binding is a date, display a p:calendar field. -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Date}">
+            <p:calendar id="${id}" value="#{backingBean.filters['minmaxRange '.concat(minField).concat(' ').concat(maxField)]}" pattern="#{datePattern}" disabled="#{disabled}" />
+        </c:if>
+
+        <!--  If the value binding is a number display number field. -->
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Number}">
+            <p:inputText id="${id}" value="#{backingBean.filters['minmaxRange '.concat(minField).concat(' ').concat(maxField)]}" size="5" maxlength="5"
+                disabled="#{cc.parent.attrs.disabled}">
+                <f:converter converterId="${fieldInfo.numberConverter}" />
+            </p:inputText>
+        </c:if>
+    </hftl:decorateFormField>
+</ui:composition>
+</html>

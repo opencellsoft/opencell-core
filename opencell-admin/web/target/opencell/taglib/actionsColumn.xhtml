@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<!-- 
+
+    Makes part of "happy faces" component group.
+    A custom tag to create a p:column component containing buttons to manage an entity item  
+        
+    Can be used inside any p:datatable type component including hftl:datalist 
+    
+    Attributes
+        backingBean - backing bean for data action/navigation. If not provided, defaults to #{backingBean} used in hftl:datalist
+        entity - a p:datatable model iteration variable. If not provided, defaults to #{entity} - a default iteration variable of hftl:datalist
+        renderViewLink - should reder a "view" button       
+        renderEditLink - should render "edit" button
+        renderDeleteLink - should render "delete" button
+        renderEnableLink - should render "enable" button
+        renderDuplicateLink - should render "duplicate" button
+        editView - specifies view/edit link outcome.
+        backView - specifies back link outcome
+        propagateConversation - propagate conversation id in a link to an entity view 
+        renderLinkInEdit - should a link to an entity view open edit mode
+        useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation 
+        width - p:column width 
+        
+-->
+
+<ui:composition>
+
+    <c:if test="${empty propagateConversation}">
+        <c:set var="propagateConversation" value="true"/>
+    </c:if>
+    <c:if test="${empty renderViewLink}">
+        <c:set var="renderViewLink" value="false"/>
+    </c:if>
+    <c:if test="${empty renderEditLink}">
+        <c:set var="renderEditLink" value="false"/>
+    </c:if>
+    <c:if test="${empty renderDeleteLink}">
+        <c:set var="renderDeleteLink" value="true"/>
+    </c:if>
+    <c:if test="${empty renderEnableLink}">
+        <c:set var="renderEnableLink" value="false"/>
+    </c:if>
+    <c:if test="${empty renderDuplicateLink}">
+        <c:set var="renderDuplicateLink" value="false"/>
+    </c:if>
+    <c:if test="${empty editView}">
+        <c:set var="editView" value="#{backingBean.getEditViewName()}"/>
+    </c:if>
+
+    <c:if test="${empty width}">
+        <c:set var="width" value="#{(renderEnableLink or renderDuplicateLink)?100:60}"/>
+    </c:if>
+
+    <c:if test="${empty objectIdParamName}">
+        <c:set var="objectIdParamName" value="objectId"/>
+    </c:if>
+
+    <c:if test="${useCustomIdParam}">
+        <c:set var="objectIdParamName" value="#{backingBean.idParameterName}"/>
+    </c:if>
+
+    <p:column exportable="false" toggleable="false" width="#{width}">
+        <f:facet name="header">
+            <h:outputText value="#{messages['commons.actions']}"/>
+        </f:facet>
+
+        <p:button id="#{resultsId}viewlink" outcome="#{editView}"
+                  icon="ui-icon-search" rendered="#{renderViewLink}">
+            <f:param name="#{objectIdParamName}" value="#{entity.id}"/>
+            <f:param name="edit" value="false"/>
+            <c:if test="${propagateConversation}">
+                <f:param name="cid"
+                         value="#{javax.enterprise.context.conversation.id}"/>
+            </c:if>
+            <c:if test="${not empty backView}">
+                <f:param name="backView"
+                         value="#{backView}"/>
+            </c:if>
+            <c:if test="${not empty backEntityId}">
+                <f:param name="backEntityId" value="#{backEntityId}"/>
+            </c:if>
+            <c:if test="${not empty backTab}">
+                <f:param name="backTab" value="#{backTab}"/>
+            </c:if>
+            <c:if test="${not empty backMainTab}">
+                <f:param name="backMainTab" value="#{backMainTab}"/>
+            </c:if>
+        </p:button>
+
+        <p:tooltip for="#{resultsId}editlink"
+                   value="#{messages['commons.edit']}" showEffect="slide"
+                   hideEffect="slide"/>
+        <p:button id="#{resultsId}editlink" outcome="#{editView}"
+                  icon="ui-icon-document" rendered="#{renderEditLink}">
+            <f:param name="#{objectIdParamName}" value="#{entity.id}"/>
+            <f:param name="edit" value="true"/>
+            <c:if test="${propagateConversation}">
+                <f:param name="cid"
+                         value="#{javax.enterprise.context.conversation.id}"/>
+            </c:if>
+            <c:if test="${not empty backView}">
+                <f:param name="backView"
+                         value="#{backView}"/>
+            </c:if>
+        </p:button>
+
+        <p:commandButton id="#{resultsId}duplicatelink" icon="ui-icon-plus" rendered="#{renderDuplicateLink and backingBean.canUserUpdateEntity()}"
+                         action="#{backingBean.duplicate()}" update="@form">
+            <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}"/>
+            <c:if test="${propagateConversation}">
+                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+            </c:if>
+            <p:confirm header="#{messages['commons.duplicate']}" message="#{messages['commons.confirmDuplicate']}"/>
+        </p:commandButton>
+
+        <p:commandButton id="#{resultsId}enablelink" icon="ui-icon-circle-check"
+                         rendered="#{renderEnableLink and entity.disabled and backingBean.canUserUpdateEntity()}" action="#{backingBean.enable()}" update="@form">
+            <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}"/>
+            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}"/>
+        </p:commandButton>
+
+        <p:commandButton id="#{resultsId}disablelink" icon="ui-icon-circle-close"
+                         rendered="#{renderEnableLink and not entity.disabled and backingBean.canUserUpdateEntity()}" action="#{backingBean.disable()}" update="@form">
+            <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}"/>
+            <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}"/>
+        </p:commandButton>
+
+
+        <p:remoteCommand id="remoteDeleteButton" actionListener="#{backingBean.delete}" name="#{resultsId}doDelete"
+                         update="@form" rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}"/>
+        <p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash" oncomplete="#{resultsId}doDelete()"
+                         rendered="#{renderDeleteLink and backingBean.canUserUpdateEntity()}">
+            <f:setPropertyActionListener target="#{backingBean.entity}" value="#{entity}"/>
+            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert"/>
+        </p:commandButton>
+        <ui:insert/>
+    </p:column>
+</ui:composition>
+
+</html>

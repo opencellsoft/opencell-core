@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" template="/layout/template.xhtml"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{multiLanguageFieldListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem outcome="multiLanguageFields" value="#{messages['menu.multiLanguageFields']}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <o:importFunctions type="org.meveo.commons.utils.ReflectionUtils" var="ref" />
+
+        <hftl:searchPanel backingBean="#{multiLanguageFieldListBean}" columns="3" label="#{messages['multiLanguageFields.search']}" renderNewButton="false" ajaxUpdateIds="entityList entityDialog">
+            <hftl:decorateFormField label="#{messages['multiLanguageFields.objectType']}">
+                <p:selectOneMenu value="#{multiLanguageFieldListBean.entityClass}" disabled="#{disabled}">
+                    <f:selectItems value="#{multiLanguageFieldListBean.multiLanguageClasses}" var="listVal" itemValue="#{listVal}" itemLabel="#{ref:getHumanClassName(listVal.simpleName)}" />
+                    <hftl:objectConverter />
+                    <p:ajax update="entityList entityDialog" listener="#{multiLanguageFieldListBean.changeEntityClass}" event="change" />
+                </p:selectOneMenu>
+            </hftl:decorateFormField>
+            <hftl:decorateFormField label="#{messages['businessEntity.code']}">
+                <h:inputText value="#{multiLanguageFieldListBean.filters['code']}" />
+            </hftl:decorateFormField>
+        </hftl:searchPanel>
+
+        <h:panelGroup id="entityList">
+            <c:if test="#{multiLanguageFieldListBean.entityClass!=null}">
+                <h:form id="results_form" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
+                    <p:dataTable id="datatable_results" var="entity" scrollable="false" value="#{multiLanguageFieldListBean.lazyDataModel}" paginator="true" rows="20"
+                        selection="#{multiLanguageFieldListBean.selectedEntity}" selectionMode="single" sortBy="#{'sortBy'}"
+                        sortField="#{ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')?'code':'id'}"
+                        paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                        rowsPerPageTemplate="20,50,100" lazy="true" resizableColumns="true" styleClass="custom-grid" rowKey="#{entity.id}" first="#{multiLanguageFieldListBean.dataTableFirstAttribute}"
+                        reflow="true" paginatorPosition="#{paginatorPosition}">
+
+                        <p:ajax event="rowSelect" update=":entityDialog" oncomplete="PF('entityDialog').show()" />
+
+                        <p:column width="10%" headerText="#{messages['businessEntity.code']}">
+
+                            <h:outputText value="#{entity.code}" rendered="#{ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}" />
+                            <h:outputText value="#{entity.id}" rendered="#{ ! ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}" />
+                            <!--                         <c:if test="#{multiLanguageFieldListBean.canUserUpdateEntity()}"> -->
+                            <!--                             <p:commandLink value="#{entity.code}" oncomplete="PF('entityDialog').show()" update=":entityDialog"> -->
+                            <!--                                 <f:setPropertyActionListener target="#{multiLanguageFieldListBean.selectedEntity}" value="#{entity}" /> -->
+                            <!--                             </p:commandLink> -->
+                        </p:column>
+                        <c:forEach items="#{multiLanguageFieldListBean.multiLanguageFields}" var="field">
+                            <p:column width="30%" headerText="#{messages['multiLanguageFields.'.concat(field)]}">
+                                <h:outputText value="#{entity[field]}" />
+                            </p:column>
+                            <p:column width="60%" headerText="#{messages['multiLanguageFields.'.concat(field).concat('Translation')]}">
+                                <c:forEach items="#{multiLanguageFieldListBean.providerLanguages}" var="languageCode">
+                                    <h:outputText value="#{languageCode}" /> -
+                                    <h:outputText value="#{entity[field.concat('I18n')][languageCode]}" title="#{languageCode}" />
+                                    <br />
+                                </c:forEach>
+                            </p:column>
+                        </c:forEach>
+                    </p:dataTable>
+                </h:form>
+            </c:if>
+        </h:panelGroup>
+
+
+        <h:panelGroup id="entityDialog">
+            <c:if test="#{multiLanguageFieldListBean.selectedEntity!=null}">
+                <p:dialog header="#{messages['multiLanguageFields.fieldTranslations']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="entityDialog" width="90%" closable="true"
+                    position="top">
+
+                    <p:scrollPanel mode="native" style="max-height:550px;">
+                        <hftl:decorateFormPanel formId="entityForm">
+                            <ui:define name="fields">
+                                <hftl:decorateFormField label="#{messages['businessEntity.code']}" rendered="#{ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}">
+                                    <h:outputText value="#{multiLanguageFieldListBean.selectedEntity.code}" />
+                                </hftl:decorateFormField>
+                                <hftl:decorateFormField label="#{messages['baseEntity.id']}" rendered="#{! ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}">
+                                    <h:outputText value="#{multiLanguageFieldListBean.selectedEntity.id}" />
+                                </hftl:decorateFormField>
+
+                                <c:forEach items="#{multiLanguageFieldListBean.multiLanguageFields}" var="field">
+                                    <hftl:formLanguageFields backingBean="#{multiLanguageFieldListBean}" entity="#{multiLanguageFieldListBean.selectedEntity}"
+                                        label="#{messages['multiLanguageFields.'.concat(field)]}" field="#{field}" componentWidth="100" cols="170" />
+                                </c:forEach>
+                            </ui:define>
+                            <ui:define name="buttons">
+                                <p:commandButton value="#{messages['action.save']}" action="#{multiLanguageFieldListBean.updateEntity}" update="@form :results_form"
+                                    oncomplete="if (args &amp;&amp; !args.validationFailed){PF('entityDialog').hide();}" />
+                                <p:button value="#{messages['action.cancel']}" onclick="PF('entityDialog').hide(); return false;" />
+                            </ui:define>
+                        </hftl:decorateFormPanel>
+                    </p:scrollPanel>
+                </p:dialog>
+            </c:if>
+        </h:panelGroup>
+    </ui:define>
+
+</ui:composition>

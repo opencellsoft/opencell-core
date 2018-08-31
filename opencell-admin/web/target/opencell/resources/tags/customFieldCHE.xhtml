@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:cc="http://xmlns.jcp.org/jsf/composite" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+
+
+<!-- 
+    A tag to display a single custom field
+    Makes part of custom field management tag group 
+
+    Attributes
+        prefix - prefix for component to distinguish when used multiple times in save page
+        entity - entity, custom fields are related to
+        edit - edit mode
+        datePattern - date pattern for date entry/display
+        dateTimePattern - date time pattern for period date display
+        messagesId - an ID of messages component for validation messages
+        cft - custom field template
+
+ -->
+
+<cc:interface>
+    <cc:attribute name="entity" required="true" />
+    <cc:attribute name="cft" required="true" />
+    <cc:attribute name="edit" required="true" />
+    <cc:attribute name="datePattern" required="true" />
+    <cc:attribute name="dateTimePattern" required="true" />
+    <cc:attribute name="messagesId" required="true" />
+    <cc:attribute name="prefix" required="true" />
+    <cc:attribute name="disabled" default="#{!cc.attrs.entity.transient and !cc.attrs.cft.allowEdit}" />
+    <cc:attribute name="cfValueHolder" default="#{customFieldDataEntryBean.getFieldValueHolderByUUID(cc.attrs.entity.uuid)}" />
+</cc:interface>
+
+<cc:implementation>
+
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
+    <o:importFunctions type="org.meveo.model.crm.custom.CustomFieldValue" var="cfv" />
+
+
+    <c:if test="#{!cc.attrs.cft.versionable}">
+        <c:if test="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
+            <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="25" displayOneLine="false">
+                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}" entity="#{cc.attrs.entity}"
+                    datePattern="#{cc.attrs.datePattern}" disabled="#{cc.attrs.disabled}" />
+            </hftl:decorateFormField>
+        </c:if>
+
+        <c:if
+            test="#{(cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MAP or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.LIST or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MATRIX) }">
+            <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}" prefix="#{cc.attrs.prefix}"
+                datePattern="#{cc.attrs.datePattern}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}" />
+        </c:if>
+
+
+    </c:if>
+
+    <c:if test="#{cc.attrs.cft.versionable}">
+        <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">
+            <hftl:customFieldPeriods cft="#{cc.attrs.cft}" edit="#{cc.attrs.edit}" datePattern="#{cc.attrs.datePattern}" dateTimePattern="#{cc.attrs.dateTimePattern}" entity="#{cc.attrs.entity}"
+                messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}" prefix="#{cc.attrs.prefix}" clientGuiId="#{cc.clientId}"
+                periodDetailsGuiId=":#{customFieldDataEntryBean.getParentComponentId(cc.clientId).concat(':').concat(cc.attrs.prefix).concat('periodFields')}" />
+        </hftl:decorateFormField>
+    </c:if>
+
+</cc:implementation>
+</html>

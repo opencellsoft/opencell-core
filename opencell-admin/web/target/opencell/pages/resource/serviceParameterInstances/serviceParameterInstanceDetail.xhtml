@@ -1,0 +1,25 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{serviceParameterInstanceBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+
+		<hftl:formPanel label="#{messages['serviceParameterInstance.serviceParameterPanel']}" backingBean="#{serviceParameterInstanceBean}" >
+			<hftl:formField label="#{messages['serviceParameterInstance.code']}" field="code" />
+    		<hftl:formField label="#{messages['serviceParameterInstance.name']}" field="name" />
+    		<hftl:formField label="#{messages['serviceParameterInstance.value']}" field="value" />
+    		<hftl:formField label="#{messages['serviceParameterInstance.cumulativePeriods']}" field="cumulativePeriods" />
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

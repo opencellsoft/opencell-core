@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{userRoleListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.userRoles']}" outcome="roles" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['role.search']}"
+			backingBean="#{userRoleListBean}">
+			<hftl:searchField label="#{messages['role.name']}" field="name" />
+			<hftl:searchField label="#{messages['role.description']}"
+				field="description" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['role.title']}"
+			backingBean="#{userRoleListBean}" sortBy="name">
+			<hftl:column label="#{messages['role.name']}" field="name"
+				entityView="roleDetail" valueIdField="id" />
+			<hftl:column label="#{messages['role.description']}"
+				field="description" />
+			<hftl:column label="#{messages['role.permissions']}"
+				field="permissions" valueLabelField="name" isList="true" />
+
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('administrationManagement')}" />
+
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

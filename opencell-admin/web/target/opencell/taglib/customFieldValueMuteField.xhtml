@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+
+
+<!-- 
+    A tag displaying or editing a single custom field value bound to any variable
+    Makes part of custom field management tag group 
+
+    Attributes
+        cft - custom field template containing field definition
+        edit - should value be displayed, or edit control be shown
+        field - a field storing a value - any variable will do (type Object)
+        label - field label, for value validation purpose
+        datePattern - date pattern for date entry/display
+        required - if a value is required
+        placeholder - placeholder text
+ -->
+
+<ui:composition>
+    <h:outputText value="#{''}" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.STRING}">
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" size="30" maxlength="#{cft.maxValue}">
+                <c:if test="#{cft.regExp!=null}">
+                    <f:validateRegex pattern="#{cft.regExp}" />
+                </c:if>
+            </p:inputText>
+        </c:if>
+    </c:if>
+    <c:if test="#{(cft.fieldType eq CustomFieldTypeEnum.TEXT_AREA)}">
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputTextarea value="#{field}" cols="#{cols}" rows="#{rows}" required="#{required}" label="#{label}" placeholder="#{placeholder}" />
+        </c:if>
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DATE}">
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}">
+                <f:convertDateTime type="date" pattern="#{datePattern}" />
+            </h:outputText>
+        </c:if>
+        <c:if test="#{edit}">
+            <p:calendar showButtonPanel="true" pattern="#{datePattern}" value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" />
+        </c:if>
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" converter="javax.faces.Double">
+                <!--                 <f:convertNumber minFractionDigits="2" /> -->
+                <c:if test="#{cft.minValue!=null and cft.maxValue!=null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" maximum="#{cft.maxValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue!=null and cft.maxValue==null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue==null and cft.maxValue!=null}">
+                    <f:validateLongRange maximum="#{cft.maxValue}" />
+                </c:if>
+            </p:inputText>
+        </c:if>
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LONG}">
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:inputText value="#{field}" required="#{required}" label="#{label}" placeholder="#{placeholder}" converter="javax.faces.Long">
+                <!--                 <f:convertNumber integerOnly="true" /> -->
+                <c:if test="#{cft.minValue!=null and cft.maxValue!=null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" maximum="#{cft.maxValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue!=null and cft.maxValue==null}">
+                    <f:validateLongRange minimum="#{cft.minValue}" />
+                </c:if>
+                <c:if test="#{cft.minValue==null and cft.maxValue!=null}">
+                    <f:validateLongRange maximum="#{cft.maxValue}" />
+                </c:if>
+            </p:inputText>
+        </c:if>
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
+        <c:if test="#{! edit}">
+            <h:outputText value="#{field.code}" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
+                converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" queryDelay="1000" var="e"
+                itemLabel="#{e.code}" itemValue="#{e}">
+                <f:attribute name="classname" value="#{cft.entityClazz}" />
+                <p:column width="50" headerText="#{messages['BusinessEntity.code']}">
+                    <h:outputText value="#{e.code}" />
+                </p:column>
+                <p:column width="50" headerText="#{messages['BusinessEntity.description']}">
+                    <h:outputText value="#{e.description}" />
+                </p:column>
+            </p:autoComplete>
+        </c:if>
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.LIST}">
+        <c:if test="#{! edit}">
+            <h:outputText rendered="#{field!=null}" value="#{cft.listValues[field]} (#{field})" styleClass="field-value" />
+        </c:if>
+        <c:if test="#{edit}">
+            <p:selectOneMenu value="#{field}" required="#{false and required}" label="#{label}">
+                <f:selectItem itemValue="#{null}" itemLabel="#{placeholder}" />
+                <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+            </p:selectOneMenu>
+        </c:if>
+    </c:if>
+</ui:composition>
+
+</html>

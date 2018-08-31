@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{calendarListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="calendars"
+					value="#{messages['menu.calendars']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['calendar.search']}" backingBean="#{calendarListBean}" columns="1" >
+			<hftl:searchField label="#{messages['calendar.name']}" field="code" />
+			<hftl:searchField label="#{messages['calendar.type']}" field="calendarType" listValues="#{calendarListBean.calendarTypes}"/>
+			<hftl:searchField label="#{messages['calendar.description']}" field="description" size="100" />
+
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['calendar.title']}" backingBean="#{calendarListBean}" sortBy="code">
+			<hftl:column label="#{messages['calendar.name']}" field="code" />
+			<hftl:column label="#{messages['calendar.type']}" field="calendarType" isMessage="true" messagePrefix="calendar.calendarType"/>
+			<hftl:column label="#{messages['calendar.description']}" field="description" />
+			<hftl:actionsColumn permission="#{currentUser.hasRole('catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

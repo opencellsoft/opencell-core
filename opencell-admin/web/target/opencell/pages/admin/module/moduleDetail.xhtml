@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:of="http://omnifaces.org/functions"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml" xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="meveoModuleId" value="#{meveoModuleBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="meveoModules" value="#{messages['menu.meveoModules']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['meveoModule.title']}"
+					disabled="true" rendered="#{meveoModuleBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['meveoModule.title']} - #{meveoModuleBean.entity.code}"
+					disabled="true" rendered="#{!meveoModuleBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+        <ui:include src="modulePopups.xhtml">
+            <ui:param name="backingBean" value="#{meveoModuleBean}" />
+        </ui:include>
+
+
+        <hftl:formPanel formId="moduleForm" label="#{messages['meveoModule.title']}" showFormButtons="false" backingBean="#{meveoModuleBean}"
+            edit="#{!meveoModuleBean.entity.downloaded}">
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" id="description" />
+            <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.logo']}" rendered="#{!meveoModuleBean.entity.transient}">
+                <h:panelGrid columns="2" id="logo">
+                    <c:set var="pictureDestUrlList"
+                        value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${appProvider.code}/module/${meveoModuleBean.entity.logoPicture}" />
+                    <p:graphicImage url="${pictureDestUrlList}" rendered="#{not empty meveoModuleBean.entity.logoPicture}" cache="false">
+                        <f:attribute name="height" value="30"></f:attribute>
+                        <f:attribute name="width" value="30"></f:attribute>
+                    </p:graphicImage>
+                    <p:commandButton value="#{messages['commons.upload']}" partialSubmit="true" process="@this" oncomplete="PF('uploadPictureDialog').show()"
+                        rendered="#{!meveoModuleBean.entity.downloaded and !meveoModuleBean.entity.transient}"></p:commandButton>
+                </h:panelGrid>
+            </hftl:decorateFormField>
+            <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
+                createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{meveoModuleBean}" createEditPopupListenerViewMethod="viewEditScript"
+                createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
+            <hftl:decorateFormField fiedlId="status" label="#{messages['commons.status']}" rendered="#{meveoModuleBean.entity.downloaded}" newLine="true">
+                <h:outputText
+                    value="#{messages[!meveoModuleBean.entity.installed?'meveoModule.downloaded':meveoModuleBean.entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+                    styleClass="field-value" rendered="#{meveoModuleBean.entity.downloaded}" />
+            </hftl:decorateFormField>
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
+                rendered="#{!meveoModuleBean.entity.downloaded}" newLine="true" />
+            <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!meveoModuleBean.entity.transient}">
+                <h:outputText value="#{meveoModuleBean.getPartOfModules()}" />
+            </hftl:decorateFormField>
+
+            <ui:include src="moduleTree.xhtml">
+                <ui:param name="backingBean" value="#{meveoModuleBean}" />
+            </ui:include>
+
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+                <hf:formButtons backingBean="#{meveoModuleBean}" edit="true" showEditButton="#{!meveoModuleBean.entity.downloaded}"
+                    showEnableDisableButton="#{!meveoModuleBean.entity.downloaded}" showDeleteButton="#{!meveoModuleBean.entity.downloaded}" formId="moduleId"
+                    useCustomIdParam="true">
+
+                    <p:commandButton value="#{messages['meveoModule.install']}" action="#{meveoModuleBean.install}" update="@form"
+                        rendered="#{meveoModuleBean.entity.downloaded and !meveoModuleBean.entity.installed}" />
+                    <p:commandButton value="#{messages['meveoModule.uninstall']}" action="#{meveoModuleBean.uninstall}" update="@form"
+                        rendered="#{meveoModuleBean.entity.downloaded and meveoModuleBean.entity.installed}">
+                        <p:confirm header="#{messages['meveoModule.uninstall']}" message="#{messages['meveoModule.confirmUninstall']}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{messages['commons.disable']}"
+                        rendered="#{meveoModuleBean.entity.downloaded and meveoModuleBean.entity.installed and meveoModuleBean.entity.active}" action="#{meveoModuleBean.disable}"
+                        update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmDisableAllModule']}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="#{messages['commons.enable']}"
+                        rendered="#{meveoModuleBean.entity.downloaded and meveoModuleBean.entity.installed and meveoModuleBean.entity.disabled}" action="#{meveoModuleBean.enable}"
+                        update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmEnableAllModule']}" />
+                    </p:commandButton>
+
+                </hf:formButtons>
+
+                <p:commandButton id="publishModuleButton" update=":#{p:component('publishModuleDialog')}" value="#{messages['meveoModule.publishModule']}"
+                    rendered="#{not meveoModuleBean.entity.transient}" oncomplete="PF('publishModuleDialog').show()" style="margin-top:10px">
+                    <f:setPropertyActionListener value="#{null}" target="#{meveoModuleBean.meveoInstance}" />
+                </p:commandButton>
+
+            </ui:define>
+        </hftl:formPanel>
+        <p:dialog id="publishModuleDialog" styleClass="confirm-dialog" header="#{messages['meveoModule.publishModule']}" widgetVar="publishModuleDialog" width="700" modal="true">
+            <hftl:decorateFormPanel formId="publishForm" rendered="#{not meveoModuleBean.entity.transient}">
+                <ui:define name="fields">
+                    <hftl:decorateFormField fieldId="meveoInstance" label="#{messages['meveoModule.meveoInstance']}">
+                        <p:selectOneMenu value="#{meveoModuleBean.meveoInstance}" id="meveoInstance" required="true">
+                            <f:selectItem />
+                            <f:selectItems value="#{meveoInstanceListBean.listAll()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+                            <hftl:objectConverter />
+                            <p:ajax event="valueChange" update="@form" />
+                        </p:selectOneMenu>
+                    </hftl:decorateFormField>
+                </ui:define>
+                <ui:define name="buttons">
+                    <p:commandButton id="confirmOk" value="#{messages['commons.yes']}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('publishModuleDialog').hide()"
+                        action="#{meveoModuleBean.publishModule}" update=":publishForm:messages :moduleForm">
+                    </p:commandButton>
+                    <p:commandButton id="confirmKo" value="#{messages['commons.no']}" onclick="PF('publishModuleDialog').hide()" type="button" />
+                </ui:define>
+            </hftl:decorateFormPanel>
+        </p:dialog>
+        <p:dialog id="uploadPictureDialog" styleClass="confirm-dialog" header="#{messages['meveoModule.uploadPicture.header']}" widgetVar="uploadPictureDialog" width="700"
+            modal="true">
+            <h:form id="uploadPictureForm" enctype="multipart/form-data">
+                <p:messages autoUpdate="true" />
+                <div class="clearLeft">
+                    <p:fileUpload fileUploadListener="#{meveoModuleBean.handleFileUpload}" update="uploadPictureForm" multiple="false" mode="advanced" dragDropSupport="true"
+                        process="@this" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" auto="true" />
+                </div>
+                <h:panelGrid columns="2" id="picture" columnClasses="panelGrid-column50,panelGrid-column50" styleClass="panelGrid-column100">
+                    <c:set var="pictureSourceUrl"
+                        value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${appProvider.code}/module/tmp/${meveoModuleBean.tmpPicture}" />
+                    <c:set var="pictureDestUrl2"
+                        value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${appProvider.code}/module/${meveoModuleBean.entity.logoPicture}" />
+                    <p:scrollPanel mode="native" style="width:400px;height:300px">
+                        <p:imageCropper id="pic" value="#{meveoModuleBean.croppedImage}" image="${pictureSourceUrl}" minSize="30,30" maxSize="100,100" initialCoords="0,0,30,30"
+                            rendered="#{not empty meveoModuleBean.tmpPicture}" />
+                    </p:scrollPanel>
+                    <p:graphicImage url="${pictureDestUrl2}" cache="false" rendered="#{not empty meveoModuleBean.entity.logoPicture}" />
+                </h:panelGrid>
+                <div class="clearLeft">
+                    <p:commandButton id="cropButton" value="#{messages['meveoModule.crop']}" action="#{meveoModuleBean.cropLogo}" update="uploadPictureForm :moduleForm:logo"
+                        icon="ui-icon-scissors" />
+                    <p:commandButton id="closeButton" value="#{messages['commons.close']}" onclick="PF('uploadPictureDialog').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

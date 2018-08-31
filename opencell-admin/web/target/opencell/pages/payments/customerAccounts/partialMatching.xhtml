@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml">
+
+    <ui:define name="body">
+
+        <p:panel>
+            <f:facet name="header">
+                <h:outputText value="#{messages['customerAccount.transferAccountTitle']}" />
+            </f:facet>
+
+            <hftl:dataList backingBean="#{accountOperationListBean}" dataModel="#{accountOperationListBean.getPartialMatchingOps()}" edit="false" checkMany="false">
+                <hftl:column label="#{messages['accountOperation.type']}" field="accountOperation.type" />
+                <hftl:column label="#{messages['accountOperation.occCode']}" field="accountOperation.occCode" />
+                <hftl:column label="#{messages['accountOperation.occDescription']}" field="accountOperation.occDescription" />
+                <hftl:column label="#{messages['accountOperation.transactionDate']}" field="accountOperation.transactionDate" />
+                <hftl:column label="#{messages['accountOperation.dueDate']}" field="accountOperation.dueDate" />
+                <p:column headerText="#{messages['accountOperation.debit']}">
+                    <h:outputText value="#{entity.accountOperation.amount}" rendered="#{entity.accountOperation.transactionCategory == 'DEBIT'}">
+                        <f:converter converterId="bigDecimal4DigitsConverter" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{messages['accountOperation.credit']}">
+                    <h:outputText value="#{entity.accountOperation.amount}" rendered="#{entity.accountOperation.transactionCategory == 'CREDIT'}">
+                        <f:converter converterId="bigDecimal4DigitsConverter" />
+                    </h:outputText>
+                </p:column>
+                <hftl:column label="#{messages['accountOperation.matchingStatus']}" field="accountOperation.matchingStatus.label" isMessage="true" />
+                <p:column styleClass="actions-column" headerText="#{messages['commons.actions']}">
+                    <h:commandLink id="selectPartialOcc" value="#{messages['matchingCode.selectForPartialMatching']}" rendered="#{entity.partialMatchingAllowed}"
+                        action="#{accountOperationListBean.partialMatching(entity)}" />
+                    <!--  <p:toolTip for="selectPartialOcc" value="#{messages['matching.selectPartialOcc']}"/>-->
+                </p:column>
+            </hftl:dataList>
+        </p:panel>
+    </ui:define>
+</ui:composition>

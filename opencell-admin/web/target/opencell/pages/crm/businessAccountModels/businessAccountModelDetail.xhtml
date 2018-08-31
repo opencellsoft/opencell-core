@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
+    template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="businessAccountModelId" value="#{businessAccountModelBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+				<p:menuitem outcome="businessAccountModels" value="#{messages['menu.businessAccountModels']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['businessAccountModel.title']}"
+					disabled="true" rendered="#{businessAccountModelBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['businessAccountModel.title']} - #{businessAccountModelBean.entity.code}"
+					disabled="true" rendered="#{!businessAccountModelBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+        <ui:include src="../../admin/module/modulePopups.xhtml">
+            <ui:param name="backingBean" value="#{businessAccountModelBean}" />
+        </ui:include>
+
+        <hftl:formPanel formId="moduleForm" label="#{messages['businessAccountModel.title']}" backingBean="#{businessAccountModelBean}" showFormButtons="false"
+            edit="#{!businessAccountModelBean.entity.downloaded}">
+
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
+            <hftl:formField label="#{messages['businessAccountModel.type']}" field="hierarchyType" />
+            <hftl:formField id="script" label="#{messages['meveoModule.script']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="moduleScriptPopup"
+                createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{businessAccountModelBean}" createEditPopupListenerViewMethod="viewEditScript"
+                createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" />
+            <hftl:decorateFormField fiedlId="status" label="#{messages['commons.status']}" rendered="#{businessAccountModelBean.entity.downloaded}" newLine="true">
+                <h:outputText
+                    value="#{messages[!businessAccountModelBean.entity.installed?'meveoModule.downloaded':businessAccountModelBean.entity.active?'meveoModule.installedAndEnabled':'meveoModule.installedAndDisabled']}"
+                    styleClass="field-value" rendered="#{businessAccountModelBean.entity.downloaded}" />
+            </hftl:decorateFormField>
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"
+                rendered="#{!businessAccountModelBean.entity.downloaded}" />
+
+            <ui:include src="../../admin/module/moduleTree.xhtml">
+                <ui:param name="backingBean" value="#{businessAccountModelBean}" />
+            </ui:include>
+
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+                <hf:formButtons killConversationOnSave="false" killConversationOnBack="false" backingBean="#{businessAccountModelBean}" edit="true" showEditButton="#{!businessAccountModelBean.entity.downloaded}"
+                    showEnableDisableButton="#{!businessAccountModelBean.entity.downloaded}" showDeleteButton="#{!businessAccountModelBean.entity.downloaded}" formId="moduleId"
+                    useCustomIdParam="true">
+
+                    <p:commandButton value="#{messages['meveoModule.install']}" action="#{businessAccountModelBean.install}" update="@form"
+                        rendered="#{businessAccountModelBean.entity.downloaded and !businessAccountModelBean.entity.installed}" />
+                    <p:commandButton value="#{messages['meveoModule.uninstall']}" action="#{businessAccountModelBean.uninstall}" update="@form"
+                        rendered="#{businessAccountModelBean.entity.downloaded and businessAccountModelBean.entity.installed}">
+                        <p:confirm header="#{messages['meveoModule.uninstall']}" message="#{messages['meveoModule.confirmUninstall']}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{messages['commons.disable']}"
+                        rendered="#{businessAccountModelBean.entity.downloaded and businessAccountModelBean.entity.installed and businessAccountModelBean.entity.active}"
+                        action="#{businessAccountModelBean.disable}" update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmDisableAllModule']}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="#{messages['commons.enable']}"
+                        rendered="#{businessAccountModelBean.entity.downloaded and businessAccountModelBean.entity.installed and businessAccountModelBean.entity.disabled}"
+                        action="#{businessAccountModelBean.enable}" update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmEnableAllModule']}" />
+                    </p:commandButton>
+
+                </hf:formButtons>
+            </ui:define>
+        </hftl:formPanel>
+
+
+    </ui:define>
+</ui:composition>

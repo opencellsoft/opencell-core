@@ -1,0 +1,137 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{recurringChargeTemplateBean.objectId}" />	
+            <f:viewParam name="objectId" value="#{chargeTemplateBean.objectId}" />
+            <f:viewParam name="tab" value="#{recurringChargeTemplateBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+    
+	<ui:define name="body">
+
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="recurringChargeTemplates"
+					value="#{messages['menu.recurringChargeTemplates']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['recurringChargeTemplate']}"
+					disabled="true" rendered="#{recurringChargeTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['recurringChargeTemplate']} #{messages['commons.configuration']} - #{recurringChargeTemplateBean.entity.code}"
+					disabled="true" rendered="#{!recurringChargeTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel formId="reccuringChargeId" ajaxSubmit="true" submitPartialProcess=":reccuringChargeId:tabView"
+			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
+			backingBean="#{recurringChargeTemplateBean}" 
+			showEnableDisableButton="true" 
+			updateConfirmationMessage="#{recurringChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
+
+			<p:tabView id="tabView" activeIndex="#{recurringChargeTemplateBean.activeTab}">
+
+				<p:tab title="#{messages['customer.tab.information']}">
+
+                       <hftl:formField label="#{messages['chargeTemplate.code']}"
+							field="code" required="true" validateUnique="true" />
+						<hftl:formField
+							label="#{messages['recurringChargeTemplate.durationTermInMonth']}"
+							field="durationTermInMonth" />
+						<hftl:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />														
+						<hftl:formField
+							label="#{messages['recurringChargeTemplate.terminationProrata']}"
+							field="terminationProrata" />
+						<hftl:formField
+							label="#{messages['recurringChargeTemplate.applyInAdvance']}"
+							field="applyInAdvance" />
+						<hftl:formField
+							label="#{messages['recurringChargeTemplate.sharedLevel']}"
+							field="shareLevel" />
+						<hftl:formField
+							label="#{messages['chargeTemplate.inputUnitDescription']}"
+							field="inputUnitDescription" />
+						<hftl:formField
+							label="#{messages['chargeTemplate.ratingUnitDescription']}"
+							field="ratingUnitDescription" />
+						<hftl:formField
+							label="#{messages['chargeTemplate.unitMultiplicator']}"
+							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
+						<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
+							field="unitNbDecimal" />
+						<hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode" />
+												
+						<hftl:formField label="#{messages['recurringChargeTemplate.filterExpression']}"
+						   field="filterExpression" textArea="true" rows="1" maxlength="2000"/>							
+
+                        <hftl:formLanguageFields field="description" />
+                        
+						<hftl:formField id="invoiceSubCategorySelectedId"
+							label="#{messages['charge.subCategory']}"
+							field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
+<!-- 							popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
+						<hftl:formField
+							label="#{messages['recurringChargeTemplate.calendar']}"
+							field="calendar" valueLabelField="code" required="true" popup="false"
+							listBean="#{calendarBean}" />
+                        
+                        <hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
+                            field="amountEditable" />
+                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+                            field="disabled" isMessage="true" />
+                        <hftl:formField id="revenueRecognitionRuleId" label="#{messages['charge.revenueRecognitionRule']}"  
+                        field="revenueRecognitionRule" valueLabelField="code" listBean="#{revenueRecognitionRuleBean}" />
+                            
+                        <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
+                            field="edrTemplates" listType="pickUpList" valueLabelField="code"
+                            dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
+                        
+
+   						<hftl:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']} EL"
+						   field="subscriptionProrataEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.terminationProrata']} EL"
+						   field="terminationProrataEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.applyInAdvance']} EL"
+						   field="applyInAdvanceEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']} EL"
+						   field="durationTermInMonthEl" textArea="true" rows="1" maxlength="2000"/>	
+						<hftl:formField label="#{messages['recurringChargeTemplate.calendar']} EL"
+						   field="calendarCodeEl" textArea="true" rows="1" maxlength="2000"/>	
+
+				</p:tab>
+
+				<p:tab title="#{messages['pricePlanMatrix.panel']}"
+					rendered="#{chargeTemplateBean.objectId!=null}">
+					<p:panel>
+						<hftl:decorateFormField fieldId="recurringChargeCode"
+							label="#{messages['pricePlanMatrix.eventCode']} :">
+							<h:outputText id="recurringChargeCode"
+								value="#{recurringChargeTemplateBean.entity.code}"
+								disabled="true" style="font-weight:bold;" />
+						</hftl:decorateFormField>
+
+						<hftl:decorateFormField fieldId="recurringChargeDescription"
+							label="#{messages['businessEntity.description']} :">
+							<h:outputText id="recurringChargeDescription"
+								value="#{recurringChargeTemplateBean.entity.description}"
+								disabled="true" style="font-weight:bold;" />
+						</hftl:decorateFormField>
+					</p:panel>
+					<ui:include
+						src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
+				</p:tab>
+
+				<hftl:customFields backingBean="#{recurringChargeTemplateBean}"
+					messagesId=":reccuringChargeId:messages" />
+
+			</p:tabView>
+        </hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

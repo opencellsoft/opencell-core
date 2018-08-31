@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui" contentType="text/html"
+	locale="#{localeSelector.currentLocale}">
+
+	<ui:insert name="metadata" />
+
+	<html>
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+	<title>Opencell | Open Source Billing Platform</title>
+	<link rel="shortcut icon" href="#{request.contextPath}/favicon.png" />
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/stylesheet/theme.xcss" />
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/stylesheet/theme.css" />
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/stylesheet/main.css" />
+	<h:outputStylesheet library="css" name="opencell-layout.css"></h:outputStylesheet>
+	<link rel="stylesheet" type="text/css"
+		href="#{request.contextPath}/stylesheet/custom.css" />
+	<ui:insert name="head" />
+	<meta http-equiv="Refresh" content="1740; URL=login.jsf" />
+</h:head>
+
+<h:body>
+	<div id="admin-bar" class="">
+		<div id="logo">
+			<h:graphicImage name="logo.png" library="img" />
+		</div>
+		<div id="headerleft"></div>
+		<div id="headerright">
+			<ui:include src="language.xhtml" />
+			<div style="width: 30px" />
+		</div>
+	</div>
+	<!--end of admin bar -->
+
+	<div class="body login-body">
+		<ui:insert name="body" />
+	</div>
+
+	<ui:include src="loginFooter.xhtml" />
+
+	<!--<div class="footer">Opencell 5.1.1 0c636f3b9bc7f6366c2e894a27216fc6716cde49</div>-->
+	<p:ajaxStatus
+		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+		<f:facet name="start">
+			<h:graphicImage library="img" name="loading.gif" />
+		</f:facet>
+
+		<f:facet name="complete">
+			<h:outputText value="" />
+		</f:facet>
+	</p:ajaxStatus>
+
+</h:body>
+	</html>
+</f:view>

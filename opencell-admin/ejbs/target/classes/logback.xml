@@ -1,0 +1,33 @@
+<!-- https://examples.javacodegeeks.com/enterprise-java/logback/logback-rollingfileappender-example/ -->
+<!-- jboss log dir property: jboss.server.log.dir -->
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="OC-AUDIT-FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${jboss.server.log.dir}/audit_log.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${jboss.server.log.dir}/audit_log.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+
+	<logger name="org.meveo.audit.logging.handler.FileAuditHandler"
+		level="trace" additivity="false">
+		<appender-ref ref="OC-AUDIT-FILE" />
+	</logger>
+
+	<root level="trace">
+		<appender-ref ref="OC-AUDIT-FILE" />
+	</root>
+
+</configuration>

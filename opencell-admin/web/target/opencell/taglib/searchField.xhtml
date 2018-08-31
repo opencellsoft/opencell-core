@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org" xmlns:o="http://omnifaces.org/ui" xmlns:l="http://www.lapis.com/jsf/exporter"
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a search field with a label and a data entry control 
+    
+    Must be located inside a searchPanel component or have the following attributes provided if used as standalone: backingBean
+    
+    An applicable input control is determined automatically based on a field, of an entity type associated to a backing bean, type. The following field types are supported:
+        Text - as regular text entry, list of values and autocomplete
+        Number -  as regular text entry, as a spinner of numbers and a list of values
+        Boolean - as a checkbox
+        Entity - as a list of values or selection via popup search
+        Date - as a calendar
+        Enum - as a list of enum values
+
+     Attributes applicable to ALL types of fields
+        backingBean - backing bean associated with search. If not provided a backing bean passed to a parent searchPanel will be used.
+        label - a label
+        field - a field for data entry/view. Can contain "." for hierarchy of fields e.g. address.email
+        disabled - is data entry control disabled        
+       
+     Additional attributes applicable to Text type fields
+        size - a size attribute of inputText control
+        maxlength - a maxlength attribute of inputText control
+        listValues - a map of value (key) and label (value) pairs for picklist   
+        isAutocomplete and autocompleteBean and autocompleteMethod - should autocomplete be used and a bean (el expresseion) and method (string name) to use
+        listElements - a list of entities
+        valueField - use in conjunction with listElements. Since this is not an entity case
+        converter - converter (id) to apply
+        
+     Additional attributes applicable to Number type fields
+        rangeSearch - search by a range of values
+        
+     Additional attributes applicable to Boolean type fields        
+        none
+     
+     Additional attributes applicable to Date type fields
+        rangeSearch - search by a range of dates 
+        datePattern - date pattern to apply in calendar selection. If not provided, time attribute is consulted whether to add time part to a date 
+        time - should a date selection be time specific.          
+     
+     Additional attributes applicable to Enum type fields             
+        listValues - a map of value (key) and label (value) pairs for picklist
+        
+     Additional attributes applicable to Entity type fields    
+        size - a size attribute of inputText control
+        popup and popupId - entity search via a popup and associated popup id 
+        listBean - a backing bean to provide a list of entities via listAll method
+        listElements - a list of entities
+        valueLabelField - selected entity's attribute to display when entity is selected. In a list of entities used as a label attribute for list item.
+        showResetButton - reset filter value to be NULL
+-->
+
+<ui:composition>
+    <o:importConstants type="org.meveo.util.view.FieldInformation.FieldTypeEnum" />
+
+    <c:set var="fieldIdPrefix" value="#{fn:replace(field, '\\.', '_')}" />
+
+    <c:if test="${empty(disabled)}">
+        <c:set var="disabled" value="false" />
+    </c:if>
+
+    <c:if test="${empty(size)}">
+        <c:set var="size" value="20" />
+    </c:if>
+
+    <c:if test="${empty(maxlength)}">
+        <c:set var="maxlength" value="60" />
+    </c:if>
+
+    <c:if test="${empty(rangeSearch)}">
+        <c:set var="rangeSearch" value="true" />
+    </c:if>
+
+    <c:if test="${empty(componentWidth)}">
+        <c:set var="componentWidth" value="${size>40?50:25}" />
+    </c:if>
+
+    <c:if test="${empty(showResetButton)}">
+        <c:set var="showResetButton" value="true" />
+    </c:if>
+
+    <hftl:getFieldInformation backingBean="${backingBean}" fieldName="${field}" var="fieldInfo" />
+
+    <!-- If value binding is a text field, display a text input field -->
+    <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Text}">
+        <c:if test="${empty(listElements)}">
+            <c:if test="${empty(isAutocomplete)}">
+                <c:set var="isAutocomplete" value="false" />
+            </c:if>
+            <hftl:searchTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+                componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}"
+                maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
+                autocompleteMethod="${autocompleteMethod}" converter="${converter}" />
+        </c:if>
+
+        <c:if test="${not empty(listElements)}">
+            <c:if test="${empty(isAutocomplete)}">
+                <c:set var="isAutocomplete" value="false" />
+            </c:if>
+
+            <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
+                disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
+                listElements="${listElements}" valueLabelField="${valueLabelField}" valueField="${valueField}" size="${size}" />
+        </c:if>
+    </c:if>
+
+
+    <!--  If the value binding is a boolean, display a drop down with yes/no choices. -->
+    <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Boolean}">
+        <hftl:searchBooleanField id="${empty(id)?fieldIdPrefix.concat('_bool'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+            componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" />
+    </c:if>
+
+    <!--  If the value binding is a date, display a p:calendar field. -->
+    <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Date}">
+        <c:if test="${empty(time)}">
+            <c:set var="time" value="false" />
+        </c:if>
+        <c:if test="${empty(datePattern)}">
+            <c:set var="datePattern" value="${time?paramBean.dateTimeFormat:paramBean.dateFormat}" />
+        </c:if>
+
+        <hftl:searchDateField id="${empty(id)?fieldIdPrefix.concat('_date'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+            componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" rangeSearch="${rangeSearch}"
+            datePattern="${datePattern}" />
+    </c:if>
+
+    <!--  If the value binding is an enum, display a drop down. -->
+    <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Enum}">
+        <c:if test="${empty(listValues)}">
+            <c:set var="listValues" value="${fieldInfo.enumListValues}" />
+        </c:if>
+        <hftl:searchEnumField id="${empty(id)?fieldIdPrefix.concat('_enum'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
+            componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" listValues="${listValues}"
+            enumClassname="#{fieldInfo.enumClassname}" />
+    </c:if>
+
+    <!--  If the value binding is a number display number field. -->
+    <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Number}">
+        <hftl:searchNumberField id="${empty(id)?fieldIdPrefix.concat('_number'):id}" converterId="${fieldInfo.numberConverter}" backingBean="${backingBean}" field="${field}" label="${label}"
+            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" rangeSearch="${rangeSearch}" />
+    </c:if>
+
+
+    <!--  If the value binding is an entity field display a popup or a picklist of entities -->
+    <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Entity}">
+
+        <c:if test="${empty(popup)}">
+            <c:set var="popup" value="false" />
+        </c:if>
+
+        <c:if test="${empty(popupId)}">
+            <c:set var="popupId" value="popup" />
+        </c:if>
+        <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
+            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" popup="${popup}"
+            popupId="${popupId}" listBean="${listBean}" listElements="${listElements}" valueLabelField="${valueLabelField}" size="${size}" />
+    </c:if>
+</ui:composition>
+
+</html>

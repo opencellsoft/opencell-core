@@ -1,0 +1,86 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+        <title>Opencell | Open Source Billing Platform</title>
+        <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>
+
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/theme.css"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/main.css"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/custom.css"/>
+
+        <ui:insert name="head"/>
+
+        <h:outputScript name="js/jquery.cookie.js" library="layout"/>
+        <h:outputScript name="js/equalHeight.js" library="layout"/>
+        <h:outputScript name="js/layout.js" library="layout"/>
+
+        <h:outputStylesheet library="css" name="opencell-layout.css"></h:outputStylesheet>
+    </h:head>
+
+    <h:body styleClass="FixedTopBar OpencellMegaMenu">
+
+        <f:view contentType="text/html" locale="#{localeSelector.currentLocale}">
+
+            <ui:insert name="metadata"/>
+
+            <c:if test="#{!currentUser.hasRole('hideMenuHeaderFooter') }">
+                <div id="layout-topbar-cover">
+                    <ui:include src="/layout/topbar.xhtml"/>
+                </div>
+            </c:if>
+
+            <div id="layout-portlets-cover">
+                <ui:insert name="body"/>
+            </div>
+
+            <script type="text/javascript">
+                $(function () {
+                    if (window.self != window.top) {
+                        $(document.body).addClass("in-iframe");
+                        $('#layout-menu-cover').addClass('active');
+                    }
+                });
+            </script>
+
+            <c:if test="#{!currentUser.hasRole('hideMenuHeaderFooter') }">
+                <ui:include src="footer.xhtml"/>
+            </c:if>
+
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                <f:facet name="start">
+                    <h:graphicImage library="img" name="loading.gif"/>
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value=""/>
+                </f:facet>
+            </p:ajaxStatus>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" closeOnEscape="true">
+                <p:commandButton value="#{messages['commons.yes']}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                <p:commandButton value="#{messages['commons.no']}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+            </p:confirmDialog>
+
+        </f:view>
+
+
+        <script type="text/javascript">
+            $(function () {
+                $('.ui-dialog').css({
+                    'max-height': '50%', 'overflow': 'auto',
+                    'position': 'fixed',
+                    'top': '30%',
+                    'left': '30%',
+                    'transform': 'translate(0%, -20%)'
+                });
+            });
+        </script>
+
+    </h:body>
+
+
+</html>

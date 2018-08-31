@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+
+
+<!-- 
+    A tag diplay a single custom field's periods 
+    Makes part of custom field management tag group 
+
+    Attributes
+        cft - custom field template containing field definition
+        edit - should value be displayed, or edit control be shown
+        datePattern - date pattern for date entry/display
+        dateTimePattern - date time pattern for date period display
+        entity - entity, custom fields are related to
+        messagesId - messages id tag to update for general errors
+        disabled - is field non-editable
+        prefix - prefix for component to distinguish when used multiple times in the same page (for different entities)        
+        clientGuiId - client (of parent) component ID
+        inherited - is tag used to show inherited CF values
+        periodDetailsGuiId - period value table ID
+ -->
+
+<ui:composition>
+
+    <c:if test="${empty(inherited)}">
+        <c:set var="inherited" value="false" />
+    </c:if>
+    <c:set var="idPrefix" value="#{prefix}#{inherited?'_i':''}" />
+    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
+
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
+    <p:dataTable id="#{idPrefix}periodTable_omitFromSubmit" lazy="false" value="#{cfVersionableValues}" var="period" sortField="#{cft.calendar!=null?period.period.from:period.priority}"
+        editable="#{edit and cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !disabled}" editMode="cell" resizableColumns="true" reflow="true" rowIndexVar="rowIndex">
+
+        <p:ajax event="cellEdit" update="#{messagesId}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
+
+        <p:column headerText="#{messages['customFieldTemplate.priority']}" width="10%" sortBy="#{period.priority}" rendered="#{cft.calendar==null}">
+            <h:outputText value="#{period.priority}"></h:outputText>
+        </p:column>
+        <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="13%" sortBy="#{period.period.from}">
+            <h:outputText value="#{period.period.from}">
+                <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+            </h:outputText>
+        </p:column>
+        <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="13%" sortBy="#{period.period.to}">
+            <h:outputText value="#{period.period.to}">
+                <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+            </h:outputText>
+        </p:column>
+        <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
+            <p:cellEditor rendered="#{cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
+                <f:facet name="output">
+                    <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period}" entity="#{entity}" datePattern="#{datePattern}" />
+                </f:facet>
+                <f:facet name="input">
+                    <hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period}" entity="#{entity}" datePattern="#{datePattern}" />
+                </f:facet>
+            </p:cellEditor>
+            <h:outputText value="#{period.getShortRepresentationOfValue(cft, datePattern)}" rendered="#{cft.storageType != CustomFieldStorageTypeEnum.SINGLE}" />
+        </p:column>
+        <p:column headerText="#{messages['commons.actions']}" width="15%">
+            <!-- update="periodFields"  -->
+            <p:commandButton icon="ui-icon-search" immediate="true" update="#{periodDetailsGuiId}" actionListener="#{cfValueHolder.clearNewValueDefaults(cft)}"
+                onsuccess="PF('#{prefix}periodValuesDialogWidget').show()" rendered="#{cft.storageType != CustomFieldStorageTypeEnum.SINGLE}" title="#{messages['customFieldTemplate.periodValue.view']}">
+                <f:setPropertyActionListener target="#{cfValueHolder.selectedFieldTemplate}" value="#{cft}" />
+                <f:setPropertyActionListener target="#{cfValueHolder.selectedValuePeriod}" value="#{period}" />
+                <f:setPropertyActionListener target="#{cfValueHolder.selectedValuePeriodId}" value=":#{component.parent.parent.clientId}" />
+                <f:setPropertyActionListener target="#{cfValueHolder.selectedValuePeriodEdit}" value="#{edit and !inherited}" />
+                <p:resetInput target="#{periodDetailsGuiId}" />
+            </p:commandButton>
+            <p:commandButton action="#{customFieldDataEntryBean.removePeriod(cfValueHolder, cft, period)}" partialSubmit="true" process="@this" icon="ui-icon-trash"
+                update="#{idPrefix}periodTable_omitFromSubmit" rendered="#{edit and !disabled}" title="#{messages['customFieldTemplate.periodValue.removePeriod']}" />
+            <p:commandButton action="#{customFieldDataEntryBean.decreasePriority(cfValueHolder, cft, period)}" partialSubmit="true" process="@this" icon="ui-icon-arrowthick-1-n"
+                update="#{idPrefix}periodTable_omitFromSubmit" rendered="#{edit and !disabled and cft.calendar==null and rowIndex>0}" title="#{messages['customFieldTemplate.periodValue.priorityDecrease']}" />
+            <p:commandButton action="#{customFieldDataEntryBean.increasePriority(cfValueHolder, cft, period)}" partialSubmit="true" process="@this" icon="ui-icon-arrowthick-1-s"
+                update="#{idPrefix}periodTable_omitFromSubmit" rendered="#{edit and !disabled and cft.calendar==null and rowIndex&lt;cfVersionableValues.size()-1}" title="#{messages['customFieldTemplate.periodValue.priorityIncrease']}" />
+
+        </p:column>
+        <f:facet name="footer">
+            <p:messages globalOnly="false" redisplay="false" />
+
+            <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
+
+                <p:calendar id="period_date" showButtonPanel="true" pattern="#{dateTimePattern}" value="#{cfValueHolder.newValues[cft.code.concat('_periodStartDate')]}" required="false"
+                    styleClass="minWidthCalendar" label="#{messages['customFieldTemplate.periodDate']}" placeholder="#{messages['customFieldTemplate.periodDate']}" rendered="#{cft.calendar!=null}">
+                </p:calendar>
+                <p:calendar id="period_start_date" showButtonPanel="true" pattern="#{dateTimePattern}" value="#{cfValueHolder.newValues[cft.code.concat('_periodStartDate')]}"
+                    styleClass="minWidthCalendar" label="#{messages['customFieldTemplate.periodStartDate']}" placeholder="#{messages['customFieldTemplate.periodStartDate']}"
+                    rendered="#{cft.calendar==null}">
+                </p:calendar>
+
+                <p:calendar id="period_end_date" showButtonPanel="true" pattern="#{dateTimePattern}" styleClass="minWidthCalendar" value="#{cfValueHolder.newValues[cft.code.concat('_periodEndDate')]}"
+                    label="#{messages['customFieldTemplate.periodEndDate']}" placeholder="#{messages['customFieldTemplate.periodEndDate']}" rendered="#{cft.calendar==null}">
+                </p:calendar>
+
+                <c:if test="#{cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
+                    <hftl:customFieldValueMuteField edit="true" cft="#{cft}" field="#{cfValueHolder.newValues[cft.code.concat('_value')]}" label="#{messages['commons.value']}"
+                        placeholder="#{messages['commons.value']}" datePattern="#{datePattern}" />
+                </c:if>
+            </hf:namingContainer>
+
+            <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields" update="#{idPrefix}periodTable_omitFromSubmit"
+                action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" rendered="#{edit and !disabled and cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
+                <p:resetInput target="addNewFields" />
+            </p:commandButton>
+
+            <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields"
+                update="#{idPrefix}periodTable_omitFromSubmit #{periodDetailsGuiId}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{prefix}periodValuesDialogWidget').show()"
+                action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}"
+                actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':'.concat(idPrefix.concat('periodTable_omitFromSubmit')))))}"
+                rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
+                <p:resetInput target="addNewFields" />
+                <p:resetInput target="#{periodDetailsGuiId}" />
+            </p:commandButton>
+
+        </f:facet>
+    </p:dataTable>
+</ui:composition>
+</html>
