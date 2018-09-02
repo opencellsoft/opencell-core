@@ -43,19 +43,23 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     public void instanciate(PaymentScheduleTemplate paymentScheduleTemplate, ServiceInstance serviceInstance) throws BusinessException {
 
         PaymentScheduleInstance paymentScheduleInstance = new PaymentScheduleInstance();
-        paymentScheduleInstance.setPaymentScheduleTemplate(paymentScheduleTemplate);
-        paymentScheduleInstance.setServiceInstance(serviceInstance);
+        paymentScheduleInstance.setAmount(serviceInstance.getAmountPS() == null ? paymentScheduleTemplate.getAmount() :  serviceInstance.getAmountPS());
+        paymentScheduleInstance.setCalendar(serviceInstance.getCalendarPS() == null ? paymentScheduleTemplate.getCalendar() : serviceInstance.getCalendarPS() );
+        paymentScheduleInstance.setPaymentScheduleTemplate(paymentScheduleTemplate);        
         paymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.IN_PROGRESS);
         paymentScheduleInstance.setStatusDate(new Date());
+        paymentScheduleInstance.setStartDate(serviceInstance.getSubscriptionDate());
+        paymentScheduleInstance.setEndDate(serviceInstance.getEndAgreementDate() == null ? serviceInstance.getSubscription().getEndAgreementDate(): serviceInstance.getEndAgreementDate());
         paymentScheduleInstance.setCode(paymentScheduleTemplate.getCode());
         paymentScheduleInstance.setDescription(paymentScheduleTemplate.getDescription());
+        paymentScheduleInstance.setServiceInstance(serviceInstance);
         create(paymentScheduleInstance);
 
-        Calendar cal = paymentScheduleTemplate.getCalendar();
-        cal.setInitDate(paymentScheduleTemplate.getStartDate());
-        Date date = paymentScheduleTemplate.getStartDate();
-        int i = 1;
-        while (i <= paymentScheduleTemplate.getNumberPayments()) {
+        Calendar cal = paymentScheduleInstance.getCalendar();
+        cal.setInitDate(paymentScheduleInstance.getStartDate());
+        Date date = serviceInstance.getSubscriptionDate();
+       
+        while (date.before(paymentScheduleInstance.getEndDate())) {
 
             PaymentScheduleInstanceItem paymentScheduleInstanceItem = new PaymentScheduleInstanceItem();
             paymentScheduleInstanceItem.setDueDate(DateUtils.addDaysToDate(date, paymentScheduleTemplate.getDueDateDays()));
@@ -63,12 +67,11 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
             paymentScheduleInstanceItem.setRequestPaymentDate(
                 computeRequestPaymentDate(serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount(), paymentScheduleInstanceItem.getDueDate()));
             date = cal.nextCalendarDate(date);
-            if(i == paymentScheduleTemplate.getNumberPayments()) {
+            if(!date.before(serviceInstance.getEndAgreementDate())) {
                 paymentScheduleInstanceItem.setLast(true);
             }else {
                 paymentScheduleInstanceItem.setLast(false);
-            }
-            i++;
+            }            
             paymentScheduleInstanceItemService.create(paymentScheduleInstanceItem);
 
         }

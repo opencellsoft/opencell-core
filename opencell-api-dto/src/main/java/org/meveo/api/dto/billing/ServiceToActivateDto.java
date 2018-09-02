@@ -54,6 +54,12 @@ public class ServiceToActivateDto implements Serializable {
 
     /** The rate until date. */
     private Date rateUntilDate;
+    
+    /** The amount PS. */
+    private BigDecimal amountPS;
+    
+    /** The calendar PS code. */
+    private String calendarPSCode;
 
     /**
      * Gets the code.
@@ -199,6 +205,47 @@ public class ServiceToActivateDto implements Serializable {
         this.description = description;
     }
     
+    
+    
+    /**
+     * Gets the amount PS.
+     *
+     * @return the amountPS
+     */
+    public BigDecimal getAmountPS() {
+        return amountPS;
+    }
+
+    /**
+     * Sets the amount PS.
+     *
+     * @param amountPS the amountPS to set
+     */
+    public void setAmountPS(BigDecimal amountPS) {
+        this.amountPS = amountPS;
+    }
+
+    /**
+     * Gets the calendar PS code.
+     *
+     * @return the calendarPSCode
+     */
+    public String getCalendarPSCode() {
+        return calendarPSCode;
+    }
+
+    /**
+     * Sets the calendar PS code.
+     *
+     * @param calendarPSCode the calendarPSCode to set
+     */
+    public void setCalendarPSCode(String calendarPSCode) {
+        this.calendarPSCode = calendarPSCode;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return String.format("ServiceToActivateDto [code=%s, quantity=%s, subscriptionDate=%s, chargeInstanceOverrides=%s, customFields=%s]", code, quantity, subscriptionDate,

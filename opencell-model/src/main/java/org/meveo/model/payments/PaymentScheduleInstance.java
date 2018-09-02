@@ -3,6 +3,7 @@
  */
 package org.meveo.model.payments;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.catalog.Calendar;
 
 /**
  * @author anasseh
@@ -56,10 +58,30 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     @NotNull
     private PaymentScheduleTemplate paymentScheduleTemplate;
     
+    @Column(name = "start_date")  
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    private Date startDate;
+    
+    @Column(name = "end_date")  
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    private Date endDate;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_instance_id")
     @NotNull
     private ServiceInstance serviceInstance;
+    
+    @Column(name = "amount")
+    @NotNull
+    private BigDecimal amount;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_id")
+    @NotNull
+    private Calendar calendar;
+  
     
     @OneToMany(mappedBy = "paymentScheduleInstance", cascade = CascadeType.ALL)   
     private List<PaymentScheduleInstanceItem> paymentScheduleInstanceItems;
@@ -133,6 +155,62 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
     }
-   
-   
+
+    /**
+     * @return the startDate
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @return the amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /**
+     * @param amount the amount to set
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * @return the calendar
+     */
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    /**
+     * @param calendar the calendar to set
+     */
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
+    /**
+     * @return the endDate
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+      
 }

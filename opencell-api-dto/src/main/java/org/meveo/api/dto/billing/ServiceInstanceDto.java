@@ -78,6 +78,9 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 
     /** The rate until date. */
     private Date rateUntilDate;
+    
+    private BigDecimal amountPS;
+    private String calendarPSCode;
 
     /**
      * Instantiates a new service instance dto.
@@ -326,6 +329,36 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         this.rateUntilDate = rateUntilDate;
     }
     
+    
+    
+    /**
+     * @return the amountPS
+     */
+    public BigDecimal getAmountPS() {
+        return amountPS;
+    }
+
+    /**
+     * @param amountPS the amountPS to set
+     */
+    public void setAmountPS(BigDecimal amountPS) {
+        this.amountPS = amountPS;
+    }
+
+    /**
+     * @return the calendarPSCode
+     */
+    public String getCalendarPSCode() {
+        return calendarPSCode;
+    }
+
+    /**
+     * @param calendarPSCode the calendarPSCode to set
+     */
+    public void setCalendarPSCode(String calendarPSCode) {
+        this.calendarPSCode = calendarPSCode;
+    }
+
     @Override
     public String toString() {
         return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="

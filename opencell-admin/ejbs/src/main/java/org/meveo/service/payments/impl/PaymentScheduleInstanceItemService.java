@@ -142,7 +142,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         BillingAccount billingAccount = userAccount.getBillingAccount();
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
-        BigDecimal amount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAmount();
+        BigDecimal amount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount();
         BigDecimal amounts[] = getAmounts(invoiceSubCat, amount, billingAccount.getTradingCountry(), userAccount);
         List<Long> aoIdsToPay = new ArrayList<Long>();
         Invoice invoice = null;
@@ -171,45 +171,45 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice = invoiceService.findById(createInvoiceResponseDto.getInvoiceId());
             recordedInvoiceService.generateRecordedInvoice(invoice);
             aoIdsToPay.add(invoice.getRecordedInvoice().getId());
-
+            paymentScheduleInstanceItem.setInvoice(invoice);
         }
-
-        PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
-        if (preferredMethod == null) {
-            throw new BusinessException("preferredMethod is null");
-        }
-
-        PaymentResponseDto doPaymentResponseDto = null;
-        if (preferredMethod.getPaymentType() == PaymentMethodEnum.CARD) {
-            doPaymentResponseDto = paymentService.payByCardToken(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, false, false, null);
-        } else if (preferredMethod.getPaymentType() == PaymentMethodEnum.DIRECTDEBIT) {
-            doPaymentResponseDto = paymentService.payByMandat(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, false, false, null);
-        } else {
-            throw new BusinessException("Payment method " + preferredMethod.getPaymentType() + " not allowed");
-        }
-
-        AccountOperationPS accountOperationPS = createPaymentAO(customerAccount, amount, doPaymentResponseDto, preferredMethod.getPaymentType(), aoIdsToPay,
-            paymentScheduleInstanceItem);
-
-        if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isGenerateAdvancePaymentInvoice()) {
-            try {
-                aoIdsToPay.add(accountOperationPS.getId());
-                matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToPay, null, MatchingTypeEnum.A);
-                doPaymentResponseDto.setMatchingCreated(true);
-            } catch (Exception e) {
-                log.warn("Cant create matching :", e);
+        if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isDoPayment()) {
+            PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
+            if (preferredMethod == null) {
+                throw new BusinessException("preferredMethod is null");
             }
-        }
 
-        paymentScheduleInstanceItem.setAccountOperationPS(accountOperationPS);
-        paymentScheduleInstanceItem.setInvoice(invoice);
+            PaymentResponseDto doPaymentResponseDto = null;
+            if (preferredMethod.getPaymentType() == PaymentMethodEnum.CARD) {
+                doPaymentResponseDto = paymentService.payByCardToken(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, false, false, null);
+            } else if (preferredMethod.getPaymentType() == PaymentMethodEnum.DIRECTDEBIT) {
+                doPaymentResponseDto = paymentService.payByMandat(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, false, false, null);
+            } else {
+                throw new BusinessException("Payment method " + preferredMethod.getPaymentType() + " not allowed");
+            }
+
+            AccountOperationPS accountOperationPS = createPaymentAO(customerAccount, amount, doPaymentResponseDto, preferredMethod.getPaymentType(), aoIdsToPay,
+                paymentScheduleInstanceItem);
+
+            if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isGenerateAdvancePaymentInvoice()) {
+                try {
+                    aoIdsToPay.add(accountOperationPS.getId());
+                    matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToPay, null, MatchingTypeEnum.A);
+                    doPaymentResponseDto.setMatchingCreated(true);
+                } catch (Exception e) {
+                    log.warn("Cant create matching :", e);
+                }
+            }
+
+            paymentScheduleInstanceItem.setAccountOperationPS(accountOperationPS);
+        }
 
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat);
 
         oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
-            new Date(), amounts[0], null, new BigDecimal(-1), null, null, null, null, true);
-        
-        if(paymentScheduleInstanceItem.isLast()) {
+            new Date(), new BigDecimal("-"+amounts[0]), null, new BigDecimal(1), null, null, null, null, true);
+
+        if (paymentScheduleInstanceItem.isLast()) {
             paymentScheduleInstanceItem.getPaymentScheduleInstance().setStatus(PaymentScheduleStatusEnum.DONE);
             paymentScheduleInstanceItem.getPaymentScheduleInstance().setStatusDate(new Date());
         }

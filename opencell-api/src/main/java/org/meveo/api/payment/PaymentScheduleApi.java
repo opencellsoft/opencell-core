@@ -69,18 +69,14 @@ public class PaymentScheduleApi extends BaseApi {
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getServiceTemplateCode())) {
             missingParameters.add("serviceTemplateCode");
         }
-        if (StringUtils.isBlank(paymentScheduleTemplateDto.getStartDate())) {
-            missingParameters.add("startDate");
-        }
+       
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getDueDateDays())) {
             missingParameters.add("dueDateDays");
         }
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getAmount())) {
             missingParameters.add("amount");
         }
-        if (StringUtils.isBlank(paymentScheduleTemplateDto.getNumberPayments())) {
-            missingParameters.add("numberPayments");
-        }
+       
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentLabel())) {
             missingParameters.add("paymentLabel");
         }
@@ -93,6 +89,10 @@ public class PaymentScheduleApi extends BaseApi {
 
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getGenerateAdvancePaymentInvoice())) {
             missingParameters.add("generateAdvancePaymentInvoice");
+        }
+        
+        if (StringUtils.isBlank(paymentScheduleTemplateDto.getDoPayment())) {
+            missingParameters.add("doPayment");
         }
 
         handleMissingParameters();
@@ -124,15 +124,14 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setCode(paymentScheduleTemplateDto.getCode());
         paymentScheduleTemplate.setDescription(paymentScheduleTemplateDto.getDescription());
         paymentScheduleTemplate.setCalendar(calendar);
-        paymentScheduleTemplate.setServiceTemplate(serviceTemplate);
-        paymentScheduleTemplate.setStartDate(paymentScheduleTemplateDto.getStartDate());
+        paymentScheduleTemplate.setServiceTemplate(serviceTemplate);     
         paymentScheduleTemplate.setDueDateDays(paymentScheduleTemplateDto.getDueDateDays());
-        paymentScheduleTemplate.setAmount(paymentScheduleTemplateDto.getAmount());
-        paymentScheduleTemplate.setNumberPayments(paymentScheduleTemplateDto.getNumberPayments());
+        paymentScheduleTemplate.setAmount(paymentScheduleTemplateDto.getAmount());      
         paymentScheduleTemplate.setPaymentLabel(paymentScheduleTemplateDto.getPaymentLabel());
         paymentScheduleTemplate.setAdvancePaymentInvoiceType(invoiceType);
         paymentScheduleTemplate.setAdvancePaymentInvoiceSubCategory(invoiceSubCategory);
         paymentScheduleTemplate.setGenerateAdvancePaymentInvoice(paymentScheduleTemplateDto.getGenerateAdvancePaymentInvoice().booleanValue());
+        paymentScheduleTemplate.setDoPayment(paymentScheduleTemplateDto.getDoPayment().booleanValue());
 
         // populate customFields
         try {
@@ -204,19 +203,12 @@ public class PaymentScheduleApi extends BaseApi {
         }
         if (serviceTemplate != null) {
             paymentScheduleTemplate.setServiceTemplate(serviceTemplate);
-        }
-        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getStartDate())) {
-            paymentScheduleTemplate.setStartDate(paymentScheduleTemplateDto.getStartDate());
-        }
+        }       
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getDueDateDays())) {
             paymentScheduleTemplate.setDueDateDays(paymentScheduleTemplateDto.getDueDateDays());
         }
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getAmount())) {
             paymentScheduleTemplate.setAmount(paymentScheduleTemplateDto.getAmount());
-        }
-
-        if (!StringUtils.isBlank(paymentScheduleTemplateDto.getNumberPayments())) {
-            paymentScheduleTemplate.setNumberPayments(paymentScheduleTemplateDto.getNumberPayments());
         }
         if (!StringUtils.isBlank(paymentScheduleTemplateDto.getPaymentLabel())) {
             paymentScheduleTemplate.setPaymentLabel(paymentScheduleTemplateDto.getPaymentLabel());

@@ -90,6 +90,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -165,6 +166,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private BillingCycleService billingCycleService;
+    
+    @Inject
+    private  CalendarService calendarService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -483,7 +487,15 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setOrderNumber(activateServicesDto.getOrderNumber());
                 serviceInstance.setOrderItemId(activateServicesDto.getOrderItemId());
                 serviceInstance.setOrderItemAction(activateServicesDto.getOrderItemAction());
-
+                org.meveo.model.catalog.Calendar calendarPS = null;
+                if(!StringUtils.isBlank(serviceToActivateDto.getCalendarPSCode())) {
+                    calendarPS = calendarService.findByCode(serviceToActivateDto.getCalendarPSCode());
+                    if(calendarPS == null) {
+                        throw new EntityDoesNotExistsException(org.meveo.model.catalog.Calendar.class, serviceToActivateDto.getCalendarPSCode());
+                    }
+                }
+                serviceInstance.setAmountPS(serviceToActivateDto.getAmountPS());
+                serviceInstance.setCalendarPS(calendarPS);
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true);
@@ -613,6 +625,13 @@ public class SubscriptionApi extends BaseApi {
             }
             log.debug("Will instantiate service {} for subscription {} quantity {}", serviceTemplate.getCode(), subscription.getCode(), serviceToInstantiateDto.getQuantity());
 
+            org.meveo.model.catalog.Calendar calendarPS = null;
+            if(!StringUtils.isBlank(serviceToInstantiateDto.getCalendarPSCode())) {
+                calendarPS = calendarService.findByCode(serviceToInstantiateDto.getCalendarPSCode());
+                if(calendarPS == null) {
+                    throw new EntityDoesNotExistsException(org.meveo.model.catalog.Calendar.class, serviceToInstantiateDto.getCalendarPSCode());
+                }
+            }
             serviceInstance = new ServiceInstance();
             serviceInstance.setCode(serviceTemplate.getCode());
             serviceInstance.setDescription(serviceTemplate.getDescription());
@@ -623,6 +642,8 @@ public class SubscriptionApi extends BaseApi {
             serviceInstance.setOrderNumber(instantiateServicesDto.getOrderNumber());
             serviceInstance.setOrderItemId(instantiateServicesDto.getOrderItemId());
             serviceInstance.setOrderItemAction(instantiateServicesDto.getOrderItemAction());
+            serviceInstance.setAmountPS(serviceToInstantiateDto.getAmountPS());
+            serviceInstance.setCalendarPS(calendarPS);
 
             if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                 Calendar calendar = Calendar.getInstance();
@@ -1214,6 +1235,8 @@ public class SubscriptionApi extends BaseApi {
                         serviceToInstantiate.setQuantity(serviceInstanceDto.getQuantity());
                         serviceToInstantiate.setCustomFields(serviceInstanceDto.getCustomFields());
                         serviceToInstantiate.setRateUntilDate(serviceInstanceDto.getRateUntilDate());
+                        serviceToInstantiate.setAmountPS(serviceInstanceDto.getAmountPS());
+                        serviceToInstantiate.setCalendarPSCode(serviceInstanceDto.getCalendarPSCode());
                         serviceToInstantiates.add(serviceToInstantiate);
 
                         // Service will be activated
@@ -1225,6 +1248,8 @@ public class SubscriptionApi extends BaseApi {
                         serviceToActivateDto.setQuantity(serviceInstanceDto.getQuantity());
                         serviceToActivateDto.setCustomFields(serviceInstanceDto.getCustomFields());
                         serviceToActivateDto.setRateUntilDate(serviceInstanceDto.getRateUntilDate());
+                        serviceToActivateDto.setAmountPS(serviceInstanceDto.getAmountPS());
+                        serviceToActivateDto.setCalendarPSCode(serviceInstanceDto.getCalendarPSCode());
                         activateServicesDto.getServicesToActivateDto().addService(serviceToActivateDto);
                     }
                 }

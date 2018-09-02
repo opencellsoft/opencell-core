@@ -60,6 +60,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -167,6 +168,14 @@ public class ServiceInstance extends BusinessCFEntity {
 
     @Embedded
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
+    
+    @Column(name = "amount_ps")
+   private BigDecimal amountPS; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_ps_id")
+   private Calendar calendarPS; 
+   
     
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -519,4 +528,35 @@ public class ServiceInstance extends BusinessCFEntity {
 	public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
 		this.serviceRenewal = serviceRenewal;
 	}
+
+    /**
+     * @return the amountPS
+     */
+    public BigDecimal getAmountPS() {
+        return amountPS;
+    }
+
+    /**
+     * @param amountPS the amountPS to set
+     */
+    public void setAmountPS(BigDecimal amountPS) {
+        this.amountPS = amountPS;
+    }
+
+    /**
+     * @return the calendarPS
+     */
+    public Calendar getCalendarPS() {
+        return calendarPS;
+    }
+
+    /**
+     * @param calendarPS the calendarPS to set
+     */
+    public void setCalendarPS(Calendar calendarPS) {
+        this.calendarPS = calendarPS;
+    }
+
+    
+	
 }

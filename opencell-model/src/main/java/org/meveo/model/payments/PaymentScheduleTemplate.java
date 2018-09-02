@@ -4,7 +4,6 @@
 package org.meveo.model.payments;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -15,8 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -45,10 +42,13 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 612388141736383814L;
     
-    @Column(name = "start_date")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "payment_label")
     @NotNull
-    private Date startDate;
+    private String paymentLabel;
+    
+    @Column(name = "due_date_days")
+    @NotNull
+    private Integer dueDateDays;
     
     @Column(name = "amount")
     @NotNull
@@ -59,17 +59,6 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
     @NotNull
     private Calendar calendar;
     
-    @Column(name = "number_payments")
-    @NotNull
-    private Integer numberPayments;
-    
-    @Column(name = "payment_label")
-    @NotNull
-    private String paymentLabel;
-    
-    @Column(name = "due_date_days")
-    @NotNull
-    private Integer dueDateDays;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
@@ -91,64 +80,13 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
     @NotNull
     private InvoiceSubCategory advancePaymentInvoiceSubCategory;
     
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_do_payment", nullable = false)
+    @NotNull
+    private boolean doPayment;
+    
     @OneToMany(mappedBy = "paymentScheduleTemplate", cascade = CascadeType.ALL)   
     private List<PaymentScheduleInstance> paymentScheduleInstances;
-
-    /**
-     * @return the startDate
-     */
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * @return the amount
-     */
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    /**
-     * @param amount the amount to set
-     */
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    /**
-     * @return the calendar
-     */
-    public Calendar getCalendar() {
-        return calendar;
-    }
-
-    /**
-     * @param calendar the calendar to set
-     */
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
-    }
-
-    /**
-     * @return the numberPayments
-     */
-    public Integer getNumberPayments() {
-        return numberPayments;
-    }
-
-    /**
-     * @param numberPayments the numberPayments to set
-     */
-    public void setNumberPayments(Integer numberPayments) {
-        this.numberPayments = numberPayments;
-    }
 
     /**
      * @return the paymentLabel
@@ -247,5 +185,48 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
     public void setPaymentScheduleInstances(List<PaymentScheduleInstance> paymentScheduleInstances) {
         this.paymentScheduleInstances = paymentScheduleInstances;
     }
-  
+
+    /**
+     * @return the amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /**
+     * @param amount the amount to set
+     */
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * @return the calendar
+     */
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    /**
+     * @param calendar the calendar to set
+     */
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
+    /**
+     * @return the doPayment
+     */
+    public boolean isDoPayment() {
+        return doPayment;
+    }
+
+    /**
+     * @param doPayment the doPayment to set
+     */
+    public void setDoPayment(boolean doPayment) {
+        this.doPayment = doPayment;
+    }
+
+   
 }

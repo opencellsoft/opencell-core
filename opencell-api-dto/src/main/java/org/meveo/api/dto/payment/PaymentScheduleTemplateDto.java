@@ -67,6 +67,10 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         
     /** The generate advance payment invoice. */
     private Boolean generateAdvancePaymentInvoice;
+    
+   
+    /** The do payment. */
+    private Boolean doPayment;
        
     /** The advance payment invoice sub category code. */
     private String advancePaymentInvoiceSubCategoryCode;
@@ -272,6 +276,24 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
      */
     public void setCalendarCode(String calendarCode) {
         this.calendarCode = calendarCode;
+    }
+
+    /**
+     * Gets the do payment.
+     *
+     * @return the doPayment
+     */
+    public Boolean getDoPayment() {
+        return doPayment;
+    }
+
+    /**
+     * Sets the do payment.
+     *
+     * @param doPayment the doPayment to set
+     */
+    public void setDoPayment(Boolean doPayment) {
+        this.doPayment = doPayment;
     }
 
 }
