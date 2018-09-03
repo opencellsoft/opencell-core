@@ -99,7 +99,7 @@ public class YouSignApi extends BaseApi {
             
             // The list of files to sign cannot be empty :  
             List<SignFileRequestDto> filesToSign = postData.getFilesToSign();
-            this.checkFilesToSign(filesToSign, withInternalMember);
+            this.checkFilesToSign(filesToSign, withInternalMember, postData.isAbsolutePaths());
             
             // preparing webhook config , for instance a webhook to download the document into OC server once signed :
             procedure.setConfig(this.getWebhookConfig());
@@ -401,7 +401,7 @@ public class YouSignApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      * @throws FileNotFoundException the file not found exception
      */
-    private void checkFilesToSign(List<SignFileRequestDto> filesToSign, boolean withInternalMember) throws MeveoApiException, FileNotFoundException {
+    private void checkFilesToSign(List<SignFileRequestDto> filesToSign, boolean withInternalMember, boolean isAbsolutePaths) throws MeveoApiException, FileNotFoundException {
 
         if (CollectionUtils.isEmpty(filesToSign)) { 
             throw new MeveoApiException(" filesToSign cannot be empty !"); 
@@ -435,6 +435,9 @@ public class YouSignApi extends BaseApi {
             }
             // Creating byte file content if empty :
             if (ArrayUtils.isEmpty(fileContent)) {
+                if (!isAbsolutePaths) { // if filePath is relative then add provider root directory as parent :  
+                    filePath = this.paramBeanFactory.getChrootDir() + filePath;
+                }
                 file.setContent(getFileAsBytes(filePath)); 
             }
         }

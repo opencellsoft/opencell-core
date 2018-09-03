@@ -14,6 +14,9 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
     /** The Constant serialVersionUID. */ 
     private static final long serialVersionUID = 1L; 
     
+    /** The absolute paths. */
+    private boolean absolutePaths;
+    
     /** if true an internal member will be added to the procedure with internal member. */
     private boolean withInternalMember;
     
@@ -75,5 +78,19 @@ public class CreateProcedureRequestDto  extends BaseEntityDto {
      */
     public void setWithInternalMember(boolean withInternalMember) {
         this.withInternalMember = withInternalMember;
+    }
+
+    /**
+     * @return the absolutePaths
+     */
+    public boolean isAbsolutePaths() {
+        return absolutePaths;
+    }
+
+    /**
+     * @param absolutePaths the absolutePaths to set
+     */
+    public void setAbsolutePaths(boolean absolutePaths) {
+        this.absolutePaths = absolutePaths;
     }
 }
