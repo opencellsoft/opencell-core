@@ -36,7 +36,7 @@ import org.meveo.service.base.AccountService;
  * Customer service implementation.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class CustomerService extends AccountService<Customer> {
@@ -136,4 +136,8 @@ public class CustomerService extends AccountService<Customer> {
             return null;
         }
     }
+    
+	public void deleteGPDR(Customer entity, String randomCode) {
+    	entity.anonymize(randomCode);
+	}
 }

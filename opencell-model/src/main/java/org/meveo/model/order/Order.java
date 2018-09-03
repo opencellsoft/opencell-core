@@ -147,7 +147,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     private String receivedFromApp;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
-    private List<Invoice> invoices = new ArrayList<Invoice>();
+    private List<Invoice> invoices = new ArrayList<>();
 
     @Column(name = "DUE_DATE_DELAY_EL", length = 2000)
     @Size(max = 2000)

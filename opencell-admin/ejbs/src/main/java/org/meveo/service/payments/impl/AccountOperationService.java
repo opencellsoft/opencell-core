@@ -31,7 +31,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -142,6 +144,46 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return null;
         }
     }
+    
+    /**
+     * Return all AccountOperation with now - invoiceDate date > n years.
+     * @param nYear age of the account operation
+     * @return Filtered list of account operations
+     */
+    @SuppressWarnings("unchecked")
+	public List<AccountOperation> listInactiveAccountOperations(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
+    	
+    	return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
+    }
+    
+    /**
+     * Return all unpaid AccountOperation with now - invoiceDate date > n years.
+     * @param nYear age of the account operation
+     * @return Filtered list of account operations
+     */
+    @SuppressWarnings("unchecked")
+	public List<AccountOperation> listUnpaidAccountOperations(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
+    	qb.startOrClause();
+    	qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.L);
+    	qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.P);
+    	qb.endOrClause();
+    	
+    	return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+	public void bulkDelete(List<AccountOperation> inactiveAccountOps) throws BusinessException {
+		for (AccountOperation e : inactiveAccountOps) {
+			remove(e);
+		}
+	}
     
     /**
      * Count unmatched AOs by CA.

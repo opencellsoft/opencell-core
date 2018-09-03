@@ -65,6 +65,7 @@ import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
@@ -226,6 +227,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
+    
+    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GdprConfiguration gdprConfiguration;
     
     @Embedded
 	@AttributeOverrides({ //
@@ -583,6 +587,22 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
+
+	public GdprConfiguration getGdprConfiguration() {
+		return gdprConfiguration;
+	}
+
+	public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
+		this.gdprConfiguration = gdprConfiguration;
+	}
+	
+	public GdprConfiguration getGdprConfigurationNullSafe() {
+		if (gdprConfiguration == null) {
+			gdprConfiguration = new GdprConfiguration();
+		}
+
+		return gdprConfiguration;
+	}
 
     public GenericSequence getRumSequence() {
 		return rumSequence;

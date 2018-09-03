@@ -2120,4 +2120,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return result;
     }
+    
+    /**
+     * Return all invoices with now - invoiceDate date > n years.
+     * @param nYear age of the invoices
+     * @return Filtered list of invoices
+     */
+    @SuppressWarnings("unchecked")
+	public List<Invoice> listInactiveInvoice(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Invoice.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound);
+    	
+    	return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+	public void bulkDelete(List<Invoice> inactiveInvoices) throws BusinessException {
+		for (Invoice e : inactiveInvoices) {
+			remove(e);
+		}
+	}
 }

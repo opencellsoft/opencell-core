@@ -271,6 +271,19 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
 	@Override
+	public ActionStatus anonymizeGpdr(String customerCode) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.anonymizeGpdr(customerCode);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
 	public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {
 		ActionStatus result = new ActionStatus();
 

@@ -134,6 +134,9 @@
 			                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 			                        </p:button>
 	                                <p:commandButton ajax="false" rendered="#{!entity.transient}" value="#{messages['action.export']}" action="#{customerBean.exportCustomerHierarchy()}"/>
+	                                <p:commandButton action="#{customerBean.anonymizeGpdr()}" rendered="#{!entity.transient}" value="#{messages['action.anonymizeGDPR']}" update="@(form)">
+                               	 		<p:confirm header="#{messages['action.confirm']}" message="#{messages['confirmationMessage.confirmGDPRDelete']}" icon="ui-icon-alert" />
+                               	 	</p:commandButton>
 	                            </div>
 	                        </h:panelGroup>
 	                    </ui:define>

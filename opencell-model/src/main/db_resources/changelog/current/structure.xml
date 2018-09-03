@@ -1502,6 +1502,57 @@
         
          
      </changeSet>
+     
+     <changeSet id="#3485_20180725" author="Edwardlegaspi">
+    	<createTable tableName="adm_gdpr_configuration">
+    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_adm_gdpr_configuration" />
+            </column>
+            <column name="provider_id" type="bigint" />
+            <column name="version" type="int4" />
+    		<column name="inactive_subscription_life" type="int4" defaultValueNumeric="5"></column>
+    		<column name="inactive_order_life" type="int4" defaultValueNumeric="10"></column>
+    		<column name="invoice_life" type="int4" defaultValueNumeric="10"></column>
+    		<column name="accounting_life" type="int4" defaultValueNumeric="10"></column>
+    		<column name="customer_profile_life" type="int4" defaultValueNumeric="3"></column>
+    		<column name="mailing_life" type="int4" defaultValueNumeric="3"></column>
+    		<column name="ao_check_unpaid_life" type="int4" defaultValueNumeric="3"></column>
+    		<column name="delete_sub" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_order" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_invoice" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_accounting" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_cust_prospect" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_mailing_life" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="delete_ao_check_unpaid" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+    	</createTable>
+    	
+    	<createSequence sequenceName="adm_gdpr_configuration_seq" startValue="1" />
+    	
+   		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="adm_gdpr_configuration" constraintName="fk_crm_provider_adm_gdpr_conf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+    </changeSet>
+    
+   	<changeSet id="#3485_20180725 - MySQL" author="Edwardlegaspi" dbms="mysql">
+	    <createTable tableName="adm_gdpr_configuration_seq">
+	        <column name="next_val" type="BIGINT">
+	            <constraints nullable="false" primaryKey="true" primaryKeyName="pk_adm_gdpr_configuration_seq" />
+	        </column>
+	    </createTable>
+    </changeSet>
 
     <changeSet id="#2741_20170816" author="EdwardLegaspi">
     	<addColumn tableName="billing_invoice_sub_cat">
