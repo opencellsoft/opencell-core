@@ -18,6 +18,9 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,34 +31,44 @@ import javax.persistence.ManyToOne;
 @DiscriminatorValue("T")
 public class TaxInvoiceAgregate extends InvoiceAgregate {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "tax_id")
-	private Tax tax;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
 
-	public TaxInvoiceAgregate() {
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal taxPercent;
 
-	}
+    public TaxInvoiceAgregate() {
 
-	public TaxInvoiceAgregate(TaxInvoiceAgregate taxInvoiceAgregate) {
-		this.setItemNumber(taxInvoiceAgregate.getItemNumber());
-		this.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax());
-		this.setAmountWithTax(taxInvoiceAgregate.getAmountWithTax());
-		this.setAmountTax(taxInvoiceAgregate.getAmountTax());
-		this.setTaxPercent(taxInvoiceAgregate.getTaxPercent());
-		this.setBillingAccount(taxInvoiceAgregate.getBillingAccount());
-		this.setBillingRun(taxInvoiceAgregate.getBillingRun());
-		this.setUserAccount(taxInvoiceAgregate.getUserAccount());
-		this.setDiscountAggregate(false);
-	}
+    }
 
-	public Tax getTax() {
-		return tax;
-	}
+    public TaxInvoiceAgregate(TaxInvoiceAgregate taxInvoiceAgregate) {
+        this.setItemNumber(taxInvoiceAgregate.getItemNumber());
+        this.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax());
+        this.setAmountWithTax(taxInvoiceAgregate.getAmountWithTax());
+        this.setAmountTax(taxInvoiceAgregate.getAmountTax());
+        this.setTaxPercent(taxInvoiceAgregate.getTaxPercent());
+        this.setBillingAccount(taxInvoiceAgregate.getBillingAccount());
+        this.setBillingRun(taxInvoiceAgregate.getBillingRun());
+        this.setUserAccount(taxInvoiceAgregate.getUserAccount());
+        this.setDiscountAggregate(false);
+    }
 
-	public void setTax(Tax tax) {
-		this.tax = tax;
-	}
+    public Tax getTax() {
+        return tax;
+    }
 
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
+
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
 }

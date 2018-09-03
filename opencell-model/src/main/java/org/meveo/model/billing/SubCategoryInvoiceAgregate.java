@@ -69,12 +69,19 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Column(name = "discount_plan_item_code", length = 50)
     @Size(max = 50)
     private String discountPlanItemCode;
-	
-	@Transient
-	private Set<Tax> subCategoryTaxesTransient;
+
+    @Transient
+    private Set<Tax> subCategoryTaxesTransient;
 
     @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountPercent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
+
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal taxPercent;
 
     @Transient
     private BigDecimal oldAmountWithoutTax;
@@ -243,21 +250,36 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
                 + oldAmountWithoutTax + ", oldAmountWithTax=" + oldAmountWithTax + "]";
     }
 
-	public Set<Tax> getSubCategoryTaxesTransient() {
-		return subCategoryTaxesTransient;
-	}
+    public Set<Tax> getSubCategoryTaxesTransient() {
+        return subCategoryTaxesTransient;
+    }
 
-	public void setSubCategoryTaxesTransient(Set<Tax> subCategoryTaxesTransient) {
-		this.subCategoryTaxesTransient = subCategoryTaxesTransient;
-	}
-	
-	public void addSubCategoryTaxTransient(Tax subCategoryTax) {
-		if (subCategoryTaxesTransient == null) {
-			subCategoryTaxesTransient = new HashSet<>();
-		}
-		if (subCategoryTax != null) {
-			subCategoryTaxesTransient.add(subCategoryTax);
-		}
-	}
+    public void setSubCategoryTaxesTransient(Set<Tax> subCategoryTaxesTransient) {
+        this.subCategoryTaxesTransient = subCategoryTaxesTransient;
+    }
 
+    public void addSubCategoryTaxTransient(Tax subCategoryTax) {
+        if (subCategoryTaxesTransient == null) {
+            subCategoryTaxesTransient = new HashSet<>();
+        }
+        if (subCategoryTax != null) {
+            subCategoryTaxesTransient.add(subCategoryTax);
+        }
+    }
+
+    public Tax getTax() {
+        return tax;
+    }
+
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
+
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
 }

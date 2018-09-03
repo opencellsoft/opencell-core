@@ -78,8 +78,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Size(max = 255)
     private String description;
 
-    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal taxPercent;
 
     @Column(name = "quantity")
     private BigDecimal quantity;
@@ -200,13 +198,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         this.description = description;
     }
 
-    public BigDecimal getTaxPercent() {
-        return taxPercent;
-    }
-
-    public void setTaxPercent(BigDecimal taxPercent) {
-        this.taxPercent = taxPercent;
-    }
 
     public BigDecimal getAmount() {
         return amount;

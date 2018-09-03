@@ -1701,9 +1701,6 @@
         <addColumn tableName="billing_billing_account">
             <column name="trading_language_code" type="varchar(3)"/>
         </addColumn>        
-        <addColumn tableName="billing_wallet_operation">
-            <column name="tax_id" type="bigint"/>
-        </addColumn>   
         <sql>update ${db.schema.adapted}crm_provider set rounding_mode='NEAREST' where rounding_mode is null</sql>
         <sql>update ${db.schema.adapted}crm_provider set invoice_rounding_mode='NEAREST' where invoice_rounding_mode is null</sql>
         <sql>update ${db.schema.adapted}crm_provider set rating_rounding=2 where rating_rounding is null</sql>
