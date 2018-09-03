@@ -122,6 +122,11 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
      * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
      */
     private String ratingEL;
+    
+    /**
+     * Expression for getting the InvoiceSubCategory.
+     */
+    private String invoiceSubCategoryEL;
 
     /**
      * Instantiates a new price plan matrix dto.
@@ -183,6 +188,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         ratingEL = pricePlan.getRatingEL();
         minimumAmountWithoutTaxEl = pricePlan.getMinimumAmountWithoutTaxEl();
         minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
+        invoiceSubCategoryEL = pricePlan.getInvoiceSubCategoryEL();
     }
 
     /**
@@ -752,4 +758,12 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
                 + amountWithTax + ", amountWithoutTaxEL=" + amountWithoutTaxEL + ", amountWithTaxEL=" + amountWithTaxEL + ", priority=" + priority + ", criteria1=" + criteria1
                 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode + ", scriptInstance=" + scriptInstance + "]";
     }
+
+	public String getInvoiceSubCategoryEL() {
+		return invoiceSubCategoryEL;
+	}
+
+	public void setInvoiceSubCategoryEL(String invoiceSubCategoryEL) {
+		this.invoiceSubCategoryEL = invoiceSubCategoryEL;
+	}
 }
