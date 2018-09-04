@@ -5,9 +5,9 @@ import org.meveo.api.dto.response.BaseResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * A DTO Class holding the response of Generating a  PDF Contract file.
+ * A DTO Class holding the response of Generating a document PDF file.
  */
-public class PDFContractResponseDto extends BaseResponse {
+public class PDFDocumentResponseDto extends BaseResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

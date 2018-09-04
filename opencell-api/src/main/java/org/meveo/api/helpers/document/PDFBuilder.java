@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  * Usage example : 
  * 
- *  PDFBuilder pdfBuilder = PDFBuilder.newInstance(contractDir, contarctNamePrefix, mainTemplateDoc);
+ *  PDFBuilder pdfBuilder = PDFBuilder.newInstance(documentDir, documentNamePrefix, mainTemplateDoc);
  * 
  *  pdfBuilder.withFormFieds(templateDto.getTemplateFields())
  *                          .withBarcodeFieds(templateDto.getBarCodeFields())
