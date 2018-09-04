@@ -45,14 +45,16 @@ public class PDFDocumentApi extends BaseApi {
                 this.checkTemplateDtoParams(templateDto);
             }
             LOG.debug("End checking common required & additional params  ]");
+            
+            final String rootPath = this.paramBeanFactory.getChrootDir();
          
             // generating the PDF document & returning its file path
-            String pdfFilePath = PDFDocumentHelper.generatePDF(postData, this.paramBeanFactory.getChrootDir());
-            restul.setPdfFilePath(pdfFilePath);
+            String absolutePdfFilePath = PDFDocumentHelper.generatePDF(postData, rootPath);
+            restul.setPdfFilePath(postData.isAbsolutePaths() ? absolutePdfFilePath : absolutePdfFilePath.substring(rootPath.length()));
 
             // generating the PDF as byte[]
-            if (pdfFilePath != null && postData.isReturnPdf()) {
-                restul.setPdfFile(PDFDocumentHelper.getPdfFileAsBytes(pdfFilePath));
+            if (absolutePdfFilePath != null && postData.isReturnPdf()) {
+                restul.setPdfFile(PDFDocumentHelper.getPdfFileAsBytes(absolutePdfFilePath));
             }
             return restul;
             
