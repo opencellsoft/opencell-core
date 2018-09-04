@@ -8,6 +8,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -247,6 +248,30 @@ public class PaymentScheduleApi extends BaseApi {
             return createPaymentScheduleTemplate(paymentScheduleTemplateDto);
         }
         return updatePaymentScheduleTemplate(paymentScheduleTemplateDto);
+
+    }
+    
+    public void updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) throws MissingParameterException {
+        //delete instance
+        //termine and instanciate neww one
+        //update infos (amount, calenndar,pay days)
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getStatus())) {
+            missingParameters.add("status");
+        }
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getServiceInstanceCode())) {
+            missingParameters.add("serviceInstanceCode");
+        }      
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getSubscriptionCode())) {
+            missingParameters.add("subscriptionCode");
+        }     
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getServiceInstanceCode())) {
+            missingParameters.add("serviceInstanceCode");
+        }     
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getServiceInstanceCode())) {
+            missingParameters.add("serviceInstanceCode");
+        }             
+        handleMissingParameters();
+        
 
     }
 }

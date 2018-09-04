@@ -12,13 +12,17 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
+import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 
@@ -33,6 +37,33 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
+    
+    @Override
+    public PaymentScheduleInstance update(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {
+        switch (paymentScheduleInstance.getStatus()) {
+        case CANCELLED:
+            cancel(paymentScheduleInstance);
+            break;
+
+        case UPDATED:           
+            break;
+
+        default:
+            break;
+        }
+        
+        
+        
+        return super.update(entity);
+    }
+
+    /**
+     * @param paymentScheduleInstance
+     */
+    private void cancel(PaymentScheduleInstance paymentScheduleInstance) {
+        // TODO Auto-generated method stub
+        
+    }
 
     public void updateAndInstanciate(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {
         paymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.UPDATED);
