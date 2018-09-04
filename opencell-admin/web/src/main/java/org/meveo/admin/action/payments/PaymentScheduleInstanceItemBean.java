@@ -18,8 +18,6 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.List;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,37 +26,33 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
-import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
+import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.primefaces.model.LazyDataModel;
 
 
 /**
- * Standard backing bean for {@link PaymentScheduleTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * Standard backing bean for {@link PaymentScheduleInstanceItem} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
-public class PaymentScheduleTemplateBean extends CustomFieldBean<PaymentScheduleTemplate> {
+public class PaymentScheduleInstanceItemBean extends CustomFieldBean<PaymentScheduleInstanceItem> {
     private static final long serialVersionUID = 1L;
     /**
-     * Injected @{link PaymentScheduleTemplate} service. Extends {@link PersistenceService}.
+     * Injected @{link PaymentScheduleInstanceItem} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private PaymentScheduleTemplateService paymentScheduleTemplateService;
+    private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public PaymentScheduleTemplateBean() {
-        super(PaymentScheduleTemplate.class);
+    public PaymentScheduleInstanceItemBean() {
+        super(PaymentScheduleInstanceItem.class);
     }
 
     /**
@@ -67,7 +61,7 @@ public class PaymentScheduleTemplateBean extends CustomFieldBean<PaymentSchedule
      * 
      */
     @Override
-    public PaymentScheduleTemplate initEntity() {
+    public PaymentScheduleInstanceItem initEntity() {
         super.initEntity();       
         return entity;
     }
@@ -96,16 +90,17 @@ public class PaymentScheduleTemplateBean extends CustomFieldBean<PaymentSchedule
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<PaymentScheduleTemplate> getPersistenceService() {
-        return paymentScheduleTemplateService;
+    protected IPersistenceService<PaymentScheduleInstanceItem> getPersistenceService() {
+        return paymentScheduleInstanceItemService;
     }
 
     @Override
     protected String getDefaultSort() {
-        return "code";
+        return "dueDate";
     }
-
-    public List<PaymentMethodEnum> getAllowedPaymentMethods() {
-        return appProvider.getPaymentMethods();
-    }
+    public LazyDataModel<PaymentScheduleInstanceItem> getItemsForInstance(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {              
+        // filters.put("serviceInstance", serviceInstanceService.refreshOrRetrieve(serviceInstance));    
+     filters.put("paymentScheduleInstance", paymentScheduleInstance);    
+     return getLazyDataModel();
+ }   
 }

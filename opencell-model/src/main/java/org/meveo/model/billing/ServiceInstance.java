@@ -176,6 +176,8 @@ public class ServiceInstance extends BusinessCFEntity {
     @JoinColumn(name = "calendar_ps_id")
    private Calendar calendarPS; 
    
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    private List<PaymentScheduleInstance> psInstances;
     
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -555,6 +557,20 @@ public class ServiceInstance extends BusinessCFEntity {
      */
     public void setCalendarPS(Calendar calendarPS) {
         this.calendarPS = calendarPS;
+    }
+
+    /**
+     * @return the psInstances
+     */
+    public List<PaymentScheduleInstance> getPsInstances() {
+        return psInstances;
+    }
+
+    /**
+     * @param psInstances the psInstances to set
+     */
+    public void setPsInstances(List<PaymentScheduleInstance> psInstances) {
+        this.psInstances = psInstances;
     }
 
     

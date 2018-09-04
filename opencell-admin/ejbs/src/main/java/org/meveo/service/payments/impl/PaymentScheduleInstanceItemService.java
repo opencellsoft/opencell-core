@@ -152,6 +152,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoiceDto.setBillingAccountCode(
                 paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount().getBillingAccount().getCode());
             invoiceDto.setInvoiceDate(new Date());
+            invoiceDto.setDueDate(paymentScheduleInstanceItem.getDueDate());
             invoiceDto.setInvoiceMode(InvoiceModeEnum.AGGREGATED);
 
             SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();

@@ -70,9 +70,7 @@ public class CalendarApi extends BaseApi {
             if (postData.getDays() != null && postData.getDays().size() > 0) {
                 List<DayInYear> days = new ArrayList<DayInYear>();
                 for (DayInYearDto d : postData.getDays()) {
-                    DayInYear dayInYear = dayInYearService.findByMonthAndDay(d.getMonth(), d.getDay());
-                    
-                    System.out.println("\n\n\n\n\n\n\n\n dayInYear:"+dayInYear);
+                    DayInYear dayInYear = dayInYearService.findByMonthAndDay(d.getMonth(), d.getDay());                   
                     if (dayInYear != null) {
                         days.add(dayInYear);
                     }

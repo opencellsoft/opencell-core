@@ -1169,6 +1169,18 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>paymentScheduleInstances</from-outcome>
+		<to-view-id>/pages/payments/paymentScheduleInstances/paymentScheduleInstances.xhtml
+		</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>paymentScheduleInstanceDetail</from-outcome>
+		<to-view-id>/pages/payments/paymentScheduleInstances/paymentScheduleInstanceDetail.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>	
+	<navigation-case>
 		<from-outcome>paymentGateways</from-outcome>
 		<to-view-id>/pages/payments/paymentGateways/paymentGateways.xhtml
 		</to-view-id>
