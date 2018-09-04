@@ -193,18 +193,32 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     private String woDescriptionELSpark;
 
     /**
-     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     * Expression to calculate price with tax.
      */
-    @Column(name = "rating_el", length = 2000)
+    @Column(name = "rating_el_with_tax", length = 2000)
     @Size(max = 2000)
-    private String ratingEL;
+    private String ratingWithTaxEL;
 
     /**
-     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     * Expression to calculate price with tax - for Spark.
      */
-    @Column(name = "rating_el_sp", length = 2000)
+    @Column(name = "rating_el_with_tax_sp", length = 2000)
     @Size(max = 2000)
-    private String ratingELSpark;
+    private String ratingWithTaxELSpark;
+
+    /**
+     * Expression to calculate price without tax
+     */
+    @Column(name = "rating_el_without_tax", length = 2000)
+    @Size(max = 2000)
+    private String ratingWithoutTaxEL;
+
+    /**
+     * Expression to calculate price without tax - for Spark.
+     */
+    @Column(name = "rating_el_without_tax_sp", length = 2000)
+    @Size(max = 2000)
+    private String ratingWithoutTaxELSpark;
 
     @Column(name = "minimum_amount_without_tax_el", length = 2000)
     @Size(max = 2000)
@@ -662,34 +676,6 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     }
 
     /**
-     * @return Expression to calculate price without tax
-     */
-    public String getRatingEL() {
-        return ratingEL;
-    }
-
-    /**
-     * @param ratingEL Expression to calculate price without tax
-     */
-    public void setRatingEL(String ratingEL) {
-        this.ratingEL = ratingEL;
-    }
-
-    /**
-     * @return Expression to calculate price without tax - for Spark
-     */
-    public String getRatingELSpark() {
-        return ratingELSpark;
-    }
-
-    /**
-     * @param ratingELSpark Expression to calculate price without tax - for Spark
-     */
-    public void setRatingELSpark(String ratingELSpark) {
-        this.ratingELSpark = ratingELSpark;
-    }
-
-    /**
      * @return Expression to calculate minimum amount without tax
      */
     public String getMinimumAmountWithoutTaxEl() {
@@ -753,4 +739,59 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
         this.invoiceSubCategoryEL = invoiceSubCategoryEL;
     }
 
+    /**
+     * @return Expression to calculate price with tax
+     */
+    public String getRatingWithTaxEL() {
+        return ratingWithTaxEL;
+    }
+
+    /**
+     * @param ratingELWithTax Expression to calculate price with tax
+     */
+    public void setRatingWithTaxEL(String ratingELWithTax) {
+        this.ratingWithTaxEL = ratingELWithTax;
+    }
+
+    /**
+     * @return Expression to calculate price with tax - for Spark
+     */
+    public String getRatingWithTaxELSpark() {
+        return ratingWithTaxELSpark;
+    }
+
+    /**
+     * @param ratingWithTaxELSpark Expression to calculate price with tax - for Spark
+     */
+    public void setRatingWithTaxELSpark(String ratingWithTaxELSpark) {
+        this.ratingWithTaxELSpark = ratingWithTaxELSpark;
+    }
+
+    /**
+     * @return Expression to calculate price without tax
+     */
+    public String getRatingWithoutTaxEL() {
+        return ratingWithoutTaxEL;
+    }
+
+    /**
+     * @param ratingELWithoutTax Expression to calculate price without tax
+     */
+    public void setRatingWithoutTaxEL(String ratingELWithoutTax) {
+        this.ratingWithoutTaxEL = ratingELWithoutTax;
+    }
+
+    /**
+     * @return Expression to calculate price without tax - for Spark
+     */
+    public String getRatingWithoutTaxELSpark() {
+        return ratingWithoutTaxELSpark;
+    }
+
+    /**
+     * @param ratingWithoutTaxELSpark Expression to calculate price without tax - for Spark
+     */
+    public void setRatingWithoutTaxELSpark(String ratingWithoutTaxELSpark) {
+        this.ratingWithoutTaxELSpark = ratingWithoutTaxELSpark;
+    }
 }

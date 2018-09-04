@@ -3,10 +3,8 @@ package org.meveo.service.intcrm.impl;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -16,13 +14,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CSVUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.communication.Message;
@@ -33,6 +32,7 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.SellerService;
@@ -41,7 +41,6 @@ import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.slf4j.Logger;
 
 @Stateless
 public class ContactService extends BusinessService<Contact> {
@@ -52,9 +51,6 @@ public class ContactService extends BusinessService<Contact> {
 	@Inject
 	private AddressBookService addressBookService;
 
-	@Inject
-	private Logger log;
-	
 	@Inject
 	private CustomerService customerService;
 	
@@ -235,6 +231,28 @@ public class ContactService extends BusinessService<Contact> {
 			
 		} catch (IOException e) {	
 		    
+		}
+	}
+	
+	/**
+     * Return all orders with now - orderDate date > n years.
+     * @param nYear age of the subscription
+     * @return Filtered list of orders
+     */
+    @SuppressWarnings("unchecked")
+	public List<Contact> listInactiveProspect(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Contact.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("auditable.created", higherBound);
+    	qb.addBooleanCriterion("isProspect", true);
+    	
+    	return (List<Contact>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+	public void bulkDelete(List<Contact> inactiveContacts) throws BusinessException {
+		for (Contact e : inactiveContacts) {
+			remove(e);
 		}
 	}
 }

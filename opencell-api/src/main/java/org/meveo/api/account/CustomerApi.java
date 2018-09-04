@@ -69,6 +69,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.dwh.GdprService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
@@ -113,6 +114,9 @@ public class CustomerApi extends AccountEntityApi {
     @Inject
     private InvoiceService invoiceService;
 
+    @Inject
+    private GdprService gdprService;
+    
     @Inject
 	private AddressBookService addressBookService;
 
@@ -799,6 +803,11 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
     }
+
+	public void anonymizeGpdr(String customerCode) throws BusinessException {
+		Customer entity = customerService.findByCode(customerCode);
+		gdprService.anonymize(entity);		
+	}
 
 	public void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
 		if (postData.getSequenceSize() > 20) {

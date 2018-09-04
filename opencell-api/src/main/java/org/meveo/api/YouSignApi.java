@@ -3,6 +3,9 @@ package org.meveo.api;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +18,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -22,13 +26,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.document.sign.CreateProcedureRequestDto;
+import org.meveo.api.dto.document.sign.SignEventWebhookDto;
 import org.meveo.api.dto.document.sign.SignFileObjectRequestDto;
 import org.meveo.api.dto.document.sign.SignFileRequestDto;
 import org.meveo.api.dto.document.sign.SignFileResponseDto;
 import org.meveo.api.dto.document.sign.SignMemberRequestDto;
+import org.meveo.api.dto.document.sign.SignProcedureConfigDto;
 import org.meveo.api.dto.document.sign.SignProcedureDto;
 import org.meveo.api.dto.document.sign.SignProcedureResponseDto;
+import org.meveo.api.dto.document.sign.YousignEventEnum;
+import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +61,9 @@ public class YouSignApi extends BaseApi {
     /** The Constant YOUSIGN_API_URL_PROPERTY_KEY. */
     private static final String YOUSIGN_API_URL_PROPERTY_KEY = "yousign.api.url";
     
+    /** The Constant YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY. */
+    private static final String YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY = "yousign.api.callback.url";
+    
     /** The Constant SIGN_OBJECT_POSITION_PATTERN. */
     private static final Pattern SIGN_OBJECT_POSITION_PATTERN = Pattern.compile("[0-9]+,[0-9]+,[0-9]+,[0-9]+");
     
@@ -69,8 +82,8 @@ public class YouSignApi extends BaseApi {
        
         SignProcedureResponseDto result = new SignProcedureResponseDto();
         
-        final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
-        final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+        final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+        final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
         
         try {
             boolean withInternalMember = postData.isWithInternalMember();
@@ -87,7 +100,9 @@ public class YouSignApi extends BaseApi {
             // The list of files to sign cannot be empty :  
             List<SignFileRequestDto> filesToSign = postData.getFilesToSign();
             this.checkFilesToSign(filesToSign, withInternalMember);
-           
+            
+            // preparing webhook config , for instance a webhook to download the document into OC server once signed :
+            procedure.setConfig(this.getWebhookConfig());
             
             // Uploading files to Yousign platform :
             this.uploadFilesToSign(filesToSign, YOU_SIGN_REST_URL, YOU_SIGN_AUTH_TOKEN);
@@ -98,7 +113,7 @@ public class YouSignApi extends BaseApi {
             // Creating procedureusing  Yousign platform API :
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/procedures"));
-            Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).post(Entity.json(postData.getProcedure()));
+            Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).post(Entity.json(procedure));
             
             if (isSuccessResponse(response)) {
                 // reading results :
@@ -117,6 +132,50 @@ public class YouSignApi extends BaseApi {
         return result;
     }
     
+    
+    private SignProcedureConfigDto getWebhookConfig() throws MeveoApiException {
+        
+        String url = this.getMandatoryYousignParam(YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY);
+        List<SignEventWebhookDto> webkooks = new ArrayList<>();
+        webkooks.add(new SignEventWebhookDto(url, "PUT"));
+        
+        Map<YousignEventEnum, List<SignEventWebhookDto>> webhook = new HashMap<>();
+        webhook.put(YousignEventEnum.PROCEDURE_FINISHED, webkooks);
+       
+        return new SignProcedureConfigDto(webhook);
+    }
+
+
+    /**
+     * Download file by its id from Yousign and save in server.
+     *
+     * @param fileResponseDto the id
+     * @return the raw response dto
+     * @throws MeveoApiException the meveo api exception
+     */
+    public RawResponseDto<String> downloadFileByIdAndSaveInServer(String fileId, String fileName) throws MeveoApiException {
+
+        RawResponseDto<String> result = new RawResponseDto<>();
+        byte [] content = this.downloadFileById(fileId).getContent();
+        String filePath = getDownloadedFilePath(fileName, "pdf"); // TODO : make the extension dynamic !
+        try {
+            Files.write(Paths.get(filePath), Base64.decodeBase64(content), StandardOpenOption.CREATE);
+        } catch (Exception e) {
+            log.error(" Error while saving file : {}, [{}] ", filePath, e.getMessage());
+            result.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, e.getMessage()));
+        }
+        return result;
+    }
+    
+    private String getDownloadedFilePath(String fileName, String extension) {
+        String parentDirPath = paramBeanFactory.getChrootDir() + File.separator + "docToSign";
+        File parentDir = new File( parentDirPath );
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();  
+        }
+        return parentDirPath + File.separator + fileName + "." + extension;
+    }
+    
     /**
      * Gets the file by id.
      *
@@ -128,16 +187,15 @@ public class YouSignApi extends BaseApi {
         
         SignFileResponseDto result = new SignFileResponseDto();
         try {
-            final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
-            final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+            final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+            final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target(YOU_SIGN_REST_URL.concat("/files/".concat(id).concat("/download")));
             Response response = target.request().header(HttpHeaders.AUTHORIZATION, "Bearer " + YOU_SIGN_AUTH_TOKEN).get();
             
             if (isSuccessResponse(response)) {
-                byte[] fileContent = response.readEntity(byte[].class); 
-                result = new SignFileResponseDto(id, fileContent);
+                result = new SignFileResponseDto(id, response.readEntity(byte[].class));
             } else {
                 throw new MeveoApiException(" [Yousign Error] [" + response.getStatus() +"] : " + response.getStatusInfo().getReasonPhrase());
             }
@@ -151,7 +209,7 @@ public class YouSignApi extends BaseApi {
         }
         return result;
     }
-
+    
     /**
      * Gets the procedure by id.
      *
@@ -163,8 +221,8 @@ public class YouSignApi extends BaseApi {
         
         SignProcedureResponseDto result = new SignProcedureResponseDto();
         try {
-            final String YOU_SIGN_REST_URL = this.getMondatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
-            final String YOU_SIGN_AUTH_TOKEN = this.getMondatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
+            final String YOU_SIGN_REST_URL = this.getMandatoryYousignParam(YOUSIGN_API_URL_PROPERTY_KEY);
+            final String YOU_SIGN_AUTH_TOKEN = this.getMandatoryYousignParam(YOUSIGN_API_TOKEN_PROPERTY_KEY);
             
             ResteasyClient client = new ResteasyClientBuilder().build();
             ResteasyWebTarget target = client.target( YOU_SIGN_REST_URL.concat("/procedures/".concat(id)) );
@@ -209,10 +267,10 @@ public class YouSignApi extends BaseApi {
      * @return the mondatory yousign param
      * @throws MeveoApiException the meveo api exception
      */
-    private String getMondatoryYousignParam (String paramKey) throws MeveoApiException {
-        String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, null);
+    private String getMandatoryYousignParam (String paramKey) throws MeveoApiException {
+        String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, "");
         if (StringUtils.isEmpty(paramValue)) {
-            throw new MeveoApiException(" Mondatory Yousign param not configured : " + paramKey); 
+            throw new MeveoApiException(" Mandatory Yousign param not configured : " + paramKey); 
         }
         return paramValue;
     }
@@ -282,7 +340,7 @@ public class YouSignApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      */
     private SignMemberRequestDto getInternalMember() throws MeveoApiException {
-        String internalMemberId = this.getMondatoryYousignParam("yousign.api.user");
+        String internalMemberId = this.getMandatoryYousignParam("yousign.api.user");
         return new SignMemberRequestDto(internalMemberId);
     }
 

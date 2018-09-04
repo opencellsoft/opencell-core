@@ -24,6 +24,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Embeddable
 public class ContactInformation implements Serializable, Cloneable {
 
@@ -96,6 +100,13 @@ public class ContactInformation implements Serializable, Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+
+	public void anonymize(String code) {
+		setEmail(code + "@opencellsoft.com");
+		setFax(code);
+		setMobile(code);
+		setPhone(code);
 	}
 
 }

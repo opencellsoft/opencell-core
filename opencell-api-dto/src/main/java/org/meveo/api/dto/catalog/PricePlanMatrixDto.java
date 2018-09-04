@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -137,14 +138,28 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     private String woDescriptionELSpark;
 
     /**
-     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     * Expression to calculate price with tax.
      */
-    private String ratingEL;
+    @Size(max = 2000)
+    private String ratingWithTaxEL;
 
     /**
-     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService - for Spark
+     * Expression to calculate price with tax - for Spark.
      */
-    private String ratingELSpark;
+    @Size(max = 2000)
+    private String ratingWithTaxELSpark;
+
+    /**
+     * Expression to calculate price without tax
+     */
+    @Size(max = 2000)
+    private String ratingWithoutTaxEL;
+
+    /**
+     * Expression to calculate price without tax - for Spark.
+     */
+    @Size(max = 2000)
+    private String ratingWithoutTaxELSpark;
 
     /**
      * Instantiates a new price plan matrix dto.
@@ -209,8 +224,10 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
         woDescriptionEL = pricePlan.getWoDescriptionEL();
         woDescriptionELSpark = pricePlan.getWoDescriptionELSpark();
-        ratingEL = pricePlan.getRatingEL();
-        ratingELSpark = pricePlan.getRatingEL();
+        ratingWithTaxEL = pricePlan.getRatingWithTaxEL();
+        ratingWithTaxELSpark = pricePlan.getRatingWithTaxELSpark();
+        ratingWithoutTaxEL = pricePlan.getRatingWithoutTaxEL();
+        ratingWithoutTaxELSpark = pricePlan.getRatingWithoutTaxELSpark();
         minimumAmountWithoutTaxEl = pricePlan.getMinimumAmountWithoutTaxEl();
         minimumAmountWithoutTaxELSpark = pricePlan.getMinimumAmountWithoutTaxELSpark();
         minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
@@ -762,31 +779,59 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     }
 
     /**
-     * @return Expression to calculate price without tax
+     * @return Expression to calculate price with tax
      */
-    public String getRatingEL() {
-        return ratingEL;
+    public String getRatingWithTaxEL() {
+        return ratingWithTaxEL;
     }
 
     /**
-     * @param ratingEL Expression to calculate price without tax
+     * @param ratingELWithTax Expression to calculate price with tax
      */
-    public void setRatingEL(String ratingEL) {
-        this.ratingEL = ratingEL;
+    public void setRatingWithTaxEL(String ratingELWithTax) {
+        this.ratingWithTaxEL = ratingELWithTax;
+    }
+
+    /**
+     * @return Expression to calculate price with tax - for Spark
+     */
+    public String getRatingWithTaxELSpark() {
+        return ratingWithTaxELSpark;
+    }
+
+    /**
+     * @param ratingWithTaxELSpark Expression to calculate price with tax - for Spark
+     */
+    public void setRatingWithTaxELSpark(String ratingWithTaxELSpark) {
+        this.ratingWithTaxELSpark = ratingWithTaxELSpark;
+    }
+
+    /**
+     * @return Expression to calculate price without tax
+     */
+    public String getRatingWithoutTaxEL() {
+        return ratingWithoutTaxEL;
+    }
+
+    /**
+     * @param ratingELWithoutTax Expression to calculate price without tax
+     */
+    public void setRatingWithoutTaxEL(String ratingELWithoutTax) {
+        this.ratingWithoutTaxEL = ratingELWithoutTax;
     }
 
     /**
      * @return Expression to calculate price without tax - for Spark
      */
-    public String getRatingELSpark() {
-        return ratingELSpark;
+    public String getRatingWithoutTaxELSpark() {
+        return ratingWithoutTaxELSpark;
     }
 
     /**
-     * @param ratingELSpark Expression to calculate price without tax - for Spark
+     * @param ratingWithoutTaxELSpark Expression to calculate price without tax - for Spark
      */
-    public void setRatingELSpark(String ratingELSpark) {
-        this.ratingELSpark = ratingELSpark;
+    public void setRatingWithoutTaxELSpark(String ratingWithoutTaxELSpark) {
+        this.ratingWithoutTaxELSpark = ratingWithoutTaxELSpark;
     }
 
     /**
@@ -857,7 +902,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
                 + minimumAmountWithTaxELSpark + ", priority=" + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", criteriaEL="
                 + criteriaEL + ", criteriaELSpark=" + criteriaELSpark + ", validityCalendarCode=" + validityCalendarCode + ", scriptInstance=" + scriptInstance + ", customFields="
                 + customFields + ", languageDescriptions=" + languageDescriptions + ", woDescriptionEL=" + woDescriptionEL + ", woDescriptionELSpark=" + woDescriptionELSpark
-                + ", ratingEL=" + ratingEL + ", ratingELSpark=" + ratingELSpark + ", id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode
-                + "]";
+                + ", ratingWithTaxEL=" + ratingWithTaxEL + ", ratingWithTaxELSpark=" + ratingWithTaxELSpark + ", ratingWithoutTaxEL=" + ratingWithoutTaxEL
+                + ", ratingWithoutTaxELSpark=" + ratingWithoutTaxELSpark + "]";
     }
 }

@@ -54,6 +54,10 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BA", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
@@ -211,7 +215,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     
     @Transient
 	private BigDecimal totalInvoicingAmountTax;
-
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -475,6 +478,17 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.minimumLabelEl = minimumLabelEl;
     }
 
+    @Override
+	public void anonymize(String code) {
+		super.anonymize(code);
+		getContactInformation().anonymize(code);
+		if (getUsersAccounts() != null) {
+			for (UserAccount ua : getUsersAccounts()) {
+				ua.anonymize(code);
+			}
+		}
+	}
+    
     /**
      * @return Expression to determine minimum amount value - for Spark
      */

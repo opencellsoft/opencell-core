@@ -9,9 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.document.sign.CreateProcedureRequestDto;
+import org.meveo.api.dto.document.sign.SignFileResponseDto;
 import org.meveo.api.dto.document.sign.SignProcedureResponseDto;
 import org.meveo.api.dto.response.RawResponseDto;
-import org.meveo.api.dto.document.sign.SignFileResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /** 

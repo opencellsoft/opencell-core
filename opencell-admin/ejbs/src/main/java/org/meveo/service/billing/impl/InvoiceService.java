@@ -484,15 +484,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     
-    /*
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAgregatesAndInvoice(Long billingAccountId, Long billingRunId, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
-        return createAgregatesAndInvoice(billingAccountId, billingRunId, ratedTransactionFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate, false);
-    }
-*/
-    
+    /**
+     * Get rated transactions for entity grouped by billing account and seller, which allows invoice generation by seller and billing account
+     * 
+     * @param entity entity to be billed
+     * @param billingRun billing run
+     * @param ratedTransactionFilter rated transaction filter
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @return list of rated transaction groups for entity.
+     */
     public List<RatedTransactionGroup> getRatedTransactionGroups(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
         
@@ -501,6 +503,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingCycle billingCycle = null;
         Map<BillingAccount, List<RatedTransaction>> mapBillingAccountRT = new HashMap<BillingAccount, List<RatedTransaction>>();
         
+        // Get entity RTs grouped by billing account
         if (ratedTransactionFilter != null) {
             List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
             if (ratedTransactions == null || ratedTransactions.isEmpty()) {
@@ -542,6 +545,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } 
         }
         
+        // Split RTs billing account groups to billing account/seller groups
         for (Map.Entry<BillingAccount, List<RatedTransaction>> entryBaTr : mapBillingAccountRT.entrySet()) {
             BillingAccount billingAccount = entryBaTr.getKey();
             List<RatedTransaction> ratedTransactions = entryBaTr.getValue();
@@ -2091,4 +2095,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return result;
     }
+    
+    /**
+     * Return all invoices with now - invoiceDate date > n years.
+     * @param nYear age of the invoices
+     * @return Filtered list of invoices
+     */
+    @SuppressWarnings("unchecked")
+	public List<Invoice> listInactiveInvoice(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Invoice.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound);
+    	
+    	return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+	public void bulkDelete(List<Invoice> inactiveInvoices) throws BusinessException {
+		for (Invoice e : inactiveInvoices) {
+			remove(e);
+		}
+	}
 }

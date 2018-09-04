@@ -2096,4 +2096,17 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
+    
+    @Override
+    public ActionStatus getSystemProperties() {
+    	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            result.setMessage(configurationApi.getPropertiesAsJsonString());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -53,6 +54,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
@@ -135,8 +137,8 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "matching_status")
     private MatchingStatusEnum matchingStatus;
 
-    @OneToMany(mappedBy = "accountOperation")
-    private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
+    @OneToMany(mappedBy = "accountOperation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MatchingAmount> matchingAmounts = new ArrayList<>();
 
     @Column(name = "occ_code", length = 255)
     @Size(max = 255)
@@ -181,7 +183,10 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
-
+    
+	@OneToMany(mappedBy = "recordedInvoice", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Invoice> invoices;
+	
     @Transient
     private String code;
 
@@ -480,4 +485,12 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     public void setDescription(String description) {
         this.occDescription = description;
     }
+
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
+
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
 }

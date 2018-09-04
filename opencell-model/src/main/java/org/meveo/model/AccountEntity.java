@@ -42,6 +42,12 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 
+/**
+ * Parent class of all account entities.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @ObservableEntity
 @Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type" }))
@@ -175,6 +181,11 @@ public abstract class AccountEntity extends BusinessCFEntity {
 
 	public void setJobTitle(String jobTitle) {
 		this.jobTitle = jobTitle;
+	}
+	
+	public void anonymize(String code) {
+		name.anonymize(code);
+		address.anonymize(code);
 	}
 	
 	public String getVatNo() {

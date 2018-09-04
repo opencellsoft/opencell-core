@@ -48,6 +48,10 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "UA", inheritCFValuesFrom="billingAccount")
 @ExportIdentifier({ "code" })
@@ -229,4 +233,5 @@ public class UserAccount extends AccountEntity {
     public Class<? extends BusinessEntity> getParentEntityType() {
         return BillingAccount.class;
     }
+
 }

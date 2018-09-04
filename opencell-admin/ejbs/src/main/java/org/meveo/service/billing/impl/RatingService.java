@@ -625,9 +625,9 @@ public class RatingService extends BusinessService<WalletOperation> {
             priceWithoutTax = walletOperation.getQuantity().multiply(unitPriceWithoutTax);
 
             // process ratingEL here
-            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingEL())) {
-                priceWithoutTax = new BigDecimal(
-                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
+            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingWithoutTaxEL())) {
+                priceWithoutTax = BigDecimal.valueOf(
+                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingWithoutTaxEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
             }
             priceWithoutTax = round(priceWithoutTax, rounding, roundingMode);
 
@@ -644,6 +644,13 @@ public class RatingService extends BusinessService<WalletOperation> {
         } else {
 
             priceWithTax = walletOperation.getQuantity().multiply(unitPriceWithTax);
+            
+            // process ratingEL here
+            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingWithTaxEL())) {
+            	priceWithTax = BigDecimal.valueOf(
+                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingWithTaxEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
+            }
+            
             priceWithTax = round(priceWithTax, rounding, roundingMode);
 
             if (walletOperation.getTaxPercent() != null) {

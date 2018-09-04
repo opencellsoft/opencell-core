@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -119,8 +117,8 @@ public class ChargeInstance extends BusinessEntity {
     @Size(max = 255)
     protected String criteria3;
 
-    @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
+    @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    protected List<WalletOperation> walletOperations = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
@@ -150,7 +148,7 @@ public class ChargeInstance extends BusinessEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
     @OrderColumn(name = "INDX")
-    protected List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
+    protected List<WalletInstance> walletInstances = new ArrayList<>();
 
     @Transient
     protected List<WalletOperation> sortedWalletOperations;
@@ -283,11 +281,11 @@ public class ChargeInstance extends BusinessEntity {
         this.invoicingCalendar = invoicingCalendar;
     }
 
-    public Set<WalletOperation> getWalletOperations() {
+    public List<WalletOperation> getWalletOperations() {
         return walletOperations;
     }
 
-    public void setWalletOperations(Set<WalletOperation> walletOperations) {
+    public void setWalletOperations(List<WalletOperation> walletOperations) {
         this.walletOperations = walletOperations;
     }
 

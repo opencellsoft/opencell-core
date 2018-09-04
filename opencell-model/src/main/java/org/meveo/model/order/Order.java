@@ -153,7 +153,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     private String receivedFromApp;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
-    private List<Invoice> invoices = new ArrayList<Invoice>();
+    private List<Invoice> invoices = new ArrayList<>();
 
     /**
      * Expression to calculate Invoice due date delay value

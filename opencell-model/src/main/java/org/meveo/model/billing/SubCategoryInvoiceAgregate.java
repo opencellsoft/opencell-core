@@ -49,7 +49,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoice_agregate_taxes", joinColumns = @JoinColumn(name = "sub_cat_invoice_aggregat_id"), inverseJoinColumns = @JoinColumn(name = "tax_id"))
-    private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
+    private Set<Tax> subCategoryTaxes = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_invoice_agregate")
@@ -59,8 +59,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
-    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
+    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
     @Column(name = "discount_plan_code", length = 50)
     @Size(max = 50)

@@ -74,10 +74,8 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "application_date")
     private Date applicationDate = new Date();
 
-    @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ProductChargeInstance> productChargeInstances = new ArrayList<ProductChargeInstance>();
+    @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductChargeInstance> productChargeInstances = new ArrayList<>();
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;

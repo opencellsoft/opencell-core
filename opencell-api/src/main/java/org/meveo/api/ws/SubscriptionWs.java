@@ -50,6 +50,9 @@ public interface SubscriptionWs extends IBaseWs {
     @WebMethod
     ActionStatus terminateServices(@WebParam(name = "terminateSubscriptionServices") TerminateSubscriptionServicesRequestDto postData);
 
+    @WebMethod
+    ActionStatus activateSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
+    
     /**
      * List subscriptions by a user account. Deprecated in v.4.7.2. Use listAll() instead.
      * 

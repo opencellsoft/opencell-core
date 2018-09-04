@@ -183,8 +183,10 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
         pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
-        pricePlanMatrix.setRatingEL(postData.getRatingEL());
-        pricePlanMatrix.setRatingELSpark(postData.getRatingELSpark());
+        pricePlanMatrix.setRatingWithTaxEL(postData.getRatingWithTaxEL());
+        pricePlanMatrix.setRatingWithTaxELSpark(postData.getRatingWithTaxELSpark());
+        pricePlanMatrix.setRatingWithoutTaxEL(postData.getRatingWithoutTaxEL());
+        pricePlanMatrix.setRatingWithoutTaxELSpark(postData.getRatingWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
         pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
@@ -319,8 +321,10 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteriaELSpark(postData.getCriteriaELSpark());
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
         pricePlanMatrix.setWoDescriptionELSpark(postData.getWoDescriptionELSpark());
-        pricePlanMatrix.setRatingEL(postData.getRatingEL());
-        pricePlanMatrix.setRatingELSpark(postData.getRatingELSpark());
+        pricePlanMatrix.setRatingWithTaxEL(postData.getRatingWithTaxEL());
+        pricePlanMatrix.setRatingWithTaxELSpark(postData.getRatingWithTaxELSpark());
+        pricePlanMatrix.setRatingWithoutTaxEL(postData.getRatingWithoutTaxEL());
+        pricePlanMatrix.setRatingWithoutTaxELSpark(postData.getRatingWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
         pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());

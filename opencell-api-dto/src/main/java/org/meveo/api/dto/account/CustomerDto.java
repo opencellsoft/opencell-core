@@ -8,9 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.crm.AdditionalDetailsDto;
-import org.meveo.api.dto.crm.AddressBookDto;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.intcrm.AdditionalDetails;
 
 /**
  * The Class CustomerDto.

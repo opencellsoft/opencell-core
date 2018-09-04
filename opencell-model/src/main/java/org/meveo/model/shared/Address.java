@@ -31,7 +31,8 @@ import org.meveo.model.billing.Country;
 /**
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
  */
 @Embeddable
 public class Address implements Serializable, Cloneable {
@@ -160,5 +161,15 @@ public class Address implements Serializable, Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		Address o = (Address) super.clone();
 		return o;
+	}
+	
+	public void anonymize(String code) {
+		setAddress1(code);
+		setAddress2(code);
+		setAddress3(code);
+		setCity(code);
+		setState(code);
+		setZipCode("xxx");
+		setCountry(null);
 	}
 }

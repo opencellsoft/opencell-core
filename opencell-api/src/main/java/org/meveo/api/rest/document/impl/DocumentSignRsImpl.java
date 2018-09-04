@@ -1,6 +1,8 @@
 package org.meveo.api.rest.document.impl;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.api.YouSignApi;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -8,12 +10,15 @@ import org.meveo.api.dto.document.sign.CreateProcedureRequestDto;
 import org.meveo.api.dto.document.sign.SignFileResponseDto;
 import org.meveo.api.dto.document.sign.SignProcedureResponseDto;
 import org.meveo.api.dto.response.RawResponseDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.document.DocumentSignRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * The default Implementation of DocumentSignRs.
  */
+@RequestScoped
+@Interceptors({ WsRestApiInterceptor.class })
 public class DocumentSignRsImpl extends BaseRs implements DocumentSignRs {
     
     @Inject
@@ -65,6 +70,5 @@ public class DocumentSignRsImpl extends BaseRs implements DocumentSignRs {
             processException(e, result.getActionStatus()); 
         } 
         return result; 
-    } 
-
+    }
 }
