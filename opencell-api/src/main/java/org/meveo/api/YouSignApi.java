@@ -23,6 +23,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -135,7 +136,13 @@ public class YouSignApi extends BaseApi {
     
     private SignProcedureConfigDto getWebhookConfig() throws MeveoApiException {
         
-        String url = this.getMandatoryYousignParam(YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY);
+        String url = this.getYousignParam(YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY, false);
+        if (StringUtils.isEmpty(url)) {
+            return null;
+        }
+        if ( !UrlValidator.getInstance().isValid(url) ) {
+            throw new MeveoApiException(" Malformed URL  : " + YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY + " = " + url); 
+        }
         List<SignEventWebhookDto> webkooks = new ArrayList<>();
         webkooks.add(new SignEventWebhookDto(url, "PUT"));
         
@@ -268,8 +275,13 @@ public class YouSignApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      */
     private String getMandatoryYousignParam (String paramKey) throws MeveoApiException {
+        return this.getYousignParam(paramKey, true);
+    }
+    
+
+    private String getYousignParam (String paramKey, boolean isMandatory) throws MeveoApiException {
         String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, "");
-        if (StringUtils.isEmpty(paramValue)) {
+        if (isMandatory && StringUtils.isEmpty(paramValue)) {
             throw new MeveoApiException(" Mandatory Yousign param not configured : " + paramKey); 
         }
         return paramValue;
