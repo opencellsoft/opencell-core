@@ -15,6 +15,19 @@
 
     <ui:define name="body">
     
+        <hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"  
+			selection="#{accountOperationBean.filters['accountingCode']}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" 
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}" 
+			column2="description" 
+			updateField=":parentTab:searchForm:cAaccountingCodeId">
+		</hftl:entityPopup>
+    
     	 <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" 
         		updateField=":parentTab:formCustomerAccount:childTab:customerSelectId :parentTab:formCustomerAccount:childTab:customerSelectId_text" selection="#{customerAccountBean.entity.customer}"
         		backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
@@ -273,8 +286,11 @@
                             <hftl:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />
                             <hftl:searchField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" />
                             <hftl:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />
-                            <hftl:searchField label="#{messages['accountingCode']}" field="accountingCode" valueLabelField="code" listBean="#{accountingCodeListBean}" />
-                            <hftl:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
+							
+						    <hftl:searchField id="cAaccountingCodeId" label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" valueLabelField="code"  popup="true"
+							popupId="accountingCodePopup" showResetButton="true" />
+							
+							<hftl:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
                             <hftl:searchField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
                             <hftl:searchField label="#{messages['order.number']}" field="orderNumber" />
                         </hftl:searchPanel>
