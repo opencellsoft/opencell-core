@@ -31,8 +31,13 @@ public class PDFDocumentHelper {
     public static String generatePDF(PDFDocumentRequestDto postData, String rootDir) throws Exception {
         
         String documentDir = postData.getDocumentDestinationDir();
+        
         if (!postData.isAbsolutePaths()) {
-            documentDir = rootDir + documentDir;
+            if ("/".equals(documentDir) ) { // to avoid having paths like : aa/bb//cc
+                documentDir = rootDir;
+            } else {
+                documentDir = rootDir + documentDir;
+            }
         }
         if ( !new File(documentDir).exists() ) {
             throw new FileNotFoundException(documentDir + " (No such directory) ");
