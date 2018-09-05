@@ -35,6 +35,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
@@ -896,6 +897,23 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
+            this.nullifyInvoiceFileNames(billingRun); // #3600
+        }
+    }
+    
+    /**
+     * Nullify invoice file names.
+     *
+     * @param billingRun the billing run
+     * @throws BusinessException 
+     */
+    private void nullifyInvoiceFileNames(BillingRun billingRun) throws BusinessException {
+        List<Invoice> brInvoices = this.invoiceService.getInvoices(billingRun);
+        if (CollectionUtils.isNotEmpty(brInvoices)) {
+            for (Invoice invoice : brInvoices) {
+                invoice.setPdfFilename(null);
+                invoice.setXmlFilename(null);
+            }
         }
     }
 
