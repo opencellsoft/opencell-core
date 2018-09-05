@@ -123,6 +123,7 @@ public class CustomerBean extends AccountBean<Customer> {
 	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
 	 * as a zipped file along with the pdf invoices.
 	 * 
+	 * @return null for JSF navigation
 	 * @throws Exception when zipping fail
 	 */
     @ActionMethod
@@ -140,6 +141,8 @@ public class CustomerBean extends AccountBean<Customer> {
     * In such case, mandatory information (accounting, invoicing, payments) are preserved but the data tables including the
     * customer's data must are anonymized (firstname/name/emails/phones/addresses..). 
     * So if a person register back it will be treated as a new customer without history.
+    * 
+    * @return null for JSF navigation
     */
     @ActionMethod
     public String anonymizeGpdr() {
