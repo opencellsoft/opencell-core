@@ -81,6 +81,12 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     @JoinColumn(name = "calendar_id")
     @NotNull
     private Calendar calendar;
+    
+    @Column(name = "due_date_days")
+    @NotNull
+    private Integer dueDateDays;
+    
+    
   
     
     @OneToMany(mappedBy = "paymentScheduleInstance", cascade = CascadeType.ALL)   
@@ -210,6 +216,20 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    /**
+     * @return the dueDateDays
+     */
+    public Integer getDueDateDays() {
+        return dueDateDays;
+    }
+
+    /**
+     * @param dueDateDays the dueDateDays to set
+     */
+    public void setDueDateDays(Integer dueDateDays) {
+        this.dueDateDays = dueDateDays;
     }
 
       

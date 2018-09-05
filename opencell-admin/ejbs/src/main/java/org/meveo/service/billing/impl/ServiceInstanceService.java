@@ -474,7 +474,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         
         PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
         if(paymentScheduleTemplate != null) {
-            paymentScheduleInstanceService.instanciate(paymentScheduleTemplate,serviceInstance);
+            paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate,serviceInstance);
         }
     }
 

@@ -39,6 +39,7 @@
 					<hftl:formField label="#{messages['paymentScheduleInstance.endDate']}" field="endDate" required="true"/>
 					<hftl:formField label="#{messages['paymentScheduleTemplate.amount']}" field="amount" required="true"/>				
 					<hftl:formField label="#{messages['paymentScheduleTemplate.status']}" field="status" required="true"/>
+					 <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dueDateDays" /> 
 					
 					<hftl:dataList backingBean="#{paymentScheduleInstanceItemBean}" dataModel="#{paymentScheduleInstanceItemBean.getItemsForInstance(paymentScheduleInstanceBean.entity)}" 
 	                label="#{messages['paymentScheduleInstanceItem.title']}" sortBy="dueDate" exportButton="false" checkMany="false">														

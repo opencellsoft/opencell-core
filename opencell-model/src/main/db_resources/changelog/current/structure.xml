@@ -1441,6 +1441,9 @@
             <column name="service_instance_id" type="bigint" >
                 <constraints nullable="false" />
             </column> 
+            <column name="due_date_days" type="int" >
+                <constraints nullable="false" />
+            </column>
                 
         </createTable>
         <createSequence sequenceName="ar_payment_schedule_inst_seq" />
@@ -1497,6 +1500,9 @@
         <addColumn tableName="billing_service_instance">
             <column name="calendar_ps_id" type="bigint" />
         </addColumn>   
+        <addColumn tableName="billing_service_instance">
+            <column name="due_date_days_ps" type="int" />
+        </addColumn>                            
          <addForeignKeyConstraint baseColumnNames="calendar_ps_id" baseTableName="billing_service_instance" constraintName="fk_calendar_srv_inst" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />         
      </changeSet>

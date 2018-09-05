@@ -71,7 +71,7 @@
 					<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />  
                          <hftl:formField label="#{messages['serviceInstance.amountPS']}" field="amountPS" /> 
                           <hftl:formField label="#{messages['serviceInstance.calendarPS']}" field="calendarPS" valueLabelField="code" listBean="#{calendarBean}" id="calendarPsId" /> 
-                         
+                         <hftl:formField label="#{messages['paymentScheduleTemplate.dayInMonth']}" field="dueDateDaysPS" /> 
                     <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
 	                    <h:panelGroup id="serviceRenewal">
 	                    	<hftl:formField label="#{messages['subscription.initialTermType']}" field="serviceRenewal" childField="initialTermType" componentWidth="100" listenerUpdate="termType"></hftl:formField>

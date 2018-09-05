@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.ServiceInstance;
@@ -41,7 +40,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ViewScoped
-public class PaymentScheduleInstanceBean extends CustomFieldBean<PaymentScheduleInstance> {
+public class PaymentScheduleInstanceBean extends BaseBean<PaymentScheduleInstance> {
     private static final long serialVersionUID = 1L;
     /**
      * Injected @{link PaymentScheduleInstance} service. Extends {@link PersistenceService}.

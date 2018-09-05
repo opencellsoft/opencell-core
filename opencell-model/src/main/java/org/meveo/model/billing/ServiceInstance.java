@@ -45,6 +45,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
@@ -178,6 +179,9 @@ public class ServiceInstance extends BusinessCFEntity {
    
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<PaymentScheduleInstance> psInstances;
+    
+    @Column(name = "due_date_days_ps")
+    private Integer dueDateDaysPS;
     
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -571,6 +575,20 @@ public class ServiceInstance extends BusinessCFEntity {
      */
     public void setPsInstances(List<PaymentScheduleInstance> psInstances) {
         this.psInstances = psInstances;
+    }
+
+    /**
+     * @return the dueDateDaysPS
+     */
+    public Integer getDueDateDaysPS() {
+        return dueDateDaysPS;
+    }
+
+    /**
+     * @param dueDateDaysPS the dueDateDaysPS to set
+     */
+    public void setDueDateDaysPS(Integer dueDateDaysPS) {
+        this.dueDateDaysPS = dueDateDaysPS;
     }
 
     
