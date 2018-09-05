@@ -609,6 +609,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     Invoice invoice = new Invoice();
                     invoice.setInvoiceType(invoiceType);
                     invoice.setBillingAccount(billingAccount);
+                   
                     if (billingRun != null) {
                         invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
                     }
@@ -620,6 +621,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (entity instanceof Order) {
                         order = (Order) entity;
                         paymentMethod = order.getPaymentMethod();
+                    }
+                    
+                    if (entity instanceof Subscription) {
+                        invoice.setSubscription((Subscription) entity);
                     }
     
                     CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(billingAccount.getCustomerAccount());

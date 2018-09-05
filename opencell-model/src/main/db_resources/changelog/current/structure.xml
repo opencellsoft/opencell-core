@@ -1396,5 +1396,11 @@
 			<column name="rum_current_sequence_nb" type="bigint" />
      	</addColumn>
      </changeSet>
+     
+	<changeSet id="#3613_20180903" author="EdwardPLegaspi">
+		<addColumn tableName="billing_invoice">
+			<column name="subscription_id" type="bigint" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
