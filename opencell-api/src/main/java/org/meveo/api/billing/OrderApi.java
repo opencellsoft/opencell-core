@@ -608,7 +608,7 @@ public class OrderApi extends BaseApi {
 
         subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber, orderItem.getId(), OrderItemActionEnum.MODIFY);
 
-        subscriptionService.refresh(subscription);
+//        subscriptionService.refresh(subscription);
         orderItem.setSubscription(subscription);
         
         productOrderItem.getProduct().setId(subscription.getCode());
