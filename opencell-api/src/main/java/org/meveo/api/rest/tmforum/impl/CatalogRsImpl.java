@@ -261,7 +261,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productTemplateApi.create(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
@@ -276,7 +276,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productTemplateApi.createOrUpdate(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
@@ -291,7 +291,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productTemplateApi.update(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
@@ -306,7 +306,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productTemplateApi.remove(code, validFrom, validTo);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
@@ -352,7 +352,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productChargeTemplateApi.create(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
@@ -367,7 +367,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productChargeTemplateApi.createOrUpdate(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
@@ -382,7 +382,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productChargeTemplateApi.update(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
@@ -397,7 +397,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
         try {
             productChargeTemplateApi.remove(code);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(result);
 
         } catch (Exception e) {
             processException(e, result);
