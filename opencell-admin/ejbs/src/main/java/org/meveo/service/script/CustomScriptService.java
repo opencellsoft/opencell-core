@@ -623,9 +623,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             throws BusinessException {
 
         if (context == null) {
-            context = new HashMap<String, Object>();
+            context = new HashMap<>();
         }
         context.put(Script.CONTEXT_ENTITY, entity);
+        context.put(Script.CONTEXT_ACTION, scriptCode);
         Map<String, Object> result = execute(scriptCode, context);
         return result;
     }
