@@ -2847,7 +2847,23 @@ ORDER BY
         </insert>
     </changeSet>
 
-   <changeSet id="20180715 Payment gateway" author="ansseh">
+    <changeSet author="anasseh" id="#3080_draft_innvoice_type">
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="DRAFT" />
+            <column name="description" value="Draft invoice" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="sequence_size" valueNumeric="5" />
+            <column name="occ_template_id" value="-25" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="prefix_el" value="DRAFT_" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="20180715 Payment gateway" author="ansseh">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0, now(), 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
 			package org.meveo.service.script.demo;
 
