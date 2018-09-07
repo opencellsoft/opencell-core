@@ -3,6 +3,8 @@ package org.meveo.api;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -23,7 +25,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -140,9 +141,8 @@ public class YouSignApi extends BaseApi {
         if (StringUtils.isEmpty(url)) {
             return null;
         }
-        if ( !UrlValidator.getInstance().isValid(url) ) {
-            throw new MeveoApiException(" Malformed URL  : " + YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY + " = " + url); 
-        }
+        this.checkUrlFormat(url);
+       
         List<SignEventWebhookDto> webkooks = new ArrayList<>();
         webkooks.add(new SignEventWebhookDto(url, "PUT"));
         
@@ -152,6 +152,14 @@ public class YouSignApi extends BaseApi {
         return new SignProcedureConfigDto(webhook);
     }
 
+
+    private void checkUrlFormat(String url) throws MeveoApiException {
+        try {
+            new URL(url);
+        } catch (MalformedURLException e) {
+            throw new MeveoApiException(" Malformed URL  : " + YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY + " = " + url); 
+        }
+    }
 
     /**
      * Download file by its id from Yousign and save in server.
