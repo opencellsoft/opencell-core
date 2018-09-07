@@ -48,17 +48,17 @@ public class ArConfig {
 
 	public static String getDDRequestOutputDirectory() {
 		//FIXME:set correct default value
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_OUTPUT_DIR,"/tmp");
+		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_OUTPUT_DIR,"tmp");
 	}
 
 	public static String getDDRequestFileNamePrefix() {
 		//FIXME:set correct default value
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_FILE_NAME_PREFIX,"");
+		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_FILE_NAME_PREFIX,"SDD_");
 	}
 
 	public static String getDDRequestFileNameExtension() {
 		//FIXME:set correct default value
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_FILE_NAME_EXTENSION,".txt");
+		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_FILE_NAME_EXTENSION,".xml");
 	}
 	public static int getDateValueAfter() {
 		//FIXME:set correct default value

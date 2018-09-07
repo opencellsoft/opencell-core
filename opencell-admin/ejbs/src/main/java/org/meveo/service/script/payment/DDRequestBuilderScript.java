@@ -37,7 +37,8 @@ public abstract class  DDRequestBuilderScript extends Script implements DDReques
     }
    
     @Override
-    public void getDDFileName(Map<String, Object> methodContext) throws BusinessException {       
+    public String getDDFileName(Map<String, Object> methodContext) throws BusinessException { 
+        return null;
     }
 
     @Override

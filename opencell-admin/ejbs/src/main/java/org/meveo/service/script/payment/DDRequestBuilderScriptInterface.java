@@ -28,9 +28,10 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
      * Build DD request file name.
      *
      * @param methodContext the method context
+     * @return the DD file name
      * @throws BusinessException the business exception
      */
-    public void getDDFileName(Map<String, Object> methodContext) throws BusinessException;
+    public String getDDFileName(Map<String, Object> methodContext) throws BusinessException;
     
     /**
      * Return the prefix for the DD reject file.
