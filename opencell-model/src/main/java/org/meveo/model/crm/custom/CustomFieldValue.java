@@ -18,6 +18,7 @@ import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.IReferenceEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.shared.DateUtils;
@@ -202,7 +203,7 @@ public class CustomFieldValue implements Serializable {
      * cetCode field is set to entityReferenceValue.classnameCode value
      */
     @JsonIgnore
-    private BusinessEntity entityReferenceValueForGUI;
+    private IReferenceEntity entityReferenceValueForGUI;
 
     @JsonIgnore
     protected boolean isNewPeriod = false;
@@ -444,11 +445,11 @@ public class CustomFieldValue implements Serializable {
         }
     }
 
-    public void setEntityReferenceValueForGUI(BusinessEntity businessEntity) {
+    public void setEntityReferenceValueForGUI(IReferenceEntity businessEntity) {
         this.entityReferenceValueForGUI = businessEntity;
     }
 
-    public BusinessEntity getEntityReferenceValueForGUI() {
+    public IReferenceEntity getEntityReferenceValueForGUI() {
         return entityReferenceValueForGUI;
     }
 
