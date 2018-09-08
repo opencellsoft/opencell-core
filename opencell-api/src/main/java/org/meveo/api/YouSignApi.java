@@ -164,7 +164,8 @@ public class YouSignApi extends BaseApi {
     /**
      * Download file by its id from Yousign and save in server.
      *
-     * @param fileResponseDto the id
+     * @param fileId the file id
+     * @param fileName the file name
      * @return the raw response dto
      * @throws MeveoApiException the meveo api exception
      */
