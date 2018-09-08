@@ -342,7 +342,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 	}
  
     /**
-     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date > n years.
+     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date &gt; n years.
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
      */

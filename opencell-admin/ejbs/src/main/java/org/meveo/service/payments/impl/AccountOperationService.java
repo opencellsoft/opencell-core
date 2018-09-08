@@ -146,7 +146,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
     
     /**
-     * Return all AccountOperation with now - invoiceDate date > n years.
+     * Return all AccountOperation with now - invoiceDate date &gt; n years.
      * @param nYear age of the account operation
      * @return Filtered list of account operations
      */
@@ -161,7 +161,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
     
     /**
-     * Return all unpaid AccountOperation with now - invoiceDate date > n years.
+     * Return all unpaid AccountOperation with now - invoiceDate date &gt; n years.
      * @param nYear age of the account operation
      * @return Filtered list of account operations
      */
