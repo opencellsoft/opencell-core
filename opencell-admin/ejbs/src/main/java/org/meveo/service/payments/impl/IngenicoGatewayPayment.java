@@ -52,7 +52,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardD
  * 
  * @author anasseh
  * 
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
@@ -333,12 +333,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
+   
     @Override
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
@@ -353,5 +348,5 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
-    }
+    }   
 }

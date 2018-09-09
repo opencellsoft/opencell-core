@@ -26,9 +26,9 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -84,9 +84,10 @@ public class DDRequestLOT extends AuditableEntity {
     @Column(name = "rejected_invoices")
     private Integer rejectedInvoices;
 
-    @Column(name = "file_format")
-    @Enumerated(EnumType.STRING)
-    private DDRequestFileFormatEnum fileFormat;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ddrequest_builder_id")
+    private DDRequestBuilder ddRequestBuilder;
+
 
     public String getFileName() {
         return fileName;
@@ -169,17 +170,18 @@ public class DDRequestLOT extends AuditableEntity {
     }
 
     /**
-     * @return the fileFormat
+     * @return the ddRequestBuilder
      */
-    public DDRequestFileFormatEnum getFileFormat() {
-        return fileFormat;
+    public DDRequestBuilder getDdRequestBuilder() {
+        return ddRequestBuilder;
     }
 
     /**
-     * @param fileFormat the fileFormat to set
+     * @param ddRequestBuilder the ddRequestBuilder to set
      */
-    public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
-        this.fileFormat = fileFormat;
+    public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
+        this.ddRequestBuilder = ddRequestBuilder;
     }
 
+      
 }

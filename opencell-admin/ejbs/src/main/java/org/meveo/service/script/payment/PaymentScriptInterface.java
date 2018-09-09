@@ -9,7 +9,7 @@ import org.meveo.service.script.ScriptInterface;
  * The Interface PaymentScriptInterface.
  *
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 public interface PaymentScriptInterface extends ScriptInterface {
 
@@ -92,4 +92,5 @@ public interface PaymentScriptInterface extends ScriptInterface {
      * @throws BusinessException the business exception
      */
     void checkMandat(Map<String, Object> methodContext) throws BusinessException;
-}
+    
+    }

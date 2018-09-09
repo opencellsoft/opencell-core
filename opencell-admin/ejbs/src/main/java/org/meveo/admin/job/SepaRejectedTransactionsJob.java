@@ -3,109 +3,98 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.admin.sepa.PaynumFile;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ImportFileFiltre;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.payments.impl.DDRequestItemService;
+import org.meveo.service.payments.impl.DDRequestBuilderFactory;
+import org.meveo.service.payments.impl.DDRequestBuilderInterface;
+import org.meveo.service.payments.impl.DDRequestBuilderService;
 
 /**
- * The Class SepaRejectedTransactionsJob consume sepa/paynum rejected files (sepa/paynum callBacks).
+ * The Class SepaRejectedTransactionsJob consume sepa/paynum or any custom rejected files (ddRequest file callBacks).
  * 
  * @author anasseh
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  * 
  */
 @Stateless
 public class SepaRejectedTransactionsJob extends Job {
 
-    /** The sepa service. */
-    @Inject
-    private DDRequestItemService sepaService;
-
-    /** The paynum file. */
-    @Inject
-    private PaynumFile paynumFile;
-
     /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    @Inject
+    private SepaRejectedTransactionsJobBean sepaRejectedTransactionsJobBean;
+
+    @Inject
+    private DDRequestBuilderService ddRequestBuilderService;
+
+    @Inject
+    private DDRequestBuilderFactory ddRequestBuilderFactory;
+
+    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        ParamBean param = paramBeanFactory.getInstance();
-        String fileFormat = (String) this.getParamOrCFValue(jobInstance, "fileFormat");
-        String defaultPrefix = "PAYNUM".equalsIgnoreCase(fileFormat) ? "*" : "Pain002_";
-        String defaultExtension = "PAYNUM".equalsIgnoreCase(fileFormat) ? "csv" : "xml";
-
-        String importDir = param.getChrootDir(currentUser.getProviderCode());
-
-        String dirIN = importDir + File.separator + "rejectedSepaTransactions" + File.separator + "input";
-        log.info("dirIN=" + dirIN);
-        String dirOK = importDir + File.separator + "rejectedSepaTransactions" + File.separator + "output";
-        String dirKO = importDir + File.separator + "rejectedSepaTransactions" + File.separator + "reject";
-        String prefix = param.getProperty(fileFormat.toLowerCase() + "RejectedTransactionsJob.file.prefix", defaultPrefix);
-        String ext = param.getProperty(fileFormat.toLowerCase() + "RejectedTransactionsJob.file.extension", defaultExtension);
-
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         try {
-
-            File dir = new File(dirIN);
+            DDRequestBuilder ddRequestBuilder = null;
+            String ddRequestBuilderCode = null;
+            if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "RejectSepaJob_ddRequestBuilder") != null) {
+                ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "RejectSepaJob_ddRequestBuilder")).getCode();
+                ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
+            } else {
+                throw new BusinessException("Can't find ddRequestBuilder");
+            }
+            if (ddRequestBuilder == null) {
+                throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
+            }
+            DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
+            String prefix = ddRequestBuilderInterface.getDDRejectFilePrefix();
+            String ext = ddRequestBuilderInterface.getDDRejectFileExtension();
+            String inputDir = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_inputDir")).replaceAll("\\..", "");
+            log.info("inputDir=" + inputDir);
+            File dir = new File(inputDir);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            List<File> files = getFilesToProcess(dir, prefix, ext);
-            int numberOfFiles = files.size();
-            log.info("InputFiles job " + numberOfFiles + " to import");
-            result.setNbItemsToProcess(numberOfFiles);
-            for (File file : files) {
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-                    break;
-                }
-                File currentFile = null;
-                try {
-                    log.info("InputFiles job " + file.getName() + " in progres");
-                    currentFile = FileUtils.addExtension(file, ".processing");
-                    if ("PAYNUM".equalsIgnoreCase(fileFormat)) {
-                        paynumFile.processRejectFile(currentFile, file.getName());
-                    } else {
-                        sepaService.processRejectFile(currentFile, file.getName());
-                    }
+            ArrayList<String> fileExtensions = new ArrayList<String>();
+            fileExtensions.add(ext);
 
-                    FileUtils.moveFile(dirOK, currentFile, file.getName());
-                    log.info("InputFiles job " + file.getName() + " done");
-                    result.registerSucces();
-
-                } catch (Exception e) {
-                    result.registerError(e.getMessage());
-                    log.error("InputFiles job " + file.getName() + " failed", e);
-                    FileUtils.moveFile(dirKO, currentFile, file.getName());
-                } finally {
-                    if (currentFile != null) {
-                        currentFile.delete();
+            File[] files = FileUtils.getFilesForParsing(inputDir, fileExtensions, prefix);
+            if (files == null || files.length == 0) {
+                result.setReport("No files!");
+            } else {
+                int numberOfFiles = files.length;
+                log.info("InputFiles job " + numberOfFiles + " to import");
+                result.setNbItemsToProcess(numberOfFiles);
+                for (File file : files) {
+                    if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                        break;
                     }
+                    sepaRejectedTransactionsJobBean.execute(result, jobInstance, file, ddRequestBuilderInterface, inputDir);
                 }
             }
-
         } catch (Exception e) {
             log.error("Failed to sepa reject transaction", e);
         }
@@ -116,45 +105,29 @@ public class SepaRejectedTransactionsJob extends Job {
         return JobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
 
-    /**
-     * Gets the files to process.
-     *
-     * @param dir the dir
-     * @param prefix the prefix
-     * @param ext the ext
-     * @return the files to process
-     */
-    private List<File> getFilesToProcess(File dir, String prefix, String ext) {
-        List<File> files = new ArrayList<File>();
-        ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
-        File[] listFile = dir.listFiles(filtre);
-        if (listFile == null) {
-            return files;
-        }
-        for (File file : listFile) {
-            if (file.isFile()) {
-                files.add(file);
-            }
-        }
-        return files;
-    }
-
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
-        CustomFieldTemplate formatTransfo = new CustomFieldTemplate();
-        formatTransfo.setCode("fileFormat");
-        formatTransfo.setAppliesTo("JOB_SepaRejectedTransactionsJob");
-        formatTransfo.setActive(true);
-        formatTransfo.setDefaultValue("SEPA");
-        formatTransfo.setDescription("File format");
-        formatTransfo.setFieldType(CustomFieldTypeEnum.LIST);
-        formatTransfo.setValueRequired(false);
-        Map<String, String> listValues = new HashMap<String, String>();
-        listValues.put("SEPA", "SEPA");
-        listValues.put("PAYNUM", "PAYNUM");
-        formatTransfo.setListValues(listValues);
-        result.put("fileFormat", formatTransfo);
+        CustomFieldTemplate inputDirectoryCF = new CustomFieldTemplate();
+        inputDirectoryCF.setCode("RejectSepaJob_inputDir");
+        inputDirectoryCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        inputDirectoryCF.setActive(true);
+        inputDirectoryCF.setDescription(resourceMessages.getString("flatFile.inputDir"));
+        inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
+        inputDirectoryCF.setDefaultValue(null);
+        inputDirectoryCF.setValueRequired(true);
+        inputDirectoryCF.setMaxValue(256L);
+        result.put("RejectSepaJob_inputDir", inputDirectoryCF);
+
+        CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
+        payentGatewayCF.setCode("RejectSepaJob_ddRequestBuilder");
+        payentGatewayCF.setAppliesTo("JOB_SepaRejectedTransactionsJob");
+        payentGatewayCF.setActive(true);
+        payentGatewayCF.setDescription("DDRequest builder");
+        payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
+        payentGatewayCF.setValueRequired(true);
+        result.put("RejectSepaJob_ddRequestBuilder", payentGatewayCF);
 
         return result;
     }

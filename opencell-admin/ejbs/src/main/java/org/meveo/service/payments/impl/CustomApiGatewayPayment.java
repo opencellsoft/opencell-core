@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 
  *  @author anasseh
- *  @lastModifiedVersion 5.0
+ *  @lastModifiedVersion 5.2
  */
 
 public class CustomApiGatewayPayment implements GatewayPaymentInterface {
@@ -101,11 +101,6 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         doPaymentResponseDto.setBankRefenrence((String) scriptContext.get(PaymentScript.RESULT_BANK_REFERENCE));
         doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
         return doPaymentResponseDto;
-    }
-
-    @Override
-    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException {
-        // TODO PaymentRun
     }
 
     @Override
@@ -222,5 +217,4 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
         return doPaymentResponseDto;    
     }
-
 }

@@ -1578,5 +1578,69 @@
             <column name="rating_el_with_tax" type="varchar(2000)" />
         </addColumn>
     </changeSet>
+    
+     <changeSet id="#3554_20180812_2 payment sepa as file" author="anasseh" dbms="mysql">
+           <createTable tableName="ar_ddrequest_builder_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ddrequest_builder_seq_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_ddrequest_builder_seq values(1)</sql>
+     </changeSet>
      
+     <changeSet id="#3554_20180812 payment sepa as file" author="anasseh">
+     	 <createSequence sequenceName="ar_ddrequest_builder_seq" />                            
+         <createTable tableName="ar_ddrequest_builder">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_builder_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="type" type="varchar(255)" >
+                    <constraints nullable="false" />
+            </column>
+           
+            <column name="implementation_class_name" type="varchar(255)" />
+            <column name="script_instance_id" type="bigint" />
+            <column name="nb_ops_file" type="bigint" />
+            <column name="max_size_file" type="bigint" />
+          
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+             <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="cf_values" type="${type.json}" />
+        </createTable>   
+        
+        	<addColumn tableName="ar_ddrequest_lot_op">
+     		<column name="ddrequest_builder_id" type="bigint"></column>     		
+     	</addColumn>
+     	<addColumn tableName="ar_ddrequest_lot_op">
+     		<column name="filter_id" type="bigint"></column>     		
+     	</addColumn>
+     	 <dropColumn tableName="ar_ddrequest_lot_op" columnName="file_format" />
+     	 <addForeignKeyConstraint baseColumnNames="ddrequest_builder_id" baseTableName="ar_ddrequest_lot_op" constraintName="fk_op_ddreq_builder_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_builder" />
+         <addForeignKeyConstraint baseColumnNames="filter_id" baseTableName="ar_ddrequest_lot_op" constraintName="fk_op_ddreq_filter_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_filter" />                                 
+     	<addColumn tableName="ar_ddrequest_lot">
+     		<column name="ddrequest_builder_id" type="bigint"></column>     		
+     	</addColumn>
+     	 <dropColumn tableName="ar_ddrequest_lot" columnName="file_format" />
+     	 <addForeignKeyConstraint baseColumnNames="ddrequest_builder_id" baseTableName="ar_ddrequest_lot" constraintName="fk_lot_req_builder_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_builder" />   
+                                            
+        
+     </changeSet>     
 </databaseChangeLog>

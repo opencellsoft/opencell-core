@@ -8,7 +8,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="objectId" value="#{ddRequestLOTBean.objectId}" />
+            <f:viewParam name="objectId" value="#{dDRequestLOTBean.objectId}" />
         </f:metadata>
     </ui:define>
 	<ui:define name="body">
@@ -17,12 +17,12 @@
 				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
 				<p:menuitem outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />				
 				<p:menuitem
-					value="#{messages['ddrequestLot.panel']} - #{ddRequestLOTBean.entity.fileName}"
-					disabled="true" rendered="#{!ddRequestLOTBean.entity.transient}" />
+					value="#{messages['ddrequestLot.panel']} - #{dDRequestLOTBean.entity.fileName}"
+					disabled="true" rendered="#{!dDRequestLOTBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>
 	
-		<hftl:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" edit="false">
+		<hftl:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{dDRequestLOTBean}" edit="false">
 		    <p:panel>
 			<hftl:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
 			<hftl:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
@@ -32,11 +32,11 @@
 			<hftl:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCause" />
 		   </p:panel>	
 		<h:panelGrid columns="3">
-			<p:commandButton disabled="#{!ddRequestLOTBean.canGenerateFile()}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
-     		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />
+			<p:commandButton disabled="#{!dDRequestLOTBean.canGenerateFile()}" action="#{dDRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
+     		<p:commandButton value="#{messages['action.back']}" action="#{dDRequestLOTBean.back}" immediate="true" />
    		</h:panelGrid>	
 		</hftl:formPanel>					 
-			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getDdrequestItems()}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
+			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{dDRequestLOTBean.entity.getDdrequestItems()}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
 						<hftl:column showSortLinks="false"
 							label="#{messages['accountOperation.operationDate']}"
 							field="recordedInvoice.auditable.created" isDate="true"/>
