@@ -12,6 +12,8 @@ import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
+import org.meveo.api.dto.payment.DDRequestBuilderDto;
+import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PaymentDto;
@@ -29,6 +31,7 @@ import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.CreditCategoryApi;
+import org.meveo.api.payment.DDRequestBuilderApi;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.payment.PaymentGatewayApi;
@@ -40,7 +43,7 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * The implementation for PaymentWs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -60,6 +63,9 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
     @Inject
     private PaymentGatewayApi paymentGatewayApi;
+    
+    @Inject
+    private DDRequestBuilderApi ddRequestBuilderApi;
 
     @Override
     public ActionStatus create(PaymentDto postData) {
@@ -379,7 +385,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     /********************************************/
-    /**** Payment Methods ****/
+    /**** Payment Gateway                   ****/
     /******************************************/
 
     @Override
@@ -498,6 +504,109 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
             processException(e, result.getActionStatus());
         }
 
+        return result;
+    }
+    
+    /********************************************/
+    /**** DDRequest Builder                 ****/
+    /******************************************/
+    
+    @Override
+    public DDRequestBuilderResponseDto addDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        DDRequestBuilderResponseDto response = new DDRequestBuilderResponseDto();
+        try {
+            ddRequestBuilderApi.create(ddRequestBuilder);
+            response.getDdRequestBuilders().add(ddRequestBuilderApi.find(ddRequestBuilder.getCode()));
+
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return response;
+    }
+
+    @Override
+    public ActionStatus updateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            ddRequestBuilderApi.update(ddRequestBuilder);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            ddRequestBuilderApi.remove(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto listDDRequestBuilders(PagingAndFiltering pagingAndFiltering) {
+        DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
+        try {
+            result = ddRequestBuilderApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return null;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto findDDRequestBuilder(String code) {
+        DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
+
+        try {
+            result.getDdRequestBuilders().add(ddRequestBuilderApi.find(code));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto createOrUpdateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        DDRequestBuilderResponseDto response = new DDRequestBuilderResponseDto();
+        try {
+            ddRequestBuilderApi.createOrUpdate(ddRequestBuilder);
+            response.getDdRequestBuilders().add(ddRequestBuilderApi.find(ddRequestBuilder.getCode()));
+
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+        return response;
+    }
+
+    @Override
+    public ActionStatus enableDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus();
+        try {
+            ddRequestBuilderApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus();
+        try {
+            ddRequestBuilderApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
         return result;
     }
 }

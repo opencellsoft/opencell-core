@@ -4367,5 +4367,34 @@ order by edr.STATUS, edr.id DESC
         </sql>
     </changeSet>
 
-    
+    <changeSet id="#3554_20180812 payment sepa as file _data" author="anasseh">
+        <insert tableName="ar_ddrequest_builder">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2018-08-12 14:04:19.955" />
+            <column name="code" value="Sepa_STD" />
+            <column name="description" value="Sepa  : urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 and Sepa reject file Pain002" />
+            <column name="type" value="NATIF" />
+            <column name="implementation_class_name" value="org.meveo.admin.sepa.SepaFile"/>
+            <column name="nb_ops_file" value="-1"/>
+            <column name="max_size_file" value="-1"/>
+            <column name="uuid" value="44bb7507-11cc-4a98-aa50-1777ddae3e6c" />
+            <column name="creator" value="opencell.admin" />
+        </insert>  
+        <insert tableName="ar_ddrequest_builder">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2018-08-12 14:05:32.622" />
+            <column name="code" value="Sepa_Paynum" />
+            <column name="description" value="Sepa  : urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 and Sepa reject file Pain002" />
+            <column name="type" value="NATIF" />
+            <column name="implementation_class_name" value="org.meveo.admin.sepa.PaynumFile"/>
+            <column name="nb_ops_file" value="-1"/>
+            <column name="max_size_file" value="-1"/>
+            <column name="uuid" value="a6873856-1d25-4df8-8801-09314528aa17" />
+            <column name="creator" value="opencell.admin" />
+        </insert> 
+    </changeSet>
 </databaseChangeLog>

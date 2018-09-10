@@ -1642,5 +1642,9 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_builder" />   
                                             
         
-     </changeSet>     
+     </changeSet> 
+     <changeSet id="#3554_20180910" author="hznibar">
+        <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="text" />
+        <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="text" />        
+    </changeSet>    
 </databaseChangeLog>

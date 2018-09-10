@@ -48,8 +48,7 @@ public class DDRequestLOT extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "file_name", length = 255)
-    @Size(max = 255)
+    @Column(name = "file_name", columnDefinition = "text")
     private String fileName;
 
     @Column(name = "return_file_name", length = 255)
