@@ -1569,11 +1569,11 @@
      		<column name="cf_values" type="${type.json}"/>   
      	</addColumn>
      	<sql><![CDATA[update billing_invoice_type set uuid=concat('InvoiceType-',code)]]></sql>
-     	<addNotNullConstraint tableName="billing_invoice_type" columnName="uuid"/>
+     	<addNotNullConstraint columnDataType="varchar(60)" tableName="billing_invoice_type" columnName="uuid"/>
      </changeSet>
      
      <changeSet id="#2449_20180822" author="EdwardPLegaspi">
-     	<renameColumn tableName="cat_price_plan_matrix" oldColumnName="rating_el" newColumnName="rating_el_without_tax"/>
+     	<renameColumn tableName="cat_price_plan_matrix" columnDataType="varchar(2000)" oldColumnName="rating_el" newColumnName="rating_el_without_tax"/>
         <addColumn tableName="cat_price_plan_matrix">
             <column name="rating_el_with_tax" type="varchar(2000)" />
         </addColumn>
