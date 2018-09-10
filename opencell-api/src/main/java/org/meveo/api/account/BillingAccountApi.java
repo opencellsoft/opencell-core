@@ -162,6 +162,15 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         BillingAccount billingAccount = new BillingAccount();
+        
+        if (!StringUtils.isBlank(postData.getPhone())) {
+        	postData.getContactInformation().setPhone(postData.getPhone());
+		}
+
+        if (!StringUtils.isBlank(postData.getEmail())) {
+        	postData.getContactInformation().setEmail(postData.getEmail());
+        }
+        
         populate(postData, billingAccount);
 
         billingAccount.setCustomerAccount(customerAccount);
@@ -172,7 +181,6 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
         billingAccount.setTerminationDate(postData.getTerminationDate());
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
-        billingAccount.getContactInformation().setPhone(postData.getPhone());
         billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
 
@@ -190,7 +198,6 @@ public class BillingAccountApi extends AccountEntityApi {
         } else {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
-        billingAccount.getContactInformation().setEmail(postData.getEmail());
         billingAccount.setExternalRef1(postData.getExternalRef1());
         billingAccount.setExternalRef2(postData.getExternalRef2());
 
@@ -301,6 +308,13 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getExternalRef2())) {
             billingAccount.setExternalRef2(postData.getExternalRef2());
         }
+        
+        if (!StringUtils.isBlank(postData.getPhone())) {
+            postData.getContactInformation().setPhone(postData.getPhone());
+        }
+        if (!StringUtils.isBlank(postData.getEmail())) {
+        	postData.getContactInformation().setEmail(postData.getEmail());
+        }
 
         updateAccount(billingAccount, postData, checkCustomFields);
 
@@ -316,14 +330,8 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getElectronicBilling() != null) {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
-        if (!StringUtils.isBlank(postData.getEmail())) {
-            billingAccount.getContactInformation().setEmail(postData.getEmail());
-        }
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
-        }
-        if (!StringUtils.isBlank(postData.getPhone())) {
-            billingAccount.getContactInformation().setPhone(postData.getPhone());
         }
         if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
             billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());

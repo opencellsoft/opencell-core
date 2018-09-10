@@ -23,7 +23,7 @@ import org.meveo.model.shared.ContactInformation;
  * The Class BillingAccountDto.
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
+ * @lastModifiedVersion 5.2
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -394,7 +394,7 @@ public class BillingAccountDto extends AccountDto {
     }
 
     /**
-     * Gets the email.
+     * Gets the email. Get's priority over ContactInformation.email.
      *
      * @return the email
      */
@@ -520,7 +520,7 @@ public class BillingAccountDto extends AccountDto {
     }
 
     /**
-     * Gets the phone.
+     * Gets the phone. Gets priority over ContactInformation.phone.
      *
      * @return the phone
      */
