@@ -28,8 +28,11 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -68,6 +71,9 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
     @Inject
     private FilterService filterService;
 
+    @Inject
+    private PaymentHistoryService paymentHistoryService;
+
     public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestBuilder ddRequestBuilder, Filter filter) throws BusinessEntityException, Exception {
         log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
         List<RecordedInvoice> recordedInvoices = null;
@@ -85,7 +91,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         } else {
             recordedInvoices = (List<RecordedInvoice>) filterService.filteredListAsObjects(filter);
         }
-        
+
         if ((recordedInvoices == null) || (recordedInvoices.isEmpty())) {
             throw new BusinessEntityException("no invoices!");
         }
@@ -180,19 +186,31 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 
         for (int i = 0; i < ddRequestLOT.getDdrequestItems().size(); i++) {
             DDRequestItem ddrequestItem = ddRequestLOT.getDdrequestItems().get(i);
+            AutomatedPayment automatedPayment = null;
+            PaymentErrorTypeEnum paymentErrorTypeEnum = null;
+            PaymentStatusEnum  paymentStatusEnum= null;
+            String errorMsg = null;
             if (!ddrequestItem.hasError()) {
                 if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
                     log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
                 } else {
-                    AutomatedPayment automatedPayment = createPayment(PaymentMethodEnum.DIRECTDEBIT, directDebitTemplate, ddrequestItem.getAmount(),
+                    automatedPayment = createPayment(PaymentMethodEnum.DIRECTDEBIT, directDebitTemplate, ddrequestItem.getAmount(),
                         ddrequestItem.getRecordedInvoice().getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
                         DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(),
                         ddrequestItem.getRecordedInvoice(), true, MatchingTypeEnum.A_DERICT_DEBIT);
                     ddrequestItem.setAutomatedPayment(automatedPayment);
                     updateNoCheck(ddrequestItem);
-
+                    paymentStatusEnum = PaymentStatusEnum.PENDING;
                 }
+            } else {
+                paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;
+                paymentStatusEnum = PaymentStatusEnum.ERROR;
+                errorMsg = ddrequestItem.getErrorMsg();
             }
+            paymentHistoryService.addHistory(ddrequestItem.getRecordedInvoice().getCustomerAccount(), automatedPayment, null,
+                (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(), paymentStatusEnum, errorMsg, errorMsg, paymentErrorTypeEnum,
+                OperationCategoryEnum.CREDIT, ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getRecordedInvoice().getCustomerAccount().getPreferredPaymentMethod());
+
         }
         ddRequestLOT.setPaymentCreated(true);
         dDRequestLOTService.updateNoCheck(ddRequestLOT);

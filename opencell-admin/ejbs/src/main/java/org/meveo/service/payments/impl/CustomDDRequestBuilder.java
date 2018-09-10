@@ -44,30 +44,27 @@ public class CustomDDRequestBuilder implements DDRequestBuilderInterface {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);  
         scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider); 
-        ddRequestBuilderScriptInterface.getDDFileName(scriptContext);
-        return (String) scriptContext.get(DDRequestBuilderScript.FILE_NAME);
+        return ddRequestBuilderScriptInterface.getDDFileName(scriptContext);
+        
     }
 
     @Override
     public String getDDRejectFilePrefix() throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();        
-        ddRequestBuilderScriptInterface.getDDRejectFilePrefix(scriptContext);
-        return (String) scriptContext.get(DDRequestBuilderScript.DD_REJECT_PREFIX);
+        return ddRequestBuilderScriptInterface.getDDRejectFilePrefix(scriptContext);         
     }
 
     @Override
     public String getDDRejectFileExtension() throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();        
-        ddRequestBuilderScriptInterface.getDDRejectFileExtension(scriptContext);
-        return (String) scriptContext.get(DDRequestBuilderScript.DD_REJECT_EXTENSION);
+        return ddRequestBuilderScriptInterface.getDDRejectFileExtension(scriptContext);        
     }
 
     @Override
     public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(DDRequestBuilderScript.DD_REJECT_FILE, file);  
-        ddRequestBuilderScriptInterface.getDDFileName(scriptContext);
-        return (DDRejectFileInfos) scriptContext.get(DDRequestBuilderScript.DD_REJECT_FILE_INFOS);
+        return ddRequestBuilderScriptInterface.processDDRejectedFile(scriptContext);  
     }
 
 }

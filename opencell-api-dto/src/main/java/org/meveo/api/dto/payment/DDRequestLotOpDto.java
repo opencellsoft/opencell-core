@@ -33,6 +33,9 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     @XmlElement(required = true)
     private Date toDueDate;
     
+    /** The filter code. */
+    private String filterCode;
+    
     /** The ddrequest op. */
     private DDRequestOpEnum ddrequestOp;
     
@@ -42,9 +45,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     /** The error cause. */
     private String errorCause;
     
-    /** The file format. */
-    @XmlElement(required = true)
-    private String paymentGatewayCode;
+    /** The dd request builder code. */
+    private String ddRequestBuilderCode;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -65,7 +67,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.ddrequestOp = ddrequestLotOp.getDdrequestOp();
         this.status = ddrequestLotOp.getStatus();
         this.errorCause = ddrequestLotOp.getErrorCause();
-      //  this.paymentGatewayCode = ddrequestLotOp.getPaymentGateway() != null ? ddrequestLotOp.getPaymentGateway().getCode() : null;
+        this.ddRequestBuilderCode = ddrequestLotOp.getDdRequestBuilder() != null ? ddrequestLotOp.getDdRequestBuilder().getCode() : null;
+        this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
     }
 
     /**
@@ -159,24 +162,39 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
-     * @return the paymentGatewayCode
+     * Gets the filter code.
+     *
+     * @return the filterCode
      */
-    public String getPaymentGatewayCode() {
-        return paymentGatewayCode;
+    public String getFilterCode() {
+        return filterCode;
     }
 
     /**
-     * @param paymentGatewayCode the paymentGatewayCode to set
+     * Sets the filter code.
+     *
+     * @param filterCode the filterCode to set
      */
-    public void setPaymentGatewayCode(String paymentGatewayCode) {
-        this.paymentGatewayCode = paymentGatewayCode;
+    public void setFilterCode(String filterCode) {
+        this.filterCode = filterCode;
     }
 
-    @Override
-    public String toString() {
-        return "DDRequestLotOpDto [fromDueDate=" + fromDueDate + ", toDueDate=" + toDueDate + ", ddrequestOp=" + ddrequestOp + ", status=" + status + ", errorCause=" + errorCause
-                + ", paymentGatewayCode=" + paymentGatewayCode + "]";
+    /**
+     * Gets the dd request builder code.
+     *
+     * @return the ddRequestBuilderCode
+     */
+    public String getDdRequestBuilderCode() {
+        return ddRequestBuilderCode;
     }
 
-    
+    /**
+     * Sets the dd request builder code.
+     *
+     * @param ddRequestBuilderCode the ddRequestBuilderCode to set
+     */
+    public void setDdRequestBuilderCode(String ddRequestBuilderCode) {
+        this.ddRequestBuilderCode = ddRequestBuilderCode;
+    }
+
 }

@@ -16,69 +16,84 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.filter.Filter;
+import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
-import org.meveo.service.payments.impl.PaymentGatewayService;
+import org.meveo.service.filter.FilterService;
+import org.meveo.service.payments.impl.DDRequestBuilderService;
 
 /**
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * @author Tyshan Shi(tyshan@manaty.net)
  * @since Jul 11, 2016 7:30:19 PM
  **/
 @Stateless
 public class DDRequestLotOpApi extends BaseApi {
 
-	@Inject
-	private DDRequestLotOpService ddrequestLotOpService;
-	
-	@Inject
-	private PaymentGatewayService paymentGatewayService;
-	
-	public void create(DDRequestLotOpDto dto) throws BusinessException, MissingParameterException, EntityDoesNotExistsException{
-		if(StringUtils.isBlank(dto.getPaymentGatewayCode())){
-			this.missingParameters.add("paymentGatewayCode");
-		}
-		if(StringUtils.isBlank(dto.getFromDueDate())){
-			this.missingParameters.add("fromDueDate");
-		}
-		if(StringUtils.isBlank(dto.getToDueDate())){
-			this.missingParameters.add("toDueDate");
-		}
-		this.handleMissingParameters();
-		
-		//DDRequestBuilder ddRequestBuilder  = paymentGatewayService.findByCode(dto.getPaymentGatewayCode());
-		
-		//if(paymentGateway == null) {
-		  //  throw new EntityDoesNotExistsException(PaymentGateway.class, dto.getPaymentGatewayCode());
-		//}
-		
-		DDRequestLotOp lot=new DDRequestLotOp();
-		lot.setFromDueDate(dto.getFromDueDate());
-		lot.setToDueDate(dto.getToDueDate());
-		//lot.setDdRequestBuilder(ddRequestBuilder);
-		if(StringUtils.isBlank(dto.getDdrequestOp())){
-			lot.setDdrequestOp(DDRequestOpEnum.CREATE);
-		}else{
-			lot.setDdrequestOp(dto.getDdrequestOp());
-		}
-		if(StringUtils.isBlank(dto.getStatus())){
-			lot.setStatus(DDRequestOpStatusEnum.WAIT);
-		}else{
-			lot.setStatus(dto.getStatus());
-		}
-		lot.setErrorCause(dto.getErrorCause());
-		ddrequestLotOpService.create(lot);
-	}
-	
-	public List<DDRequestLotOpDto> listDDRequestLotOps(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status){
-		List<DDRequestLotOpDto> result=new ArrayList<DDRequestLotOpDto>();
-		List<DDRequestLotOp> lots=ddrequestLotOpService.findByDateStatus(fromDueDate,toDueDate,status);
-		if(lots!=null&&!lots.isEmpty()){
-			for(DDRequestLotOp lot:lots){
-				result.add(new DDRequestLotOpDto(lot));
-			}
-		}
-		return result;
-	}
-	
-}
+    @Inject
+    private DDRequestLotOpService ddrequestLotOpService;
 
+    @Inject
+    private DDRequestBuilderService ddRequestBuilderService;
+
+    @Inject
+    private FilterService filterService;
+
+    public void create(DDRequestLotOpDto dto) throws BusinessException, MissingParameterException, EntityDoesNotExistsException {
+        if (StringUtils.isBlank(dto.getDdRequestBuilderCode())) {
+            this.missingParameters.add("ddRequestBuilderCode");
+        }
+        if (StringUtils.isBlank(dto.getFilterCode())) {
+            if (StringUtils.isBlank(dto.getFromDueDate())) {
+                this.missingParameters.add("fromDueDate or filterCode");
+            }
+            if (StringUtils.isBlank(dto.getToDueDate())) {
+                this.missingParameters.add("toDueDate or filterCode");
+            }
+        }
+        this.handleMissingParameters();
+
+        DDRequestBuilder ddRequestBuilder = ddRequestBuilderService.findByCode(dto.getDdRequestBuilderCode());
+
+        if (ddRequestBuilder == null) {
+            throw new EntityDoesNotExistsException(DDRequestBuilder.class, dto.getDdRequestBuilderCode());
+        }
+
+        Filter filter = null;
+        if (!StringUtils.isBlank(dto.getFilterCode())) {
+            filter = filterService.findByCode(dto.getFilterCode());
+            if (filter == null) {
+                throw new EntityDoesNotExistsException(Filter.class, dto.getFilterCode());
+            }
+        }
+
+        DDRequestLotOp lotOp = new DDRequestLotOp();
+        lotOp.setFromDueDate(dto.getFromDueDate());
+        lotOp.setToDueDate(dto.getToDueDate());
+        lotOp.setDdRequestBuilder(ddRequestBuilder);
+        lotOp.setFilter(filter);
+        if (StringUtils.isBlank(dto.getDdrequestOp())) {
+            lotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
+        } else {
+            lotOp.setDdrequestOp(dto.getDdrequestOp());
+        }
+        if (StringUtils.isBlank(dto.getStatus())) {
+            lotOp.setStatus(DDRequestOpStatusEnum.WAIT);
+        } else {
+            lotOp.setStatus(dto.getStatus());
+        }
+        lotOp.setErrorCause(dto.getErrorCause());
+        ddrequestLotOpService.create(lotOp);
+    }
+
+    public List<DDRequestLotOpDto> listDDRequestLotOps(Date fromDueDate, Date toDueDate, DDRequestOpStatusEnum status) {
+        List<DDRequestLotOpDto> result = new ArrayList<DDRequestLotOpDto>();
+        List<DDRequestLotOp> lots = ddrequestLotOpService.findByDateStatus(fromDueDate, toDueDate, status);
+        if (lots != null && !lots.isEmpty()) {
+            for (DDRequestLotOp lot : lots) {
+                result.add(new DDRequestLotOpDto(lot));
+            }
+        }
+        return result;
+    }
+
+}

@@ -310,7 +310,7 @@ public class PaymentApi extends BaseApi {
 
             doPaymentResponseDto = paymentService.payByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
                 cardPaymentRequestDto.getOwnerName(), cardPaymentRequestDto.getCvv(), cardPaymentRequestDto.getExpiryDate(), cardPaymentRequestDto.getCardType(),
-                cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(),null);
+                cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
         } else {
             doPaymentResponseDto = paymentService.payByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
                 cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
@@ -327,12 +327,13 @@ public class PaymentApi extends BaseApi {
      * @throws InvalidParameterException invalid parameter exception
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "paymentHistories", 
-                   itemPropertiesToFilter = { @FilterProperty(property = "sellerCode", entityClass = Seller.class, allowAccessIfNull = false),
-                                              @FilterProperty(property = "customerAccountCode", entityClass = CustomerAccount.class, allowAccessIfNull = false),
-                                              @FilterProperty(property = "customerCode", entityClass = Customer.class, allowAccessIfNull = false)})
+    @FilterResults(propertyToFilter = "paymentHistories", itemPropertiesToFilter = {
+            @FilterProperty(property = "sellerCode", entityClass = Seller.class, allowAccessIfNull = false),
+            @FilterProperty(property = "customerAccountCode", entityClass = CustomerAccount.class, allowAccessIfNull = false),
+            @FilterProperty(property = "customerCode", entityClass = Customer.class, allowAccessIfNull = false) })
     public PaymentHistoriesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("payment", "refund"), pagingAndFiltering, PaymentHistory.class);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("payment", "refund"), pagingAndFiltering,
+            PaymentHistory.class);
         Long totalCount = paymentHistoryService.count(paginationConfig);
         PaymentHistoriesDto paymentHistoriesDto = new PaymentHistoriesDto();
         paymentHistoriesDto.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
@@ -349,6 +350,7 @@ public class PaymentApi extends BaseApi {
 
     /**
      * Return list AO matched with a payment or refund
+     * 
      * @param paymentOrRefund
      * @return list AO matched
      */
@@ -369,6 +371,7 @@ public class PaymentApi extends BaseApi {
 
     /**
      * Build paymentHistory dto from entity
+     * 
      * @param paymentHistory payment History
      * @return PaymentHistoryDto
      */
@@ -390,10 +393,14 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setPaymentGatewayCode(paymentHistory.getPaymentGatewayCode());
         paymentHistoryDto.setPaymentMethodName(paymentHistory.getPaymentMethodName());
         paymentHistoryDto.setPaymentMethodType(paymentHistory.getPaymentMethodType());
-        paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), true)));
-        paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), true)));
+        if (paymentHistory.getRefund() != null) {
+            paymentHistoryDto.setRefund(new AccountOperationDto(paymentHistory.getRefund(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getRefund(), true)));
+        }
+        if (paymentHistory.getPayment() != null) {
+            paymentHistoryDto.setPayment(new AccountOperationDto(paymentHistory.getPayment(), entityToDtoConverter.getCustomFieldsDTO(paymentHistory.getPayment(), true)));
+        }
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
-        paymentHistoryDto.setStatus(paymentHistory.getStatus());        
+        paymentHistoryDto.setStatus(paymentHistory.getStatus());
         paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());
         AccountOperationsDto accountOperationsDto = new AccountOperationsDto();
         accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));

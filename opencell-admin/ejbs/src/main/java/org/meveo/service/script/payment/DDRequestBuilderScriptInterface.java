@@ -1,6 +1,5 @@
 package org.meveo.service.script.payment;
 
-import java.io.File;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
