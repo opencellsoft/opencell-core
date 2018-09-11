@@ -305,21 +305,20 @@ public final class FileUtils {
      * @param extensions list of extensions
      * @return array of File instance
      */
-    public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions, String prefix) {
+    public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions, final String prefix) {
         File sourceDir = new File(sourceDirectory);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
             logger.info(String.format("Wrong source directory: %s", sourceDir.getAbsolutePath()));
             return null;
         }
-
         File[] files = sourceDir.listFiles(new FilenameFilter() {
 
             public boolean accept(File dir, String name) {
-                if (extensions == null) {
+                if (extensions == null && (name.startsWith(prefix) || "*".equals(prefix) || prefix == null)) {
                     return true;
                 }
                 for (String extension : extensions) {
-                    if ((name.endsWith(extension) || "*".equals(extension)) && (name.startsWith(prefix) || "*".equals(prefix))) {
+                    if ((name.endsWith(extension) || "*".equals(extension)) && (name.startsWith(prefix) || "*".equals(prefix) || prefix == null)) {
                         return true;
                     }
                 }
