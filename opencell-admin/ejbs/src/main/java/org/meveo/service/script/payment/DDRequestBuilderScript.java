@@ -20,9 +20,6 @@ public abstract class  DDRequestBuilderScript extends Script implements DDReques
     
     /** The Constant PROVIDER. */
     public static final String PROVIDER = "PROVIDER";
-    
-    /** The Constant FILE_NAME. */
-    public static final String FILE_NAME = "FILE_NAME";
 
     public static final String DD_REJECT_PREFIX = "DD_REJECT_PREFIX";
 

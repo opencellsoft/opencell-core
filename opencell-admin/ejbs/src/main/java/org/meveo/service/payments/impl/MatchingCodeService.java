@@ -111,9 +111,6 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
             accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
             matchingAmount.setMatchingAmount(amountToMatch);
-
-            accountOperation = accountOperationService.update(accountOperation);
-
             matchingAmount.updateAudit(currentUser);
             matchingAmount.setAccountOperation(accountOperation);
             matchingAmount.setMatchingCode(matchingCode);
