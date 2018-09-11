@@ -290,6 +290,19 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @JoinColumn(name = "charge_instance_id")
     private ChargeInstance chargeInstance;
 
+    /**
+     * Tax applied
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
+
+    /**
+     * Tax percent applied
+     */
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal taxPercent;
+
     @Transient
     private OfferTemplate offerTemplate;
 
@@ -785,5 +798,33 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setChargeInstance(ChargeInstance chargeInstance) {
         this.chargeInstance = chargeInstance;
+    }
+
+    /**
+     * @return Tax applied
+     */
+    public Tax getTax() {
+        return tax;
+    }
+
+    /**
+     * @param tax Tax applied
+     */
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
+    /**
+     * @return Tax percent applied
+     */
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
+
+    /**
+     * @param taxPercent Tax percent applied
+     */
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
     }
 }

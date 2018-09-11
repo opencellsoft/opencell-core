@@ -1747,6 +1747,11 @@
         <addColumn tableName="billing_rated_transaction">
             <column name="charge_instance_id" type="bigint" />
             <column name="seller_id" type="bigint" />
+            <column name="tax_id" type="bigint" />
+            <column name="tax_percent" type="numeric(23, 12)" />
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="tax_id" type="bigint" />
         </addColumn>
         <addColumn tableName="billing_cycle">     
             <column name="due_date_delay_el_sp" type="varchar(2000)" />
@@ -1755,11 +1760,19 @@
         <addColumn tableName="ar_customer_account">     
             <column name="due_date_delay_el_sp" type="varchar(2000)" />
         </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="subscription_id" type="bigint" />
+            <column name="order_id" type="bigint" />
+        </addColumn>        
+        <addColumn tableName="cat_discount_plan_item">     
+            <column name="expression_el_sp" type="varchar(2000)" />
+            <column name="discount_percent_el_sp" type="varchar(2000)" />
+        </addColumn>        
+        <addColumn tableName="billing_invoice_agregate">
+            <column name="discount_plan_item_id" type="bigint" />
+        </addColumn>
         <addDefaultValue columnName="rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
         <addDefaultValue columnName="invoice_rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
-        <addColumn tableName="billing_billing_account">
-            <column name="trading_language_code" type="varchar(3)"/>
-        </addColumn>        
         <sql>update ${db.schema.adapted}crm_provider set rounding_mode='NEAREST' where rounding_mode is null</sql>
         <sql>update ${db.schema.adapted}crm_provider set invoice_rounding_mode='NEAREST' where invoice_rounding_mode is null</sql>
         <sql>update ${db.schema.adapted}crm_provider set rating_rounding=2 where rating_rounding is null</sql>
@@ -1775,15 +1788,15 @@
             billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id and
             billing_rated_transaction.wallet_operation_id is not null
         </sql>
-        <sql>update ${db.schema.adapted}billing_billing_account set trading_language_code = adm_language.language_code from ${db.schema.adapted}billing_trading_language, ${db.schema.adapted}adm_language where
-            billing_billing_account.trading_language_id=billing_trading_language.id and
-            billing_trading_language.language_id = adm_language.id
+        <sql>update ${db.schema.adapted}billing_invoice_agregate set discount_plan_item_id = cat_discount_plan_item.id from ${db.schema.adapted}cat_discount_plan_item where
+            cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code and
+            billing_invoice_agregate.discount_plan_item_code is not null
         </sql>        
     </changeSet>
 
     <changeSet id="#3577_20180727_migration_M" author="AndriusKarpavicius" dbms="mysql">
         <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id where billing_rated_transaction.wallet_operation_id is not null</sql>
-        <sql>update ${db.schema.adapted}billing_billing_account join ${db.schema.adapted}billing_trading_language on billing_billing_account.trading_language_id=billing_trading_language.id join adm_language on billing_trading_language.language_id = adm_language_id set trading_language_code = adm_language.language_code</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}cat_discount_plan_item on cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code set discount_plan_item_id = cat_discount_plan_item.id where billing_invoice_agregate.discount_plan_item_code is not null</sql>
     </changeSet>
     
     <changeSet id="#3577_20180827" author="AndriusKarpavicius">

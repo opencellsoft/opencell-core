@@ -78,15 +78,8 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Size(max = 255)
     private String description;
 
-
-    @Column(name = "quantity")
-    private BigDecimal quantity;
-
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
-
-    @Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal discount;
 
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amountWithoutTax;
@@ -112,11 +105,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
-
-    @Type(type = "numeric_boolean")
-    @Column(name = "discount_aggregate", nullable = false)
-    @NotNull
-    private boolean discountAggregate;
 
     public TradingCurrency getTradingCurrency() {
         return tradingCurrency;
@@ -198,21 +186,12 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         this.description = description;
     }
 
-
     public BigDecimal getAmount() {
         return amount;
     }
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
     }
 
     public BigDecimal getAmountWithoutTax() {
@@ -250,18 +229,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         }
     }
 
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
-
-    public void addQuantity(BigDecimal quantity) {
-        this.quantity = this.quantity.add(quantity);
-    }
-
     public void addAmount(BigDecimal amountToAdd) {
         if (amount == null) {
             amount = new BigDecimal("0");
@@ -292,14 +259,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
             }
             amountTax = amountTax.add(amountToAdd);
         }
-    }
-
-    public boolean isDiscountAggregate() {
-        return discountAggregate;
-    }
-
-    public void setDiscountAggregate(boolean discountAggregate) {
-        this.discountAggregate = discountAggregate;
     }
 
     public void resetAmounts() {

@@ -35,7 +35,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.Type;
+import org.meveo.model.catalog.DiscountPlanItem;
 
 @Entity
 @DiscriminatorValue("F")
@@ -47,6 +51,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "invoicesubcategory")
     private InvoiceSubCategory invoiceSubCategory;
 
+    // Field no longer used since v.5.2. Use tax and taxPercent fields instead
+    @Deprecated
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoice_agregate_taxes", joinColumns = @JoinColumn(name = "sub_cat_invoice_aggregat_id"), inverseJoinColumns = @JoinColumn(name = "tax_id"))
     private Set<Tax> subCategoryTaxes = new HashSet<>();
@@ -70,9 +76,19 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Size(max = 50)
     private String discountPlanItemCode;
 
+    /**
+     * Discount plan item applied
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_item_id")
+    private DiscountPlanItem discountPlanItem;
+
     @Transient
     private Set<Tax> subCategoryTaxesTransient;
 
+    /**
+     * Discount percent applied
+     */
     @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountPercent;
 
@@ -82,6 +98,21 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxPercent;
+
+    // Field no longer used since v.5.2
+    @Deprecated
+    @Column(name = "quantity")
+    private BigDecimal quantity;
+
+    // Field no longer used since v.5.2
+    @Deprecated
+    @Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal discount;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "discount_aggregate", nullable = false)
+    @NotNull
+    private boolean discountAggregate;
 
     @Transient
     private BigDecimal oldAmountWithoutTax;
@@ -176,10 +207,16 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.discountPlanItemCode = discountPlanItemCode;
     }
 
+    /**
+     * @return Discount percent applied
+     */
     public BigDecimal getDiscountPercent() {
         return discountPercent;
     }
 
+    /**
+     * @param discountPercent Discount percent applied
+     */
     public void setDiscountPercent(BigDecimal discountPercent) {
         this.discountPercent = discountPercent;
     }
@@ -281,5 +318,47 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     public void setTaxPercent(BigDecimal taxPercent) {
         this.taxPercent = taxPercent;
+    }
+
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
+
+    public void addQuantity(BigDecimal quantity) {
+        this.quantity = this.quantity.add(quantity);
+    }
+
+    public BigDecimal getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
+
+    public boolean isDiscountAggregate() {
+        return discountAggregate;
+    }
+
+    public void setDiscountAggregate(boolean discountAggregate) {
+        this.discountAggregate = discountAggregate;
+    }
+
+    /**
+     * @return Discount applied
+     */
+    public DiscountPlanItem getDiscountPlanItem() {
+        return discountPlanItem;
+    }
+
+    /**
+     * @param discountPlanItem Discount applied
+     */
+    public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
+        this.discountPlanItem = discountPlanItem;
     }
 }

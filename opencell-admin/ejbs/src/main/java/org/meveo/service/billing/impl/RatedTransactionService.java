@@ -294,7 +294,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         long startDate = System.currentTimeMillis();
         boolean entreprise = appProvider.isEntreprise();
         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
-        String languageCode = billingAccount.getTradingLanguageCode();
+        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
         int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
@@ -695,7 +695,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         } else {
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-                if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && invoiceAgregate.isDiscountAggregate()) {
+                if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate)invoiceAgregate).isDiscountAggregate()) {
                     discountAmountWithoutTax.add(invoiceAgregate.getAmountWithoutTax());
                     discountAmountTax.add(invoiceAgregate.getAmountTax());
                     discountAmountWithTax.add(invoiceAgregate.getAmountWithTax());
@@ -960,7 +960,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
 
                                 if (invoiceAgregate instanceof SubCategoryInvoiceAgregate
-                                        && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(userAccount.getWallet()) && !invoiceAgregate.isDiscountAggregate()) {
+                                        && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(userAccount.getWallet()) && !((SubCategoryInvoiceAgregate) invoiceAgregate).isDiscountAggregate()) {
                                     allSubcategories.add(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory());
                                 }
                             }
@@ -1002,7 +1002,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         // } else {
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(wallet)
-                    && ((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().equals(invoiceSubCat) && !invoiceAgregate.isDiscountAggregate()) {
+                    && ((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().equals(invoiceSubCat) && !((SubCategoryInvoiceAgregate) invoiceAgregate).isDiscountAggregate()) {
                 amount = amount.add(invoiceAgregate.getAmountWithoutTax());
             }
         }
@@ -1064,8 +1064,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             invoiceAgregateSubcat.setDiscountAggregate(true);
             invoiceAgregateSubcat.setDiscountPercent(discountPercent);
             // invoiceAgregateSubcat.setDiscountPercent(discountPlanItem.getPercent());
-            invoiceAgregateSubcat.setDiscountPlanCode(discountPlanItem.getDiscountPlan().getCode());
-            invoiceAgregateSubcat.setDiscountPlanItemCode(discountPlanItem.getCode());
+            invoiceAgregateSubcat.setDiscountPlanItem(discountPlanItem);
         }
     }
 

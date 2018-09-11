@@ -106,8 +106,8 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
      */
     public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
         if (subCategoryInvoiceAgregate != null) {
-            discountPlanCode = subCategoryInvoiceAgregate.getDiscountPlanCode();
-            discountPlanItemCode = subCategoryInvoiceAgregate.getDiscountPlanItemCode();
+            discountPlanCode = subCategoryInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getCode();
+            discountPlanItemCode = subCategoryInvoiceAgregate.getDiscountPlanItem().getCode();
             discountPercent = subCategoryInvoiceAgregate.getDiscountPercent();
             itemNumber = subCategoryInvoiceAgregate.getItemNumber();
             if (subCategoryInvoiceAgregate.getAccountingCode() != null) {

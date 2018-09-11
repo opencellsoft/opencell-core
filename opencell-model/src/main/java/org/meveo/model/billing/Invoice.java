@@ -196,9 +196,26 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<>();
 
+    /**
+     * Quote that invoice was produced for
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
+
+    /**
+     * Subscription that invoice was produced for
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
+    /**
+     * Order that invoice was produced for
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     /**
      * XML file name. Might contain subdirectories relative to directory where all XML files are located.
@@ -217,10 +234,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
-    
+
     @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal dueBalance;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = true)
     private Seller seller;
@@ -572,7 +589,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { billingRun };
@@ -618,28 +635,29 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return the quote
+     * @return Quote that invoice was produced for
      */
     public Quote getQuote() {
         return quote;
     }
 
     /**
-     * @param quote the quote to set
+     * @param quote Quote that invoice was produced for
      */
     public void setQuote(Quote quote) {
         this.quote = quote;
     }
 
     /**
-     * Return a PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
-     * 
-     * @return PDF file name
+     * @return PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
      */
     public String getPdfFilename() {
         return pdfFilename;
     }
 
+    /**
+     * @param pdfFilename PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
+     */
     public void setPdfFilename(String pdfFilename) {
         this.pdfFilename = pdfFilename;
     }
@@ -660,14 +678,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * Return a XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
-     * 
-     * @return XML file name
+     * @return XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
      */
     public String getXmlFilename() {
         return xmlFilename;
     }
 
+    /**
+     * @param xmlFilename XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
+     */
     public void setXmlFilename(String xmlFilename) {
         this.xmlFilename = xmlFilename;
     }
@@ -709,13 +728,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
     }
 
-	public BigDecimal getDueBalance() {
-		return dueBalance;
-	}
+    public BigDecimal getDueBalance() {
+        return dueBalance;
+    }
 
-	public void setDueBalance(BigDecimal dueBalance) {
-		this.dueBalance = dueBalance;
-	}
+    public void setDueBalance(BigDecimal dueBalance) {
+        this.dueBalance = dueBalance;
+    }
 
     public Seller getSeller() {
         return seller;
@@ -724,5 +743,33 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-	
+
+    /**
+     * @return Subscription that invoice was produced for
+     */
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    /**
+     * @param subscription Subscription that invoice was produced for
+     */
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
+
+    /**
+     * 
+     * @return Order that invoice was produced for
+     */
+    public Order getOrder() {
+        return order;
+    }
+
+    /**
+     * @param order Order that invoice was produced for
+     */
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

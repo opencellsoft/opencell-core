@@ -130,6 +130,13 @@ public class WalletOperation extends BusinessEntity {
     private Currency currency;
 
     /**
+     * Tax applied
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
+
+    /**
      * Tax percent applied
      */
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -304,6 +311,20 @@ public class WalletOperation extends BusinessEntity {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    /**
+     * @return Tax applied
+     */
+    public Tax getTax() {
+        return tax;
+    }
+
+    /**
+     * @param tax Tax applied
+     */
+    public void setTax(Tax tax) {
+        this.tax = tax;
     }
 
     /**

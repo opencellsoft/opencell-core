@@ -923,8 +923,6 @@ public class InvoiceApi extends BaseApi {
                     subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
                 }
                 subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-                subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
-                subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
                 subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
                 subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
                 subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
@@ -943,8 +941,6 @@ public class InvoiceApi extends BaseApi {
                         subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
                     }
                     subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-                    subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
-                    subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
                     subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
                     subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
                     subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());

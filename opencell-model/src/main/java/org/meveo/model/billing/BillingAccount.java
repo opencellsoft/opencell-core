@@ -132,13 +132,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
-    /**
-     * A derived value from tradingLanguage.language.languageCode field
-     */
-    @Column(name = "trading_language_code", length = 3)
-    @Size(max = 3)
-    private String tradingLanguageCode;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
@@ -357,20 +350,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     public void setTradingLanguage(TradingLanguage tradingLanguage) {
         this.tradingLanguage = tradingLanguage;
-    }
-
-    /**
-     * @return A derived value from tradingLanguage.language.languageCode field
-     */
-    public String getTradingLanguageCode() {
-        return tradingLanguageCode;
-    }
-
-    /**
-     * @param tradingLanguageCode A derived value from tradingLanguage.language.languageCode field
-     */
-    public void setTradingLanguageCode(String tradingLanguageCode) {
-        this.tradingLanguageCode = tradingLanguageCode;
     }
 
     public SubscriptionTerminationReason getTerminationReason() {
