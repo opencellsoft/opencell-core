@@ -2858,7 +2858,7 @@ ORDER BY
             <column name="sequence_size" valueNumeric="5" />
             <column name="occ_template_id" value="-25" />
             <column name="matching_auto" valueNumeric="0" />
-            <column name="matching_auto" valueNumeric="0" />
+            <column name="use_self_sequence" valueNumeric="0" />
             <column name="prefix_el" value="DRAFT_" />
         </insert>
     </changeSet>
