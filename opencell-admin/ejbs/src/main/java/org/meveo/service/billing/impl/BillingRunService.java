@@ -35,6 +35,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
@@ -896,9 +897,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
+            invoiceService.nullifyInvoiceFileNames(billingRun); // #3600
         }
     }
-
+    
     /**
      * Force validate.
      *
