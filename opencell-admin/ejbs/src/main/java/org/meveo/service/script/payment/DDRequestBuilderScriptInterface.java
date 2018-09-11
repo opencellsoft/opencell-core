@@ -51,7 +51,8 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
     /**
      * Process the dd reject file.
      * 
-     * @param file The dd reject file to process.
+     * @param methodContext the context.
+     * @return The ddRejectFileInfos
      * @throws BusinessException the BusinessException.
      */
     public DDRejectFileInfos processDDRejectedFile(Map<String, Object> methodContext) throws BusinessException;
