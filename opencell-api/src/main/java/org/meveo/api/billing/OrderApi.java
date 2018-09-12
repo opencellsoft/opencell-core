@@ -12,8 +12,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.IncorrectServiceInstanceException;
-import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -785,8 +783,10 @@ public class OrderApi extends BaseApi {
     }
 
     private void extractServices(SubscriptionDto subscriptionDto, List<Product> services)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
+            throws BusinessException, MeveoApiException {
 
+    	Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode());
+    	
         for (Product serviceProduct : services) {
 
             String serviceCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), String.class, null);
@@ -815,10 +815,24 @@ public class OrderApi extends BaseApi {
                 }
                 
                 // check if service is activated on a given subscription
-                List<ServiceInstance> serviceFound = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscriptionDto.getCode(), InstanceStatusEnum.ACTIVE);
-                if (serviceFound != null && !serviceFound.isEmpty()) {
-                    continue;
-                }
+//                List<ServiceInstance> serviceFound = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscriptionDto.getCode(), InstanceStatusEnum.ACTIVE);
+//                if (serviceFound != null && !serviceFound.isEmpty()) {
+//                    continue;
+//                }
+				if (subscription != null && subscription.getServiceInstances() != null
+						&& !subscription.getServiceInstances().isEmpty()) {
+					boolean flag = false;
+					for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+						if (serviceCode.equals(serviceInstance.getCode())
+								&& serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+							flag = true;
+						}
+					}
+
+					if (flag) {
+						continue;
+					}
+				}
 
                 serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
                     OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));

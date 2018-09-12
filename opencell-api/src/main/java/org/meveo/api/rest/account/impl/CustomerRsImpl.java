@@ -267,5 +267,4 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
 		return result;
 	}
-
 }

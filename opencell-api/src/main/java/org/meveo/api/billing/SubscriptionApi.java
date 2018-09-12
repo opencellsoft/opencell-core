@@ -1689,9 +1689,10 @@ public class SubscriptionApi extends BaseApi {
      * Rate subscription.
      *
      * @param postData the post data
+     * @return instance of RateSubscriptionResponseDto.
      * @throws BusinessException the business exception
      * @throws MissingParameterException the missing parameter exception
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parameter exception
      */
     public RateSubscriptionResponseDto rateSubscription(RateSubscriptionRequestDto postData) throws BusinessException, MissingParameterException, InvalidParameterException {
 

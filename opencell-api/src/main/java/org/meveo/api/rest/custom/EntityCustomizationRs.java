@@ -36,8 +36,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Define a new custom entity template including fields and applicable actions
      * 
-     * @param dto
-     * @return
+     * @param dto The custom entity instance's data
+     * @return Request processing status
      */
     @POST
     @Path("/entity/")
@@ -46,8 +46,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Update custom entity template definition
      * 
-     * @param dto
-     * @return
+     * @param dto The custom entity instance's data
+     * @return Request processing status
      */
     @PUT
     @Path("/entity/")
@@ -56,8 +56,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Remove custom entity template definition given its code
      * 
-     * @param customEntityTemplateCode
-     * @return
+     * @param customEntityTemplateCode The custom entity template's code
+     * @return Request processing status
      */
     @DELETE
     @Path("/entity/{customEntityTemplateCode}")
@@ -66,8 +66,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Get custom entity template definition including its fields and applicable actions
      * 
-     * @param customEntityTemplateCode
-     * @return customEntityTemplateResponseDto
+     * @param customEntityTemplateCode The custom entity template's code
+     * @return instance of CustomEntityTemplateResponseDto
      */
     @GET
     @Path("/entity/{customEntityTemplateCode}")
@@ -77,6 +77,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * List custom entity templates.
      * 
      * @param customEntityTemplateCode An optional and partial custom entity template code
+     * @return instance of CustomEntityTemplatesResponseDto
      */
     @GET
     @Path("/entity/list")
@@ -85,8 +86,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Define new or update existing custom entity template definition
      * 
-     * @param dto
-     * @return
+     * @param dto The custom entity instance's data
+     * @return Request processing status
      */
     @POST
     @Path("/entity/createOrUpdate")
@@ -95,8 +96,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * To be sure the compatibility of above method we will create a new one. Define new or update existing custom entity template definition
      * 
-     * @param dto
-     * @return
+     * @param dto The custom entity instance's data
+     * @return Request processing status
      */
     @POST
     @Path("/cet/createOrUpdate")
@@ -125,8 +126,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Customize a standard Meveo entity definition by adding fields and/or custom actions
      * 
-     * @param dto
-     * @return
+     * @param dto The custom entity instance's data
+     * @return Request processing status
      */
     @PUT
     @Path("/customize/")
@@ -136,7 +137,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * Get customizations made on a standard Meveo entity given its class
      * 
      * @param customizedEntityClass Standard Meveo entity class name
-     * @return
+     * @return instance of EntityCustomizationResponseDto
      */
     @GET
     @Path("/customize/{customizedEntityClass}")
@@ -145,8 +146,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Define a new custom field
      * 
-     * @param postData
-     * @return
+     * @param postData posted data to API
+     * @return Request processing status
      */
     @POST
     @Path("/field/")
@@ -154,6 +155,9 @@ public interface EntityCustomizationRs extends IBaseRs {
 
     /**
      * Update existing custom field definition
+     * 
+     * @param postData posted data to API
+     * @return Request processing status
      */
     @PUT
     @Path("/field/")
@@ -164,7 +168,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * 
      * @param customFieldTemplateCode Custom field template code
      * @param appliesTo Entity custom field applies to
-     * @return
+     * @return Request processing status
      */
     @DELETE
     @Path("/field/{customFieldTemplateCode}/{appliesTo}")
@@ -175,7 +179,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * 
      * @param customFieldTemplateCode Custom field template code
      * @param appliesTo Entity custom field applies to
-     * @return
+     * @return instance of GetCustomFieldTemplateReponseDto.
      */
     @GET
     @Path("/field/")
@@ -184,8 +188,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Define new or update existing custom field definition
      * 
-     * @param postData
-     * @return
+     * @param postData posted data to API
+     * @return Request processing status
      */
     @POST
     @Path("/field/createOrUpdate")
@@ -216,8 +220,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Define a new entity action
      * 
-     * @param postData
-     * @return
+     * @param postData posted data to API
+     * @return Request processing status
      */
     @POST
     @Path("/action/")
@@ -226,8 +230,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Update existing entity action definition
      * 
-     * @param dto
-     * @return
+     * @param dto posted data to API
+     * @return Request processing status
      */
     @PUT
     @Path("/action/")
@@ -238,7 +242,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * 
      * @param actionCode Entity action code
      * @param appliesTo Entity that action applies to
-     * @return
+     * @return Request processing status
      */
     @DELETE
     @Path("/action/{actionCode}/{appliesTo}")
@@ -249,7 +253,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * 
      * @param actionCode Entity action code
      * @param appliesTo Entity that action applies to
-     * @return
+     * @return instance of EntityCustomActionResponseDto
      */
     @GET
     @Path("/action/")
@@ -258,8 +262,8 @@ public interface EntityCustomizationRs extends IBaseRs {
     /**
      * Define new or update existing entity action definition
      * 
-     * @param dto
-     * @return
+     * @param dto posted data to API
+     * @return Request processing status
      */
     @POST
     @Path("/action/createOrUpdate")
@@ -293,7 +297,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * 
      * @param code CFT code
      * @param wildcode code filter
-     * @return
+     * @return instance of BusinessEntityResponseDto
      */
     @GET
     @Path("/listBusinessEntityForCFVByCode/")
@@ -304,7 +308,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * 
      * @param appliesTo - the type of entity to which the CFT applies. eg OFFER, SERVICE.
      * @param entityCode - code of the entity
-     * @return
+     * @return instance of EntityCustomizationResponseDto
      */
     @GET
     @Path("/entity/listELFiltered")

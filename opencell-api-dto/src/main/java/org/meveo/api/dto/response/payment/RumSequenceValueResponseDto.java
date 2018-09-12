@@ -7,7 +7,7 @@ import org.meveo.api.dto.response.BaseResponse;
  * RUM Sequence value response DTO representation.
  * 
  * @author Edward P. Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 public class RumSequenceValueResponseDto extends BaseResponse {
 

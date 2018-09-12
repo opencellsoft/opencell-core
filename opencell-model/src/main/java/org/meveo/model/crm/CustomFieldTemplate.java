@@ -285,9 +285,27 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         return newList;
     }
 
+    /**
+     * set ListValues
+     *
+     * @param listValues
+     */
     public void setListValues(Map<String, String> listValues) {
         this.listValues = listValues;
+        List<OrderedValue> newListOrderedValues = new ArrayList<OrderedValue>();;
+        if (listValues != null && !listValues.isEmpty()) {
+            int i = 0;
+            for (String key : listValues.keySet()) {
+                OrderedValue orderedValue = new OrderedValue();
+                orderedValue.setKey(key);
+                orderedValue.setLabel(listValues.get(key));
+                orderedValue.setGuiPosition(String.valueOf(i++));
+                newListOrderedValues.add(orderedValue);
+            }
+        }
+        this.listOrderedValues = newListOrderedValues;
     }
+
 
     public List<OrderedValue> getListOrderedValues() {
         return listOrderedValues;

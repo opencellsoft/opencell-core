@@ -49,6 +49,7 @@ public class OfferServiceTemplateDto implements Serializable {
      *
      * @param e the OfferServiceTemplate entity
      * @param customFields the custom fields
+     * @param loadServiceChargeTemplate whether to load the charge templates or not.
      */
     public OfferServiceTemplateDto(OfferServiceTemplate e, CustomFieldsDto customFields, boolean loadServiceChargeTemplate) {
         if (e.getServiceTemplate() != null) {

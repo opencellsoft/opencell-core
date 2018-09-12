@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
  * Sequence class use when generating RUM.
  * 
  * @author Edward P. Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 @Embeddable
 public class RumSequence implements Serializable {

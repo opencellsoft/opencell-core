@@ -46,7 +46,9 @@ public interface InvoiceRs extends IBaseRs {
      * @param invoiceNumber invoice number
      * @param invoiceType invoice type
      * @param includeTransactions Should transactions, associated to an invoice, be listed
-     * @return GetInvoiceResponseDto
+     * @param includePdf true if we want to generate/include pdf
+     * @param includeXml true if we want to generate/include xml
+     * @return instance of GetInvoiceResponseDto
      */
     @GET
     @Path("/")
@@ -69,6 +71,7 @@ public interface InvoiceRs extends IBaseRs {
      * Deprecated in v.4.7.2, use "list()" instead with criteria "billingAccount.customerAccount.code=xxx"
      * 
      * @param customerAccountCode Customer account code
+     * @param returnPdf true if we want to generate pdf
      * @return customer invoice.
      */
     @Deprecated

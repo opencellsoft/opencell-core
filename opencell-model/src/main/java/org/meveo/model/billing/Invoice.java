@@ -218,6 +218,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     
     @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal dueBalance;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -697,4 +701,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 	public void setDueBalance(BigDecimal dueBalance) {
 		this.dueBalance = dueBalance;
 	}
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 }

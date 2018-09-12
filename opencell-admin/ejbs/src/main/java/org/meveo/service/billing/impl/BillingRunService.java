@@ -470,6 +470,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * Clean billing run.
      *
      * @param billingRun the billing run
+     * @throws BusinessException business exception
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -751,7 +752,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     /**
      * Assign invoice number and increment BA invoice dates.
      *
-     * @param billingRunId The billing run ID
+     * @param billingRun The billing run
      * @param nbRuns the nb runs
      * @param waitingMillis The waiting millis
      * @param jobInstanceId The job instance id

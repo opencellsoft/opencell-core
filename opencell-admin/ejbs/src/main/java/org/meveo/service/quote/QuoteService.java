@@ -85,7 +85,9 @@ public class QuoteService extends BusinessService<Quote> {
 
     /**
      * Create a simulated invoice for quote.
+     * 
      * @param quoteInvoiceInfos map of quote invoice info
+     * @param generatePdf generate a PDF file or not.
      * @return list of invoice
      * @throws BusinessException business exception
      */

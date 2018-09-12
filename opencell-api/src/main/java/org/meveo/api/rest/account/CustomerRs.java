@@ -103,6 +103,7 @@ public interface CustomerRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
+     * @param inheritCF Custom field inheritance type.
      * @return List of customers
      */
     @GET
@@ -227,8 +228,12 @@ public interface CustomerRs extends IBaseRs {
 	 * Exports an account hierarchy given a specific customer selected in the GUI.
 	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
 	 * as a zipped file along with the pdf invoices.
+	 * 
+	 * @param customerCode The customer's code
+     * @return Request processing status
 	 */
     @GET
     @Path("/exportCustomerHierarchy")
     ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
+
 }
