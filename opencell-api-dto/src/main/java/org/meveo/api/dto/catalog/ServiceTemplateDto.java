@@ -170,6 +170,10 @@ public class ServiceTemplateDto extends EnableBusinessDto {
                 }
             }
         }
+        
+		if (serviceTemplate.getServiceRenewal() != null) {
+			renewalRule = new SubscriptionRenewalDto(serviceTemplate.getServiceRenewal());
+		}
 
         customFields = customFieldInstances;
     }
