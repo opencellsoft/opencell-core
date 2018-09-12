@@ -84,7 +84,7 @@ public class PaymentJobBean extends BaseJobBean {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
                 createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
-                matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
+                matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_matchingAO"));
                 daysBeforeOrAfterDueDate = (Long) this.getParamOrCFValue(jobInstance, "PaymentJob_daysBeforeOrAfterDueDate");
                 paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
 
