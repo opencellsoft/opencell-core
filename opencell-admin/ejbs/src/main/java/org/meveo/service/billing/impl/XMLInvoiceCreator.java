@@ -1269,50 +1269,52 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element category = null;
         boolean hasMinAmountRT = false;
         LinkedHashMap<String, Element> subCategoriesMap = new LinkedHashMap<String, Element>();
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getWallet() == null) {
-                
-                hasMinAmountRT = true;
-                Element subCategory = null;
-                if(subCategoriesMap.containsKey(ratedTransaction.getCode())) {
-                    subCategory = subCategoriesMap.get(ratedTransaction.getCode());
-                } else {
-                    subCategory = doc.createElement("subCategory");
-                    subCategory.setAttribute("label", ratedTransaction.getDescription());
-                    subCategory.setAttribute("code", ratedTransaction.getCode());
-                    subCategory.setAttribute("amountWithoutTax", roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
+        if(ratedTransactions != null) {
+            for (RatedTransaction ratedTransaction : ratedTransactions) {
+                if (ratedTransaction.getWallet() == null) {
+                    
+                    hasMinAmountRT = true;
+                    Element subCategory = null;
+                    if(subCategoriesMap.containsKey(ratedTransaction.getCode())) {
+                        subCategory = subCategoriesMap.get(ratedTransaction.getCode());
+                    } else {
+                        subCategory = doc.createElement("subCategory");
+                        subCategory.setAttribute("label", ratedTransaction.getDescription());
+                        subCategory.setAttribute("code", ratedTransaction.getCode());
+                        subCategory.setAttribute("amountWithoutTax", roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
+                    }
+    
+                    Element line = doc.createElement("line");
+                    Element lebel = doc.createElement("label");
+                    Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
+                    lebel.appendChild(lebelTxt);
+    
+                    Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+                    Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                    lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+                    line.appendChild(lineUnitAmountWithoutTax);
+    
+                    Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+                    Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
+                    lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
+                    line.appendChild(lineAmountWithoutTax);
+    
+                    if (!enterprise) {
+                        Element lineAmountWithTax = doc.createElement("amountWithTax");
+                        Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
+                        lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+                        line.appendChild(lineAmountWithTax);
+                    }
+    
+                    Element quantity = doc.createElement("quantity");
+                    Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                    quantity.appendChild(quantityTxt);
+                    line.appendChild(quantity);
+                    line.appendChild(lebel);
+                    subCategory.appendChild(line);
+    
+                    subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
                 }
-
-                Element line = doc.createElement("line");
-                Element lebel = doc.createElement("label");
-                Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
-                lebel.appendChild(lebelTxt);
-
-                Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
-                lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
-                line.appendChild(lineUnitAmountWithoutTax);
-
-                Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
-                lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
-                line.appendChild(lineAmountWithoutTax);
-
-                if (!enterprise) {
-                    Element lineAmountWithTax = doc.createElement("amountWithTax");
-                    Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
-                    lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-                    line.appendChild(lineAmountWithTax);
-                }
-
-                Element quantity = doc.createElement("quantity");
-                Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
-                quantity.appendChild(quantityTxt);
-                line.appendChild(quantity);
-                line.appendChild(lebel);
-                subCategory.appendChild(line);
-
-                subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
             }
         }
         
