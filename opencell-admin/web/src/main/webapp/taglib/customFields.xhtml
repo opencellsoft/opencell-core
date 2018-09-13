@@ -47,45 +47,37 @@
         <c:set var="entity" value="#{backingBean.entity}" />
     </c:if>
     <c:if test="${empty(defaultTabLabel)}">
-        <c:set var="defaultTabLabel" value="#{messages['customFieldTemplate.cfValues']}" />
+        <c:set var="defaultTabLabel" value="#{messages['accountEntity.defaultLevel']}" />
     </c:if>
     <c:set var="newEntity" value="#{entity.transient}" />
     <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
     <c:set var="edit" value="#{edit and backingBean.canUserUpdateEntity()}" />
-
+    <c:if test="${empty(renderForm)}">
+        <c:set var="renderForm" value="false" />
+    </c:if>
+    
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
     <f:event listener="#{customFieldDataEntryBean.validateCustomFields(entity)}" type="postValidate" />
 
-    <c:if test="${empty(renderForm)}">
-        <c:set var="renderForm" value="false" />
-    </c:if>
-
-    <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
-
-        <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}" ></c:set>
-        <c:set var="renderTab" value="#{cfTab.hasVisibleCustomFields(entity, cfValueHolder)}" />
-
-        <p:tab title="#{tabLabel}" rendered="#{renderTab}">
-        
-            <c:if test="#{renderForm}">
-                <h:form id="#{prefix}_form_group_#{cfTabStatus.index}">
-                    <h:panelGroup id="form_panel">
-                        <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
-                            dateTimePattern="#{dateTimePattern}" prefix="#{prefix}_form_#{cfTabStatus.index}" />
-                    </h:panelGroup>
-                </h:form>
-            </c:if>
-
-            <c:if test="#{!renderForm}">
-                <h:panelGroup id="#{prefix}_panel_group_#{cfTabStatus.index}">
-                    <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
-                        dateTimePattern="#{dateTimePattern}" prefix="#{prefix}_panel_#{cfTabStatus.index}" />
-                </h:panelGroup>
-            </c:if>
-
-        </p:tab>
-    </c:forEach>
-
+	<c:set var="groupFieldTemplateChildren" value="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" />
+	<c:set var="renderTabView" value="#{customFieldDataEntryBean.hasVisibleTabs(groupFieldTemplateChildren, entity, cfValueHolder)}" />
+	
+	<c:if test="#{groupFieldTemplateChildren.size() == 1}">
+		<hftl:customFieldTab groupFieldTemplateChildren="#{groupFieldTemplateChildren}" defaultTabLabel="#{messages['customFieldTemplate.cfValues']}" formLevelEdit="#{formLevelEdit}" edit="#{edit}" datePattern="#{datePattern}"
+			dateTimePattern="#{dateTimePattern}" messagesId="#{messagesId}" prefix="#{prefix}" entity="#{entity}"
+			newEntity="#{newEntity}" cfValueHolder="#{cfValueHolder}" renderForm="#{renderForm}"></hftl:customFieldTab>
+	</c:if>
+	
+	<c:if test="#{groupFieldTemplateChildren.size() > 1}">
+		<p:tab title="#{messages['meveoModule.customFields']}">
+			<p:tabView prependId="false" rendered="#{renderTabView}">
+				<hftl:customFieldTab groupFieldTemplateChildren="#{groupFieldTemplateChildren}" defaultTabLabel="#{defaultTabLabel}" formLevelEdit="#{formLevelEdit}" edit="#{edit}" datePattern="#{datePattern}"
+					dateTimePattern="#{dateTimePattern}" messagesId="#{messagesId}" prefix="#{prefix}" entity="#{entity}"
+					newEntity="#{newEntity}" cfValueHolder="#{cfValueHolder}" renderForm="#{renderForm}"></hftl:customFieldTab>
+			</p:tabView>
+		</p:tab>
+	</c:if>
+	
 </ui:composition>
 </html>
