@@ -409,6 +409,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         
         if (prefix != null && !StringUtils.isBlank(prefix)) {
             prefix = evaluatePrefixElExpression(prefix, invoice);
+        } else {
+            prefix = "";
         }
 
         String invoiceNumber = invoicesToNumberInfo.nextInvoiceNumber();
@@ -2097,7 +2099,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     /**
-     * Return all invoices with now - invoiceDate date > n years.
+     * Return all invoices with now - invoiceDate date &gt; n years.
      * @param nYear age of the invoices
      * @return Filtered list of invoices
      */
@@ -2116,4 +2118,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			remove(e);
 		}
 	}
+
+    /**
+     * Nullify BR's invoices file names (xml and pdf).
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyInvoiceFileNames(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("Invoice.nullifyInvoiceFileNames").setParameter("billingRun", billingRun).executeUpdate();
+    }
 }

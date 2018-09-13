@@ -6,15 +6,14 @@ import java.util.Map;
 import javax.ejb.Stateless;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.document.PDFContractRequestDto;
+import org.meveo.api.dto.document.PDFDocumentRequestDto;
 import org.meveo.api.dto.document.PDFTemplateDto;
-import org.meveo.api.dto.response.document.PDFContractResponseDto;
+import org.meveo.api.dto.response.document.PDFDocumentResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.helpers.document.PDFContractHelper;
+import org.meveo.api.helpers.document.PDFDocumentHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,38 +21,40 @@ import org.slf4j.LoggerFactory;
  * Created by said on 7/9/18.
  */
 @Stateless
-public class PDFContractApi extends BaseApi {
+public class PDFDocumentApi extends BaseApi {
     
-    private static final Logger LOG = LoggerFactory.getLogger(PDFContractApi.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PDFDocumentApi.class);
     
-    public PDFContractResponseDto generatePDFContract(PDFContractRequestDto postData) throws MeveoApiException {
+    public PDFDocumentResponseDto generatePDF(PDFDocumentRequestDto postData) throws MeveoApiException {
 
-        PDFContractResponseDto restul = new PDFContractResponseDto();
-
+        PDFDocumentResponseDto restul = new PDFDocumentResponseDto();
+        
         try {
             LOG.debug("[ Start checking common required & additional params ...");
             List<PDFTemplateDto> listTemplates = postData.getListTemplates();
             if (CollectionUtils.isEmpty(listTemplates)) {
                 throw new MeveoApiException("listTemplates cannot be empty !");
             }
-            String contractDestinationDir = checkConfiguredOrApiParam(postData.getContractDestinationDir(), "contractDestinationDir");
-            postData.setContractDestinationDir(contractDestinationDir);
+            String documentDestinationDir = checkConfiguredOrApiParam(postData.getDocumentDestinationDir(), "documentDestinationDir");
+            postData.setDocumentDestinationDir(documentDestinationDir);
            
-            if (postData.getContarctNamePrefix() == null) {
-                postData.setContarctNamePrefix((String) this.customFieldInstanceService.getCFValue(this.appProvider, "contarctNamePrefix"));
+            if (postData.getDocumentNamePrefix() == null) {
+                postData.setDocumentNamePrefix((String) this.customFieldInstanceService.getCFValue(this.appProvider, "documentNamePrefix"));
             }
             for (PDFTemplateDto templateDto : listTemplates) {
                 this.checkTemplateDtoParams(templateDto);
             }
             LOG.debug("End checking common required & additional params  ]");
+            
+            final String rootPath = this.paramBeanFactory.getChrootDir();
          
-            // generating the PDF contract & returning its file path
-            String pdfFilePath = PDFContractHelper.generatePDFContract(postData);
-            restul.setPdfFilePath(pdfFilePath);
+            // generating the PDF document & returning its file path
+            String absolutePdfFilePath = PDFDocumentHelper.generatePDF(postData, rootPath);
+            restul.setPdfFilePath(postData.isAbsolutePaths() ? absolutePdfFilePath : absolutePdfFilePath.substring(rootPath.length()));
 
             // generating the PDF as byte[]
-            if (pdfFilePath != null && BooleanUtils.isTrue(postData.getReturnPdf())) {
-                restul.setPdfFile(PDFContractHelper.getPdfFileAsBytes(pdfFilePath));
+            if (absolutePdfFilePath != null && postData.isReturnPdf()) {
+                restul.setPdfFile(PDFDocumentHelper.getPdfFileAsBytes(absolutePdfFilePath));
             }
             return restul;
             
@@ -92,11 +93,11 @@ public class PDFContractApi extends BaseApi {
     }
     
     private String checkConfiguredOrApiParam(String apiValue, String paramName) throws MeveoApiException {
-        if(apiValue == null) {
+        if(StringUtils.isEmpty(apiValue)) {
             apiValue = (String) this.customFieldInstanceService.getCFValue(this.appProvider, paramName);
         }
-        if (apiValue == null) {
-            throw new MeveoApiException(String.format("%s should be configured or sent by the request !", paramName)); 
+        if (StringUtils.isEmpty(apiValue)) {
+            throw new MeveoApiException(String.format("%s should be configured  or sent by the API request !", paramName)); 
         }
         return apiValue;
     }

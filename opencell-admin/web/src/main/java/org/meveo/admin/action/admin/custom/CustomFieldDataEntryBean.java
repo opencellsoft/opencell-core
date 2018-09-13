@@ -35,6 +35,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.IReferenceEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -594,8 +595,11 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param wildcode A partial entity code match
      * @return A list of entities [partially] matching code
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
+     * @throws ClassNotFoundException 
      */
-    public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) {
+    public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode);
     }
@@ -1169,7 +1173,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             List<Object> listValue = new ArrayList<Object>();
             for (CustomFieldValueHolder childEntityValueHolder : customFieldValue.getChildEntityValuesForGUI()) {
-                listValue.add(new EntityReferenceWrapper((BusinessEntity) childEntityValueHolder.getEntity()));
+                listValue.add(new EntityReferenceWrapper((IReferenceEntity) childEntityValueHolder.getEntity()));
             }
             customFieldValue.setListValue(listValue);
 
@@ -1179,7 +1183,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             List<Object> listValue = new ArrayList<Object>();
             for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
-                    listValue.add(new EntityReferenceWrapper((BusinessEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
+                    listValue.add(new EntityReferenceWrapper((IReferenceEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
 
                 } else {
                     listValue.add(listItem.get(CustomFieldValue.MAP_VALUE));
@@ -1194,7 +1198,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
-                    mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), new EntityReferenceWrapper((BusinessEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
+                    mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), new EntityReferenceWrapper((IReferenceEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
 
                 } else {
                     mapValue.put((String) listItem.get(CustomFieldValue.MAP_KEY), listItem.get(CustomFieldValue.MAP_VALUE));
@@ -1228,7 +1232,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     }
 
                     if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
-                        value = new EntityReferenceWrapper((BusinessEntity) value);
+                        value = new EntityReferenceWrapper((IReferenceEntity) value);
                     }
                 }
 
@@ -1391,7 +1395,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param entityReferenceValue Entity reference value
      * @return Business entity JPA object
      */
-    private BusinessEntity deserializeEntityReferenceForGUI(EntityReferenceWrapper entityReferenceValue) {
+    private IReferenceEntity deserializeEntityReferenceForGUI(EntityReferenceWrapper entityReferenceValue) {
         if (entityReferenceValue == null) {
             return null;
         }
@@ -1406,13 +1410,13 @@ public class CustomFieldDataEntryBean implements Serializable {
         // } else {
 
         try {
-            BusinessEntity convertedEntity = (BusinessEntity) ReflectionUtils.createObject(entityReferenceValue.getClassname());
+            IReferenceEntity convertedEntity = (IReferenceEntity) ReflectionUtils.createObject(entityReferenceValue.getClassname());
             if (convertedEntity != null) {
                 if (convertedEntity instanceof CustomEntityInstance) {
                     ((CustomEntityInstance) convertedEntity).setCetCode(entityReferenceValue.getClassnameCode());
                 }
 
-                convertedEntity.setCode(entityReferenceValue.getCode());
+                convertedEntity.setReferenceCode(entityReferenceValue.getCode());
             } else {
                 Logger log = LoggerFactory.getLogger(this.getClass());
                 log.error("Unknown entity class specified " + entityReferenceValue.getClassname() + "in a custom field value {} ", entityReferenceValue);

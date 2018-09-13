@@ -11,6 +11,8 @@ import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
+import org.meveo.api.dto.payment.DDRequestBuilderDto;
+import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PaymentDto;
@@ -339,5 +341,81 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentHistoriesDto listHistory(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+   
+    /********************************************/
+    /**** DDRequest Builder                 ****/
+    /******************************************/
+    
+    /**
+     * Add a new ddRequest builder.
+     * 
+     * @param ddRequestBuilder ddRequest builder DTO
+     * @return the ddRequestBuilder dto created
+     */
+    @WebMethod
+    public DDRequestBuilderResponseDto addDDRequestBuilder(@WebParam(name = "DDRequestBuilderDto") DDRequestBuilderDto ddRequestBuilder);
+
+    /**
+     * Update existing ddRequest builder.
+     * 
+     * @param ddRequestBuilder ddRequest builder DTO
+     * @return Action status
+     */
+    @WebMethod
+    public ActionStatus updateDDRequestBuilder(@WebParam(name = "DDRequestBuilderDto") DDRequestBuilderDto ddRequestBuilder);
+
+    /**
+     * Remove ddRequest builder.
+     * 
+     * @param code code
+     * @return Action status
+     */
+    @WebMethod
+    public ActionStatus removeDDRequestBuilder(@WebParam(name = "code") String code);
+
+    /**
+     * List ddRequest builders on searching by any ddRequest builder fields in addition to paging and sorting.
+     * 
+     * @param pagingAndFiltering Paging and filtering criteria.
+     * @return A list of ddRequest builders
+     */
+    @WebMethod
+    public DDRequestBuilderResponseDto listDDRequestBuilders(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Retrieve ddRequest builder by its code
+     * 
+     * @param code code
+     * @return payment DTO
+     */
+    @WebMethod
+    public DDRequestBuilderResponseDto findDDRequestBuilder(@WebParam(name = "code") String code);
+
+    /**
+     * Create or update ddRequest builder.
+     * 
+     * @param ddRequestBuilder ddRequest builder DTO
+     * @return the ddRequestBuilder dto created
+     */
+    @WebMethod
+    public DDRequestBuilderResponseDto createOrUpdateDDRequestBuilder(@WebParam(name = "DDRequestBuilderDto") DDRequestBuilderDto ddRequestBuilder);
+
+    /**
+     * Enable ddRequest builder by its code
+     * 
+     * @param code Payment gateway code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus enableDDRequestBuilder(@WebParam(name = "code") String code);
+
+    /**
+     * Disable ddRequest builder by its code
+     * 
+     * @param code Payment gateway code
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus disableDDRequestBuilder(@WebParam(name = "code") String code);
 
 }

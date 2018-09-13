@@ -131,7 +131,7 @@ public class OrderService extends BusinessService<Order> {
     }
     
     /**
-     * Return all orders with now - orderDate date > n years.
+     * Return all orders with now - orderDate date &gt; n years.
      * @param nYear age of the subscription
      * @return Filtered list of orders
      */

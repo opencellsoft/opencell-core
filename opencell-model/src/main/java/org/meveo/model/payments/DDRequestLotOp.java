@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.filter.Filter;
 
 @Entity
 @Table(name = "ar_ddrequest_lot_op")
@@ -68,9 +69,13 @@ public class DDRequestLotOp extends AuditableEntity {
     @Size(max = 255)
     private String errorCause;
 
-    @Column(name = "file_format")
-    @Enumerated(EnumType.STRING)
-    private DDRequestFileFormatEnum fileFormat;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ddrequest_builder_id")
+    private DDRequestBuilder ddRequestBuilder;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "filter_id")
+    private Filter filter;    
 
     /**
      * @return the fromDueDate
@@ -151,17 +156,33 @@ public class DDRequestLotOp extends AuditableEntity {
     }
 
     /**
-     * @return the fileFormat
+     * @return the ddRequestBuilder
      */
-    public DDRequestFileFormatEnum getFileFormat() {
-        return fileFormat;
+    public DDRequestBuilder getDdRequestBuilder() {
+        return ddRequestBuilder;
     }
 
     /**
-     * @param fileFormat the fileFormat to set
+     * @param ddRequestBuilder the ddRequestBuilder to set
      */
-    public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
-        this.fileFormat = fileFormat;
+    public void setDdRequestBuilder(DDRequestBuilder ddRequestBuilder) {
+        this.ddRequestBuilder = ddRequestBuilder;
     }
 
+    /**
+     * @return the filter
+     */
+    public Filter getFilter() {
+        return filter;
+    }
+
+    /**
+     * @param filter the filter to set
+     */
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
+   
+   
 }

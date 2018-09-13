@@ -106,16 +106,16 @@
         </p:inputText>
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.ENTITY}">
-        <h:outputText value="#{field.entityReferenceValueForGUI.code}" styleClass="field-value" rendered="#{!edit or disabled}" />
-        <p:autoComplete value="#{field.entityReferenceValueForGUI}" required="#{cft.valueRequired and !hasInheritedValue}" size="30" maxlength="60" dropdown="true" label="#{cft.description}"
-            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" var="e" itemLabel="#{e.code}"
+        <h:outputText value="#{field.entityReferenceValueForGUI.referenceCode}" styleClass="field-value" rendered="#{!edit or disabled}" />
+        <p:autoComplete value="#{field.entityReferenceValueForGUI}" required="#{cft.valueRequired and !hasInheritedValue}" size="30" maxlength="60" dropdown="true" label="#{cft.referenceDescription}"
+            converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" var="e" itemLabel="#{e.referenceCode}"
             itemValue="#{e}" rendered="#{edit and !disabled}">
             <f:attribute name="classname" value="#{cft.entityClazz}" />
             <p:column width="50" headerText="#{messages['BusinessEntity.code']}">
-                <h:outputText value="#{e.code}" />
+                <h:outputText value="#{e.referenceCode}" />
             </p:column>
             <p:column width="50" headerText="#{messages['BusinessEntity.description']}">
-                <h:outputText value="#{e.description}" />
+                <h:outputText value="#{e.referenceDescription}" />
             </p:column>
         </p:autoComplete>
     </c:if>

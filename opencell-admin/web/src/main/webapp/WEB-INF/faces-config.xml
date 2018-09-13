@@ -1151,6 +1151,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>dDRequestBuilders</from-outcome>
+		<to-view-id>/pages/payments/dDRequestBuilders/dDRequestBuilders.xhtml
+		</to-view-id>
+		<redirect />
+	</navigation-case>	
+	<navigation-case>
 		<from-outcome>ddrequestLots</from-outcome>
 		<to-view-id>/pages/payments/ddrequestLot/ddrequestLots.xhtml
 		</to-view-id>

@@ -39,20 +39,13 @@
 					<f:convertDateTime pattern="dd/MM/yyyy" />
 				</h:outputText>
 			</p:column>
-			<hftl:column label="#{messages['ddrequestLotOp.fromDueDate']}"
-				field="fromDueDate" isDate="true" />
-			<hftl:column label="#{messages['ddrequestLotOp.toDueDate']}"
-				field="toDueDate" isDate="true" />
-			<hftl:column label="#{messages['ddrequestLotOp.ddrequestOp']}"
-				field="ddrequestOp.label" isMessage="true" />
-			<hftl:column label="#{messages['ddrequestLotOp.status']}"
-				field="status.label" isMessage="true" />
-			<hftl:column label="#{messages['ddrequestLot.fileFormat']}"
-				field="fileFormat.label" isMessage="true" />				
-			<hftl:column label="#{messages['ddrequestLotOp.errorCause']}"
-				field="errorCause" />
-			<hftl:actionsColumn renderEditLink="true"
-				permission="#{currentUser.hasRole('billingManagement')}" />
+			<hftl:column label="#{messages['ddrequestLotOp.fromDueDate']}" field="fromDueDate" isDate="true" />
+			<hftl:column label="#{messages['ddrequestLotOp.toDueDate']}" field="toDueDate" isDate="true" />
+			<hftl:column label="#{messages['ddrequestLotOp.ddrequestOp']}" field="ddrequestOp.label" isMessage="true" />
+			<hftl:column label="#{messages['ddrequestLotOp.status']}" field="status.label" isMessage="true" />
+			<hftl:column label="#{messages['dDRequestBuilder.title']}" field="ddRequestBuilder.code" />				
+			<hftl:column label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" />
+			<hftl:actionsColumn renderEditLink="true" permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

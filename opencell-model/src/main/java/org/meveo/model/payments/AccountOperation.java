@@ -164,8 +164,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
-    @Column(name = "bank_lot", length = 255)
-    @Size(max = 255)
+    @Column(name = "bank_lot", columnDefinition = "text")
     private String bankLot;
 
     @Column(name = "bank_reference", length = 255)

@@ -47,7 +47,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  */
 @Named
 @ViewScoped
-public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
+public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 
     private static final long serialVersionUID = 1L;
 
@@ -75,7 +75,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public DdRequestLOTBean() {
+    public DDRequestLOTBean() {
         super(DDRequestLOT.class);
     }
 
@@ -89,7 +89,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
             DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
             ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.FILE);
             ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-            ddrequestLotOp.setFileFormat(entity.getFileFormat());
+            ddrequestLotOp.setDdRequestBuilder(entity.getDdRequestBuilder());
             ddrequestLotOp.setDdrequestLOT(entity);
             ddrequestLotOpService.create(ddrequestLotOp);
             messages.info(new BundleKey("messages", "ddrequestLot.generateFileSuccessful"));
@@ -111,7 +111,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
             DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
             ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.PAYMENT);
             ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-            ddrequestLotOp.setFileFormat(entity.getFileFormat());
+            ddrequestLotOp.setDdRequestBuilder(entity.getDdRequestBuilder());
             ddrequestLotOp.setDdrequestLOT(entity);
             ddrequestLotOpService.create(ddrequestLotOp);
             messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsSuccessful"));

@@ -15,7 +15,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * anonymized the stored data.
  * 
  * @author Edward P. Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class GdprService extends BaseService {

@@ -77,6 +77,7 @@ import org.meveo.model.quote.Quote;
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
+        @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
@@ -613,7 +614,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
 
         for (InvoiceAgregate invoiceAggregate : invoiceAgregates) {
-            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && invoiceAggregate.isDiscountAggregate()) {
+            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate)invoiceAggregate).isDiscountAggregate()) {
                 aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
             }
         }

@@ -34,7 +34,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
-            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethod paymentMethod) throws BusinessException {
+            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod) throws BusinessException {
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setCustomerAccountCode(customerAccount.getCode());
         paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
@@ -50,7 +50,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null));
         paymentHistory.setOperationCategory(operationCategory);
         paymentHistory.setSyncStatus(status);
-        paymentHistory.setPaymentGatewayCode(paymentGateway == null ? null : paymentGateway.getCode());
+        paymentHistory.setPaymentGatewayCode(paymentGatewayCode);
         paymentHistory.setLastUpdateDate(paymentHistory.getOperationDate());
         if (paymentMethod != null) {
             paymentHistory.setPaymentMethodType(paymentMethod.getPaymentType());
