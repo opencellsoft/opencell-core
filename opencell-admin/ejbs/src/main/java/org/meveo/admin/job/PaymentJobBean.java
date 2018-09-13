@@ -73,7 +73,7 @@ public class PaymentJobBean extends BaseJobBean {
 
             PaymentGateway paymentGateway = null;
             if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
-                paymentGatewayService.findByCode(((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
+                paymentGateway =  paymentGatewayService.findByCode(((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
             }
             try {
                 operationCategory = OperationCategoryEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
@@ -84,7 +84,7 @@ public class PaymentJobBean extends BaseJobBean {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
                 createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
-                matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
+                matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_matchingAO"));
                 daysBeforeOrAfterDueDate = (Long) this.getParamOrCFValue(jobInstance, "PaymentJob_daysBeforeOrAfterDueDate");
                 paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
 

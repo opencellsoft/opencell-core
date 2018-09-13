@@ -191,6 +191,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
         pricePlanMatrix.setMinimumAmountWithTaxELSpark(postData.getMinimumAmountWithTaxELSpark());
+        pricePlanMatrix.setInvoiceSubCategoryEL(postData.getInvoiceSubCategoryEL());
 
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
@@ -329,6 +330,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setMinimumAmountWithoutTaxELSpark(postData.getMinimumAmountWithoutTaxELSpark());
         pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
         pricePlanMatrix.setMinimumAmountWithTaxELSpark(postData.getMinimumAmountWithTaxELSpark());
+        pricePlanMatrix.setInvoiceSubCategoryEL(postData.getInvoiceSubCategoryEL());
 
         if (postData.getLanguageDescriptions() != null) {
             pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), pricePlanMatrix.getDescriptionI18n()));

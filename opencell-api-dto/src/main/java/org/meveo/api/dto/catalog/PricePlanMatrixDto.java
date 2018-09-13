@@ -162,6 +162,11 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     private String ratingWithoutTaxELSpark;
 
     /**
+     * Expression for getting the InvoiceSubCategory.
+     */
+    private String invoiceSubCategoryEL;
+
+    /**
      * Instantiates a new price plan matrix dto.
      */
     public PricePlanMatrixDto() {
@@ -232,6 +237,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         minimumAmountWithoutTaxELSpark = pricePlan.getMinimumAmountWithoutTaxELSpark();
         minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
         minimumAmountWithTaxELSpark = pricePlan.getMinimumAmountWithTaxELSpark();
+        invoiceSubCategoryEL = pricePlan.getInvoiceSubCategoryEL();
     }
 
     /**
@@ -905,4 +911,12 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
                 + ", ratingWithTaxEL=" + ratingWithTaxEL + ", ratingWithTaxELSpark=" + ratingWithTaxELSpark + ", ratingWithoutTaxEL=" + ratingWithoutTaxEL
                 + ", ratingWithoutTaxELSpark=" + ratingWithoutTaxELSpark + "]";
     }
+
+	public String getInvoiceSubCategoryEL() {
+		return invoiceSubCategoryEL;
+	}
+
+	public void setInvoiceSubCategoryEL(String invoiceSubCategoryEL) {
+		this.invoiceSubCategoryEL = invoiceSubCategoryEL;
+	}
 }
