@@ -599,6 +599,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * Validate complex custom fields
      * 
      * @param entity Entity, to which custom fields are related to
+     * @return Are custom fields valid or not
      */
     public boolean validateCustomFields(ICustomFieldEntity entity) {
         boolean valid = true;
@@ -866,7 +867,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         try {
 
-            action = entityActionScriptService.findByCode(action.getCode());
+            action = entityActionScriptService.retrieveIfNotManaged(action);
             
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
@@ -943,7 +944,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param entity Entity, the fields relate to
      * @param isNewEntity Is it a new entity
      * @return CustomFieldValue Map
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
         String uuid = entity.getUuid();
@@ -956,15 +957,17 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Save custom fields for a given entity
+     * Save custom fields for a given entity.
      * 
      * @param entity Entity, the fields relate to
+     * @param uuid Unique uid of field value holder
+     * @param duplicateCFI duplicateCFI
      * @param isNewEntity Is it a new entity
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
      *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
      *        instead we duplicate again.
      * @return CustomFieldValue Map
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity,
             boolean removedOriginalCFI) throws BusinessException {
@@ -1078,7 +1081,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Save child entity record
+     * Save child entity record.
      * 
      * @param mainEntityValueHolder Main entity custom field value holder
      * @param mainEntityCfv Main entity's custom field value containing child entities
@@ -1093,7 +1096,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         // check that CEI code is unique
         CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(cei.getCetCode(), cei.getCode());
-        if ((cei.isTransient() && ceiSameCode != null) || (!cei.isTransient() && cei.getId().longValue() != ceiSameCode.getId().longValue())) {
+        if ((cei.isTransient() && ceiSameCode != null) || (!cei.isTransient() && ceiSameCode != null && cei.getId().longValue() != ceiSameCode.getId().longValue())) {
             messages.error(new BundleKey("messages", "commons.uniqueField.code"));
             FacesContext.getCurrentInstance().validationFailed();
             return;
@@ -1121,7 +1124,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Prepare to edit child entity
+     * Prepare to edit child entity.
      * 
      * @param mainEntityValueHolder Main entity custom field value holder
      * @param selectedChildEntity Child entity custom field value holder
@@ -1149,7 +1152,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param customFieldValue Value to serialize
      * @param cft Custom field template
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private void serializeFromGUI(CustomFieldValue customFieldValue, CustomFieldTemplate cft) {
 
@@ -1249,7 +1252,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param mainEntity Entity of which child entity type field is being saved
      * @param customFieldValue Value to serialize
      * @param childEntityFieldDefinition Custom field template
-     * @throws BusinessException
+     * @throws BusinessException General business exception
      */
     private void saveChildEntities(ICustomFieldEntity mainEntity, CustomFieldValue customFieldValue, CustomFieldTemplate childEntityFieldDefinition) throws BusinessException {
         if (childEntityFieldDefinition.getFieldType() != CustomFieldTypeEnum.CHILD_ENTITY) {
@@ -1444,10 +1447,11 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Save custom fields for a given entity
+     * Save custom fields for a given entity.
      * 
      * @param entity Entity, the fields relate to
-     * @throws BusinessException
+     * @return CustomFieldTemplate and Value Map
+     * @throws BusinessException General business exception
      */
     public Map<CustomFieldTemplate, Object> loadCustomFieldsFromGUI(ICustomFieldEntity entity) throws BusinessException {
         Map<CustomFieldTemplate, Object> fieldMap = new HashMap<>();
@@ -1470,10 +1474,11 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Get custom field values for a given entity - in case of versioned custom fields, retrieve the latest value
+     * Get custom field values for a given entity - in case of versioned custom fields, retrieve the latest value.
      * 
      * @param entity Entity, the fields relate to
-     * @throws BusinessException
+     * @return CustomFieldTemplate and Value Map
+     * @throws BusinessException General business exception
      */
     public Map<CustomFieldTemplate, Object> getFieldValuesLatestValue(ICustomFieldEntity entity) throws BusinessException {
         Map<CustomFieldTemplate, Object> fieldMap = new HashMap<>();
@@ -1593,4 +1598,14 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
         return componentId;
     }
+    
+	public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity,
+			CustomFieldValueHolder cfValueHolder) {
+		for (GroupedCustomField cfTab : children) {
+			if (cfTab.hasVisibleCustomFields(entity, cfValueHolder)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
