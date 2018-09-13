@@ -15,6 +15,9 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * The Class ServiceTemplateDto.
  *
@@ -72,6 +75,7 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     private String minimumLabelEl;
     
     /** The renewal rule. */
+    @JsonInclude(Include.NON_NULL)
     private SubscriptionRenewalDto renewalRule;
 
     /**
