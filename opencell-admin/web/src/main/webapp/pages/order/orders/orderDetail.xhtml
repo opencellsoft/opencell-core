@@ -546,18 +546,9 @@
 
                                                     <div class="clearLeft"></div>
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
-
                                                         <!-- custom fields -->
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) == 1}">
-                                                            <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                                                        </c:if>
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) > 1}">
-                                                            <p:tabView>
-                                                                <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                    messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                                                            </p:tabView>
-                                                        </c:if>
+                                                        <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                            messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>

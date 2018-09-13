@@ -131,14 +131,7 @@
         </f:facet>
 
         <!-- custom fields -->
-        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() == 1}">
-            <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
-        </c:if>
-        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() > 1}">
-            <p:tabView>
-                <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
-            </p:tabView>
-        </c:if>
+        <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
     </p:panel>
     
 </ui:composition>
