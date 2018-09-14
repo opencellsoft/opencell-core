@@ -18,18 +18,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="Frequency1Code"&gt;
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *     &lt;enumeration value="YEAR"/&gt;
- *     &lt;enumeration value="MNTH"/&gt;
- *     &lt;enumeration value="QURT"/&gt;
- *     &lt;enumeration value="MIAN"/&gt;
- *     &lt;enumeration value="WEEK"/&gt;
- *     &lt;enumeration value="DAIL"/&gt;
- *     &lt;enumeration value="ADHO"/&gt;
- *     &lt;enumeration value="INDA"/&gt;
- *   &lt;/restriction&gt;
- * &lt;/simpleType&gt;
+ * &lt;simpleType name="Frequency1Code">
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="YEAR"/>
+ *     &lt;enumeration value="MNTH"/>
+ *     &lt;enumeration value="QURT"/>
+ *     &lt;enumeration value="MIAN"/>
+ *     &lt;enumeration value="WEEK"/>
+ *     &lt;enumeration value="DAIL"/>
+ *     &lt;enumeration value="ADHO"/>
+ *     &lt;enumeration value="INDA"/>
+ *   &lt;/restriction>
+ * &lt;/simpleType>
  * </pre>
  * 
  */

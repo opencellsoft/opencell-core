@@ -22,34 +22,34 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="EntryTransaction2"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="Refs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionReferences2" minOccurs="0"/&gt;
- *         &lt;element name="AmtDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchange3" minOccurs="0"/&gt;
- *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4" minOccurs="0"/&gt;
- *         &lt;element name="Chrgs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargesInformation6" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionInterest2" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="RltdPties" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionParty2" minOccurs="0"/&gt;
- *         &lt;element name="RltdAgts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionAgents2" minOccurs="0"/&gt;
- *         &lt;element name="Purp" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Purpose2Choice" minOccurs="0"/&gt;
- *         &lt;element name="RltdRmtInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}RemittanceLocation2" maxOccurs="10" minOccurs="0"/&gt;
- *         &lt;element name="RmtInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}RemittanceInformation5" minOccurs="0"/&gt;
- *         &lt;element name="RltdDts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionDates2" minOccurs="0"/&gt;
- *         &lt;element name="RltdPric" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionPrice2Choice" minOccurs="0"/&gt;
- *         &lt;element name="RltdQties" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionQuantities1Choice" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="FinInstrmId" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}SecurityIdentification4Choice" minOccurs="0"/&gt;
- *         &lt;element name="Tax" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxInformation3" minOccurs="0"/&gt;
- *         &lt;element name="RtrInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReturnReasonInformation10" minOccurs="0"/&gt;
- *         &lt;element name="CorpActn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CorporateAction1" minOccurs="0"/&gt;
- *         &lt;element name="SfkpgAcct" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashAccount16" minOccurs="0"/&gt;
- *         &lt;element name="AddtlTxInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="EntryTransaction2">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="Refs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionReferences2" minOccurs="0"/>
+ *         &lt;element name="AmtDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchange3" minOccurs="0"/>
+ *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4" minOccurs="0"/>
+ *         &lt;element name="Chrgs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargesInformation6" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionInterest2" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="RltdPties" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionParty2" minOccurs="0"/>
+ *         &lt;element name="RltdAgts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionAgents2" minOccurs="0"/>
+ *         &lt;element name="Purp" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Purpose2Choice" minOccurs="0"/>
+ *         &lt;element name="RltdRmtInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}RemittanceLocation2" maxOccurs="10" minOccurs="0"/>
+ *         &lt;element name="RmtInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}RemittanceInformation5" minOccurs="0"/>
+ *         &lt;element name="RltdDts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionDates2" minOccurs="0"/>
+ *         &lt;element name="RltdPric" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionPrice2Choice" minOccurs="0"/>
+ *         &lt;element name="RltdQties" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionQuantities1Choice" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="FinInstrmId" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}SecurityIdentification4Choice" minOccurs="0"/>
+ *         &lt;element name="Tax" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxInformation3" minOccurs="0"/>
+ *         &lt;element name="RtrInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReturnReasonInformation10" minOccurs="0"/>
+ *         &lt;element name="CorpActn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CorporateAction1" minOccurs="0"/>
+ *         &lt;element name="SfkpgAcct" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashAccount16" minOccurs="0"/>
+ *         &lt;element name="AddtlTxInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -84,13 +84,13 @@ public class EntryTransaction2 {
     @XmlElement(name = "AmtDtls")
     protected AmountAndCurrencyExchange3 amtDtls;
     @XmlElement(name = "Avlbty")
-    protected List<CashBalanceAvailability2&gt; avlbty;
+    protected List<CashBalanceAvailability2> avlbty;
     @XmlElement(name = "BkTxCd")
     protected BankTransactionCodeStructure4 bkTxCd;
     @XmlElement(name = "Chrgs")
-    protected List<ChargesInformation6&gt; chrgs;
+    protected List<ChargesInformation6> chrgs;
     @XmlElement(name = "Intrst")
-    protected List<TransactionInterest2&gt; intrst;
+    protected List<TransactionInterest2> intrst;
     @XmlElement(name = "RltdPties")
     protected TransactionParty2 rltdPties;
     @XmlElement(name = "RltdAgts")
@@ -98,7 +98,7 @@ public class EntryTransaction2 {
     @XmlElement(name = "Purp")
     protected Purpose2Choice purp;
     @XmlElement(name = "RltdRmtInf")
-    protected List<RemittanceLocation2&gt; rltdRmtInf;
+    protected List<RemittanceLocation2> rltdRmtInf;
     @XmlElement(name = "RmtInf")
     protected RemittanceInformation5 rmtInf;
     @XmlElement(name = "RltdDts")
@@ -106,7 +106,7 @@ public class EntryTransaction2 {
     @XmlElement(name = "RltdPric")
     protected TransactionPrice2Choice rltdPric;
     @XmlElement(name = "RltdQties")
-    protected List<TransactionQuantities1Choice&gt; rltdQties;
+    protected List<TransactionQuantities1Choice> rltdQties;
     @XmlElement(name = "FinInstrmId")
     protected SecurityIdentification4Choice finInstrmId;
     @XmlElement(name = "Tax")
@@ -175,7 +175,7 @@ public class EntryTransaction2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the avlbty property.
+     * This is why there is not a <CODE>set</CODE> method for the avlbty property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -190,9 +190,9 @@ public class EntryTransaction2 {
      * 
      * 
      */
-    public List<CashBalanceAvailability2&gt; getAvlbty() {
+    public List<CashBalanceAvailability2> getAvlbty() {
         if (avlbty == null) {
-            avlbty = new ArrayList<CashBalanceAvailability2&gt;();
+            avlbty = new ArrayList<CashBalanceAvailability2>();
         }
         return this.avlbty;
     }
@@ -228,7 +228,7 @@ public class EntryTransaction2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the chrgs property.
+     * This is why there is not a <CODE>set</CODE> method for the chrgs property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -243,9 +243,9 @@ public class EntryTransaction2 {
      * 
      * 
      */
-    public List<ChargesInformation6&gt; getChrgs() {
+    public List<ChargesInformation6> getChrgs() {
         if (chrgs == null) {
-            chrgs = new ArrayList<ChargesInformation6&gt;();
+            chrgs = new ArrayList<ChargesInformation6>();
         }
         return this.chrgs;
     }
@@ -257,7 +257,7 @@ public class EntryTransaction2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the intrst property.
+     * This is why there is not a <CODE>set</CODE> method for the intrst property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -272,9 +272,9 @@ public class EntryTransaction2 {
      * 
      * 
      */
-    public List<TransactionInterest2&gt; getIntrst() {
+    public List<TransactionInterest2> getIntrst() {
         if (intrst == null) {
-            intrst = new ArrayList<TransactionInterest2&gt;();
+            intrst = new ArrayList<TransactionInterest2>();
         }
         return this.intrst;
     }
@@ -358,7 +358,7 @@ public class EntryTransaction2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the rltdRmtInf property.
+     * This is why there is not a <CODE>set</CODE> method for the rltdRmtInf property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -373,9 +373,9 @@ public class EntryTransaction2 {
      * 
      * 
      */
-    public List<RemittanceLocation2&gt; getRltdRmtInf() {
+    public List<RemittanceLocation2> getRltdRmtInf() {
         if (rltdRmtInf == null) {
-            rltdRmtInf = new ArrayList<RemittanceLocation2&gt;();
+            rltdRmtInf = new ArrayList<RemittanceLocation2>();
         }
         return this.rltdRmtInf;
     }
@@ -459,7 +459,7 @@ public class EntryTransaction2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the rltdQties property.
+     * This is why there is not a <CODE>set</CODE> method for the rltdQties property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -474,9 +474,9 @@ public class EntryTransaction2 {
      * 
      * 
      */
-    public List<TransactionQuantities1Choice&gt; getRltdQties() {
+    public List<TransactionQuantities1Choice> getRltdQties() {
         if (rltdQties == null) {
-            rltdQties = new ArrayList<TransactionQuantities1Choice&gt;();
+            rltdQties = new ArrayList<TransactionQuantities1Choice>();
         }
         return this.rltdQties;
     }

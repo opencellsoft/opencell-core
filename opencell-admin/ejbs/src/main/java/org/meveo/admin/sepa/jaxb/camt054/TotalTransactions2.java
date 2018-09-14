@@ -22,18 +22,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TotalTransactions2"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="TtlNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions2" minOccurs="0"/&gt;
- *         &lt;element name="TtlCdtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/&gt;
- *         &lt;element name="TtlDbtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/&gt;
- *         &lt;element name="TtlNtriesPerBkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TotalsPerBankTransactionCode2" maxOccurs="unbounded" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="TotalTransactions2">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="TtlNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions2" minOccurs="0"/>
+ *         &lt;element name="TtlCdtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/>
+ *         &lt;element name="TtlDbtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/>
+ *         &lt;element name="TtlNtriesPerBkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TotalsPerBankTransactionCode2" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -54,7 +54,7 @@ public class TotalTransactions2 {
     @XmlElement(name = "TtlDbtNtries")
     protected NumberAndSumOfTransactions1 ttlDbtNtries;
     @XmlElement(name = "TtlNtriesPerBkTxCd")
-    protected List<TotalsPerBankTransactionCode2&gt; ttlNtriesPerBkTxCd;
+    protected List<TotalsPerBankTransactionCode2> ttlNtriesPerBkTxCd;
 
     /**
      * Gets the value of the ttlNtries property.
@@ -135,7 +135,7 @@ public class TotalTransactions2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the ttlNtriesPerBkTxCd property.
+     * This is why there is not a <CODE>set</CODE> method for the ttlNtriesPerBkTxCd property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -150,9 +150,9 @@ public class TotalTransactions2 {
      * 
      * 
      */
-    public List<TotalsPerBankTransactionCode2&gt; getTtlNtriesPerBkTxCd() {
+    public List<TotalsPerBankTransactionCode2> getTtlNtriesPerBkTxCd() {
         if (ttlNtriesPerBkTxCd == null) {
-            ttlNtriesPerBkTxCd = new ArrayList<TotalsPerBankTransactionCode2&gt;();
+            ttlNtriesPerBkTxCd = new ArrayList<TotalsPerBankTransactionCode2>();
         }
         return this.ttlNtriesPerBkTxCd;
     }

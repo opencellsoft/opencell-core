@@ -18,12 +18,12 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="Priority2Code"&gt;
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *     &lt;enumeration value="HIGH"/&gt;
- *     &lt;enumeration value="NORM"/&gt;
- *   &lt;/restriction&gt;
- * &lt;/simpleType&gt;
+ * &lt;simpleType name="Priority2Code">
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="HIGH"/>
+ *     &lt;enumeration value="NORM"/>
+ *   &lt;/restriction>
+ * &lt;/simpleType>
  * </pre>
  * 
  */

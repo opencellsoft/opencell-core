@@ -21,22 +21,22 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ChargesInformation6"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="TtlChrgsAndTaxAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
- *         &lt;element name="Amt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/&gt;
- *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode" minOccurs="0"/&gt;
- *         &lt;element name="Tp" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargeType2Choice" minOccurs="0"/&gt;
- *         &lt;element name="Rate" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}PercentageRate" minOccurs="0"/&gt;
- *         &lt;element name="Br" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargeBearerType1Code" minOccurs="0"/&gt;
- *         &lt;element name="Pty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BranchAndFinancialInstitutionIdentification4" minOccurs="0"/&gt;
- *         &lt;element name="Tax" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxCharges2" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="ChargesInformation6">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="TtlChrgsAndTaxAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
+ *         &lt;element name="Amt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/>
+ *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode" minOccurs="0"/>
+ *         &lt;element name="Tp" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargeType2Choice" minOccurs="0"/>
+ *         &lt;element name="Rate" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}PercentageRate" minOccurs="0"/>
+ *         &lt;element name="Br" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargeBearerType1Code" minOccurs="0"/>
+ *         &lt;element name="Pty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BranchAndFinancialInstitutionIdentification4" minOccurs="0"/>
+ *         &lt;element name="Tax" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxCharges2" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

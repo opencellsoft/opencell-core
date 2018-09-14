@@ -22,20 +22,20 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CurrencyExchange5"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="SrcCcy" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyCode"/&gt;
- *         &lt;element name="TrgtCcy" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyCode" minOccurs="0"/&gt;
- *         &lt;element name="UnitCcy" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyCode" minOccurs="0"/&gt;
- *         &lt;element name="XchgRate" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BaseOneRate"/&gt;
- *         &lt;element name="CtrctId" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
- *         &lt;element name="QtnDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="CurrencyExchange5">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="SrcCcy" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyCode"/>
+ *         &lt;element name="TrgtCcy" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyCode" minOccurs="0"/>
+ *         &lt;element name="UnitCcy" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyCode" minOccurs="0"/>
+ *         &lt;element name="XchgRate" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BaseOneRate"/>
+ *         &lt;element name="CtrctId" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
+ *         &lt;element name="QtnDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

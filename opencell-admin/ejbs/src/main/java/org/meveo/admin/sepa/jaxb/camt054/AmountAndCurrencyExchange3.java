@@ -22,19 +22,19 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AmountAndCurrencyExchange3"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="InstdAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/&gt;
- *         &lt;element name="TxAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/&gt;
- *         &lt;element name="CntrValAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/&gt;
- *         &lt;element name="AnncdPstngAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/&gt;
- *         &lt;element name="PrtryAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails4" maxOccurs="unbounded" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="AmountAndCurrencyExchange3">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="InstdAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/>
+ *         &lt;element name="TxAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/>
+ *         &lt;element name="CntrValAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/>
+ *         &lt;element name="AnncdPstngAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails3" minOccurs="0"/>
+ *         &lt;element name="PrtryAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchangeDetails4" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -58,7 +58,7 @@ public class AmountAndCurrencyExchange3 {
     @XmlElement(name = "AnncdPstngAmt")
     protected AmountAndCurrencyExchangeDetails3 anncdPstngAmt;
     @XmlElement(name = "PrtryAmt")
-    protected List<AmountAndCurrencyExchangeDetails4&gt; prtryAmt;
+    protected List<AmountAndCurrencyExchangeDetails4> prtryAmt;
 
     /**
      * Gets the value of the instdAmt property.
@@ -163,7 +163,7 @@ public class AmountAndCurrencyExchange3 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the prtryAmt property.
+     * This is why there is not a <CODE>set</CODE> method for the prtryAmt property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -178,9 +178,9 @@ public class AmountAndCurrencyExchange3 {
      * 
      * 
      */
-    public List<AmountAndCurrencyExchangeDetails4&gt; getPrtryAmt() {
+    public List<AmountAndCurrencyExchangeDetails4> getPrtryAmt() {
         if (prtryAmt == null) {
-            prtryAmt = new ArrayList<AmountAndCurrencyExchangeDetails4&gt;();
+            prtryAmt = new ArrayList<AmountAndCurrencyExchangeDetails4>();
         }
         return this.prtryAmt;
     }

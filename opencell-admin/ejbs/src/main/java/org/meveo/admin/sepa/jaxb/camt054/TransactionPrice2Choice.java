@@ -22,18 +22,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TransactionPrice2Choice"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;choice&gt;
- *           &lt;element name="DealPric" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/&gt;
- *           &lt;element name="Prtry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ProprietaryPrice2" maxOccurs="unbounded"/&gt;
- *         &lt;/choice&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="TransactionPrice2Choice">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;choice>
+ *           &lt;element name="DealPric" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/>
+ *           &lt;element name="Prtry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ProprietaryPrice2" maxOccurs="unbounded"/>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -48,7 +48,7 @@ public class TransactionPrice2Choice {
     @XmlElement(name = "DealPric")
     protected ActiveOrHistoricCurrencyAndAmount dealPric;
     @XmlElement(name = "Prtry")
-    protected List<ProprietaryPrice2&gt; prtry;
+    protected List<ProprietaryPrice2> prtry;
 
     /**
      * Gets the value of the dealPric property.
@@ -81,7 +81,7 @@ public class TransactionPrice2Choice {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the prtry property.
+     * This is why there is not a <CODE>set</CODE> method for the prtry property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -96,9 +96,9 @@ public class TransactionPrice2Choice {
      * 
      * 
      */
-    public List<ProprietaryPrice2&gt; getPrtry() {
+    public List<ProprietaryPrice2> getPrtry() {
         if (prtry == null) {
-            prtry = new ArrayList<ProprietaryPrice2&gt;();
+            prtry = new ArrayList<ProprietaryPrice2>();
         }
         return this.prtry;
     }

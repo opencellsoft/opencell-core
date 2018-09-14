@@ -18,16 +18,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="RemittanceLocationMethod2Code"&gt;
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *     &lt;enumeration value="FAXI"/&gt;
- *     &lt;enumeration value="EDIC"/&gt;
- *     &lt;enumeration value="URID"/&gt;
- *     &lt;enumeration value="EMAL"/&gt;
- *     &lt;enumeration value="POST"/&gt;
- *     &lt;enumeration value="SMSM"/&gt;
- *   &lt;/restriction&gt;
- * &lt;/simpleType&gt;
+ * &lt;simpleType name="RemittanceLocationMethod2Code">
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="FAXI"/>
+ *     &lt;enumeration value="EDIC"/>
+ *     &lt;enumeration value="URID"/>
+ *     &lt;enumeration value="EMAL"/>
+ *     &lt;enumeration value="POST"/>
+ *     &lt;enumeration value="SMSM"/>
+ *   &lt;/restriction>
+ * &lt;/simpleType>
  * </pre>
  * 
  */

@@ -22,16 +22,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CustomerDirectDebitInitiationV02"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="GrpHdr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}GroupHeader39"/&gt;
- *         &lt;element name="PmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PaymentInstructionInformation4" maxOccurs="unbounded"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="CustomerDirectDebitInitiationV02">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="GrpHdr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}GroupHeader39"/>
+ *         &lt;element name="PmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PaymentInstructionInformation4" maxOccurs="unbounded"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -46,7 +46,7 @@ public class CustomerDirectDebitInitiationV02 {
     @XmlElement(name = "GrpHdr", required = true)
     protected GroupHeader39 grpHdr;
     @XmlElement(name = "PmtInf", required = true)
-    protected List<PaymentInstructionInformation4&gt; pmtInf;
+    protected List<PaymentInstructionInformation4> pmtInf;
 
     /**
      * Gets the value of the grpHdr property.
@@ -79,7 +79,7 @@ public class CustomerDirectDebitInitiationV02 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the pmtInf property.
+     * This is why there is not a <CODE>set</CODE> method for the pmtInf property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -94,9 +94,9 @@ public class CustomerDirectDebitInitiationV02 {
      * 
      * 
      */
-    public List<PaymentInstructionInformation4&gt; getPmtInf() {
+    public List<PaymentInstructionInformation4> getPmtInf() {
         if (pmtInf == null) {
-            pmtInf = new ArrayList<PaymentInstructionInformation4&gt;();
+            pmtInf = new ArrayList<PaymentInstructionInformation4>();
         }
         return this.pmtInf;
     }

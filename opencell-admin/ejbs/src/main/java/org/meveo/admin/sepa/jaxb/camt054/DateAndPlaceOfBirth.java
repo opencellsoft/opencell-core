@@ -21,18 +21,18 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DateAndPlaceOfBirth"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="BirthDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate"/&gt;
- *         &lt;element name="PrvcOfBirth" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
- *         &lt;element name="CityOfBirth" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text"/&gt;
- *         &lt;element name="CtryOfBirth" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CountryCode"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="DateAndPlaceOfBirth">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="BirthDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate"/>
+ *         &lt;element name="PrvcOfBirth" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
+ *         &lt;element name="CityOfBirth" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text"/>
+ *         &lt;element name="CtryOfBirth" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CountryCode"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

@@ -22,18 +22,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AccountInterest2"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="Tp" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}InterestType1Choice" minOccurs="0"/&gt;
- *         &lt;element name="Rate" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Rate3" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="FrToDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateTimePeriodDetails" minOccurs="0"/&gt;
- *         &lt;element name="Rsn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="AccountInterest2">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="Tp" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}InterestType1Choice" minOccurs="0"/>
+ *         &lt;element name="Rate" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Rate3" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="FrToDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateTimePeriodDetails" minOccurs="0"/>
+ *         &lt;element name="Rsn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -50,7 +50,7 @@ public class AccountInterest2 {
     @XmlElement(name = "Tp")
     protected InterestType1Choice tp;
     @XmlElement(name = "Rate")
-    protected List<Rate3&gt; rate;
+    protected List<Rate3> rate;
     @XmlElement(name = "FrToDt")
     protected DateTimePeriodDetails frToDt;
     @XmlElement(name = "Rsn")
@@ -87,7 +87,7 @@ public class AccountInterest2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE&gt;set</CODE&gt; method for the rate property.
+     * This is why there is not a <CODE>set</CODE> method for the rate property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -102,9 +102,9 @@ public class AccountInterest2 {
      * 
      * 
      */
-    public List<Rate3&gt; getRate() {
+    public List<Rate3> getRate() {
         if (rate == null) {
-            rate = new ArrayList<Rate3&gt;();
+            rate = new ArrayList<Rate3>();
         }
         return this.rate;
     }

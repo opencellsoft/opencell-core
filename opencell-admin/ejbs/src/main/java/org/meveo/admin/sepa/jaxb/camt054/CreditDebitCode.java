@@ -18,12 +18,12 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="CreditDebitCode"&gt;
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *     &lt;enumeration value="CRDT"/&gt;
- *     &lt;enumeration value="DBIT"/&gt;
- *   &lt;/restriction&gt;
- * &lt;/simpleType&gt;
+ * &lt;simpleType name="CreditDebitCode">
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="CRDT"/>
+ *     &lt;enumeration value="DBIT"/>
+ *   &lt;/restriction>
+ * &lt;/simpleType>
  * </pre>
  * 
  */
