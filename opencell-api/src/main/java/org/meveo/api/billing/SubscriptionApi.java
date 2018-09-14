@@ -791,12 +791,13 @@ public class SubscriptionApi extends BaseApi {
         if ((subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) && (subscription.getStatus() != SubscriptionStatusEnum.CREATED)) {
             throw new MeveoApiException("subscription is not ACTIVE or CREATED: [" + subscription.getStatus() + "]");
         }
-
+        
         List<WalletOperation> walletOperations = null;
 
         try {
             ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
                 StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), null);
+            productInstance.setSeller(subscription.getSeller());
 
             // populate customFields
             try {
