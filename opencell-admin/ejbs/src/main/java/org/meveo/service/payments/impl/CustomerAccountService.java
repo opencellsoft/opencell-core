@@ -62,19 +62,25 @@ import org.meveo.service.base.AccountService;
 @Stateless
 public class CustomerAccountService extends AccountService<CustomerAccount> {
 
+    /** The credit category service. */
     @Inject
     private CreditCategoryService creditCategoryService;
 
+    /** The other credit and charge service. */
     @Inject
     private OtherCreditAndChargeService otherCreditAndChargeService;
 
+    /** The recource messages. */
     @Inject
     private ResourceBundle recourceMessages;
 
+    /** The payment method service. */
     @Inject
     private PaymentMethodService paymentMethodService;
 
     /**
+     * Checks if is customer account with id exists.
+     *
      * @param id id of customer to be checking
      * @return true if customer is found.
      */
@@ -88,21 +94,55 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return count.longValue() > 0;
     }
 
+    /**
+     * Gets the all billing keywords.
+     *
+     * @return the all billing keywords
+     */
     @SuppressWarnings("unchecked")
     public List<String> getAllBillingKeywords() {
         Query query = getEntityManager().createQuery("select distinct(billingKeyword) from CustomerAccount");
         return query.getResultList();
     }
 
+    /**
+     * Import customer accounts.
+     *
+     * @param customerAccountsToImport the customer accounts to import
+     * @return the list
+     */
     public List<CustomerAccount> importCustomerAccounts(List<CustomerAccount> customerAccountsToImport) {
         List<CustomerAccount> failedImports = new ArrayList<CustomerAccount>();
         return failedImports;
     }
     
+    /**
+     * Compute occ amount.
+     *
+     * @param customerAccount the customer account
+     * @param operationCategoryEnum the operation category enum
+     * @param isDue the is due
+     * @param to the to
+     * @param status the status
+     * @return the big decimal
+     * @throws Exception the exception
+     */
     private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isDue, Date to, MatchingStatusEnum... status) throws Exception {
     	return computeOccAmount(customerAccount, operationCategoryEnum, false, isDue, to, status);
     }
 
+    /**
+     * Compute occ amount.
+     *
+     * @param customerAccount the customer account
+     * @param operationCategoryEnum the operation category enum
+     * @param isFuture the is future
+     * @param isDue the is due
+     * @param to the to
+     * @param status the status
+     * @return the big decimal
+     * @throws Exception the exception
+     */
     private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to, MatchingStatusEnum... status) throws Exception {
         BigDecimal balance = null;
         QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
@@ -133,6 +173,16 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return balance;
     }
     
+    /**
+     * Compute balance.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @param isDue the is due
+     * @param status the status
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
     	return computeBalance(customerAccount, to, false, isDue, status);
     }
@@ -181,12 +231,22 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     }
 
+    /**
+     * Customer account balance due.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     public BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
 
     /**
+     * Customer account balance due.
+     *
      * @param customerAccountId customer account id
      * @param customerAccountCode customer account code
      * @param to until date
@@ -198,38 +258,90 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
+    /**
+     * Customer account balance due without litigation.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     public BigDecimal customerAccountBalanceDueWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
+    /**
+     * Customer account balance due without litigation.
+     *
+     * @param customerAccountId the customer account id
+     * @param customerAccountCode the customer account code
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
         log.info("customerAccountBalanceDueWithoutLitigation with id" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
         return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
+    /**
+     * Customer account balance.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     public BigDecimal customerAccountBalance(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
 
+    /**
+     * Customer account balance exigible.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     public BigDecimal customerAccountBalanceExigible(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceExigible  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
 
     }
 
+    /**
+     * Customer account balance exigible without litigation.
+     *
+     * @param customerAccountId the customer account id
+     * @param customerAccountCode the customer account code
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     public BigDecimal customerAccountBalanceExigibleWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
         log.info("customerAccountBalanceExigibleWithoutLitigation with id:{},code:{},toDate:{}", customerAccountId, customerAccountCode, to);
         return customerAccountBalanceExigibleWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
+    /**
+     * Customer account balance exigible without litigation.
+     *
+     * @param customerAccount the customer account
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
     public BigDecimal customerAccountBalanceExigibleWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceExigibleWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
     /**
+     * Customer account balance exigible.
+     *
      * @param customerAccountId customer account id
      * @param customerAccountCode customer account code
      * @param to until date
@@ -241,6 +353,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
+    /**
+     * Close customer account.
+     *
+     * @param customerAccount the customer account
+     * @throws BusinessException the business exception
+     */
     @MeveoAudit
     public void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException {
         log.info("closeCustomerAccount customerAccount {}", (customerAccount == null ? "null" : customerAccount.getCode()));
@@ -279,11 +397,28 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
     }
 
+    /**
+     * Close customer account.
+     *
+     * @param customerAccountId the customer account id
+     * @param customerAccountCode the customer account code
+     * @throws BusinessException the business exception
+     * @throws Exception the exception
+     */
     public void closeCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException, Exception {
         log.info("closeCustomerAccount customerAccountCode {}, customerAccountID {}", customerAccountCode, customerAccountId);
         closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode));
     }
 
+    /**
+     * Transfer account.
+     *
+     * @param fromCustomerAccount the from customer account
+     * @param toCustomerAccount the to customer account
+     * @param amount the amount
+     * @throws BusinessException the business exception
+     * @throws Exception the exception
+     */
     @MeveoAudit
     public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException, Exception {
         log.info("transfertAccount fromCustomerAccount {} toCustomerAccount {} amount {}", (fromCustomerAccount == null ? "null" : fromCustomerAccount.getCode()),
@@ -336,6 +471,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         transferAccount(findCustomerAccount(fromCustomerAccountId, fromCustomerAccountCode), findCustomerAccount(toCustomerAccountId, toCustomerAccountCode), amount);
     }
 
+    /**
+     * Consult customer account.
+     *
+     * @param id the id
+     * @param code the code
+     * @return the customer account
+     * @throws BusinessException the business exception
+     */
     public CustomerAccount consultCustomerAccount(Long id, String code) throws BusinessException {
         return findCustomerAccount(id, code);
     }
@@ -363,8 +506,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     }
 
     /**
-     * update dunningLevel for one existed customer account by id or code
-     * 
+     * update dunningLevel for one existed customer account by id or code.
+     *
      * @param id id of customer account
      * @param code code of customer account
      * @param dunningLevel dunning level
@@ -423,6 +566,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return operations;
     }
 
+    /**
+     * Find customer account.
+     *
+     * @param id the id
+     * @param code the code
+     * @return the customer account
+     * @throws BusinessException the business exception
+     */
     public CustomerAccount findCustomerAccount(Long id, String code) throws BusinessException {
 
         log.info("findCustomerAccount with code:" + code + ",id:" + id);
@@ -448,6 +599,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return customerAccount;
     }
 
+    /**
+     * Checks if is all service instances terminated.
+     *
+     * @param customerAccount the customer account
+     * @return true, if is all service instances terminated
+     */
     public boolean isAllServiceInstancesTerminated(CustomerAccount customerAccount) {
         // FIXME : just count inside the query
         Query billingQuery = getEntityManager().createQuery(
@@ -464,6 +621,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return true;
     }
 
+    /**
+     * Gets the customer accounts.
+     *
+     * @param creditCategory the credit category
+     * @param paymentMethod the payment method
+     * @return the customer accounts
+     */
     @SuppressWarnings("unchecked")
     public List<CustomerAccount> getCustomerAccounts(String creditCategory, PaymentMethodEnum paymentMethod) {
         List<CustomerAccount> customerAccounts = getEntityManager()
@@ -473,6 +637,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return customerAccounts;
     }
 
+    /**
+     * List by customer.
+     *
+     * @param customer the customer
+     * @return the list
+     */
     @SuppressWarnings("unchecked")
     public List<CustomerAccount> listByCustomer(Customer customer) {
         QueryBuilder qb = new QueryBuilder(CustomerAccount.class, "c");
@@ -486,6 +656,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.base.PersistenceService#create(org.meveo.model.IEntity)
+     */
     @Override
     public void create(CustomerAccount entity) throws BusinessException {
 
@@ -504,6 +677,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         super.create(entity);
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.service.base.PersistenceService#update(org.meveo.model.IEntity)
+     */
     @Override
     public CustomerAccount update(CustomerAccount entity) throws BusinessException {
 
@@ -522,6 +698,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return super.update(entity);
     }
 
+    /**
+     * Gets the preferred payment method.
+     *
+     * @param customerAccountId the customer account id
+     * @return the preferred payment method
+     */
     public PaymentMethod getPreferredPaymentMethod(Long customerAccountId) {
         try {
             TypedQuery<PaymentMethod> query = this.getEntityManager().createNamedQuery("PaymentMethod.getPreferredPaymentMethodForCA", PaymentMethod.class).setMaxResults(1)
@@ -536,6 +718,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
     }
 
+    /**
+     * Gets the payment methods.
+     *
+     * @param billingAccount the billing account
+     * @return the payment methods
+     */
     @SuppressWarnings("unchecked")
     public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
 
@@ -601,16 +789,17 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     
     /**
      * Return list customerAccount ids for payment.
-     * 
+     *
      * @param paymentMethodEnum payment method.
-     * @param dueDate the due date.
+     * @param fromDueDate the from due date
+     * @param toDueDate the to due date
      * @return list of customerAccount ids.
      */
     @SuppressWarnings("unchecked")
-    public List<Long> getCAidsForPayment(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+    public List<Long> getCAidsForPayment(PaymentMethodEnum paymentMethodEnum,Date fromDueDate,Date toDueDate) {
         try {
             return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForPayment").setParameter("paymentMethodIN", paymentMethodEnum)
-                    .setParameter("dueDateIN", dueDate).getResultList();
+                    .setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
         } catch (NoResultException e) {
             return null;
         }
@@ -618,16 +807,17 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     
     /**
      * Return list customerAccount ids for refund.
-     * 
+     *
      * @param paymentMethodEnum payment method.
-     * @param dueDate the due date.
+     * @param fromDueDate the from due date
+     * @param toDueDate the to due date
      * @return list of customerAccount ids.
      */
     @SuppressWarnings("unchecked")
-    public List<Long> getCAidsForRefund(PaymentMethodEnum paymentMethodEnum,Date dueDate) {
+    public List<Long> getCAidsForRefund(PaymentMethodEnum paymentMethodEnum,Date fromDueDate,Date toDueDate) {
         try {
             return (List<Long>) getEntityManager().createNamedQuery("CustomerAccount.listCAIdsForRefund").setParameter("paymentMethodIN", paymentMethodEnum)
-                    .setParameter("dueDateIN", dueDate).getResultList();
+                    .setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
         } catch (NoResultException e) {
             return null;
         }

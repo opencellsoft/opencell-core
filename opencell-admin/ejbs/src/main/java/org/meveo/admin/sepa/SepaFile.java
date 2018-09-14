@@ -6,11 +6,11 @@ import java.util.Date;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.jaxb.Pain002;
-import org.meveo.admin.sepa.jaxb.Pain008;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts;
+import org.meveo.admin.sepa.jaxb.Pain008;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr.InitgPty;
@@ -45,7 +45,6 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.util.DDRequestBuilderClass;
@@ -226,21 +225,21 @@ public class SepaFile implements DDRequestBuilderInterface {
         SchmeNm SchemeName = new SchmeNm();
         other.setSchmeNm(SchemeName);
         SchemeName.setPrtry("SEPA");
-        addTransaction(dDRequestItem.getRecordedInvoice(), PaymentInformation);
+        addTransaction(dDRequestItem, PaymentInformation);
     }
 
-    private void addTransaction(RecordedInvoice invoice, PmtInf PaymentInformation) throws Exception {
-        CustomerAccount ca = invoice.getCustomerAccount();
+    private void addTransaction(DDRequestItem dDRequestItem, PmtInf PaymentInformation) throws Exception {
+        CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
 
         DrctDbtTxInf DirectDebitTransactionInformation = new DrctDbtTxInf();
         PaymentInformation.getDrctDbtTxInf().add(DirectDebitTransactionInformation);
         PmtId PaymentIdentification = new PmtId();
         DirectDebitTransactionInformation.setPmtId(PaymentIdentification);
-        PaymentIdentification.setInstrId(invoice.getReference());
-        PaymentIdentification.setEndToEndId(invoice.getReference());
+        PaymentIdentification.setInstrId(""+dDRequestItem.getId());
+        PaymentIdentification.setEndToEndId(""+dDRequestItem.getId());
         InstdAmt InstructedAmount = new InstdAmt();
         DirectDebitTransactionInformation.setInstdAmt(InstructedAmount);
-        InstructedAmount.setValue(invoice.getAmount().setScale(2, RoundingMode.HALF_UP));
+        InstructedAmount.setValue(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
         InstructedAmount.setCcy("EUR");
         DrctDbtTx DirectDebitTransaction = new DrctDbtTx();
         DirectDebitTransactionInformation.setDrctDbtTx(DirectDebitTransaction);
@@ -254,7 +253,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         DbtrAgt DebtorAgent = new DbtrAgt();
         DirectDebitTransactionInformation.setDbtrAgt(DebtorAgent);
         org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId FinancialInstitutionIdentification = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId();
-        FinancialInstitutionIdentification.setBIC(invoice.getPaymentInfo6());
+        FinancialInstitutionIdentification.setBIC("bic");
         DebtorAgent.setFinInstnId(FinancialInstitutionIdentification);
 
         Dbtr Debtor = new Dbtr();
@@ -264,7 +263,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         DbtrAcct DebtorAccount = new DbtrAcct();
         DirectDebitTransactionInformation.setDbtrAcct(DebtorAccount);
         org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id Identification = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id();
-        Identification.setIBAN(invoice.getPaymentInfo());
+        Identification.setIBAN("iban");
         DebtorAccount.setId(Identification);
 
     }

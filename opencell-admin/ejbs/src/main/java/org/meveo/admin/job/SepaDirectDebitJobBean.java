@@ -71,7 +71,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for parameter={}", jobInstance.getParametres());
         try {
-
+            String paymentPerAOorCA = "CA";
             DDRequestBuilder ddRequestBuilder = null;
             String ddRequestBuilderCode = null;
             if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
@@ -83,13 +83,17 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             if (ddRequestBuilder == null) {
                 throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
             }
+            paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "SepaJob_AOorCA");
             DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
             List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder);
 
             if (ddrequestOps != null) {
                 log.info("ddrequestOps found:" + ddrequestOps.size());
+                result.setNbItemsToProcess(ddrequestOps.size());
+
             } else {
                 log.info("ddrequestOps null");
+                result.setNbItemsToProcess(0);
                 return;
             }
 
@@ -99,7 +103,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                 }
                 try {
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-                        DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), ddRequestBuilder,ddrequestLotOp.getFilter());
+                        DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), ddRequestBuilder,ddrequestLotOp.getFilter(),paymentPerAOorCA);
                         if (ddRequestLOT.getInvoicesNumber() > ddRequestLOT.getRejectedInvoices()) { 
                             ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT,appProvider));
                             ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT,appProvider);
@@ -111,20 +115,16 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                     } else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
                         ddRequestBuilderInterface.generateDDRequestLotFile(ddrequestLotOp.getDdrequestLOT(),appProvider);
                     }
-
                     ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
-
-                } catch (BusinessEntityException e) {
-                    log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
-                    ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
-                    ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-                    dDRequestLotOpService.updateNoCheck(ddrequestLotOp);
+                    result.registerSucces();
 
                 } catch (Exception e) {
                     log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
                     ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
                     ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
                     dDRequestLotOpService.updateNoCheck(ddrequestLotOp);
+                    result.registerError(ddrequestLotOp.getId(), e.getMessage());
+                    result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
                 }
             }
         } catch (Exception e) {

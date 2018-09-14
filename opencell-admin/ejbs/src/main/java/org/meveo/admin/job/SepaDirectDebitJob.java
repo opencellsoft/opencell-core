@@ -51,6 +51,21 @@ public class SepaDirectDebitJob extends Job {
         payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
         payentGatewayCF.setValueRequired(true);
         result.put("SepaJob_ddRequestBuilder", payentGatewayCF);
+        
+        Map<String, String> lisValuesAOorCA = new HashMap<String, String>();
+        lisValuesAOorCA.put("AO", "AO");
+        lisValuesAOorCA.put("CA", "CA");
+        
+        CustomFieldTemplate AOorCA = new CustomFieldTemplate();
+        AOorCA.setCode("SepaJob_AOorCA");
+        AOorCA.setAppliesTo("JOB_SepaDirectDebitJob");
+        AOorCA.setActive(true);
+        AOorCA.setDefaultValue("CA");
+        AOorCA.setDescription(resourceMessages.getString("jobExecution.AOorCA"));
+        AOorCA.setFieldType(CustomFieldTypeEnum.LIST);
+        AOorCA.setValueRequired(true);
+        AOorCA.setListValues(lisValuesAOorCA);
+        result.put("SepaJob_AOorCA", AOorCA);
        
         return result;
     }

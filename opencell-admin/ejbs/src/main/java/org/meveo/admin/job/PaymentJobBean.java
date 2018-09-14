@@ -65,7 +65,8 @@ public class PaymentJobBean extends BaseJobBean {
             Long waitingMillis = new Long(0);
             boolean createAO = true;
             boolean matchingAO = true;
-            Long daysBeforeOrAfterDueDate = null;
+            Date fromDueDate = null;
+            Date toDueDate = null;
             String paymentPerAOorCA = "CA";
 
             OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
@@ -85,7 +86,8 @@ public class PaymentJobBean extends BaseJobBean {
                 }
                 createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
                 matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_matchingAO"));
-                daysBeforeOrAfterDueDate = (Long) this.getParamOrCFValue(jobInstance, "PaymentJob_daysBeforeOrAfterDueDate");
+                fromDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_fromDueDate");
+                toDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_toDueDate");
                 paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
 
             } catch (Exception e) {
@@ -93,30 +95,32 @@ public class PaymentJobBean extends BaseJobBean {
                 waitingMillis = new Long(0);
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
-
-            Date dueDate = new Date(1);
-            if (daysBeforeOrAfterDueDate != null) {
-                dueDate = DateUtils.addDaysToDate(new Date(), daysBeforeOrAfterDueDate.intValue());
+           
+            if (fromDueDate == null) {
+                fromDueDate = new Date(1);
+            }
+            if (toDueDate == null) {
+                toDueDate = DateUtils.addYearsToDate(fromDueDate, 1000);
             }
 
-            List<Long> ids = new ArrayList<Long>();
+            List<Long> caIds = new ArrayList<Long>();
             if (OperationCategoryEnum.CREDIT == operationCategory) {
-                ids = customerAccountService.getCAidsForPayment(paymentMethodType, dueDate);
+                caIds = customerAccountService.getCAidsForPayment(paymentMethodType, fromDueDate,toDueDate);
             } else {
-                ids = customerAccountService.getCAidsForRefund(paymentMethodType, dueDate);
+                caIds = customerAccountService.getCAidsForRefund(paymentMethodType, fromDueDate,toDueDate);
             }
 
-            log.debug("nb CA for payment:" + ids.size());
-            result.setNbItemsToProcess(ids.size());
+            log.debug("nb CA for payment:" + caIds.size());
+            result.setNbItemsToProcess(caIds.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
+            SubListCreator subListCreator = new SubListCreator(caIds, nbRuns.intValue());
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
                 futures.add(paymentAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
-                    paymentMethodType, lastCurrentUser, paymentPerAOorCA, dueDate));
+                    paymentMethodType, lastCurrentUser, paymentPerAOorCA, fromDueDate,toDueDate));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

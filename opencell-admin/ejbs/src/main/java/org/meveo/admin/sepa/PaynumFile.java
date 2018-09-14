@@ -107,7 +107,7 @@ public class PaynumFile implements DDRequestBuilderInterface {
     private String[] ddRequestItemToRecord(DDRequestItem ddrequestItem) throws Exception {
         String[] lineAsArray = new String[14];
         // code débiteur (optionnel)
-        lineAsArray[0] = getSecretCode(ddrequestItem.getRecordedInvoice().getCustomerAccount());
+        lineAsArray[0] = getSecretCode(ddrequestItem.getAccountOperations().get(0).getCustomerAccount());
         // nom débiteur (optionnel)
         lineAsArray[1] = "";
         // prénom débiteur (optionnel)
@@ -124,7 +124,7 @@ public class PaynumFile implements DDRequestBuilderInterface {
         lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale((/* appProvider.getRounding() == null ? 2 : appProvider.getRounding() */2), RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)).longValue());
         // devise (code ISO sur 3 caractères, exemples: "EUR", "USD")
-        lineAsArray[8] = ddrequestItem.getRecordedInvoice().getCustomerAccount().getTradingCurrency().getCurrencyCode();
+        lineAsArray[8] = ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getTradingCurrency().getCurrencyCode();
         // date émission (optionnel)
         lineAsArray[9] = "";
         // date échéance (optionnel)

@@ -1647,4 +1647,13 @@
         <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="text" />
         <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="text" />        
     </changeSet>    
+    
+    <changeSet id="#3626 - Payment Sepa (by invoice or CA)_20180912" author="anasseh">
+    		<dropColumn tableName="ar_ddrequest_item" columnName="account_operation_id" />
+    		<addColumn tableName="ar_account_operation">
+     		<column name="ddrequest_item_id" type="bigint"></column>     		
+     	</addColumn>
+    		 <addForeignKeyConstraint baseColumnNames="ddrequest_item_id" baseTableName="ar_account_operation" constraintName="fk_ao_ddreq_item_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_item" />
+    </changeSet>
 </databaseChangeLog>

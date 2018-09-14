@@ -20,12 +20,15 @@ package org.meveo.model.payments;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -92,9 +95,8 @@ public class DDRequestItem extends AuditableEntity {
     @JoinColumn(name = "ddrequest_lot_id")
     private DDRequestLOT ddRequestLOT;
 
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_operation_id")
-    private RecordedInvoice recordedInvoice;
+    @OneToMany(mappedBy = "ddRequestItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)   
+    private List<AccountOperation> accountOperations;
 
     @Column(name = "error_msg", length = 1000)
     @Size(max = 1000)
@@ -196,19 +198,6 @@ public class DDRequestItem extends AuditableEntity {
         this.ddRequestLOT = ddRequestLOT;
     }
 
-    /**
-     * @return the recordedInvoice
-     */
-    public RecordedInvoice getRecordedInvoice() {
-        return recordedInvoice;
-    }
-
-    /**
-     * @param recordedInvoice the recordedInvoice to set
-     */
-    public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
-        this.recordedInvoice = recordedInvoice;
-    }
 
     public String getPaymentInfo6() {
         return paymentInfo6;
@@ -238,6 +227,22 @@ public class DDRequestItem extends AuditableEntity {
      */
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+    
+
+
+    /**
+     * @return the accountOperations
+     */
+    public List<AccountOperation> getAccountOperations() {
+        return accountOperations;
+    }
+
+    /**
+     * @param accountOperations the accountOperations to set
+     */
+    public void setAccountOperations(List<AccountOperation> accountOperations) {
+        this.accountOperations = accountOperations;
     }
 
     @Transient
