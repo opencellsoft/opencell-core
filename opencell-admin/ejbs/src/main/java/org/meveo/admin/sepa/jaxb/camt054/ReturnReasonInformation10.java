@@ -22,18 +22,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ReturnReasonInformation10">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="OrgnlBkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4" minOccurs="0"/>
- *         &lt;element name="Orgtr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}PartyIdentification32" minOccurs="0"/>
- *         &lt;element name="Rsn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReturnReason5Choice" minOccurs="0"/>
- *         &lt;element name="AddtlInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max105Text" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ReturnReasonInformation10"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="OrgnlBkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4" minOccurs="0"/&gt;
+ *         &lt;element name="Orgtr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}PartyIdentification32" minOccurs="0"/&gt;
+ *         &lt;element name="Rsn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReturnReason5Choice" minOccurs="0"/&gt;
+ *         &lt;element name="AddtlInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max105Text" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -54,7 +54,7 @@ public class ReturnReasonInformation10 {
     @XmlElement(name = "Rsn")
     protected ReturnReason5Choice rsn;
     @XmlElement(name = "AddtlInf")
-    protected List<String> addtlInf;
+    protected List<String&gt; addtlInf;
 
     /**
      * Gets the value of the orgnlBkTxCd property.
@@ -135,7 +135,7 @@ public class ReturnReasonInformation10 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the addtlInf property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the addtlInf property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -150,9 +150,9 @@ public class ReturnReasonInformation10 {
      * 
      * 
      */
-    public List<String> getAddtlInf() {
+    public List<String&gt; getAddtlInf() {
         if (addtlInf == null) {
-            addtlInf = new ArrayList<String>();
+            addtlInf = new ArrayList<String&gt;();
         }
         return this.addtlInf;
     }

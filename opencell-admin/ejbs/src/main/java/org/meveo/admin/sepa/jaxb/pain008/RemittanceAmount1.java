@@ -22,20 +22,20 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RemittanceAmount1">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="DuePyblAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
- *         &lt;element name="DscntApldAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
- *         &lt;element name="CdtNoteAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
- *         &lt;element name="TaxAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
- *         &lt;element name="AdjstmntAmtAndRsn" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}DocumentAdjustment1" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="RmtdAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="RemittanceAmount1"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="DuePyblAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
+ *         &lt;element name="DscntApldAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
+ *         &lt;element name="CdtNoteAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
+ *         &lt;element name="TaxAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
+ *         &lt;element name="AdjstmntAmtAndRsn" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}DocumentAdjustment1" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="RmtdAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -60,7 +60,7 @@ public class RemittanceAmount1 {
     @XmlElement(name = "TaxAmt")
     protected ActiveOrHistoricCurrencyAndAmount taxAmt;
     @XmlElement(name = "AdjstmntAmtAndRsn")
-    protected List<DocumentAdjustment1> adjstmntAmtAndRsn;
+    protected List<DocumentAdjustment1&gt; adjstmntAmtAndRsn;
     @XmlElement(name = "RmtdAmt")
     protected ActiveOrHistoricCurrencyAndAmount rmtdAmt;
 
@@ -167,7 +167,7 @@ public class RemittanceAmount1 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the adjstmntAmtAndRsn property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the adjstmntAmtAndRsn property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -182,9 +182,9 @@ public class RemittanceAmount1 {
      * 
      * 
      */
-    public List<DocumentAdjustment1> getAdjstmntAmtAndRsn() {
+    public List<DocumentAdjustment1&gt; getAdjstmntAmtAndRsn() {
         if (adjstmntAmtAndRsn == null) {
-            adjstmntAmtAndRsn = new ArrayList<DocumentAdjustment1>();
+            adjstmntAmtAndRsn = new ArrayList<DocumentAdjustment1&gt;();
         }
         return this.adjstmntAmtAndRsn;
     }

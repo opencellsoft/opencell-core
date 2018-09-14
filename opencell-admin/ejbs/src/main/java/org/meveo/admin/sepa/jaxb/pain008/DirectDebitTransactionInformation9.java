@@ -22,31 +22,31 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DirectDebitTransactionInformation9">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="PmtId" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PaymentIdentification1"/>
- *         &lt;element name="PmtTpInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PaymentTypeInformation20" minOccurs="0"/>
- *         &lt;element name="InstdAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount"/>
- *         &lt;element name="ChrgBr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ChargeBearerType1Code" minOccurs="0"/>
- *         &lt;element name="DrctDbtTx" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}DirectDebitTransaction6" minOccurs="0"/>
- *         &lt;element name="UltmtCdtr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/>
- *         &lt;element name="DbtrAgt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}BranchAndFinancialInstitutionIdentification4"/>
- *         &lt;element name="DbtrAgtAcct" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CashAccount16" minOccurs="0"/>
- *         &lt;element name="Dbtr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32"/>
- *         &lt;element name="DbtrAcct" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CashAccount16"/>
- *         &lt;element name="UltmtDbtr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/>
- *         &lt;element name="InstrForCdtrAgt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max140Text" minOccurs="0"/>
- *         &lt;element name="Purp" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Purpose2Choice" minOccurs="0"/>
- *         &lt;element name="RgltryRptg" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RegulatoryReporting3" maxOccurs="10" minOccurs="0"/>
- *         &lt;element name="Tax" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}TaxInformation3" minOccurs="0"/>
- *         &lt;element name="RltdRmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RemittanceLocation2" maxOccurs="10" minOccurs="0"/>
- *         &lt;element name="RmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RemittanceInformation5" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="DirectDebitTransactionInformation9"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="PmtId" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PaymentIdentification1"/&gt;
+ *         &lt;element name="PmtTpInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PaymentTypeInformation20" minOccurs="0"/&gt;
+ *         &lt;element name="InstdAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ActiveOrHistoricCurrencyAndAmount"/&gt;
+ *         &lt;element name="ChrgBr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ChargeBearerType1Code" minOccurs="0"/&gt;
+ *         &lt;element name="DrctDbtTx" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}DirectDebitTransaction6" minOccurs="0"/&gt;
+ *         &lt;element name="UltmtCdtr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/&gt;
+ *         &lt;element name="DbtrAgt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}BranchAndFinancialInstitutionIdentification4"/&gt;
+ *         &lt;element name="DbtrAgtAcct" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CashAccount16" minOccurs="0"/&gt;
+ *         &lt;element name="Dbtr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32"/&gt;
+ *         &lt;element name="DbtrAcct" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CashAccount16"/&gt;
+ *         &lt;element name="UltmtDbtr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/&gt;
+ *         &lt;element name="InstrForCdtrAgt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max140Text" minOccurs="0"/&gt;
+ *         &lt;element name="Purp" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Purpose2Choice" minOccurs="0"/&gt;
+ *         &lt;element name="RgltryRptg" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RegulatoryReporting3" maxOccurs="10" minOccurs="0"/&gt;
+ *         &lt;element name="Tax" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}TaxInformation3" minOccurs="0"/&gt;
+ *         &lt;element name="RltdRmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RemittanceLocation2" maxOccurs="10" minOccurs="0"/&gt;
+ *         &lt;element name="RmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RemittanceInformation5" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -100,11 +100,11 @@ public class DirectDebitTransactionInformation9 {
     @XmlElement(name = "Purp")
     protected Purpose2Choice purp;
     @XmlElement(name = "RgltryRptg")
-    protected List<RegulatoryReporting3> rgltryRptg;
+    protected List<RegulatoryReporting3&gt; rgltryRptg;
     @XmlElement(name = "Tax")
     protected TaxInformation3 tax;
     @XmlElement(name = "RltdRmtInf")
-    protected List<RemittanceLocation2> rltdRmtInf;
+    protected List<RemittanceLocation2&gt; rltdRmtInf;
     @XmlElement(name = "RmtInf")
     protected RemittanceInformation5 rmtInf;
 
@@ -427,7 +427,7 @@ public class DirectDebitTransactionInformation9 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the rgltryRptg property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the rgltryRptg property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -442,9 +442,9 @@ public class DirectDebitTransactionInformation9 {
      * 
      * 
      */
-    public List<RegulatoryReporting3> getRgltryRptg() {
+    public List<RegulatoryReporting3&gt; getRgltryRptg() {
         if (rgltryRptg == null) {
-            rgltryRptg = new ArrayList<RegulatoryReporting3>();
+            rgltryRptg = new ArrayList<RegulatoryReporting3&gt;();
         }
         return this.rgltryRptg;
     }
@@ -480,7 +480,7 @@ public class DirectDebitTransactionInformation9 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the rltdRmtInf property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the rltdRmtInf property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -495,9 +495,9 @@ public class DirectDebitTransactionInformation9 {
      * 
      * 
      */
-    public List<RemittanceLocation2> getRltdRmtInf() {
+    public List<RemittanceLocation2&gt; getRltdRmtInf() {
         if (rltdRmtInf == null) {
-            rltdRmtInf = new ArrayList<RemittanceLocation2>();
+            rltdRmtInf = new ArrayList<RemittanceLocation2&gt;();
         }
         return this.rltdRmtInf;
     }

@@ -22,20 +22,20 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="StructuredRemittanceInformation7">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="RfrdDocInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ReferredDocumentInformation3" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="RfrdDocAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RemittanceAmount1" minOccurs="0"/>
- *         &lt;element name="CdtrRefInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CreditorReferenceInformation2" minOccurs="0"/>
- *         &lt;element name="Invcr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/>
- *         &lt;element name="Invcee" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/>
- *         &lt;element name="AddtlRmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max140Text" maxOccurs="3" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="StructuredRemittanceInformation7"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="RfrdDocInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ReferredDocumentInformation3" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="RfrdDocAmt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}RemittanceAmount1" minOccurs="0"/&gt;
+ *         &lt;element name="CdtrRefInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CreditorReferenceInformation2" minOccurs="0"/&gt;
+ *         &lt;element name="Invcr" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/&gt;
+ *         &lt;element name="Invcee" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32" minOccurs="0"/&gt;
+ *         &lt;element name="AddtlRmtInf" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max140Text" maxOccurs="3" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 public class StructuredRemittanceInformation7 {
 
     @XmlElement(name = "RfrdDocInf")
-    protected List<ReferredDocumentInformation3> rfrdDocInf;
+    protected List<ReferredDocumentInformation3&gt; rfrdDocInf;
     @XmlElement(name = "RfrdDocAmt")
     protected RemittanceAmount1 rfrdDocAmt;
     @XmlElement(name = "CdtrRefInf")
@@ -62,7 +62,7 @@ public class StructuredRemittanceInformation7 {
     @XmlElement(name = "Invcee")
     protected PartyIdentification32 invcee;
     @XmlElement(name = "AddtlRmtInf")
-    protected List<String> addtlRmtInf;
+    protected List<String&gt; addtlRmtInf;
 
     /**
      * Gets the value of the rfrdDocInf property.
@@ -71,7 +71,7 @@ public class StructuredRemittanceInformation7 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the rfrdDocInf property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the rfrdDocInf property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -86,9 +86,9 @@ public class StructuredRemittanceInformation7 {
      * 
      * 
      */
-    public List<ReferredDocumentInformation3> getRfrdDocInf() {
+    public List<ReferredDocumentInformation3&gt; getRfrdDocInf() {
         if (rfrdDocInf == null) {
-            rfrdDocInf = new ArrayList<ReferredDocumentInformation3>();
+            rfrdDocInf = new ArrayList<ReferredDocumentInformation3&gt;();
         }
         return this.rfrdDocInf;
     }
@@ -196,7 +196,7 @@ public class StructuredRemittanceInformation7 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the addtlRmtInf property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the addtlRmtInf property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -211,9 +211,9 @@ public class StructuredRemittanceInformation7 {
      * 
      * 
      */
-    public List<String> getAddtlRmtInf() {
+    public List<String&gt; getAddtlRmtInf() {
         if (addtlRmtInf == null) {
-            addtlRmtInf = new ArrayList<String>();
+            addtlRmtInf = new ArrayList<String&gt;();
         }
         return this.addtlRmtInf;
     }

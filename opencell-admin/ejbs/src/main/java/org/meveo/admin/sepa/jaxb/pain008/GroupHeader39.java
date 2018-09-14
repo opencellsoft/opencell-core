@@ -24,21 +24,21 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="GroupHeader39">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="MsgId" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max35Text"/>
- *         &lt;element name="CreDtTm" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ISODateTime"/>
- *         &lt;element name="Authstn" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Authorisation1Choice" maxOccurs="2" minOccurs="0"/>
- *         &lt;element name="NbOfTxs" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max15NumericText"/>
- *         &lt;element name="CtrlSum" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}DecimalNumber" minOccurs="0"/>
- *         &lt;element name="InitgPty" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32"/>
- *         &lt;element name="FwdgAgt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}BranchAndFinancialInstitutionIdentification4" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="GroupHeader39"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="MsgId" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max35Text"/&gt;
+ *         &lt;element name="CreDtTm" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ISODateTime"/&gt;
+ *         &lt;element name="Authstn" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Authorisation1Choice" maxOccurs="2" minOccurs="0"/&gt;
+ *         &lt;element name="NbOfTxs" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max15NumericText"/&gt;
+ *         &lt;element name="CtrlSum" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}DecimalNumber" minOccurs="0"/&gt;
+ *         &lt;element name="InitgPty" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}PartyIdentification32"/&gt;
+ *         &lt;element name="FwdgAgt" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}BranchAndFinancialInstitutionIdentification4" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -60,7 +60,7 @@ public class GroupHeader39 {
     @XmlElement(name = "CreDtTm", required = true)
     protected XMLGregorianCalendar creDtTm;
     @XmlElement(name = "Authstn")
-    protected List<Authorisation1Choice> authstn;
+    protected List<Authorisation1Choice&gt; authstn;
     @XmlElement(name = "NbOfTxs", required = true)
     protected String nbOfTxs;
     @XmlElement(name = "CtrlSum")
@@ -125,7 +125,7 @@ public class GroupHeader39 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the authstn property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the authstn property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -140,9 +140,9 @@ public class GroupHeader39 {
      * 
      * 
      */
-    public List<Authorisation1Choice> getAuthstn() {
+    public List<Authorisation1Choice&gt; getAuthstn() {
         if (authstn == null) {
-            authstn = new ArrayList<Authorisation1Choice>();
+            authstn = new ArrayList<Authorisation1Choice&gt;();
         }
         return this.authstn;
     }

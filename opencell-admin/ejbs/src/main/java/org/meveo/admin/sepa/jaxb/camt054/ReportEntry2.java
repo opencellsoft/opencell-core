@@ -22,32 +22,32 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ReportEntry2">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="NtryRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
- *         &lt;element name="Amt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/>
- *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode"/>
- *         &lt;element name="RvslInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TrueFalseIndicator" minOccurs="0"/>
- *         &lt;element name="Sts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryStatus2Code"/>
- *         &lt;element name="BookgDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/>
- *         &lt;element name="ValDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/>
- *         &lt;element name="AcctSvcrRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
- *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4"/>
- *         &lt;element name="ComssnWvrInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}YesNoIndicator" minOccurs="0"/>
- *         &lt;element name="AddtlInfInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}MessageIdentification2" minOccurs="0"/>
- *         &lt;element name="AmtDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchange3" minOccurs="0"/>
- *         &lt;element name="Chrgs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargesInformation6" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="TechInptChanl" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TechnicalInputChannel1Choice" minOccurs="0"/>
- *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionInterest2" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="NtryDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryDetails1" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="AddtlNtryInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ReportEntry2"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="NtryRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
+ *         &lt;element name="Amt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/&gt;
+ *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode"/&gt;
+ *         &lt;element name="RvslInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TrueFalseIndicator" minOccurs="0"/&gt;
+ *         &lt;element name="Sts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryStatus2Code"/&gt;
+ *         &lt;element name="BookgDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/&gt;
+ *         &lt;element name="ValDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/&gt;
+ *         &lt;element name="AcctSvcrRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
+ *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4"/&gt;
+ *         &lt;element name="ComssnWvrInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}YesNoIndicator" minOccurs="0"/&gt;
+ *         &lt;element name="AddtlInfInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}MessageIdentification2" minOccurs="0"/&gt;
+ *         &lt;element name="AmtDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchange3" minOccurs="0"/&gt;
+ *         &lt;element name="Chrgs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargesInformation6" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="TechInptChanl" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TechnicalInputChannel1Choice" minOccurs="0"/&gt;
+ *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionInterest2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="NtryDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryDetails1" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="AddtlNtryInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -92,7 +92,7 @@ public class ReportEntry2 {
     @XmlElement(name = "AcctSvcrRef")
     protected String acctSvcrRef;
     @XmlElement(name = "Avlbty")
-    protected List<CashBalanceAvailability2> avlbty;
+    protected List<CashBalanceAvailability2&gt; avlbty;
     @XmlElement(name = "BkTxCd", required = true)
     protected BankTransactionCodeStructure4 bkTxCd;
     @XmlElement(name = "ComssnWvrInd")
@@ -102,13 +102,13 @@ public class ReportEntry2 {
     @XmlElement(name = "AmtDtls")
     protected AmountAndCurrencyExchange3 amtDtls;
     @XmlElement(name = "Chrgs")
-    protected List<ChargesInformation6> chrgs;
+    protected List<ChargesInformation6&gt; chrgs;
     @XmlElement(name = "TechInptChanl")
     protected TechnicalInputChannel1Choice techInptChanl;
     @XmlElement(name = "Intrst")
-    protected List<TransactionInterest2> intrst;
+    protected List<TransactionInterest2&gt; intrst;
     @XmlElement(name = "NtryDtls")
-    protected List<EntryDetails1> ntryDtls;
+    protected List<EntryDetails1&gt; ntryDtls;
     @XmlElement(name = "AddtlNtryInf")
     protected String addtlNtryInf;
 
@@ -311,7 +311,7 @@ public class ReportEntry2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the avlbty property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the avlbty property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -326,9 +326,9 @@ public class ReportEntry2 {
      * 
      * 
      */
-    public List<CashBalanceAvailability2> getAvlbty() {
+    public List<CashBalanceAvailability2&gt; getAvlbty() {
         if (avlbty == null) {
-            avlbty = new ArrayList<CashBalanceAvailability2>();
+            avlbty = new ArrayList<CashBalanceAvailability2&gt;();
         }
         return this.avlbty;
     }
@@ -436,7 +436,7 @@ public class ReportEntry2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the chrgs property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the chrgs property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -451,9 +451,9 @@ public class ReportEntry2 {
      * 
      * 
      */
-    public List<ChargesInformation6> getChrgs() {
+    public List<ChargesInformation6&gt; getChrgs() {
         if (chrgs == null) {
-            chrgs = new ArrayList<ChargesInformation6>();
+            chrgs = new ArrayList<ChargesInformation6&gt;();
         }
         return this.chrgs;
     }
@@ -489,7 +489,7 @@ public class ReportEntry2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the intrst property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the intrst property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -504,9 +504,9 @@ public class ReportEntry2 {
      * 
      * 
      */
-    public List<TransactionInterest2> getIntrst() {
+    public List<TransactionInterest2&gt; getIntrst() {
         if (intrst == null) {
-            intrst = new ArrayList<TransactionInterest2>();
+            intrst = new ArrayList<TransactionInterest2&gt;();
         }
         return this.intrst;
     }
@@ -518,7 +518,7 @@ public class ReportEntry2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ntryDtls property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the ntryDtls property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -533,9 +533,9 @@ public class ReportEntry2 {
      * 
      * 
      */
-    public List<EntryDetails1> getNtryDtls() {
+    public List<EntryDetails1&gt; getNtryDtls() {
         if (ntryDtls == null) {
-            ntryDtls = new ArrayList<EntryDetails1>();
+            ntryDtls = new ArrayList<EntryDetails1&gt;();
         }
         return this.ntryDtls;
     }

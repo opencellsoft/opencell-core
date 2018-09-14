@@ -24,27 +24,27 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AccountNotification2">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="Id" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text"/>
- *         &lt;element name="ElctrncSeqNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Number" minOccurs="0"/>
- *         &lt;element name="LglSeqNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Number" minOccurs="0"/>
- *         &lt;element name="CreDtTm" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime"/>
- *         &lt;element name="FrToDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateTimePeriodDetails" minOccurs="0"/>
- *         &lt;element name="CpyDplctInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CopyDuplicate1Code" minOccurs="0"/>
- *         &lt;element name="RptgSrc" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReportingSource1Choice" minOccurs="0"/>
- *         &lt;element name="Acct" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashAccount20"/>
- *         &lt;element name="RltdAcct" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashAccount16" minOccurs="0"/>
- *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AccountInterest2" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="TxsSummry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TotalTransactions2" minOccurs="0"/>
- *         &lt;element name="Ntry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReportEntry2" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="AddtlNtfctnInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="AccountNotification2"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="Id" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text"/&gt;
+ *         &lt;element name="ElctrncSeqNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Number" minOccurs="0"/&gt;
+ *         &lt;element name="LglSeqNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Number" minOccurs="0"/&gt;
+ *         &lt;element name="CreDtTm" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime"/&gt;
+ *         &lt;element name="FrToDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateTimePeriodDetails" minOccurs="0"/&gt;
+ *         &lt;element name="CpyDplctInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CopyDuplicate1Code" minOccurs="0"/&gt;
+ *         &lt;element name="RptgSrc" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReportingSource1Choice" minOccurs="0"/&gt;
+ *         &lt;element name="Acct" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashAccount20"/&gt;
+ *         &lt;element name="RltdAcct" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashAccount16" minOccurs="0"/&gt;
+ *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AccountInterest2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="TxsSummry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TotalTransactions2" minOccurs="0"/&gt;
+ *         &lt;element name="Ntry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ReportEntry2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="AddtlNtfctnInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -86,11 +86,11 @@ public class AccountNotification2 {
     @XmlElement(name = "RltdAcct")
     protected CashAccount16 rltdAcct;
     @XmlElement(name = "Intrst")
-    protected List<AccountInterest2> intrst;
+    protected List<AccountInterest2&gt; intrst;
     @XmlElement(name = "TxsSummry")
     protected TotalTransactions2 txsSummry;
     @XmlElement(name = "Ntry")
-    protected List<ReportEntry2> ntry;
+    protected List<ReportEntry2&gt; ntry;
     @XmlElement(name = "AddtlNtfctnInf")
     protected String addtlNtfctnInf;
 
@@ -317,7 +317,7 @@ public class AccountNotification2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the intrst property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the intrst property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -332,9 +332,9 @@ public class AccountNotification2 {
      * 
      * 
      */
-    public List<AccountInterest2> getIntrst() {
+    public List<AccountInterest2&gt; getIntrst() {
         if (intrst == null) {
-            intrst = new ArrayList<AccountInterest2>();
+            intrst = new ArrayList<AccountInterest2&gt;();
         }
         return this.intrst;
     }
@@ -370,7 +370,7 @@ public class AccountNotification2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ntry property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the ntry property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -385,9 +385,9 @@ public class AccountNotification2 {
      * 
      * 
      */
-    public List<ReportEntry2> getNtry() {
+    public List<ReportEntry2&gt; getNtry() {
         if (ntry == null) {
-            ntry = new ArrayList<ReportEntry2>();
+            ntry = new ArrayList<ReportEntry2&gt;();
         }
         return this.ntry;
     }

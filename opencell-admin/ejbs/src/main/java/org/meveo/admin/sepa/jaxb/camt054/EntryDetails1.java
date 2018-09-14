@@ -22,16 +22,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="EntryDetails1">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="Btch" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BatchInformation2" minOccurs="0"/>
- *         &lt;element name="TxDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryTransaction2" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EntryDetails1"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="Btch" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BatchInformation2" minOccurs="0"/&gt;
+ *         &lt;element name="TxDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryTransaction2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -46,7 +46,7 @@ public class EntryDetails1 {
     @XmlElement(name = "Btch")
     protected BatchInformation2 btch;
     @XmlElement(name = "TxDtls")
-    protected List<EntryTransaction2> txDtls;
+    protected List<EntryTransaction2&gt; txDtls;
 
     /**
      * Gets the value of the btch property.
@@ -79,7 +79,7 @@ public class EntryDetails1 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the txDtls property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the txDtls property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -94,9 +94,9 @@ public class EntryDetails1 {
      * 
      * 
      */
-    public List<EntryTransaction2> getTxDtls() {
+    public List<EntryTransaction2&gt; getTxDtls() {
         if (txDtls == null) {
-            txDtls = new ArrayList<EntryTransaction2>();
+            txDtls = new ArrayList<EntryTransaction2&gt;();
         }
         return this.txDtls;
     }

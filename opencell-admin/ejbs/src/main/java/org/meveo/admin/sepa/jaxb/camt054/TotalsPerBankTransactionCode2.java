@@ -23,21 +23,21 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TotalsPerBankTransactionCode2">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="NbOfNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max15NumericText" minOccurs="0"/>
- *         &lt;element name="Sum" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DecimalNumber" minOccurs="0"/>
- *         &lt;element name="TtlNetNtryAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DecimalNumber" minOccurs="0"/>
- *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode" minOccurs="0"/>
- *         &lt;element name="FcstInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TrueFalseIndicator" minOccurs="0"/>
- *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4"/>
- *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="TotalsPerBankTransactionCode2"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="NbOfNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max15NumericText" minOccurs="0"/&gt;
+ *         &lt;element name="Sum" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DecimalNumber" minOccurs="0"/&gt;
+ *         &lt;element name="TtlNetNtryAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DecimalNumber" minOccurs="0"/&gt;
+ *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode" minOccurs="0"/&gt;
+ *         &lt;element name="FcstInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TrueFalseIndicator" minOccurs="0"/&gt;
+ *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4"/&gt;
+ *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -67,7 +67,7 @@ public class TotalsPerBankTransactionCode2 {
     @XmlElement(name = "BkTxCd", required = true)
     protected BankTransactionCodeStructure4 bkTxCd;
     @XmlElement(name = "Avlbty")
-    protected List<CashBalanceAvailability2> avlbty;
+    protected List<CashBalanceAvailability2&gt; avlbty;
 
     /**
      * Gets the value of the nbOfNtries property.
@@ -220,7 +220,7 @@ public class TotalsPerBankTransactionCode2 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the avlbty property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the avlbty property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -235,9 +235,9 @@ public class TotalsPerBankTransactionCode2 {
      * 
      * 
      */
-    public List<CashBalanceAvailability2> getAvlbty() {
+    public List<CashBalanceAvailability2&gt; getAvlbty() {
         if (avlbty == null) {
-            avlbty = new ArrayList<CashBalanceAvailability2>();
+            avlbty = new ArrayList<CashBalanceAvailability2&gt;();
         }
         return this.avlbty;
     }

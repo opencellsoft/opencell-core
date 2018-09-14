@@ -22,16 +22,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="BankToCustomerDebitCreditNotificationV02">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="GrpHdr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}GroupHeader42"/>
- *         &lt;element name="Ntfctn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AccountNotification2" maxOccurs="unbounded"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="BankToCustomerDebitCreditNotificationV02"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="GrpHdr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}GroupHeader42"/&gt;
+ *         &lt;element name="Ntfctn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AccountNotification2" maxOccurs="unbounded"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -46,7 +46,7 @@ public class BankToCustomerDebitCreditNotificationV02 {
     @XmlElement(name = "GrpHdr", required = true)
     protected GroupHeader42 grpHdr;
     @XmlElement(name = "Ntfctn", required = true)
-    protected List<AccountNotification2> ntfctn;
+    protected List<AccountNotification2&gt; ntfctn;
 
     /**
      * Gets the value of the grpHdr property.
@@ -79,7 +79,7 @@ public class BankToCustomerDebitCreditNotificationV02 {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ntfctn property.
+     * This is why there is not a <CODE&gt;set</CODE&gt; method for the ntfctn property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -94,9 +94,9 @@ public class BankToCustomerDebitCreditNotificationV02 {
      * 
      * 
      */
-    public List<AccountNotification2> getNtfctn() {
+    public List<AccountNotification2&gt; getNtfctn() {
         if (ntfctn == null) {
-            ntfctn = new ArrayList<AccountNotification2>();
+            ntfctn = new ArrayList<AccountNotification2&gt;();
         }
         return this.ntfctn;
     }
