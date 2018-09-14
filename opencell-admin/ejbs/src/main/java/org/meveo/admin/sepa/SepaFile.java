@@ -6,35 +6,33 @@ import java.util.Date;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.jaxb.Pain002;
-import org.meveo.admin.sepa.jaxb.Pain008;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr.InitgPty;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.Cdtr;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAcct;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAcct.Id;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAgt;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAgt.FinInstnId;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id.PrvtId;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id.PrvtId.Othr;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id.PrvtId.Othr.SchmeNm;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.Dbtr;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DrctDbtTx;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DrctDbtTx.MndtRltdInf;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.InstdAmt;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.PmtId;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.LclInstrm;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.SvcLvl;
+import org.meveo.admin.sepa.jaxb.pain008.AccountIdentification4Choice;
+import org.meveo.admin.sepa.jaxb.pain008.ActiveOrHistoricCurrencyAndAmount;
+import org.meveo.admin.sepa.jaxb.pain008.BranchAndFinancialInstitutionIdentification4;
+import org.meveo.admin.sepa.jaxb.pain008.CashAccount16;
+import org.meveo.admin.sepa.jaxb.pain008.CustomerDirectDebitInitiationV02;
+import org.meveo.admin.sepa.jaxb.pain008.DirectDebitTransaction6;
+import org.meveo.admin.sepa.jaxb.pain008.DirectDebitTransactionInformation9;
+import org.meveo.admin.sepa.jaxb.pain008.Document;
+import org.meveo.admin.sepa.jaxb.pain008.FinancialInstitutionIdentification7;
+import org.meveo.admin.sepa.jaxb.pain008.GenericPersonIdentification1;
+import org.meveo.admin.sepa.jaxb.pain008.GroupHeader39;
+import org.meveo.admin.sepa.jaxb.pain008.LocalInstrument2Choice;
+import org.meveo.admin.sepa.jaxb.pain008.MandateRelatedInformation6;
+import org.meveo.admin.sepa.jaxb.pain008.Party6Choice;
+import org.meveo.admin.sepa.jaxb.pain008.PartyIdentification32;
+import org.meveo.admin.sepa.jaxb.pain008.PaymentIdentification1;
+import org.meveo.admin.sepa.jaxb.pain008.PaymentInstructionInformation4;
+import org.meveo.admin.sepa.jaxb.pain008.PaymentMethod2Code;
+import org.meveo.admin.sepa.jaxb.pain008.PaymentTypeInformation20;
+import org.meveo.admin.sepa.jaxb.pain008.PersonIdentification5;
+import org.meveo.admin.sepa.jaxb.pain008.PersonIdentificationSchemeName1Choice;
+import org.meveo.admin.sepa.jaxb.pain008.SequenceType1Code;
+import org.meveo.admin.sepa.jaxb.pain008.ServiceLevel8Choice;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -91,10 +89,9 @@ public class SepaFile implements DDRequestBuilderInterface {
     public void generateDDRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
         try {
             ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-            Pain008 document = new Pain008();
-            CstmrDrctDbtInitn message = new CstmrDrctDbtInitn();
+            Document document = new Document();
+            CustomerDirectDebitInitiationV02 message = new CustomerDirectDebitInitiationV02();
             document.setCstmrDrctDbtInitn(message);
-            document.setXmlns("urn:iso:std:iso:20022:tech:xsd:pain.008.001.02");
             addHeader(message, ddRequestLot, appProvider);
             for (DDRequestItem ddrequestItem : ddRequestLot.getDdrequestItems()) {
                 if (!ddrequestItem.hasError()) {
@@ -134,15 +131,15 @@ public class SepaFile implements DDRequestBuilderInterface {
             if (orgnlGrpInfAndSts == null) {
                 throw new BusinessException("OriginalGroupInformationAndStatus tag doesn't exist");
             }
-            
+
             String dDRequestLOTref = orgnlGrpInfAndSts.getOrgnlMsgId();
             if (dDRequestLOTref == null || dDRequestLOTref.indexOf("-") < 0) {
                 throw new BusinessException("Unknown dDRequestLOTref:" + dDRequestLOTref);
             }
             String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
-            
+
             ddRejectFileInfos.setDdRequestLotId(dDRequestLOTrefSplited[1]);
-            
+
             if (orgnlGrpInfAndSts.getGrpSts() != null && "RJCT".equals(orgnlGrpInfAndSts.getGrpSts())) {
                 ddRejectFileInfos.setTheDDRequestFileWasRejected(true);
                 ddRejectFileInfos.setReturnStatusCode(orgnlGrpInfAndSts.getStsRsnInf().getRsn().getCd());
@@ -151,121 +148,123 @@ public class SepaFile implements DDRequestBuilderInterface {
             OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
             for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
                 if ("RJCT".equals(txInfAndSts.getTxSts())) {
-                    ddRejectFileInfos.getListInvoiceRefsRejected().put(txInfAndSts.getOrgnlEndToEndId(),"RJCT");                    
+                    ddRejectFileInfos.getListInvoiceRefsRejected().put(txInfAndSts.getOrgnlEndToEndId(), "RJCT");
                 }
             }
-            
+
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
         return ddRejectFileInfos;
     }
-    private void addHeader(CstmrDrctDbtInitn message, DDRequestLOT ddRequestLOT, Provider appProvider) throws Exception {
-        GrpHdr groupHeader = new GrpHdr();
+
+    private void addHeader(CustomerDirectDebitInitiationV02 message, DDRequestLOT ddRequestLOT, Provider appProvider) throws Exception {
+
+        GroupHeader39 groupHeader = new GroupHeader39();
         message.setGrpHdr(groupHeader);
         groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + "-" + ddRequestLOT.getId());
         groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
-        groupHeader.setNbOfTxs(ddRequestLOT.getDdrequestItems().size());
+        groupHeader.setNbOfTxs(String.valueOf(ddRequestLOT.getDdrequestItems().size()));
         groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2, RoundingMode.HALF_UP));
-        InitgPty initgPty = new InitgPty();
+        PartyIdentification32 initgPty = new PartyIdentification32();
         initgPty.setNm(appProvider.getDescription());
         groupHeader.setInitgPty(initgPty);
 
     }
 
-    private void addPaymentInformation(CstmrDrctDbtInitn Message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
+    private void addPaymentInformation(CustomerDirectDebitInitiationV02 Message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
 
         log.info("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
         ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
-        PmtInf PaymentInformation = new PmtInf();
-        Message.getPmtInf().add(PaymentInformation);
-        PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + "-" + dDRequestItem.getId());
-        PaymentInformation.setPmtMtd(paramBean.getProperty("sepa.PmtMtd", "TRF"));
-        PaymentInformation.setNbOfTxs(1);
-        PaymentInformation.setCtrlSum(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
-        PmtTpInf PaymentTypeInformation = new PmtTpInf();
-        PaymentInformation.setPmtTpInf(PaymentTypeInformation);
-        SvcLvl ServiceLevel = new SvcLvl();
-        PaymentTypeInformation.setSvcLvl(ServiceLevel);
-        ServiceLevel.setCd("SEPA");
-        LclInstrm LocalInstrument = new LclInstrm();
-        PaymentTypeInformation.setLclInstrm(LocalInstrument);
-        LocalInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", "CORE"));
-        PaymentTypeInformation.setSeqTp("FRST");
+        PaymentInstructionInformation4 paymentInformation = new PaymentInstructionInformation4();
+        Message.getPmtInf().add(paymentInformation);
+        paymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + "-" + dDRequestItem.getId());
+        paymentInformation.setPmtMtd(PaymentMethod2Code.DD);
+        paymentInformation.setNbOfTxs("1");
+        paymentInformation.setCtrlSum(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
+        PaymentTypeInformation20 paymentTypeInformation = new PaymentTypeInformation20();
+        paymentInformation.setPmtTpInf(paymentTypeInformation);
+        ServiceLevel8Choice serviceLevel = new ServiceLevel8Choice();
+        paymentTypeInformation.setSvcLvl(serviceLevel);
+        serviceLevel.setCd("SEPA");
+        LocalInstrument2Choice localInstrument = new LocalInstrument2Choice();
+        paymentTypeInformation.setLclInstrm(localInstrument);
+        localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", "CORE"));
+        paymentTypeInformation.setSeqTp(SequenceType1Code.FRST);
 
-        PaymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
+        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
 
         BankCoordinates providerBC = appProvider.getBankCoordinates();
         if (providerBC == null) {
             throw new BusinessException("Missing bank information on provider");
         }
-        Cdtr Creditor = new Cdtr();
-        Creditor.setNm(appProvider.getDescription());
-        PaymentInformation.setCdtr(Creditor);
+        PartyIdentification32 creditor = new PartyIdentification32();
+        creditor.setNm(appProvider.getDescription());
+        paymentInformation.setCdtr(creditor);
 
-        CdtrAcct creditorAccount = new CdtrAcct();
-        PaymentInformation.setCdtrAcct(creditorAccount);
-        Id identification = new Id();
+        CashAccount16 creditorAccount = new CashAccount16();
+        paymentInformation.setCdtrAcct(creditorAccount);
+        AccountIdentification4Choice identification = new AccountIdentification4Choice();
         creditorAccount.setId(identification);
         identification.setIBAN(providerBC.getIban());
 
-        CdtrAgt CreditorAgent = new CdtrAgt();
-        PaymentInformation.setCdtrAgt(CreditorAgent);
-        FinInstnId FinancialInstitutionIdentification = new FinInstnId();
-        CreditorAgent.setFinInstnId(FinancialInstitutionIdentification);
-        FinancialInstitutionIdentification.setBIC(providerBC.getBic());
-        CdtrSchmeId CreditorSchemeIdentification = new CdtrSchmeId();
-        PaymentInformation.setCdtrSchmeId(CreditorSchemeIdentification);
-        org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id CdtrSchmeId = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id();
-        CreditorSchemeIdentification.setId(CdtrSchmeId);
-        PrvtId privateidentifier = new PrvtId();
-        CdtrSchmeId.setPrvtId(privateidentifier);
-        Othr other = new Othr();
-        privateidentifier.setOthr(other);
+        BranchAndFinancialInstitutionIdentification4 creditorAgent = new BranchAndFinancialInstitutionIdentification4();
+        paymentInformation.setCdtrAgt(creditorAgent);
+        FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();
+        creditorAgent.setFinInstnId(financialInstitutionIdentification);
+        financialInstitutionIdentification.setBIC(providerBC.getBic());
+        PartyIdentification32 creditorSchemeIdentification = new PartyIdentification32();
+        paymentInformation.setCdtrSchmeId(creditorSchemeIdentification);
+        Party6Choice cdtrSchmeId = new Party6Choice();
+        creditorSchemeIdentification.setId(cdtrSchmeId);
+        PersonIdentification5 privateidentifier = new PersonIdentification5();
+        cdtrSchmeId.setPrvtId(privateidentifier);
+        GenericPersonIdentification1 other = new GenericPersonIdentification1();
+        privateidentifier.getOthr().add(other);
         other.setId(providerBC.getIcs());
-        SchmeNm SchemeName = new SchmeNm();
-        other.setSchmeNm(SchemeName);
-        SchemeName.setPrtry("SEPA");
-        addTransaction(dDRequestItem.getRecordedInvoice(), PaymentInformation);
+        PersonIdentificationSchemeName1Choice schemeName = new PersonIdentificationSchemeName1Choice();
+        other.setSchmeNm(schemeName);
+        schemeName.setPrtry("SEPA");
+        addTransaction(dDRequestItem.getRecordedInvoice(), paymentInformation);
     }
 
-    private void addTransaction(RecordedInvoice invoice, PmtInf PaymentInformation) throws Exception {
+    private void addTransaction(RecordedInvoice invoice, PaymentInstructionInformation4 paymentInformation) throws Exception {
         CustomerAccount ca = invoice.getCustomerAccount();
 
-        DrctDbtTxInf DirectDebitTransactionInformation = new DrctDbtTxInf();
-        PaymentInformation.getDrctDbtTxInf().add(DirectDebitTransactionInformation);
-        PmtId PaymentIdentification = new PmtId();
-        DirectDebitTransactionInformation.setPmtId(PaymentIdentification);
+        DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
+        paymentInformation.getDrctDbtTxInf().add(directDebitTransactionInformation);
+        PaymentIdentification1 PaymentIdentification = new PaymentIdentification1();
+        directDebitTransactionInformation.setPmtId(PaymentIdentification);
         PaymentIdentification.setInstrId(invoice.getReference());
         PaymentIdentification.setEndToEndId(invoice.getReference());
-        InstdAmt InstructedAmount = new InstdAmt();
-        DirectDebitTransactionInformation.setInstdAmt(InstructedAmount);
-        InstructedAmount.setValue(invoice.getAmount().setScale(2, RoundingMode.HALF_UP));
-        InstructedAmount.setCcy("EUR");
-        DrctDbtTx DirectDebitTransaction = new DrctDbtTx();
-        DirectDebitTransactionInformation.setDrctDbtTx(DirectDebitTransaction);
-        MndtRltdInf MandateRelatedInformation = new MndtRltdInf();
-        DirectDebitTransaction.setMndtRltdInf(MandateRelatedInformation);
+        ActiveOrHistoricCurrencyAndAmount instructedAmount = new ActiveOrHistoricCurrencyAndAmount();
+        directDebitTransactionInformation.setInstdAmt(instructedAmount);
+        instructedAmount.setValue(invoice.getAmount().setScale(2, RoundingMode.HALF_UP));
+        instructedAmount.setCcy("EUR");
+        DirectDebitTransaction6 directDebitTransaction = new DirectDebitTransaction6();
+        directDebitTransactionInformation.setDrctDbtTx(directDebitTransaction);
+        MandateRelatedInformation6 mandateRelatedInformation = new MandateRelatedInformation6();
+        directDebitTransaction.setMndtRltdInf(mandateRelatedInformation);
         PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
         if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            MandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
-            MandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
+            mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
+            mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
         }
-        DbtrAgt DebtorAgent = new DbtrAgt();
-        DirectDebitTransactionInformation.setDbtrAgt(DebtorAgent);
-        org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId FinancialInstitutionIdentification = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId();
-        FinancialInstitutionIdentification.setBIC(invoice.getPaymentInfo6());
-        DebtorAgent.setFinInstnId(FinancialInstitutionIdentification);
+        BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
+        directDebitTransactionInformation.setDbtrAgt(debtorAgent);
+        FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();
+        financialInstitutionIdentification.setBIC(invoice.getPaymentInfo6());
+        debtorAgent.setFinInstnId(financialInstitutionIdentification);
 
-        Dbtr Debtor = new Dbtr();
-        DirectDebitTransactionInformation.setDbtr(Debtor);
-        Debtor.setNm(ca.getDescription());
+        PartyIdentification32 debtor = new PartyIdentification32();
+        directDebitTransactionInformation.setDbtr(debtor);
+        debtor.setNm(ca.getDescription());
 
-        DbtrAcct DebtorAccount = new DbtrAcct();
-        DirectDebitTransactionInformation.setDbtrAcct(DebtorAccount);
-        org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id Identification = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id();
-        Identification.setIBAN(invoice.getPaymentInfo());
-        DebtorAccount.setId(Identification);
+        CashAccount16 debtorAccount = new CashAccount16();
+        directDebitTransactionInformation.setDbtrAcct(debtorAccount);
+        AccountIdentification4Choice identification = new AccountIdentification4Choice();
+        identification.setIBAN(invoice.getPaymentInfo());
+        debtorAccount.setId(identification);
 
     }
 }
