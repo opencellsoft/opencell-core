@@ -20,18 +20,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AccountSchemeName1Choice">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;choice>
- *           &lt;element name="Cd" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ExternalAccountIdentification1Code"/>
- *           &lt;element name="Prtry" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max35Text"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * <complexType name="AccountSchemeName1Choice">
+ *   <complexContent>
+ *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       <sequence>
+ *         <choice>
+ *           <element name="Cd" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ExternalAccountIdentification1Code"/>
+ *           <element name="Prtry" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Max35Text"/>
+ *         </choice>
+ *       </sequence>
+ *     </restriction>
+ *   </complexContent>
+ * </complexType>
  * </pre>
  * 
  * 
