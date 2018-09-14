@@ -20,19 +20,19 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PaymentTypeInformation20">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="InstrPrty" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Priority2Code" minOccurs="0"/>
- *         &lt;element name="SvcLvl" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ServiceLevel8Choice" minOccurs="0"/>
- *         &lt;element name="LclInstrm" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}LocalInstrument2Choice" minOccurs="0"/>
- *         &lt;element name="SeqTp" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}SequenceType1Code" minOccurs="0"/>
- *         &lt;element name="CtgyPurp" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CategoryPurpose1Choice" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="PaymentTypeInformation20"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="InstrPrty" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}Priority2Code" minOccurs="0"/&gt;
+ *         &lt;element name="SvcLvl" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}ServiceLevel8Choice" minOccurs="0"/&gt;
+ *         &lt;element name="LclInstrm" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}LocalInstrument2Choice" minOccurs="0"/&gt;
+ *         &lt;element name="SeqTp" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}SequenceType1Code" minOccurs="0"/&gt;
+ *         &lt;element name="CtgyPurp" type="{urn:iso:std:iso:20022:tech:xsd:pain.008.001.02}CategoryPurpose1Choice" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

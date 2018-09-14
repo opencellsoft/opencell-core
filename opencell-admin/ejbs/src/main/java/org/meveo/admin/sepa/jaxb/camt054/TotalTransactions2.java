@@ -22,18 +22,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TotalTransactions2">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="TtlNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions2" minOccurs="0"/>
- *         &lt;element name="TtlCdtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/>
- *         &lt;element name="TtlDbtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/>
- *         &lt;element name="TtlNtriesPerBkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TotalsPerBankTransactionCode2" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="TotalTransactions2"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="TtlNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions2" minOccurs="0"/&gt;
+ *         &lt;element name="TtlCdtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/&gt;
+ *         &lt;element name="TtlDbtNtries" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}NumberAndSumOfTransactions1" minOccurs="0"/&gt;
+ *         &lt;element name="TtlNtriesPerBkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TotalsPerBankTransactionCode2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

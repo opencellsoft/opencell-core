@@ -20,16 +20,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Pagination">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="PgNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max5NumericText"/>
- *         &lt;element name="LastPgInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}YesNoIndicator"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Pagination"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="PgNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max5NumericText"/&gt;
+ *         &lt;element name="LastPgInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}YesNoIndicator"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

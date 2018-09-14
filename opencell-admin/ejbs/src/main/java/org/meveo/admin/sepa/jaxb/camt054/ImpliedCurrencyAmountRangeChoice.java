@@ -21,21 +21,21 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ImpliedCurrencyAmountRangeChoice">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;choice>
- *           &lt;element name="FrAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountRangeBoundary1"/>
- *           &lt;element name="ToAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountRangeBoundary1"/>
- *           &lt;element name="FrToAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}FromToAmountRange"/>
- *           &lt;element name="EQAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ImpliedCurrencyAndAmount"/>
- *           &lt;element name="NEQAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ImpliedCurrencyAndAmount"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ImpliedCurrencyAmountRangeChoice"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;choice&gt;
+ *           &lt;element name="FrAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountRangeBoundary1"/&gt;
+ *           &lt;element name="ToAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountRangeBoundary1"/&gt;
+ *           &lt;element name="FrToAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}FromToAmountRange"/&gt;
+ *           &lt;element name="EQAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ImpliedCurrencyAndAmount"/&gt;
+ *           &lt;element name="NEQAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ImpliedCurrencyAndAmount"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

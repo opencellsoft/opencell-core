@@ -24,24 +24,24 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TaxInformation3">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="Cdtr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxParty1" minOccurs="0"/>
- *         &lt;element name="Dbtr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxParty2" minOccurs="0"/>
- *         &lt;element name="AdmstnZn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
- *         &lt;element name="RefNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max140Text" minOccurs="0"/>
- *         &lt;element name="Mtd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
- *         &lt;element name="TtlTaxblBaseAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
- *         &lt;element name="TtlTaxAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/>
- *         &lt;element name="Dt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/>
- *         &lt;element name="SeqNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Number" minOccurs="0"/>
- *         &lt;element name="Rcrd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxRecord1" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="TaxInformation3"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="Cdtr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxParty1" minOccurs="0"/&gt;
+ *         &lt;element name="Dbtr" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxParty2" minOccurs="0"/&gt;
+ *         &lt;element name="AdmstnZn" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
+ *         &lt;element name="RefNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max140Text" minOccurs="0"/&gt;
+ *         &lt;element name="Mtd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
+ *         &lt;element name="TtlTaxblBaseAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
+ *         &lt;element name="TtlTaxAmt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount" minOccurs="0"/&gt;
+ *         &lt;element name="Dt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/&gt;
+ *         &lt;element name="SeqNb" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Number" minOccurs="0"/&gt;
+ *         &lt;element name="Rcrd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TaxRecord1" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

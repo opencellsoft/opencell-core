@@ -22,32 +22,32 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ReportEntry2">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="NtryRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
- *         &lt;element name="Amt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/>
- *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode"/>
- *         &lt;element name="RvslInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TrueFalseIndicator" minOccurs="0"/>
- *         &lt;element name="Sts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryStatus2Code"/>
- *         &lt;element name="BookgDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/>
- *         &lt;element name="ValDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/>
- *         &lt;element name="AcctSvcrRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/>
- *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4"/>
- *         &lt;element name="ComssnWvrInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}YesNoIndicator" minOccurs="0"/>
- *         &lt;element name="AddtlInfInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}MessageIdentification2" minOccurs="0"/>
- *         &lt;element name="AmtDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchange3" minOccurs="0"/>
- *         &lt;element name="Chrgs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargesInformation6" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="TechInptChanl" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TechnicalInputChannel1Choice" minOccurs="0"/>
- *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionInterest2" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="NtryDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryDetails1" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="AddtlNtryInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ReportEntry2"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="NtryRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
+ *         &lt;element name="Amt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ActiveOrHistoricCurrencyAndAmount"/&gt;
+ *         &lt;element name="CdtDbtInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CreditDebitCode"/&gt;
+ *         &lt;element name="RvslInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TrueFalseIndicator" minOccurs="0"/&gt;
+ *         &lt;element name="Sts" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryStatus2Code"/&gt;
+ *         &lt;element name="BookgDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/&gt;
+ *         &lt;element name="ValDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}DateAndDateTimeChoice" minOccurs="0"/&gt;
+ *         &lt;element name="AcctSvcrRef" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max35Text" minOccurs="0"/&gt;
+ *         &lt;element name="Avlbty" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}CashBalanceAvailability2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="BkTxCd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}BankTransactionCodeStructure4"/&gt;
+ *         &lt;element name="ComssnWvrInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}YesNoIndicator" minOccurs="0"/&gt;
+ *         &lt;element name="AddtlInfInd" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}MessageIdentification2" minOccurs="0"/&gt;
+ *         &lt;element name="AmtDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}AmountAndCurrencyExchange3" minOccurs="0"/&gt;
+ *         &lt;element name="Chrgs" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ChargesInformation6" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="TechInptChanl" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TechnicalInputChannel1Choice" minOccurs="0"/&gt;
+ *         &lt;element name="Intrst" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}TransactionInterest2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="NtryDtls" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}EntryDetails1" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="AddtlNtryInf" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}Max500Text" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

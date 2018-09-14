@@ -23,22 +23,22 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TransactionDates2">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="AccptncDtTm" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime" minOccurs="0"/>
- *         &lt;element name="TradActvtyCtrctlSttlmDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/>
- *         &lt;element name="TradDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/>
- *         &lt;element name="IntrBkSttlmDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/>
- *         &lt;element name="StartDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/>
- *         &lt;element name="EndDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/>
- *         &lt;element name="TxDtTm" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime" minOccurs="0"/>
- *         &lt;element name="Prtry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ProprietaryDate2" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="TransactionDates2"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="AccptncDtTm" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime" minOccurs="0"/&gt;
+ *         &lt;element name="TradActvtyCtrctlSttlmDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/&gt;
+ *         &lt;element name="TradDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/&gt;
+ *         &lt;element name="IntrBkSttlmDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/&gt;
+ *         &lt;element name="StartDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/&gt;
+ *         &lt;element name="EndDt" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODate" minOccurs="0"/&gt;
+ *         &lt;element name="TxDtTm" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ISODateTime" minOccurs="0"/&gt;
+ *         &lt;element name="Prtry" type="{urn:iso:std:iso:20022:tech:xsd:camt.054.001.02}ProprietaryDate2" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
