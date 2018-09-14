@@ -116,7 +116,7 @@ public class BillingCycle extends BusinessCFEntity {
     private String invoiceTypeEl;
 
     /**
-     * Expression to resolve invoice type code for Spark
+     * Expression to resolve invoice type code - for Spark
      */
     @Column(name = "invoice_type_el_sp", length = 2000)
     @Size(max = 2000)

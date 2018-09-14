@@ -32,6 +32,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -52,6 +53,7 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.SortOrder;
@@ -107,6 +109,9 @@ public class WalletApi extends BaseApi {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+
+    @Inject
+    private TaxService taxService;
 
     /**
      * Calculate current (open or reserved) wallet balance at a given level
@@ -466,6 +471,15 @@ public class WalletApi extends BaseApi {
                 throw new EntityDoesNotExistsException(ChargeInstance.class, postData.getChargeInstance());
             }
         }
+
+        Tax tax = null;
+        if (postData.getTaxCode() != null) {
+            tax = taxService.findByCode(postData.getTaxCode());
+            if (tax == null) {
+                throw new EntityDoesNotExistsException(Tax.class, postData.getTaxCode());
+            }
+        }
+
         WalletOperation walletOperation = new WalletOperation();
         walletOperation.setDescription(postData.getDescription());
         walletOperation.setCode(postData.getCode());
@@ -482,6 +496,7 @@ public class WalletApi extends BaseApi {
         walletOperation.setStatus(postData.getStatus());
         walletOperation.setCounter(null);
         walletOperation.setRatingUnitDescription(postData.getRatingUnitDescription());
+        walletOperation.setTax(tax);
         walletOperation.setTaxPercent(postData.getTaxPercent());
         walletOperation.setUnitAmountTax(postData.getUnitAmountTax());
         walletOperation.setUnitAmountWithoutTax(postData.getUnitAmountWithoutTax());

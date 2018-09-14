@@ -55,7 +55,6 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
         this.setBillingAccount(categoryInvoiceAgregate.getBillingAccount());
         this.setBillingRun(categoryInvoiceAgregate.getBillingRun());
         this.setUserAccount(categoryInvoiceAgregate.getUserAccount());
-        this.setDiscountAggregate(false);
     }
 
     public InvoiceCategory getInvoiceCategory() {

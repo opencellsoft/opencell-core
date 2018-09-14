@@ -680,7 +680,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
      */
     public String getMinimumAmountWithoutTaxEl() {
         return minimumAmountWithoutTaxEl;
-    }
+    } 
 
     /**
      * @param minimumAmountWithoutTaxEl Expression to calculate minimum amount without tax

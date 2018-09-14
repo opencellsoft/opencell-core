@@ -82,19 +82,19 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
@@ -107,38 +107,58 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Size(max = 2000)
     @Column(name = "long_description", columnDefinition = "TEXT")
     private String longDescription;
-    
+
     @ImageType
     @Column(name = "image_path", length = 100)
     @Size(max = 100)
     private String imagePath;
 
+    /**
+     * Expression to determine minimum amount value
+     */
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
 
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
-    
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
+
     @Embedded
     private SubscriptionRenewal serviceRenewal = new SubscriptionRenewal();
 
     @Transient
     private boolean selected;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
-	/**
-	 * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
-	 */
-	@Transient
-	private boolean instantiatedFromBSM;
-	
-	@Transient
-	private String descriptionOverride;
+    /**
+     * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
+     */
+    @Transient
+    private boolean instantiatedFromBSM;
+
+    @Transient
+    private String descriptionOverride;
 
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
         ServiceChargeTemplateRecurring result = null;
@@ -228,11 +248,11 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
         }
 
         ServiceTemplate other = (ServiceTemplate) obj;
-        
+
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        
+
         if (code == null) {
             if (other.getCode() != null)
                 return false;
@@ -281,13 +301,13 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
         this.imagePath = imagePath;
     }
 
-	public boolean isInstantiatedFromBSM() {
-		return instantiatedFromBSM;
-	}
+    public boolean isInstantiatedFromBSM() {
+        return instantiatedFromBSM;
+    }
 
-	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
-		this.instantiatedFromBSM = instantiatedFromBSM;
-	}
+    public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
+        this.instantiatedFromBSM = instantiatedFromBSM;
+    }
 
     public String getDescriptionOverride() {
         return descriptionOverride;
@@ -297,29 +317,69 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
         this.descriptionOverride = descriptionOverride;
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
 
-	public SubscriptionRenewal getServiceRenewal() {
-		return serviceRenewal;
-	}
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
 
-	public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
-		this.serviceRenewal = serviceRenewal;
-	}
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
+    public SubscriptionRenewal getServiceRenewal() {
+        return serviceRenewal;
+    }
+
+    public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
+        this.serviceRenewal = serviceRenewal;
+    }
 
     /**
      * @return the autoEndOfEngagement

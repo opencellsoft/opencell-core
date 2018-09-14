@@ -94,13 +94,13 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private DiscountPlanService discountPlanService;
-    
+
     @Inject
     private WalletOperationService walletOperationService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
     @Inject
     private UserAccountApi userAccountApi;
 
@@ -174,7 +174,9 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingAccount.getContactInformation().setPhone(postData.getPhone());
         billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
 
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
@@ -260,11 +262,11 @@ public class BillingAccountApi extends AccountEntityApi {
             } else if (!billingAccount.getCustomerAccount().equals(customerAccount)) {
                 // a safeguard to allow this only if all the WO/RT have been invoiced.
                 Long countNonTreatedWO = walletOperationService.countNonTreatedWOByBA(billingAccount);
-                if(countNonTreatedWO > 0) {
+                if (countNonTreatedWO > 0) {
                     throw new BusinessApiException("Can not change the parent account. Billing account have non treated WO");
                 }
                 Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByBA(billingAccount);
-                if(countNonInvoicedRT > 0) {
+                if (countNonInvoicedRT > 0) {
                     throw new BusinessApiException("Can not change the parent account. Billing account have non invoiced RT");
                 }
             }
@@ -325,11 +327,17 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getPhone())) {
             billingAccount.getContactInformation().setPhone(postData.getPhone());
         }
-        if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+        if (postData.getMinimumAmountEl() != null) {
             billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         }
-        if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+        if (postData.getMinimumAmountElSpark() != null) {
+            billingAccount.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+        }
+        if (postData.getMinimumLabelEl() != null) {
             billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (postData.getMinimumLabelElSpark() != null) {
+            billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
@@ -554,16 +562,22 @@ public class BillingAccountApi extends AccountEntityApi {
                 if (!StringUtils.isBlank(postData.getEmail())) {
                     existedBillingAccountDto.setEmail(postData.getEmail());
                 }
-                if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+                if (postData.getMinimumAmountEl() != null) {
                     existedBillingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl());
                 }
-                if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+                if (postData.getMinimumAmountElSpark() != null) {
+                    existedBillingAccountDto.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+                }
+                if (postData.getMinimumLabelEl() != null) {
                     existedBillingAccountDto.setMinimumLabelEl(postData.getMinimumLabelEl());
+                }
+                if (postData.getMinimumLabelElSpark() != null) {
+                    existedBillingAccountDto.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
                 }
                 if (postData.getInvoicingThreshold() != null) {
                     existedBillingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
                 }
-                //
+
                 accountHierarchyApi.populateNameAddress(existedBillingAccountDto, postData);
                 if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                     existedBillingAccountDto.setCustomFields(postData.getCustomFields());
@@ -660,22 +674,22 @@ public class BillingAccountApi extends AccountEntityApi {
      * @param ba the selected BillingAccount
      * @return DTO representation of BillingAccount
      */
-	public BillingAccountDto exportBillingAccountHierarchy(BillingAccount ba) {
-		BillingAccountDto result = new BillingAccountDto(ba);
+    public BillingAccountDto exportBillingAccountHierarchy(BillingAccount ba) {
+        BillingAccountDto result = new BillingAccountDto(ba);
 
-		if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
-			for (Invoice invoice : ba.getInvoices()) {
-				result.getInvoices().add(invoiceApi.invoiceToDto(invoice, true, false));
-			}
-		}
+        if (ba.getInvoices() != null && !ba.getInvoices().isEmpty()) {
+            for (Invoice invoice : ba.getInvoices()) {
+                result.getInvoices().add(invoiceApi.invoiceToDto(invoice, true, false));
+            }
+        }
 
-		if (ba.getUsersAccounts() != null && !ba.getUsersAccounts().isEmpty()) {
-			for (UserAccount ua : ba.getUsersAccounts()) {
-				result.getUserAccounts().getUserAccount().add(userAccountApi.exportUserAccountHierarchy(ua));
-			}
-		}
+        if (ba.getUsersAccounts() != null && !ba.getUsersAccounts().isEmpty()) {
+            for (UserAccount ua : ba.getUsersAccounts()) {
+                result.getUserAccounts().getUserAccount().add(userAccountApi.exportUserAccountHierarchy(ua));
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
 }

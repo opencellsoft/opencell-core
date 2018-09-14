@@ -29,7 +29,7 @@ public class BillingCycleApi extends BaseApi {
 
     @Inject
     private CalendarService calendarService;
-    
+
     @Inject
     private InvoiceTypeService invoiceTypeService;
 
@@ -52,8 +52,6 @@ public class BillingCycleApi extends BaseApi {
         }
 
         handleMissingParametersAndValidate(postData);
-     
-        
 
         if (billingCycleService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(BillingCycle.class, postData.getCode());
@@ -63,13 +61,13 @@ public class BillingCycleApi extends BaseApi {
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-        
+
         InvoiceType invoiceType = null;
         if (!StringUtils.isBlank(postData.getInvoiceTypeCode())) {
-			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
-			if(invoiceType == null){
-				 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
-			}
+            invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
+            if (invoiceType == null) {
+                throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
+            }
         }
 
         BillingCycle billingCycle = new BillingCycle();
@@ -85,8 +83,10 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
+        billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
+        billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
         billingCycle.setType(postData.getType());
-        
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
@@ -98,7 +98,7 @@ public class BillingCycleApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         billingCycleService.create(billingCycle);
     }
 
@@ -121,9 +121,6 @@ public class BillingCycleApi extends BaseApi {
         }
 
         handleMissingParametersAndValidate(postData);
-        
-
-        
 
         BillingCycle billingCycle = billingCycleService.findByCode(postData.getCode());
 
@@ -138,10 +135,10 @@ public class BillingCycleApi extends BaseApi {
 
         InvoiceType invoiceType = null;
         if (!StringUtils.isBlank(postData.getInvoiceTypeCode())) {
-			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
-			if(invoiceType == null){
-				 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
-			}
+            invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
+            if (invoiceType == null) {
+                throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
+            }
         }
         billingCycle.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         billingCycle.setDescription(postData.getDescription());
@@ -155,23 +152,31 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
+
+        if (postData.getInvoiceTypeEl() != null) {
+            billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
+        }
+        if (postData.getInvoiceTypeElSpark() != null) {
+            billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
+        }
+
         billingCycle.setType(postData.getType());
 
-	   // populate customFields
-	    try {
-	        populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
-	
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
+
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
-        }  
-        
+        }
+
         billingCycle = billingCycleService.update(billingCycle);
     }
-    
+
     public BillingCycleDto find(String billingCycleCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(billingCycleCode)) {
@@ -186,7 +191,7 @@ public class BillingCycleApi extends BaseApi {
             throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
         }
 
-        result = new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsDTO(billingCycle, true));
+        result = new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsDTO(billingCycle, true));
 
         return result;
     }
@@ -206,7 +211,7 @@ public class BillingCycleApi extends BaseApi {
     }
 
     public void createOrUpdate(BillingCycleDto postData) throws MeveoApiException, BusinessException {
-       
+
         BillingCycle billingCycle = billingCycleService.findByCode(postData.getCode());
         if (billingCycle == null) {
             create(postData);
@@ -214,6 +219,5 @@ public class BillingCycleApi extends BaseApi {
             update(postData);
         }
     }
-    
-    
+
 }

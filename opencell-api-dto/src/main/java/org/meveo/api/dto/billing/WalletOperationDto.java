@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
@@ -59,6 +58,11 @@ public class WalletOperationDto extends BusinessEntityDto {
 
     /** The rating unit description. */
     private String ratingUnitDescription;
+
+    /**
+     * Tax applied - code
+     */
+    private String taxCode;
 
     /** The tax percent. */
     private BigDecimal taxPercent;
@@ -119,7 +123,7 @@ public class WalletOperationDto extends BusinessEntityDto {
 
     /** The raw amount with tax. */
     private BigDecimal rawAmountWithTax;
-    
+
     /** The rated transaction. */
     @JsonInclude(Include.ALWAYS)
     private WoRatedTransactionDto ratedTransaction;
@@ -148,6 +152,9 @@ public class WalletOperationDto extends BusinessEntityDto {
         type = walletOperation.getType();
         status = walletOperation.getStatus();
         ratingUnitDescription = walletOperation.getRatingUnitDescription();
+        if (walletOperation.getTax() != null) {
+            taxCode = walletOperation.getTax().getCode();
+        }
         taxPercent = walletOperation.getTaxPercent();
         unitAmountWithoutTax = walletOperation.getUnitAmountWithoutTax();
         unitAmountWithTax = walletOperation.getUnitAmountWithTax();
@@ -279,6 +286,20 @@ public class WalletOperationDto extends BusinessEntityDto {
      */
     public void setOperationDate(Date operationDate) {
         this.operationDate = operationDate;
+    }
+
+    /**
+     * @return Tax applied - code
+     */
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    /**
+     * @param taxCode Tax applied - code
+     */
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
     }
 
     /**
@@ -640,6 +661,7 @@ public class WalletOperationDto extends BusinessEntityDto {
     public void setSubscription(String subscription) {
         this.subscription = subscription;
     }
+
     /**
      * Gets the rating unit description.
      *
@@ -711,7 +733,7 @@ public class WalletOperationDto extends BusinessEntityDto {
     public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
         this.rawAmountWithTax = rawAmountWithTax;
     }
-    
+
     /**
      * @return the ratedTransaction
      */

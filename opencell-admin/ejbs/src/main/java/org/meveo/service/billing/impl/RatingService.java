@@ -214,7 +214,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param tCurrency trading currency
      * @param countryId id of country
      * @param languageCode code of language
-     * @param taxPercent tax percent
+     * @param tax Tax to apply
      * @param discountPercent discount percent
      * @param nextApplicationDate next date of application
      * @param invoiceSubCategory subcategory of invoice
@@ -231,7 +231,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      */
     public WalletOperation prerateChargeApplication(ChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity,
-            BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, String languageCode, BigDecimal taxPercent, BigDecimal discountPercent,
+            BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, String languageCode, Tax tax, BigDecimal discountPercent,
             Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
             ChargeApplicationModeEnum mode, UserAccount userAccount) throws BusinessException {
 
@@ -274,7 +274,12 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
 
         walletOperation.setCode(chargeTemplate.getCode());
-        walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : taxPercent);
+        if (isExonerated) {
+            walletOperation.setTaxPercent(BigDecimal.ZERO);
+        } else {
+            walletOperation.setTax(tax);
+            walletOperation.setTaxPercent(tax.getPercent());
+        }
         walletOperation.setCurrency(tCurrency.getCurrency());
         walletOperation.setStartDate(startdate);
         walletOperation.setEndDate(endDate);
@@ -324,7 +329,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated later automatically
      * @param tCurrency trading currency
      * @param countryId country id
-     * @param taxPercent tax percent
+     * @param tax Tax to charge
      * @param discountPercent discount percent
      * @param nextApplicationDate next application date
      * @param invoiceSubCategory sub category date
@@ -341,7 +346,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @throws BusinessException business exception
      */
     public WalletOperation rateChargeApplication(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
-            BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
+            BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, Tax tax,
             BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber,
             Date startdate, Date endDate, ChargeApplicationModeEnum mode, boolean forSchedule, boolean isVirtual) throws BusinessException {
         Date subscriptionDate = null;
@@ -356,7 +361,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         Subscription subscription = chargeInstance.getSubscription();
         WalletOperation walletOperation = prerateChargeApplication(chargeInstance.getChargeTemplate(), subscriptionDate, subscription == null ? null : subscription.getOffer(),
-            chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantityInChargeUnits, tCurrency, countryId, languageCode, taxPercent,
+            chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantityInChargeUnits, tCurrency, countryId, languageCode, tax,
             discountPercent, nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, orderNumber, startdate, endDate, mode, chargeInstance.getUserAccount());
 
         chargeInstance.getWalletOperations().add(walletOperation);
@@ -905,6 +910,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                 if (tax == null) {
                     throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
                 }
+                operation.setTax(tax);
                 operation.setTaxPercent(tax.getPercent());
 
                 rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),

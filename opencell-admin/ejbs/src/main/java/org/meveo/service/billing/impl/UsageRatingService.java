@@ -246,7 +246,12 @@ public class UsageRatingService implements Serializable {
         walletOperation.setInputQuantity(quantityToCharge);
         walletOperation
             .setQuantity(NumberUtils.getInChargeUnit(quantityToCharge, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
-        walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
+        if (isExonerated){
+            walletOperation.setTaxPercent(BigDecimal.ZERO);
+        } else {
+            walletOperation.setTax(tax);
+            walletOperation.setTaxPercent(tax.getPercent());
+        }
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setCurrency(currency.getCurrency());

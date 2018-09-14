@@ -347,13 +347,15 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.setEndDate(ratedTransaction.getEndDate());
         this.setSubscription(ratedTransaction.getSubscription());
         this.setSeller(ratedTransaction.getSeller());
+        this.setTax(ratedTransaction.getTax());
+        this.setTaxPercent(ratedTransaction.getTaxPercent());
     }
 
     public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity,
             BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
             InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription,
             String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate,
-            Date endDate, Seller seller) {
+            Date endDate, Seller seller, Tax tax, BigDecimal taxPercent) {
 
         super();
 
@@ -383,6 +385,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.startDate = startDate;
         this.endDate = endDate;
         this.seller = seller;
+        this.tax = tax;
+        this.taxPercent = taxPercent;
 
         if (inputUnitDescription != null) {
             this.unityDescription = inputUnitDescription;
@@ -425,6 +429,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.edr = walletOperation.getEdr();
         this.startDate = walletOperation.getStartDate();
         this.endDate = walletOperation.getEndDate();
+        this.tax = walletOperation.getTax();
+        this.taxPercent = walletOperation.getTaxPercent();
 
         this.unityDescription = walletOperation.getInputUnitDescription();
         if (this.unityDescription == null) {

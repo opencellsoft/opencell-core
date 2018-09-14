@@ -64,14 +64,24 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private String accountingCode;
 
     /**
-     * EL expression to determine if discount plan item applies
+     * Expression to determine if discount applies
      */
     private String expressionEl;
 
     /**
-     * EL expression to determine discount percentage
+     * Expression to determine if discount applies - for Spark
+     */
+    private String expressionElSpark;
+
+    /**
+     * Expression to calculate discount percentage
      */
     private String discountPercentEl;
+
+    /**
+     * Expression to calculate discount percentage - for Spark
+     */
+    private String discountPercentElSpark;
 
     /**
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
@@ -97,7 +107,9 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.percent = discountPlanItem.getPercent();
         this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
+        this.expressionElSpark = discountPlanItem.getExpressionElSpark();
         this.discountPercentEl = discountPlanItem.getDiscountPercentEl();
+        this.discountPercentElSpark = discountPlanItem.getDiscountPercentElSpark();
         this.disabled = discountPlanItem.isDisabled();
     }
 
@@ -210,39 +222,59 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     }
 
     /**
-     * Gets the expression el.
-     *
-     * @return the expression el
+     * @return Expression to determine if discount applies
      */
     public String getExpressionEl() {
         return expressionEl;
     }
 
     /**
-     * Sets the expression el.
-     *
-     * @param expressionEl the new expression el
+     * @param expressionEl Expression to determine if discount applies
      */
     public void setExpressionEl(String expressionEl) {
         this.expressionEl = expressionEl;
     }
 
     /**
-     * Gets the discount percent el.
-     *
-     * @return the discount percent el
+     * @return Expression to determine if discount applies - for Spark
+     */
+    public String getExpressionElSpark() {
+        return expressionElSpark;
+    }
+
+    /**
+     * @param expressionElSpark Expression to determine if discount applies - for Spark
+     */
+    public void setExpressionElSpark(String expressionElSpark) {
+        this.expressionElSpark = expressionElSpark;
+    }
+
+    /**
+     * @return Expression to calculate discount percentage
      */
     public String getDiscountPercentEl() {
         return discountPercentEl;
     }
 
     /**
-     * Sets the discount percent el.
-     *
-     * @param discountPercentEl the new discount percent el
+     * @param discountPercentEl Expression to calculate discount percentage
      */
     public void setDiscountPercentEl(String discountPercentEl) {
         this.discountPercentEl = discountPercentEl;
+    }
+
+    /**
+     * @return Expression to calculate discount percentage - for Spark
+     */
+    public String getDiscountPercentElSpark() {
+        return discountPercentElSpark;
+    }
+
+    /**
+     * @param discountPercentElSpark Expression to calculate discount percentage - for Spark
+     */
+    public void setDiscountPercentElSpark(String discountPercentElSpark) {
+        this.discountPercentElSpark = discountPercentElSpark;
     }
 
     @Override

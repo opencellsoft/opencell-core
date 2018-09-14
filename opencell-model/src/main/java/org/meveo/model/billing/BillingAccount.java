@@ -181,14 +181,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Size(max = 2000)
     private String minimumAmountElSpark;
 
-
     /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
-
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
@@ -199,15 +197,15 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     @Transient
     private List<RatedTransaction> minRatedTransactions;
-    
+
     @Transient
-	private BigDecimal totalInvoicingAmountWithoutTax;
-    
+    private BigDecimal totalInvoicingAmountWithoutTax;
+
     @Transient
-	private BigDecimal totalInvoicingAmountWithTax;
-    
+    private BigDecimal totalInvoicingAmountWithTax;
+
     @Transient
-	private BigDecimal totalInvoicingAmountTax;
+    private BigDecimal totalInvoicingAmountTax;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -444,6 +442,20 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     }
 
     /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
      * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
@@ -455,34 +467,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
-    }
-
-    @Override
-	public void anonymize(String code) {
-		super.anonymize(code);
-		getContactInformation().anonymize(code);
-		if (getUsersAccounts() != null) {
-			for (UserAccount ua : getUsersAccounts()) {
-				ua.anonymize(code);
-			}
-		}
-	}
-    
-    /**
-     * @return Expression to determine minimum amount value - for Spark
-     */
-    public String getMinimumAmountElSpark() {
-        return minimumAmountElSpark;
-    }
-	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		minRatedTransactions = ratedTransactions;
-	}
-
-    /**
-     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
-     */
-    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
-        this.minimumAmountElSpark = minimumAmountElSpark;
     }
 
     /**
@@ -499,33 +483,47 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
+    @Override
+    public void anonymize(String code) {
+        super.anonymize(code);
+        getContactInformation().anonymize(code);
+        if (getUsersAccounts() != null) {
+            for (UserAccount ua : getUsersAccounts()) {
+                ua.anonymize(code);
+            }
+        }
+    }
 
-	public List<RatedTransaction> getMinRatedTransactions() {
-		return minRatedTransactions;
-	}
+    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        minRatedTransactions = ratedTransactions;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithoutTax() {
-		return totalInvoicingAmountWithoutTax;
-	}
+    public List<RatedTransaction> getMinRatedTransactions() {
+        return minRatedTransactions;
+    }
 
-	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
-		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithoutTax() {
+        return totalInvoicingAmountWithoutTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountWithTax() {
-		return totalInvoicingAmountWithTax;
-	}
+    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+        this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+    }
 
-	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
-		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
-	}
+    public BigDecimal getTotalInvoicingAmountWithTax() {
+        return totalInvoicingAmountWithTax;
+    }
 
-	public BigDecimal getTotalInvoicingAmountTax() {
-		return totalInvoicingAmountTax;
-	}
+    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+        this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+    }
 
-	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
-		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
-	}
+    public BigDecimal getTotalInvoicingAmountTax() {
+        return totalInvoicingAmountTax;
+    }
+
+    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+        this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+    }
 
 }

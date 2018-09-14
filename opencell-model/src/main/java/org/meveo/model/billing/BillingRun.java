@@ -135,6 +135,9 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date invoiceDate;
 
+    /**
+     * Include in invoice Rated transactions up to that date
+     */
     @Column(name = "last_transaction_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTransactionDate;
@@ -320,10 +323,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         this.invoiceDate = invoiceDate;
     }
 
+    /**
+     * @return Include in invoice Rated transactions up to that date
+     */
     public Date getLastTransactionDate() {
         return lastTransactionDate;
     }
 
+    /**
+     * @param lastTransactionDate Include in invoice Rated transactions up to that date
+     */
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
     }

@@ -62,6 +62,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomerCategory;
@@ -830,10 +831,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
                             if (diff.doubleValue() > 0) {
                                 BigDecimal taxPercent = BigDecimal.ZERO;
+                                Tax tax = null;
                                 BigDecimal rtMinAmount = diff.multiply(ratio);
                                 for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                                     if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
                                         taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                        tax = invoiceSubcategoryCountry.getTax();
                                         break;
                                     }
                                 }
@@ -850,7 +853,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax,
                                     BigDecimal.ONE, amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "",
                                     "", "", null, null, "", "", null, "NO_OFFER", null,
-                                    RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel, null, null, subscription.getSeller());
+                                    RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), serviceMinLabel, null, null, subscription.getSeller(), tax, taxPercent);
 
                                     minAmountTransactions.add(ratedTransaction);
 
@@ -920,10 +923,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                     if (diff.doubleValue() > 0) {
 
                         BigDecimal taxPercent = BigDecimal.ZERO;
+                        Tax tax = null;
                         BigDecimal rtMinAmount = diff.multiply(ratio);
                         for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                             if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
                                 taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                tax = invoiceSubcategoryCountry.getTax();
                                 break;
                             }
                         }
@@ -940,7 +945,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                         RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, BigDecimal.ONE,
                             amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null,
                             subscription, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(),
-                            subscriptionMinLabel, null, null, subscription.getSeller());
+                            subscriptionMinLabel, null, null, subscription.getSeller(), tax, taxPercent);
 
                             minAmountTransactions.add(ratedTransaction);
                             
@@ -1024,10 +1029,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                     if (diff.doubleValue() > 0) {
 
                         BigDecimal taxPercent = BigDecimal.ZERO;
+                        Tax tax = null;
                         BigDecimal rtMinAmount = diff.multiply(ratio);
                         for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                             if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
                                 taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                tax = invoiceSubcategoryCountry.getTax();
                                 break;
                             }
                         }
@@ -1044,7 +1051,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                         RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, BigDecimal.ONE,
                             amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount, invoiceSubCategory, "", "", "", "", null, null, "",
                             "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), billingAccountMinLabel, null,
-                            null, seller);
+                            null, seller, tax, taxPercent);
 
 	                    minAmountTransactions.add(ratedTransaction);
 	
@@ -1077,17 +1084,5 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      */
     public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
         return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
-    }
-
-    @Override
-    public void create(BillingAccount entity) throws BusinessException {
-        entity.setTradingLanguageCode(entity.getTradingLanguage().getLanguage().getLanguageCode());
-        super.create(entity);
-    }
-
-    @Override
-    public BillingAccount update(BillingAccount entity) throws BusinessException {
-        entity.setTradingLanguageCode(entity.getTradingLanguage().getLanguage().getLanguageCode());
-        return super.update(entity);
     }
 }

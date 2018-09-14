@@ -1864,16 +1864,20 @@
             cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code and
             billing_invoice_agregate.discount_plan_item_code is not null
         </sql>        
+        <sql>update ${db.schema.adapted}billing_invoice_agregate set tax_id = billing_invoice_agregate_taxes.tax_id from ${db.schema.adapted}billing_invoice_agregate_taxes where
+        billing_invoice_agregate.id=billing_invoice_agregate_taxes.sub_cat_invoice_aggregat_id and billing_invoice_agregate.tax_id is null</sql>
     </changeSet>
 
     <changeSet id="#3577_20180727_migration_M" author="AndriusKarpavicius" dbms="mysql">
         <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id where billing_rated_transaction.wallet_operation_id is not null</sql>
         <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}cat_discount_plan_item on cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code set discount_plan_item_id = cat_discount_plan_item.id where billing_invoice_agregate.discount_plan_item_code is not null</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}billing_invoice_agregate_taxes on billing_invoice_agregate.id=sub_cat_invoice_aggregat_id set tax_id = billing_invoice_agregate_taxes.tax_id where billing_invoice_agregate.tax_id is null</sql>
     </changeSet>
     
     <changeSet id="#3577_20180827" author="AndriusKarpavicius">
         <addNotNullConstraint tableName="billing_rated_transaction" columnName="seller_id" columnDataType="bigint"/>
         <addNotNullConstraint tableName="billing_wallet_operation" columnName="seller_id" columnDataType="bigint"/>
+        <dropTable tableName="billing_invoice_agregate_taxes"/>
     </changeSet>
     
     <changeSet id="spark_P" author="AndriusKarpavicius" dbms="postgresql">

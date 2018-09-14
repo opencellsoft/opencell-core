@@ -254,7 +254,7 @@ public class InvoiceApi extends BaseApi {
                         ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
                         amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null,
                         ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-                        ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller);
+                        ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, currentTax, currentTax.getPercent());
 
                     meveoRatedTransaction.setInvoice(invoice);
                     meveoRatedTransaction.setWallet(userAccount.getWallet());
@@ -876,8 +876,7 @@ public class InvoiceApi extends BaseApi {
      * @return amount with tax.
      */
     private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
-        Integer rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
-        BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), rounding, appProvider.getRoundingMode().getRoundingMode()));
+        BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
         return ttc;
     }
 
@@ -919,9 +918,6 @@ public class InvoiceApi extends BaseApi {
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
                 subCategoryInvoiceAgregateDto.setType("R");
                 subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                if (invoiceAgregate.getAccountingCode() != null) {
-                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
-                }
                 subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                 subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
                 subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
@@ -937,14 +933,14 @@ public class InvoiceApi extends BaseApi {
                     subCategoryInvoiceAgregateDto.setType("F");
                     subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(subCategoryAggregate.getInvoiceSubCategory().getCode());
                     subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    if (invoiceAgregate.getAccountingCode() != null) {
-                        subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+                    if (subCategoryAggregate.getAccountingCode() != null) {
+                        subCategoryInvoiceAgregateDto.setAccountingCode(subCategoryAggregate.getAccountingCode().getCode());
                     }
-                    subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-                    subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
-                    subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
-                    subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-                    subCategoryInvoiceAgregateDto.setUserAccountCode(invoiceAgregate.getUserAccount() == null ? null : invoiceAgregate.getUserAccount().getCode());
+                    subCategoryInvoiceAgregateDto.setDescription(subCategoryAggregate.getDescription());
+                    subCategoryInvoiceAgregateDto.setAmountWithoutTax(subCategoryAggregate.getAmountWithoutTax());
+                    subCategoryInvoiceAgregateDto.setAmountTax(subCategoryAggregate.getAmountTax());
+                    subCategoryInvoiceAgregateDto.setAmountWithTax(subCategoryAggregate.getAmountWithTax());
+                    subCategoryInvoiceAgregateDto.setUserAccountCode(subCategoryAggregate.getUserAccount() == null ? null : subCategoryAggregate.getUserAccount().getCode());
 
                     if (includeTransactions) {
 

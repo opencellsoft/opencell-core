@@ -21,13 +21,14 @@ import org.meveo.model.shared.ContactInformation;
 
 /**
  * The Class BillingAccountDto.
+ * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0.1
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-//@FilterResults(propertyToFilter = "userAccounts.userAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserAccount.class) })
+// @FilterResults(propertyToFilter = "userAccounts.userAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserAccount.class) })
 public class BillingAccountDto extends AccountDto {
 
     /** The Constant serialVersionUID. */
@@ -51,45 +52,59 @@ public class BillingAccountDto extends AccountDto {
 
     /** The next invoice date. */
     private Date nextInvoiceDate;
-    
+
     /** The subscription date. */
     private Date subscriptionDate;
-    
+
     /** The termination date. */
     private Date terminationDate;
-    
+
     /** The electronic billing. */
     private Boolean electronicBilling;
-    
+
     /** The status. */
     private AccountStatusEnum status;
-    
+
     /** The status date. */
     private Date statusDate;
-    
+
     /** The termination reason. */
     private String terminationReason;
-    
+
     /** The email. */
     private String email;
-    
+
     /** The invoices. */
     private List<InvoiceDto> invoices = new ArrayList<>();
-    
+
     /** The invoicing threshold. */
     private BigDecimal invoicingThreshold;
-    
+
     /** The discount plan. */
     private String discountPlan;
-    
+
     /** The phone. */
     protected String phone;
-    
-    /** Minimum Amount El. */
+
+    /**
+     * Expression to determine minimum amount value
+     */
     private String minimumAmountEl;
 
-	/** Minimum Label El. */
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     private String minimumLabelEl;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    private String minimumLabelElSpark;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
@@ -120,62 +135,64 @@ public class BillingAccountDto extends AccountDto {
     public BillingAccountDto() {
         super();
     }
-    
+
     /**
      * Instantiates a new billing account dto.
      * 
      * @param e BillingAccount entity
      */
-	public BillingAccountDto(BillingAccount e) {
-		super(e);
+    public BillingAccountDto(BillingAccount e) {
+        super(e);
 
-		if (e.getCustomerAccount() != null) {
-			setCustomerAccount(e.getCustomerAccount().getCode());
-		}
-		BillingCycle bc = e.getBillingCycle();
-		if (bc != null) {
-			setBillingCycle(bc.getCode());
-			setInvoicingThreshold(bc.getInvoicingThreshold());
-		}
-		if (e.getTradingCountry() != null) {
-			setCountry(e.getTradingCountry().getCountryCode());
-		}
-		if (e.getTradingLanguage() != null) {
-			setLanguage(e.getTradingLanguage().getLanguageCode());
-		}
-		setNextInvoiceDate(e.getNextInvoiceDate());
-		setSubscriptionDate(e.getSubscriptionDate());
-		setTerminationDate(e.getTerminationDate());
-		setElectronicBilling(e.getElectronicBilling());
-		setStatus(e.getStatus());
-		setStatusDate(e.getStatusDate());
-		setMinimumAmountEl(e.getMinimumAmountEl());
-		setMinimumLabelEl(e.getMinimumLabelEl());
-		if (e.getTerminationReason() != null) {
-			setTerminationReason(e.getTerminationReason().getCode());
-		}
-		ContactInformation contactInfos = e.getContactInformation();
-		if(contactInfos != null) {
-    	    setPhone(contactInfos.getPhone());
-    		setEmail(contactInfos.getEmail());
-		}
+        if (e.getCustomerAccount() != null) {
+            setCustomerAccount(e.getCustomerAccount().getCode());
+        }
+        BillingCycle bc = e.getBillingCycle();
+        if (bc != null) {
+            setBillingCycle(bc.getCode());
+            setInvoicingThreshold(bc.getInvoicingThreshold());
+        }
+        if (e.getTradingCountry() != null) {
+            setCountry(e.getTradingCountry().getCountryCode());
+        }
+        if (e.getTradingLanguage() != null) {
+            setLanguage(e.getTradingLanguage().getLanguageCode());
+        }
+        setNextInvoiceDate(e.getNextInvoiceDate());
+        setSubscriptionDate(e.getSubscriptionDate());
+        setTerminationDate(e.getTerminationDate());
+        setElectronicBilling(e.getElectronicBilling());
+        setStatus(e.getStatus());
+        setStatusDate(e.getStatusDate());
+        setMinimumAmountEl(e.getMinimumAmountEl());
+        setMinimumAmountElSpark(e.getMinimumAmountElSpark());
+        setMinimumLabelEl(e.getMinimumLabelEl());
+        setMinimumLabelElSpark(e.getMinimumLabelElSpark());
+        if (e.getTerminationReason() != null) {
+            setTerminationReason(e.getTerminationReason().getCode());
+        }
+        ContactInformation contactInfos = e.getContactInformation();
+        if (contactInfos != null) {
+            setPhone(contactInfos.getPhone());
+            setEmail(contactInfos.getEmail());
+        }
 
-		if (e.getDiscountPlan() != null) {
-			setDiscountPlan(e.getDiscountPlan().getCode());
-		}
+        if (e.getDiscountPlan() != null) {
+            setDiscountPlan(e.getDiscountPlan().getCode());
+        }
 
-		// Start compatibility with pre-4.6 versions
+        // Start compatibility with pre-4.6 versions
 
-		PaymentMethod paymentMethod = e.getCustomerAccount().getPreferredPaymentMethod();
-		if (paymentMethod != null) {
-			setPaymentMethod(paymentMethod.getPaymentType());
-			if (paymentMethod instanceof DDPaymentMethod) {
-				setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
-			}
-		}
+        PaymentMethod paymentMethod = e.getCustomerAccount().getPreferredPaymentMethod();
+        if (paymentMethod != null) {
+            setPaymentMethod(paymentMethod.getPaymentType());
+            if (paymentMethod instanceof DDPaymentMethod) {
+                setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
+            }
+        }
 
-		// End compatibility with pre-4.6 versions
-	}
+        // End compatibility with pre-4.6 versions
+    }
 
     /**
      * Gets the customer account.
@@ -536,26 +553,65 @@ public class BillingAccountDto extends AccountDto {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    
+
     @Override
     public String toString() {
         return "BillingAccountDto [code=" + code + ", description=" + description + "]";
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
 
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
 }

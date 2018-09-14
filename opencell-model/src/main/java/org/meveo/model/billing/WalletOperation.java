@@ -561,6 +561,7 @@ public class WalletOperation extends BusinessEntity {
         result.setStartDate(startDate);
         result.setStatus(WalletOperationStatusEnum.OPEN);
         result.setSubscriptionDate(subscriptionDate);
+        result.setTax(tax);
         result.setTaxPercent(taxPercent);
         result.setType(type);
         result.setUnitAmountTax(unitAmountTax);

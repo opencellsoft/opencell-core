@@ -40,6 +40,10 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxPercent;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
+
     public TaxInvoiceAgregate() {
 
     }
@@ -53,7 +57,6 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
         this.setBillingAccount(taxInvoiceAgregate.getBillingAccount());
         this.setBillingRun(taxInvoiceAgregate.getBillingRun());
         this.setUserAccount(taxInvoiceAgregate.getUserAccount());
-        this.setDiscountAggregate(false);
     }
 
     public Tax getTax() {
@@ -70,5 +73,13 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 
     public void setTaxPercent(BigDecimal taxPercent) {
         this.taxPercent = taxPercent;
+    }
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
     }
 }

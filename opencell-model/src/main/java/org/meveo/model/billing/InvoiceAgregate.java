@@ -29,12 +29,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -69,10 +67,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
     @Column(name = "item_number")
     private Integer itemNumber;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accounting_code_id")
-    private AccountingCode accountingCode;
 
     @Column(name = "description", length = 255)
     @Size(max = 255)
@@ -168,14 +162,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
     public void setItemNumber(Integer itemNumber) {
         this.itemNumber = itemNumber;
-    }
-
-    public AccountingCode getAccountingCode() {
-        return accountingCode;
-    }
-
-    public void setAccountingCode(AccountingCode accountingCode) {
-        this.accountingCode = accountingCode;
     }
 
     public String getDescription() {

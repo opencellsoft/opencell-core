@@ -65,6 +65,10 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
+
     @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
@@ -172,6 +176,14 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     public void setWallet(WalletInstance wallet) {
         this.wallet = wallet;
+    }
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
     }
 
     public Set<Tax> getSubCategoryTaxes() {
@@ -320,30 +332,59 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.taxPercent = taxPercent;
     }
 
+    /**
+     * Field no longer used since v.5.2
+     * 
+     */
+    @Deprecated
     public BigDecimal getQuantity() {
         return quantity;
     }
 
+    /**
+     * Field no longer used since v.5.2
+     */
+    @Deprecated
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
 
+    /**
+     * Field no longer used since v.5.2
+     * 
+     */
+    @Deprecated
     public void addQuantity(BigDecimal quantity) {
         this.quantity = this.quantity.add(quantity);
     }
 
+    /**
+     * Field no longer used since v.5.2
+     * 
+     */
+    @Deprecated
     public BigDecimal getDiscount() {
         return discount;
     }
 
+    /**
+     * Field no longer used since v.5.2
+     */
+    @Deprecated
     public void setDiscount(BigDecimal discount) {
         this.discount = discount;
     }
 
+    /**
+     * @return Is this a discount aggregate
+     */
     public boolean isDiscountAggregate() {
         return discountAggregate;
     }
 
+    /**
+     * @param discountAggregate Is this a discount aggregate
+     */
     public void setDiscountAggregate(boolean discountAggregate) {
         this.discountAggregate = discountAggregate;
     }
