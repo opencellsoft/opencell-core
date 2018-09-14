@@ -34,7 +34,9 @@
                     <hftl:formField label="#{messages['chargeApplication.applicationDate']}" field="applicationDate" required="true" listenerUpdate="productTemplatePopup" allowEdit="false" />
                     <hftl:formField id="productTemplateSelectedId" label="#{messages['productTemplate.title']}" field="productTemplate" popup="true" required="true" popupId="productTemplatePopup"
                         valueLabelField="code" width="30" allowEdit="false" />
-
+					<hftl:formField id="productSellerSelectId" label="#{messages['seller']}" backingBean="#{parentBackingBean}" entity="#{parentBackingBean.productInstance}" field="seller" popup="true" required="true" popupId="productSellerPopup"
+                        valueLabelField="code" width="30" allowEdit="false" />
+					
                     <h:panelGroup id="productCF">
                         <hftl:customFields backingBean="#{parentBackingBean}" entity="#{parentBackingBean.productInstance}" messagesId="#{parentIdPath}:applyProductForm:messages" prefix="pi" />
                     </h:panelGroup>

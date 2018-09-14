@@ -324,7 +324,7 @@ public class SellerDto extends BusinessEntityDto {
     public void setAddress(AddressDto address) {
         this.address = address;
     }
-
+	
     @Override
     public String toString() {
         return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="

@@ -347,7 +347,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             oneShotChargeInstance.setSubscription(entity);
-            oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            oneShotChargeInstance.setSeller(entity.getSeller());
             oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
             oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
 
@@ -1077,6 +1077,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		List<ServiceInstance> si = serviceInstanceService.findBySubscription(entity);
 		return (si == null || si.isEmpty()) ? true : false;
 	}
+    
+    public List<Seller> listProductSellers() {
+        if(productInstance != null && productInstance.getProductTemplate() != null) {
+            if(productInstance.getProductTemplate().getSellers().size() > 0) {
+                return productInstance.getProductTemplate().getSellers();
+            } else {
+                return sellerService.list();
+            }
+        } else {
+            return new ArrayList<Seller>();
+        }
+    }
     
     public List<Seller> listSellers() {
         if(entity.getOffer() != null) {

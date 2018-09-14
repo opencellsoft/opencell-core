@@ -123,6 +123,9 @@ public class SubscriptionDto extends BusinessEntityDto {
     @XmlElement(required = true)
     private String billingCycle;
 
+    /** The seller. */
+    private String seller;
+    
     /** The auto end of engagement. */
     private Boolean autoEndOfEngagement;
 
@@ -167,6 +170,9 @@ public class SubscriptionDto extends BusinessEntityDto {
         setMinimumAmountElSpark(e.getMinimumAmountElSpark());
         setMinimumLabelEl(e.getMinimumLabelEl());
         setMinimumLabelElSpark(e.getMinimumLabelElSpark());
+        if(e.getSeller() != null) {
+        	setSeller(e.getSeller().getCode());
+    }
     }
 
     /**
@@ -580,6 +586,21 @@ public class SubscriptionDto extends BusinessEntityDto {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
+
+    
+    /**
+	 * @return the seller
+	 */
+	public String getSeller() {
+		return seller;
+	}
+
+	/**
+	 * @param seller the seller to set
+	 */
+	public void setSeller(String seller) {
+		this.seller = seller;
+	}
 
     @Override
     public String toString() {

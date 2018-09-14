@@ -142,7 +142,9 @@ public class WalletOperationDto extends BusinessEntityDto {
      */
     public WalletOperationDto(WalletOperation walletOperation) {
         super(walletOperation);
-        seller = walletOperation.getSeller().getCode();
+        if(walletOperation.getSeller() != null) {
+            seller = walletOperation.getSeller().getCode();
+        }
 
         if (walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null) {
             walletTemplate = walletOperation.getWallet().getWalletTemplate().getCode();

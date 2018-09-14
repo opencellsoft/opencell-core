@@ -95,7 +95,7 @@ public class OneShotChargeInstance extends ChargeInstance {
         this.amountWithTax = amountWithTax;
         this.userAccount = subscription.getUserAccount();
         this.subscription = subscription;
-        this.seller = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        this.seller = subscription.getSeller();
         this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
         this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
         this.chargeTemplate = chargeTemplate;
