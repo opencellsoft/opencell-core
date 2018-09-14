@@ -51,12 +51,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "invoicesubcategory")
     private InvoiceSubCategory invoiceSubCategory;
 
-    // Field no longer used since v.5.2. Use tax and taxPercent fields instead
-    @Deprecated
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "billing_invoice_agregate_taxes", joinColumns = @JoinColumn(name = "sub_cat_invoice_aggregat_id"), inverseJoinColumns = @JoinColumn(name = "tax_id"))
-    private Set<Tax> subCategoryTaxes = new HashSet<>();
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_invoice_agregate")
     private CategoryInvoiceAgregate categoryInvoiceAgregate;
@@ -184,23 +178,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
-    }
-
-    public Set<Tax> getSubCategoryTaxes() {
-        return subCategoryTaxes;
-    }
-
-    public void setSubCategoryTaxes(Set<Tax> subCategoryTaxes) {
-        this.subCategoryTaxes = subCategoryTaxes;
-    }
-
-    public void addSubCategoryTax(Tax subCategoryTax) {
-        if (subCategoryTaxes == null) {
-            subCategoryTaxes = new HashSet<Tax>();
-        }
-        if (subCategoryTax != null) {
-            subCategoryTaxes.add(subCategoryTax);
-        }
     }
 
     public String getDiscountPlanCode() {

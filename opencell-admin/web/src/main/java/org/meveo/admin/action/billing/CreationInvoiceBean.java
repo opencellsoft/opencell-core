@@ -531,7 +531,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 subCategoryInvoiceAgregate.setInvoice(invoiceCopy);
                 subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(catInvAggr);
                 subCategoryInvoiceAgregate.setRatedtransactions(new ArrayList<RatedTransaction>());
-                subCategoryInvoiceAgregate.setSubCategoryTaxes(new HashSet<Tax>());
                 invoiceAgregateService.create(subCategoryInvoiceAgregate);
                 subCategoryInvoiceAggregatesCopy.add(subCategoryInvoiceAgregate);
                 

@@ -1195,7 +1195,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             taxInvoiceAgregate.setAmountWithoutTax(new BigDecimal(0));
             for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
                 if (subCategoryInvoiceAgregate.getQuantity().signum() != 0) {
-                    if (subCategoryInvoiceAgregate.getSubCategoryTaxes().contains(taxInvoiceAgregate.getTax())) {
+                    if (subCategoryInvoiceAgregate.getTax().equals(taxInvoiceAgregate.getTax())) {
                         taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
                     }
                 }
@@ -1253,14 +1253,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.debug("delta={}-{}={}", nonEnterprisePriceWithTax, invoice.getAmountWithTax(), delta);
 
             biggestSubCat.setAmountWithoutTax(biggestSubCat.getAmountWithoutTax().add(delta).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()));
-            for (Tax tax : biggestSubCat.getSubCategoryTaxes()) {
-                TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(tax.getId());
-                log.debug("tax3 ht={}", invoiceAgregateT.getAmountWithoutTax());
+            Tax tax = biggestSubCat.getTax();
+            TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(tax.getId());
+            log.debug("tax3 ht={}", invoiceAgregateT.getAmountWithoutTax());
 
-                invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()));
-                log.debug("tax4 ht={}", invoiceAgregateT.getAmountWithoutTax());
-
-            }
+            invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()));
+            log.debug("tax4 ht={}", invoiceAgregateT.getAmountWithoutTax());
 
             CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat.getCategoryInvoiceAgregate();
             invoiceAgregateR.setAmountWithoutTax(invoiceAgregateR.getAmountWithoutTax().add(delta).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()));
@@ -1325,7 +1323,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             taxInvoiceAgregate.setAmountWithoutTax(new BigDecimal(0));
             for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
                 if (subCategoryInvoiceAgregate.getQuantity().signum() != 0) {
-                    if (subCategoryInvoiceAgregate.getSubCategoryTaxes().contains(taxInvoiceAgregate.getTax())) {
+                    if (subCategoryInvoiceAgregate.getTax().equals(taxInvoiceAgregate.getTax())) {
                         taxInvoiceAgregate.addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
                     }
                 }

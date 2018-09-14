@@ -295,7 +295,7 @@ public class InvoiceApi extends BaseApi {
                 invoiceAgregateSubcat.setAuditable(auditable);
                 invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
                 invoiceAgregateSubcat.setTaxPercent(currentTax.getPercent());
-                invoiceAgregateSubcat.setSubCategoryTaxes(new HashSet<Tax>(Arrays.asList(currentTax)));
+                invoiceAgregateSubcat.setTax(currentTax);
 
                 if (isDetailledInvoiceMode) {
                     invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());

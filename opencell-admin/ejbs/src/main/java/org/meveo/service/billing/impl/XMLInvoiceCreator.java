@@ -1521,16 +1521,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             subCategory.setAttribute("amountWithTax", roundToString(subCatInvoiceAgregate.getAmountWithTax(), invoiceRounding, invoiceRoundingMode));
                         }
     
-                        String taxesCode = "";
-                        String taxesPercent = "";
-                        String sep = "";
-                        for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {
-                            taxesCode = taxesCode + sep + tax.getCode();
-                            taxesPercent = taxesPercent + sep + roundToString(tax.getPercent(), invoiceRounding, invoiceRoundingMode);
-                            sep = ";";
-                        }
-                        subCategory.setAttribute("taxCode", taxesCode);
-                        subCategory.setAttribute("taxPercent", taxesPercent);
+                        Tax tax  = subCatInvoiceAgregate.getTax();
+                        subCategory.setAttribute("taxCode", tax.getCode());
+                        subCategory.setAttribute("taxPercent", roundToString(tax.getPercent(), invoiceRounding, invoiceRoundingMode));
     
                         for (RatedTransaction ratedTransaction : ratedTransactions) {
                             if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
@@ -1994,16 +1987,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         code = invoiceSubCat.getCode();
                     }
                     subCategory.setAttribute("code", code);
-                    String taxesCode = "";
-                    String taxesPercent = "";
-                    String sep = "";
-                    for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {
-                        taxesCode = taxesCode + sep + tax.getCode();
-                        taxesPercent = taxesPercent + sep + roundToString(tax.getPercent(), invoiceRounding, invoiceRoundingMode);
-                        sep = ";";
-                    }
-                    subCategory.setAttribute("taxCode", taxesCode);
-                    subCategory.setAttribute("taxPercent", taxesPercent);
+                    Tax tax = subCatInvoiceAgregate.getTax();
+                    subCategory.setAttribute("taxCode", tax.getCode());
+                    subCategory.setAttribute("taxPercent", roundToString(tax.getPercent(), invoiceRounding, invoiceRoundingMode));
 
                     if (!entreprise) {
                         subCategory.setAttribute("amountWithTax", roundToString(subCatInvoiceAgregate.getAmountWithTax(), invoiceRounding, invoiceRoundingMode));
