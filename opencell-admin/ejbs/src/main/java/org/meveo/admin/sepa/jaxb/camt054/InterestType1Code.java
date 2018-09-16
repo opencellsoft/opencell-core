@@ -18,12 +18,12 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="InterestType1Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="INDY"/>
- *     &lt;enumeration value="OVRN"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="InterestType1Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="INDY"/&gt;
+ *     &lt;enumeration value="OVRN"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

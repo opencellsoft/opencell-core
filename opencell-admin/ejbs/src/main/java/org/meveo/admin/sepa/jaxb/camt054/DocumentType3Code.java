@@ -18,16 +18,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="DocumentType3Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="RADM"/>
- *     &lt;enumeration value="RPIN"/>
- *     &lt;enumeration value="FXDR"/>
- *     &lt;enumeration value="DISP"/>
- *     &lt;enumeration value="PUOR"/>
- *     &lt;enumeration value="SCOR"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="DocumentType3Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="RADM"/&gt;
+ *     &lt;enumeration value="RPIN"/&gt;
+ *     &lt;enumeration value="FXDR"/&gt;
+ *     &lt;enumeration value="DISP"/&gt;
+ *     &lt;enumeration value="PUOR"/&gt;
+ *     &lt;enumeration value="SCOR"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

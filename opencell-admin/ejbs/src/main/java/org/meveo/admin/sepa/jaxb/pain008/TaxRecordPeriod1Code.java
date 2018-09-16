@@ -19,28 +19,28 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="TaxRecordPeriod1Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="MM01"/>
- *     &lt;enumeration value="MM02"/>
- *     &lt;enumeration value="MM03"/>
- *     &lt;enumeration value="MM04"/>
- *     &lt;enumeration value="MM05"/>
- *     &lt;enumeration value="MM06"/>
- *     &lt;enumeration value="MM07"/>
- *     &lt;enumeration value="MM08"/>
- *     &lt;enumeration value="MM09"/>
- *     &lt;enumeration value="MM10"/>
- *     &lt;enumeration value="MM11"/>
- *     &lt;enumeration value="MM12"/>
- *     &lt;enumeration value="QTR1"/>
- *     &lt;enumeration value="QTR2"/>
- *     &lt;enumeration value="QTR3"/>
- *     &lt;enumeration value="QTR4"/>
- *     &lt;enumeration value="HLF1"/>
- *     &lt;enumeration value="HLF2"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="TaxRecordPeriod1Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="MM01"/&gt;
+ *     &lt;enumeration value="MM02"/&gt;
+ *     &lt;enumeration value="MM03"/&gt;
+ *     &lt;enumeration value="MM04"/&gt;
+ *     &lt;enumeration value="MM05"/&gt;
+ *     &lt;enumeration value="MM06"/&gt;
+ *     &lt;enumeration value="MM07"/&gt;
+ *     &lt;enumeration value="MM08"/&gt;
+ *     &lt;enumeration value="MM09"/&gt;
+ *     &lt;enumeration value="MM10"/&gt;
+ *     &lt;enumeration value="MM11"/&gt;
+ *     &lt;enumeration value="MM12"/&gt;
+ *     &lt;enumeration value="QTR1"/&gt;
+ *     &lt;enumeration value="QTR2"/&gt;
+ *     &lt;enumeration value="QTR3"/&gt;
+ *     &lt;enumeration value="QTR4"/&gt;
+ *     &lt;enumeration value="HLF1"/&gt;
+ *     &lt;enumeration value="HLF2"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */
