@@ -12,6 +12,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -307,4 +308,9 @@ public class PaymentMethodApi extends BaseApi {
             paymentMethodService.disable(paymentMethod);
         }
     }
+
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
+        return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
+    }
+
 }

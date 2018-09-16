@@ -3,7 +3,12 @@ package org.meveo.service.payments.impl;
 import java.util.Map;
 
 
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutRequest;
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.CreateHostedCheckoutResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.hostedcheckout.definitions.HostedCheckoutSpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.*;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.EjbUtils;
@@ -35,11 +40,6 @@ import com.ingenico.connect.gateway.sdk.java.domain.errors.definitions.APIError;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.PaymentResponse;
-import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
-import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
-import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
-import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
-import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerToken;
@@ -80,7 +80,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         client = Factory.createClient(communicatorConfiguration);
     }
 
-    private static Client getClient() {
+    public static Client getClient() {
         if (client == null) {
             connect();
         }
@@ -348,5 +348,69 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
-    }   
+    }
+
+    @Override
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
+        try
+        {
+            String returnUrl = hostedCheckoutInput.getReturnUrl();
+            Long id = hostedCheckoutInput.getCustomerAccountId();
+            String TimeMillisWithcustomerAccountId =  System.currentTimeMillis() + "-" + id;
+
+            String redirectionUrl;
+
+            String locale = "en_GB";
+            String amount = "100";
+            String currencyCode = "EUR";
+            String authorizationMode = "FINAL_AUTHORIZATION";
+
+            String merchantId = paramBeanFactory.getInstance().getProperty("ingenico.merchantId", "changeIt");
+
+            HostedCheckoutSpecificInput hostedCheckoutSpecificInput = new HostedCheckoutSpecificInput();
+            hostedCheckoutSpecificInput.setLocale(locale);
+            hostedCheckoutSpecificInput.setVariant("101");
+            hostedCheckoutSpecificInput.setReturnUrl(returnUrl);
+
+            AmountOfMoney amountOfMoney = new AmountOfMoney();
+            amountOfMoney.setAmount(Long.valueOf(amount));
+            amountOfMoney.setCurrencyCode(currencyCode);
+
+            Address billingAddress = new Address();
+            billingAddress.setCountryCode("US");
+
+            Customer customer = new Customer();
+            customer.setBillingAddress(billingAddress);
+
+            OrderReferences orderReferences = new OrderReferences();
+            orderReferences.setMerchantReference(TimeMillisWithcustomerAccountId);
+
+            Order order = new Order();
+            order.setAmountOfMoney(amountOfMoney);
+            order.setCustomer(customer);
+            order.setReferences(orderReferences);
+
+            CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
+            cardPaymentMethodSpecificInput.setAuthorizationMode(authorizationMode);
+            cardPaymentMethodSpecificInput.setTokenize(true);
+            cardPaymentMethodSpecificInput.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
+            cardPaymentMethodSpecificInput.setIsRecurring(true);
+            cardPaymentMethodSpecificInput.setReturnUrl("https://3f2943ee.ngrok.io/opencell/");
+
+            CreateHostedCheckoutRequest body = new CreateHostedCheckoutRequest();
+            body.setHostedCheckoutSpecificInput(hostedCheckoutSpecificInput);
+            body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
+            body.setOrder(order);
+
+            CreateHostedCheckoutResponse response = getClient().merchant(merchantId).hostedcheckouts().create(body);
+
+            redirectionUrl = "https://payment." +  response.getPartialRedirectUrl();
+            return redirectionUrl;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
 }

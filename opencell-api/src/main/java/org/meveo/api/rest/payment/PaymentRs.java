@@ -14,18 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.DDRequestBuilderDto;
-import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
-import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.PaymentGatewayDto;
-import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
-import org.meveo.api.dto.payment.PaymentHistoriesDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.PaymentMethodTokenDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -444,5 +433,31 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Path("/ddRequestBuilder/{code}/disable")
     ActionStatus disableDDRequestBuilder(@PathParam("code") String code);
+
+    /**
+     *
+     * @param customerAccountCode the customerAccount Code
+     * @param returnUrl the return Url
+     * @param locale the locale
+     * @param amount the amount of transaction
+     * @param currencyCode the currency Code
+     * @param authorizationMode  the authorizationMode
+     * @param countryCode the country Code
+     * @param skipAuthentication the skipAuthentication boolean
+     * @return the HostedCheckout Url
+     */
+    @GET
+    @Path("/paymentGateway/getHostedCheckoutUrl")
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
+                                                                 @QueryParam("returnUrl") String returnUrl,
+                                                                 @DefaultValue("en_GB") @QueryParam("locale") String locale,
+                                                                 @DefaultValue("100") @QueryParam("amount") String amount,
+                                                                 @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode,
+                                                                 @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
+                                                                 @DefaultValue("US") @QueryParam("countryCode") String countryCode,
+                                                                 @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
+                                                                 @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName
+    );
+
 
 }

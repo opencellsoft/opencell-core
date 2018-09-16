@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -217,4 +218,10 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
         return doPaymentResponseDto;    
     }
+
+    @Override
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
+        return null;
+    }
+
 }

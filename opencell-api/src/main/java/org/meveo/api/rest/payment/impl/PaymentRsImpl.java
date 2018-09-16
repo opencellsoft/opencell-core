@@ -5,21 +5,11 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.DDRequestBuilderDto;
-import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
-import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.PaymentGatewayDto;
-import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
-import org.meveo.api.dto.payment.PaymentHistoriesDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.PaymentMethodTokenDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -548,4 +538,32 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         }
         return null;
     }
+
+    @Override
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl, String locale, String amount, String currencyCode, String authorizationMode, String countryCode, Boolean skipAuthentication, String gatewayPaymentName) {
+
+        String paymentUrl = "";
+
+        HostedCheckoutInput hostedCheckoutInput = new HostedCheckoutInput();
+        hostedCheckoutInput.setCustomerAccountCode(customerAccountCode);
+        hostedCheckoutInput.setReturnUrl(returnUrl);
+        hostedCheckoutInput.setAmount(amount);
+        hostedCheckoutInput.setAuthorizationMode(authorizationMode);
+        hostedCheckoutInput.setCountryCode(countryCode);
+        hostedCheckoutInput.setCurrencyCode(currencyCode);
+        hostedCheckoutInput.setLocale(locale);
+        hostedCheckoutInput.setSkipAuthentication(skipAuthentication);
+        hostedCheckoutInput.setGatewayPaymentName(GatewayPaymentNamesEnum.valueOf(gatewayPaymentName));
+
+        try {
+            paymentUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
+        PaymentHostedCheckoutResponseDto paymentHostedCheckoutResponseDto = new PaymentHostedCheckoutResponseDto(paymentUrl,  customerAccountCode,  returnUrl);
+
+        return paymentHostedCheckoutResponseDto;
+
+    }
+
 }

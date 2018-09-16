@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+    <ui:define name="body">
+        <h:form prependId="false">
+            <p:commandButton id="jsf-submit" value="#{messages['paymentGateway.registerPayment']}" action="#{paymentGatewayBean.getIngenicoUrl('WS_FULL_150_CustomerD','https://3f2943ee.ngrok.io/opencell/')}" update="afterLoad" oncomplete="afterLoad()" style="display:none"/>
+        </h:form>
+
+        <form id="walletTarget" method="post" action="">
+            <br/>
+            <br/>
+            <br/>
+            &#160;&#160;&#160;&#160;<input id="button-submit" type="button" onclick="normal()" value="Open HostedCheckout" height="60" width="100"/>
+            <input id="plain-submit" type="submit" style="display:none" value="Submit"/>
+        </form>
+
+        <h:panelGroup id="afterLoad">
+            <h:outputScript>
+                function afterLoad() {
+                window.location.replace("#{paymentGatewayBean.redirectionUrl}");
+                }
+            </h:outputScript>
+        </h:panelGroup>
+        <script type="text/javascript">
+            function normal() {
+                document.getElementById('jsf-submit').click();
+            }
+        </script>
+    </ui:define>
+</ui:composition>
