@@ -9,7 +9,6 @@ public class CSVUtils {
 
     private static final char DEFAULT_SEPARATOR = ',';
     private static final char DEFAULT_QUOTE = '"';
-    
 
     public static void main(String[] args) throws Exception {
 
@@ -37,7 +36,7 @@ public class CSVUtils {
         List<String> result = new ArrayList<>();
 
         //if empty, return!
-        if (cvsLine == null && cvsLine.isEmpty()) {
+        if (cvsLine == null || cvsLine.isEmpty()) {
             return result;
         }
 
@@ -49,7 +48,7 @@ public class CSVUtils {
             separators = DEFAULT_SEPARATOR;
         }
 
-        StringBuffer curVal = new StringBuffer();
+        StringBuilder curVal = new StringBuilder();
         boolean inQuotes = false;
         boolean startCollectChar = false;
         boolean doubleQuotesInColumn = false;
@@ -95,12 +94,11 @@ public class CSVUtils {
 
                     result.add(curVal.toString());
 
-                    curVal = new StringBuffer();
+                    curVal = new StringBuilder();
                     startCollectChar = false;
 
                 } else if (ch == '\r') {
                     //ignore LF characters
-                    continue;
                 } else if (ch == '\n') {
                     //the end, break!
                     break;
