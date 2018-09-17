@@ -2848,6 +2848,13 @@ ORDER BY
     </changeSet>
 
     <changeSet author="anasseh" id="#3080_draft_innvoice_type">
+    	<insert tableName="billing_seq_invoice">
+    		<column name="id" valueNumeric="-1" />
+            <column name="code" value="DRAFT" />
+    	    <column name="sequence_size" valueNumeric="5" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+    	</insert>
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-4" />
             <column name="version" valueNumeric="0" />
@@ -2855,12 +2862,12 @@ ORDER BY
             <column name="code" value="DRAFT" />
             <column name="description" value="Draft invoice" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="sequence_size" valueNumeric="5" />
             <column name="occ_template_id" value="-25" />
             <column name="matching_auto" valueNumeric="0" />
             <column name="use_self_sequence" valueNumeric="0" />
             <column name="prefix_el" value="DRAFT_" />
             <column name="uuid" value="INVOICE_TYPE-4" />
+            <column name="invoice_sequence_id" value="-1" />
         </insert>
     </changeSet>
     

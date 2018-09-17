@@ -42,6 +42,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -54,6 +55,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -108,6 +110,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     @Inject
     private ProductTemplateService productTemplateService;
+    
+    @Inject
+    private SellerService sellerService;
 
     private CounterInstance selectedCounterInstance;
     private ProductInstance productInstance;
@@ -566,6 +571,18 @@ public class UserAccountBean extends AccountBean<UserAccount> {
             productInstance = null;
 
             messages.info(new BundleKey("messages", "productInstance.saved.ok"));
+        }
+    }
+    
+    public List<Seller> listSellers() {
+        if(productInstance!= null && productInstance.getProductTemplate() != null) {
+            if(productInstance.getProductTemplate().getSellers().size() > 0) {
+                return productInstance.getProductTemplate().getSellers();
+            } else {
+                return sellerService.list();
+            }
+        } else {
+            return new ArrayList<Seller>();
         }
     }
 }

@@ -304,7 +304,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { offer, userAccount };
+        return new ICustomFieldEntity[] { offer, seller, userAccount };
     }
 
     /**
@@ -548,4 +548,5 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
+
 }

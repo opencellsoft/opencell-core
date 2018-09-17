@@ -45,6 +45,21 @@
             selectionListenerBean="#{userAccountBean}" selectionListenerMethod="updateProductInstanceCode" 
             updateField=":parentTab:applyProductForm:productTemplateSelectedId :parentTab:applyProductForm:productTemplateSelectedId_text :parentTab:applyProductForm:productCF">
         </hftl:entityPopup>
+        <hftl:entityPopup id="productSellerPopup"
+			header="#{messages['seller.popup.header']}"
+			backingBean="#{userAccountBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{userAccountBean.productInstance.seller}"
+			dataModel="#{userAccountBean.listSellers()}"
+			updateField=":parentTab:applyProductForm:productSellerSelectId :parentTab:applyProductForm:productSellerSelectId_text">
+		</hftl:entityPopup>
+        
 
         <!-- 		<hftl:entityPopup id="walletOperationPopup" -->
         <!-- 			dataModel="#{userAccountBean.getWalletOperationsNoInvoiced()}" -->
