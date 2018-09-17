@@ -78,7 +78,7 @@ public class PDFParametersConstruction {
     private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
 
     private ClassLoader cl = new URLClassLoader(new URL[] { PDFParametersConstruction.class.getClassLoader().getResource("reports/fonts.jar") });
-
+    
     public Map<String, Object> constructParameters(Invoice invoice, String provider) {
 
         try {
@@ -112,12 +112,38 @@ public class PDFParametersConstruction {
             for (String key : baCustomFields.keySet()) {
                 parameters.put(key, baCustomFields.get(key));
             }
-
+            
+            parameters.put(JRParameter.REPORT_LOCALE, getBillingAccountLocale(invoice));
+            
             return parameters;
         } catch (Exception e) {
             log.error("failed to construct parameters ", e);
             return null;
         }
+    }
+    
+    private Map<String, Locale> getLocaleMap() {
+        String[] languages = Locale.getISOLanguages();
+        Map<String, Locale> localeMap = new HashMap<String, Locale>(languages.length);
+        for (String language : languages) {
+            Locale locale = new Locale(language, "");
+            localeMap.put(locale.getISO3Language().toUpperCase(), locale);
+        }
+        return localeMap;
+    }
+    
+    private String iso3LanguageCodeToIso2LanguageCode(String iso3LanguageCode) {
+        String iso2LanguageCode = Locale.getDefault().getLanguage();
+        if(getLocaleMap().get(iso3LanguageCode) != null) {
+            iso2LanguageCode = getLocaleMap().get(iso3LanguageCode).getLanguage();
+        }
+        return iso2LanguageCode;
+    }
+    
+    private Locale getBillingAccountLocale(Invoice invoice) {
+        String languageCode = iso3LanguageCodeToIso2LanguageCode(invoice.getBillingAccount().getTradingLanguage().getLanguageCode());
+        String countryCode = invoice.getBillingAccount().getTradingCountry().getCountryCode();
+        return new Locale(languageCode, countryCode);
     }
 
     private Map<String, String> getBACustomFields(BillingAccount billingAccount) {
