@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.IReferenceEntity;
 import org.meveo.model.customEntities.CustomEntityInstance;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @author Andrius Karpavicius
  **/
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EntityReferenceWrapper implements Serializable {
+public class EntityReferenceWrapper implements Serializable, IReferenceEntity {
 
     private static final long serialVersionUID = -4756870628233941711L;
 
@@ -47,6 +48,18 @@ public class EntityReferenceWrapper implements Serializable {
             classnameCode = ((CustomEntityInstance) entity).getCetCode();
         }
         code = entity.getCode();
+    }
+    
+    public EntityReferenceWrapper(IReferenceEntity entity) {
+        super();
+        if (entity == null) {
+            return;
+        }
+        classname = ReflectionUtils.getCleanClassName(entity.getClass().getName());
+        if (entity instanceof CustomEntityInstance) {
+            classnameCode = ((CustomEntityInstance) entity).getCetCode();
+        }
+        code = entity.getReferenceCode();
     }
 
     public EntityReferenceWrapper(String classname, String classnameCode, String code) {
@@ -85,6 +98,21 @@ public class EntityReferenceWrapper implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("EntityReferenceWrapper [classname=%s, classnameCode=%s, code=%s]", classname, classnameCode, code);
+        return String.format("EntityReferenceWrapper [classname=%s, classnameCode=%s, code=%s, referenceCode=%s]", classname, classnameCode, code, getReferenceCode());
     }
+
+    @Override
+	public String getReferenceCode() {
+		return getCode();
+	}
+    
+    @Override
+	public void setReferenceCode(Object value) {
+		setCode(value.toString());
+	}
+
+	@Override
+	public String getReferenceDescription() {
+		return null;
+	}
 }

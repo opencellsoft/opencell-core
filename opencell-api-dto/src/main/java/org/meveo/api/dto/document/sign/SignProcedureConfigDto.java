@@ -18,9 +18,19 @@ public class SignProcedureConfigDto extends BaseEntityDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L; 
     
+    public SignProcedureConfigDto () {
+    }
+    
+    public SignProcedureConfigDto (Map<YousignEventEnum, List<SignEventWebhookDto>> webhook) {
+        this.webhook = webhook;
+    }
+    
     /** The email. */
     private Map<String, List<SignEventEmailDto>> email;
-
+    
+    /** The webhook. */
+    private Map<YousignEventEnum, List<SignEventWebhookDto>> webhook;
+    
     /**
      * Gets the email.
      *
@@ -37,6 +47,24 @@ public class SignProcedureConfigDto extends BaseEntityDto {
      */
     public void setEmail(Map<String, List<SignEventEmailDto>> email) {
         this.email = email;
+    }
+
+    /**
+     * Gets the webhook.
+     *
+     * @return the webhook
+     */
+    public Map<YousignEventEnum, List<SignEventWebhookDto>> getWebhook() {
+        return webhook;
+    }
+
+    /**
+     * Sets the webhook.
+     *
+     * @param webhook the webhook to set
+     */
+    public void setWebhook(Map<YousignEventEnum, List<SignEventWebhookDto>> webhook) {
+        this.webhook = webhook;
     }
 
 }

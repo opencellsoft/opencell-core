@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -53,14 +52,13 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
-import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 4.8
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {

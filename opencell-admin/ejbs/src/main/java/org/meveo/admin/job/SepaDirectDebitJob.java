@@ -14,11 +14,12 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.service.job.Job;
 
 
 /**
- * The Class SepaDirectDebitJob generate sepa/paynum files for available DirectDebit request operations.
+ * The Class SepaDirectDebitJob generate sepa/paynum or custom files for available DirectDebit request operations.
  */
 @Stateless
 public class SepaDirectDebitJob extends Job {
@@ -40,21 +41,17 @@ public class SepaDirectDebitJob extends Job {
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
-        CustomFieldTemplate formatTransfo = new CustomFieldTemplate();
-        formatTransfo.setCode("fileFormat");
-        formatTransfo.setAppliesTo("JOB_SepaDirectDebitJob");
-        formatTransfo.setActive(true);
-        formatTransfo.setDefaultValue("SEPA");
-        formatTransfo.setDescription("File format");
-        formatTransfo.setFieldType(CustomFieldTypeEnum.LIST);
-        formatTransfo.setValueRequired(false);
-        Map<String, String> listValues = new HashMap<String, String>();
-        listValues.put("SEPA", "SEPA");
-        listValues.put("PAYNUM", "PAYNUM");
-        formatTransfo.setListValues(listValues);
-        result.put("fileFormat", formatTransfo);
-
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();        
+        CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
+        payentGatewayCF.setCode("SepaJob_ddRequestBuilder");
+        payentGatewayCF.setAppliesTo("JOB_SepaDirectDebitJob");
+        payentGatewayCF.setActive(true);
+        payentGatewayCF.setDescription("DDRequest builder");
+        payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
+        payentGatewayCF.setValueRequired(true);
+        result.put("SepaJob_ddRequestBuilder", payentGatewayCF);
+       
         return result;
     }
 }

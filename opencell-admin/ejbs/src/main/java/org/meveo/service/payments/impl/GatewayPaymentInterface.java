@@ -104,13 +104,7 @@ public interface GatewayPaymentInterface {
      * @throws BusinessException business exception
      */
     public void cancelPayment(String paymentID) throws BusinessException;
-
- // TODO PaymentRun
-    /**
-     * @param ddRequestLot debit direct request by lot
-     * @throws BusinessException business exception
-     */
-    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException;
+    
 
     // TODO PaymentRun
     /**

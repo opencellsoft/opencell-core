@@ -19,9 +19,9 @@ public interface IBanRs extends IBaseRs {
     /**
      * validate the iban and/or bic
      *
-     * @param iban
-     * @param bic
-     * @return
+     * @param iban the International Bank Account Number to validate
+     * @param bic the Bank Identifier Code to validate
+     * @return the status of the validation
      */
 
     @GET

@@ -421,16 +421,8 @@
                                                     <div class="clearLeft"></div>
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
                                                         <!-- custom fields -->
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) == 1}">
-                                                            <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
-                                                        </c:if>
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) > 1}">
-                                                            <p:tabView>
-                                                                <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                    messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
-                                                            </p:tabView>
-                                                        </c:if>
+                                                        <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{productTemplateBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                            messagesId=":quoteForm:tabView:quoteItemMessages" edit="#{quoteBean.quoteEditable}" />
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>

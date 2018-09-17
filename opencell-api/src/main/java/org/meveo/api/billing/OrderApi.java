@@ -608,7 +608,7 @@ public class OrderApi extends BaseApi {
 
         subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber, orderItem.getId(), OrderItemActionEnum.MODIFY);
 
-        subscriptionService.refresh(subscription);
+//        subscriptionService.refresh(subscription);
         orderItem.setSubscription(subscription);
         
         productOrderItem.getProduct().setId(subscription.getCode());
@@ -666,9 +666,9 @@ public class OrderApi extends BaseApi {
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber);
         if(subscription != null) {
-        	productInstance.setSeller(subscription.getSeller());
+            productInstance.setSeller(subscription.getSeller());
         } else {
-        	productInstance.setSeller(orderItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            productInstance.setSeller(orderItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         }
 
         try {
@@ -788,8 +788,10 @@ public class OrderApi extends BaseApi {
     }
 
     private void extractServices(SubscriptionDto subscriptionDto, List<Product> services)
-            throws MeveoApiException {
+            throws BusinessException, MeveoApiException {
 
+        Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode());
+        
         for (Product serviceProduct : services) {
 
             String serviceCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), String.class, null);
@@ -801,9 +803,6 @@ public class OrderApi extends BaseApi {
 
             serviceInstanceDto.setId(serviceId);
             serviceInstanceDto.setCode(serviceCode);
-            
-            // list of service for activation
-            List<String> serviceCodesForActivation = new ArrayList<>();
 
             if (terminationDate != null) {
                 if (StringUtils.isBlank(serviceCode) && serviceId == null) {
@@ -820,7 +819,36 @@ public class OrderApi extends BaseApi {
                     throw new MissingParameterException("serviceCode");
                 }
                 
-                serviceCodesForActivation.add(serviceCode);
+                // check if service is activated on a given subscription
+//                List<ServiceInstance> serviceFound = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscriptionDto.getCode(), InstanceStatusEnum.ACTIVE);
+//                if (serviceFound != null && !serviceFound.isEmpty()) {
+//                    continue;
+//                }
+                if (subscription != null && subscription.getServiceInstances() != null
+                        && !subscription.getServiceInstances().isEmpty()) {
+                    boolean flag = false;
+                    for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                        if (serviceCode.equals(serviceInstance.getCode())
+                                && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+                            flag = true;
+                        }
+                    }
+
+                    if (flag) {
+                        continue;
+                    }
+                }
+
+                serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
+                    OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
+                serviceInstanceDto.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+                    Date.class, DateUtils.setTimeToZero(new Date())));
+                serviceInstanceDto.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
+                    Date.class, DateUtils.setTimeToZero(new Date())));
+
+                serviceInstanceDto.setEndAgreementDate(
+                    (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+                serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
 
                 // Service will be updated
             } else if (serviceId != null) {
@@ -829,38 +857,6 @@ public class OrderApi extends BaseApi {
                 serviceInstanceDto.setEndAgreementDate(
                     (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
             }
-            
-            // do the query in 1 go
-			if (!serviceCodesForActivation.isEmpty()) {
-				// check if service is activated on a given subscription
-				Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode());
-
-				boolean found = false;
-				
-				if(subscription != null) {
-					if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty()) {
-						for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-							if (serviceCodesForActivation.contains(serviceInstance.getCode()) && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-								found = true;
-								break;
-							}
-						}
-					}
-				}
-				
-				if(!found) {
-					serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
-							OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
-					serviceInstanceDto.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-							Date.class, DateUtils.setTimeToZero(new Date())));
-					serviceInstanceDto.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
-							Date.class, DateUtils.setTimeToZero(new Date())));
-	
-					serviceInstanceDto.setEndAgreementDate(
-							(Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
-					serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
-				}
-			}
             
             subscriptionDto.getServices().addServiceInstance(serviceInstanceDto);
         }

@@ -50,6 +50,20 @@
 			column2="description" eventBackingBean="#{invoiceSubCategoryBean}"
 			updateField=":#{p:component('taxScriptSelectId')} :#{p:component('taxScriptSelectId_text')}"></hftl:entityPopup>
 
+		<hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"
+			selection="#{invoiceSubCategoryBean.entity.accountingCode}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" 
+			updateField=":tabView:formId:accountingCodeId :tabView:formId:accountingCodeId_text">
+		</hftl:entityPopup>
+
 		<h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -67,14 +81,12 @@
 
                         <hftl:formField id="categorySelectId" label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory" valueLabelField="code" required="true"
                             listBean="#{invoiceCategoryBean}" />
-                        <!--                            popup="true" popupId="searchInvoiceCategoryPopup" /> -->
-
                         <hftl:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false" />
-
-                        <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" listBean="#{accountingCodeListBean}" valueLabelField="code" listenerUpdate="@this" />
-
+						<hftl:formField id="accountingCodeId"
+							label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode"
+							valueLabelField="code" listenerUpdate="@this" popup="true"
+							popupId="accountingCodePopup" showResetButton="true" />
                         <hftl:formLanguageFields field="description" />
-
 						<hftl:formField id="taxScriptSelectId" label="#{messages['invoiceSubCategory.taxScript']}" field="taxScript" valueLabelField="code" required="false" popup="true" popupId="taxScriptPopup" showResetButton="true" />
 					</hftl:formPanel>
 

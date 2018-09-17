@@ -411,6 +411,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         
         if (prefix != null && !StringUtils.isBlank(prefix)) {
             prefix = evaluatePrefixElExpression(prefix, invoice);
+        } else {
+            prefix = "";
         }
 
         String invoiceNumber = invoicesToNumberInfo.nextInvoiceNumber();
@@ -2119,5 +2121,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return result;
+    }
+    
+    /**
+     * Return all invoices with now - invoiceDate date &gt; n years.
+     * @param nYear age of the invoices
+     * @return Filtered list of invoices
+     */
+    @SuppressWarnings("unchecked")
+	public List<Invoice> listInactiveInvoice(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Invoice.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", higherBound);
+    	
+    	return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+	public void bulkDelete(List<Invoice> inactiveInvoices) throws BusinessException {
+		for (Invoice e : inactiveInvoices) {
+			remove(e);
+		}
+	}
+
+    /**
+     * Nullify BR's invoices file names (xml and pdf).
+     *
+     * @param billingRun the billing run
+     */
+    public void nullifyInvoiceFileNames(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("Invoice.nullifyInvoiceFileNames").setParameter("billingRun", billingRun).executeUpdate();
     }
 }

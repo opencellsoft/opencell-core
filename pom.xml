@@ -5,7 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>5.1.1-SNAPSHOT</version>
+	<version>5.2-SNAPSHOT</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -421,7 +421,6 @@
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>2.7.4</version>
-				<scope>provided</scope>
 			</dependency>
 
 			<dependency>
@@ -434,14 +433,12 @@
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
 				<version>2.7.4</version>
-				<scope>provided</scope>
 			</dependency>
 
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
 				<version>2.7.4</version>
-				<scope>provided</scope>
 			</dependency>
 
 			<dependency>

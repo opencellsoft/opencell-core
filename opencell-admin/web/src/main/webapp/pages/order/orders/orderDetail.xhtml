@@ -119,7 +119,7 @@
                                 <h:panelGroup rendered="#{orderBean.paymentMethodType!=null and orderBean.entity.paymentMethod != null}">
                                     <hftl:formField label="#{messages['paymentMethod.alias']}" field="paymentMethod" childField="alias" required="true" />
 
-                                    <c:if test="#{orderBean.entity.paymentMethod.paymentType eq PaymentMethodEnum.CARD}">
+                                    <c:if test="#{orderBean.paymentMethodType eq PaymentMethodEnum.CARD}">
                                         <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType" required="true"
                                             edit="#{orderBean.paymentMethod.tokenId==null}" />
                                         <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardOwner']}" field="owner" required="true"
@@ -137,7 +137,7 @@
                                         </hftl:decorateFormField>
                                     </c:if>
 
-                                    <c:if test="#{orderBean.entity.paymentMethod.paymentType eq PaymentMethodEnum.DIRECTDEBIT}">
+                                    <c:if test="#{orderBean.paymentMethodType eq PaymentMethodEnum.DIRECTDEBIT}">
                                         <hftl:decorateFormField label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
                                             <p:inputText id="mandateIdentification" value="#{orderBean.paymentMethod.mandateIdentification}" required="true" />
                                         </hftl:decorateFormField>
@@ -545,18 +545,9 @@
 
                                                     <div class="clearLeft"></div>
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
-
                                                         <!-- custom fields -->
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) == 1}">
-                                                            <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                                                        </c:if>
-                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) > 1}">
-                                                            <p:tabView>
-                                                                <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                                    messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                                                            </p:tabView>
-                                                        </c:if>
+                                                        <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                            messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>

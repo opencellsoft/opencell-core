@@ -118,25 +118,17 @@ public class ServiceInstance extends BusinessCFEntity {
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
-    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
+    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<OneShotChargeInstance>();
+    @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<>();
 
-    @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<OneShotChargeInstance>();
+    @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<>();
 
-    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // TODO : Add orphanRemoval annotation.
-    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
+    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_termin_reason_id")
@@ -167,7 +159,7 @@ public class ServiceInstance extends BusinessCFEntity {
     @Size(max = 2000)
     private String minimumLabelEl;
 
-    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderHistory> orderHistories;
 
     @Embedded

@@ -657,13 +657,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
                 
                 for (Tax tax : biggestSubCat.getSubCategoryTaxes()) {
-                	// why NPE on this ???
-                	if(taxInvoiceAgregateMap.get(tax.getId()) != null) {
-	                    TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(tax.getId());
-	                    log.debug("  tax3 ht ->" + invoiceAgregateT.getAmountWithoutTax());
-	                    invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode)));
-	                    log.debug("  tax4 ht ->" + invoiceAgregateT.getAmountWithoutTax());
-                	}
+                    TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
+                    if(invoiceAgregateT != null) {
+                        log.debug("  tax3 ht -> {}", invoiceAgregateT.getAmountWithoutTax());
+                        invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode)));
+                        log.debug("  tax4 ht ->" + invoiceAgregateT.getAmountWithoutTax());
+                    }
                 }
                 CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat.getCategoryInvoiceAgregate();
                 invoiceAgregateR.setAmountWithoutTax(invoiceAgregateR.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode)));

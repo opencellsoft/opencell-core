@@ -159,7 +159,7 @@ public class InvoiceApi extends BaseApi {
         BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
         Invoice invoice = new Invoice();
         invoice.setBillingAccount(billingAccount);
-
+        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());
         invoice.setDueDate(invoiceDTO.getDueDate());
 

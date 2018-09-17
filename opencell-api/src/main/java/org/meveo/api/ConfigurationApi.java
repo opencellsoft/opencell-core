@@ -1,12 +1,17 @@
 package org.meveo.api;
 
+import java.util.Properties;
+
 import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.ParamBean;
 
+import com.google.gson.Gson;
+
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
  *
  */
 @Stateless
@@ -23,4 +28,12 @@ public class ConfigurationApi extends BaseApi {
         paramBean.setProperty(property, value);
         paramBean.saveProperties();
     }
+    
+	public String getPropertiesAsJsonString() {
+		ParamBean paramBean = paramBeanFactory.getInstance();
+		Properties props = paramBean.getProperties();
+		Gson gsonObj = new Gson();
+		return gsonObj.toJson(props);
+	}
+    
 }

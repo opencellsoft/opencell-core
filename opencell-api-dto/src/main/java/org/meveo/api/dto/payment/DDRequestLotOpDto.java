@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AuditableEntityDto;
-import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
@@ -34,6 +33,9 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     @XmlElement(required = true)
     private Date toDueDate;
     
+    /** The filter code. */
+    private String filterCode;
+    
     /** The ddrequest op. */
     private DDRequestOpEnum ddrequestOp;
     
@@ -43,9 +45,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     /** The error cause. */
     private String errorCause;
     
-    /** The file format. */
-    @XmlElement(required = true)
-    private DDRequestFileFormatEnum fileFormat;
+    /** The dd request builder code. */
+    private String ddRequestBuilderCode;
 
     /**
      * Instantiates a new DD request lot op dto.
@@ -66,7 +67,8 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
         this.ddrequestOp = ddrequestLotOp.getDdrequestOp();
         this.status = ddrequestLotOp.getStatus();
         this.errorCause = ddrequestLotOp.getErrorCause();
-        this.fileFormat = ddrequestLotOp.getFileFormat();
+        this.ddRequestBuilderCode = ddrequestLotOp.getDdRequestBuilder() != null ? ddrequestLotOp.getDdRequestBuilder().getCode() : null;
+        this.filterCode = ddrequestLotOp.getFilter() != null ? ddrequestLotOp.getFilter().getCode() : null;
     }
 
     /**
@@ -160,27 +162,39 @@ public class DDRequestLotOpDto extends AuditableEntityDto {
     }
 
     /**
-     * Gets the file format.
+     * Gets the filter code.
      *
-     * @return the file format
+     * @return the filterCode
      */
-    public DDRequestFileFormatEnum getFileFormat() {
-        return fileFormat;
+    public String getFilterCode() {
+        return filterCode;
     }
 
     /**
-     * Sets the file format.
+     * Sets the filter code.
      *
-     * @param fileFormat the new file format
+     * @param filterCode the filterCode to set
      */
-    public void setFileFormat(DDRequestFileFormatEnum fileFormat) {
-        this.fileFormat = fileFormat;
+    public void setFilterCode(String filterCode) {
+        this.filterCode = filterCode;
     }
 
-    @Override
-    public String toString() {
-        return "DDRequestLotOpDto [fromDueDate=" + fromDueDate + ", toDueDate=" + toDueDate + ", ddrequestOp=" + ddrequestOp + ", status=" + status + ", errorCause=" + errorCause
-                + ", fileFormat=" + fileFormat + "]";
+    /**
+     * Gets the dd request builder code.
+     *
+     * @return the ddRequestBuilderCode
+     */
+    public String getDdRequestBuilderCode() {
+        return ddRequestBuilderCode;
+    }
+
+    /**
+     * Sets the dd request builder code.
+     *
+     * @param ddRequestBuilderCode the ddRequestBuilderCode to set
+     */
+    public void setDdRequestBuilderCode(String ddRequestBuilderCode) {
+        this.ddRequestBuilderCode = ddRequestBuilderCode;
     }
 
 }

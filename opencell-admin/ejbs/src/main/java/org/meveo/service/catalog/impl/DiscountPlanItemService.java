@@ -1,5 +1,6 @@
 package org.meveo.service.catalog.impl;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
@@ -13,6 +14,9 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem> {
 
+	@EJB
+	private DiscountPlanService discountPlanService;
+	
     public DiscountPlanItem findByCode(String code) {
         QueryBuilder qb = new QueryBuilder(DiscountPlanItem.class, "d");
         qb.addCriterion("d.code", "=", code, true);
@@ -27,14 +31,16 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     public void create(DiscountPlanItem dpi) throws BusinessException {
         super.create(dpi);
         // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it is cached
-        refresh(dpi.getDiscountPlan());
+        // refresh(dpi.getDiscountPlan());
+        dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
     }
 
     @Override
     public DiscountPlanItem update(DiscountPlanItem dpi) throws BusinessException {
         dpi = super.update(dpi);
         // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it is cached
-        refresh(dpi.getDiscountPlan());
+        // refresh(dpi.getDiscountPlan());
+        dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
         return dpi;
     }
 

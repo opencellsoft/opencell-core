@@ -13,6 +13,20 @@
     </ui:define>
 
 	<ui:define name="body">
+	
+	    <hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"
+			selection="#{occTemplateBean.entity.accountingCode}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" 
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}" 
+			column2="description"
+			updateField=":formId:accountingCodeId :formId:accountingCodeId_text">
+		</hftl:entityPopup>
+		
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -29,7 +43,10 @@
 		<hftl:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:formField label="#{messages['accountingCode']}" field="accountingCode" valueLabelField="code" listBean="#{accountingCodeListBean}" listenerUpdate="@this" required="true" />
+			<hftl:formField id="accountingCodeId"
+				label="#{messages['accountingCode']}" field="accountingCode"
+				valueLabelField="code" listenerUpdate="@this" popup="true"
+				popupId="accountingCodePopup" showResetButton="true" required="true" />
 			<hftl:formField label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
 			<hftl:formField label="#{messages['occTemplate.occCategory']}" field="occCategory" required="true"/>
 		</hftl:formPanel>

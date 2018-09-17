@@ -78,7 +78,7 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  */
 @WebService
 public interface SettingsWs extends IBaseWs {
@@ -929,5 +929,12 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     GetOccTemplatesResponseDto listOccTemplate(@WebParam(name = "query") String query, @WebParam(name = "fields") String fields, @WebParam(name = "offset") Integer offset,
             @WebParam(name = "limit") Integer limit, @WebParam(name = "sortBy") String sortBy, @WebParam(name = "sortOrder") SortOrder sortOrder);
+
+    /**
+     * Returns the system properties as json string.
+     * @return system properties
+     */
+    @WebMethod
+	ActionStatus getSystemProperties();
 
 }
