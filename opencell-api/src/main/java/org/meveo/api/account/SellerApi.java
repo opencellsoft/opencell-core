@@ -48,7 +48,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -120,11 +120,20 @@ public class SellerApi extends BaseApi {
                     throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
                 
-                InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
-                invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
-                invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
-                seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
-            }
+                if(StringUtils.isBlank(entry.getValue().getInvoiceSequenceCode())) {
+                	// v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
+                	InvoiceSequence invoiceSequenceInvoiceTypeSeller = entry.getValue().fromDto();
+                    invoiceSequenceInvoiceTypeSeller.setCode(invoiceType.getCode() + "_" + seller.getCode());
+                    invoiceSequenceService.create(invoiceSequenceInvoiceTypeSeller);
+                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
+                } else {
+                	InvoiceSequence invoiceSequenceInvoiceTypeSeller = invoiceSequenceService.findByCode(entry.getValue().getInvoiceSequenceCode());
+                	if (invoiceSequenceInvoiceTypeSeller == null) {
+        	            throw new EntityDoesNotExistsException(InvoiceTypeSellerSequence.class, entry.getValue().getInvoiceSequenceCode());
+        	        }
+                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, entry.getValue().getPrefixEL()));
+                }
+           }
         }
         
         if (postData.getContactInformation() != null) {

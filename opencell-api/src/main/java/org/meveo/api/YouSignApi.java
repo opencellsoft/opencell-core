@@ -66,6 +66,9 @@ public class YouSignApi extends BaseApi {
     /** The Constant YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY. */
     private static final String YOUSIGN_API_CALLBACK_URL_PROPERTY_KEY = "yousign.api.callback.url";
     
+    /** The Constant YOUSIGN_API_DOWNLOAD_DIR_KEY. */
+    private static final String YOUSIGN_API_DOWNLOAD_DIR_KEY = "yousign.api.download.dir";
+    
     /** The Constant SIGN_OBJECT_POSITION_PATTERN. */
     private static final Pattern SIGN_OBJECT_POSITION_PATTERN = Pattern.compile("[0-9]+,[0-9]+,[0-9]+,[0-9]+");
     
@@ -173,9 +176,9 @@ public class YouSignApi extends BaseApi {
 
         RawResponseDto<String> result = new RawResponseDto<>();
         byte [] content = this.downloadFileById(fileId).getContent();
-        String filePath = getDownloadedFilePath(fileName, "pdf"); // TODO : make the extension dynamic !
+        String filePath = getDownloadedFilePath(fileName, "pdf"); 
         try {
-            Files.write(Paths.get(filePath), Base64.decodeBase64(content), StandardOpenOption.CREATE);
+            Files.write(Paths.get(filePath), Base64.decodeBase64(content));
         } catch (Exception e) {
             log.error(" Error while saving file : {}, [{}] ", filePath, e.getMessage());
             result.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, e.getMessage()));
@@ -183,8 +186,12 @@ public class YouSignApi extends BaseApi {
         return result;
     }
     
-    private String getDownloadedFilePath(String fileName, String extension) {
-        String parentDirPath = paramBeanFactory.getChrootDir() + File.separator + "docToSign";
+    private String getDownloadedFilePath(String fileName, String extension) throws MeveoApiException {
+        String signeddocsDir = this.getYousignParam(YOUSIGN_API_DOWNLOAD_DIR_KEY, false, "/signeddocs");
+        if (!signeddocsDir.startsWith(File.separator)) {
+            signeddocsDir =  File.separator +  signeddocsDir;
+        }
+        String parentDirPath = paramBeanFactory.getChrootDir() + signeddocsDir;
         File parentDir = new File( parentDirPath );
         if (!parentDir.exists()) {
             parentDir.mkdirs();  
@@ -286,10 +293,13 @@ public class YouSignApi extends BaseApi {
     private String getMandatoryYousignParam (String paramKey) throws MeveoApiException {
         return this.getYousignParam(paramKey, true);
     }
-    
 
     private String getYousignParam (String paramKey, boolean isMandatory) throws MeveoApiException {
-        String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, "");
+        return this.getYousignParam(paramKey, isMandatory, "");
+    }
+    
+    private String getYousignParam(String paramKey, boolean isMandatory, String defaultValue) throws MeveoApiException {
+        String paramValue = this.paramBeanFactory.getInstance().getProperty(paramKey, defaultValue);
         if (isMandatory && StringUtils.isEmpty(paramValue)) {
             throw new MeveoApiException(" Mandatory Yousign param not configured : " + paramKey); 
         }

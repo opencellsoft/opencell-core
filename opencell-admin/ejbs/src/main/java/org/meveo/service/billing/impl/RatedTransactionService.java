@@ -659,9 +659,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 for (Tax tax : biggestSubCat.getSubCategoryTaxes()) {
                     TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
                     if(invoiceAgregateT != null) {
-	                    log.debug("  tax3 ht -> {}", invoiceAgregateT.getAmountWithoutTax());
-	                    invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode)));
-	                    log.debug("  tax4 ht ->" + invoiceAgregateT.getAmountWithoutTax());
+                        log.debug("  tax3 ht -> {}", invoiceAgregateT.getAmountWithoutTax());
+                        invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(rounding, getRoundingMode(roundingMode)));
+                        log.debug("  tax4 ht ->" + invoiceAgregateT.getAmountWithoutTax());
                     }
                 }
                 CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat.getCategoryInvoiceAgregate();
@@ -1185,7 +1185,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, wallet, billingAccount,
                 invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getParameterExtra(),
                 walletOperation.getOrderNumber(), walletOperation.getSubscription(), walletOperation.getInputUnitDescription(), walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
-                walletOperation.getOfferCode(), walletOperation.getEdr(), null, null, walletOperation.getStartDate(), walletOperation.getEndDate());
+                walletOperation.getOfferCode(), walletOperation.getEdr(), null, null, walletOperation.getStartDate(), walletOperation.getEndDate(), walletOperation.getSeller());
 
         walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 

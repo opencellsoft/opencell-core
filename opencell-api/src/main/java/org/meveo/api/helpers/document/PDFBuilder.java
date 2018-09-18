@@ -1,9 +1,9 @@
 package org.meveo.api.helpers.document;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -141,8 +141,7 @@ public class PDFBuilder {
      * @return the string
      */
     private String newPdfFilePath() {
-        String dateTime = String.valueOf(new Date().getTime());
-        return this.targetDirPath.concat("/").concat(documentNamePrefix).concat("_").concat(dateTime).concat(".pdf");
+        return this.targetDirPath.concat(File.separator).concat(documentNamePrefix).concat(".pdf");
     }
     
     /**

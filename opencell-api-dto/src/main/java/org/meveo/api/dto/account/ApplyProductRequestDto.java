@@ -61,6 +61,9 @@ public class ApplyProductRequestDto extends BaseEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /** The seller. */
+    private String seller;
 
     /**
      * Instantiates a new apply product request dto.
@@ -304,7 +307,25 @@ public class ApplyProductRequestDto extends BaseEntityDto {
         this.customFields = customFields;
     }
     
-    @Override
+    /**
+     * Gets the seller.
+     * 
+	 * @return the seller
+	 */
+	public String getSeller() {
+		return seller;
+	}
+
+	/**
+	 * Sets the seller.
+	 * 
+	 * @param seller the seller to set
+	 */
+	public void setSeller(String seller) {
+		this.seller = seller;
+	}
+
+	@Override
     public String toString() {
         return "ApplyProductRequestDto [product=" + product + ", userAccount=" + userAccount + ", subscription=" + subscription + ", operationDate=" + operationDate
                 + ", description=" + description + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1=" + criteria1 + ", criteria2="

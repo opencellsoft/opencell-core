@@ -1405,21 +1405,21 @@
             <column name="registration_no" type="varchar(100)" />
         </addColumn>
         <sql><![CDATA[
-        update account_entity e set email = (select email from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-		update account_entity e set fax = (select fax from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-		update account_entity e set mobile = (select mobile from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-		update account_entity e set phone = (select phone from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-		
-		update account_entity e set email = (select email from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
-		update account_entity e set phone = (select phone from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
-		
-		update account_entity e set email = (select email from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-		update account_entity e set fax = (select fax from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-		update account_entity e set mobile = (select mobile from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-		update account_entity e set phone = (select phone from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-		
-		update account_entity e set registration_no = (select registration_no from crm_customer c where c.id=e.id);
-		update account_entity e set vat_no = (select vat_no from crm_customer c where c.id=e.id);
+        update ${db.schema.adapted}account_entity e set email = (select email from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+        update ${db.schema.adapted}account_entity e set fax = (select fax from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+        update ${db.schema.adapted}account_entity e set mobile = (select mobile from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+        update ${db.schema.adapted}account_entity e set phone = (select phone from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+        
+        update ${db.schema.adapted}account_entity e set email = (select email from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+        update ${db.schema.adapted}account_entity e set phone = (select phone from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+        
+        update ${db.schema.adapted}account_entity e set email = (select email from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+        update ${db.schema.adapted}account_entity e set fax = (select fax from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+        update ${db.schema.adapted}account_entity e set mobile = (select mobile from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+        update ${db.schema.adapted}account_entity e set phone = (select phone from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+        
+        update ${db.schema.adapted}account_entity e set registration_no = (select registration_no from crm_customer c where c.id=e.id);
+        update ${db.schema.adapted}account_entity e set vat_no = (select vat_no from crm_customer c where c.id=e.id);
 		]]></sql>
         <dropColumn tableName="crm_customer" columnName="email" />
         <dropColumn tableName="crm_customer" columnName="fax" />
@@ -1461,7 +1461,9 @@
     <changeSet id="#3508_20180806 - Invoice Sequence entity" author="AbdelmounaimAkadid">
         <createSequence sequenceName="bill_seq_invoice_seq" />
         <createTable tableName="billing_seq_invoice">
-            <column name="id" type="bigint" autoIncrement="${id.auto}" />
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_seq_invoice" />
+            </column>
             <column name="sequence_size" type="int4" />
             <column name="current_invoice_nb" type="bigint" />
             <column name="version" type="int4" />
@@ -1476,7 +1478,6 @@
             </column>
             <column name="description" type="varchar(255)" />
         </createTable>
-        <addPrimaryKey columnNames="id" constraintName="pk_billing_seq_invoice" tableName="billing_seq_invoice" />
         <addColumn tableName="billing_seq_invtyp_sell">
             <column name="invoice_sequence_id" type="bigint" />
         </addColumn>
@@ -1501,6 +1502,18 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
         
          
+        <addColumn tableName="billing_product_instance">
+            <column name="seller_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_product_instance" constraintName="fk_billing_product_instance_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+        
+        <addColumn tableName="billing_rated_transaction">
+            <column name="seller_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+ 
      </changeSet>
      
      <changeSet id="#3485_20180725" author="Edwardlegaspi">
@@ -1587,6 +1600,145 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_ddrequest_builder_seq values(1)</sql>
      </changeSet>
+
+    <changeSet id="#3508_20180828 - Migration for sequences - postgresql" author="AbdelmounaimAkadid" dbms="postgresql">
+        <sql endDelimiter="$$" splitStatements="false"><![CDATA[
+        DO $$
+        DECLARE 
+            rec_seq RECORD;
+            seqId text;
+        BEGIN
+            FOR rec_seq IN
+                 SELECT its.id its_id, it.code invoice_type_code, s.code seller_code, its.sequence_size sequence_size, its.current_invoice_nb current_invoice_nb 
+                 FROM ${db.schema.adapted}billing_seq_invtyp_sell its JOIN ${db.schema.adapted}billing_invoice_type it ON it.id=its.invoicetype_id JOIN ${db.schema.adapted}crm_seller s ON s.id=its.seller_id
+                 WHERE its.sequence_size IS NOT NULL
+            LOOP
+                seqId := nextval('bill_seq_invoice_seq');
+                EXECUTE 'INSERT INTO ${db.schema.adapted}billing_seq_invoice (id, sequence_size, current_invoice_nb, code, creator, created) VALUES (' || seqId || ', ' || rec_seq.sequence_size || ',' || CASE WHEN rec_seq.current_invoice_nb IS NULL THEN 0 ELSE rec_seq.current_invoice_nb END || ',''' || rec_seq.invoice_type_code || '_' || rec_seq.seller_code || ''', ''MIGRATION_SCRIPT'', NOW())';
+                EXECUTE 'UPDATE ${db.schema.adapted}billing_seq_invtyp_sell SET invoice_sequence_id =''' || seqId || ''' WHERE id='||rec_seq.its_id;
+            END LOOP;  
+        END$$;
+        ]]></sql>
+        <dropColumn tableName="billing_seq_invtyp_sell" columnName="sequence_size" />
+        <dropColumn tableName="billing_seq_invtyp_sell" columnName="current_invoice_nb" />
+    
+        <sql endDelimiter="$$" splitStatements="false"><![CDATA[        
+        DO $$
+        DECLARE 
+            rec_seq RECORD;
+            seqId text;
+        BEGIN
+            FOR rec_seq IN
+                 SELECT invtype.id invtype_id, invtype.code invtype_code, invtype.sequence_size invtype_seqsize, invtype.current_invoice_nb current_invoice_nb
+                 FROM ${db.schema.adapted}billing_invoice_type invtype WHERE invtype.sequence_size IS NOT NULL
+            LOOP
+                seqId := nextval('bill_seq_invoice_seq');
+                EXECUTE 'INSERT INTO ${db.schema.adapted}billing_seq_invoice (id, sequence_size, current_invoice_nb, code, creator, created) VALUES (' || seqId || ', ' || rec_seq.invtype_seqsize || ',' || CASE WHEN rec_seq.current_invoice_nb IS NULL THEN 0 ELSE rec_seq.current_invoice_nb END || ',''' || rec_seq.invtype_code || ''', ''MIGRATION_SCRIPT'', NOW())';
+                EXECUTE 'UPDATE ${db.schema.adapted}billing_invoice_type SET invoice_sequence_id =''' || seqId || ''' WHERE id='||rec_seq.invtype_id;
+            END LOOP;  
+        END$$;
+        ]]></sql>
+        <dropColumn tableName="billing_invoice_type" columnName="sequence_size" />
+        <dropColumn tableName="billing_invoice_type" columnName="current_invoice_nb" />
+        
+     </changeSet>
+     
+     <changeSet id="#3508_20180828 - Migration for sequences - mysql" author="AbdelmounaimAkadid" dbms="mysql">
+        <sql endDelimiter="$$" splitStatements="false"><![CDATA[
+            DROP PROCEDURE IF EXISTS proc_seq_migration$$
+            CREATE PROCEDURE proc_seq_migration()
+            BEGIN
+                DECLARE invtype_seller_id BIGINT;
+                DECLARE invtype_seller_seqsize BIGINT;
+                DECLARE invtype_seller_current_invoice_nb BIGINT;
+                DECLARE invtype_seller_code VARCHAR(255);
+                DECLARE cur_seq CURSOR FOR SELECT its.id invtype_seller_id, CONCAT(it.code, '_', s.code) AS invtype_seller_code, its.sequence_size invtype_seller_seqsize, its.current_invoice_nb invtype_seller_current_invoice_nb 
+                     FROM ${db.schema.adapted}billing_seq_invtyp_sell its JOIN ${db.schema.adapted}billing_invoice_type it ON it.id=its.invoicetype_id JOIN ${db.schema.adapted}crm_seller s ON s.id=its.seller_id
+                     WHERE its.sequence_size IS NOT NULL
+                        
+                OPEN cur_seq;
+                         
+                Reading_Seqs: LOOP
+                    FETCH cur_seq INTO invtype_seller_id, invtype_seller_code, invtype_seller_seqsize, invtype_seller_current_invoice_nb;
+                    INSERT INTO ${db.schema.adapted}billing_seq_invoice (sequence_size, current_invoice_nb, code, creator, created) VALUES (invtype_seller_seqsize, invtype_seller_current_invoice_nb, invtype_seller_code, 'MIGRATION_SCRIPT', NOW());
+                    UPDATE ${db.schema.adapted}billing_seq_invtyp_sell SET invoice_sequence_id = LAST_INSERT_ID() WHERE id = invtype_seller_id;
+                END LOOP;
+            
+                CLOSE cur_seq;
+            END;
+            
+            CALL proc_seq_migration()
+            ]]></sql>
+         <dropColumn tableName="billing_seq_invtyp_sell" columnName="sequence_size" />
+         <dropColumn tableName="billing_seq_invtyp_sell" columnName="current_invoice_nb" />
+        
+         <sql endDelimiter="$$" splitStatements="false"><![CDATA[  
+            DROP PROCEDURE IF EXISTS proc_seq_migration$$
+            CREATE PROCEDURE proc_seq_migration()
+            BEGIN
+                DECLARE invtype_id BIGINT;
+                DECLARE invtype_seqsize BIGINT;
+                DECLARE invtype_current_invoice_nb BIGINT;
+                DECLARE invtype_code VARCHAR(255);
+                DECLARE cur_seq CURSOR FOR SELECT invtype.id invtype_id, invtype.code invtype_code, invtype.sequence_size invtype_seqsize, invtype.current_invoice_nb invtype_current_invoice_nb
+                             FROM ${db.schema.adapted}billing_invoice_type invtype WHERE invtype.sequence_size IS NOT NULL;
+                        
+                OPEN cur_seq;
+                         
+                Reading_Seqs: LOOP
+                    FETCH cur_seq INTO invtype_id, invtype_code, invtype_seqsize, invtype_current_invoice_nb;
+                    INSERT INTO ${db.schema.adapted}billing_seq_invoice (sequence_size, current_invoice_nb, code, creator, created) VALUES (invtype_seqsize, invtype_current_invoice_nb, invtype_code, 'MIGRATION_SCRIPT', NOW());
+                    UPDATE ${db.schema.adapted}billing_invoice_type SET invoice_sequence_id = LAST_INSERT_ID() WHERE id = invtype_id;
+                END LOOP;
+            
+                CLOSE cur_seq;
+            END;
+            
+            CALL proc_seq_migration()
+        ]]>
+        </sql>
+        <dropColumn tableName="billing_invoice_type" columnName="sequence_size" />
+        <dropColumn tableName="billing_invoice_type" columnName="current_invoice_nb" />
+        
+    </changeSet>
+    
+    <changeSet id="#3508_20180828 - Migration for seller" author="AbdelmounaimAkadid">
+        <sql><![CDATA[
+            UPDATE ${db.schema.adapted}billing_invoice invu SET seller_id = (
+                SELECT c.seller_id FROM ${db.schema.adapted}billing_invoice inv 
+                JOIN ${db.schema.adapted}billing_billing_account ba ON inv.billing_account_id = ba.id 
+                JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
+                JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE inv.id = invu.id
+            ) WHERE seller_id IS NULL;
+        ]]>
+        </sql>
+        <addNotNullConstraint tableName="billing_invoice" columnName="seller_id"/>
+    
+        <sql><![CDATA[
+            UPDATE ${db.schema.adapted}billing_subscription subu SET seller_id = (
+                SELECT c.seller_id FROM ${db.schema.adapted}billing_subscription sub 
+                JOIN ${db.schema.adapted}billing_user_account ua ON sub.user_account_id = ua.id 
+                JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
+                JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
+                JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE sub.id = subu.id
+            ) WHERE seller_id IS NULL;
+        ]]>
+        </sql>        
+        <addNotNullConstraint tableName="billing_subscription" columnName="seller_id"/>
+        
+        <sql><![CDATA[
+            UPDATE ${db.schema.adapted}billing_product_instance bpiu SET seller_id = (
+                SELECT c.seller_id FROM ${db.schema.adapted}billing_product_instance bpi 
+                JOIN ${db.schema.adapted}billing_user_account ua ON bpi.user_account_id = ua.id 
+                JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
+                JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
+                JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE bpi.id = bpiu.id
+            ) WHERE seller_id IS NULL;
+        ]]>
+        </sql>    
+        <addNotNullConstraint tableName="billing_product_instance" columnName="seller_id"/>
+              
+    </changeSet>
      
      <changeSet id="#3554_20180812 payment sepa as file" author="anasseh">
      	 <createSequence sequenceName="ar_ddrequest_builder_seq" />                            

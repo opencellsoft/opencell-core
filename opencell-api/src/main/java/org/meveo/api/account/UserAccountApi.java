@@ -22,6 +22,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.EntityNotAllowedException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -29,6 +30,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -41,6 +43,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -82,6 +85,9 @@ public class UserAccountApi extends AccountEntityApi {
     
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private SellerService sellerService;
 
     public void create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -401,6 +407,23 @@ public class UserAccountApi extends AccountEntityApi {
         if (userAccount == null) {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
         }
+        
+        Seller seller = null;
+        if (StringUtils.isBlank(postData.getSeller())) {
+        	// v5.2 : code for API backward compatibility call, seller code must be mandatory in future versions
+            seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        } else {
+	        seller = sellerService.findByCode(postData.getSeller());
+	        if (seller == null) {
+	            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+	        }
+	        
+	        if(productTemplate.getSellers().size() > 0) {
+                if(!productTemplate.getSellers().contains(seller)) {
+    	            throw new EntityNotAllowedException(Seller.class, ProductInstance.class, postData.getSeller());
+                }
+            } 
+        }
 
         if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
             throw new MeveoApiException("User account is not ACTIVE.");
@@ -411,6 +434,7 @@ public class UserAccountApi extends AccountEntityApi {
         try {
             ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
                 postData.getDescription(), null);
+            productInstance.setSeller(seller);
 
             // Validate and populate customFields
             try {

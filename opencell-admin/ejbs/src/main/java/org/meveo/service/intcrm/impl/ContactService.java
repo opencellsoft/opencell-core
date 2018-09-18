@@ -213,24 +213,18 @@ public class ContactService extends BusinessService<Contact> {
 	public void logContactError(List<String> contactErrors) throws IOException {
 		String path1 = System.getProperty("jboss.server.temp.dir") + "\\ContactError.log";
 		String path2 = System.getProperty("jboss.server.temp.dir") + "\\LastContactError.log";
-		
-		try {
-			FileWriter fw1 = new FileWriter(path1, true);
-		    BufferedWriter bw1 = new BufferedWriter(fw1);
-		    PrintWriter pwout1 = new PrintWriter(bw1);
-		    
-		    PrintWriter pwout2 = new PrintWriter(path2);
-	
-			for(String contactError : contactErrors) {
-				pwout1.println(new Date().toString() + " | " + contactError);
-				pwout2.println(new Date().toString() + " | " + contactError);
-				
+
+		try (FileWriter fw1 = new FileWriter(path1, true)) {
+			try (BufferedWriter bw1 = new BufferedWriter(fw1)) {
+				try (PrintWriter pwout1 = new PrintWriter(bw1)) {
+					try (PrintWriter pwout2 = new PrintWriter(path2)) {
+						for (String contactError : contactErrors) {
+							pwout1.println(new Date().toString() + " | " + contactError);
+							pwout2.println(new Date().toString() + " | " + contactError);
+						}
+					}
+				}
 			}
-			pwout1.close();
-			pwout2.close();
-			
-		} catch (IOException e) {	
-		    
 		}
 	}
 	

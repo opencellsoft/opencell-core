@@ -557,8 +557,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Map<Seller, List<RatedTransaction>> mapSellerRT = new HashMap<Seller, List<RatedTransaction>>();
             for(RatedTransaction rt: ratedTransactions) {
                 Seller seller = null;
-                if(rt.getSubscription() != null) {
-                   seller = rt.getSubscription().getSeller();
+                if(rt.getSeller() != null) {
+                   seller = rt.getSeller();
                 }
                 if(seller == null) {
                     seller = rt.getBillingAccount().getCustomerAccount().getCustomer().getSeller();

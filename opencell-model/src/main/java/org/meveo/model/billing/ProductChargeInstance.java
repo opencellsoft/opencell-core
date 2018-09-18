@@ -56,7 +56,7 @@ public class ProductChargeInstance extends ChargeInstance {
         this.chargeDate = productInstance.getApplicationDate();
         this.userAccount = productInstance.getUserAccount();
         this.subscription = productInstance.getSubscription();
-        this.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        this.setSeller(productInstance.getSeller());
         this.setCountry(userAccount.getBillingAccount().getTradingCountry());
         this.setCurrency(userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency());
         this.productInstance = productInstance;
