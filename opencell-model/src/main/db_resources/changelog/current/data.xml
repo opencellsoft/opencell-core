@@ -4367,5 +4367,4 @@ order by edr.STATUS, edr.id DESC
         </sql>
     </changeSet>
 
-    
 </databaseChangeLog>
