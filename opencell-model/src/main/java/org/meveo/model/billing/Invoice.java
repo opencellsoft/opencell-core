@@ -159,7 +159,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     @Column(name = "comment", length = 1200)
