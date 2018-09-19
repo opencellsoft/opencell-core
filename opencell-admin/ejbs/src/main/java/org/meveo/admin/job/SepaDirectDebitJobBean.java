@@ -71,7 +71,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for parameter={}", jobInstance.getParametres());
         try {
-            String paymentPerAOorCA = "CA";
+            
             DDRequestBuilder ddRequestBuilder = null;
             String ddRequestBuilderCode = null;
             if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
@@ -83,7 +83,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             if (ddRequestBuilder == null) {
                 throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
             }
-            paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "SepaJob_AOorCA");
+           
             DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
             List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder);
 
@@ -103,13 +103,13 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                 }
                 try {
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-                        DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), ddRequestBuilder,ddrequestLotOp.getFilter(),paymentPerAOorCA);
-                        if (ddRequestLOT.getInvoicesNumber() > ddRequestLOT.getRejectedInvoices()) { 
+                        DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), ddRequestBuilder,ddrequestLotOp.getFilter());
+                        if (ddRequestLOT.getInvoicesNumber() > 0) { 
                             ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT,appProvider));
                             ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT,appProvider);
                             ddRequestLOT.setSendDate(new Date());
                             dDRequestLOTService.updateNoCheck(ddRequestLOT);
-                            ddRequestItemService.createPaymentsForDDRequestLot(ddRequestLOT);
+                            //ddRequestItemService.createPaymentsForDDRequestLot(ddRequestLOT);
                         }
 
                     } else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {

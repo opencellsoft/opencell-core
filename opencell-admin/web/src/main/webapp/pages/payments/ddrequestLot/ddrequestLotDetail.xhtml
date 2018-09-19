@@ -35,11 +35,47 @@
 			<p:commandButton disabled="#{!dDRequestLOTBean.canGenerateFile()}" action="#{dDRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
      		<p:commandButton value="#{messages['action.back']}" action="#{dDRequestLOTBean.back}" immediate="true" />
    		</h:panelGrid>	
-		</hftl:formPanel>					 
-			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{dDRequestLOTBean.entity.getDdrequestItems()}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
+		</hftl:formPanel>	
+		
+		                	<p:dataTable id="selectedEntitiesDatatable" var="itemEntity" value="#{dDRequestLOTBean.entity.ddrequestItems}" paginator="true" rows="10"
+						paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="false"
+						styleClass="custom-grid" rowsPerPageTemplate="10, 20, 50" reflow="true">
+						<p:column headerText="#{messages['accountOperation.operationDate']}">
+							<h:outputText value="#{itemEntity.auditable.created}" styleClass="field-value" >
+								<f:convertDateTime pattern="#{paramBean.dateTimeFormat}" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['recordedInvoice.amount']}">
+							<h:outputText value="#{itemEntity.amount}" styleClass="field-value" />
+						</p:column>
+						<p:column headerText="#{messages['accountOperation.dueDate']}">
+							<h:outputText value="#{itemEntity.dueDate}" styleClass="field-value">
+								<f:convertDateTime pattern="#{paramBean.dateTimeFormat}" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['ddRequestItem.errorMsg']}">
+							<h:outputText value="#{itemEntity.errorMsg}" styleClass="field-value" />
+						</p:column>						
+					</p:dataTable>				 
+			<!-- 	<hftl:dataList backingBean="#{dDRequestItemListBean}" dataModel="#{dDRequestItemBean.getItemsByLot(dDRequestLOTBean.entity)}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
 						<hftl:column showSortLinks="false"
 							label="#{messages['accountOperation.operationDate']}"
-							field="recordedInvoice.auditable.created" isDate="true"/>
+							field="auditable.created" isDate="true"/>
+					    	<hftl:column label="#{messages['recordedInvoice.amount']}"
+							field="amount" />	
+						<hftl:column label="#{messages['accountOperation.dueDate']}"
+							field="dueDate" isDate="true"/>		
+						<hftl:column label="#{messages['ddRequestItem.errorMsg']}"
+							field="errorMsg" />								
+							
+													
+						<hftl:column label="#{messages['accountOperation.netToPay']}"
+							field="automatedPayment" />
+													<hftl:column label="#{messages['accountOperation.netToPay']}"
+							field="accountOperations" />
+							
+						
+															
 						<hftl:column label="#{messages['accountOperation.reference']}"
 							field="recordedInvoice.reference" />	
 						<hftl:column label="#{messages['accountOperation.occCode']}"
@@ -49,17 +85,15 @@
 							field="recordedInvoice.occDescription" />
 						<hftl:column label="#{messages['accountOperation.transactionDate']}"
 							field="recordedInvoice.transactionDate" />						
-						<hftl:column label="#{messages['accountOperation.dueDate']}"
-							field="recordedInvoice.dueDate" />
-					<hftl:column label="#{messages['recordedInvoice.amount']}"
-							field="recordedInvoice.amount" />							
+
+						
 						<hftl:column label="#{messages['accountOperation.netToPay']}"
 							field="recordedInvoice.netToPay" />
 						<hftl:column label="#{messages['ddRequestItem.errorMsg']}"
 							field="errorMsg" />							
-												- 					
+										- 					
 					</hftl:dataList>
-				 
+				  -->		
 				 
 	</ui:define>
 

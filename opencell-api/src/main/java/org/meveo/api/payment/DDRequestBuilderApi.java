@@ -62,6 +62,9 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
             if (ddRequestBuilderDto.getType() == null) {
                 missingParameters.add("type");
             }
+            if (ddRequestBuilderDto.getPaymentLevel() == null) {
+                missingParameters.add("paymentLevel");
+            }            
 
             if (ddRequestBuilderDto.getType() == DDRequestBuilderTypeEnum.CUSTOM && StringUtils.isBlank(ddRequestBuilderDto.getScriptInstanceCode())) {
                 missingParameters.add("scriptInstanceCode");
@@ -91,7 +94,7 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
         ddRequestBuilder.setScriptInstance(scriptInstance);
         ddRequestBuilder.setMaxSizeFile(ddRequestBuilderDto.getMaxSizeFile());
         ddRequestBuilder.setNbOperationPerFile(ddRequestBuilderDto.getNbOperationPerFile());
-
+        ddRequestBuilder.setPaymentLevel(ddRequestBuilderDto.getPaymentLevel());
 
         if (ddRequestBuilderDto.isDisabled() != null) {
             ddRequestBuilder.setDisabled(ddRequestBuilderDto.isDisabled());
@@ -137,6 +140,9 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
         }
         if (ddRequestBuilderDto.getMaxSizeFile() != null && ddRequestBuilderDto.getMaxSizeFile()  != 0L ) {
             ddRequestBuilder.setMaxSizeFile(ddRequestBuilderDto.getMaxSizeFile());
+        }
+        if (ddRequestBuilderDto.getPaymentLevel() != null ) {
+            ddRequestBuilder.setPaymentLevel(ddRequestBuilderDto.getPaymentLevel());
         }
         if (!StringUtils.isBlank(ddRequestBuilderDto.getScriptInstanceCode())) {
             ScriptInstance scriptInstance = scriptInstanceService.findByCode(ddRequestBuilderDto.getScriptInstanceCode());
