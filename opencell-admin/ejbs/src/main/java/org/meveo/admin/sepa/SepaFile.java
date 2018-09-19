@@ -165,7 +165,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + "-" + ddRequestLOT.getId());
         groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
         groupHeader.setNbOfTxs(ddRequestLOT.getDdrequestItems().size());
-        groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2, RoundingMode.HALF_UP));
+        groupHeader.setCtrlSum(ddRequestLOT.getTotalAmount().setScale(2, RoundingMode.HALF_UP));
         InitgPty initgPty = new InitgPty();
         initgPty.setNm(appProvider.getDescription());
         groupHeader.setInitgPty(initgPty);

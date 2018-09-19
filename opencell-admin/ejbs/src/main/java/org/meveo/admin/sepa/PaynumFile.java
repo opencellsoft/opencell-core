@@ -38,13 +38,11 @@ public class PaynumFile implements DDRequestBuilderInterface {
         String codeCreancier_paramKey = "paynum.codeCreancier";
         String codeCreancier = paramBean.getProperty(codeCreancier_paramKey, null);
         fileName = DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
-                + "_" + (ddRequestLot.getInvoicesNumber() - ddRequestLot.getRejectedInvoices()) + "_" + (ddRequestLot.getInvoicesAmount()
+                + "_" + (ddRequestLot.getNbItemsOk() - ddRequestLot.getNbItemsKo()) + "_" + (ddRequestLot.getTotalAmount()
                     .setScale((appProvider.getRounding() == null ? 2 : appProvider.getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())
                 + "_ppf_factures_" + codeCreancier + ".csv";
 
-        String outputDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
-
-        outputDir = outputDir + File.separator + appProvider.getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
+        String outputDir =  ArConfig.getDDRequestOutputDirectory();
         outputDir = outputDir.replaceAll("\\..", "");
 
         log.info("DDRequest output directory=" + outputDir);

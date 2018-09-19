@@ -94,6 +94,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
     /**
      * Set the discriminatorValue value, so it would be available in the list of entities right away.
+     * 
      * @param aop account operation.
      * @return id of account operation.
      * @throws BusinessException business exception.
@@ -110,19 +111,37 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     /**
-     * Gets the AO list to pay .
+     * Gets the a os to pay.
      *
-     * @param paymentMethodEnum payment method.
+     * @param paymentMethodEnum the payment method enum
      * @param fromDueDate the from due date
      * @param toDueDate the to due date
      * @param customerAccountId the customer account id
-     * @return list of account operations.
+     * @return the a os to pay
      */
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToPay(PaymentMethodEnum paymentMethodEnum,Date fromDueDate,Date toDueDate,Long customerAccountId) {
+    public List<AccountOperation> getAOsToPay(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, Long customerAccountId) {
         try {
             return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPay").setParameter("paymentMethodIN", paymentMethodEnum)
-                    .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
+                .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the a os to pay.
+     *
+     * @param paymentMethodEnum the payment method enum
+     * @param fromDueDate the from due date
+     * @param toDueDate the to due date
+     * @return the a os to pay
+     */
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> getAOsToPay(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate) {
+        try {
+            return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAoToPayWithoutCA").setParameter("paymentMethodIN", paymentMethodEnum)
+                .setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
         } catch (NoResultException e) {
             return null;
         }
@@ -138,61 +157,63 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @return list of account operations.
      */
     @SuppressWarnings("unchecked")
-    public List<AccountOperation> getAOsToRefund(PaymentMethodEnum paymentMethodEnum,Date fromDueDate,Date toDueDate,Long customerAccountId) {
+    public List<AccountOperation> getAOsToRefund(PaymentMethodEnum paymentMethodEnum, Date fromDueDate, Date toDueDate, Long customerAccountId) {
         try {
             return (List<AccountOperation>) getEntityManager().createNamedQuery("AccountOperation.listAOIdsToRefund").setParameter("paymentMethodIN", paymentMethodEnum)
-                    .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
+                .setParameter("caIdIN", customerAccountId).setParameter("fromDueDateIN", fromDueDate).setParameter("toDueDateIN", toDueDate).getResultList();
         } catch (NoResultException e) {
             return null;
         }
     }
-    
+
     /**
      * Return all AccountOperation with now - invoiceDate date &gt; n years.
+     * 
      * @param nYear age of the account operation
      * @return Filtered list of account operations
      */
     @SuppressWarnings("unchecked")
-	public List<AccountOperation> listInactiveAccountOperations(int nYear) {
-    	QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
-    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
-    	
-    	qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
-    	
-    	return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
-    }
-    
-    /**
-     * Return all unpaid AccountOperation with now - invoiceDate date &gt; n years.
-     * @param nYear age of the account operation
-     * @return Filtered list of account operations
-     */
-    @SuppressWarnings("unchecked")
-	public List<AccountOperation> listUnpaidAccountOperations(int nYear) {
-    	QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
-    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
-    	
-    	qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
-    	qb.startOrClause();
-    	qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.L);
-    	qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.P);
-    	qb.endOrClause();
-    	
-    	return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
+    public List<AccountOperation> listInactiveAccountOperations(int nYear) {
+        QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
+        Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+
+        qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
+
+        return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-	/**
+    /**
+     * Return all unpaid AccountOperation with now - invoiceDate date &gt; n years.
+     * 
+     * @param nYear age of the account operation
+     * @return Filtered list of account operations
+     */
+    @SuppressWarnings("unchecked")
+    public List<AccountOperation> listUnpaidAccountOperations(int nYear) {
+        QueryBuilder qb = new QueryBuilder(AccountOperation.class, "e");
+        Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+
+        qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
+        qb.startOrClause();
+        qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.L);
+        qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.P);
+        qb.endOrClause();
+
+        return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+    /**
      * Bulk delete.
      *
      * @param inactiveAccountOps the inactive account ops
      * @throws BusinessException the business exception
      */
-	public void bulkDelete(List<AccountOperation> inactiveAccountOps) throws BusinessException {
-		for (AccountOperation e : inactiveAccountOps) {
-			remove(e);
-		}
-	}
-    
+    public void bulkDelete(List<AccountOperation> inactiveAccountOps) throws BusinessException {
+        for (AccountOperation e : inactiveAccountOps) {
+            remove(e);
+        }
+    }
+
     /**
      * Count unmatched AOs by CA.
      * 

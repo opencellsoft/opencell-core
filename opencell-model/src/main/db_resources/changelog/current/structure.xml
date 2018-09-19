@@ -1658,6 +1658,6 @@
      	</addColumn>
     		 <addForeignKeyConstraint baseColumnNames="ddrequest_item_id" baseTableName="ar_account_operation" constraintName="fk_ao_ddreq_item_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_item" />
-         <sql>update ${db.schema.adapted}ar_ddrequest_builder set payment_level='AO'</sql>                                 
+         <sql><![CDATA[update ${db.schema.adapted}ar_ddrequest_builder set payment_level='AO']]></sql>                                 
     </changeSet>
 </databaseChangeLog>
