@@ -810,6 +810,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceType = invoiceTypeService.getDefaultCommertial();
         }
         Invoice invoice = new Invoice();
+        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());

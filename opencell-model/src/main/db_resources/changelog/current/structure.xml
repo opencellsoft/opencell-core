@@ -1800,7 +1800,4 @@
         <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="text" />        
     </changeSet>    
     
-    <changeSet id="#20180919 - Tests Fixes" author="EdwardPLegaspi">
-        <dropNotNullConstraint tableName="billing_invoice" columnName="seller_id"/>        
-    </changeSet>    
 </databaseChangeLog>
