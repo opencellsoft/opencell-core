@@ -1799,4 +1799,8 @@
         <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="text" />
         <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="text" />        
     </changeSet>    
+    
+    <changeSet id="#20180919 - Tests Fixes" author="EdwardPLegaspi">
+        <dropNotNullConstraint tableName="billing_invoice" columnName="seller_id"/>        
+    </changeSet>    
 </databaseChangeLog>
