@@ -181,7 +181,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
     
-	@OneToMany(mappedBy = "recordedInvoice", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "recordedInvoice")
 	private List<Invoice> invoices;
 	
     @Transient

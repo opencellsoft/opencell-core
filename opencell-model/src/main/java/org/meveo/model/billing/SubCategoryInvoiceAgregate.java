@@ -59,7 +59,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
-    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
     @Column(name = "discount_plan_code", length = 50)

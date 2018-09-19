@@ -1799,4 +1799,5 @@
         <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="text" />
         <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="text" />        
     </changeSet>    
+    
 </databaseChangeLog>
