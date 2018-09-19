@@ -311,6 +311,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
+        cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
+        cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
+        cardPaymentMethodSpecificInput.setReturnUrl("http://integration.i.opencellsoft.com/opencell/inbound/DEMO/custom_payment-callback");
         return cardPaymentMethodSpecificInput;
     }
 

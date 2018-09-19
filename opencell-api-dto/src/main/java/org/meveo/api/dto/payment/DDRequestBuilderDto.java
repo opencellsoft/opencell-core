@@ -11,6 +11,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestBuilderTypeEnum;
+import org.meveo.model.payments.PaymentLevelEnum;
 
 /**
  * The DDRequestBuilderDto Dto.
@@ -39,6 +40,9 @@ public class DDRequestBuilderDto extends EnableBusinessDto {
 
     /** The max size file in ko. */
     private Long maxSizeFile;
+    
+    /** The payment level. */
+    private PaymentLevelEnum paymentLevel;
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
@@ -64,6 +68,7 @@ public class DDRequestBuilderDto extends EnableBusinessDto {
         this.type = ddRequestBuilder.getType();
         this.maxSizeFile = ddRequestBuilder.getMaxSizeFile();
         this.nbOperationPerFile = ddRequestBuilder.getNbOperationPerFile();
+        this.paymentLevel = ddRequestBuilder.getPaymentLevel();
     }
 
     /**
@@ -173,4 +178,23 @@ public class DDRequestBuilderDto extends EnableBusinessDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+
+    /**
+     * Gets the payment level.
+     *
+     * @return the paymentLevel
+     */
+    public PaymentLevelEnum getPaymentLevel() {
+        return paymentLevel;
+    }
+
+    /**
+     * Sets the payment level.
+     *
+     * @param paymentLevel the paymentLevel to set
+     */
+    public void setPaymentLevel(PaymentLevelEnum paymentLevel) {
+        this.paymentLevel = paymentLevel;
+    }
+    
 }
