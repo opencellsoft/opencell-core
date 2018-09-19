@@ -57,44 +57,7 @@
 						<p:column headerText="#{messages['ddRequestItem.errorMsg']}">
 							<h:outputText value="#{itemEntity.errorMsg}" styleClass="field-value" />
 						</p:column>						
-					</p:dataTable>				 
-			<!-- 	<hftl:dataList backingBean="#{dDRequestItemListBean}" dataModel="#{dDRequestItemBean.getItemsByLot(dDRequestLOTBean.entity)}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
-						<hftl:column showSortLinks="false"
-							label="#{messages['accountOperation.operationDate']}"
-							field="auditable.created" isDate="true"/>
-					    	<hftl:column label="#{messages['recordedInvoice.amount']}"
-							field="amount" />	
-						<hftl:column label="#{messages['accountOperation.dueDate']}"
-							field="dueDate" isDate="true"/>		
-						<hftl:column label="#{messages['ddRequestItem.errorMsg']}"
-							field="errorMsg" />								
-							
-													
-						<hftl:column label="#{messages['accountOperation.netToPay']}"
-							field="automatedPayment" />
-													<hftl:column label="#{messages['accountOperation.netToPay']}"
-							field="accountOperations" />
-							
-						
-															
-						<hftl:column label="#{messages['accountOperation.reference']}"
-							field="recordedInvoice.reference" />	
-						<hftl:column label="#{messages['accountOperation.occCode']}"
-							field="recordedInvoice.occCode" />					
-						<hftl:column
-							label="#{messages['accountOperation.occDescription']}"
-							field="recordedInvoice.occDescription" />
-						<hftl:column label="#{messages['accountOperation.transactionDate']}"
-							field="recordedInvoice.transactionDate" />						
-
-						
-						<hftl:column label="#{messages['accountOperation.netToPay']}"
-							field="recordedInvoice.netToPay" />
-						<hftl:column label="#{messages['ddRequestItem.errorMsg']}"
-							field="errorMsg" />							
-										- 					
-					</hftl:dataList>
-				  -->		
+					</p:dataTable>				 			
 				 
 	</ui:define>
 

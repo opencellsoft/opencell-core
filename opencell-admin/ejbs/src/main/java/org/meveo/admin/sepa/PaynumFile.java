@@ -115,11 +115,11 @@ public class PaynumFile implements DDRequestBuilderInterface {
         // email débiteur (optionnel)
         lineAsArray[4] = "";
         // code facture
-        lineAsArray[5] = ddrequestItem.getReference();
+        lineAsArray[5] = ""+ddrequestItem.getId();
         // code facture secondaire (optionnel)
         lineAsArray[6] = ddrequestItem.getReference();
         // montant en centimes
-        lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale((/* appProvider.getRounding() == null ? 2 : appProvider.getRounding() */2), RoundingMode.HALF_UP)
+        lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale(2, RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)).longValue());
         // devise (code ISO sur 3 caractères, exemples: "EUR", "USD")
         lineAsArray[8] = ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getTradingCurrency().getCurrencyCode();

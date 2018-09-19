@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
@@ -49,6 +50,9 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         ddDequestItem.setPaymentInfo4(listAO.get(0).getPaymentInfo4());
         ddDequestItem.setPaymentInfo5(listAO.get(0).getPaymentInfo5());
         ddDequestItem.setAccountOperations(listAO);
+        if(listAO.size() == 1 && !StringUtils.isBlank(listAO.get(0).getReference())) {
+            ddDequestItem.setReference(listAO.get(0).getReference());
+        }
         create(ddDequestItem);
         for (AccountOperation ao : listAO) {
             ao.setDdRequestItem(ddDequestItem);
