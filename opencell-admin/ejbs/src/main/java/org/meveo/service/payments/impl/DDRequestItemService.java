@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -292,7 +293,9 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 
         AutomatedPayment automatedPayment = recordedInvoice.getPayedDDRequestItem().getAutomatedPayment();
         log.debug("automatedPayment.getAccountingCode():" + automatedPayment.getAccountingCode().getCode());
-        matchingCodeService.unmatching(recordedInvoice.getMatchingAmounts().get(0).getMatchingCode().getId());
+        if (recordedInvoice.getMatchingAmounts() != null && !recordedInvoice.getMatchingAmounts().isEmpty()) {
+            matchingCodeService.unmatching(recordedInvoice.getMatchingAmounts().get(0).getMatchingCode().getId());
+        }
 
         automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
         automatedPayment.setComment(rejectCause);
@@ -310,7 +313,8 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 
         if (ddRejectFileInfos.isTheDDRequestFileWasRejected()) {
             // original message rejected at protocol level control
-            for (DDRequestItem ddRequestItem : dDRequestLOT.getDdrequestItems()) {
+        	CopyOnWriteArrayList<DDRequestItem> items = new CopyOnWriteArrayList<>(dDRequestLOT.getDdrequestItems());
+            for (DDRequestItem ddRequestItem : items) {
                 if (!ddRequestItem.hasError()) {
                     rejectPayment(ddRequestItem.getRecordedInvoice(), "RJCT");
                 }
