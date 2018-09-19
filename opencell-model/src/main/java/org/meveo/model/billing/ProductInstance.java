@@ -86,7 +86,7 @@ public class ProductInstance extends BusinessCFEntity {
     private String orderNumber;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = true)
+    @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
     public ProductInstance() {
