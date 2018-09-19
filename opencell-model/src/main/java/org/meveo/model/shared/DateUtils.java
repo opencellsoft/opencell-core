@@ -620,4 +620,22 @@ public class DateUtils {
 
         return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
     }
+    
+    /**
+     * Format DDMMY : 
+     *  # SimpleDateFormat way is not working for this format => e.g : with sfd, 2009 will return '9' but 2018 will return 18 , 
+     *   BUT the need here is to return always the last digit of the year !
+     *
+     * @param date the date
+     * @return the string
+     */
+    public static String formatDDMMY (Date date) {
+        
+        String ddMM = formatDateWithPattern(date, "ddMM");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String y = String.valueOf(calendar.get(Calendar.YEAR) % 10);
+        
+        return ddMM+y;
+    }
 }
