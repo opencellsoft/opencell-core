@@ -497,7 +497,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String billingAccountCode = billingAccount.getCode() + "";
         billingAccountTag.setAttribute("id", billingAccountId);
         billingAccountTag.setAttribute("code", billingAccountCode);
-        billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
+        billingAccountTag.setAttribute("description", billingAccount.getDescription() != null ? billingAccount.getDescription() : "");
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
         billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
