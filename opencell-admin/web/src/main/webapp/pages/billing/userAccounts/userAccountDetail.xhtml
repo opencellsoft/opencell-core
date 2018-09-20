@@ -160,6 +160,8 @@
                                         </h:panelGroup>
                                         
                                         <hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />
+                                        <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
+										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
                                     </p:fieldset>
                                     
                                     <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft">
@@ -172,7 +174,17 @@
                                 </p:tab>
 
                                 <p:tab title="#{messages['billingAccount.tab.information']}" id="tab1">
-                                    <p:fieldset legend="#{messages['commons.contacts']}">
+                                	<p:fieldset legend="#{messages['commons.contacts']}">
+										<hftl:formField label="#{messages['contactInformation.email']}"
+											field="contactInformation" childField="email" popup="false"
+											required="false" id="email" validateEmail="true" />
+		
+										<hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50"
+											field="contactInformation" childField="phone" popup="false" />
+										<hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50"
+											field="contactInformation" childField="mobile" popup="false" />
+									</p:fieldset>
+                                    <p:fieldset legend="#{messages['commons.address']}">
                                         <hftl:formField label="#{messages['address.address1']}" field="address" childField="address1" />
                                         <hftl:formField label="#{messages['address.address2']}" field="address" childField="address2" />
                                         <hftl:formField label="#{messages['address.address3']}" field="address" childField="address3" />

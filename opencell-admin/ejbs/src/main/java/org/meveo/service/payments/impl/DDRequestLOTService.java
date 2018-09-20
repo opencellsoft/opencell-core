@@ -379,9 +379,10 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     public void rejectPayment(DDRequestItem ddRequestItem, String rejectCause) throws BusinessException {
 
         AutomatedPayment automatedPayment = ddRequestItem.getAutomatedPayment();
-        if (automatedPayment.getMatchingAmounts() != null && !automatedPayment.getMatchingAmounts().isEmpty()) {
-            matchingCodeService.unmatching(automatedPayment.getMatchingAmounts().get(0).getMatchingCode().getId());
+        if (automatedPayment.getMatchingAmounts() == null || automatedPayment.getMatchingAmounts().isEmpty()) {
+            throw new BusinessException("ddRequestItem id :" + ddRequestItem.getId() + " Callback not expected");
         }
+        matchingCodeService.unmatching(automatedPayment.getMatchingAmounts().get(0).getMatchingCode().getId());
 
         automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
         automatedPayment.setComment(rejectCause);
@@ -396,28 +397,29 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
      */
     public void processRejectFile(DDRejectFileInfos ddRejectFileInfos) throws BusinessException {
         DDRequestLOT dDRequestLOT = null;
-        if (!StringUtils.isBlank(ddRejectFileInfos.getDdRequestLotId())) {
-            dDRequestLOT = findById(Long.valueOf(ddRejectFileInfos.getDdRequestLotId()));
+        if (ddRejectFileInfos.getDdRequestLotId() != null) {
+            dDRequestLOT = findById(ddRejectFileInfos.getDdRequestLotId(), Arrays.asList("ddrequestItems"));
         }
-        if (dDRequestLOT == null) {
-            throw new BusinessException("DDRequestLOT doesn't exist. id=" + ddRejectFileInfos.getDdRequestLotId());
-        }
-
-        if (ddRejectFileInfos.isTheDDRequestFileWasRejected()) {
-            // original message rejected at protocol level control
-            CopyOnWriteArrayList<DDRequestItem> items = new CopyOnWriteArrayList<>(dDRequestLOT.getDdrequestItems());
-            for (DDRequestItem ddRequestItem : items) {
-                if (!ddRequestItem.hasError()) {
-                    rejectPayment(ddRequestItem, "RJCT");
+        if (dDRequestLOT != null) {
+            if (ddRejectFileInfos.isTheDDRequestFileWasRejected()) {
+                // original message rejected at protocol level control
+                CopyOnWriteArrayList<DDRequestItem> items = new CopyOnWriteArrayList<>(dDRequestLOT.getDdrequestItems());
+                for (DDRequestItem ddRequestItem : items) {
+                    if (!ddRequestItem.hasError()) {
+                        rejectPayment(ddRequestItem, "RJCT");
+                    }
                 }
+                dDRequestLOT.setReturnStatusCode(ddRejectFileInfos.getReturnStatusCode());
             }
-            dDRequestLOT.setReturnStatusCode(ddRejectFileInfos.getReturnStatusCode());
-        } else {
-            for (Entry<String, String> entry : ddRejectFileInfos.getListInvoiceRefsRejected().entrySet()) {
-                DDRequestItem ddRequestItem = ddRequestItemService.findById(new Long(entry.getKey()));
-                rejectPayment(ddRequestItem, entry.getValue());
-            }
+            dDRequestLOT.setReturnFileName(ddRejectFileInfos.getFileName());
         }
-        dDRequestLOT.setReturnFileName(ddRejectFileInfos.getFileName());        
+        for (Entry<Long, String> entry : ddRejectFileInfos.getListInvoiceRefsRejected().entrySet()) {
+            DDRequestItem ddRequestItem = ddRequestItemService.findById(entry.getKey(), Arrays.asList("ddRequestLOT"));
+            if (ddRequestItem == null) {
+                throw new BusinessException("Cant find item by id:" + entry.getKey());
+            }
+            rejectPayment(ddRequestItem, entry.getValue());
+            ddRequestItem.getDdRequestLOT().setReturnStatusCode(ddRejectFileInfos.getReturnStatusCode());
+        }
     }
 }

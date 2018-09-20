@@ -63,14 +63,13 @@ import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
-import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.dwh.GdprService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.dwh.GdprService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.primefaces.model.SortOrder;
@@ -182,18 +181,6 @@ public class CustomerApi extends AccountEntityApi {
         customer.setSeller(seller);
         customer.setExternalRef1(postData.getExternalRef1());
         customer.setExternalRef2(postData.getExternalRef2());
-        customer.setVatNo(postData.getVatNo());
-        customer.setRegistrationNo(postData.getRegistrationNo());
-
-        if (postData.getContactInformation() != null) {
-            if (customer.getContactInformation() == null) {
-                customer.setContactInformation(new ContactInformation());
-            }
-            customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
-            customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
-            customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-            customer.getContactInformation().setFax(postData.getContactInformation().getFax());
-        }
 
         if (businessAccountModel != null) {
             customer.setBusinessAccountModel(businessAccountModel);
@@ -293,30 +280,6 @@ public class CustomerApi extends AccountEntityApi {
         }
         if (!StringUtils.isBlank(postData.getExternalRef2())) {
             customer.setExternalRef2(postData.getExternalRef2());
-        }
-        if (!StringUtils.isBlank(postData.getVatNo())) {
-            customer.setVatNo(postData.getVatNo());
-        }
-        if (!StringUtils.isBlank(postData.getRegistrationNo())) {
-            customer.setRegistrationNo(postData.getRegistrationNo());
-        }
-
-        if (postData.getContactInformation() != null) {
-            if (customer.getContactInformation() == null) {
-                customer.setContactInformation(new ContactInformation());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
-                customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getPhone())) {
-                customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
-                customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
-                customer.getContactInformation().setFax(postData.getContactInformation().getFax());
-            }
         }
 
         if (businessAccountModel != null) {
@@ -716,6 +679,12 @@ public class CustomerApi extends AccountEntityApi {
                 if (!StringUtils.isBlank(customerDto.getContactInformation().getFax())) {
                     existedCustomerDto.getContactInformation().setFax(customerDto.getContactInformation().getFax());
                 }
+            }
+            if (!StringUtils.isBlank(customerDto.getVatNo())) {
+            	existedCustomerDto.setVatNo(customerDto.getVatNo());
+            }
+            if (!StringUtils.isBlank(customerDto.getRegistrationNo())) {
+            	existedCustomerDto.setRegistrationNo(customerDto.getRegistrationNo());
             }
             accountHierarchyApi.populateNameAddress(existedCustomerDto, customerDto);
             if (!StringUtils.isBlank(customerDto.getCustomFields())) {

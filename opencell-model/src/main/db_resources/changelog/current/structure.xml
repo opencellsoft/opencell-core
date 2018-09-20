@@ -1812,5 +1812,10 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_item" />
          <sql><![CDATA[update ${db.schema.adapted}ar_ddrequest_builder set payment_level='AO']]></sql>                                 
     </changeSet>
+    
+    <changeSet id="2670_20180920 - Increase sequence length" author="EdwardPLegaspi">
+    	<modifyDataType columnName="rum_prefix" newDataType="varchar(255)" tableName="crm_provider"/>
+    	<modifyDataType columnName="cust_no_prefix" newDataType="varchar(255)" tableName="crm_provider"/>
+    </changeSet>
 
 </databaseChangeLog>

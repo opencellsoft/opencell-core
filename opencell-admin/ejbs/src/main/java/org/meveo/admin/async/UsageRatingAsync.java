@@ -62,9 +62,7 @@ public class UsageRatingAsync {
                 break;
             }
             try {
-                long startDate = System.currentTimeMillis();
                 unitUsageRatingJobBean.execute(result, id);
-                log.debug("Finished processing EDR {}: {}", id, (System.currentTimeMillis() - startDate));
 
             } catch (BusinessException be) {
                 unitUsageRatingJobBean.registerFailedEdr(result, id, be);
