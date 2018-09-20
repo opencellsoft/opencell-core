@@ -444,7 +444,9 @@ public interface PaymentRs extends IBaseRs {
      * @param authorizationMode  the authorizationMode
      * @param countryCode the country Code
      * @param skipAuthentication the skipAuthentication boolean
-     * @return the HostedCheckout Url
+     * @param gatewayPaymentName the gatewayPayment Name
+     * @param variant the variant Look
+     * @return the PaymentHostedCheckoutResponseDto
      */
     @GET
     @Path("/paymentGateway/getHostedCheckoutUrl")
@@ -456,7 +458,8 @@ public interface PaymentRs extends IBaseRs {
                                                                  @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
                                                                  @DefaultValue("US") @QueryParam("countryCode") String countryCode,
                                                                  @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
-                                                                 @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName
+                                                                 @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName,
+                                                                 @DefaultValue("101") @QueryParam("variant") String variant
     );
 
 

@@ -366,24 +366,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
             String redirectionUrl;
 
-            String locale = "en_GB";
-            String amount = "100";
-            String currencyCode = "EUR";
-            String authorizationMode = "FINAL_AUTHORIZATION";
-
             String merchantId = paramBeanFactory.getInstance().getProperty("ingenico.merchantId", "changeIt");
 
             HostedCheckoutSpecificInput hostedCheckoutSpecificInput = new HostedCheckoutSpecificInput();
-            hostedCheckoutSpecificInput.setLocale(locale);
-            hostedCheckoutSpecificInput.setVariant("101");
+            hostedCheckoutSpecificInput.setLocale(hostedCheckoutInput.getLocale());
+            hostedCheckoutSpecificInput.setVariant(hostedCheckoutInput.getVariant());
             hostedCheckoutSpecificInput.setReturnUrl(returnUrl);
 
             AmountOfMoney amountOfMoney = new AmountOfMoney();
-            amountOfMoney.setAmount(Long.valueOf(amount));
-            amountOfMoney.setCurrencyCode(currencyCode);
+            amountOfMoney.setAmount(Long.valueOf(hostedCheckoutInput.getAmount()));
+            amountOfMoney.setCurrencyCode(hostedCheckoutInput.getCurrencyCode());
 
             Address billingAddress = new Address();
-            billingAddress.setCountryCode("US");
+            billingAddress.setCountryCode(hostedCheckoutInput.getCountryCode());
 
             Customer customer = new Customer();
             customer.setBillingAddress(billingAddress);
@@ -397,11 +392,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             order.setReferences(orderReferences);
 
             CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
-            cardPaymentMethodSpecificInput.setAuthorizationMode(authorizationMode);
+            cardPaymentMethodSpecificInput.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
             cardPaymentMethodSpecificInput.setTokenize(true);
             cardPaymentMethodSpecificInput.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
             cardPaymentMethodSpecificInput.setIsRecurring(true);
-            cardPaymentMethodSpecificInput.setReturnUrl("https://3f2943ee.ngrok.io/opencell/");
+            cardPaymentMethodSpecificInput.setReturnUrl(hostedCheckoutInput.getReturnUrl());
 
             CreateHostedCheckoutRequest body = new CreateHostedCheckoutRequest();
             body.setHostedCheckoutSpecificInput(hostedCheckoutSpecificInput);

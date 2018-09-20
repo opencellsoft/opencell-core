@@ -12,6 +12,7 @@ public class HostedCheckoutInput {
     String customerAccountCode;
     long customerAccountId;
     String returnUrl;
+    String variant;
     GatewayPaymentNamesEnum gatewayPaymentName;
 
     public GatewayPaymentNamesEnum getGatewayPaymentName() {
@@ -92,5 +93,13 @@ public class HostedCheckoutInput {
 
     public void setCustomerAccountId(long customerAccountId) {
         this.customerAccountId = customerAccountId;
+    }
+
+    public String getVariant() {
+        return variant;
+    }
+
+    public void setVariant(String variant) {
+        this.variant = variant;
     }
 }

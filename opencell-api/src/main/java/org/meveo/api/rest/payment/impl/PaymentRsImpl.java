@@ -540,7 +540,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl, String locale, String amount, String currencyCode, String authorizationMode, String countryCode, Boolean skipAuthentication, String gatewayPaymentName) {
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl, String locale, String amount, String currencyCode, String authorizationMode, String countryCode, Boolean skipAuthentication, String gatewayPaymentName, String variant) {
 
         String paymentUrl = "";
 
@@ -554,6 +554,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         hostedCheckoutInput.setLocale(locale);
         hostedCheckoutInput.setSkipAuthentication(skipAuthentication);
         hostedCheckoutInput.setGatewayPaymentName(GatewayPaymentNamesEnum.valueOf(gatewayPaymentName));
+        hostedCheckoutInput.setVariant(variant);
 
         try {
             paymentUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
