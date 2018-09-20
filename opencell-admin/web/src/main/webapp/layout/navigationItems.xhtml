@@ -278,8 +278,6 @@
 			value="#{messages['menu.ddrequestLotOp']}" />
 		<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
 			value="#{messages['menu.ddrequestLot']}" />
-        <!--<p:menuitem id="hostedCheckout" outcome="hostedCheckout"-->
-                    <!--value="#{messages['menu.hostedCheckout']}" />-->
 	</p:submenu>
 	
 	<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">

@@ -1180,12 +1180,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		</to-view-id>
 		<redirect />
 	</navigation-case>
-	<!--<navigation-case>-->
-		<!--<from-outcome>hostedCheckout</from-outcome>-->
-		<!--<to-view-id>/pages/payments/paymentGateways/hostedCheckout.xhtml-->
-		<!--</to-view-id>-->
-		<!--<redirect />-->
-	<!--</navigation-case>-->
 	<navigation-case>
 		<from-outcome>ddrequestLotOps</from-outcome>
 		<to-view-id>/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml
