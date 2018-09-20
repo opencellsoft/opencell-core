@@ -22,7 +22,11 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
@@ -507,7 +511,10 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         return result;
     }
 
-
+    /********************************************/
+    /**** Payment Schedules                 ****/
+    /******************************************/
+    
     @Override
     public ActionStatus createOrUpdatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -540,6 +547,70 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
             result.setMessage("" + paymentScheduleApi.updatePaymentScheduleTemplate(paymentScheduleTemplateDto));
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus removePaymentScheduleTemplate(String paymentScheduleTemplateCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.removePaymentScheduleTemplate(paymentScheduleTemplateCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(String paymentScheduleTemplateCode) {
+        PaymentScheduleTemplateResponseDto result = new PaymentScheduleTemplateResponseDto();
+        try {
+            result.setPaymentScheduleTemplateDto(paymentScheduleApi.findPaymentScheduleTemplate(paymentScheduleTemplateCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(PagingAndFiltering pagingAndFiltering) {
+        PaymentScheduleTemplatesDto result = new PaymentScheduleTemplatesDto();
+        try {
+            result = paymentScheduleApi.listPaymentScheduleTemplate(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.updatePaymentScheduleInstance(paymentScheduleInstanceDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering) {
+        PaymentScheduleInstancesDto result = new PaymentScheduleInstancesDto();
+        try {
+            result = paymentScheduleApi.listPaymentScheduleInstance(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

@@ -21,12 +21,9 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -36,7 +33,6 @@ import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -51,9 +47,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RecordedInvoiceCatAgregate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
-import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
@@ -191,63 +185,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
     }
 
-    /**
-     * @param expression EL expression
-     * @param invoice invoice
-     * @param billingRun billingRun
-     * @return evaluated expression
-     * @throws BusinessException business exception
-     */
-    public String evaluateStringExpression(String expression, Invoice invoice, BillingRun billingRun) throws BusinessException {
-        String result = null;
-        if (StringUtils.isBlank(expression)) {
-            return result;
-        }
-
-        Map<Object, Object> userMap = constructElContext(expression, invoice, billingRun);
-
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
-        }
-        return result;
-    }
-    
-    /**
-     * @param expression EL expression
-     * @param invoice invoice
-     * @param billingRun billingRun
-     * @return userMap userMap
-     */
-    private Map<Object, Object> constructElContext(String expression, Invoice invoice, BillingRun billingRun) {
-
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        BillingAccount billingAccount = invoice.getBillingAccount();
-
-        if (expression.indexOf("invoice") >= 0) {
-            userMap.put("invoice", invoice);
-        }
-        if (expression.indexOf("br") >= 0) {
-            userMap.put("br", billingRun);
-        }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
-        }
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
-        }
-        if (expression.indexOf("c") >= 0) {
-            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
-        }
-        if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
-        }
-
-        return userMap;
-    }
-
+   
     /**
      * @param invoice invoice used to generate
      * @throws InvoiceExistException invoice exist exception
@@ -279,35 +217,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             }
         }
 
-        OCCTemplate occTemplate = null;
-        if (invoice.getNetToPay().compareTo(BigDecimal.ZERO) < 0) {
-            String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateNegativeCodeEl(), invoice, invoice.getBillingRun());
-            if (!StringUtils.isBlank(occTemplateCode)) {
-                occTemplate = occTemplateService.findByCode(occTemplateCode);
-            }
-
-            if(occTemplate == null) {
-                occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
-            }
-
-            if (occTemplate == null) {
-                throw new ImportInvoiceException("Cant find negative OccTemplate");
-            }
-        } else {
-            String occTemplateCode = evaluateStringExpression(invoice.getInvoiceType().getOccTemplateCodeEl(), invoice, invoice.getBillingRun());
-            if (!StringUtils.isBlank(occTemplateCode)) {
-                occTemplate = occTemplateService.findByCode(occTemplateCode);
-            }
-
-            if(occTemplate == null) {
-                occTemplate = invoice.getInvoiceType().getOccTemplate();
-            }
-            
-            if (occTemplate == null) {
-                throw new ImportInvoiceException("Cant find OccTemplate");
-            }
-        }
-
+        OCCTemplate occTemplate = occTemplateService.getOccTemplateFromInvoiceType(invoice.getNetToPay(), invoice.getInvoiceType(), invoice, invoice.getBillingRun());
+      
         RecordedInvoice recordedInvoice = createRecordedInvoice(amountWithoutTaxForRecordedIncoice, amountWithTaxForRecordedIncoice, amountTaxForRecordedIncoice,
             invoice.getNetToPay(), invoice, occTemplate, true);
         create(recordedInvoice);
@@ -420,5 +331,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 
         return recordedInvoice;
+    }
+
+    /**
+     * @return
+     */
+    public List<Long> queryInvoiceIdsForPS() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

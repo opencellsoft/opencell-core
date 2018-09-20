@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.payments.PaymentScheduleTemplate;
 
 /**
  * The Class PaymentScheduleTemplateDto.
@@ -40,43 +41,70 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-   
     /** The start date. */
     private Date startDate;
-    
+
     /** The amount. */
     private BigDecimal amount;
- 
+
     /** The calendar code. */
     private String calendarCode;
-        
-    /** The number payments. */
-    private Integer numberPayments;
-        
+
     /** The payment label. */
     private String paymentLabel;
-       
+
     /** The due date days. */
     private Integer dueDateDays;
-       
+
     /** The service template code. */
     private String serviceTemplateCode;
-       
+
     /** The advance payment invoice type code. */
     private String advancePaymentInvoiceTypeCode;
-        
+
     /** The generate advance payment invoice. */
     private Boolean generateAdvancePaymentInvoice;
-    
-   
+
     /** The do payment. */
     private Boolean doPayment;
-       
+
     /** The advance payment invoice sub category code. */
     private String advancePaymentInvoiceSubCategoryCode;
-   
+
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    
+    /**
+     * Instantiates a new payment schedule template dto.
+     */
+    public PaymentScheduleTemplateDto() {
+        
+    }
+
+    /**
+     * Instantiates a new payment schedule template dto.
+     *
+     * @param paymentScheduleTemplate the payment schedule template
+     * @param customFields the custom fields
+     */
+    public PaymentScheduleTemplateDto(PaymentScheduleTemplate paymentScheduleTemplate, CustomFieldsDto customFields) {
+        this.advancePaymentInvoiceSubCategoryCode = paymentScheduleTemplate.getAdvancePaymentInvoiceSubCategory() == null ? null
+                : paymentScheduleTemplate.getAdvancePaymentInvoiceSubCategory().getCode();
+        this.advancePaymentInvoiceTypeCode = paymentScheduleTemplate.getAdvancePaymentInvoiceType() == null ? null
+                : paymentScheduleTemplate.getAdvancePaymentInvoiceType().getCode();
+        this.calendarCode = paymentScheduleTemplate.getCalendar() == null ? null : paymentScheduleTemplate.getCalendar().getCode();
+        this.code = paymentScheduleTemplate.getCode();
+        this.description = paymentScheduleTemplate.getDescription();
+        this.amount = paymentScheduleTemplate.getAmount();
+        this.dueDateDays = paymentScheduleTemplate.getDueDateDays();
+        this.id = paymentScheduleTemplate.getId();
+        this.paymentLabel = paymentScheduleTemplate.getPaymentLabel();
+        this.serviceTemplateCode = paymentScheduleTemplate.getServiceTemplate().getCode();
+        this.doPayment = paymentScheduleTemplate.isDoPayment();
+        this.generateAdvancePaymentInvoice = paymentScheduleTemplate.isGenerateAdvancePaymentInvoice();
+        this.customFields = customFields;
+    }
 
     /**
      * Gets the start date.
@@ -114,25 +142,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.amount = amount;
     }
 
-    
-
-    /**
-     * Gets the number payments.
-     *
-     * @return the numberPayments
-     */
-    public Integer getNumberPayments() {
-        return numberPayments;
-    }
-
-    /**
-     * Sets the number payments.
-     *
-     * @param numberPayments the numberPayments to set
-     */
-    public void setNumberPayments(Integer numberPayments) {
-        this.numberPayments = numberPayments;
-    }
+   
 
     /**
      * Gets the payment label.

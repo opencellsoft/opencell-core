@@ -1,5 +1,7 @@
 package org.meveo.api.rest.payment;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -24,7 +26,11 @@ import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -346,6 +352,11 @@ public interface PaymentRs extends IBaseRs {
     @Path("/history/list")
     PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering);
     
+    
+    /************************************************************************************************/
+    /****                           Payment Schedules                                            ****/
+    /************************************************************************************************/
+    
     /**
      * Create or update payment Schedules template.
      * 
@@ -364,5 +375,99 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Path("/paymentScheduleTemplate")
     public ActionStatus createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    
+    /**
+     * Create  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleTemplate")
+    public ActionStatus updatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
 
+    /**
+     * remove  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateCode payment Schedule Template Code  to remove
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/paymentScheduleTemplate")
+    public ActionStatus removePaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode") String paymentScheduleTemplateCode);
+    
+    /**
+     * find  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateCode payment Schedule Template Code  to find
+     * @return Request processing status
+     */
+    @GET
+    @Path("/paymentScheduleTemplate")
+    public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode")  String paymentScheduleTemplateCode);
+      
+    /**
+     * List  PaymentScheduleTemplate matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An paymentScheduleTemplate dto list
+     */
+    @POST
+    @Path("/paymentScheduleTemplate/list")
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List  PaymentScheduleTemplate matching a given criteria
+     * 
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return An paymentScheduleTemplate dto list
+     */
+    @GET
+    @Path("/paymentScheduleTemplate/list")
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    
+    /**
+     * Update  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleInstance")
+    public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * List  PaymentScheduleInstance matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An PaymentScheduleInstance dto list
+     */
+    @POST
+    @Path("/paymentScheduleInstance/list")
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List  paymentScheduleInstance matching a given criteria
+     * 
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return An paymentScheduleInstance dto list
+     */
+    @GET
+    @Path("/paymentScheduleInstance/list")
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    
 }

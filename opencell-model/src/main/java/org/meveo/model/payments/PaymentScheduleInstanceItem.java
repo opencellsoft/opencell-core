@@ -3,6 +3,7 @@
  */
 package org.meveo.model.payments;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.AttributeOverride;
@@ -37,9 +38,11 @@ import org.meveo.model.billing.Invoice;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_schedule_inst_item_seq"), })
 @NamedQueries({
-    @NamedQuery(name = "PaymentScheduleInstanceItem.listItemsToProcess", query = "Select psii  from PaymentScheduleInstanceItem as psii where psii.invoice is null and  psii.accountOperationPS is null and psii.paymentScheduleInstance.status ='IN_PROGRESS' and psii.requestPaymentDate <=:requestPaymentDateIN  "),       
-    @NamedQuery(name = "PaymentScheduleInstanceItem.deleteItemsToProcess", query = "Delete from PaymentScheduleInstanceItem as psii where psii.invoice is null and  psii.accountOperationPS is null and psii.paymentScheduleInstance.status ='UPDATED' ")   
-})
+        @NamedQuery(name = "PaymentScheduleInstanceItem.listItemsToProcess", query = "Select psii  from PaymentScheduleInstanceItem as psii where psii.invoice is null and  psii.recordedInvoice is null and psii.paymentScheduleInstance.status ='IN_PROGRESS' and psii.requestPaymentDate <=:requestPaymentDateIN  "),
+        @NamedQuery(name = "PaymentScheduleInstanceItem.countPaidItems", query = "Select count(*) from PaymentScheduleInstanceItem as psii where   psii.recordedInvoice is not null and psii.recordedInvoice.matchingStatus ='L'and psii.paymentScheduleInstance.serviceInstance.id=:serviceInstanceIdIN "),
+        @NamedQuery(name = "PaymentScheduleInstanceItem.countIncomingItems", query = "Select count(*) from PaymentScheduleInstanceItem as psii where  ( psii.recordedInvoice is null or psii.recordedInvoice.matchingStatus ='O') and psii.paymentScheduleInstance.serviceInstance.id=:serviceInstanceIdIN and psii.paymentScheduleInstance.status ='IN_PROGRESS'"),
+        @NamedQuery(name = "PaymentScheduleInstanceItem.amountPaidItems", query = "Select sum(psii.paymentScheduleInstance.amount) from PaymentScheduleInstanceItem as psii where   psii.recordedInvoice is not null and psii.recordedInvoice.matchingStatus ='L'and psii.paymentScheduleInstance.serviceInstance.id=:serviceInstanceIdIN "),
+        @NamedQuery(name = "PaymentScheduleInstanceItem.amountIncomingItems", query = "Select sum(psii.paymentScheduleInstance.amount) from PaymentScheduleInstanceItem as psii where  ( psii.recordedInvoice is null or psii.recordedInvoice.matchingStatus ='O') and psii.paymentScheduleInstance.serviceInstance.id=:serviceInstanceIdIN and psii.paymentScheduleInstance.status ='IN_PROGRESS'")})
 public class PaymentScheduleInstanceItem extends EnableEntity {
 
     /** The Constant serialVersionUID. */
@@ -61,17 +64,17 @@ public class PaymentScheduleInstanceItem extends EnableEntity {
     private Date requestPaymentDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ao_ps_id")   
-    private AccountOperationPS accountOperationPS;
-    
+    @JoinColumn(name = "ao_ps_id")
+    private RecordedInvoice recordedInvoice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "is_last", nullable = false)
     @NotNull
-    private  boolean last;
+    private boolean last;
 
     /**
      * @return the paymentScheduleInstance
@@ -116,17 +119,17 @@ public class PaymentScheduleInstanceItem extends EnableEntity {
     }
 
     /**
-     * @return the accountOperationPS
+     * @return the recordedInvoice
      */
-    public AccountOperationPS getAccountOperationPS() {
-        return accountOperationPS;
+    public RecordedInvoice getRecordedInvoice() {
+        return recordedInvoice;
     }
 
     /**
-     * @param accountOperationPS the accountOperationPS to set
+     * @param recordedInvoice the recordedInvoice to set
      */
-    public void setAccountOperationPS(AccountOperationPS accountOperationPS) {
-        this.accountOperationPS = accountOperationPS;
+    public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
+        this.recordedInvoice = recordedInvoice;
     }
 
     /**
@@ -156,7 +159,13 @@ public class PaymentScheduleInstanceItem extends EnableEntity {
     public void setLast(boolean last) {
         this.last = last;
     }
-    
-    
+
+    public boolean isPaid() {
+        if (getRecordedInvoice() != null && getRecordedInvoice().getUnMatchingAmount() != null && getRecordedInvoice().getUnMatchingAmount().compareTo(BigDecimal.ZERO) == 0) {
+            return true;
+        }
+        return false;
+
+    }
 
 }

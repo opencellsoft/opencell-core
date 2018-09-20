@@ -19,13 +19,19 @@
 package org.meveo.api.dto.payment;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.model.payments.PaymentScheduleInstance;
+import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
 
 /**
@@ -41,8 +47,12 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     private static final long serialVersionUID = 1L;
 
    
+   
     /** The end date. */
     private Date endDate;
+    
+    /** The start date. */
+    private Date startDate;
     
     /** The amount. */
     private BigDecimal amount;
@@ -50,17 +60,66 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     /** The calendar code. */
     private String calendarCode;
         
+    /** The status. */
     private PaymentScheduleStatusEnum status;
     
-    private String paymentScheduleTemplate;
+    /** The status date. */
+    private Date statusDate;
+    
+    /** The payment schedule template code. */
+    private String paymentScheduleTemplateCode;
              
     /** The due date days. */
     private Integer dueDateDays;
     
+    /** The service instance code. */
     private String serviceInstanceCode;
+    
+    /** The subscription code. */
     private String subscriptionCode;
+    
+    private PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto;
+    
+    @XmlElementWrapper
+    @XmlElement(name = "item")
+    private List<PaymentScheduleInstanceItemDto> items = new ArrayList<PaymentScheduleInstanceItemDto>();
+    
+    
+    /**
+     * Instantiates a new payment schedule instance dto.
+     */
+    public PaymentScheduleInstanceDto() {
+        
+    }
+    
+    /**
+     * Instantiates a new payment schedule instance dto.
+     *
+     * @param paymentScheduleInstance the payment schedule instance
+     */
+    public  PaymentScheduleInstanceDto(PaymentScheduleInstance paymentScheduleInstance) {
+        this.id = paymentScheduleInstance.getId();
+        this.amount = paymentScheduleInstance.getAmount();
+        this.calendarCode = paymentScheduleInstance.getCalendar().getCode();
+        this.code = paymentScheduleInstance.getCode();
+        this.description = paymentScheduleInstance.getDescription();
+        this.dueDateDays = paymentScheduleInstance.getDueDateDays();
+        this.endDate = paymentScheduleInstance.getEndDate();
+        this.startDate = paymentScheduleInstance.getStartDate();
+        this.paymentScheduleTemplateCode = paymentScheduleInstance.getPaymentScheduleTemplate().getCode();
+        this.statusDate = paymentScheduleInstance.getStatusDate();
+        this.status = paymentScheduleInstance.getStatus();
+        this.serviceInstanceCode = paymentScheduleInstance.getServiceInstance().getCode();
+        this.subscriptionCode = paymentScheduleInstance.getServiceInstance().getSubscription().getCode();
+        for(PaymentScheduleInstanceItem item  : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
+          this.items.add(new PaymentScheduleInstanceItemDto(item) );
+        }
+         
+    }
 
     /**
+     * Gets the end date.
+     *
      * @return the endDate
      */
     public Date getEndDate() {
@@ -68,6 +127,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the end date.
+     *
      * @param endDate the endDate to set
      */
     public void setEndDate(Date endDate) {
@@ -75,6 +136,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the amount.
+     *
      * @return the amount
      */
     public BigDecimal getAmount() {
@@ -82,6 +145,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the amount.
+     *
      * @param amount the amount to set
      */
     public void setAmount(BigDecimal amount) {
@@ -89,6 +154,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the calendar code.
+     *
      * @return the calendarCode
      */
     public String getCalendarCode() {
@@ -96,6 +163,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the calendar code.
+     *
      * @param calendarCode the calendarCode to set
      */
     public void setCalendarCode(String calendarCode) {
@@ -103,6 +172,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the status.
+     *
      * @return the status
      */
     public PaymentScheduleStatusEnum getStatus() {
@@ -110,27 +181,19 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the status.
+     *
      * @param status the status to set
      */
     public void setStatus(PaymentScheduleStatusEnum status) {
         this.status = status;
     }
 
-    /**
-     * @return the paymentScheduleTemplate
-     */
-    public String getPaymentScheduleTemplate() {
-        return paymentScheduleTemplate;
-    }
+   
 
     /**
-     * @param paymentScheduleTemplate the paymentScheduleTemplate to set
-     */
-    public void setPaymentScheduleTemplate(String paymentScheduleTemplate) {
-        this.paymentScheduleTemplate = paymentScheduleTemplate;
-    }
-
-    /**
+     * Gets the due date days.
+     *
      * @return the dueDateDays
      */
     public Integer getDueDateDays() {
@@ -138,6 +201,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the due date days.
+     *
      * @param dueDateDays the dueDateDays to set
      */
     public void setDueDateDays(Integer dueDateDays) {
@@ -145,6 +210,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the service instance code.
+     *
      * @return the serviceInstanceCode
      */
     public String getServiceInstanceCode() {
@@ -152,6 +219,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the service instance code.
+     *
      * @param serviceInstanceCode the serviceInstanceCode to set
      */
     public void setServiceInstanceCode(String serviceInstanceCode) {
@@ -159,6 +228,8 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the subscription code.
+     *
      * @return the subscriptionCode
      */
     public String getSubscriptionCode() {
@@ -166,10 +237,94 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the subscription code.
+     *
      * @param subscriptionCode the subscriptionCode to set
      */
     public void setSubscriptionCode(String subscriptionCode) {
         this.subscriptionCode = subscriptionCode;
+    }
+
+    /**
+     * Gets the start date.
+     *
+     * @return the startDate
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Sets the start date.
+     *
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Gets the status date.
+     *
+     * @return the statusDate
+     */
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    /**
+     * Sets the status date.
+     *
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    /**
+     * Gets the payment schedule template code.
+     *
+     * @return the paymentScheduleTemplateCode
+     */
+    public String getPaymentScheduleTemplateCode() {
+        return paymentScheduleTemplateCode;
+    }
+
+    /**
+     * Sets the payment schedule template code.
+     *
+     * @param paymentScheduleTemplateCode the paymentScheduleTemplateCode to set
+     */
+    public void setPaymentScheduleTemplateCode(String paymentScheduleTemplateCode) {
+        this.paymentScheduleTemplateCode = paymentScheduleTemplateCode;
+    }
+
+    /**
+     * @return the items
+     */
+    public List<PaymentScheduleInstanceItemDto> getItems() {
+        return items;
+    }
+
+    /**
+     * @param items the items to set
+     */
+    public void setItems(List<PaymentScheduleInstanceItemDto> items) {
+        this.items = items;
+    }
+
+    /**
+     * @return the paymentScheduleInstanceBalanceDto
+     */
+    public PaymentScheduleInstanceBalanceDto getPaymentScheduleInstanceBalanceDto() {
+        return paymentScheduleInstanceBalanceDto;
+    }
+
+    /**
+     * @param paymentScheduleInstanceBalanceDto the paymentScheduleInstanceBalanceDto to set
+     */
+    public void setPaymentScheduleInstanceBalanceDto(PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto) {
+        this.paymentScheduleInstanceBalanceDto = paymentScheduleInstanceBalanceDto;
     }
     
     

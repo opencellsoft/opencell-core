@@ -8,7 +8,7 @@ package org.meveo.model.payments;
  *
  */
 public enum PaymentScheduleStatusEnum {
-    NEW, IN_PROGRESS, OBSOLETE, DONE, TERMINATED, CANCELLED;
+    IN_PROGRESS, OBSOLETE, DONE, CANCELLED;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

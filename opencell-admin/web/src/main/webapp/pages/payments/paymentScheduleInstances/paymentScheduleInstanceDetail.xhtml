@@ -33,7 +33,7 @@
 					<hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true"/>
 					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />						
 					
-					<hftl:formField  id="calendarId" label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar" childField="code"   />
+					<hftl:formField  id="calendarId" label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar"  valueLabelField="code" listBean="#{calendarBean}" componentWidth="10"  />
 					<hftl:formField label="#{messages['paymentScheduleInstance.serviceInstance']}"  field="serviceInstance" childField="code"  />					
 					<hftl:formField label="#{messages['paymentScheduleInstance.startDate']}" field="startDate" required="true"/>
 					<hftl:formField label="#{messages['paymentScheduleInstance.endDate']}" field="endDate" required="true"/>
@@ -46,7 +46,7 @@
 							<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="paymentScheduleInstance.amount" />
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.dueDate']}" field="dueDate" isDate="true"/>
 							<hftl:column label="#{messages['paymentScheduleInstanceItem.requestPaymentDate']}" field="requestPaymentDate" isDate="true"/>
-							<hftl:column label="#{messages['paymentScheduleInstanceItem.paymentStatus']}" field="last" isMessage="true"/>														
+							<hftl:column label="#{messages['paymentScheduleInstanceItem.paymentStatus']}" field="paid" isMessage="true"/>														
 			        </hftl:dataList>										
 				</p:tab>				
 			</p:tabView>								
