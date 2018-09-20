@@ -309,8 +309,13 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
 
     private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
+        ParamBean paramBean = paramBeanFactory.getInstance();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
+        cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        cardPaymentMethodSpecificInput.setIsRecurring(true);
+        cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
         return cardPaymentMethodSpecificInput;
     }
 

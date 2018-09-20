@@ -4,7 +4,7 @@
                 xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
     <ui:define name="body">
         <h:form prependId="false">
-            <p:commandButton id="jsf-submit" value="#{messages['paymentGateway.registerPayment']}" action="#{paymentGatewayBean.getIngenicoUrl('WS_FULL_150_CustomerD','https://3f2943ee.ngrok.io/opencell/')}" update="afterLoad" oncomplete="afterLoad()" style="display:none"/>
+            <p:commandButton id="jsf-submit" value="#{messages['paymentGateway.registerPayment']}" action="#{paymentGatewayBean.getIngenicoUrl('DARTY-C123','https://3f2943ee.ngrok.io/opencell/')}" update="afterLoad" oncomplete="afterLoad()" style="display:none"/>
         </h:form>
 
         <form id="walletTarget" method="post" action="">

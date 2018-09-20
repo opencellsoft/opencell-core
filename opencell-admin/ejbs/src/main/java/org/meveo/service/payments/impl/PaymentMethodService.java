@@ -86,6 +86,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         boolean result = false;
         if (paymentMethod instanceof CardPaymentMethod) {
             CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
+            if ((cardPayment == null) || (cardPayment.getCustomerAccount() == null)) {
+                result = true;
+            }
             long nbrOfCardCustomerAccount = (long)getEntityManager().createNamedQuery("PaymentMethod.getNumberOfCardCustomerAccount")
                     .setParameter("customerAccountId", cardPayment.getCustomerAccount().getId())
                     .setParameter("monthExpiration", cardPayment.getMonthExpiration())
