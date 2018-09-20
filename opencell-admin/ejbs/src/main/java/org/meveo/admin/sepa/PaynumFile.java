@@ -93,8 +93,8 @@ public class PaynumFile implements DDRequestBuilderInterface {
                 String codeFacture = fields[3];
                 String causeRejet = fields[12];
 
-                ddRejectFileInfos.setDdRequestLotId(ddRequestLotId);
-                ddRejectFileInfos.getListInvoiceRefsRejected().put(codeFacture, causeRejet);
+                ddRejectFileInfos.setDdRequestLotId(new Long(ddRequestLotId));
+                ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(codeFacture), causeRejet);
             }
         } catch (Exception e) {            
             throw new BusinessException(e.getMessage());

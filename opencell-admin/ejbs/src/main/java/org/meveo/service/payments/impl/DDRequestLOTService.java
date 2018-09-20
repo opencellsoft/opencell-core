@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -378,7 +379,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
     public void rejectPayment(DDRequestItem ddRequestItem, String rejectCause) throws BusinessException {
 
         AutomatedPayment automatedPayment = ddRequestItem.getAutomatedPayment();
-        matchingCodeService.unmatching(automatedPayment.getMatchingAmounts().get(0).getMatchingCode().getId());
+        if (automatedPayment.getMatchingAmounts() != null && !automatedPayment.getMatchingAmounts().isEmpty()) {
+            matchingCodeService.unmatching(automatedPayment.getMatchingAmounts().get(0).getMatchingCode().getId());
+        }
 
         automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
         automatedPayment.setComment(rejectCause);
@@ -402,7 +405,8 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
         if (ddRejectFileInfos.isTheDDRequestFileWasRejected()) {
             // original message rejected at protocol level control
-            for (DDRequestItem ddRequestItem : dDRequestLOT.getDdrequestItems()) {
+            CopyOnWriteArrayList<DDRequestItem> items = new CopyOnWriteArrayList<>(dDRequestLOT.getDdrequestItems());
+            for (DDRequestItem ddRequestItem : items) {
                 if (!ddRequestItem.hasError()) {
                     rejectPayment(ddRequestItem, "RJCT");
                 }

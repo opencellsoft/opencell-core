@@ -137,7 +137,7 @@ public class SepaFile implements DDRequestBuilderInterface {
             }
             String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
 
-            ddRejectFileInfos.setDdRequestLotId(dDRequestLOTrefSplited[1]);
+            ddRejectFileInfos.setDdRequestLotId(new Long(dDRequestLOTrefSplited[1]));
 
             if (orgnlGrpInfAndSts.getGrpSts() != null && "RJCT".equals(orgnlGrpInfAndSts.getGrpSts())) {
                 ddRejectFileInfos.setTheDDRequestFileWasRejected(true);
@@ -147,7 +147,7 @@ public class SepaFile implements DDRequestBuilderInterface {
             OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
             for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
                 if ("RJCT".equals(txInfAndSts.getTxSts())) {
-                    ddRejectFileInfos.getListInvoiceRefsRejected().put(txInfAndSts.getOrgnlEndToEndId(), "RJCT");
+                    ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), "RJCT");
                 }
             }
 
