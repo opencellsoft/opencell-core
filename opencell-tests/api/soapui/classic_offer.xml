@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -35,7 +35,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="21c1fb0e-ed84-4133-9d3e-82094b378947" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6e828e4a-c533-4573-a2fe-77c2898a80c9">
@@ -344,7 +344,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" id="8af58aca-6143-49ed-952e-8ab3b34bf0d4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint>
@@ -584,7 +584,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" id="9b2cc058-9937-4389-9d45-dcf284fa0358" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/SubscriptionWs</con:endpoint>
       <con:endpoint>http://jpv2.I.opencellsoft.com/meveo/SubscriptionWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
@@ -625,7 +625,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/WalletWs?wsdl" id="f799ad81-8b34-4625-831f-f4f653bea480" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/WalletWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint>
     </con:endpoints>
@@ -677,7 +677,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/MediationWs?wsdl" id="6bd4d161-6e4d-493f-9d33-8b526e6c16a5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/MediationWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/MediationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint>
@@ -703,7 +703,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" id="0f234374-b4df-4d6a-94fc-bcb97691a681" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://integration.i.opencellsoft.com/meveo/SettingsWs</con:endpoint>
@@ -1094,7 +1094,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/JobWs?wsdl" id="0eb58c11-ce7f-44a5-bd1e-0a6aec7a9961" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/JobWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint>
@@ -1133,7 +1133,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" id="f0f7e27e-a1df-4dc1-a0fd-16ad7ef97f79" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/NotificationWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/NotificationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/NotificationWs</con:endpoint>
@@ -1195,7 +1195,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="38c203bc-70bb-4e60-b187-baa76b3b8359" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint>
     </con:endpoints>
@@ -1226,7 +1226,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="5e672655-5f83-45bd-a4ef-544fb2f1e1c1" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b3f663b5-e096-4fc4-be9e-4d2d2ed16a61" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1250,7 +1250,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="7ea337bf-5239-40f7-8296-1545c8dc3097" wsaVersion="NONE" name="InvoicingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoicingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoicingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/InvoicingWs</con:endpoint>
     </con:endpoints>
     <con:operation id="01ca2ff0-e093-45ee-9558-473341191c5e" isOneWay="false" action="" name="cancelBillingRun" bindingOperationName="cancelBillingRun" type="Request-Response" outputName="cancelBillingRunResponse" inputName="cancelBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1280,7 +1280,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="ba5f98f2-b753-4f34-baf7-764ad91bb527" wsaVersion="NONE" name="SuperAdminSettingsWsSoapBinding" type="wsdl" bindingName="{http://superAdmin.ws.api.meveo.org/}SuperAdminSettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SuperAdminSettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/SuperAdminSettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation id="d31e2100-dbad-40f6-97ba-a21be91f3f06" isOneWay="false" action="" name="createCountry" bindingOperationName="createCountry" type="Request-Response" outputName="createCountryResponse" inputName="createCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1346,7 +1346,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0da7e377-c1a0-48f7-99a9-e1e9247de8ba" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://keepcool.i.opencellsoft.com/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="83d88b58-fa89-4d42-a074-14f88e26b240" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1421,7 +1421,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="46c7a3e2-1f7a-4eba-82d6-658a290b9a92" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://127.0.0.1:8080/meveo/ModuleWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint>
     </con:endpoints>
@@ -1461,11 +1461,11 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="cbea8ecf-a6c3-4d0d-a813-222e3d4af5ee" wadlVersion="http://wadl.dev.java.net/2009/02" name="Classic offer" type="rest" definitionUrl="hierar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints/>
+    <con:endpoints/>
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7959a799-a204-4db3-a820-bb959de54cab" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="5508eae1-6cce-432e-bff7-c93e068518d9">
@@ -15235,7 +15235,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="2f007db2-1b88-4bd6-896c-dd70e703831d" wsaVersion="NONE" name="AccountingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/AccountingWs</con:endpoint>
     </con:endpoints>
     <con:operation id="e44c750e-c3b0-40d6-a981-4999da2f74bf" isOneWay="false" action="" name="createAccountingCode" bindingOperationName="createAccountingCode" type="Request-Response" outputName="createAccountingCodeResponse" inputName="createAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -15250,7 +15250,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="35dcee6a-aeeb-48f6-bddc-b783e44b993f" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
     </con:endpoints>
     <con:operation id="d203de4d-8e9f-4b9f-8b95-2468dcb41c09" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -15271,7 +15271,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="e16cadb0-a036-4268-9e30-ac550f878c27" wsaVersion="NONE" name="PaymentWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}PaymentWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://127.0.0.1:8080/opencell/PaymentWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/PaymentWs</con:endpoint>
       <con:endpoint>http://localhost:8080/opencell/PaymentWs</con:endpoint>
     </con:endpoints>
@@ -15365,7 +15365,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="16d5daa1-b2c5-49a8-8fa5-2ba9f7016982" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://${" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://${</con:endpoint>
     </con:endpoints>
     <con:resource name="" path="" id="8db38344-9a09-490d-b199-c2e4a755454b">
@@ -54434,7 +54434,11 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
             <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54472,7 +54476,11 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1aa741c6-5935-4c05-9753-24ab5b8d9538"/>
             <con:assertion type="Simple Contains" id="2a7a2018-96da-4bf5-aa78-fc718da5135c" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54510,7 +54518,11 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1aa741c6-5935-4c05-9753-24ab5b8d9538"/>
             <con:assertion type="Simple Contains" id="2a7a2018-96da-4bf5-aa78-fc718da5135c" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54550,7 +54562,11 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="4fcad515-e4d3-40c2-aad2-5202b9773546"/>
             <con:assertion type="Simple Contains" id="6cc24052-74b2-4dad-b34e-44e744ac15b2" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -54584,7 +54600,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="c003fdb3-7fb4-424e-b7d1-342d46f90023" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="c003fdb3-7fb4-424e-b7d1-342d46f90023" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54616,7 +54639,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="1523f787-3ee4-4a64-b365-6ef6b7dd00d6" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="1523f787-3ee4-4a64-b365-6ef6b7dd00d6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54648,7 +54678,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="44ce5ea3-e47d-48ff-ac6d-b3d42f45aaa0" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="44ce5ea3-e47d-48ff-ac6d-b3d42f45aaa0" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54680,7 +54717,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="afe3114c-7b12-4849-9c52-6613f3638f59" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="afe3114c-7b12-4849-9c52-6613f3638f59" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54712,7 +54756,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="297bd9c0-69b3-447c-99e4-c139594934ac" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="297bd9c0-69b3-447c-99e4-c139594934ac" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54744,7 +54795,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="d76c242e-cacd-4548-8aa6-d581d49c90e0" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="d76c242e-cacd-4548-8aa6-d581d49c90e0" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54776,7 +54834,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="e464406a-2d3b-467f-b6b8-cd92d9161478" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="e464406a-2d3b-467f-b6b8-cd92d9161478" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54808,7 +54873,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="69e671b8-d5c5-4ac9-8a14-eab9811bfea9" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="69e671b8-d5c5-4ac9-8a14-eab9811bfea9" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54840,7 +54912,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="4ea0a4a4-9edd-4376-8d8b-9b4a1c895db4" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="4ea0a4a4-9edd-4376-8d8b-9b4a1c895db4" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54872,7 +54951,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="b4926909-5640-4886-abd3-8a3e1a6d9d43" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="b4926909-5640-4886-abd3-8a3e1a6d9d43" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54904,7 +54990,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="d58ebe89-7c57-4a05-aa72-7bed7fee0536" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="d58ebe89-7c57-4a05-aa72-7bed7fee0536" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54936,7 +55029,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="298fef5c-1a9e-45ea-8a4b-a07f23a13e52" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="298fef5c-1a9e-45ea-8a4b-a07f23a13e52" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -54968,7 +55068,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="4280a845-66bb-48e1-a73b-b6413ca2fa12" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="4280a845-66bb-48e1-a73b-b6413ca2fa12" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55000,7 +55107,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="84c2525a-726b-4eee-a239-3fc82c3259fc" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="84c2525a-726b-4eee-a239-3fc82c3259fc" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55032,7 +55146,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="a451337e-4eb2-46de-9c59-63e381104381" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="a451337e-4eb2-46de-9c59-63e381104381" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55064,7 +55185,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="a685b98f-61f3-40f0-8c7f-d48c5bfb4ed8" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="a685b98f-61f3-40f0-8c7f-d48c5bfb4ed8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55096,7 +55224,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="242fde10-32e2-48e9-aad0-6243c9b58f7d" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="242fde10-32e2-48e9-aad0-6243c9b58f7d" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55128,7 +55263,14 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1cedbc9b-134d-4b80-8091-42858e3a7041"/>
-            <con:assertion type="Simple Contains" id="edea2cb3-7b33-4411-aba5-466382c75c04" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="edea2cb3-7b33-4411-aba5-466382c75c04" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55389,7 +55531,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ae5dbeab-753f-42a2-9d2d-9d38a7c023f0"/>
             <con:assertion type="Simple Contains" id="4c68ede5-ad83-44c9-b8a5-91a50d7f6431" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -55423,7 +55569,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a6b29958-f25b-4ddb-8432-0ef3f0f03ea4"/>
             <con:assertion type="Simple Contains" id="951d3257-26ba-4e17-bee3-35968bfdca41" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -55566,7 +55716,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:assertion type="Simple Contains" id="608a427b-6ffb-4405-b428-a2ec58e33cfe" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="608a427b-6ffb-4405-b428-a2ec58e33cfe" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55616,7 +55773,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:assertion type="Simple Contains" id="3bb03a71-bc17-4ca9-a2bf-801d71075473" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="3bb03a71-bc17-4ca9-a2bf-801d71075473" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55666,7 +55830,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:assertion type="Simple Contains" id="bb12f3df-f1f3-4249-9eb4-4dea118ba41e" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="bb12f3df-f1f3-4249-9eb4-4dea118ba41e" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55716,7 +55887,14 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="22e2046c-2c6c-4ede-ba83-3a0d736d328f"/>
-            <con:assertion type="Simple Contains" id="eb0305d4-96f2-4427-acc1-13fd8cca5791" name="Contains"><con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:credentials>
+            <con:assertion type="Simple Contains" id="eb0305d4-96f2-4427-acc1-13fd8cca5791" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -55748,7 +55926,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/>
             <con:assertion type="Simple Contains" id="1efb2d04-be3a-463b-8400-92ddd5cafea3" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -55792,7 +55974,11 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/>
             <con:assertion type="Simple Contains" id="1efb2d04-be3a-463b-8400-92ddd5cafea3" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -55847,7 +56033,11 @@ http://<server>:<port>/opencell/inbound/DEMO/payment-callback?STATUS=<STATUS>&PA
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="c24eeb7f-b95a-43e9-9903-bfe70c17b3bf"/>
             <con:assertion type="Simple Contains" id="1efb2d04-be3a-463b-8400-92ddd5cafea3" name="Contains">
-              <con:configuration><token>&lt;status>SUCCESS&lt;/status></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
