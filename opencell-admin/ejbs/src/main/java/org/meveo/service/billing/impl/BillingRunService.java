@@ -478,39 +478,30 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void cleanBillingRun(BillingRun billingRun) throws BusinessException {
-        long start = System.currentTimeMillis();
         Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
                 + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
         queryTrans.setParameter("billingRun", billingRun);
         queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
         queryTrans.executeUpdate();
 
-        log.info("> cleanBillingRun >> Update rated transaction > {}", System.currentTimeMillis() - start);
-
         Query queryAgregate = getEntityManager().createQuery("SELECT id from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
         queryAgregate.setParameter("billingRun", billingRun);
 
         List<Long> invoiceAgregates = (List<Long>) queryAgregate.getResultList();
-        log.info("> cleanBillingRun >> Collect Invoice Aggregates > {}", System.currentTimeMillis() - start);
 
         for (Long invoiceAgregate : invoiceAgregates) {
             invoiceAgregateService.setInvoiceToNull(invoiceAgregate);
             remove(InvoiceAgregate.class, invoiceAgregate);
         }
-        log.info("> cleanBillingRun >> Invoice Aggregated will be Removed  > {}", System.currentTimeMillis() - start);
         getEntityManager().flush();
-        log.info("> cleanBillingRun >> Invoice Aggregated Removed  > {}", System.currentTimeMillis() - start);
 
         Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
         queryInvoices.setParameter("billingRun", billingRun);
         queryInvoices.executeUpdate();
-        log.info("> cleanBillingRun >> Invoices deleted > {}", System.currentTimeMillis() - start);
 
         Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         queryBA.setParameter("billingRun", billingRun);
         queryBA.executeUpdate();
-
-        log.info("> cleanBillingRun >> End. > {}", System.currentTimeMillis() - start);
     }
 
     /**

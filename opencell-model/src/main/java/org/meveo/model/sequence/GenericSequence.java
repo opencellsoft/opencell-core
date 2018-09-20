@@ -22,9 +22,9 @@ public class GenericSequence implements Serializable {
 	/**
 	 * Prefix of sequence.
 	 */
-	@Pattern(regexp = "^[\\p{Upper}-]{1,16}$")
-	@Column(name = "prefix", length = 15)
-	@Size(max = 15)
+	@Pattern(regexp = "^[\\p{Upper}-]{1,256}$")
+	@Column(name = "prefix", length = 255)
+	@Size(max = 255)
 	private String prefix = "";
 
 	/**
