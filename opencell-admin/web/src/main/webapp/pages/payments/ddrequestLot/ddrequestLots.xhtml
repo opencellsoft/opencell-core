@@ -38,13 +38,13 @@
 			<hftl:column label="#{messages['ddrequestLot.sendDate']}"
 				field="sendDate" />
 			<hftl:column label="#{messages['ddrequestLot.invoicesNumber']}"
-				field="invoicesNumber" />
+				field="nbItemsOk" />
 			<hftl:column label="#{messages['ddrequestLot.invoicesAmount']}"
-				field="invoicesAmount" />
+				field="totalAmount" />
 			<hftl:column label="#{messages['ddrequestLot.paymentCreated']}"
 				field="paymentCreated" isMessage="true" />
 			<hftl:column label="#{messages['ddrequestLot.rejectedInvoices']}"
-				field="rejectedInvoices" />				
+				field="nbItemsKo" />				
 			<hftl:actionsColumn renderDeleteLink="false" renderViewLink="true"
 				permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>

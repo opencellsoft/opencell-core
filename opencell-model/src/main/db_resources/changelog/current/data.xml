@@ -4395,7 +4395,7 @@ order by edr.STATUS, edr.id DESC
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2018-08-12 14:05:32.622" />
             <column name="code" value="Sepa_Paynum" />
-            <column name="description" value="Sepa  : urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 and Sepa reject file Pain002" />
+            <column name="description" value="Sepa Paynum" />
             <column name="type" value="NATIF" />
             <column name="implementation_class_name" value="org.meveo.admin.sepa.PaynumFile"/>
             <column name="nb_ops_file" value="-1"/>

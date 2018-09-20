@@ -121,6 +121,30 @@ public class AccountOperationDto extends AuditableEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /** The payment info. */
+    private String paymentInfo;// IBAN for direct debit
+    
+    /** The payment info 1. */
+    private String paymentInfo1;// bank code
+    
+    /** The payment info 2. */
+    private String paymentInfo2;// code guichet
+    
+    /** The payment info 3. */
+    private String paymentInfo3;// Num compte
+    
+    /** The payment info 4. */
+    private String paymentInfo4;// RIB
+    
+    /** The payment info 5. */
+    private String paymentInfo5;// bankName
+    
+    /** The payment info 6. */
+    private String paymentInfo6;// bic
+    
+    /** The billing account name. */
+    private String billingAccountName;
 
 	public AccountOperationDto() {
 		// TODO Auto-generated constructor stub
@@ -716,5 +740,119 @@ public class AccountOperationDto extends AuditableEntityDto {
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+    /**
+     * @return the paymentInfo
+     */
+    public String getPaymentInfo() {
+        return paymentInfo;
+    }
+
+    /**
+     * @param paymentInfo the paymentInfo to set
+     */
+    public void setPaymentInfo(String paymentInfo) {
+        this.paymentInfo = paymentInfo;
+    }
+
+    /**
+     * @return the paymentInfo1
+     */
+    public String getPaymentInfo1() {
+        return paymentInfo1;
+    }
+
+    /**
+     * @param paymentInfo1 the paymentInfo1 to set
+     */
+    public void setPaymentInfo1(String paymentInfo1) {
+        this.paymentInfo1 = paymentInfo1;
+    }
+
+    /**
+     * @return the paymentInfo2
+     */
+    public String getPaymentInfo2() {
+        return paymentInfo2;
+    }
+
+    /**
+     * @param paymentInfo2 the paymentInfo2 to set
+     */
+    public void setPaymentInfo2(String paymentInfo2) {
+        this.paymentInfo2 = paymentInfo2;
+    }
+
+    /**
+     * @return the paymentInfo3
+     */
+    public String getPaymentInfo3() {
+        return paymentInfo3;
+    }
+
+    /**
+     * @param paymentInfo3 the paymentInfo3 to set
+     */
+    public void setPaymentInfo3(String paymentInfo3) {
+        this.paymentInfo3 = paymentInfo3;
+    }
+
+    /**
+     * @return the paymentInfo4
+     */
+    public String getPaymentInfo4() {
+        return paymentInfo4;
+    }
+
+    /**
+     * @param paymentInfo4 the paymentInfo4 to set
+     */
+    public void setPaymentInfo4(String paymentInfo4) {
+        this.paymentInfo4 = paymentInfo4;
+    }
+
+    /**
+     * @return the paymentInfo5
+     */
+    public String getPaymentInfo5() {
+        return paymentInfo5;
+    }
+
+    /**
+     * @param paymentInfo5 the paymentInfo5 to set
+     */
+    public void setPaymentInfo5(String paymentInfo5) {
+        this.paymentInfo5 = paymentInfo5;
+    }
+
+    /**
+     * @return the paymentInfo6
+     */
+    public String getPaymentInfo6() {
+        return paymentInfo6;
+    }
+
+    /**
+     * @param paymentInfo6 the paymentInfo6 to set
+     */
+    public void setPaymentInfo6(String paymentInfo6) {
+        this.paymentInfo6 = paymentInfo6;
+    }
+
+    /**
+     * @return the billingAccountName
+     */
+    public String getBillingAccountName() {
+        return billingAccountName;
+    }
+
+    /**
+     * @param billingAccountName the billingAccountName to set
+     */
+    public void setBillingAccountName(String billingAccountName) {
+        this.billingAccountName = billingAccountName;
+    }
+    
+    
 
 }

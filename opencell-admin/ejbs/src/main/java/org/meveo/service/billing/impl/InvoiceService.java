@@ -337,7 +337,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             q.setParameter("billingAccount", billingAccount);
             q.setParameter("invoiceType", invoiceType);
             List<Invoice> invoices = q.getResultList();
-            log.info("getInvoices: founds #0 invoices with BA_code={} and type=#2 ", invoices.size(), billingAccount.getCode(), invoiceType);
+            log.info("getInvoices: founds {} invoices with BA_code={} and type={} ", invoices.size(), billingAccount.getCode(), invoiceType);
             return invoices;
         } catch (Exception e) {
             return null;
@@ -601,10 +601,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions) throws BusinessException {
-
-        long startDate = System.currentTimeMillis();
-        log.debug("createAgregatesAndInvoice entity={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
-            entity, billingRun != null ? billingRun.getId() : null, ratedTransactionFilter, lastTransactionDate, invoiceDate);
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -629,7 +625,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        List<Invoice> invoiceList = new ArrayList<Invoice>();
+        List<Invoice> invoiceList = new ArrayList<>();
         EntityManager em = getEntityManager();
         try {
             List<RatedTransactionGroup> ratedTransactionGroups = getRatedTransactionGroups(entity, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate);
@@ -673,7 +669,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     mapInvTypeRT.put(invoiceType, ratedTransactions);
                 }
                 
-               
                 for (Map.Entry<InvoiceType, List<RatedTransaction>> entry : mapInvTypeRT.entrySet()) {
                     InvoiceType invoiceType = invoiceTypeService.findById(entry.getKey().getId(), true);
                     List<RatedTransaction> ratedTransactionSelection = entry.getValue();
@@ -763,11 +758,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
     
                     invoice.assignTemporaryInvoiceNumber();
-    
-                    Long endDate = System.currentTimeMillis();
-                    log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
-                            + (endDate - startDate));
-                    
                     invoiceList.add(invoice);
                 }
             }
@@ -820,6 +810,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceType = invoiceTypeService.getDefaultCommertial();
         }
         Invoice invoice = new Invoice();
+        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
@@ -1784,7 +1775,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate);
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions());
         
-       // Invoice invoice = invoices.get(0);
         if (!isDraft) {
             for(Invoice invoice: invoices) {
                 assignInvoiceNumber(invoice);
@@ -1793,6 +1783,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
+        // Why not add a new method on another bean with Tx.Requires_New?
         commit();
         return invoices;
     }

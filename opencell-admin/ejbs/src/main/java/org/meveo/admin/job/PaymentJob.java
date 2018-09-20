@@ -146,15 +146,25 @@ public class PaymentJob extends Job {
         AOorCA.setListValues(lisValuesAOorCA);
         result.put("PaymentJob_AOorCA", AOorCA);
 
-        CustomFieldTemplate daysBeforeOrAfterDueDate = new CustomFieldTemplate();
-        daysBeforeOrAfterDueDate.setCode("PaymentJob_daysBeforeOrAfterDueDate");
-        daysBeforeOrAfterDueDate.setAppliesTo("JOB_PaymentJob");
-        daysBeforeOrAfterDueDate.setActive(true);
-        daysBeforeOrAfterDueDate.setDescription(resourceMessages.getString("jobExecution.daysBeforeOrAfterDueDate"));
-        daysBeforeOrAfterDueDate.setFieldType(CustomFieldTypeEnum.LONG);
-        daysBeforeOrAfterDueDate.setValueRequired(false);
-        daysBeforeOrAfterDueDate.setDefaultValue("");
-        result.put("PaymentJob_daysBeforeOrAfterDueDate", daysBeforeOrAfterDueDate);
+        CustomFieldTemplate fromDueDate = new CustomFieldTemplate();
+        fromDueDate.setCode("PaymentJob_fromDueDate");
+        fromDueDate.setAppliesTo("JOB_PaymentJob");
+        fromDueDate.setActive(true);
+        fromDueDate.setDescription(resourceMessages.getString("ddrequestLotOp.fromDueDate"));
+        fromDueDate.setFieldType(CustomFieldTypeEnum.DATE);
+        fromDueDate.setValueRequired(false);
+        fromDueDate.setDefaultValue("");
+        result.put("PaymentJob_fromDueDate", fromDueDate);
+        
+        CustomFieldTemplate toDueDate = new CustomFieldTemplate();
+        toDueDate.setCode("PaymentJob_toDueDate");
+        toDueDate.setAppliesTo("JOB_PaymentJob");
+        toDueDate.setActive(true);
+        toDueDate.setDescription(resourceMessages.getString("ddrequestLotOp.toDueDate"));
+        toDueDate.setFieldType(CustomFieldTypeEnum.DATE);
+        toDueDate.setValueRequired(false);
+        toDueDate.setDefaultValue("");
+        result.put("PaymentJob_toDueDate", toDueDate);
 
         return result;
     }

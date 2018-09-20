@@ -314,8 +314,9 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
         cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
-        cardPaymentMethodSpecificInput.setIsRecurring(true);
+        cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
         cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
+
         return cardPaymentMethodSpecificInput;
     }
 

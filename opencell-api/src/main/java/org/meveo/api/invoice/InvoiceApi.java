@@ -565,18 +565,19 @@ public class InvoiceApi extends BaseApi {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-        List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<GenerateInvoiceResultDto>();
+        List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
-        for(Invoice invoice : invoices) {
-            this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
-            invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
-            
-            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
-            invoicesDtos.add(generateInvoiceResultDto);
-            if (isDraft) {
-                invoiceService.cancelInvoice(invoice);
-            }
-            
+        if(invoices != null) {
+	        for(Invoice invoice : invoices) {
+	            this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+	            invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+	            
+	            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
+	            invoicesDtos.add(generateInvoiceResultDto);
+	            if (isDraft) {
+	                invoiceService.cancelInvoice(invoice);
+	            }   
+	        }
         }
         
         return invoicesDtos;

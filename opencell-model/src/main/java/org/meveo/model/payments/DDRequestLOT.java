@@ -60,14 +60,14 @@ public class DDRequestLOT extends AuditableEntity {
     private Date sendDate;
 
     @Column(name = "invoice_number")
-    private Integer invoicesNumber;
+    private Integer nbItemsOk;
 
     @Type(type = "numeric_boolean")
     @Column(name = "is_payment_created")
     private boolean paymentCreated;
 
     @Column(name = "invoice_amount", precision = 23, scale = 12)
-    private BigDecimal invoicesAmount;
+    private BigDecimal totalAmount;
 
     @OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
@@ -81,7 +81,7 @@ public class DDRequestLOT extends AuditableEntity {
     private String rejectedCause;
 
     @Column(name = "rejected_invoices")
-    private Integer rejectedInvoices;
+    private Integer nbItemsKo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ddrequest_builder_id")
@@ -104,20 +104,20 @@ public class DDRequestLOT extends AuditableEntity {
         this.sendDate = sendDate;
     }
 
-    public Integer getInvoicesNumber() {
-        return invoicesNumber;
+    public Integer getNbItemsOk() {
+        return nbItemsOk;
     }
 
-    public void setInvoicesNumber(Integer invoicesNumber) {
-        this.invoicesNumber = invoicesNumber;
+    public void setNbItemsOk(Integer invoicesNumber) {
+        this.nbItemsOk = invoicesNumber;
     }
 
-    public BigDecimal getInvoicesAmount() {
-        return invoicesAmount;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setInvoicesAmount(BigDecimal invoicesAmount) {
-        this.invoicesAmount = invoicesAmount;
+    public void setTotalAmount(BigDecimal invoicesAmount) {
+        this.totalAmount = invoicesAmount;
     }
 
     public boolean isPaymentCreated() {
@@ -160,12 +160,12 @@ public class DDRequestLOT extends AuditableEntity {
         this.rejectedCause = rejectedCause;
     }
 
-    public Integer getRejectedInvoices() {
-        return rejectedInvoices;
+    public Integer getNbItemsKo() {
+        return nbItemsKo;
     }
 
-    public void setRejectedInvoices(Integer rejectedInvoices) {
-        this.rejectedInvoices = rejectedInvoices;
+    public void setNbItemsKo(Integer rejectedInvoices) {
+        this.nbItemsKo = rejectedInvoices;
     }
 
     /**
