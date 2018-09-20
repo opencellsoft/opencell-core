@@ -248,10 +248,12 @@
 									    <c:otherwise>
 									    	<c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithTax']} EL" />
 									    </c:otherwise>
-									</c:choose>   
+									</c:choose>
                                  	
                                  	<hftl:formField label="#{messages['billingAccount.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />   
                                  	<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
+                                 	<hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
+									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
                                  	       
 							     </p:fieldset>		
 							     
@@ -275,18 +277,9 @@
 
 										<p:tab id="tab1"
 											title="#{messages['billingAccount.tab.information']}">
-                                            <p:fieldset legend="#{messages['commons.contacts']}">
-                                                <hftl:formField label="#{messages['address.address1']}" field="address" childField="address1" />
-                                                <hftl:formField label="#{messages['address.address2']}" field="address" childField="address2" />
-                                                <hftl:formField label="#{messages['address.address3']}" field="address" childField="address3" />
-                                                <hftl:formField label="#{messages['address.zipCode']}" field="address" childField="zipCode" newLine="true" />
-                                                <hftl:formField label="#{messages['address.city']}" field="address" childField="city" />
-                                                <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/>
-												
-											</p:fieldset>
-
+											
 											<p:fieldset
-												legend="#{messages['billingAccount.contactPreferences']}">
+												legend="#{messages['commons.contacts']}">
 		
 												<hftl:formField
 													label="#{messages['billingAccount.electronicBilling']}"
@@ -308,6 +301,19 @@
 															id="emailText" value="#{billingAccountBean.entity.contactInformation.email}" />
 													</hftl:decorateFormField>
 												</h:panelGroup>
+												
+												<hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="contactInformation" childField="phone" popup="false" />
+												<hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50" field="contactInformation" childField="mobile" popup="false" />
+											</p:fieldset>
+											
+                                            <p:fieldset legend="#{messages['commons.address']}">
+                                                <hftl:formField label="#{messages['address.address1']}" field="address" childField="address1" />
+                                                <hftl:formField label="#{messages['address.address2']}" field="address" childField="address2" />
+                                                <hftl:formField label="#{messages['address.address3']}" field="address" childField="address3" />
+                                                <hftl:formField label="#{messages['address.zipCode']}" field="address" childField="zipCode" newLine="true" />
+                                                <hftl:formField label="#{messages['address.city']}" field="address" childField="city" />
+                                                <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/>
+												
 											</p:fieldset>
 
 								</p:tab>
