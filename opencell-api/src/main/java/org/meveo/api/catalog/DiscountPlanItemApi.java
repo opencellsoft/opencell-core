@@ -60,8 +60,8 @@ public class DiscountPlanItemApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
-        if (postData.getPercent() == null) {
-            missingParameters.add("percent");
+        if (postData.getPercent() == null && postData.getDiscountPercentEl() == null && postData.getDiscountPercentElSpark() == null) {
+            missingParameters.add("percent, discountPercentEl or discountPercentElSpark");
         }
 
         handleMissingParameters();

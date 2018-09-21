@@ -656,7 +656,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     log.debug("  tax4 ht ->" + invoiceAgregateT.getAmountWithoutTax());
                 }
                 
-                }
                 CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat.getCategoryInvoiceAgregate();
                 invoiceAgregateR.setAmountWithoutTax(invoiceAgregateR.getAmountWithoutTax().add(delta).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()));
 

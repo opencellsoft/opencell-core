@@ -78,6 +78,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
+ * @author Andrius Karpavicius
  * @author Wassim Drira
  * @author Said Ramli
  * @lastModifiedVersion 5.1

@@ -116,7 +116,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 			expiryDate = cal.getTime();
 		}
 
-		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, seller, userAccount,
 				subscriptionDate, param1, param2, param3, new BigDecimal(1),isAmountWithTax);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller, userAccount,
@@ -215,7 +215,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 			expiryDate = cal.getTime();
 		}
 
-		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, seller, userAccount,
 				subscriptionDate, param1, param2, param3, new BigDecimal(1),isAmountWithTax);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller, userAccount,
@@ -353,6 +353,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		subscription.setStatusDate(new Date());
 		subscription.setSubscriptionDate(subscriptionDate);
 		subscription.setTerminationDate(terminationDate);
+		subscription.setSeller(seller);
 		subscriptionService.create(subscription);
 
 		reservation.setSubscription(subscription);
@@ -361,7 +362,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		// difference in amount when the credit is reserved and on the actual
 		// date of the subscription.
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate,
-				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1),isAmountWithTax);
+				seller, reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1),isAmountWithTax);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller,
 				reservation.getUserAccount(), subscriptionDate,isAmountWithTax);

@@ -12,6 +12,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -44,11 +45,8 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getInvoiceDateDelay() == null) {
             missingParameters.add("invoiceDateDelay");
         }
-        if (postData.getDueDateDelay() == null) {
-            missingParameters.add("dueDateDelay");
-        }
-        if (postData.getInvoiceDateDelay() == null) {
-            missingParameters.add("invoiceDateDelay");
+        if (postData.getDueDateDelay() == null && StringUtils.isBlank(postData.getDueDateDelayEL()) && StringUtils.isBlank(postData.getDueDateDelayELSpark())) {
+            missingParameters.add("dueDateDelay, dueDateDelayEL or dueDateDelayELSpark");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -85,8 +83,13 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceType(invoiceType);
         billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
         billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
-        billingCycle.setType(postData.getType());
 
+        if (postData.getType() == null) {
+            billingCycle.setType(BillingEntityTypeEnum.BILLINGACCOUNT);
+        } else {
+            billingCycle.setType(postData.getType());
+        }
+        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
@@ -107,19 +110,6 @@ public class BillingCycleApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getCalendar())) {
-            missingParameters.add("calendar");
-        }
-        if (postData.getInvoiceDateDelay() == null) {
-            missingParameters.add("invoiceDateDelay");
-        }
-        if (postData.getDueDateDelay() == null) {
-            missingParameters.add("dueDateDelay");
-        }
-        if (postData.getInvoiceDateDelay() == null) {
-            missingParameters.add("invoiceDateDelay");
-        }
-
         handleMissingParametersAndValidate(postData);
 
         BillingCycle billingCycle = billingCycleService.findByCode(postData.getCode());
@@ -128,39 +118,62 @@ public class BillingCycleApi extends BaseApi {
             throw new EntityDoesNotExistsException(BillingCycle.class, postData.getCode());
         }
 
-        Calendar calendar = calendarService.findByCode(postData.getCalendar());
-        if (calendar == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+        if (postData.getCalendar() != null) {
+            Calendar calendar = calendarService.findByCode(postData.getCalendar());
+            if (calendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+            }
+            billingCycle.setCalendar(calendar);
         }
 
-        InvoiceType invoiceType = null;
-        if (!StringUtils.isBlank(postData.getInvoiceTypeCode())) {
-            invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
+        if (postData.getInvoiceTypeCode() != null) {
+            InvoiceType invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
             if (invoiceType == null) {
                 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
             }
+            billingCycle.setInvoiceType(invoiceType);
         }
-        billingCycle.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        billingCycle.setDescription(postData.getDescription());
-        billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
-        billingCycle.setBillingTemplateNameEL(postData.getBillingTemplateNameEL());
-        billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
-        billingCycle.setDueDateDelay(postData.getDueDateDelay());
-        billingCycle.setDueDateDelayEL(postData.getDueDateDelayEL());
-        billingCycle.setCalendar(calendar);
-        billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
-        billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
-        billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
-        billingCycle.setInvoiceType(invoiceType);
 
-        if (postData.getInvoiceTypeEl() != null) {
-            billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
+        billingCycle.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+
+        if (postData.getDescription() != null) {
+            billingCycle.setDescription(postData.getDescription());
+        }
+        if (postData.getBillingTemplateName() != null) {
+            billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
+        }
+        if (postData.getBillingTemplateNameEL() != null) {
+            billingCycle.setBillingTemplateNameEL(postData.getBillingTemplateNameEL());
+        }
+        if (postData.getInvoiceDateDelay() != null) {
+            billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
+        }
+        if (postData.getDueDateDelay() != null) {
+            billingCycle.setDueDateDelay(postData.getDueDateDelay());
+        }
+        if (postData.getDueDateDelayEL() != null) {
+            billingCycle.setDueDateDelayEL(postData.getDueDateDelayEL());
         }
         if (postData.getInvoiceTypeElSpark() != null) {
             billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
         }
+        if (postData.getTransactionDateDelay() != null) {
+            billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
+        }
+        if (postData.getInvoiceDateProductionDelay() != null) {
+            billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
+        }
+        if (postData.getInvoicingThreshold() != null) {
+            billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
 
-        billingCycle.setType(postData.getType());
+        if (postData.getInvoiceTypeEl() != null) {
+            billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
+        }
+
+        if (postData.getType() != null) {
+            billingCycle.setType(postData.getType());
+        }
 
         // populate customFields
         try {

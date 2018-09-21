@@ -102,7 +102,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     private String minimumAmountWithTaxELSpark;
 
     /** The priority. */
-    private int priority;
+    private Integer priority;
 
     /** The criteria 1. */
     private String criteria1;
@@ -589,7 +589,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
      *
      * @return the priority
      */
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
@@ -598,7 +598,7 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
      *
      * @param priority the new priority
      */
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 

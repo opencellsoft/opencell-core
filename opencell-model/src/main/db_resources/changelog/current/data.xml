@@ -2855,7 +2855,7 @@ ORDER BY
             <column name="code" value="DRAFT" />
             <column name="description" value="Draft invoice" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="sequence_size" valueNumeric="5" />
+<!--             <column name="sequence_size" valueNumeric="5" /> -->
             <column name="occ_template_id" value="-25" />
             <column name="matching_auto" valueNumeric="0" />
             <column name="use_self_sequence" valueNumeric="0" />

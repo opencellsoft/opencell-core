@@ -231,26 +231,26 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
     private GdprConfiguration gdprConfiguration;
-    
+
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
     @Embedded
-	@AttributeOverrides({ //
-			@AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), //
-			@AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")), //
-			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb")), //
-	})
-	private GenericSequence rumSequence = new GenericSequence();
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), //
+            @AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")), //
+            @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb")), //
+    })
+    private GenericSequence rumSequence = new GenericSequence();
 
     @Embedded
-	@AttributeOverrides({ //
-			@AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), //
-			@AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")), //
-			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")), //
-	})
-	private GenericSequence customerNoSequence = new GenericSequence();
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), //
+            @AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")), //
+            @AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")), //
+    })
+    private GenericSequence customerNoSequence = new GenericSequence();
 
     public String getCode() {
         return code;
@@ -569,64 +569,64 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return Invoice amount rounding precision
+     * @return Invoice and invoice aggregate amount rounding precision
      */
     public int getInvoiceRounding() {
         return invoiceRounding;
     }
 
     /**
-     * @param invoiceRounding Invoice amount rounding precision
+     * @param invoiceRounding Invoice and invoice aggregate amount rounding precision
      */
     public void setInvoiceRounding(int invoiceRounding) {
         this.invoiceRounding = invoiceRounding;
     }
 
     /**
-     * @return Invoice amount rounding mode
+     * @return Invoice and invoice aggregate amount rounding mode
      */
     public RoundingModeEnum getInvoiceRoundingMode() {
         return invoiceRoundingMode;
     }
 
     /**
-     * @param invoiceRoundingMode Invoice amount rounding mode
+     * @param invoiceRoundingMode Invoice and invoice aggregate amount rounding mode
      */
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
-	public GdprConfiguration getGdprConfiguration() {
-		return gdprConfiguration;
-	}
+    public GdprConfiguration getGdprConfiguration() {
+        return gdprConfiguration;
+    }
 
-	public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
-		this.gdprConfiguration = gdprConfiguration;
-	}
-	
-	public GdprConfiguration getGdprConfigurationNullSafe() {
-		if (gdprConfiguration == null) {
-			gdprConfiguration = new GdprConfiguration();
-		}
+    public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
+        this.gdprConfiguration = gdprConfiguration;
+    }
 
-		return gdprConfiguration;
-	}
+    public GdprConfiguration getGdprConfigurationNullSafe() {
+        if (gdprConfiguration == null) {
+            gdprConfiguration = new GdprConfiguration();
+        }
+
+        return gdprConfiguration;
+    }
 
     public GenericSequence getRumSequence() {
         return rumSequence;
     }
 
-	public void setRumSequence(GenericSequence rumSequence) {
+    public void setRumSequence(GenericSequence rumSequence) {
         this.rumSequence = rumSequence;
     }
 
-	public GenericSequence getCustomerNoSequence() {
-		return customerNoSequence;
-	}
+    public GenericSequence getCustomerNoSequence() {
+        return customerNoSequence;
+    }
 
-	public void setCustomerNoSequence(GenericSequence customerNoSequence) {
-		this.customerNoSequence = customerNoSequence;
-	}
+    public void setCustomerNoSequence(GenericSequence customerNoSequence) {
+        this.customerNoSequence = customerNoSequence;
+    }
 
     @Override
     public CustomFieldValues getCfAccumulatedValues() {

@@ -1962,15 +1962,24 @@
             <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el_sp" type="varchar(2000)" />
         </addColumn>  
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
         <addColumn tableName="billing_rated_transaction">
             <column name="charge_instance_id" type="bigint" />
-            <column name="seller_id" type="bigint" />
             <column name="tax_id" type="bigint" />
             <column name="tax_percent" type="numeric(23, 12)" />
         </addColumn>
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_rt_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" /> 
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" /> 
         <addColumn tableName="billing_wallet_operation">
             <column name="tax_id" type="bigint" />
-        </addColumn>
+        </addColumn>           
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />           
         <addColumn tableName="billing_cycle">     
             <column name="due_date_delay_el_sp" type="varchar(2000)" />
             <column name="invoice_type_el_sp" type="varchar(2000)" />
@@ -1981,14 +1990,20 @@
         <addColumn tableName="billing_invoice">
             <column name="subscription_id" type="bigint" />
             <column name="order_id" type="bigint" />
-        </addColumn>        
+        </addColumn>               
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_invoice" constraintName="fk_inv_subscription" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />             
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_invoice" constraintName="fk_inv_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />             
         <addColumn tableName="cat_discount_plan_item">     
             <column name="expression_el_sp" type="varchar(2000)" />
             <column name="discount_percent_el_sp" type="varchar(2000)" />
         </addColumn>        
         <addColumn tableName="billing_invoice_agregate">
             <column name="discount_plan_item_id" type="bigint" />
-        </addColumn>
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_agregate" constraintName="fk_ia_dpi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" /> 
         <addDefaultValue columnName="rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
         <addDefaultValue columnName="invoice_rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
         <sql>update ${db.schema.adapted}crm_provider set rounding_mode='NEAREST' where rounding_mode is null</sql>

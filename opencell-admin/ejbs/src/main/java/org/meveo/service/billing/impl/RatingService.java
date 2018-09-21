@@ -898,25 +898,9 @@ public class RatingService extends BusinessService<WalletOperation> {
                 operation.setUnitAmountTax(null);
 
                 ChargeInstance chargeInstance = operationToRerate.getChargeInstance();
-                TradingCountry tradingCountry = chargeInstance.getUserAccount().getBillingAccount().getTradingCountry();
-                ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(chargeTemplate.getInvoiceSubCategory(),
-                    tradingCountry, operation.getOperationDate());
-                if (invoiceSubcategoryCountry == null) {
-                    throw new IncorrectChargeTemplateException("reRate: No invoiceSubcategoryCountry exists for invoiceSubCategory code="
-                            + chargeTemplate.getInvoiceSubCategory().getCode() + " and trading country=" + tradingCountry.getCountryCode());
-                }
 
-                Tax tax = null;
-                if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
-                    tax = invoiceSubcategoryCountry.getTax();
-                } else {
-                    tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), wallet == null ? null : userAccount, operation.getBillingAccount(),
-                        null);
-                }
-                if (tax == null) {
-                    throw new IncorrectChargeTemplateException("reRate: no tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-                }
+                Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, operation.getOperationDate());
+                
                 operation.setTax(tax);
                 operation.setTaxPercent(tax.getPercent());
 

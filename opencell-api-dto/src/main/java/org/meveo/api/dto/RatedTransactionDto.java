@@ -20,6 +20,7 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -85,13 +86,12 @@ public class RatedTransactionDto extends BaseEntityDto {
 
     /** The do not trigger invoicing. */
     private boolean doNotTriggerInvoicing = false;
-    
+
     /** The start date. */
     private Date startDate;
 
     /** The end date. */
     private Date endDate;
-
 
     /** parameter1 : used to set more onformations in case of "DETAILLED" invoice. */
     private String parameter1;
@@ -104,6 +104,16 @@ public class RatedTransactionDto extends BaseEntityDto {
 
     /** The user account code. */
     private String userAccountCode;
+
+    /**
+     * Tax applied - code
+     */
+    private String taxCode;
+
+    /**
+     * Tax percent
+     */
+    private BigDecimal taxPercent;
 
     /**
      * Instantiates a new rated transaction dto.
@@ -135,17 +145,21 @@ public class RatedTransactionDto extends BaseEntityDto {
         this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
         this.setStartDate(ratedTransaction.getStartDate());
         this.setEndDate(ratedTransaction.getEndDate());
+        if (ratedTransaction.getTax() != null) {
+            this.setTaxCode(ratedTransaction.getTax().getCode());
+        }
+        this.setTaxPercent(ratedTransaction.getTaxPercent());
     }
-    
+
     /**
      * Instantiates a new rated transaction dto.
      *
      * @param ratedTransaction the rated transaction
      * @param withUserAccountCode the with user account code
      */
-    public RatedTransactionDto(RatedTransaction ratedTransaction, Boolean withUserAccountCode) {
+    public RatedTransactionDto(RatedTransaction ratedTransaction, boolean withUserAccountCode) {
         this(ratedTransaction);
-        if(withUserAccountCode != null && withUserAccountCode) {
+        if (withUserAccountCode) {
             this.userAccountCode = ratedTransaction.getWallet().getUserAccount().getCode();
         }
     }
@@ -419,8 +433,7 @@ public class RatedTransactionDto extends BaseEntityDto {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-    
-    
+
     /**
      * Gets the parameter 1.
      *
@@ -489,4 +502,31 @@ public class RatedTransactionDto extends BaseEntityDto {
         this.userAccountCode = userAccountCode;
     }
 
+    /**
+     * @return Tax applied - code
+     */
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    /**
+     * @param taxCode Tax applied - code
+     */
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    /**
+     * @return Tax percent applied
+     */
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
+
+    /**
+     * @param taxPercent Tax percent applied
+     */
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
 }

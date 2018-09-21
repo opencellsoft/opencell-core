@@ -233,20 +233,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getBillingCycle())) {
-            missingParameters.add("billingCycle");
-        }
-        if (StringUtils.isBlank(postData.getCountry())) {
-            missingParameters.add("country");
-        }
-        if (StringUtils.isBlank(postData.getLanguage())) {
-            missingParameters.add("language");
-        }
-        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
-            if (StringUtils.isBlank(postData.getEmail())) {
-                missingParameters.add("email");
-            }
-        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -255,7 +241,7 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, postData.getCode());
         }
 
-        if (!StringUtils.isBlank(postData.getCustomerAccount())) {
+        if (postData.getCustomerAccount() != null) {
             CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
             if (customerAccount == null) {
                 throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
@@ -273,7 +259,7 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setCustomerAccount(customerAccount);
         }
 
-        if (!StringUtils.isBlank(postData.getBillingCycle())) {
+        if (postData.getBillingCycle() != null) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
             if (billingCycle == null) {
                 throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
@@ -281,7 +267,7 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setBillingCycle(billingCycle);
         }
 
-        if (!StringUtils.isBlank(postData.getCountry())) {
+        if (postData.getCountry() != null) {
             TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
             if (tradingCountry == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
@@ -289,7 +275,7 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setTradingCountry(tradingCountry);
         }
 
-        if (!StringUtils.isBlank(postData.getLanguage())) {
+        if (postData.getLanguage() != null) {
             TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage());
             if (tradingLanguage == null) {
                 throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
@@ -297,34 +283,40 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setTradingLanguage(tradingLanguage);
         }
 
-        if (!StringUtils.isBlank(postData.getExternalRef1())) {
+        if (postData.getExternalRef1() != null) {
             billingAccount.setExternalRef1(postData.getExternalRef1());
         }
-        if (!StringUtils.isBlank(postData.getExternalRef2())) {
+        if (postData.getExternalRef2() != null) {
             billingAccount.setExternalRef2(postData.getExternalRef2());
         }
 
         updateAccount(billingAccount, postData, checkCustomFields);
 
-        if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
+        if (postData.getNextInvoiceDate() != null) {
             billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
         }
-        if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+        if (postData.getSubscriptionDate() != null) {
             billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
         }
-        if (!StringUtils.isBlank(postData.getTerminationDate())) {
+        if (postData.getTerminationDate() != null) {
             billingAccount.setTerminationDate(postData.getTerminationDate());
         }
         if (postData.getElectronicBilling() != null) {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
-        if (!StringUtils.isBlank(postData.getEmail())) {
+        if (postData.getEmail() != null) {
             billingAccount.getContactInformation().setEmail(postData.getEmail());
         }
+
+        if (billingAccount.getElectronicBilling() && billingAccount.getContactInformation().getEmail() == null) {
+            missingParameters.add("email");
+            handleMissingParameters();
+        }
+
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
-        if (!StringUtils.isBlank(postData.getPhone())) {
+        if (postData.getPhone() != null) {
             billingAccount.getContactInformation().setPhone(postData.getPhone());
         }
         if (postData.getMinimumAmountEl() != null) {
@@ -339,14 +331,16 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getMinimumLabelElSpark() != null) {
             billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
-        if (!StringUtils.isBlank(postData.getDiscountPlan())) {
-            DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
-            if (discountPlan == null) {
-                throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
+        if (postData.getDiscountPlan() != null) {
+            if (StringUtils.isBlank(postData.getDiscountPlan())) {
+                billingAccount.setDiscountPlan(null);
+            } else {
+                DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
+                if (discountPlan == null) {
+                    throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
+                }
+                billingAccount.setDiscountPlan(discountPlan);
             }
-            billingAccount.setDiscountPlan(discountPlan);
-        } else if (postData.getDiscountPlan() != null) {
-            billingAccount.setDiscountPlan(null);
         }
 
         if (businessAccountModel != null) {

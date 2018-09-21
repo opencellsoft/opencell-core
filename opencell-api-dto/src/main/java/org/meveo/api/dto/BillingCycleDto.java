@@ -2,8 +2,6 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,7 +46,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      * Expression to calculate the due date delay - for Spark
      */
     @XmlElement(required = false)
-    private String dueDateDelaySpark;
+    private String dueDateDelayELSpark;
 
     /** The invoice date production delay. */
     @XmlElement(required = false)
@@ -351,8 +349,8 @@ public class BillingCycleDto extends BusinessEntityDto {
      * 
      * @return Expression to calculate the due date delay - for Spark
      */
-    public String getDueDateDelaySpark() {
-        return dueDateDelaySpark;
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
     }
 
     /**
@@ -361,7 +359,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      * @param dueDateDelaySpark Expression to calculate the due date delay - for Spark
      */
     public void setDueDateDelaySpark(String dueDateDelaySpark) {
-        this.dueDateDelaySpark = dueDateDelaySpark;
+        this.dueDateDelayELSpark = dueDateDelaySpark;
     }
 
     /**

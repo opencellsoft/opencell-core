@@ -169,8 +169,12 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         chargeTemplate.setFilterParam2(postData.getFilterParam2());
         chargeTemplate.setFilterParam3(postData.getFilterParam3());
         chargeTemplate.setFilterParam4(postData.getFilterParam4());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
-        chargeTemplate.setFilterExpressionSpark(postData.getFilterExpressionSpark());
+        if (postData.getFilterExpression() != null) {
+            chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        }
+        if (postData.getFilterExpressionSpark() != null) {
+            chargeTemplate.setFilterExpressionSpark(postData.getFilterExpressionSpark());
+        }
         chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());

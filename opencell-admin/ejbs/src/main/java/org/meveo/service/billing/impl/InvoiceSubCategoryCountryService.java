@@ -26,10 +26,13 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
@@ -84,7 +87,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         // compute priority
         // get all the taxes of an invoice sub category
         List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubcategoryCountry.getInvoiceSubCategory(),
-            invoiceSubcategoryCountry.getTradingCountry(), null, null, null);
+            invoiceSubcategoryCountry.getSellingCountry(), invoiceSubcategoryCountry.getTradingCountry(), null, null, null);
         if (invoiceSubcategoryCountries != null) {
             InvoiceSubcategoryCountry invoiceSubcategoryCountryFound = null;
             // check for overlap
@@ -131,71 +134,24 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
     }
 
     /**
-     * Find InvoiceSubCategoryCountry without fetching join entities.
+     * Find InvoiceSubCategoryCountry with the highest priority (lowest number). Does not fetch join entities.
      * 
      * @param invoiceSubCategory invoice sub category
      * @param tradingCountry trading country
      * @param applicationDate application date
-     * @return invoice sub category country.
+     * @return Invoice sub category country.
      */
-    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, Date applicationDate) {
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(InvoiceSubCategory invoiceSubCategory, TradingCountry sellersCountry, TradingCountry buyersCountry,
+            Date applicationDate) {
 
         try {
             return getEntityManager().createNamedQuery("InvoiceSubcategoryCountry.findByInvoiceSubCategoryAndCountry", InvoiceSubcategoryCountry.class)
-                .setParameter("invoiceSubCategory", invoiceSubCategory).setParameter("tradingCountry", tradingCountry).setParameter("applicationDate", applicationDate)
-                .setMaxResults(1).getSingleResult();
+                .setParameter("invoiceSubCategory", invoiceSubCategory).setParameter("sellingCountry", sellersCountry).setParameter("tradingCountry", buyersCountry)
+                .setParameter("applicationDate", applicationDate).setMaxResults(1).getSingleResult();
 
         } catch (NoResultException ex) {
-            log.warn("failed to find invoice SubCategory Country with parameters {}/{}/{}", invoiceSubCategory.getId(), tradingCountry.getId(), applicationDate);
-        }
-
-        return null;
-    }
-
-    /**
-     * Find InvoiceSubCategoryCountry with fetching join entities.
-     * 
-     * @param invoiceSubCategory invoice sub category
-     * @param tradingCountry trading country
-     * @param fetchFields list of fields to be fetched
-     * @param applicationDate application date.
-     * @return invoice sub category.
-     */
-    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, List<String> fetchFields,
-            Date applicationDate) {
-        QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "ic", fetchFields);
-        qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
-        qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
-        qb.addCriterionDateInRange("startValidityDate", "endValidityDate", applicationDate);
-        qb.addOrderCriterionAsIs("priority", false);
-
-        try {
-            return (InvoiceSubcategoryCountry) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Get the tax with the most highest priority='1'.
-     * 
-     * @param invoiceSubCategoryId invoice sub categoryId
-     * @param countryId country id
-     * @return invoice sub category country.
-     */
-    @SuppressWarnings("unchecked")
-    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithHighestPriority(Long invoiceSubCategoryId, Long countryId) {
-
-        try {
-            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
-            qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId, true);
-            qb.addCriterion("tradingCountry.id", "=", countryId, true);
-            qb.addOrderCriterionAsIs("priority", false);
-
-            List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
-            return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
-        } catch (NoResultException ex) {
-            log.warn("failed to find invoice SubCategory Country", ex);
+            log.warn("failed to find invoice SubCategory Country with parameters {}/{}/{}/{}", invoiceSubCategory.getId(), (sellersCountry != null ? sellersCountry.getId() : null),
+                buyersCountry.getId(), applicationDate);
         }
 
         return null;
@@ -218,31 +174,34 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
     /**
      * Find InvoiceSubCategoryCountry with a given range of validity dates. No fetching join entities.
      * 
-     * @param invoiceSubCategory invoice sub category
-     * @param tradingCountry trading country
-     * @param startValidityDate start validity date
-     * @param endValidityDate and validity date
-     * @return invoice sub category.
+     * @param invoiceSubCategory Invoice sub category
+     * @param sellersCountry Seller's country
+     * @param buyersCountry Buyer's country
+     * @param startValidityDate Tax validity period - from
+     * @param endValidityDate Tax validity period - to
+     * @return Invoice sub category country
      */
-    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry,
-            Date startValidityDate, Date endValidityDate) {
-        return findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, null, startValidityDate, endValidityDate);
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry sellersCountry,
+            TradingCountry buyersCountry, Date startValidityDate, Date endValidityDate) {
+        return findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, sellersCountry, buyersCountry, null, startValidityDate, endValidityDate);
     }
 
     /**
-     * Find InvoiceSubCategoryCountry with a given range of validity dates. With fetching join entities.
+     * Find InvoiceSubCategoryCountry with a given range of validity dates. With fetching of indicated join entities.
      * 
-     * @param invoiceSubCategory invoice sub category
-     * @param tradingCountry trading country
-     * @param fetchFields list of fields to be fetched
-     * @param startValidityDate start validity date
-     * @param endValidityDate and validity date
-     * @return invoice sub category
+     * @param invoiceSubCategory Invoice sub category
+     * @param sellersCountry Seller's country
+     * @param buyersCountry Buyer's country
+     * @param fetchFields List of fields to be fetched
+     * @param startValidityDate Tax validity period - from
+     * @param endValidityDate Tax validity period - to
+     * @return Invoice sub category country
      */
-    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry,
-            List<String> fetchFields, Date startValidityDate, Date endValidityDate) {
-        List<InvoiceSubcategoryCountry> result = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, fetchFields, startValidityDate,
-            endValidityDate);
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry sellersCountry,
+            TradingCountry buyersCountry, List<String> fetchFields, Date startValidityDate, Date endValidityDate) {
+
+        List<InvoiceSubcategoryCountry> result = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, sellersCountry, buyersCountry, fetchFields,
+            startValidityDate, endValidityDate);
 
         if (result != null && !result.isEmpty()) {
             return result.get(0);
@@ -251,11 +210,34 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return null;
     }
 
+    /**
+     * Find a list of matching InvoiceSubCategoryCountry with a given range of validity dates. With fetching of indicated join entities.
+     * 
+     * @param invoiceSubCategory Invoice sub category
+     * @param sellersCountry Seller's country
+     * @param buyersCountry Buyer's country
+     * @param fetchFields List of fields to be fetched
+     * @param startValidityDate Tax validity period - from
+     * @param endValidityDate Tax validity period - to
+     * @return Invoice sub category country
+     */
     @SuppressWarnings("unchecked")
-    public List<InvoiceSubcategoryCountry> listByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry,
-            List<String> fetchFields, Date startValidityDate, Date endValidityDate) {
+    public List<InvoiceSubcategoryCountry> listByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry sellersCountry,
+            TradingCountry buyersCountry, List<String> fetchFields, Date startValidityDate, Date endValidityDate) {
+
         QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "ic", fetchFields);
-        qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
+
+        if (sellersCountry == null) {
+            qb.addSql("ic.sellingCountry is null");
+        } else {
+            qb.addCriterionEntity("ic.sellingCountry", sellersCountry);
+        }
+
+        if (buyersCountry == null) {
+            qb.addSql("ic.tradingCountry is null");
+        } else {
+            qb.addCriterionEntity("ic.tradingCountry", buyersCountry);
+        }
         qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
         if (startValidityDate != null) {
             qb.addCriterionDate("startValidityDate", startValidityDate);
@@ -263,12 +245,134 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (endValidityDate != null) {
             qb.addCriterionDate("endValidityDate", endValidityDate);
         }
-        qb.addOrderCriterionAsIs("priority", false);
+        qb.addOrderMultiCriterion("sellingCountry", false, "tradingCountry", false, "priority", false);
 
         try {
             return (List<InvoiceSubcategoryCountry>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    /**
+     * Determine applicable tax for a given charge instance
+     * 
+     * @param chargeInstance Charge instance
+     * @param date Date to determine tax validity
+     * @return Tax to apply
+     * @throws BusinessException General business exception
+     */
+    public Tax determineTax(ChargeInstance chargeInstance, Date date) throws BusinessException {
+
+        InvoiceSubCategory invoiceSubCategory = chargeInstance.getChargeTemplate().getInvoiceSubCategory();
+
+        TradingCountry sellersCountry = chargeInstance.getSeller().getTradingCountry();
+        TradingCountry buyersCountry = chargeInstance.getCountry();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = findByInvoiceSubCategoryAndCountry(invoiceSubCategory, sellersCountry, buyersCountry, date);
+        if (invoiceSubcategoryCountry == null) {
+            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + "/"
+                    + (sellersCountry != null ? sellersCountry.getId() : null) + "/" + buyersCountry.getId());
+        }
+
+        Tax tax = null;
+
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
+            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(),
+                chargeInstance.getUserAccount().getBillingAccount(), null);
+        }
+
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+        }
+
+        return tax;
+    }
+
+    /**
+     * Determine applicable tax for a given seller/buyer and invoice subcategory combination
+     * 
+     * @param invoiceSubCategory Invoice subcategory
+     * @param seller Seller
+     * @param billingAccount Billing account
+     * @param date Date to determine tax validity
+     * @param ignoreNoTax Should exception be thrown if no tax was matched
+     * @return Tax to apply
+     * @throws BusinessException General business exception
+     */
+    public Tax determineTax(InvoiceSubCategory invoiceSubCategory, Seller seller, BillingAccount billingAccount, Date date, boolean ignoreNoTax) throws BusinessException {
+
+        TradingCountry sellersCountry = seller.getTradingCountry();
+        TradingCountry buyersCountry = billingAccount.getTradingCountry();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = findByInvoiceSubCategoryAndCountry(invoiceSubCategory, sellersCountry, buyersCountry, date);
+        if (invoiceSubcategoryCountry == null) {
+            if (ignoreNoTax) {
+                return null;
+            }
+            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + "/"
+                    + (sellersCountry != null ? sellersCountry.getId() : null) + "/" + buyersCountry.getId());
+        }
+
+        Tax tax = null;
+
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
+            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, billingAccount, null);
+        }
+
+        if (tax == null) {
+            if (ignoreNoTax) {
+                return null;
+            }
+            throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+        }
+
+        return tax;
+    }
+
+    /**
+     * Determine applicable tax for a given seller/buyer and invoice subcategory combination
+     * 
+     * @param invoiceSubCategory Invoice subcategory
+     * @param seller Seller
+     * @param buyersCountry Buyer's country
+     * @param date Date to determine tax validity
+     * @param ignoreNoTax Should exception be thrown if no tax was matched
+     * @return Tax to apply
+     * @throws BusinessException General business exception
+     */
+    public Tax determineTax(InvoiceSubCategory invoiceSubCategory, Seller seller, TradingCountry buyersCountry, Date date, boolean ignoreNoTax) throws BusinessException {
+
+        TradingCountry sellersCountry = seller.getTradingCountry();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = findByInvoiceSubCategoryAndCountry(invoiceSubCategory, sellersCountry, buyersCountry, date);
+        if (invoiceSubcategoryCountry == null) {
+            if (ignoreNoTax) {
+                return null;
+            }
+            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + "/"
+                    + (sellersCountry != null ? sellersCountry.getId() : null) + "/" + buyersCountry.getId());
+        }
+
+        Tax tax = null;
+
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
+            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null, null, null);
+        }
+
+        if (tax == null) {
+            if (ignoreNoTax) {
+                return null;
+            }
+            throw new IncorrectChargeTemplateException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
+        }
+
+        return tax;
     }
 }

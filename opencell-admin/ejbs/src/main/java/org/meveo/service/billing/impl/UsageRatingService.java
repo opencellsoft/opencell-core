@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
+import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.NoTaxException;
@@ -160,7 +161,6 @@ public class UsageRatingService implements Serializable {
 
         UsageChargeInstance chargeInstance = usageChargeInstance;
 
-        // Not a virtual operation
         Subscription subscription = edr.getSubscription();
 
         // For virtual operation, lookup charge in the subscription
@@ -191,17 +191,9 @@ public class UsageRatingService implements Serializable {
         UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
 
-        TradingCountry tradingCountry = chargeInstance.getCountry();
+        TradingCountry buyersCountry = chargeInstance.getCountry();
 
-        ChargeTemplate chargeTemplate = usageChargeInstance.getChargeTemplate();// em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplateId());
-
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(chargeTemplate.getInvoiceSubCategory(),
-            tradingCountry, edr.getEventDate());
-
-        if (invoiceSubcategoryCountry == null) {
-            throw new NoTaxException(
-                "No tax defined for country=" + tradingCountry.getCountryCode() + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategory().getCode());
-        }
+        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();// em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplateId());
 
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
@@ -209,19 +201,10 @@ public class UsageRatingService implements Serializable {
 
         TradingCurrency currency = chargeInstance.getCurrency();
         
-        
-        Tax tax = null;
-        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
-            tax = invoiceSubcategoryCountry.getTax();
-        } else {
-            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), userAccount, billingAccount, null);
-        }
-        if (tax == null) {
-            throw new NoTaxException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-        }
-
+        Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, edr.getEventDate());
+       
         walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
-        walletOperation.setRatingUnitDescription(usageChargeInstance.getRatingUnitDescription());
+        walletOperation.setRatingUnitDescription(chargeInstance.getRatingUnitDescription());
         walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
 
         // we set here the wallet to the principal wallet but it will later be overridden by charging algorithm
@@ -234,7 +217,7 @@ public class UsageRatingService implements Serializable {
         String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
         String descTranslated = descriptionMap.get(translationKey);
         if (descTranslated == null) {
-            descTranslated = (usageChargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : usageChargeInstance.getDescription();
+            descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
             if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
                 descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
             }
@@ -261,7 +244,7 @@ public class UsageRatingService implements Serializable {
         // walletOperation.setOfferCode(subscription.getOffer().getCode()); Offer code is set in walletOperation.setOfferTemplate()
         walletOperation.setOfferTemplate(subscription.getOffer());
 
-        ratingService.rateBareWalletOperation(walletOperation, usageChargeInstance.getAmountWithoutTax(), usageChargeInstance.getAmountWithTax(), tradingCountry.getId(), currency);
+        ratingService.rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), buyersCountry.getId(), currency);
     }
 
     /**

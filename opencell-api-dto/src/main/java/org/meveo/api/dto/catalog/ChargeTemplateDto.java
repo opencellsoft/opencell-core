@@ -49,10 +49,14 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     /** The unit multiplicator. */
     private BigDecimal unitMultiplicator;
 
-    /** The unit nb decimal. */
+    /**
+     * EDR and WO quantity field value precision
+     */
     private int unitNbDecimal = BaseEntity.NB_DECIMALS;
 
-    /** The rounding mode dto enum. */
+    /**
+     * EDR and WO quantity field value rounding
+     */
     private RoundingModeEnum roundingModeDtoEnum;
 
     /** The revenue recognition rule code. */
@@ -298,7 +302,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     public void setRevenueRecognitionRuleCode(String revenueRecognitionRuleCode) {
         this.revenueRecognitionRuleCode = revenueRecognitionRuleCode;
     }
-    
+
     @Override
     public String toString() {
         return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + isDisabled()

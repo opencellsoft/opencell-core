@@ -417,6 +417,16 @@ public class ProviderApi extends BaseApi {
         if (postData.getRounding() != null) {
             provider.setRounding(postData.getRounding());
         }
+        if (postData.getRoundingMode() != null) {
+            provider.setRoundingMode(postData.getRoundingMode());
+        }
+        if (postData.getInvoiceRounding() != null) {
+            provider.setInvoiceRounding(postData.getInvoiceRounding());
+        }
+        if (postData.getInvoiceRoundingMode() != null) {
+            provider.setInvoiceRoundingMode(postData.getInvoiceRoundingMode());
+        }
+
         if (postData.getPrepaidReservationExpirationDelayinMillisec() != null) {
             provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
         }

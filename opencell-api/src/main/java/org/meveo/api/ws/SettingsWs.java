@@ -137,23 +137,25 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
-    
+
     /**
      * Creates a user in keycloak and core.
+     * 
      * @param postData The user dto
      * @return ActionStatus
      */
     @WebMethod
     ActionStatus createExternalUser(@WebParam(name = "user") UserDto postData);
-    
+
     /**
      * Updates a user in keycloak and core given a username.
+     * 
      * @param postData The user dto
      * @return ActionStatus
      */
     @WebMethod
     ActionStatus updateExternalUser(@WebParam(name = "user") UserDto postData);
-    
+
     /**
      * Deletes a user in keycloak and core given a username.
      * 
@@ -362,10 +364,11 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
-            @WebParam(name = "country") String country);
+            @WebParam(name = "sellersCountry") String sellersCountry, @WebParam(name = "country") String country);
 
     @WebMethod
-    ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "country") String country);
+    ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "sellersCountry") String sellersCountry,
+            @WebParam(name = "country") String country);
 
     @WebMethod
     ActionStatus createOrUpdateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
@@ -509,7 +512,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
-    
+
     /**
      * List external source such as from keycloak.
      * 
@@ -675,7 +678,7 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceTypesResponse listInvoiceTypes();
-    
+
     // InvoiceSequence
     @WebMethod
     ActionStatus createInvoiceSequence(@WebParam(name = "invoiceSequence") InvoiceSequenceDto invoiceSequenceDto);
@@ -932,9 +935,10 @@ public interface SettingsWs extends IBaseWs {
 
     /**
      * Returns the system properties as json string.
+     * 
      * @return system properties
      */
     @WebMethod
-	ActionStatus getSystemProperties();
+    ActionStatus getSystemProperties();
 
 }

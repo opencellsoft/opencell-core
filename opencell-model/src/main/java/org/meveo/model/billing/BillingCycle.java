@@ -81,6 +81,9 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "invoice_date_delay")
     private Integer invoiceDateDelay;
 
+    /**
+     * Invoice due date delay from the invoicing date
+     */
     @Column(name = "due_date_delay")
     private Integer dueDateDelay;
 
@@ -95,14 +98,14 @@ public class BillingCycle extends BusinessCFEntity {
     private InvoiceType invoiceType;
 
     /**
-     * Expression to calculate Invoice due date delay value
+     * Expression to calculate Invoice due date delay from the invoicing date value
      */
     @Column(name = "due_date_delay_el", length = 2000)
     @Size(max = 2000)
     private String dueDateDelayEL;
 
     /**
-     * Expression to calculate Invoice due date delay value - for Spark
+     * Expression to calculate Invoice due date delay from the invoicing date value - for Spark
      */
     @Column(name = "due_date_delay_el_sp", length = 2000)
     @Size(max = 2000)
@@ -154,26 +157,48 @@ public class BillingCycle extends BusinessCFEntity {
         this.transactionDateDelay = transactionDateDelay;
     }
 
+    /**
+     * @return Number of days to add to a billing run date to compute the invoice date
+     */
     public Integer getInvoiceDateProductionDelay() {
         return invoiceDateProductionDelay;
     }
 
+    /**
+     * @param invoiceDateProductionDelay Number of days to add to a billing run date to compute the invoice date
+     */
     public void setInvoiceDateProductionDelay(Integer invoiceDateProductionDelay) {
         this.invoiceDateProductionDelay = invoiceDateProductionDelay;
     }
 
+    /**
+     * Used for immediate invoicing by oneshot charge
+     * 
+     * @return Number of days to add to a charge date to compute the invoice date
+     */
     public Integer getInvoiceDateDelay() {
         return invoiceDateDelay;
     }
 
+    /**
+     * Used for immediate invoicing by oneshot charge
+     * 
+     * @param invoiceDateDelay Number of days to add to a charge date to compute the invoice date
+     */
     public void setInvoiceDateDelay(Integer invoiceDateDelay) {
         this.invoiceDateDelay = invoiceDateDelay;
     }
 
+    /**
+     * @return Invoice due date delay from the invoicing date
+     */
     public Integer getDueDateDelay() {
         return dueDateDelay;
     }
 
+    /**
+     * @param dueDateDelay Invoice due date delay from the invoicing date
+     */
     public void setDueDateDelay(Integer dueDateDelay) {
         this.dueDateDelay = dueDateDelay;
     }
@@ -228,28 +253,28 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * @return Expression to calculate Invoice due date delay value
+     * @return Expression to calculate Invoice due date delay from the invoicing date value
      */
     public String getDueDateDelayEL() {
         return dueDateDelayEL;
     }
 
     /**
-     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay from the invoicing date value
      */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
     }
 
     /**
-     * @return Expression to calculate Invoice due date delay value - for Spark
+     * @return Expression to calculate Invoice due date delay from the invoicing date value - for Spark
      */
     public String getDueDateDelayELSpark() {
         return dueDateDelayELSpark;
     }
 
     /**
-     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay from the invoicing date value - for Spark
      */
     public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
         this.dueDateDelayELSpark = dueDateDelayELSpark;
