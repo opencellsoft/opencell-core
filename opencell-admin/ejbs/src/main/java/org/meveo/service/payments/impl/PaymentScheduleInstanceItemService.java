@@ -13,12 +13,10 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
-import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -128,7 +126,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @throws BusinessException the business exception
      * @throws Exception the exception
      */
-    public void processItem(PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws MeveoApiException, BusinessException, Exception {
+    public void processItem(PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
         paymentScheduleInstanceItem = retrieveIfNotManaged(paymentScheduleInstanceItem);
         UserAccount userAccount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
@@ -165,36 +163,46 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
 
             invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
 
-            CreateInvoiceResponseDto createInvoiceResponseDto = invoiceService.create(invoiceDto);
+            CreateInvoiceResponseDto createInvoiceResponseDto = null;
+            try {
+                createInvoiceResponseDto = invoiceService.create(invoiceDto);
+            } catch (MeveoApiException e) {
+                throw new BusinessException(e.getMessage());
+            }
 
             invoice = invoiceService.findById(createInvoiceResponseDto.getInvoiceId());
-            recordedInvoicePS = createRecordedInvoicePS( amounts,customerAccount, invoiceType,preferredMethod.getPaymentType(),invoice, aoIdsToPay, paymentScheduleInstanceItem) ;
-            aoIdsToPay.add(recordedInvoicePS.getId());
             paymentScheduleInstanceItem.setInvoice(invoice);
-        }else {
-            recordedInvoicePS = createRecordedInvoicePS( amounts,customerAccount, invoiceType,preferredMethod.getPaymentType(),invoice, aoIdsToPay, paymentScheduleInstanceItem) ;
-            aoIdsToPay.add(recordedInvoicePS.getId());
         }
+        recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
+        aoIdsToPay.add(recordedInvoicePS.getId());
+
         paymentScheduleInstanceItem.setRecordedInvoice(recordedInvoicePS);
-        if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isDoPayment()) {          
-            if (preferredMethod.getPaymentType() == PaymentMethodEnum.CARD) {
-                paymentService.payByCardToken(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, true, true, null);
-            } else if (preferredMethod.getPaymentType() == PaymentMethodEnum.DIRECTDEBIT) {
-                paymentService.payByMandat(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, true, true, null);
-            } else {
-                throw new BusinessException("Payment method " + preferredMethod.getPaymentType() + " not allowed");
-            }  
+        if (paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().isDoPayment()) {
+            try {
+                if (preferredMethod.getPaymentType() == PaymentMethodEnum.CARD) {
+                    paymentService.payByCardToken(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, true, true, null);
+                } else if (preferredMethod.getPaymentType() == PaymentMethodEnum.DIRECTDEBIT) {
+                    paymentService.payByMandat(customerAccount, (amount.multiply(new BigDecimal(100))).longValue(), aoIdsToPay, true, true, null);
+                } else {
+                    throw new BusinessException("Payment method " + preferredMethod.getPaymentType() + " not allowed");
+                }
+                applyOneShotPS(invoiceSubCat, paymentScheduleInstanceItem, amounts[0]);
+            } catch (Exception e) {
+                throw new BusinessException(e.getMessage());
+            }
         }
-
-        OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat);
-
-        oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
-            new Date(), new BigDecimal("-"+amounts[0]), null, new BigDecimal(1), null, null, null, null, true);
 
         if (paymentScheduleInstanceItem.isLast()) {
             paymentScheduleInstanceItem.getPaymentScheduleInstance().setStatus(PaymentScheduleStatusEnum.DONE);
             paymentScheduleInstanceItem.getPaymentScheduleInstance().setStatusDate(new Date());
         }
+    }
+
+    private void applyOneShotPS(InvoiceSubCategory invoiceSubCat, PaymentScheduleInstanceItem paymentScheduleInstanceItem, BigDecimal amount) throws BusinessException {
+        OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel());
+
+        oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
+            new Date(), new BigDecimal("-" + amount), null, new BigDecimal(1), null, null, null, null, true);
     }
 
     /**
@@ -204,12 +212,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @return the one shot charge template
      * @throws BusinessException the business exception
      */
-    private OneShotChargeTemplate createOneShotCharge(InvoiceSubCategory invoiceSubCategory) throws BusinessException {
+    private OneShotChargeTemplate createOneShotCharge(InvoiceSubCategory invoiceSubCategory, String paymentLabel) throws BusinessException {
         OneShotChargeTemplate oneShot = oneShotChargeTemplateService.findByCode("ADV_PAYMENT");
         if (oneShot == null) {
             oneShot = new OneShotChargeTemplate();
             oneShot.setCode("ADV_PAYMENT");
-            oneShot.setDescription("ADV_PAYMENT");
+            oneShot.setDescription(paymentLabel);
             oneShot.setInvoiceSubCategory(invoiceSubCategory);
             oneShot.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.OTHER);
             oneShot.setType(OperationTypeEnum.CREDIT);
@@ -231,8 +239,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @return the account operation PS
      * @throws BusinessException the business exception
      */
-    public RecordedInvoice createRecordedInvoicePS(BigDecimal amounts[],CustomerAccount customerAccount, InvoiceType invoiceType, PaymentMethodEnum paymentMethodType,Invoice invoice,
-            List<Long> aoIdsToPay, PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {     
+    public RecordedInvoice createRecordedInvoicePS(BigDecimal amounts[], CustomerAccount customerAccount, InvoiceType invoiceType, PaymentMethodEnum paymentMethodType,
+            Invoice invoice, List<Long> aoIdsToPay, PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
         OCCTemplate occTemplate = oCCTemplateService.getOccTemplateFromInvoiceType(amounts[2], invoiceType, null, null);
         RecordedInvoice recordedInvoicePS = new RecordedInvoice();
         recordedInvoicePS.setDueDate(paymentScheduleInstanceItem.getDueDate());
@@ -242,12 +250,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         recordedInvoicePS.setMatchingAmount(BigDecimal.ZERO);
         recordedInvoicePS.setAccountingCode(occTemplate.getAccountingCode());
         recordedInvoicePS.setOccCode(occTemplate.getCode());
-        recordedInvoicePS.setOccDescription(occTemplate.getDescription());     
-        recordedInvoicePS.setTransactionCategory(occTemplate.getOccCategory());      
+        recordedInvoicePS.setOccDescription(occTemplate.getDescription());
+        recordedInvoicePS.setTransactionCategory(occTemplate.getOccCategory());
         recordedInvoicePS.setCustomerAccount(customerAccount);
-        recordedInvoicePS.setReference(invoice == null ? "psItemID:"+paymentScheduleInstanceItem.getId() : invoice.getInvoiceNumber());
+        recordedInvoicePS.setReference(invoice == null ? "psItemID:" + paymentScheduleInstanceItem.getId() : invoice.getInvoiceNumber());
         recordedInvoicePS.setTransactionDate(new Date());
-        recordedInvoicePS.setMatchingStatus(MatchingStatusEnum.O);        
+        recordedInvoicePS.setMatchingStatus(MatchingStatusEnum.O);
         recordedInvoicePS.setTaxAmount(amounts[1]);
         recordedInvoicePS.setAmountWithoutTax(amounts[0]);
         recordedInvoicePS.setPaymentScheduleInstanceItem(paymentScheduleInstanceItem);
@@ -303,18 +311,18 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      */
     public void checkPaymentRecordInvoice(RecordedInvoice recordedInvoice) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public Long countPaidItems(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countPaidItems")
                 .setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
         } catch (Exception e) {
             return null;
-        }    
+        }
     }
-    
+
     public Long countIncomingItems(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countIncomingItems")
@@ -322,9 +330,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }    
+        }
     }
-    
+
     public BigDecimal sumAmountPaid(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountPaidItems")
@@ -332,9 +340,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }    
+        }
     }
-    
+
     public BigDecimal sumAmountIncoming(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountIncomingItems")
@@ -342,6 +350,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }    
+        }
     }
 }

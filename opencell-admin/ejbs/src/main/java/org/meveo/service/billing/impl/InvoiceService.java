@@ -2079,7 +2079,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException Business exception
      * @throws Exception exception
      */
-    public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
+    public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
        
         Auditable auditable = new Auditable(currentUser);

@@ -87,6 +87,7 @@ public class PaymentScheduleInstance extends EnableBusinessEntity {
     private Integer dueDateDays;
     
     
+    
   
     
     @OneToMany(mappedBy = "paymentScheduleInstance", cascade = CascadeType.ALL)   

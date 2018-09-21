@@ -1385,7 +1385,9 @@
             <column name="due_date_days" type="int" >
                 <constraints nullable="false" />
             </column>   
-            
+            <column name="apply_agreement" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="payment_label" type="varchar(2000)" >
                 <constraints nullable="false" />
             </column> 

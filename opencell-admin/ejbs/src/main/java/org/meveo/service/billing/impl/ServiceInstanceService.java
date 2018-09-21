@@ -605,6 +605,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (terminationReason != null) {
             serviceInstance.setSubscriptionTerminationReason(terminationReason);
         }
+        
+        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
+        if(paymentScheduleTemplate != null) {
+            paymentScheduleInstanceService.terminate(serviceInstance,terminationDate);
+        }
+        
         update(serviceInstance);
     }
 

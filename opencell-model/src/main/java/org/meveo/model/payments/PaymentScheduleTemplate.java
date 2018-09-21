@@ -87,6 +87,10 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
     
     @OneToMany(mappedBy = "paymentScheduleTemplate", cascade = CascadeType.ALL)   
     private List<PaymentScheduleInstance> paymentScheduleInstances;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_agreement")
+    private boolean applyAgreement = false;
 
     /**
      * @return the paymentLabel
@@ -226,6 +230,20 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity {
      */
     public void setDoPayment(boolean doPayment) {
         this.doPayment = doPayment;
+    }
+
+    /**
+     * @return the applyAgreement
+     */
+    public boolean isApplyAgreement() {
+        return applyAgreement;
+    }
+
+    /**
+     * @param applyAgreement the applyAgreement to set
+     */
+    public void setApplyAgreement(boolean applyAgreement) {
+        this.applyAgreement = applyAgreement;
     }
 
    

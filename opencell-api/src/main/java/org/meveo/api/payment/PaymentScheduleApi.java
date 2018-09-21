@@ -126,6 +126,9 @@ public class PaymentScheduleApi extends BaseApi {
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getDoPayment())) {
             missingParameters.add("doPayment");
         }
+        if (StringUtils.isBlank(paymentScheduleTemplateDto.isApplyAgreement())) {
+            missingParameters.add("applyAgreement");
+        }
 
         handleMissingParameters();
 
@@ -164,7 +167,7 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setAdvancePaymentInvoiceSubCategory(invoiceSubCategory);
         paymentScheduleTemplate.setGenerateAdvancePaymentInvoice(paymentScheduleTemplateDto.getGenerateAdvancePaymentInvoice().booleanValue());
         paymentScheduleTemplate.setDoPayment(paymentScheduleTemplateDto.getDoPayment().booleanValue());
-
+        paymentScheduleTemplate.setApplyAgreement(paymentScheduleTemplateDto.isApplyAgreement());
         // populate customFields
         try {
             populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, true);
@@ -261,8 +264,11 @@ public class PaymentScheduleApi extends BaseApi {
             paymentScheduleTemplate.setAdvancePaymentInvoiceSubCategory(invoiceSubCategory);
         }
         if (paymentScheduleTemplateDto.getGenerateAdvancePaymentInvoice() != null) {
-
             paymentScheduleTemplate.setGenerateAdvancePaymentInvoice(paymentScheduleTemplateDto.getGenerateAdvancePaymentInvoice().booleanValue());
+        }
+
+        if (paymentScheduleTemplateDto.isApplyAgreement() != null) {
+            paymentScheduleTemplate.setApplyAgreement(paymentScheduleTemplateDto.isApplyAgreement());
         }
 
         // populate customFields
@@ -387,12 +393,12 @@ public class PaymentScheduleApi extends BaseApi {
                     PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto = new PaymentScheduleInstanceBalanceDto();
                     Long nbPaidItems = paymentScheduleInstanceItemService.countPaidItems(psInstance);
                     Long nbIncomingItems = paymentScheduleInstanceItemService.countIncomingItems(psInstance);
-                    BigDecimal sumAmountPaid =  paymentScheduleInstanceItemService.sumAmountPaid(psInstance);
-                    BigDecimal sumAmountIncoming =  paymentScheduleInstanceItemService.sumAmountIncoming(psInstance);
+                    BigDecimal sumAmountPaid = paymentScheduleInstanceItemService.sumAmountPaid(psInstance);
+                    BigDecimal sumAmountIncoming = paymentScheduleInstanceItemService.sumAmountIncoming(psInstance);
                     if (nbPaidItems != null) {
                         paymentScheduleInstanceBalanceDto.setNbSchedulePaid(nbPaidItems.intValue());
                     }
-                    if(nbIncomingItems != null) {
+                    if (nbIncomingItems != null) {
                         paymentScheduleInstanceBalanceDto.setNbScheduleIncoming(nbIncomingItems.intValue());
                     }
                     paymentScheduleInstanceBalanceDto.setSumAmountPaid(sumAmountPaid);
@@ -446,5 +452,50 @@ public class PaymentScheduleApi extends BaseApi {
         }
 
         paymentScheduleInstanceService.update(paymentScheduleInstance);
+    }
+
+    /**
+     * Terminate payment schedule instance.
+     *
+     * @param paymentScheduleInstanceDto the payment schedule instance dto
+     * @throws MissingParameterException the missing parameter exception
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws BusinessException the business exception
+     */
+    public void terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto)
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getId())) {
+            missingParameters.add("id");
+        }
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getEndDate())) {
+            missingParameters.add("endDate");
+        }
+        handleMissingParameters();
+        PaymentScheduleInstance paymentScheduleInstance = paymentScheduleInstanceService.findById(paymentScheduleInstanceDto.getId());
+        if (paymentScheduleInstance == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, paymentScheduleInstanceDto.getId());
+        }
+        paymentScheduleInstanceService.terminate(paymentScheduleInstance, paymentScheduleInstanceDto.getEndDate());
+    }
+    
+    /**
+     * Cancel payment schedule instance.
+     *
+     * @param paymentScheduleInstanceDto the payment schedule instance dto
+     * @throws MissingParameterException the missing parameter exception
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws BusinessException the business exception
+     */
+    public void cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto)
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(paymentScheduleInstanceDto.getId())) {
+            missingParameters.add("id");
+        }       
+        handleMissingParameters();
+        PaymentScheduleInstance paymentScheduleInstance = paymentScheduleInstanceService.findById(paymentScheduleInstanceDto.getId());
+        if (paymentScheduleInstance == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, paymentScheduleInstanceDto.getId());
+        }
+        paymentScheduleInstanceService.cancel(paymentScheduleInstance);
     }
 }

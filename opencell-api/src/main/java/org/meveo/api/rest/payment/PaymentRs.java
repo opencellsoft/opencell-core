@@ -469,5 +469,23 @@ public interface PaymentRs extends IBaseRs {
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
+    /**
+     * Terminate  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleInstance/terminate")
+    public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
     
+    /**
+     * Cancel  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/paymentScheduleInstance/cancel")
+    public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
 }

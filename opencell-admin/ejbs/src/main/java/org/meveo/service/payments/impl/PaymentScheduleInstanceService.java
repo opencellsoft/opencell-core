@@ -52,6 +52,58 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
     /** The calendar service. */
     @Inject
     private CalendarService calendarService;
+    
+    /**
+     * Terminate when the linked service are terminated.
+     *
+     * @param serviceInstance the service instance
+     * @param terminationDate the termination date
+     * @throws BusinessException the business exception
+     */
+    public void terminate(ServiceInstance serviceInstance, Date terminationDate) throws BusinessException {
+        for(PaymentScheduleInstance paymentScheduleInstance : serviceInstance.getPsInstances()){
+            if(paymentScheduleInstance.getStatus() == PaymentScheduleStatusEnum.IN_PROGRESS) {
+                terminate(paymentScheduleInstance, terminationDate);
+                return;
+            }
+        } 
+    }
+    
+    /**
+     * Terminate paymentScheduleInstance.
+     *
+     * @param paymentScheduleInstance the payment schedule instance
+     * @param terminationDate the termination date
+     * @throws BusinessException the business exception
+     */
+    public void terminate(PaymentScheduleInstance paymentScheduleInstance,Date terminationDate) throws BusinessException {
+        if(paymentScheduleInstance.getPaymentScheduleTemplate().isApplyAgreement()) {
+            for(PaymentScheduleInstanceItem paymentScheduleInstanceItem : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
+               if(paymentScheduleInstanceItem.getRecordedInvoice() == null) {
+                   paymentScheduleInstanceItemService.processItem(paymentScheduleInstanceItem);
+               }
+            }
+        }
+        paymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.TERMINATED);
+        paymentScheduleInstance.setStatusDate(terminationDate);
+        super.update(paymentScheduleInstance);
+    }
+    
+    /**
+     * Cancel.
+     *
+     * @param paymentScheduleInstance the payment schedule instance
+     * @throws BusinessException the business exception
+     */
+    public void cancel(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {
+        if(paymentScheduleInstance.getPaymentScheduleTemplate().isApplyAgreement()) {
+            throw new BusinessException("Can't cancel a PaymentSchedule when is applyAgreement");            
+        }
+        paymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.CANCELLED);
+        paymentScheduleInstance.setStatusDate(new Date());
+        super.update(paymentScheduleInstance);
+    }
+
 
     @Override
     public PaymentScheduleInstance update(PaymentScheduleInstance paymentScheduleInstance) throws BusinessException {
@@ -207,4 +259,6 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
         }
         return null;
     }
+
+
 }

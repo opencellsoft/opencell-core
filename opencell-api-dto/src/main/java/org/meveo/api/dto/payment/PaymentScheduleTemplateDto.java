@@ -70,6 +70,9 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
 
     /** The advance payment invoice sub category code. */
     private String advancePaymentInvoiceSubCategoryCode;
+    
+    /** The apply agreement. */
+    private Boolean applyAgreement = false;
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
@@ -103,6 +106,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.serviceTemplateCode = paymentScheduleTemplate.getServiceTemplate().getCode();
         this.doPayment = paymentScheduleTemplate.isDoPayment();
         this.generateAdvancePaymentInvoice = paymentScheduleTemplate.isGenerateAdvancePaymentInvoice();
+        this.applyAgreement = paymentScheduleTemplate.isApplyAgreement();
         this.customFields = customFields;
     }
 
@@ -304,6 +308,24 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
      */
     public void setDoPayment(Boolean doPayment) {
         this.doPayment = doPayment;
+    }
+
+    /**
+     * Checks if is apply agreement.
+     *
+     * @return the applyAgreement
+     */
+    public Boolean isApplyAgreement() {
+        return applyAgreement;
+    }
+
+    /**
+     * Sets the apply agreement.
+     *
+     * @param applyAgreement the applyAgreement to set
+     */
+    public void setApplyAgreement(Boolean applyAgreement) {
+        this.applyAgreement = applyAgreement;
     }
 
 }

@@ -615,4 +615,30 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
         return result;
     }
+
+
+    @Override
+    public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.terminatePaymentScheduleInstance(paymentScheduleInstanceDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+           paymentScheduleApi.cancelPaymentScheduleInstance(paymentScheduleInstanceDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

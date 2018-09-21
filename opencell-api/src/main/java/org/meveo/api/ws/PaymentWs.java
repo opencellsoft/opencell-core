@@ -419,4 +419,22 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * Terminate  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus terminatePaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * Cancel  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus cancelPaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
 }
