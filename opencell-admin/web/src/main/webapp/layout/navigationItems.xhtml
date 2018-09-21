@@ -282,7 +282,7 @@
 	
 	<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 		<p:menuitem id="dunningWF" outcome="dunning_workflows" value="#{messages['dunningProcess.title']}" />
-	</p:submenu>		
+	</p:submenu>
 	
 	<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{currentUser.hasRole('financeVisualization') or currentUser.hasRole('financeManagement') }">
 		<p:menuitem id="chartOfAccounts" outcome="accountingCodes" value="#{messages['menu.chartOfAccounts']}" rendered="#{currentUser.hasRole('financeVisualization')}" />
