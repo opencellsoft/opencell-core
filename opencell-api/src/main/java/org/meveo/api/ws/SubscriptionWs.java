@@ -54,6 +54,14 @@ public interface SubscriptionWs extends IBaseWs {
     ActionStatus activateSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
     
     /**
+     * Cancels the renewal term of an active subscription.
+     * @param subscriptionCode code of the subscription
+     * @return status of the request
+     */
+    @WebMethod
+    ActionStatus cancelSubscriptionRenewal(@WebParam(name="subscriptionCode") String subscriptionCode);
+    
+    /**
      * List subscriptions by a user account. Deprecated in v.4.7.2. Use listAll() instead.
      * 
      * @param userAccountCode The user account code

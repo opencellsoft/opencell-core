@@ -82,6 +82,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -1100,5 +1101,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         } else {
             return new ArrayList<Seller>();
         }
+    }
+    
+    @ActionMethod
+    public String cancelSubscriptionRenewal() throws BusinessException {
+    	subscriptionService.cancelSubscriptionRenewal(entity);
+    	RequestContext.getCurrentInstance().reset("subscriptionTab");
+    	return null;
     }
 }
