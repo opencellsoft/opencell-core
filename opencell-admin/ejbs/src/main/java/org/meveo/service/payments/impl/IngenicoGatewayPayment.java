@@ -362,7 +362,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         {
             String returnUrl = hostedCheckoutInput.getReturnUrl();
             Long id = hostedCheckoutInput.getCustomerAccountId();
-            String TimeMillisWithcustomerAccountId =  System.currentTimeMillis() + "-" + id;
+            String TimeMillisWithcustomerAccountId =  System.currentTimeMillis() + "_-_" + id;
 
             String redirectionUrl;
 
