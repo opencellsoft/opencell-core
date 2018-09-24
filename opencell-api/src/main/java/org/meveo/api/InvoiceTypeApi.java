@@ -238,9 +238,9 @@ public class InvoiceTypeApi extends BaseApi {
                 invoiceSequence.setCode(invoiceType.getCode());
                 invoiceSequenceService.update(invoiceSequence);
             } else {
-                InvoiceSequence invoiceSequenceFromDto = invoiceTypeDto.getSequenceDto().fromDto();
-                invoiceSequenceFromDto.setCode(invoiceType.getCode());
-                invoiceSequenceService.create(invoiceSequence);
+                InvoiceSequence newInvoiceSequence = invoiceTypeDto.getSequenceDto().fromDto();
+                newInvoiceSequence.setCode(invoiceType.getCode());
+                invoiceSequenceService.create(newInvoiceSequence);
             }
             invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
         }
