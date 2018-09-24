@@ -57,6 +57,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -1092,8 +1093,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     
     public List<Seller> listSellers() {
         if(entity.getOffer() != null) {
-            if(entity.getOffer().getSellers().size() > 0) {
-                return entity.getOffer().getSellers();
+            OfferTemplate offer = offerTemplateService.findByCode(entity.getOffer().getCode());
+            if(offer.getSellers().size() > 0) {
+                return offer.getSellers();
             } else {
                 return sellerService.list();
             }
