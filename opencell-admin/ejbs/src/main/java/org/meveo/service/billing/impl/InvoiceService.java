@@ -600,7 +600,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions) throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -660,12 +660,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         String invoiceTypeCode = evaluateInvoiceType(billingCycle.getInvoiceTypeEl(), billingRun);
                         invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
                     }
-                    if (invoiceType == null) {
-                        invoiceType = billingCycle.getInvoiceType();
-                    }
-                    if (invoiceType == null) {
-                        invoiceType = invoiceTypeService.getDefaultCommertial();
-                    }
+					if (isDraft) {
+						invoiceType = invoiceTypeService.getDefaultDraft();
+					} else {
+						if (invoiceType == null) {
+							invoiceType = billingCycle.getInvoiceType();
+						}
+						if (invoiceType == null) {
+							invoiceType = invoiceTypeService.getDefaultCommertial();
+						}
+					}
                     mapInvTypeRT.put(invoiceType, ratedTransactions);
                 }
                 
@@ -1773,13 +1777,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         ratedTransactionService.createRatedTransaction(entity, invoiceDate);
 
         entity = billingAccountService.calculateInvoicing(entity, firstTransactionDate, lastTransactionDate);
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions());
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, entity.getMinRatedTransactions(), isDraft);
         
-        if (!isDraft) {
+//        if (!isDraft) {
             for(Invoice invoice: invoices) {
                 assignInvoiceNumber(invoice);
             }
-        }
+//        }
         
         // TODO : delete this commit since generating PDF/XML and producing AOs are now outside this service !
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
