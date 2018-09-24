@@ -737,7 +737,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @throws BusinessException business exception
      */
     public String evaluateStringExpression(String expression, BillingAccount ba) throws BusinessException {
-        String result = null;
+        String result = "";
         if (StringUtils.isBlank(expression)) {
             return result;
         }
@@ -762,7 +762,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @throws BusinessException business exception
      */
     private String evaluateStringExpression(String expression, Subscription subscription) throws BusinessException {
-        String result = null;
+        String result = "";
         if (StringUtils.isBlank(expression)) {
             return result;
         }
@@ -787,7 +787,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @throws BusinessException business exception
      */
     private String evaluateStringExpression(String expression, ServiceInstance serviceInstance) throws BusinessException {
-        String result = null;
+        String result = "";
         if (StringUtils.isBlank(expression)) {
             return result;
         }
