@@ -387,8 +387,8 @@ public class Invoice4_2Api extends BaseApi {
             BillingProcessTypesEnum.AUTOMATIC);
     }
 
-    private void updateBAtotalAmount(Long billingAccountId, BillingRun billingRun) throws BusinessException {
-        billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun);
+    private void updateBAtotalAmount(BillingAccount billingAccount, BillingRun billingRun) throws BusinessException {
+        billingAccountService.updateBillingAccountTotalAmounts(billingAccount, billingRun);
         log.debug("updateBillingAccountTotalAmounts ok");
     }
 
@@ -454,13 +454,13 @@ public class Invoice4_2Api extends BaseApi {
         Long billingRunId = billingRun.getId();
         log.info("launchExceptionalInvoicing ok , billingRun.id:" + billingRunId);
 
-        updateBAtotalAmount(billingAccount.getId(), billingRun);
+        updateBAtotalAmount(billingAccount, billingRun);
         log.info("updateBillingAccountTotalAmounts ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1);
         log.info("update billingRun ON_GOING");
 
-        billingRunService.createAgregatesAndInvoice(billingRun.getId(), 1, 0, null, null);
+        billingRunService.createAgregatesAndInvoice(billingRun, 1, 0, null, null);
         log.info("createAgregatesAndInvoice ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null);

@@ -87,13 +87,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     @EJB
     private BillingRunService billingRunService;
 
-    /** The rated transaction service. */
-    @Inject
-    private RatedTransactionService ratedTransactionService;
-
     /** The invoice sub category service. */
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
+    
+    /** The billing account service. */
+    @Inject
+    private BillingAccountService billingAccountService;
 
     /**
      * Inits the billing account.
@@ -356,16 +356,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     /**
      * Update billing account total amounts.
      *
-     * @param billingAccountId the billing account id
+     * @param billingAccount the billing account id
      * @param billingRun the billing run
      * @return true, if successful
      * @throws BusinessException the business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) throws BusinessException {
-        log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
-        BillingAccount billingAccount = findById(billingAccountId);
+    public BillingAccount updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun) throws BusinessException {
+        log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getId());
 
         billingAccount = calculateInvoicing(billingAccount, null, billingRun.getLastTransactionDate());
 
@@ -379,7 +378,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
                     log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
                         billingAccount.getCode(), invoiceAmount, invoicingThreshold);
-                    return false;
+                    return null;
                 } else {
                     log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
                         billingAccount.getCode(), invoiceAmount, invoicingThreshold);
@@ -396,7 +395,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
         updateNoCheck(billingAccount);
 
-        return true;
+        return billingAccount;
     }
 
     /**
@@ -754,6 +753,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         List<RatedTransaction> minAmountTransactions = new ArrayList<RatedTransaction>();
         
         Date minRatingDate = DateUtils.addDaysToDate(lastTransactionDate, -1);
+        
+        billingAccount = billingAccountService.findByCode(billingAccount.getCode());
 
         Map<InvoiceSubCategory, Map<String, BigDecimal>> billingAccountAmountMap = new HashMap<InvoiceSubCategory, Map<String, BigDecimal>>();
         List<Subscription> subscriptionsToProcess = new ArrayList<Subscription>();

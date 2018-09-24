@@ -3,6 +3,7 @@
  */
 package org.meveo.admin.async;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -56,7 +57,7 @@ public class InvoicingAsync {
     /**
      * Update billing account total amounts async. One billing account at a time in a separate transaction.
      *
-     * @param billingAccountIds Billing account ids
+     * @param billingAccounts BillingAccount
      * @param billingRun The billing run
      * @param jobInstanceId Job instance id
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -66,22 +67,22 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
+    public Future<List<BillingAccount>> updateBillingAccountTotalAmountsAsync(List<BillingAccount> billingAccounts, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
             throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
-        int count = 0;
-        for (Long billingAccountId : billingAccountIds) {
+        List<BillingAccount> fBillingAccounts = new ArrayList<BillingAccount>();
+        for (BillingAccount billingAccountEntity : billingAccounts) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
-                count++;
+            BillingAccount billingAccount = billingAccountService.updateBillingAccountTotalAmounts(billingAccountEntity, billingRun);
+            if (billingAccount != null) {
+                fBillingAccounts.add(billingAccount);
             }
         }
-        log.info("WorkSet billableBA:" + count);
-        return new AsyncResult<Integer>(new Integer(count));
+        log.info("WorkSet billable entities: " + billingAccounts.size());
+        return new AsyncResult<List<BillingAccount>>(fBillingAccounts);
     }
 
     /**
