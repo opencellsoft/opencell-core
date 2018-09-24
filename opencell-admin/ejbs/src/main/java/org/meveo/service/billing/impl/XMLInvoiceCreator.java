@@ -699,6 +699,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
 
         }
+        
+        // generate invoice line for min amount RT
+        Element userAccountTag = doc.createElement("userAccount");
+        userAccountTag.setAttribute("description", "-");
+        userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, billingAccountLanguage));
+        userAccountsTag.appendChild(userAccountTag);
+
     }
 
     /**
@@ -1252,78 +1259,92 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
     
     /**
-     * getMinAmountRTCategory
+     * Provide categories elements for min amount transactions
      * 
      * @param doc dom document
      * @param ratedTransactions rated transactions
      * @param enterprise true/false
-     * @param rounding rounding
-     * @param roundingMode rounding mode enum
      * @return category element
      * @throws BusinessException business exception
      */
-    private Element getMinAmountRTCategory(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, final int rounding) throws BusinessException {
+    private Element getMinAmountRTCategories(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, String languageCode) throws BusinessException {
+        
+        LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<InvoiceSubCategory, Element>();
+        if(ratedTransactions != null) {
+            for (RatedTransaction ratedTransaction : ratedTransactions) {
+                if (ratedTransaction.getWallet() == null) {
+                    
+                    Element subCategory = null;
+                    if(subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory()) == null) {
+                        subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), doc.createElement("subCategory"));
+                    } 
+                        
+                    subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());   
+                    subCategory.setAttribute("label", ratedTransaction.getInvoiceSubCategory().getDescription());
+                    subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());
+                    subCategory.setAttribute("amountWithoutTax", ratedTransaction.getAmountWithoutTax().toString());
     
-        Element category = null;
-        boolean hasMinAmountRT = false;
-        LinkedHashMap<String, Element> subCategoriesMap = new LinkedHashMap<String, Element>();
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getWallet() == null) {
-                hasMinAmountRT = true;
-                Element subCategory = null;
-                if(subCategoriesMap.containsKey(ratedTransaction.getCode())) {
-                    subCategory = subCategoriesMap.get(ratedTransaction.getCode());
-                } else {
-                    subCategory = doc.createElement("subCategory");
-                    subCategory.setAttribute("label", ratedTransaction.getDescription());
-                    subCategory.setAttribute("code", ratedTransaction.getCode());
-                    subCategory.setAttribute("amountWithoutTax", round(ratedTransaction.getAmountWithoutTax(), rounding));
+                    Element line = doc.createElement("line");
+                    Element lebel = doc.createElement("label");
+                    Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription() != null ? ratedTransaction.getDescription() : "");
+                    lebel.appendChild(lebelTxt);
+    
+                    Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+                    Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                    lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+                    line.appendChild(lineUnitAmountWithoutTax);
+    
+                    Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+                    Text lineAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getAmountWithoutTax().toString());
+                    lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
+                    line.appendChild(lineAmountWithoutTax);
+    
+                    if (!enterprise) {
+                        Element lineAmountWithTax = doc.createElement("amountWithTax");
+                        Text lineAmountWithTaxTxt = doc.createTextNode(ratedTransaction.getAmountWithTax().toString());
+                        lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+                        line.appendChild(lineAmountWithTax);
+                    }
+    
+                    Element quantity = doc.createElement("quantity");
+                    Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                    quantity.appendChild(quantityTxt);
+                    line.appendChild(quantity);
+                    line.appendChild(lebel);
+                    subCategory.appendChild(line);
+    
+                    subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), subCategory);
                 }
-                
-                Element line = doc.createElement("line");
-                Element lebel = doc.createElement("label");
-                Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
-                lebel.appendChild(lebelTxt);
-                
-                Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
-                lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
-                line.appendChild(lineUnitAmountWithoutTax);
-
-                Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithoutTax(), rounding));
-                lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
-                line.appendChild(lineAmountWithoutTax);
-
-                if (!enterprise) {
-                    Element lineAmountWithTax = doc.createElement("amountWithTax");
-                    Text lineAmountWithTaxTxt = doc.createTextNode(round(ratedTransaction.getAmountWithTax(), rounding));
-                    lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-                    line.appendChild(lineAmountWithTax);
-                }
-
-                Element quantity = doc.createElement("quantity");
-                Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
-                quantity.appendChild(quantityTxt);
-                line.appendChild(quantity);
-                line.appendChild(lebel);
-                subCategory.appendChild(line);
-                
-                subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
-            }   
-        }
-
-        if(hasMinAmountRT) {
-            category = doc.createElement("category");
-            category.setAttribute("label", "-");
-            category.setAttribute("code", "min_amount");
-            Element subCategories = doc.createElement("subCategories");
-            for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
-                subCategories.appendChild(entry.getValue());
             }
-            category.appendChild(subCategories);
         }
-        return category;
+        
+        LinkedHashMap<InvoiceCategory, Element> categoriesMap = new LinkedHashMap<InvoiceCategory, Element>();
+        for (Map.Entry<InvoiceSubCategory, Element> entry : subCategoriesMap.entrySet()) {
+            InvoiceSubCategory invoiceSubCategory = entry.getKey();
+            InvoiceCategory invoiceCategory = invoiceSubCategory.getInvoiceCategory();
+            if(categoriesMap.get(invoiceCategory) == null) {
+                Element category = doc.createElement("category");
+                String invoiceCategoryLabel = "";
+                if ( (invoiceCategory != null) &&
+                        (invoiceCategory.getDescriptionI18nNullSafe() != null) &&
+                        (!StringUtils.isBlank(invoiceCategory.getDescriptionI18nNullSafe().get(languageCode))) ) {
+                    invoiceCategoryLabel = invoiceCategory.getDescriptionI18nNullSafe().get(languageCode);
+                }
+                category.setAttribute("label", invoiceCategoryLabel);
+                category.setAttribute("code", invoiceCategory.getCode());
+                Element subCategories = doc.createElement("subCategories");
+                category.appendChild(subCategories);
+                categoriesMap.put(invoiceCategory, category);
+            }
+            
+            categoriesMap.get(invoiceCategory).getFirstChild().appendChild(entry.getValue());
+        }
+ 
+        Element categories = doc.createElement("categories");
+        for(Map.Entry<InvoiceCategory, Element> entry : categoriesMap.entrySet()) {
+            categories.appendChild(entry.getValue());
+        }
+        return categories;
     }
     
     /**
@@ -1707,15 +1728,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 categories.appendChild(category);
             }
             
-        }
-
-        // generate invoice line for min amount RT
-        Element minAmountRTCategory = getMinAmountRTCategory(doc, ratedTransactions, enterprise, rounding);
-        if(minAmountRTCategory != null) {
-            if(categories == null) {
-                categories = createCategoriesElement(doc, parent);
-            }
-            categories.appendChild(minAmountRTCategory);
         }
     }
 
