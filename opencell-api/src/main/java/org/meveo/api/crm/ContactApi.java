@@ -208,7 +208,13 @@ public class ContactApi extends AccountEntityApi {
 
 		if(contact.getCompany() != postData.getCompany()) {
 			contact.setCompany(postData.getCompany());
-			Customer customer = customerService.findByCompanyName(postData.getCompany());
+			Customer customer = null;
+			if(!contact.getCompany().isEmpty()) {
+				customer = customerService.findByCompanyName(postData.getCompany());
+			}
+			else {
+				customer = customerService.findByCode(postData.getCode());
+			}
 			if(customer != null) {
 				contact.setAddressBook(customer.getAddressbook());
 			}
@@ -320,12 +326,12 @@ public class ContactApi extends AccountEntityApi {
 		return result;
 	}
 
-	public ContactsDto importLinkedInFromText(String context) throws IOException {
-		Set<Contact> failedToPersist = new HashSet<Contact>();
-		Set<Contact> contacts = null;
+	public ContactsDto importCSVText(String context) throws IOException {
+		List<Contact> failedToPersist = new ArrayList<Contact>();
+		List<Contact> contacts = null;
 		List<String> failedToPersistLog = new ArrayList<String>();
 
-		contacts = contactService.parseLinkedInFromText(context);
+		contacts = contactService.parseCSVText(context);
 		
 		for(Contact contact : contacts) {
 			if(StringUtils.isBlank(contact.getName().getFirstName())) {
