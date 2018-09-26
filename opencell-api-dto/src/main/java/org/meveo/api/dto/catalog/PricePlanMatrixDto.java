@@ -121,7 +121,17 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     /**
      * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
      */
-    private String ratingEL;
+    private String ratingELWithTax;
+    
+    /**
+     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     */
+    private String ratingELWithoutTax;
+    
+    /**
+     * Expression for getting the InvoiceSubCategory.
+     */
+    private String invoiceSubCategoryEL;
 
     /**
      * Instantiates a new price plan matrix dto.
@@ -180,9 +190,11 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
         woDescriptionEL = pricePlan.getWoDescriptionEL();
-        ratingEL = pricePlan.getRatingEL();
+        ratingELWithoutTax = pricePlan.getRatingELWithoutTax();
+        ratingELWithTax = pricePlan.getRatingELWithTax();
         minimumAmountWithoutTaxEl = pricePlan.getMinimumAmountWithoutTaxEl();
         minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
+        invoiceSubCategoryEL = pricePlan.getInvoiceSubCategoryEL();
     }
 
     /**
@@ -690,24 +702,6 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     }
 
     /**
-     * Gets the rating EL.
-     *
-     * @return the rating EL
-     */
-    public String getRatingEL() {
-        return ratingEL;
-    }
-
-    /**
-     * Sets the rating EL.
-     *
-     * @param ratingEL the new rating EL
-     */
-    public void setRatingEL(String ratingEL) {
-        this.ratingEL = ratingEL;
-    }
-
-    /**
      * Gets the minimum amount without tax el.
      *
      * @return the minimum amount without tax el
@@ -752,4 +746,28 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
                 + amountWithTax + ", amountWithoutTaxEL=" + amountWithoutTaxEL + ", amountWithTaxEL=" + amountWithTaxEL + ", priority=" + priority + ", criteria1=" + criteria1
                 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode + ", scriptInstance=" + scriptInstance + "]";
     }
+
+	public String getRatingELWithTax() {
+		return ratingELWithTax;
+	}
+
+	public void setRatingELWithTax(String ratingELWithTax) {
+		this.ratingELWithTax = ratingELWithTax;
+	}
+
+	public String getRatingELWithoutTax() {
+		return ratingELWithoutTax;
+	}
+
+	public void setRatingELWithoutTax(String ratingELWithoutTax) {
+		this.ratingELWithoutTax = ratingELWithoutTax;
+	}
+
+	public String getInvoiceSubCategoryEL() {
+		return invoiceSubCategoryEL;
+	}
+
+	public void setInvoiceSubCategoryEL(String invoiceSubCategoryEL) {
+		this.invoiceSubCategoryEL = invoiceSubCategoryEL;
+	}
 }

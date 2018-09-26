@@ -142,6 +142,19 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         return result;
     }
 
+	@Override
+	public ActionStatus activateSubscription(String subscriptionCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.activateSubscription(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
     @Override
     public SubscriptionsResponseDto listSubscriptionByUserAccount(String userAccountCode) {
         SubscriptionsResponseDto result = new SubscriptionsResponseDto();

@@ -3,6 +3,7 @@ package org.meveo.service.payments.impl;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -104,13 +105,7 @@ public interface GatewayPaymentInterface {
      * @throws BusinessException business exception
      */
     public void cancelPayment(String paymentID) throws BusinessException;
-
- // TODO PaymentRun
-    /**
-     * @param ddRequestLot debit direct request by lot
-     * @throws BusinessException business exception
-     */
-    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException;
+    
 
     // TODO PaymentRun
     /**
@@ -157,5 +152,15 @@ public interface GatewayPaymentInterface {
      * @throws BusinessException Business Exception 
      */
     public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException;
-   
+
+    /**
+     * return the url of Hosted Checkout
+     *
+     * @param hostedCheckoutInput
+     * @return url of Hosted Checkout
+     * @throws BusinessException
+     *
+     * @author Mounir Bahije
+     */
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException;
 }

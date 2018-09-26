@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -63,16 +65,17 @@ import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RumSequence;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
+import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.shared.InterBankTitle;
 
 /**
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2
  */
 @Entity
 @ObservableEntity
@@ -225,8 +228,24 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
     
+    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GdprConfiguration gdprConfiguration;
+    
     @Embedded
-    private RumSequence rumSequence = new RumSequence();
+	@AttributeOverrides({ //
+			@AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), //
+			@AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")), //
+			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb")), //
+	})
+	private GenericSequence rumSequence = new GenericSequence();
+    
+    @Embedded
+	@AttributeOverrides({ //
+			@AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), //
+			@AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")), //
+			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb")), //
+	})
+	private GenericSequence customerNoSequence = new GenericSequence();
 
     public String getCode() {
         return code;
@@ -569,11 +588,35 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
-    public RumSequence getRumSequence() {
+	public GdprConfiguration getGdprConfiguration() {
+		return gdprConfiguration;
+	}
+
+	public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
+		this.gdprConfiguration = gdprConfiguration;
+	}
+	
+	public GdprConfiguration getGdprConfigurationNullSafe() {
+		if (gdprConfiguration == null) {
+			gdprConfiguration = new GdprConfiguration();
+		}
+
+		return gdprConfiguration;
+	}
+
+    public GenericSequence getRumSequence() {
 		return rumSequence;
 	}
 
-	public void setRumSequence(RumSequence rumSequence) {
+	public void setRumSequence(GenericSequence rumSequence) {
 		this.rumSequence = rumSequence;
+	}
+
+	public GenericSequence getCustomerNoSequence() {
+		return customerNoSequence;
+	}
+
+	public void setCustomerNoSequence(GenericSequence customerNoSequence) {
+		this.customerNoSequence = customerNoSequence;
 	}
 }

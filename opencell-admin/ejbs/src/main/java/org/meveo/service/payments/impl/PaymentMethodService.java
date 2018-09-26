@@ -25,7 +25,9 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
@@ -51,6 +53,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     @Inject
     private PaymentGatewayService paymentGatewayService;
 
+    @Inject
+    private CustomerAccountService customerAccountService;
+
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
 
@@ -69,6 +74,32 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
                 .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
+    }
+
+    /**
+     * Test if the card with a TokenId and aoociated to a customer account Exist
+     * @param paymentMethod Payment Method
+     * @throws BusinessException
+     */
+    public boolean cardTokenExist(PaymentMethod paymentMethod) throws BusinessException {
+
+        boolean result = false;
+        if (paymentMethod instanceof CardPaymentMethod) {
+            CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
+            if ((cardPayment == null) || (cardPayment.getCustomerAccount() == null)) {
+                result = true;
+            }
+            long nbrOfCardCustomerAccount = (long)getEntityManager().createNamedQuery("PaymentMethod.getNumberOfCardCustomerAccount")
+                    .setParameter("customerAccountId", cardPayment.getCustomerAccount().getId())
+                    .setParameter("monthExpiration", cardPayment.getMonthExpiration())
+                    .setParameter("yearExpiration", cardPayment.getYearExpiration())
+                    .setParameter("hiddenCardNumber", cardPayment.getHiddenCardNumber())
+                    .setParameter("cardType", cardPayment.getCardType())
+                    .getSingleResult();
+
+            if (nbrOfCardCustomerAccount > 0) result = true;
+        }
+        return result;
     }
 
     @Override
@@ -138,8 +169,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
 
             cardPaymentMethod.setTokenId(tockenID);
-        } else {
-            cardPaymentMethod.setTokenId(null);
         }
         cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
     }
@@ -175,5 +204,31 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         bankCoordinates.setBic(mandatInfoDto.getBic());
         ddPaymentMethod.setBankCoordinates(bankCoordinates);
         create(ddPaymentMethod);
+    }
+
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
+
+        String hostedCheckoutUrl = "";
+
+        CustomerAccount customerAccount = customerAccountService.findByCode(hostedCheckoutInput.getCustomerAccountCode());
+        hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
+        String returnUrl = hostedCheckoutInput.getReturnUrl();
+
+        if (StringUtils.isBlank(hostedCheckoutInput.getGatewayPaymentName())) {
+            try {
+                throw new InvalidParameterException("gatewayPaymentName", null);
+            } catch (InvalidParameterException e) {
+                e.printStackTrace();
+                throw new BusinessException("Invalid Parameter Exception.");
+            }
+        }
+
+        if ("INGENICO_GC".equalsIgnoreCase(hostedCheckoutInput.getGatewayPaymentName().toString())) {
+            IngenicoGatewayPayment ingenicoGatewayPayment = new IngenicoGatewayPayment();
+            hostedCheckoutUrl = ingenicoGatewayPayment.getHostedCheckoutUrl(hostedCheckoutInput);
+
+        }
+
+        return hostedCheckoutUrl;
     }
 }

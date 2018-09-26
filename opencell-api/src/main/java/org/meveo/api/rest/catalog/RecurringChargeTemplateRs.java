@@ -40,7 +40,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     /**
      * Find a recurring charge template with a given code.
      * 
-     * @param recurringChargeTemplateCode The reccuring charge template's code
+     * @param recurringChargeTemplateCode The recurring charge template's code
      * @return Return a recurringChargeTemplate
      */
     @GET
@@ -60,7 +60,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     /**
      * Remove an existing recurring charge template with a given code.
      * 
-     * @param recurringChargeTemplateCode
+     * @param recurringChargeTemplateCode The recurring charge template's code
      * @return Request processing status
      */
     @DELETE

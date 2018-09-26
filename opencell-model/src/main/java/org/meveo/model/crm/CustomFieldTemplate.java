@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
@@ -55,8 +56,7 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * @author akadid abdelmounaim
- * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 5.0
 
  **/
 @Entity
@@ -106,17 +106,9 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "value_required")
     private boolean valueRequired;
 
-    @Transient
-    private Map<String, String> listValues;
-
     @ElementCollection(fetch = FetchType.LAZY)
-    @OrderBy("gui_position ASC")
-    @CollectionTable(
-            name = "crm_custom_field_tmpl_val_pos",
-            joinColumns = { @JoinColumn(name = "customfieldtemplate_id") }
-    )
-    private List<OrderedValue> listOrderedValues = new ArrayList<OrderedValue>();
-
+    @CollectionTable(name = "crm_custom_field_tmpl_val")
+    private Map<String, String> listValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @OrderBy("columnUse ASC, position ASC")
@@ -151,6 +143,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Type(type = "numeric_boolean")
     @Column(name = "inh_as_def_value")
     private boolean useInheritedAsDefaultValue;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "cf_protectable")
+    protected boolean protectable;
 
     /**
      * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
@@ -264,7 +260,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     }
 
     public Map<String, String> getListValues() {
-        return getListValuesSorted();
+        return listValues;
     }
 
     /**
@@ -272,29 +268,28 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      * @return  a sorted LinkedHashMap values
      */
     public Map<String, String> getListValuesSorted() {
+        if (listValues != null && !listValues.isEmpty()) {
+            Comparator<String> dropdownListComparator = new Comparator<String>() {
+                @Override
+                public int compare(String s1, String s2) {
+                    try {
+                        return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
+                    } catch (NumberFormatException e) {
+                        return s1.compareTo(s2);
+                    }
+                }
+            };
 
-
-        Map<String, String> newList = new LinkedHashMap<>();
-
-        if (listOrderedValues != null && !listOrderedValues.isEmpty()) {
-
-            for (int i = 0; i < listOrderedValues.size(); i++) {
-                newList.put(listOrderedValues.get(i).getKey(), listOrderedValues.get(i).getLabel());
-            }
+            Map<String, String> newList = new TreeMap<>(dropdownListComparator);
+            newList.putAll(listValues);
+            return newList;
         }
-        return newList;
+
+        return listValues;
     }
 
     public void setListValues(Map<String, String> listValues) {
         this.listValues = listValues;
-    }
-
-    public List<OrderedValue> getListOrderedValues() {
-        return listOrderedValues;
-    }
-
-    public void setListOrderedValues(List<OrderedValue> listOrderedValues) {
-        this.listOrderedValues = listOrderedValues;
     }
 
     public List<CustomFieldMatrixColumn> getMatrixColumns() {
@@ -856,5 +851,19 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         }
 
         return valBuilder.toString();
+    }
+
+    /**
+     * @return the protectable
+     */
+    public boolean isProtectable() {
+        return protectable;
+    }
+
+    /**
+     * @param protectable the protectable to set
+     */
+    public void setProtectable(boolean protectable) {
+        this.protectable = protectable;
     }
 }

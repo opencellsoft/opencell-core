@@ -41,6 +41,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -53,6 +54,10 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BA")
 @ExportIdentifier({ "code" })
@@ -74,11 +79,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
     private Date statusDate = new Date();
-
-    @Column(name = "email", length = 255)
-    @Size(max = 255)
-    // @Pattern(regexp = ".+@.+\\..{2,4}")
-    private String email;
 
     @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
@@ -168,10 +168,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
-    @Column(name = "phone", length = 50)
-    @Size(max = 50)
-    protected String phone;
-    
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
@@ -179,6 +175,18 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
+    
+    @Transient
+    private List<RatedTransaction> minRatedTransactions;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountWithoutTax;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountWithTax;
+    
+    @Transient
+	private BigDecimal totalInvoicingAmountTax;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -225,14 +233,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
 
     public void setElectronicBilling(Boolean electronicBilling) {
         this.electronicBilling = electronicBilling;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Date getNextInvoiceDate() {
@@ -408,14 +408,6 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
         this.invoicingThreshold = invoicingThreshold;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
@@ -431,5 +423,48 @@ public class BillingAccount extends AccountEntity implements IBillableEntity {
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
+
+    @Override
+	public void anonymize(String code) {
+		super.anonymize(code);
+		getContactInformation().anonymize(code);
+		if (getUsersAccounts() != null) {
+			for (UserAccount ua : getUsersAccounts()) {
+				ua.anonymize(code);
+			}
+		}
+	}
+    
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		minRatedTransactions = ratedTransactions;
+	}
+
+	public List<RatedTransaction> getMinRatedTransactions() {
+		return minRatedTransactions;
+	}
+
+	public BigDecimal getTotalInvoicingAmountWithoutTax() {
+		return totalInvoicingAmountWithoutTax;
+	}
+
+	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+		this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
+	}
+
+	public BigDecimal getTotalInvoicingAmountWithTax() {
+		return totalInvoicingAmountWithTax;
+	}
+
+	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+		this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
+	}
+
+	public BigDecimal getTotalInvoicingAmountTax() {
+		return totalInvoicingAmountTax;
+	}
+
+	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+		this.totalInvoicingAmountTax = totalInvoicingAmountTax;
+	}
 
 }

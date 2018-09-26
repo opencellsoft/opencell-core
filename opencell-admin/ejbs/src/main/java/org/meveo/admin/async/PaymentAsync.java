@@ -28,6 +28,8 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
 /**
+ * The Class PaymentAsync.
+ *
  * @author anasseh
  * @lastModifiedVersion 5.1
  */
@@ -35,6 +37,7 @@ import org.meveo.service.payments.impl.AccountOperationService;
 @Stateless
 public class PaymentAsync {
 
+    /** The unit payment job bean. */
     @Inject
     private UnitPaymentJobBean unitPaymentJobBean;
 
@@ -42,15 +45,17 @@ public class PaymentAsync {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    /** The current user provider. */
     @Inject
     private CurrentUserProvider currentUserProvider;
 
+    /** The account operation service. */
     @Inject
     private AccountOperationService accountOperationService;
 
     /**
      * Process card payments for a list of given account operation ids. One account operation at a time in a separate transaction.
-     * 
+     *
      * @param caIds List of customerAccount ids
      * @param result Job execution result
      * @param createAO True/ false to create account operation
@@ -61,26 +66,27 @@ public class PaymentAsync {
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @param paymentPerAOorCA make payment for each AO or all AO for each CA
-     * @param dueDate AO duedate to check
+     * @param fromDueDate the from due date
+     * @param toDueDate the to due date
      * @return future result
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> caIds, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
-            OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, String paymentPerAOorCA, Date dueDate) {
+            OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, String paymentPerAOorCA, Date fromDueDate, Date toDueDate) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
+        BigDecimal oneHundred = new BigDecimal("100");
         for (Long caID : caIds) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            BigDecimal oneHundred = new BigDecimal("100");
+           
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                listAoToPayOrRefund = accountOperationService.getAOsToPay(paymentMethodType, dueDate, caID);
+                listAoToPayOrRefund = accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID);
             } else {
-                listAoToPayOrRefund = accountOperationService.getAOsToRefund(paymentMethodType, dueDate, caID);
+                listAoToPayOrRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
             }
             if ("CA".equals(paymentPerAOorCA)) {
                 List<Long> aoIds = new ArrayList<Long>();

@@ -3,6 +3,7 @@
  */
 package org.meveo.admin.async;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -66,22 +67,22 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
+    public Future<List<IBillableEntity>> updateBillingAccountTotalAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser)
             throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
-        int count = 0;
+        List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
         for (IBillableEntity entity : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            if (billingAccountService.updateEntityTotalAmounts(entity, billingRun)) {
-                count++;
+            IBillableEntity billableEntity = billingAccountService.updateEntityTotalAmounts(entity, billingRun);
+            if (billableEntity != null) {
+            	billableEntities.add(billableEntity);
             }
         }
-        log.info("WorkSet billableBA:" + count);
-        return new AsyncResult<Integer>(new Integer(count));
+        log.info("WorkSet billable entities: " + billableEntities.size());
+        return new AsyncResult<List<IBillableEntity>>(billableEntities);
     }
 
     /**
@@ -105,7 +106,10 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null);
+            	if(entity.getMinRatedTransactions().size() >0) {
+            		System.out.println("createAgregatesAndInvoiceAsync amount");
+            	}
+                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false);
             } catch (Exception e) {
                 log.error("Error for entity=" + entity + " : " + e);
             }

@@ -41,6 +41,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
@@ -125,6 +126,10 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 
     @Transient
     private boolean selected;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "auto_end_of_engagement")
+    private Boolean autoEndOfEngagement = Boolean.FALSE;
 
 	/**
 	 * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
@@ -315,5 +320,19 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	public void setServiceRenewal(SubscriptionRenewal serviceRenewal) {
 		this.serviceRenewal = serviceRenewal;
 	}
+
+    /**
+     * @return the autoEndOfEngagement
+     */
+    public Boolean getAutoEndOfEngagement() {
+        return autoEndOfEngagement;
+    }
+
+    /**
+     * @param autoEndOfEngagement the autoEndOfEngagement to set
+     */
+    public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
+        this.autoEndOfEngagement = autoEndOfEngagement;
+    }
 
 }

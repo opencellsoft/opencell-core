@@ -1,6 +1,8 @@
 package org.meveo.service.order;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -10,11 +12,13 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
@@ -122,4 +126,25 @@ public class OrderService extends BusinessService<Order> {
 
         return super.update(order);
     }
+    
+    /**
+     * Return all orders with now - orderDate date &gt; n years.
+     * @param nYear age of the subscription
+     * @return Filtered list of orders
+     */
+    @SuppressWarnings("unchecked")
+	public List<Order> listInactiveOrders(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Order.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("orderDate", higherBound);
+    	
+    	return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+	public void bulkDelete(List<Order> inactiveOrders) throws BusinessException {
+		for (Order e : inactiveOrders) {
+			remove(e);
+		}
+	}
 }

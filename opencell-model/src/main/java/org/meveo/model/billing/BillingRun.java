@@ -117,7 +117,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
 
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
 
     @Enumerated(value = EnumType.STRING)

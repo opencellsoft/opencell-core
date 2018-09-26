@@ -24,15 +24,12 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -41,19 +38,29 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 
+
+/**
+ * @author Edward P. Legaspi
+ * @author Bahije Mounir
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@CustomFieldEntity(cftCodePrefix = "INVOICE_TYPE")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_type_seq"), })
-@NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.code=:invoiceTypeCode") })
-public class InvoiceType extends BusinessEntity {
+public class InvoiceType extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,12 +72,21 @@ public class InvoiceType extends BusinessEntity {
     @JoinColumn(name = "occ_templ_negative_id")
     private OCCTemplate occTemplateNegative;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance customInvoiceXmlScriptInstance;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoice_type_applies_to", joinColumns = @JoinColumn(name = "invoice_type_id"), inverseJoinColumns = @JoinColumn(name = "applies_to_id"))
     private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
 
-    @Embedded
-    private Sequence sequence = new Sequence();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_sequence_id", nullable = true)
+    private InvoiceSequence invoiceSequence;
+    
+    @Column(name = "prefix_el", length = 2000)
+    @Size(max = 2000)
+    private String prefixEL = "";
 
     @OneToMany(mappedBy = "invoiceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceTypeSellerSequence> sellerSequence = new ArrayList<InvoiceTypeSellerSequence>();
@@ -104,6 +120,10 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
+    
+    @ManyToOne()
+    @JoinColumn(name = "tax_script_instance_id")
+    private ScriptInstance taxScript;
 
     @Column(name = "occ_template_code_el", length = 2000)
     @Size(max = 2000)
@@ -137,15 +157,15 @@ public class InvoiceType extends BusinessEntity {
         this.matchingAuto = matchingAuto;
     }
 
-    public Sequence getSequence() {
-        return sequence;
-    }
+    public InvoiceSequence getInvoiceSequence() {
+		return invoiceSequence;
+	}
 
-    public void setSequence(Sequence sequence) {
-        this.sequence = sequence;
-    }
+	public void setInvoiceSequence(InvoiceSequence invoiceSequence) {
+		this.invoiceSequence = invoiceSequence;
+	}
 
-    public List<InvoiceTypeSellerSequence> getSellerSequence() {
+	public List<InvoiceTypeSellerSequence> getSellerSequence() {
         return sellerSequence;
     }
 
@@ -170,10 +190,10 @@ public class InvoiceType extends BusinessEntity {
         return null;
     }
 
-    public Sequence getSellerSequenceSequenceByType(Seller seller) {
+    public InvoiceSequence getSellerSequenceSequenceByType(Seller seller) {
         InvoiceTypeSellerSequence seq = getSellerSequenceByType(seller);
         if (seq != null) {
-            return seq.getSequence();
+            return seq.getInvoiceSequence();
         }
         return null;
     }
@@ -215,6 +235,20 @@ public class InvoiceType extends BusinessEntity {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
 
+    public ScriptInstance getTaxScript() {
+        return taxScript;
+    }
+
+    public void setTaxScript(ScriptInstance taxScript) {
+        this.taxScript = taxScript;
+    }
+    
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
+    
+
     /**
      * @return the useSelfSequence
      */
@@ -244,5 +278,20 @@ public class InvoiceType extends BusinessEntity {
     public void setOccTemplateNegativeCodeEl(String occTemplateNegativeCodeEl) {
         this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
-    
+
+	public String getPrefixEL() {
+		return prefixEL;
+	}
+
+	public void setPrefixEL(String prefixEL) {
+		this.prefixEL = prefixEL;
+	}
+
+    public ScriptInstance getCustomInvoiceXmlScriptInstance() {
+        return customInvoiceXmlScriptInstance;
+    }
+
+    public void setCustomInvoiceXmlScriptInstance(ScriptInstance customInvoiceXmlScriptInstance) {
+        this.customInvoiceXmlScriptInstance = customInvoiceXmlScriptInstance;
+    }
 }

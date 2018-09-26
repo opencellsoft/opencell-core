@@ -8,6 +8,20 @@
     </ui:define>
 
     <ui:define name="body">
+    
+       <hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"
+			selection="#{taxBean.entity.accountingCode}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" 
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}" 
+			column2="description"
+			updateField=":taxFormId:tabView:accountingCodeId  :taxFormId:tabView:accountingCodeId_text">
+		</hftl:entityPopup>
+    
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -23,7 +37,12 @@
                     <hftl:formField label="#{messages['tax.code']}" field="code" required="true" />
                     <hftl:formLanguageFields field="description"/>
                     <hftl:formField label="#{messages['tax.percent']}" field="percent" required="true" />
-                    <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" listBean="#{accountingCodeListBean}" valueLabelField="code" listenerUpdate="@this" />
+
+	                <hftl:formField id="accountingCodeId"
+							label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode"
+							valueLabelField="code" listenerUpdate="@this" popup="true"
+							popupId="accountingCodePopup" showResetButton="true" />
+
                 </p:tab>
                 <hftl:customFields backingBean="#{taxBean}" messagesId=":taxFormId:messages" />
             </p:tabView>

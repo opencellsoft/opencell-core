@@ -54,9 +54,6 @@ public class FlatFileProcessingJobBean {
     /** The file name. */
     String fileName;
 
-    /** The input dir. */
-    String inputDir;
-
     /** The output dir. */
     String outputDir;
 

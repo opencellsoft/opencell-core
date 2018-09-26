@@ -5,23 +5,16 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.PaymentGatewayDto;
-import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
-import org.meveo.api.dto.payment.PaymentHistoriesDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.PaymentMethodTokenDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.payment.DDRequestBuilderApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.payment.PaymentGatewayApi;
 import org.meveo.api.payment.PaymentMethodApi;
@@ -33,7 +26,7 @@ import org.meveo.api.rest.payment.PaymentRs;
  * 
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -47,6 +40,9 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
     @Inject
     private PaymentGatewayApi paymentGatewayApi;
+    
+    @Inject
+    private DDRequestBuilderApi ddRequestBuilderApi;
 
     /**
      * Deprecated and replaced by createPayment
@@ -427,4 +423,148 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         return result;
     }
+    
+    /********************************************/
+    /**** DDRequest Builder                 ****/
+    /******************************************/
+    
+    @Override
+    public DDRequestBuilderResponseDto addDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        DDRequestBuilderResponseDto response = new DDRequestBuilderResponseDto();
+        try {
+            ddRequestBuilderApi.create(ddRequestBuilder);
+            response.getDdRequestBuilders().add(ddRequestBuilderApi.find(ddRequestBuilder.getCode()));
+
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return response;
+    }
+
+    @Override
+    public ActionStatus updateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            ddRequestBuilderApi.update(ddRequestBuilder);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            ddRequestBuilderApi.remove(code);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto listDDRequestBuildersPost(PagingAndFiltering pagingAndFiltering) {
+        DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
+        try {
+            result = ddRequestBuilderApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return null;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto findDDRequestBuilder(String code) {
+        DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
+
+        try {
+            result.getDdRequestBuilders().add(ddRequestBuilderApi.find(code));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public DDRequestBuilderResponseDto createOrUpdateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder) {
+        DDRequestBuilderResponseDto response = new DDRequestBuilderResponseDto();
+        try {
+            ddRequestBuilderApi.createOrUpdate(ddRequestBuilder);
+            response.getDdRequestBuilders().add(ddRequestBuilderApi.find(ddRequestBuilder.getCode()));
+
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+        return response;
+    }
+
+    @Override
+    public ActionStatus enableDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus();
+        try {
+            ddRequestBuilderApi.enableOrDisable(code, true);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus disableDDRequestBuilder(String code) {
+        ActionStatus result = new ActionStatus();
+        try {
+            ddRequestBuilderApi.enableOrDisable(code, false);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+
+    @Override
+    public DDRequestBuilderResponseDto listDDRequestBuildersGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+        DDRequestBuilderResponseDto result = new DDRequestBuilderResponseDto();
+        try {
+            result = ddRequestBuilderApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return null;
+    }
+
+    @Override
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl, String locale, String amount, String currencyCode, String authorizationMode, String countryCode, Boolean skipAuthentication, String gatewayPaymentName, String variant) {
+
+        String paymentUrl = "";
+
+        HostedCheckoutInput hostedCheckoutInput = new HostedCheckoutInput();
+        hostedCheckoutInput.setCustomerAccountCode(customerAccountCode);
+        hostedCheckoutInput.setReturnUrl(returnUrl);
+        hostedCheckoutInput.setAmount(amount);
+        hostedCheckoutInput.setAuthorizationMode(authorizationMode);
+        hostedCheckoutInput.setCountryCode(countryCode);
+        hostedCheckoutInput.setCurrencyCode(currencyCode);
+        hostedCheckoutInput.setLocale(locale);
+        hostedCheckoutInput.setSkipAuthentication(skipAuthentication);
+        hostedCheckoutInput.setGatewayPaymentName(GatewayPaymentNamesEnum.valueOf(gatewayPaymentName));
+        hostedCheckoutInput.setVariant(variant);
+
+        try {
+            paymentUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
+        PaymentHostedCheckoutResponseDto paymentHostedCheckoutResponseDto = new PaymentHostedCheckoutResponseDto(paymentUrl,  customerAccountCode,  returnUrl);
+
+        return paymentHostedCheckoutResponseDto;
+
+    }
+
 }

@@ -67,7 +67,7 @@ public class SellerDto extends BusinessEntityDto {
     private CustomFieldsDto customFields;
 
     /** The invoice type sequences. */
-    private Map<String, SequenceDto> invoiceTypeSequences = new HashMap<String, SequenceDto>();
+    private Map<String, SequenceDto> invoiceTypeSequences = new HashMap<>();
 
     /** The business account model. */
     @XmlElement(name = "businessAccountModel")
@@ -97,7 +97,7 @@ public class SellerDto extends BusinessEntityDto {
         super(seller);
         if (seller.getInvoiceTypeSequence() != null) {
             for (InvoiceTypeSellerSequence seq : seller.getInvoiceTypeSequence()) {
-                invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getSequence()));
+                invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getInvoiceSequence(), seq.getPrefixEL()));
             }
         }
 
@@ -324,7 +324,7 @@ public class SellerDto extends BusinessEntityDto {
     public void setAddress(AddressDto address) {
         this.address = address;
     }
-
+	
     @Override
     public String toString() {
         return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="

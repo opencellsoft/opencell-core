@@ -76,11 +76,9 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.slf4j.Logger;
 
 /**
  * Service class for WalletOperation entity
@@ -434,7 +432,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * Sets the charge and next charge date of a RecurringChargeInstance. This method is called when a {@link RecurringChargeTemplate#getFilterExpression()} evaluates to false.
      * 
      * @param chargeInstance RecurringChargeInstance
-     * @throws BusinessException 
+     * @throws BusinessException business exception
      * @see RecurringChargeInstance
      */
     public void updateChargeDate(RecurringChargeInstance chargeInstance) throws BusinessException {
@@ -1600,6 +1598,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByUA").setParameter("userAccount", userAccount).getSingleResult();
         } catch (NoResultException e) {
             log.warn("failed to countNonTreated WO by UA", e);
+            return null;
+        }
+    }
+    
+    public Long countNonTreatedWOByCA(CustomerAccount customerAccount) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByCA").setParameter("customerAccount", customerAccount).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNonTreated WO by CA", e);
             return null;
         }
     }

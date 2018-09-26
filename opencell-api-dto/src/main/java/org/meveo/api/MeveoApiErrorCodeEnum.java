@@ -4,6 +4,7 @@ package org.meveo.api;
  * Action status error codes. See ActionStatus.message for a detailed error message
  * 
  * @author Andrius Karpavicius
+ * @lastModifiedVersion 5.2
  **/
 
 public enum MeveoApiErrorCodeEnum {
@@ -12,6 +13,11 @@ public enum MeveoApiErrorCodeEnum {
      * Entity on which action should be performed or referenced, was not found.
      */
     ENTITY_DOES_NOT_EXISTS_EXCEPTION,
+    
+    /**
+     * Entity on which action should be performed or referenced, is not allowed.
+     */
+    ENTITY_NOT_ALLOWED_EXCEPTION,
 
     /**
      * Entity with an identical code, or some other unique identifiers was found and should be updated instead.

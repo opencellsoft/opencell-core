@@ -8,15 +8,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.payment.RumSequenceDto;
-import org.meveo.api.dto.response.payment.RumSequenceValueResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
  * API for managing RUM sequence use for SEPA direct debit.
  * 
  * @author Edward P. Legaspi
- * @LastModifiedVersion 5.2
+ * @lastModifiedVersion 5.2
  */
 @Path("/payment/rumSequences")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -31,15 +31,15 @@ public interface RumSequenceRs extends IBaseRs {
 	 * @return status of the operation
 	 */
 	@PUT
-	ActionStatus update(RumSequenceDto postData);
+	ActionStatus update(GenericSequenceDto postData);
 
 	/**
-	 * Calculates and returns but not save the next value of the mandate number.
+	 * Calculates and returns the next value of the mandate number.
 	 * 
 	 * @return next mandate value
 	 */
 	@POST
 	@Path("nextMandateNumber")
-	RumSequenceValueResponseDto getNextMandateNumber();
+	GenericSequenceValueResponseDto getNextMandateNumber();
 
 }

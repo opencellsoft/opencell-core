@@ -23,7 +23,7 @@ public class InvoiceCategoryDTO
   private RoundingMode roundingMode;
   
   /**
-   * Instantiates a new invoice category DTO with rounding & roundingMode config values.
+   * Instantiates a new invoice category DTO with rounding and roundingMode config values.
    *
    * @param rounding the rounding
    * @param roundingMode the rounding mode
@@ -34,7 +34,7 @@ public class InvoiceCategoryDTO
   }
   
   /**
-   * Instantiates a new invoice category DTO with default rounding & roundingMode values.
+   * Instantiates a new invoice category DTO with default rounding and roundingMode values.
    */
   public InvoiceCategoryDTO() {
       this(2, RoundingMode.HALF_UP);

@@ -104,6 +104,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -196,9 +197,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
         log.debug("Creating xml for invoice id={} number={}.", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
 
-        String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider, "PROV_CUSTOM_INV_XML_SCRIPT_CODE");
-
-        if (invoiceXmlScript != null) {
+        ScriptInstance scriptInstance = invoice.getInvoiceType().getCustomInvoiceXmlScriptInstance();
+        if (scriptInstance != null) {
+            String invoiceXmlScript = scriptInstance.getCode();
             ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceXmlScript);
             Map<String, Object> methodContext = new HashMap<String, Object>();
             methodContext.put(Script.CONTEXT_ENTITY, invoice);
@@ -496,7 +497,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String billingAccountCode = billingAccount.getCode() + "";
         billingAccountTag.setAttribute("id", billingAccountId);
         billingAccountTag.setAttribute("code", billingAccountCode);
-        billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
+        billingAccountTag.setAttribute("description", billingAccount.getDescription() != null ? billingAccount.getDescription() : "");
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
         billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
@@ -516,10 +517,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
          */
 
         Element email = doc.createElement("email");
-        String billingEmail = billingAccount.getEmail();
-        Text emailTxt = doc.createTextNode(billingEmail != null ? billingEmail : "");
-        email.appendChild(emailTxt);
-        billingAccountTag.appendChild(email);
+        if(billingAccount.getContactInformation() != null) {
+            String billingEmail = billingAccount.getContactInformation().getEmail();
+            Text emailTxt = doc.createTextNode(billingEmail != null ? billingEmail : "");
+            email.appendChild(emailTxt);
+            billingAccountTag.appendChild(email);
+        }
 
         addNameAndAdress(billingAccount, doc, billingAccountTag, billingAccountLanguage);
 
@@ -701,6 +704,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
 
         }
+        
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+        int rounding = getProviderRounding();
+        
+        // generate invoice line for min amount RT
+        Element userAccountTag = doc.createElement("userAccount");
+        userAccountTag.setAttribute("description", "-");
+        userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, rounding, roundingMode, billingAccountLanguage));
+        userAccountsTag.appendChild(userAccountTag);
+        
     }
 
     /**
@@ -1253,7 +1266,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
     
     /**
-     * getMinAmountRTCategory
+     * Provide categories elements for min amount transactions
      * 
      * @param doc dom document
      * @param ratedTransactions rated transactions
@@ -1263,70 +1276,85 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @return category element
      * @throws BusinessException business exception
      */
-    private Element getMinAmountRTCategory(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, final int rounding, 
-            final RoundingModeEnum roundingMode) throws BusinessException {
+    private Element getMinAmountRTCategories(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, final int rounding, 
+            final RoundingModeEnum roundingMode, String languageCode) throws BusinessException {
         
-        Element category = null;
-        boolean hasMinAmountRT = false;
-        LinkedHashMap<String, Element> subCategoriesMap = new LinkedHashMap<String, Element>();
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getWallet() == null) {
-                
-                hasMinAmountRT = true;
-                Element subCategory = null;
-                if(subCategoriesMap.containsKey(ratedTransaction.getCode())) {
-                    subCategory = subCategoriesMap.get(ratedTransaction.getCode());
-                } else {
-                    subCategory = doc.createElement("subCategory");
-                    subCategory.setAttribute("label", ratedTransaction.getDescription());
-                    subCategory.setAttribute("code", ratedTransaction.getCode());
+        LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<InvoiceSubCategory, Element>();
+        if(ratedTransactions != null) {
+            for (RatedTransaction ratedTransaction : ratedTransactions) {
+                if (ratedTransaction.getWallet() == null) {
+                    
+                    Element subCategory = null;
+                    if(subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory()) == null) {
+                        subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), doc.createElement("subCategory"));
+                    } 
+                    	
+                    subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());	
+                    subCategory.setAttribute("label", ratedTransaction.getInvoiceSubCategory().getDescription());
+                    subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());
                     subCategory.setAttribute("amountWithoutTax", roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
+    
+                    Element line = doc.createElement("line");
+                    Element lebel = doc.createElement("label");
+                    Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
+                    lebel.appendChild(lebelTxt);
+    
+                    Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
+                    Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
+                    lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+                    line.appendChild(lineUnitAmountWithoutTax);
+    
+                    Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
+                    Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
+                    lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
+                    line.appendChild(lineAmountWithoutTax);
+    
+                    if (!enterprise) {
+                        Element lineAmountWithTax = doc.createElement("amountWithTax");
+                        Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
+                        lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+                        line.appendChild(lineAmountWithTax);
+                    }
+    
+                    Element quantity = doc.createElement("quantity");
+                    Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
+                    quantity.appendChild(quantityTxt);
+                    line.appendChild(quantity);
+                    line.appendChild(lebel);
+                    subCategory.appendChild(line);
+    
+                    subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), subCategory);
                 }
-
-                Element line = doc.createElement("line");
-                Element lebel = doc.createElement("label");
-                Text lebelTxt = doc.createTextNode(ratedTransaction.getDescription());
-                lebel.appendChild(lebelTxt);
-
-                Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
-                Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction.getUnitAmountWithoutTax().toPlainString());
-                lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
-                line.appendChild(lineUnitAmountWithoutTax);
-
-                Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                Text lineAmountWithoutTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithoutTax(), rounding, roundingMode));
-                lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
-                line.appendChild(lineAmountWithoutTax);
-
-                if (!enterprise) {
-                    Element lineAmountWithTax = doc.createElement("amountWithTax");
-                    Text lineAmountWithTaxTxt = doc.createTextNode(roundToString(ratedTransaction.getAmountWithTax(), rounding, roundingMode));
-                    lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-                    line.appendChild(lineAmountWithTax);
-                }
-
-                Element quantity = doc.createElement("quantity");
-                Text quantityTxt = doc.createTextNode(ratedTransaction.getQuantity() != null ? ratedTransaction.getQuantity().toPlainString() : "");
-                quantity.appendChild(quantityTxt);
-                line.appendChild(quantity);
-                line.appendChild(lebel);
-                subCategory.appendChild(line);
-
-                subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
             }
         }
         
-        if(hasMinAmountRT) {
-            category = doc.createElement("category");
-            category.setAttribute("label", "-");
-            category.setAttribute("code", "min_amount");
-            Element subCategories = doc.createElement("subCategories");
-            for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
-                subCategories.appendChild(entry.getValue());
-            }
-            category.appendChild(subCategories);
+        LinkedHashMap<InvoiceCategory, Element> categoriesMap = new LinkedHashMap<InvoiceCategory, Element>();
+        for (Map.Entry<InvoiceSubCategory, Element> entry : subCategoriesMap.entrySet()) {
+        	InvoiceSubCategory invoiceSubCategory = entry.getKey();
+        	InvoiceCategory invoiceCategory = invoiceSubCategory.getInvoiceCategory();
+        	if(categoriesMap.get(invoiceCategory) == null) {
+        		Element category = doc.createElement("category");
+        		String invoiceCategoryLabel = "";
+        		if ( (invoiceCategory != null) &&
+                        (invoiceCategory.getDescriptionI18nNullSafe() != null) &&
+                        (!StringUtils.isBlank(invoiceCategory.getDescriptionI18nNullSafe().get(languageCode))) ) {
+                    invoiceCategoryLabel = invoiceCategory.getDescriptionI18nNullSafe().get(languageCode);
+                }
+        		category.setAttribute("label", invoiceCategoryLabel);
+                category.setAttribute("code", invoiceCategory.getCode());
+                Element subCategories = doc.createElement("subCategories");
+                category.appendChild(subCategories);
+        		categoriesMap.put(invoiceCategory, category);
+        	}
+            
+        	categoriesMap.get(invoiceCategory).getFirstChild().appendChild(entry.getValue());
         }
-        return category;
+ 
+        Element categories = doc.createElement("categories");
+        for(Map.Entry<InvoiceCategory, Element> entry : categoriesMap.entrySet()) {
+        	categories.appendChild(entry.getValue());
+        }
+        return categories;
     }
     
     /**
@@ -1724,16 +1752,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
             
         }
-
-        // generate invoice line for min amount RT
-        Element minAmountRTCategory = getMinAmountRTCategory(doc, ratedTransactions, enterprise, rounding, roundingMode);
-        if(minAmountRTCategory != null) {
-            if(categories == null) {
-                categories = createCategoriesElement(doc, parent);
-            }
-            categories.appendChild(minAmountRTCategory);
-        }
-       
     }
 
     /**

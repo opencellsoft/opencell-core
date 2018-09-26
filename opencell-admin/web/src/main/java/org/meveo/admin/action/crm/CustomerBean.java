@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -36,10 +37,13 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.dwh.GdprService;
 
 /**
  * Standard backing bean for {@link Customer} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
  */
 @Named
 @ViewScoped
@@ -56,6 +60,9 @@ public class CustomerBean extends AccountBean<Customer> {
     
     @Inject
     private CustomerApi customerApi;
+    
+    @Inject
+    private GdprService gpdrService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -116,13 +123,39 @@ public class CustomerBean extends AccountBean<Customer> {
 	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
 	 * as a zipped file along with the pdf invoices.
 	 * 
+	 * @return null for JSF navigation
 	 * @throws Exception when zipping fail
 	 */
     @ActionMethod
-	public void exportCustomerHierarchy() throws Exception {
+	public String exportCustomerHierarchy() throws Exception {
 		javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		customerApi.exportCustomerHierarchy(entity.getCode(), response);
         context.responseComplete();
+        
+        return null;
 	}
+    
+    /**
+    * Deletes customer data. 
+    * In such case, mandatory information (accounting, invoicing, payments) are preserved but the data tables including the
+    * customer's data must are anonymized (firstname/name/emails/phones/addresses..). 
+    * So if a person register back it will be treated as a new customer without history.
+    * 
+    * @return null for JSF navigation
+    */
+    @ActionMethod
+    public String anonymizeGpdr() {
+    	try {
+    		entity = customerService.refreshOrRetrieve(entity);
+	    	gpdrService.anonymize(entity);
+	    	messages.info(new BundleKey("messages", "gdpr.delete.ok"));
+    	
+    	} catch(Exception e) {
+    		log.error("Failed anonymizing account hierarchy={}", e.getMessage());
+    		messages.info(new BundleKey("messages", "gdpr.delete.ko"));
+    	}
+    	
+    	return null;
+    }
 }

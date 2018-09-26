@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{dDRequestBuilderBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+	    <p:importEnum type="org.meveo.model.payments.DDRequestBuilderTypeEnum" var="DDRequestBuilderTypeEnum" />
+	   
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem value="#{messages['menu.DDRequestBuilders']}" outcome="dDRequestBuilders" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['dDRequestBuilder.title']}"
+					disabled="true" rendered="#{dDRequestBuilderBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['dDRequestBuilder.title']} - #{dDRequestBuilderBean.entity.code}"
+					disabled="true" rendered="#{!dDRequestBuilderBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+		
+        <hftl:entityPopup id="scriptInstancePopup" header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            selection="#{dDRequestBuilderBean.entity.scriptInstance}" column2Label="#{messages['BusinessEntity.description']}" column2="description"
+			updateField=":formDDRequestBuilder:tabView:scriptSelectId :formDDRequestBuilder:tabView:scriptSelectId_text">
+		</hftl:entityPopup>
+													
+				
+		<hftl:formPanel label="#{messages['dDRequestBuilder.title']}" backingBean="#{dDRequestBuilderBean}"  formId="formDDRequestBuilder" showEnableDisableButton="true" >
+			<p:tabView id="tabView" activeIndex="#{dDRequestBuilderBean.activeTab}">
+				<p:tab  title="#{messages['commons.tab.information']}" >
+					<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />	
+					<hftl:formField label="#{messages['dDRequestBuilder.type']}" field="type" listenerUpdate="impl_class_script" />		
+					<h:panelGroup id="impl_class_script">
+						<hftl:formField  label="#{messages['dDRequestBuilder.scriptInstance']}" field="scriptInstance" id="scriptSelectId" valueLabelField="code" popup="true" popupId="scriptInstancePopup"  required="true"
+						rendered="#{dDRequestBuilderBean.entity.type!=DDRequestBuilderTypeEnum.NATIF}" />	
+						<hftl:formField label="#{messages['dDRequestBuilder.implementationClassName']}" field="implementationClassName" id="classNameId" required="true" size="60" maxlength="255"
+	                                   rendered="#{dDRequestBuilderBean.entity.type==DDRequestBuilderTypeEnum.NATIF}"  autocompleteBean="#{dDRequestBuilderBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>																				
+					</h:panelGroup>	
+					<hftl:formField label="#{messages['dDRequestBuilder.nbOperationPerFile']}" field="nbOperationPerFile" />
+					<hftl:formField label="#{messages['dDRequestBuilder.maxSizeFile']}" field="maxSizeFile" />
+					<hftl:formField label="#{messages['dDRequestBuilder.paymentLevel']}" field="paymentLevel" />				
+				</p:tab>
+				<hftl:customFields backingBean="#{dDRequestBuilderBean}" messagesId=":formDDRequestBuilder:messages" />
+			</p:tabView>								
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

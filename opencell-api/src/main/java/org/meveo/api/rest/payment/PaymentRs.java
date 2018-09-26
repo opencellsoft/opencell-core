@@ -14,16 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.PaymentGatewayDto;
-import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
-import org.meveo.api.dto.payment.PaymentHistoriesDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.PaymentMethodTokenDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -220,7 +211,7 @@ public interface PaymentRs extends IBaseRs {
     ActionStatus disablePaymentMethod(@PathParam("id") Long id);
 
     /************************************************************************************************/
-    /**** Payment Gateways ****/
+    /**** DDRequest Builders ****/
     /************************************************************************************************/
     /**
      * Add a new payment gateway.
@@ -253,7 +244,7 @@ public interface PaymentRs extends IBaseRs {
     public ActionStatus removePaymentGateway(@QueryParam("code") String code);
 
     /**
-     * List Payment Gateways matching a given criteria
+     * List payment gateways matching a given criteria
      * 
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma
@@ -269,7 +260,7 @@ public interface PaymentRs extends IBaseRs {
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
-     * List Payment Gateways matching a given criteria.
+     * List payment gateways matching a given criteria.
      * 
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return An payment gateway list
@@ -343,5 +334,133 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Path("/history/list")
     PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering);
+    
+    /************************************************************************************************/
+    /****                             DDRequest Builder                                          ****/
+    /************************************************************************************************/
+    /**
+     * Add a new ddRequest builder.
+     * 
+     * @param ddRequestBuilder ddRequest builder DTO
+     * @return the ddRequestBuilder dto created
+     */
+    @POST
+    @Path("/ddRequestBuilder")
+    public DDRequestBuilderResponseDto addDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder);
+
+    /**
+     * Update existing ddRequest builder.
+     * 
+     * @param ddRequestBuilder ddRequest builder DTO
+     * @return Action status
+     */
+    @PUT
+    @Path("/ddRequestBuilder")
+    public ActionStatus updateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder);
+
+    /**
+     * Remove ddRequest builder.
+     * 
+     * @param code ddRequest builder's code
+     * @return Action status
+     */
+    @DELETE
+    @Path("/ddRequestBuilder")
+    public ActionStatus removeDDRequestBuilder(@QueryParam("code") String code);
+
+    /**
+     * List DDRequest Builders matching a given criteria
+     * 
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return An ddRequest builder list
+     */
+    @GET
+    @Path("/ddRequestBuilder/list")
+    public DDRequestBuilderResponseDto listDDRequestBuildersGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List DDRequest Builders matching a given criteria.
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return An ddRequest builder list
+     */
+    @POST
+    @Path("/ddRequestBuilder/list")
+    public DDRequestBuilderResponseDto listDDRequestBuildersPost(PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Retrieve ddRequest builder by its code.
+     * 
+     * @param code ddRequest builder's code
+     * @return ddRequest builder DTO
+     */
+    @GET
+    @Path("/ddRequestBuilder")
+    public DDRequestBuilderResponseDto findDDRequestBuilder(@QueryParam("code") String code);
+
+    /**
+     * Create or update ddRequest builder.
+     * 
+     * @param ddRequestBuilder ddRequest builder DTO
+     * @return the ddRequestBuilder dto created
+     */
+    @POST
+    @Path("/ddRequestBuilder/createOrUpdate")
+    public DDRequestBuilderResponseDto createOrUpdateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder);
+
+    /**
+     * Enable a ddRequest builder with a given code
+     * 
+     * @param code ddRequest builder code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/ddRequestBuilder/{code}/enable")
+    ActionStatus enableDDRequestBuilder(@PathParam("code") String code);
+
+    /**
+     * Disable a ddRequest builder with a given code
+     * 
+     * @param code ddRequest builder code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/ddRequestBuilder/{code}/disable")
+    ActionStatus disableDDRequestBuilder(@PathParam("code") String code);
+
+    /**
+     *
+     * @param customerAccountCode the customerAccount Code
+     * @param returnUrl the return Url
+     * @param locale the locale
+     * @param amount the amount of transaction
+     * @param currencyCode the currency Code
+     * @param authorizationMode  the authorizationMode
+     * @param countryCode the country Code
+     * @param skipAuthentication the skipAuthentication boolean
+     * @param gatewayPaymentName the gatewayPayment Name
+     * @param variant the variant Look
+     * @return the PaymentHostedCheckoutResponseDto
+     */
+    @GET
+    @Path("/paymentGateway/getHostedCheckoutUrl")
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
+                                                                 @QueryParam("returnUrl") String returnUrl,
+                                                                 @DefaultValue("en_GB") @QueryParam("locale") String locale,
+                                                                 @DefaultValue("100") @QueryParam("amount") String amount,
+                                                                 @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode,
+                                                                 @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
+                                                                 @DefaultValue("US") @QueryParam("countryCode") String countryCode,
+                                                                 @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
+                                                                 @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName,
+                                                                 @DefaultValue("101") @QueryParam("variant") String variant
+    );
+
 
 }

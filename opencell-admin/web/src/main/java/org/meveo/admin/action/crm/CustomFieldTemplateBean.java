@@ -1,8 +1,13 @@
 package org.meveo.admin.action.crm;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.faces.application.FacesMessage;
@@ -18,6 +23,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -31,12 +37,8 @@ import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
+import org.reflections.Reflections;
 
-/**
- *
- * @author Mounir Bahije
- * @lastModifiedVersion 5.2
- */
 
 @Named
 @ViewScoped
@@ -84,7 +86,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
         if (entity.getFieldType() == CustomFieldTypeEnum.LIST) {
             entity.setListValues(new TreeMap<String, String>());
-            updateListTypeFieldInEntity(entity.getListOrderedValues(), "listValues");
+            updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
         }
 
         CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo());
@@ -130,12 +132,26 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         List<String> clazzNames = new ArrayList<String>();
 
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, false, null, null);
+        entities.addAll(calendarsAsCustomEntities(query)); // #3603 : Allow reference Custom Fields to Calendar
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
         }
-
+        
         return clazzNames;
+    }
+    
+    private Collection<? extends CustomizedEntity> calendarsAsCustomEntities(String entityName) {
+        Reflections reflections = new Reflections("org.meveo.model.catalog");
+        Set<Class<? extends Calendar>> calendarClasses = reflections.getSubTypesOf(Calendar.class);
+        List<CustomizedEntity> calendars = new ArrayList<>();
+        for (Class<? extends Calendar> calendarClass : calendarClasses) {
+            String classSimpleName = calendarClass.getSimpleName();
+            if ( !Modifier.isAbstract(calendarClass.getModifiers()) && ( (isEmpty(entityName) || classSimpleName.toLowerCase().contains(entityName)) ) ) {
+                calendars.add(new CustomizedEntity(calendarClass));
+            }
+        }
+        return calendars;
     }
 
     /**

@@ -86,22 +86,6 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     }
 
     /**
-     * Gets the max current invoice number.
-     *
-     * @param invoiceTypeCode the invoice type code
-     * @return the max current invoice number
-     * @throws BusinessException the business exception
-     */
-    public Long getMaxCurrentInvoiceNumber(String invoiceTypeCode) throws BusinessException {
-        Long max = getEntityManager().createNamedQuery("InvoiceType.currentInvoiceNb", Long.class)
-
-            .setParameter("invoiceTypeCode", invoiceTypeCode).getSingleResult();
-
-        return max == null ? 0 : max;
-
-    }
-
-    /**
      * Gets the default adjustement.
      *
      * @return the default adjustement
@@ -196,8 +180,8 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     }
 
     /**
-     * @return
-     * @throws BusinessException
+     * @return currentInvoiceNb
+     * @throws BusinessException business exception
      */
     public Long getCurrentGlobalInvoiceBb() throws BusinessException {
         appProvider = providerService.findById(appProvider.getId());
@@ -210,7 +194,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     /**
      * @param currentInvoiceNb
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void setCurrentGlobalInvoiceBb(Long currentInvoiceNb) throws BusinessException {
         try {

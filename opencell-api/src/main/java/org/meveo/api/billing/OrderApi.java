@@ -12,8 +12,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.IncorrectServiceInstanceException;
-import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -610,7 +608,7 @@ public class OrderApi extends BaseApi {
 
         subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber, orderItem.getId(), OrderItemActionEnum.MODIFY);
 
-        subscriptionService.refresh(subscription);
+//        subscriptionService.refresh(subscription);
         orderItem.setSubscription(subscription);
         
         productOrderItem.getProduct().setId(subscription.getCode());
@@ -667,6 +665,11 @@ public class OrderApi extends BaseApi {
         String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class, null);
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber);
+        if(subscription != null) {
+            productInstance.setSeller(subscription.getSeller());
+        } else {
+            productInstance.setSeller(orderItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        }
 
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
@@ -785,8 +788,10 @@ public class OrderApi extends BaseApi {
     }
 
     private void extractServices(SubscriptionDto subscriptionDto, List<Product> services)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
+            throws BusinessException, MeveoApiException {
 
+        Subscription subscription = subscriptionService.findByCode(subscriptionDto.getCode());
+        
         for (Product serviceProduct : services) {
 
             String serviceCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), String.class, null);
@@ -815,9 +820,23 @@ public class OrderApi extends BaseApi {
                 }
                 
                 // check if service is activated on a given subscription
-                List<ServiceInstance> serviceFound = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscriptionDto.getCode(), InstanceStatusEnum.ACTIVE);
-                if (serviceFound != null && !serviceFound.isEmpty()) {
-                    continue;
+//                List<ServiceInstance> serviceFound = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscriptionDto.getCode(), InstanceStatusEnum.ACTIVE);
+//                if (serviceFound != null && !serviceFound.isEmpty()) {
+//                    continue;
+//                }
+                if (subscription != null && subscription.getServiceInstances() != null
+                        && !subscription.getServiceInstances().isEmpty()) {
+                    boolean flag = false;
+                    for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                        if (serviceCode.equals(serviceInstance.getCode())
+                                && serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+                            flag = true;
+                        }
+                    }
+
+                    if (flag) {
+                        continue;
+                    }
                 }
 
                 serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,

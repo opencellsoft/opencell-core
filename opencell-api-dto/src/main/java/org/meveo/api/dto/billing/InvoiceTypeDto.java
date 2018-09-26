@@ -12,14 +12,19 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 /**
  * The Class InvoiceTypeDto.
- * 
+ *
  * @author anasseh
+ * @author Edward P. Legaspi
+ * @author Mounir Bahije
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -41,16 +46,19 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     /** The occ template negative code EL. */
     private String occTemplateNegativeCodeEl;
 
+    /** The script instance code. */
+    private String customInvoiceXmlScriptInstanceCode;
+
     /** The sequence dto. */
     private SequenceDto sequenceDto;
 
     /** The seller sequences. */
     @XmlElementWrapper
     @XmlElement(name = "sellerSequence")
-    private Map<String, SequenceDto> sellerSequences = new HashMap<String, SequenceDto>();
+    private Map<String, SequenceDto> sellerSequences = new HashMap<>();
 
     /** The applies to. */
-    private List<String> appliesTo = new ArrayList<String>();
+    private List<String> appliesTo = new ArrayList<>();
 
     /** The matching auto. */
     private boolean matchingAuto = false;
@@ -70,6 +78,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The billing template name EL. */
     private String billingTemplateNameEL;
+    
+    private CustomFieldsDto customFields;
 
     /** The use Self Sequence . */
     private boolean useSelfSequence = true;
@@ -86,27 +96,30 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      *
      * @param invoiceType the invoice type
      */
-    public InvoiceTypeDto(InvoiceType invoiceType) {
+    public InvoiceTypeDto(InvoiceType invoiceType, CustomFieldsDto customFieldInstances) {
         super(invoiceType);
 
         this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode() : null;
         this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode() : null;
         this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
         this.occTemplateNegativeCodeEl = invoiceType.getOccTemplateNegativeCodeEl();
-        this.sequenceDto = new SequenceDto(invoiceType.getSequence());
+        this.customInvoiceXmlScriptInstanceCode = invoiceType.getCustomInvoiceXmlScriptInstance() == null ? null : invoiceType.getCustomInvoiceXmlScriptInstance().getCode();
+        this.sequenceDto = new SequenceDto(invoiceType.getInvoiceSequence(), invoiceType.getPrefixEL());
         if (invoiceType.getAppliesTo() != null) {
             for (InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()) {
                 this.getAppliesTo().add(tmpInvoiceType.getCode());
             }
         }
         for (InvoiceTypeSellerSequence seq : invoiceType.getSellerSequence()) {
-            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getSequence()));
+            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getInvoiceSequence(), seq.getPrefixEL()));
         }
         this.matchingAuto = invoiceType.isMatchingAuto();
         this.billingTemplateName = invoiceType.getBillingTemplateName();
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
+        
+        customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
 
@@ -290,6 +303,14 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
 
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
     /**
      * @return the useSelfSequence
      */
@@ -340,10 +361,28 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.occTemplateNegativeCodeEl = occTemplateNegativeCodeEl;
     }
 
-    @Override
+    /**
+     * Gets the script instance code.
+     *
+     * @return the customInvoiceXmlScriptInstanceCode
+     */
+    public String getCustomInvoiceXmlScriptInstanceCode() {
+        return customInvoiceXmlScriptInstanceCode;
+    }
+
+    /**
+     * Sets the script instance code.
+     *
+     * @param customInvoiceXmlScriptInstanceCode the scriptInstanceCode to set
+     */
+    public void setCustomInvoiceXmlScriptInstanceCode(String customInvoiceXmlScriptInstanceCode) {
+        this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
+    }
+
+	@Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
-                + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
+                + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
                 + ", useSelfSequence=" + useSelfSequence + "]";
     }
 }

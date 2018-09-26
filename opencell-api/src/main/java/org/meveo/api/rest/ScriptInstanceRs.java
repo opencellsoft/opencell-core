@@ -10,15 +10,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.response.GetScriptInstanceResponseDto;
 import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2
+ *
+ * **/
 @Path("/scriptInstance")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -57,13 +64,23 @@ public interface ScriptInstanceRs extends IBaseRs {
 
     /**
      * Find a script instance with a given code.
-     * 
+     *
      * @param scriptInstanceCode The script instance's code
      * @return script instance
      */
     @GET
     @Path("/")
     GetScriptInstanceResponseDto find(@QueryParam("scriptInstanceCode") String scriptInstanceCode);
+
+    /**
+     * Execute a script instance with a given code and list of parameters for the context of the script
+     *
+     * @param scriptInstanceCode The script instance's code
+     * @return response of the script
+     */
+    @GET
+    @Path("/execute")
+    Response execute(@QueryParam("scriptInstanceCode") String scriptInstanceCode);
 
     /**
      * Create new or update an existing script instance with a given code.

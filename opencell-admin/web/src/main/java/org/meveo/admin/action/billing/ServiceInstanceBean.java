@@ -210,4 +210,11 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     public void updateSubscribedTillDate() {
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
+    
+    /**
+     * Auto update end of engagement date.
+     */
+    public void  autoUpdateEndOfEngagementDate() {
+        entity.autoUpdateEndOfEngagementDate();
+    }
 }

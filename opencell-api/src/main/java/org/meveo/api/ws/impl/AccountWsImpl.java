@@ -62,9 +62,12 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
+import org.meveo.api.payment.RumSequenceApi;
 import org.meveo.api.ws.AccountWs;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -75,7 +78,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * 
  * @author anasseh
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2
  */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -107,6 +110,9 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
     @Inject
     private TitleApi titleApi;
+    
+    @Inject
+    private RumSequenceApi rumSequenceApi;
 
     @Override
     public ActionStatus createCustomer(CustomerDto postData) {
@@ -1189,5 +1195,70 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         }
 
         return result;
+	}
+
+	@Override
+	public ActionStatus anonymizeGpdr(String customerCode) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.anonymizeGpdr(customerCode);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateMandateNumberSequence(GenericSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			rumSequenceApi.update(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public GenericSequenceValueResponseDto getNextMandateNumberSequence() {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+		try {
+			result = rumSequenceApi.getNextMandateNumber();
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerApi.updateCustomerNumberSequence(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public GenericSequenceValueResponseDto getNextCustomerNumberSequence() {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+		try {
+			result = customerApi.getNextCustomerNumber();
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
 	}
 }

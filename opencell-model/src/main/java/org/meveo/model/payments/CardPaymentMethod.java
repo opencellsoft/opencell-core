@@ -3,12 +3,7 @@ package org.meveo.model.payments;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -22,12 +17,12 @@ import org.meveo.model.shared.DateUtils;
  */
 @Entity
 @DiscriminatorValue(value = "CARD")
-public class CardPaymentMethod extends PaymentMethod {
+@NamedQueries({
+        @NamedQuery(name = "PaymentMethod.getNumberOfTokenId", query = "select count(*) from  CardPaymentMethod pm where pm.tokenId = :tokenId and pm.disabled = false") ,
+        @NamedQuery(name = "PaymentMethod.getNumberOfCardCustomerAccount", query = "select count(*) from  CardPaymentMethod pm where    pm.customerAccount.id = :customerAccountId and pm.monthExpiration = :monthExpiration and pm.yearExpiration = :yearExpiration and pm.hiddenCardNumber = :hiddenCardNumber and pm.cardType = :cardType and pm.disabled = false")
+})public class CardPaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8726571628074346184L;
-
-    @Column(name = "token_id")
-    private String tokenId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
@@ -86,14 +81,6 @@ public class CardPaymentMethod extends PaymentMethod {
         this.yearExpiration = yearExpiration;
         this.monthExpiration = monthExpiration;
         this.cardType = cardType;
-    }
-
-    public String getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(String tokenId) {
-        this.tokenId = tokenId;
     }
 
     public CreditCardTypeEnum getCardType() {
@@ -185,7 +172,7 @@ public class CardPaymentMethod extends PaymentMethod {
         setPreferred(otherPaymentMethod.isPreferred());
 
         // The rest of information is not updatable if token was generated already
-        if (tokenId != null) {
+        if (getTokenId() != null) {
             return;
         }
         setCardNumber(otherPaymentMethod.getCardNumber());

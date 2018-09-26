@@ -204,9 +204,15 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         log.info("generateInvoice billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
-            Invoice invoice = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null, false, true, true, true);
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null, false, true, true, true);
 
-            messages.info(new BundleKey("messages", "generateInvoice.successful"), invoice.getInvoiceNumber());
+            StringBuilder invoiceNumbers = new StringBuilder();
+            for(Invoice invoice : invoices) {
+                invoiceNumbers.append(invoice.getInvoiceNumber());
+                invoiceNumbers.append(" ");
+            }
+            
+            messages.info(new BundleKey("messages", "generateInvoice.successful"), invoiceNumbers.toString());
 
         } catch (Exception e) {
             log.error("Failed to generateInvoice ", e);
@@ -315,7 +321,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setCode(customerAccount.getCode());
             entity.setDescription(customerAccount.getDescription());
             if (customerAccount.getContactInformation() != null) {
-                entity.setEmail(customerAccount.getContactInformation().getEmail());
+                entity.getContactInformation().setEmail(customerAccount.getContactInformation().getEmail());
             }
             entity.setAddress(customerAccount.getAddress());
             entity.setExternalRef1(customerAccount.getExternalRef1());

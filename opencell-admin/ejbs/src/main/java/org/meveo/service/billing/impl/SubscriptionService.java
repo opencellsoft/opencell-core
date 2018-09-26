@@ -36,12 +36,15 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.billing.SubscriptionRenewal.InitialTermTypeEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
@@ -204,12 +207,31 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationReason == null) {
             throw new BusinessException("terminationReason is null");
         }
-
-        return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-            terminationReason.isApplyTerminationCharges(), orderNumber, orderItemId, orderItemAction);
+        
+		// checks if termination date is > today
+		Date endOfDayToday = DateUtils.setDateToEndOfDay(new Date());
+		if (terminationDate.before(endOfDayToday)) {
+			return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
+					terminationReason.isApplyTerminationCharges(), orderNumber, orderItemId, orderItemAction);
+		} else {
+			// if future date set subscription termination
+			return terminateSubscriptionWithFutureDate(subscription, terminationDate, terminationReason);
+		}
     }
 
-    @MeveoAudit
+    private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
+    	subscription.setSubscribedTillDate(terminationDate);
+		subscription.getSubscriptionRenewal().setTerminationReason(terminationReason);
+		subscription.getSubscriptionRenewal().setInitialTermType(InitialTermTypeEnum.FIXED);
+		subscription.getSubscriptionRenewal().setAutoRenew(false);		
+		subscription.getSubscriptionRenewal().setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
+		
+		subscription = update(subscription);
+		
+		return subscription;
+	}
+
+	@MeveoAudit
     private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
             boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
         if (terminationDate == null) {
@@ -310,5 +332,36 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
+    
+	public void activateInstantiatedService(Subscription sub) throws BusinessException {
+		for (ServiceInstance si : sub.getServiceInstances()) {
+			if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+				serviceInstanceService.serviceActivation(si, null, null);
+			}
+		}
+	}
+ 
+    /**
+     * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date &gt; n years.
+     * @param nYear age of the subscription
+     * @return Filtered list of subscriptions
+     */
+    @SuppressWarnings("unchecked")
+	public List<Subscription> listInactiveSubscriptions(int nYear) {
+    	QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
+    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+    	
+    	qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
+    	qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>");
+    	qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>");
+    	
+    	return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+    }
+
+	public void bulkDelete(List<Subscription> inactiveSubscriptions) throws BusinessException {
+		for (Subscription e : inactiveSubscriptions) {
+			remove(e);
+		}
+	}
 
 }

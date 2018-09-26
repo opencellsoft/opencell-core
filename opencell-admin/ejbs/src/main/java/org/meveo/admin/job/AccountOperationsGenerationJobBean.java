@@ -1,7 +1,9 @@
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -14,18 +16,22 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.async.AccOpGenerationAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 5.2
  **/
 @Stateless
 public class AccountOperationsGenerationJobBean extends BaseJobBean {
@@ -42,6 +48,10 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    /** The script instance service. */
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -49,17 +59,23 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         try {
 
-            boolean excludeInvoicesWithoutAmount = jobInstance.getExcludeInvoicesWithoutAmount();
+            boolean excludeInvoicesWithoutAmount = jobInstance.getExcludeInvoicesWithoutAmount() == null ? false : jobInstance.getExcludeInvoicesWithoutAmount();
             List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, excludeInvoicesWithoutAmount);
             log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
 
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
+            String scriptInstanceCode = null;
+            Map<String, Object> context = new HashMap<String, Object>();
             try {
                 nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
+                }
+                scriptInstanceCode = (String) this.getParamOrCFValue(jobInstance, "scriptInstanceCode");
+                if (this.getParamOrCFValue(jobInstance, "scriptInstanceVariables") != null) {
+                    context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "scriptInstanceVariables");
                 }
             } catch (Exception e) {
                 nbRuns = new Long(1);
@@ -70,9 +86,15 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
+            ScriptInterface script = null;
+            if (!StringUtils.isBlank(scriptInstanceCode)) {
+                script = scriptInstanceService.getScriptInstance(scriptInstanceCode);
+                script.init(context);
+            }
+            
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+                futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser, script));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

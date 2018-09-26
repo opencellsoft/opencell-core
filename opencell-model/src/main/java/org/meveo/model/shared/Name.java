@@ -27,6 +27,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Embeddable
 public class Name implements Serializable, Cloneable {
 
@@ -91,5 +95,10 @@ public class Name implements Serializable, Cloneable {
     public String getFullName() {
         return (title != null ? (title.getDescription() != null ? title.getDescription() : title.getCode()) + " " : "") + (firstName != null ? firstName + " " : "")
                 + (lastName != null ? lastName : "");
+    }
+    
+    public void anonymize(String code) {
+    	setFirstName(code);
+    	setLastName(code);
     }
 }

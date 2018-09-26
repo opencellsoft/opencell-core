@@ -2847,6 +2847,43 @@ ORDER BY
         </insert>
     </changeSet>
 
+    <changeSet author="anasseh" id="#3080_draft_innvoice_type">
+    	<insert tableName="billing_seq_invoice">
+    		<column name="id" valueNumeric="-1" />
+            <column name="code" value="DRAFT" />
+    	    <column name="sequence_size" valueNumeric="5" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+    	</insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="DRAFT" />
+            <column name="description" value="Draft invoice" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="occ_template_id" value="-25" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="use_self_sequence" valueNumeric="0" />
+            <column name="prefix_el" value="DRAFT_" />
+            <column name="uuid" value="INVOICE_TYPE-4" />
+            <column name="invoice_sequence_id" value="-1" />
+        </insert>
+    </changeSet>
+    
+     <changeSet author="SaidRamli" id="#3540_12072018">
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, version, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 0, 
+			 'documentNamePrefix' , 'PROVIDER' ,  'Prefix of the generated file name' ,  'STRING' ,  'SINGLE' , 
+			 'tab:PDF document config:3;fieldGroup:Common:0;field:0' , '50' , now())
+			</sql>
+			<sql>insert into ${db.schema.adapted}crm_custom_field_tmpl (id, version, code, applies_to ,description, field_type, storage_type, gui_position, max_value, created) VALUES
+			 (nextval('${db.schema.adapted}crm_custom_fld_tmp_seq') , 0, 
+			 'documentDestinationDir' , 'PROVIDER' ,  'The directory where the file will be created' ,  'STRING' ,  'SINGLE' , 
+			 'tab:PDF document config:3;fieldGroup:Common:0;field:1' , '50' , now())
+			</sql>
+	 </changeSet>
+
    <changeSet id="20180715 Payment gateway" author="ansseh">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-10, 0, 0, now(), 'org.meveo.service.script.demo.CustomGatewayPaymentScript', 'CustomGatewayPaymentScript', 'JAVA', '
 			package org.meveo.service.script.demo;
@@ -4299,4 +4336,79 @@ order by edr.STATUS, edr.id DESC
             <column name="params" value="%"></column>
         </insert>
 	</changeSet>
+
+    <changeSet author="MounirBahije" id="#3545_13082018">
+        <sql>
+            update ${db.schema.adapted}billing_invoice_type set script_instance_id = (select id from ${db.schema.adapted}meveo_script_instance where code =  (select substring(
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) ))) )
+            )
+            for
+
+            (select 	position('"' in
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) )) + 1) ))
+            )
+            )
+            )))
+        </sql>
+        <sql>
+            update ${db.schema.adapted}crm_provider set cf_values =
+            (select replace(
+            (select replace(
+            (select replace(
+            (select replace( (select cf_values from ${db.schema.adapted}crm_provider  where id = 1),
+            (select '"PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"' ||
+            (select substring(
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) ))) )
+            )
+            for
+            (select 	position('"' in
+            (select substring((select cf_values from ${db.schema.adapted}crm_provider  where id = 1)  from
+            (select char_length('PROV_CUSTOM_INV_XML_SCRIPT_CODE":[{"string":"') + (select position('PROV_CUSTOM_INV_XML_SCRIPT_CODE' in (select cf_values from ${db.schema.adapted}crm_provider  where id = 1) )) + 1) ))
+            )
+            )
+            ))
+            || '"}]') , '')),'{,','{')), '],,"', '],"')),',}','}'))
+        </sql>
+    </changeSet>
+
+    <changeSet id="#3554_20180812 payment sepa as file _data" author="anasseh">
+        <insert tableName="ar_ddrequest_builder">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2018-08-12 14:04:19.955" />
+            <column name="code" value="Sepa_STD" />
+            <column name="description" value="Sepa  : urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 and Sepa reject file Pain002" />
+            <column name="type" value="NATIF" />
+            <column name="implementation_class_name" value="org.meveo.admin.sepa.SepaFile"/>
+            <column name="nb_ops_file" value="-1"/>
+            <column name="max_size_file" value="-1"/>
+            <column name="uuid" value="44bb7507-11cc-4a98-aa50-1777ddae3e6c" />
+            <column name="creator" value="opencell.admin" />
+        </insert>  
+        <insert tableName="ar_ddrequest_builder">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2018-08-12 14:05:32.622" />
+            <column name="code" value="Sepa_Paynum" />
+            <column name="description" value="Sepa Paynum" />
+            <column name="type" value="NATIF" />
+            <column name="implementation_class_name" value="org.meveo.admin.sepa.PaynumFile"/>
+            <column name="nb_ops_file" value="-1"/>
+            <column name="max_size_file" value="-1"/>
+            <column name="uuid" value="a6873856-1d25-4df8-8801-09314528aa17" />
+            <column name="creator" value="opencell.admin" />
+        </insert> 
+    </changeSet>
+    
+    <changeSet id="#20180920" author="EdwardPLegaspi">
+    	<update tableName="billing_seq_invoice">
+	        <column name="version" value="0" />
+	        <where>version IS NULL</where>
+	    </update>
+    </changeSet>
 </databaseChangeLog>
