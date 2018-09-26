@@ -1032,6 +1032,25 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 			</view-param>
 		</redirect>
 	</navigation-case>
+	<navigation-case>
+		<from-outcome>backToCaFromOcc</from-outcome>
+		<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtm</to-view-id>
+		<redirect include-view-params="true">
+		    <view-param>
+				<name>customerAccountId</name>
+				<value>#{accountOperationBean.backEntityId}</value>
+			</view-param>
+			<view-param>
+				<name>mainTab</name>
+				<value>#{accountOperationBean.backMainTab}</value>
+			</view-param>
+			<view-param>
+				<name>tab</name>
+				<value>#{accountOperationBean.backTab}</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
+	
 
 	<navigation-case>
 		<from-outcome>crmAccounts</from-outcome>

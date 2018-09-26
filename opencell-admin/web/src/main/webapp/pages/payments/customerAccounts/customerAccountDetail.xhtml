@@ -361,9 +361,14 @@
 
                             <hftl:column label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus.label" isMessage="true" width="10%" />
 
-                            <hftl:actionsColumn width="15%" renderDeleteLink="false" editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true" />
-                            
-                            <ui:define name="add-on-buttons">
+							<hftl:actionsColumn width="15%" renderDeleteLink="false"
+								editView="#{accountOperationBean.displayOperation(entity)}"
+								backView="backToCaFromOcc"
+								backEntityId="#{customerAccountBean.objectId}"
+								backTab="0" backMainTab="1"
+								renderViewLink="true" />
+
+							<ui:define name="add-on-buttons">
                                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{accountOperationBean.canUserUpdateEntity()}">
                                     <p:commandButton action="#{accountOperationBean.matching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonLettrage']}"
                                         rendered="#{customerAccountBean.isActiveAccount()}" />
