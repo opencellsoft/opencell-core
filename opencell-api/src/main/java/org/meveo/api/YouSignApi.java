@@ -445,7 +445,7 @@ public class YouSignApi extends BaseApi {
                 if (StringUtils.isEmpty(internalPosition)) {
                     this.missingParameters.add("fileToSign -> internalPosition");
                 } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(internalPosition).matches()) {
-                    this.missingParameters.add("fileToSign -> internalPosition");
+                    throw new MeveoApiException("fileToSign -> internalPosition : format invalid ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+' ");
                 }
             }
             
@@ -453,7 +453,7 @@ public class YouSignApi extends BaseApi {
             if (StringUtils.isEmpty(externalPosition)) {
                 this.missingParameters.add("fileToSign -> externalPosition");
             } else if (!SIGN_OBJECT_POSITION_PATTERN.matcher(externalPosition).matches()) {
-                this.missingParameters.add("fileToSign -> externalPosition");
+                throw new MeveoApiException("fileToSign -> externalPosition : format invalid ! should be like '[0-9]+,[0-9]+,[0-9]+,[0-9]+' ");
             }
             
             this.handleMissingParameters();
