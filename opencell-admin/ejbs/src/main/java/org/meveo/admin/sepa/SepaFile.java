@@ -231,8 +231,8 @@ public class SepaFile implements DDRequestBuilderInterface {
         CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
         PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
         BankCoordinates bankCoordiates = null;
-        if (preferedPaymentMethod instanceof DDPaymentMethod) {
-            bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+        if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
+            throw new BusinessException("Payment method not valid!");
         }
 
         DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
