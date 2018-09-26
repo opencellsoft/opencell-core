@@ -316,4 +316,17 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         return result;
     }
 
+	@Override
+	public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
 }

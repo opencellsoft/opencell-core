@@ -1784,4 +1784,19 @@ public class SubscriptionApi extends BaseApi {
 		
 		subscriptionService.activateInstantiatedService(subscription);
 	}
+	
+	public void cancelSubscriptionRenewal(String subscriptionCode) throws MeveoApiException, BusinessException {
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+		}
+
+		handleMissingParameters();
+
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+		}
+		
+		subscriptionService.cancelSubscriptionRenewal(subscription);
+	}
 }
