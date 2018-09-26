@@ -58,6 +58,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.filter.FilterService;
 
@@ -215,8 +216,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
         if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
             for (AccountOperation ao : listAoToPay) {
                 String errorMsg = getMissingField(ao);
-                ddRequestLOT.getDdrequestItems().add(
-                    ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, ao.getCustomerAccount().getName().getFullName(), errorMsg, Arrays.asList(ao)));
+                Name caName =  ao.getCustomerAccount().getName();
+                String caFullName = caName != null ? caName.getFullName() : "";
+                ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
                 if (errorMsg != null) {
                     nbItemsKo++;
                     allErrors += errorMsg + " ; ";
