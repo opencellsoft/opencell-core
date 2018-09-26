@@ -94,8 +94,8 @@ public class ContactApi extends AccountEntityApi {
 		else if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode()))
 			contact.setEmail(postData.getCode());
 		else {
-			contact.setCode(postData.getEmail());
-			contact.setEmail(postData.getCode());
+			contact.setCode(postData.getCode());
+			contact.setEmail(postData.getEmail());
 		}
 
 		contact.setCompany(postData.getCompany());
@@ -112,7 +112,13 @@ public class ContactApi extends AccountEntityApi {
 		contact.setAgreedToUA(postData.isAgreedToUA());
 		contact.setTags(postData.getTags()	);
 		
-		Customer customer = customerService.findByCompanyName(postData.getCompany());
+		Customer customer = null;
+		if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
+			customer = customerService.findByCode(postData.getCode());
+		}
+		else {
+			customer = customerService.findByCompanyName(postData.getCompany());
+		}
 		if(customer != null) {
 			contact.setAddressBook(customer.getAddressbook());
 		}
@@ -209,11 +215,11 @@ public class ContactApi extends AccountEntityApi {
 		if(contact.getCompany() != postData.getCompany()) {
 			contact.setCompany(postData.getCompany());
 			Customer customer = null;
-			if(!contact.getCompany().isEmpty()) {
-				customer = customerService.findByCompanyName(postData.getCompany());
+			if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
+				customer = customerService.findByCode(postData.getCode());
 			}
 			else {
-				customer = customerService.findByCode(postData.getCode());
+				customer = customerService.findByCompanyName(postData.getCompany());
 			}
 			if(customer != null) {
 				contact.setAddressBook(customer.getAddressbook());
