@@ -35,11 +35,10 @@ public class PDFDocumentApi extends BaseApi {
             if (CollectionUtils.isEmpty(listTemplates)) {
                 throw new MeveoApiException("listTemplates cannot be empty !");
             }
-            String documentDestinationDir = checkConfiguredOrApiParam(postData.getDocumentDestinationDir(), "documentDestinationDir");
-            postData.setDocumentDestinationDir(documentDestinationDir);
            
-            if (postData.getDocumentNamePrefix() == null) {
-                postData.setDocumentNamePrefix((String) this.customFieldInstanceService.getCFValue(this.appProvider, "documentNamePrefix"));
+            if (StringUtils.isEmpty(postData.getDocumentNamePrefix())) {
+                this.missingParameters.add("documentNamePrefix");
+                this.handleMissingParameters();
             }
             for (PDFTemplateDto templateDto : listTemplates) {
                 this.checkTemplateDtoParams(templateDto);
