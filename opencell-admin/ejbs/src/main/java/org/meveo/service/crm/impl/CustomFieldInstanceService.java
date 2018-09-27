@@ -17,7 +17,6 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -76,9 +75,6 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
-
-    @Inject
-    private Conversation conversation;
 
     @Inject
     private CurrentUserProvider currentUserProvider;
@@ -1701,34 +1697,37 @@ public class CustomFieldInstanceService extends BaseService {
      *
      * @param cft Custom field template
      * @param value Value to inspect
-     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
+     * @param filterKeys Keys to match. The order must correspond to the order of the keys during data entry
      * @return A value matched
      */
     @SuppressWarnings("unchecked")
-    public static Object matchMatrixValue(CustomFieldTemplate cft, Object value, Object... keys) {
-        if (value == null || !(value instanceof Map) || keys == null || keys.length == 0) {
+    public static Object matchMatrixValue(CustomFieldTemplate cft, Object value, Object... filterKeys) {
+        if (!(value instanceof Map) || filterKeys == null || filterKeys.length == 0) {
             return null;
         }
 
         Object valueMatched = null;
 
         for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
-            String[] keysParsed = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
-            if (keysParsed.length != keys.length) {
+            String[] matrixKeys = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+            if (matrixKeys.length != filterKeys.length) {
                 continue;
             }
 
-            boolean allMatched = true;
-            for (int i = 0; i < keysParsed.length; i++) {
+            boolean isMatchedAllKeys = true;
+            for (int i = 0; i < matrixKeys.length; i++) {
                 CustomFieldMatrixColumn matrixColumn = cft.getMatrixColumnByIndex(i);
-                if (matrixColumn == null || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.STRING && !keysParsed[i].equals(keys[i]))
-                        || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.RON && !isNumberRangeMatch(keysParsed[i], keys[i]))) {
-                    allMatched = false;
+                if (matrixColumn == null
+                	|| (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.STRING 
+                		&& !matrixKeys[i].equals(filterKeys[i]) && !matrixKeys[i].equals(CustomFieldValue.WILDCARD_MATCH_ALL)) 
+                	|| (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.RON 
+                		&& !isNumberRangeMatch(matrixKeys[i], filterKeys[i]))) {
+                    isMatchedAllKeys = false;
                     break;
                 }
             }
 
-            if (allMatched) {
+            if (isMatchedAllKeys) {
                 valueMatched = valueInfo.getValue();
                 break;
             }
@@ -1840,6 +1839,10 @@ public class CustomFieldInstanceService extends BaseService {
         if (numberToMatchObj == null) {
             return false;
         }
+        
+		if (numberRange.equals(CustomFieldValue.WILDCARD_MATCH_ALL)) {
+			return true;
+		}
 
         String[] rangeInfo = numberRange.split(CustomFieldValue.RON_VALUE_SEPARATOR);
         Double fromNumber = null;
