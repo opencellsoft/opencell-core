@@ -123,7 +123,7 @@
 			</h:panelGrid>
 
 			<h:panelGroup
-				rendered="#{calendarBean.entity.calendarType=='PERIOD'}">
+				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarPeriod'}">
 
 				<hftl:formField label="#{messages['calendar.periodLength']}"
 					field="periodLength" required="true" newLine="true" />
@@ -139,7 +139,7 @@
 					field="nbPeriods" required="true" />
 			</h:panelGroup>
 
-			<h:panelGroup rendered="#{calendarBean.entity.calendarType=='JOIN'}">
+			<h:panelGroup rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarJoin'}">
 				<hftl:formField id="joinType" label="#{messages['calendar.joinType']}"
 					field="joinType" newLine="true" required="true" />
 				<hftl:formField id="joinCalendar1"
@@ -155,7 +155,7 @@
 
 
 			<h:panelGroup
-				rendered="#{calendarBean.entity.calendarType=='INTERVAL'}">
+				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarInterval'}">
 
 				<hftl:decorateFormField fieldId="intervalType"
 					label="#{messages['calendar.intervalType']}" newLine="true">
