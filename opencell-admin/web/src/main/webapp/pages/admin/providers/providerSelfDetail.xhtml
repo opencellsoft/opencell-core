@@ -53,11 +53,16 @@
 					<hftl:formField label="#{messages['provider.paymentMethods']}" field="paymentMethods" listType="pickUpList" valueLabelField="label" dualListModel="#{providerBean.paymentMethodsModel}" newLine="true"/>
                   
                     <p:fieldset legend="#{messages['provider.bankCoordinates.title']}" styleClass="clearLeft">
+                    
                         <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" newLine="true" />
-
                         <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="41" />
-
                         <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="42" />
+                        
+                        <hftl:formField label="#{messages['bankCoordinates.branchCode']}" field="bankCoordinates" childField="branchCode" size="5" />
+                        <hftl:formField label="#{messages['bankCoordinates.accountNumber']}" field="bankCoordinates" childField="accountNumber" size="11" />
+                        <hftl:formField label="#{messages['bankCoordinates.bankCode']}" field="bankCoordinates" childField="bankCode" size="5" />
+                        <hftl:formField label="#{messages['bankCoordinates.issuerName']}" field="bankCoordinates" childField="issuerName" size="50" />
+                                                
                     </p:fieldset>
                     <p:fieldset legend="#{messages['provider.invoiceConfiguration.title']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}" field="invoiceConfiguration" childField="displaySubscriptions"
