@@ -4411,9 +4411,12 @@ order by edr.STATUS, edr.id DESC
 	        <where>version IS NULL</where>
 	    </update>
     </changeSet>
-    
+
     <changeSet id="#3638_20180925" author="SaidRamli">
     	<addDefaultValue columnName="version" tableName="billing_seq_invoice" defaultValueNumeric="0"/>
+    </changeSet>
+     <changeSet id="#3583_20180925" author="SaidRamli">
+    	<sql>update ${db.schema.adapted}billing_invoice set due_date = to_timestamp(to_char(due_date , 'yyyy-mm-dd') , 'yyyy-mm-dd')</sql>
     </changeSet>
     
 </databaseChangeLog>

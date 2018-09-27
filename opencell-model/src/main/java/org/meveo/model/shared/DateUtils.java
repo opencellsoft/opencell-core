@@ -33,12 +33,16 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 public class DateUtils {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DateUtils.class);
 
     private static long lastTime = System.currentTimeMillis() / 1000;
 
@@ -637,5 +641,23 @@ public class DateUtils {
         String y = String.valueOf(calendar.get(Calendar.YEAR) % 10);
         
         return ddMM+y;
+    }
+    
+    public static Date truncateTime(Date date) {
+        try {
+            if (date == null) {
+                return null;
+            }
+            Calendar cal = Calendar.getInstance(); // locale-specific
+            cal.setTime(date);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTime();
+        } catch (Exception e) {
+            LOG.error(" error on truncateTime : [{}] ", e.getMessage());
+            return date;
+        }
     }
 }
