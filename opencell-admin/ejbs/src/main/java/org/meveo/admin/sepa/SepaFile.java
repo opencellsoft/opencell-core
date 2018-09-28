@@ -191,7 +191,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", "CORE"));
         paymentTypeInformation.setSeqTp(SequenceType1Code.FRST);
 
-        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
+        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // à revoir
 
         BankCoordinates providerBC = appProvider.getBankCoordinates();
         if (providerBC == null) {
@@ -252,7 +252,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         directDebitTransaction.setMndtRltdInf(mandateRelatedInformation);
        
         mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
-        mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
+        mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
         
         BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
         directDebitTransactionInformation.setDbtrAgt(debtorAgent);
