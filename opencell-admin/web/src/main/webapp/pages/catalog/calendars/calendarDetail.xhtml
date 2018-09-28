@@ -84,11 +84,11 @@
 			<hftl:formField label="#{messages['calendar.days']}" field="days"
 				listType="pickUpList" valueLabelField="day" valueLabelField2="month"
 				dualListModel="#{calendarBean.dayInYearModel}"
-				rendered="#{calendarBean.entity.calendarType=='YEARLY'}"
+				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarYearly'}"
 				newLine="true" />
 
 			<h:panelGrid columns="2"
-				rendered="#{calendarBean.entity.calendarType=='DAILY'}"
+				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarDaily'}"
 				styleClass="clearLeft">
 				<p:outputLabel value="#{messages['calendar.hours']}" />
 				<h:panelGrid id="calendarHourMin">
