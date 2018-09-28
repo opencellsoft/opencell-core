@@ -79,8 +79,14 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     /** The rate until date. */
     private Date rateUntilDate;
     
+    /** The amount PS. */
     private BigDecimal amountPS;
+    
+    /** The calendar PS code. */
     private String calendarPSCode;
+    
+    /** The due date days PS. */
+    private Integer dueDateDaysPS;
 
     /**
      * Instantiates a new service instance dto.
@@ -332,6 +338,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     
     
     /**
+     * Gets the amount PS.
+     *
      * @return the amountPS
      */
     public BigDecimal getAmountPS() {
@@ -339,6 +347,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the amount PS.
+     *
      * @param amountPS the amountPS to set
      */
     public void setAmountPS(BigDecimal amountPS) {
@@ -346,6 +356,8 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Gets the calendar PS code.
+     *
      * @return the calendarPSCode
      */
     public String getCalendarPSCode() {
@@ -353,12 +365,35 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     }
 
     /**
+     * Sets the calendar PS code.
+     *
      * @param calendarPSCode the calendarPSCode to set
      */
     public void setCalendarPSCode(String calendarPSCode) {
         this.calendarPSCode = calendarPSCode;
     }
 
+    /**
+     * Gets the due date days PS.
+     *
+     * @return the dueDateDaysPS
+     */
+    public Integer getDueDateDaysPS() {
+        return dueDateDaysPS;
+    }
+
+    /**
+     * Sets the due date days PS.
+     *
+     * @param dueDateDaysPS the dueDateDaysPS to set
+     */
+    public void setDueDateDaysPS(Integer dueDateDaysPS) {
+        this.dueDateDaysPS = dueDateDaysPS;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="

@@ -494,6 +494,7 @@ public class SubscriptionApi extends BaseApi {
                         throw new EntityDoesNotExistsException(org.meveo.model.catalog.Calendar.class, serviceToActivateDto.getCalendarPSCode());
                     }
                 }
+                serviceInstance.setDueDateDaysPS(serviceToActivateDto.getDueDateDaysPS());
                 serviceInstance.setAmountPS(serviceToActivateDto.getAmountPS());
                 serviceInstance.setCalendarPS(calendarPS);
                 // populate customFields
@@ -1249,6 +1250,7 @@ public class SubscriptionApi extends BaseApi {
                         serviceToActivateDto.setCustomFields(serviceInstanceDto.getCustomFields());
                         serviceToActivateDto.setRateUntilDate(serviceInstanceDto.getRateUntilDate());
                         serviceToActivateDto.setAmountPS(serviceInstanceDto.getAmountPS());
+                        serviceToActivateDto.setDueDateDaysPS(serviceInstanceDto.getDueDateDaysPS());
                         serviceToActivateDto.setCalendarPSCode(serviceInstanceDto.getCalendarPSCode());
                         activateServicesDto.getServicesToActivateDto().addService(serviceToActivateDto);
                     }

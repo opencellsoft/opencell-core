@@ -60,6 +60,10 @@ public class ServiceToActivateDto implements Serializable {
     
     /** The calendar PS code. */
     private String calendarPSCode;
+    
+
+    /** The due date days PS. */
+    private Integer dueDateDaysPS;
 
     /**
      * Gets the code.
@@ -241,6 +245,26 @@ public class ServiceToActivateDto implements Serializable {
      */
     public void setCalendarPSCode(String calendarPSCode) {
         this.calendarPSCode = calendarPSCode;
+    }
+    
+    
+
+    /**
+     * Gets the due date days PS.
+     *
+     * @return the dueDateDaysPS
+     */
+    public Integer getDueDateDaysPS() {
+        return dueDateDaysPS;
+    }
+
+    /**
+     * Sets the due date days PS.
+     *
+     * @param dueDateDaysPS the dueDateDaysPS to set
+     */
+    public void setDueDateDaysPS(Integer dueDateDaysPS) {
+        this.dueDateDaysPS = dueDateDaysPS;
     }
 
     /* (non-Javadoc)
