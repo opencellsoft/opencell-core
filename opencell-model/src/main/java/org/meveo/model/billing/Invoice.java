@@ -236,7 +236,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     
     
     /**
-     * #3583 : dueDate &  invoiceDate should be truncated before persist or update
+     * 3583 : dueDate &  invoiceDate should be truncated before persist or update
      */
     @PrePersist
     @PreUpdate
