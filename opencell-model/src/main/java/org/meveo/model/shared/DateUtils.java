@@ -637,7 +637,7 @@ public class DateUtils {
     
     /**
      * Format DDMMY : 
-     *  # SimpleDateFormat way is not working for this format => e.g : with sfd, 2009 will return '9' but 2018 will return 18 , 
+     *   SimpleDateFormat way is not working for this format => e.g : with sfd, 2009 will return '9' but 2018 will return 18 , 
      *   BUT the need here is to return always the last digit of the year !
      *
      * @param date the date
