@@ -178,8 +178,11 @@ public class PictureServlet extends HttpServlet {
         }
 
         if (imagePath != null) {
+        	log.debug("imagePath found={}", imagePath);
             data = loadImage(imagePath);
         }
+        
+        log.debug("imagePath is null");
 
         // Load a default image if not found
         if (data == null) {
@@ -199,6 +202,7 @@ public class PictureServlet extends HttpServlet {
                 return;
             }
 
+            log.debug("pull data from cache");
             // load from cached default images
             data = cachedDefaultImages.get(defaultImage);
             imagePath = rootPath + File.separator + defaultImage;
@@ -211,8 +215,11 @@ public class PictureServlet extends HttpServlet {
 
         if (data != null) {
             Path destFile = Paths.get(imagePath);
+            log.debug("data is not null, loading imagePath={}", imagePath);
+            
             try {
                 mimeType = Files.probeContentType(destFile);
+                log.debug("mimeType found={}", mimeType);
                 if (mimeType != null) {
                     resp.setContentType(mimeType);
                 }

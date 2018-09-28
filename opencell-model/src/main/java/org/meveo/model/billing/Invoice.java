@@ -40,6 +40,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -61,6 +63,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.quote.Quote;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -230,6 +233,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     @Transient
     private Long invoiceAdjustmentCurrentProviderNb;
+    
+    
+    /**
+     * #3583 : dueDate &  invoiceDate should be truncated before persist or update
+     */
+    @PrePersist
+    @PreUpdate
+    public void prePersistOrUpdate() {
+        this.dueDate =  DateUtils.truncateTime(this.dueDate);
+        this.invoiceDate =  DateUtils.truncateTime(this.invoiceDate);
+    }
 
     public List<RatedTransaction> getRatedTransactions() {
         return ratedTransactions;
