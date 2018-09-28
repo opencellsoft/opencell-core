@@ -77,20 +77,27 @@ public class PaymentScheduleInstanceService extends BusinessService<PaymentSched
      * @throws BusinessException the business exception
      */
     public void terminate(PaymentScheduleInstance paymentScheduleInstance,Date terminationDate) throws BusinessException {
-        if(paymentScheduleInstance.getPaymentScheduleTemplate().isApplyAgreement()) {
+        if(terminationDate == null) {
+            terminationDate = paymentScheduleInstance.getEndDate();
+        }
+        PaymentScheduleTemplate  paymentScheduleTemplate = paymentScheduleTemplateService.refreshOrRetrieve(paymentScheduleInstance.getPaymentScheduleTemplate());
+        
+        if(paymentScheduleTemplate.isApplyAgreement()) {
+            paymentScheduleInstance = refreshOrRetrieve(paymentScheduleInstance);
             for(PaymentScheduleInstanceItem paymentScheduleInstanceItem : paymentScheduleInstance.getPaymentScheduleInstanceItems()) {
                if(paymentScheduleInstanceItem.getRecordedInvoice() == null) {
                    paymentScheduleInstanceItemService.processItem(paymentScheduleInstanceItem);
                }
             }
         }
+        paymentScheduleInstance.setEndDate(terminationDate);
         paymentScheduleInstance.setStatus(PaymentScheduleStatusEnum.TERMINATED);
         paymentScheduleInstance.setStatusDate(terminationDate);
         super.update(paymentScheduleInstance);
     }
     
     /**
-     * Cancel.
+     * Cancel paymentScheduleInstance.
      *
      * @param paymentScheduleInstance the payment schedule instance
      * @throws BusinessException the business exception

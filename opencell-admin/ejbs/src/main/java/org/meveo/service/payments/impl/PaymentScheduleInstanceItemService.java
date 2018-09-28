@@ -122,9 +122,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * Process item.
      *
      * @param paymentScheduleInstanceItem the payment schedule instance item
-     * @throws MeveoApiException the meveo api exception
      * @throws BusinessException the business exception
-     * @throws Exception the exception
      */
     public void processItem(PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
         paymentScheduleInstanceItem = retrieveIfNotManaged(paymentScheduleInstanceItem);
@@ -186,7 +184,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
                 } else {
                     throw new BusinessException("Payment method " + preferredMethod.getPaymentType() + " not allowed");
                 }
-                applyOneShotPS(invoiceSubCat, paymentScheduleInstanceItem, amounts[0]);
             } catch (Exception e) {
                 throw new BusinessException(e.getMessage());
             }
@@ -198,17 +195,50 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         }
     }
 
-    private void applyOneShotPS(InvoiceSubCategory invoiceSubCat, PaymentScheduleInstanceItem paymentScheduleInstanceItem, BigDecimal amount) throws BusinessException {
-        OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel());
+    /**
+     * Apply one shot reject PS.
+     *
+     * @param paymentScheduleInstanceItem the payment schedule instance item
+     * @throws BusinessException the business exception
+     */
+    public void applyOneShotRejectPS(PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
+        applyOneShotPS(paymentScheduleInstanceItem, true);
+    }
+
+    /**
+     * Apply one shot PS.
+     *
+     * @param paymentScheduleInstanceItem the payment schedule instance item
+     * @param isPaymentRejected the is payment rejected
+     * @throws BusinessException the business exception
+     */
+    private void applyOneShotPS(PaymentScheduleInstanceItem paymentScheduleInstanceItem, boolean isPaymentRejected) throws BusinessException {
+        UserAccount userAccount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount();
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+        InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
+        BigDecimal amounts[] = getAmounts(invoiceSubCat, paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), billingAccount.getTradingCountry(), userAccount);
+        String paymentlabel = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel();
+        OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
         oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
-            new Date(), new BigDecimal("-" + amount), null, new BigDecimal(1), null, null, null, null, true);
+            new Date(), new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null,paymentlabel+(isPaymentRejected ? " (Rejected)" : "") ,null, true);
+    }
+
+    /**
+     * Apply one shot PS.
+     *
+     * @param paymentScheduleInstanceItem the payment schedule instance item
+     * @throws BusinessException the business exception
+     */
+    public void applyOneShotPS(PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
+        applyOneShotPS(paymentScheduleInstanceItem, false);
     }
 
     /**
      * Creates the one shot charge.
      *
      * @param invoiceSubCategory the invoice sub category
+     * @param paymentLabel the payment label
      * @return the one shot charge template
      * @throws BusinessException the business exception
      */
@@ -230,10 +260,11 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     /**
      * Creates the PS AO.
      *
+     * @param amounts the amounts
      * @param customerAccount the customer account
-     * @param amount the amount
-     * @param doPaymentResponseDto the do payment response dto
+     * @param invoiceType the invoice type
      * @param paymentMethodType the payment method type
+     * @param invoice the invoice
      * @param aoIdsToPay the ao ids to pay
      * @param paymentScheduleInstanceItem the payment schedule instance item
      * @return the account operation PS
@@ -307,13 +338,21 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     }
 
     /**
-     * @param recordedInvoice
+     * Check payment record invoice.
+     *
+     * @param recordedInvoice the recorded invoice
      */
     public void checkPaymentRecordInvoice(RecordedInvoice recordedInvoice) {
         // TODO Auto-generated method stub
 
     }
 
+    /**
+     * Count paid items.
+     *
+     * @param paymentScheduleInstance the payment schedule instance
+     * @return the long
+     */
     public Long countPaidItems(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countPaidItems")
@@ -323,6 +362,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         }
     }
 
+    /**
+     * Count incoming items.
+     *
+     * @param paymentScheduleInstance the payment schedule instance
+     * @return the long
+     */
     public Long countIncomingItems(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countIncomingItems")
@@ -333,6 +378,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         }
     }
 
+    /**
+     * Sum amount paid.
+     *
+     * @param paymentScheduleInstance the payment schedule instance
+     * @return the big decimal
+     */
     public BigDecimal sumAmountPaid(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountPaidItems")
@@ -343,6 +394,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         }
     }
 
+    /**
+     * Sum amount incoming.
+     *
+     * @param paymentScheduleInstance the payment schedule instance
+     * @return the big decimal
+     */
     public BigDecimal sumAmountIncoming(PaymentScheduleInstance paymentScheduleInstance) {
         try {
             return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountIncomingItems")

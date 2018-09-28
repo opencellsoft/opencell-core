@@ -18,6 +18,8 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.util.Date;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -88,6 +90,13 @@ public class PaymentScheduleInstanceBean extends BaseBean<PaymentScheduleInstanc
         }
         return null;
     }
+    
+    @ActionMethod
+    public String terminate() throws BusinessException {
+        log.info("\n\n\n\n\n entity.getEndDate(): "+entity.getEndDate());
+        paymentScheduleInstanceService.terminate(entity, entity.getEndDate());
+        return null;
+    }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -102,8 +111,7 @@ public class PaymentScheduleInstanceBean extends BaseBean<PaymentScheduleInstanc
         return "startDate";
     }
    
-    public LazyDataModel<PaymentScheduleInstance> getInstancesForService(ServiceInstance serviceInstance) throws BusinessException {              
-           // filters.put("serviceInstance", serviceInstanceService.refreshOrRetrieve(serviceInstance));    
+    public LazyDataModel<PaymentScheduleInstance> getInstancesForService(ServiceInstance serviceInstance) throws BusinessException {                        
         filters.put("serviceInstance", serviceInstanceService.refreshOrRetrieve(serviceInstance));    
         return getLazyDataModel();
     }
