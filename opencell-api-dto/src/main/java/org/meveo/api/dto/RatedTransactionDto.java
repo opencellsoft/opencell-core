@@ -25,8 +25,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.billing.RatedTransaction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Dto class for Rated Transaction informations
@@ -42,6 +45,13 @@ public class RatedTransactionDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7627662294414998797L;
+
+    /**
+     * Record identifier
+     */
+    @XmlTransient
+    @JsonIgnore
+    private Long id;
 
     /** The usage date. */
     @XmlElement(required = true)
@@ -116,6 +126,16 @@ public class RatedTransactionDto extends BaseEntityDto {
     private BigDecimal taxPercent;
 
     /**
+     * Invoice subcategory code
+     */
+    private String invoiceSubCategoryCode;
+
+    /**
+     * Seller code
+     */
+    private String sellerCode;
+
+    /**
      * Instantiates a new rated transaction dto.
      */
     public RatedTransactionDto() {
@@ -128,6 +148,7 @@ public class RatedTransactionDto extends BaseEntityDto {
      * @param ratedTransaction the rated transaction
      */
     public RatedTransactionDto(RatedTransaction ratedTransaction) {
+        this.id = ratedTransaction.getId();
         this.setUsageDate(ratedTransaction.getUsageDate());
         this.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithoutTax());
         this.setUnitAmountWithTax(ratedTransaction.getUnitAmountWithTax());
@@ -152,15 +173,23 @@ public class RatedTransactionDto extends BaseEntityDto {
     }
 
     /**
-     * Instantiates a new rated transaction dto.
+     * Instantiates a new rated transaction dto from an entity
      *
-     * @param ratedTransaction the rated transaction
-     * @param withUserAccountCode the with user account code
+     * @param ratedTransaction Rated transaction to convert
+     * @param includeUserAccount Include user account code
+     * @param includeSeller Include seller code
+     * @param includeInvoiceSubCategory Include Invoice subcategory code
      */
-    public RatedTransactionDto(RatedTransaction ratedTransaction, boolean withUserAccountCode) {
+    public RatedTransactionDto(RatedTransaction ratedTransaction, boolean includeUserAccount, boolean includeSeller, boolean includeInvoiceSubCategory) {
         this(ratedTransaction);
-        if (withUserAccountCode) {
+        if (includeUserAccount && ratedTransaction.getWallet() != null) {
             this.userAccountCode = ratedTransaction.getWallet().getUserAccount().getCode();
+        }
+        if (includeInvoiceSubCategory) {
+            this.invoiceSubCategoryCode = ratedTransaction.getInvoiceSubCategory().getCode();
+        }
+        if (includeSeller && ratedTransaction.getSeller() != null) {
+            this.sellerCode = ratedTransaction.getSeller().getCode();
         }
     }
 
@@ -528,5 +557,47 @@ public class RatedTransactionDto extends BaseEntityDto {
      */
     public void setTaxPercent(BigDecimal taxPercent) {
         this.taxPercent = taxPercent;
+    }
+
+    /**
+     * @return Record identifier
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id Record identifier
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return Invoice subcategory code
+     */
+    public String getInvoiceSubCategoryCode() {
+        return invoiceSubCategoryCode;
+    }
+
+    /**
+     * @param invoiceSubCategoryCode Invoice subcategory code
+     */
+    public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
+        this.invoiceSubCategoryCode = invoiceSubCategoryCode;
+    }
+
+    /**
+     * @return Seller code
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * @param sellerCode Seller code
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
     }
 }

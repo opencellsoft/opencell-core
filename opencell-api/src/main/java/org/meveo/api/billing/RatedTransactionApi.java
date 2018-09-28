@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.api.dto.account.RatedTransactionListDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.exception.InvalidParameterException;
@@ -51,18 +50,16 @@ public class RatedTransactionApi extends BaseApi {
         result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
-        RatedTransactionListDto ratedTransactionListDto = new RatedTransactionListDto();
-        ratedTransactionListDto.setTotalNumberOfRecords(totalCount);
-
         boolean returnUserAccountCode = pagingAndFiltering.hasFieldOption("userAccountCode");
+        boolean returnSellerCode = pagingAndFiltering.hasFieldOption("sellerCode");
+        boolean returnInvoiceSubCategoryCode = pagingAndFiltering.hasFieldOption("invoiceSubCategoryCode");
 
         if (totalCount > 0) {
             List<RatedTransaction> ratedTransactions = ratedTransactionService.list(paginationConfig);
             for (RatedTransaction rt : ratedTransactions) {
-                ratedTransactionListDto.getRatedTransactions().add(new RatedTransactionDto(rt, returnUserAccountCode));
+                result.getRatedTransactions().add(new RatedTransactionDto(rt, returnUserAccountCode, returnSellerCode, returnInvoiceSubCategoryCode));
             }
         }
-        result.setRatedTransactionListDto(ratedTransactionListDto);
         return result;
     }
 

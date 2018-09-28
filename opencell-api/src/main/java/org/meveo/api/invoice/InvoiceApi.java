@@ -614,7 +614,7 @@ public class InvoiceApi extends BaseApi {
         subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
 
         for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-            SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto(subCategoryInvoiceAgregate);
+            SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto(subCategoryInvoiceAgregate, false);
             dto.getDiscountAggregates().add(subCategoryInvoiceAgregateDto);
         }
 
@@ -892,122 +892,20 @@ public class InvoiceApi extends BaseApi {
 
     private InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf, boolean includeXml) {
 
-        InvoiceDto invoiceDto = new InvoiceDto();
-        invoiceDto.setAuditable(invoice);
-        invoiceDto.setInvoiceId(invoice.getId());
-        invoiceDto.setBillingAccountCode(invoice.getBillingAccount().getCode());
-        invoiceDto.setInvoiceDate(invoice.getInvoiceDate());
-        invoiceDto.setDueDate(invoice.getDueDate());
-
-        invoiceDto.setAmountWithoutTax(invoice.getAmountWithoutTax());
-        invoiceDto.setAmountTax(invoice.getAmountTax());
-        invoiceDto.setAmountWithTax(invoice.getAmountWithTax());
-        invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-        invoiceDto.setPaymentMethod(invoice.getPaymentMethodType());
-        invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
-        invoiceDto.setDueBalance(invoice.getDueBalance());
-
-        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-            if (invoiceAgregate instanceof SubCategoryInvoiceAgregate || invoiceAgregate instanceof TaxInvoiceAgregate) {
-                continue;
-
-            } else if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-                categoryInvoiceAgregateDto.setCategoryInvoiceCode(((CategoryInvoiceAgregate) invoiceAgregate).getInvoiceCategory().getCode());
-
-                SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-                subCategoryInvoiceAgregateDto.setType("R");
-                subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-                subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
-                subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
-                subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-                subCategoryInvoiceAgregateDto.setUserAccountCode(invoiceAgregate.getUserAccount() == null ? null : invoiceAgregate.getUserAccount().getCode());
-
-                categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
-
-                invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
-
-                for (SubCategoryInvoiceAgregate subCategoryAggregate : ((CategoryInvoiceAgregate) invoiceAgregate).getSubCategoryInvoiceAgregates()) {
-                    subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-                    subCategoryInvoiceAgregateDto.setType("F");
-                    subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(subCategoryAggregate.getInvoiceSubCategory().getCode());
-                    subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    if (subCategoryAggregate.getAccountingCode() != null) {
-                        subCategoryInvoiceAgregateDto.setAccountingCode(subCategoryAggregate.getAccountingCode().getCode());
-                    }
-                    subCategoryInvoiceAgregateDto.setDescription(subCategoryAggregate.getDescription());
-                    subCategoryInvoiceAgregateDto.setAmountWithoutTax(subCategoryAggregate.getAmountWithoutTax());
-                    subCategoryInvoiceAgregateDto.setAmountTax(subCategoryAggregate.getAmountTax());
-                    subCategoryInvoiceAgregateDto.setAmountWithTax(subCategoryAggregate.getAmountWithTax());
-                    subCategoryInvoiceAgregateDto.setUserAccountCode(subCategoryAggregate.getUserAccount() == null ? null : subCategoryAggregate.getUserAccount().getCode());
-
-                    if (includeTransactions) {
-
-                        List<RatedTransaction> ratedTransactions = ratedTransactionService.getListByInvoiceAndSubCategory(invoice, subCategoryAggregate.getInvoiceSubCategory());
-
-                        for (RatedTransaction ratedTransaction : ratedTransactions) {
-                            subCategoryInvoiceAgregateDto.getRatedTransactions().add(new RatedTransactionDto(ratedTransaction));
-                        }
-                    }
-
-                    categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
-                }
-                // } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                // SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-                // subCategoryInvoiceAgregateDto.setType("T");
-                // subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                // subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
-                // subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-                // subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
-                // subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
-                // subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
-                // subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
-                // subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-                // subCategoryInvoiceAgregateDto.setUserAccountCode(invoiceAgregate.getUserAccount() == null ? null : invoiceAgregate.getUserAccount().getCode());
-                // CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = null;
-                // if (invoiceDto.getCategoryInvoiceAgregates().size() > 0) {
-                // categoryInvoiceAgregateDto = invoiceDto.getCategoryInvoiceAgregates().get(0);
-                // } else {
-                // categoryInvoiceAgregateDto = new CategoryInvoiceAgregateDto();
-                // invoiceDto.getCategoryInvoiceAgregates().add(categoryInvoiceAgregateDto);
-                // }
-                //
-                // categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
-            }
-        }
-
-        for (Invoice inv : invoice.getLinkedInvoices()) {
-            invoiceDto.getListInvoiceIdToLink().add(inv.getId());
-        }
-
-        if (invoice.getRecordedInvoice() != null) {
-            RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
-            invoiceDto.setRecordedInvoiceDto(recordedInvoiceDto);
-        }
+        InvoiceDto invoiceDto = new InvoiceDto(invoice, includeTransactions);
 
         this.setInvoicePdf(invoice, includePdf, invoiceDto);
-
-        // #2236 if includeXml return xml file content
-        if (includeXml) {
-            this.setInvoiceXml(invoice, invoiceDto);
-        }
-
-        if (invoiceService.isInvoiceXmlExist(invoice)) {
-            invoiceDto.setXmlFilename(invoice.getXmlFilename());
-        }
-        invoiceDto.setNetToPay(invoice.getNetToPay());
-        invoiceDto.setReturnPdf(invoiceDto.getPdf() != null);
+        this.setInvoiceXml(invoice, includeXml, invoiceDto);
 
         return invoiceDto;
     }
 
     /**
-     * Setting invoice pdf contents
+     * Setting Invoice DTO with invoice pdf file contents
      * 
-     * @param invoice
-     * @param includePdf
-     * @param invoiceDto
+     * @param invoice Invoice
+     * @param includePdf Include PDF file contents
+     * @param invoiceDto Invoice DTO to set the PDF value to
      */
     private void setInvoicePdf(Invoice invoice, boolean includePdf, InvoiceDto invoiceDto) {
         boolean pdfFileExists = invoiceService.isInvoicePdfExist(invoice);
@@ -1031,26 +929,45 @@ public class InvoiceApi extends BaseApi {
                     log.error(e.getMessage(), e);
                 }
             }
+        } else {
+            invoiceDto.setPdfFilename(null);
         }
     }
 
     /**
-     * #2236 setting invoice xml
+     * #2236 Populate Invoice DTO with invoice xml file infp
      * 
-     * @param invoice
-     * @param invoiceDto
-     * @throws BusinessException
+     * @param invoice Invoice
+     * @param includeXml Include XML file contents
+     * @param invoiceDto Invoice DTO to set the XML value to
      */
-    private void setInvoiceXml(Invoice invoice, InvoiceDto invoiceDto) {
-        try {
-            if (!invoiceService.isInvoiceXmlExist(invoice)) {
+    private void setInvoiceXml(Invoice invoice, boolean includeXml, InvoiceDto invoiceDto) {
+
+        boolean xmlExists = invoiceService.isInvoiceXmlExist(invoice);
+        // Generate XML file if requested, but not available yet
+        if (includeXml && !xmlExists) {
+            try {
                 invoiceService.produceInvoiceXml(invoice);
+            } catch (BusinessException e) {
+                log.error("Failed to generate XML file for invoice " + invoice.getId());
             }
-            String xml = invoiceService.getInvoiceXml(invoice);
-            invoiceDto.setXml(xml != null ? Base64.encodeBase64String(xml.getBytes()) : null);
-        } catch (BusinessException e) {
-            log.error(e.getMessage(), e);
+            xmlExists = invoiceService.isInvoiceXmlExist(invoice);
         }
+        if (xmlExists) {
+            invoiceDto.setXmlFilename(invoice.getXmlFilename());
+            if (includeXml) {
+                try {
+                    String xml = invoiceService.getInvoiceXml(invoice);
+                    invoiceDto.setXml(xml != null ? Base64.encodeBase64String(xml.getBytes()) : null);
+
+                } catch (BusinessException e) {
+                    // Should not happen as file was found few lines above
+                    log.error(e.getMessage(), e);
+                }
+            }
+        } else {
+            invoiceDto.setXmlFilename(null);
+        }        
     }
 
     public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf) {

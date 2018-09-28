@@ -2,6 +2,7 @@ package org.meveo.api.dto.invoice;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -14,8 +15,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.PermissionDto;
+import org.meveo.api.dto.TaxInvoiceAggregateDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -49,10 +56,15 @@ public class InvoiceDto extends AuditableEntityDto {
     @XmlElement(required = true)
     private Date invoiceDate;
 
-    /** The category invoice agregates. */
+    /** The category invoice aggregates. */
     @XmlElementWrapper
     @XmlElement(name = "categoryInvoiceAgregate", required = true)
     private List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
+
+    /** The tax aggregates */
+    @XmlElementWrapper
+    @XmlElement(name = "taxAggregate", required = true)
+    private List<TaxInvoiceAggregateDto> taxAggregates = new ArrayList<TaxInvoiceAggregateDto>();
 
     /** The list invoice id to link. */
     @XmlElementWrapper
@@ -61,19 +73,19 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /** The invoice number. */
     private String invoiceNumber;
-    
+
     /** The discount. */
     private BigDecimal discount;
-    
+
     /** The amount without tax. */
     private BigDecimal amountWithoutTax;
-    
+
     /** The amount tax. */
     private BigDecimal amountTax;
-    
+
     /** The amount with tax. */
     private BigDecimal amountWithTax;
-    
+
     /** The payment method. */
     private PaymentMethodEnum paymentMethod;
     /**
@@ -84,25 +96,25 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /** The xml filename. */
     private String xmlFilename;
-    
+
     /** The xml. */
     private String xml;
-    
+
     /** The pdf filename. */
     private String pdfFilename;
-    
+
     /** The pdf. */
     private byte[] pdf;
-    
+
     /** The auto validation. */
     private boolean autoValidation = true;
-    
+
     /** The return xml. */
     private boolean returnXml = false;
-    
+
     /** The return pdf. */
     private boolean returnPdf = false;
-    
+
     /** The include balance. */
     private boolean includeBalance = false;
 
@@ -118,10 +130,10 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
-    
+
     /**
-     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount.
-     * Due balance is a "future" dueBalance (the due balance at the invoice due date).
+     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount. Due balance is a "future" dueBalance (the
+     * due balance at the invoice due date).
      */
     private BigDecimal dueBalance;
 
@@ -130,8 +142,56 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public InvoiceDto() {
     }
-    
-	/**
+
+    /**
+     * Instantiates a new invoice dto. Note: does not fill in XML and PDF information
+     * 
+     * @param invoice Invoice
+     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
+     */
+    public InvoiceDto(Invoice invoice, boolean includeTransactions) {
+
+        this.setAuditable(invoice);
+        this.setInvoiceId(invoice.getId());
+        this.setBillingAccountCode(invoice.getBillingAccount().getCode());
+        this.setInvoiceDate(invoice.getInvoiceDate());
+        this.setDueDate(invoice.getDueDate());
+
+        this.setAmountWithoutTax(invoice.getAmountWithoutTax());
+        this.setAmountTax(invoice.getAmountTax());
+        this.setAmountWithTax(invoice.getAmountWithTax());
+        this.setInvoiceNumber(invoice.getInvoiceNumber());
+        this.setPaymentMethod(invoice.getPaymentMethodType());
+        this.setInvoiceType(invoice.getInvoiceType().getCode());
+        this.setDueBalance(invoice.getDueBalance());
+        this.setXmlFilename(invoice.getXmlFilename());
+        this.setPdfFilename(invoice.getPdfFilename());
+
+        for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
+            if (invoiceAggregate instanceof CategoryInvoiceAgregate) {
+                categoryInvoiceAgregates.add(new CategoryInvoiceAgregateDto((CategoryInvoiceAgregate) invoiceAggregate, includeTransactions));
+            } else if (invoiceAggregate instanceof TaxInvoiceAgregate) {
+                taxAggregates.add(new TaxInvoiceAggregateDto((TaxInvoiceAgregate) invoiceAggregate));
+            }
+        }
+
+        categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
+        taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
+
+        for (Invoice inv : invoice.getLinkedInvoices()) {
+            getListInvoiceIdToLink().add(inv.getId());
+        }
+
+        if (invoice.getRecordedInvoice() != null) {
+            RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
+            setRecordedInvoiceDto(recordedInvoiceDto);
+        }
+
+        setNetToPay(invoice.getNetToPay());
+        setReturnPdf(getPdf() != null);
+    }
+
+    /**
      * Gets the list invoice id to link.
      *
      * @return the listInvoiceIdToLink
@@ -595,11 +655,25 @@ public class InvoiceDto extends AuditableEntityDto {
         this.xml = xml;
     }
 
-	public BigDecimal getDueBalance() {
-		return dueBalance;
-	}
+    public BigDecimal getDueBalance() {
+        return dueBalance;
+    }
 
-	public void setDueBalance(BigDecimal dueBalance) {
-		this.dueBalance = dueBalance;
-	}
+    public void setDueBalance(BigDecimal dueBalance) {
+        this.dueBalance = dueBalance;
+    }
+
+    /**
+     * @return Tax aggregates
+     */
+    public List<TaxInvoiceAggregateDto> getTaxAggregates() {
+        return taxAggregates;
+    }
+
+    /**
+     * @param taxAggregates Tax aggregates
+     */
+    public void setTaxAggregates(List<TaxInvoiceAggregateDto> taxAggregates) {
+        this.taxAggregates = taxAggregates;
+    }
 }

@@ -76,6 +76,7 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());
         billingCycle.setDueDateDelay(postData.getDueDateDelay());
         billingCycle.setDueDateDelayEL(postData.getDueDateDelayEL());
+        billingCycle.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
         billingCycle.setCalendar(calendar);
         billingCycle.setTransactionDateDelay(postData.getTransactionDateDelay());
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
@@ -153,6 +154,9 @@ public class BillingCycleApi extends BaseApi {
         }
         if (postData.getDueDateDelayEL() != null) {
             billingCycle.setDueDateDelayEL(postData.getDueDateDelayEL());
+        }
+        if (postData.getDueDateDelayELSpark() != null) {
+            billingCycle.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
         }
         if (postData.getInvoiceTypeElSpark() != null) {
             billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());

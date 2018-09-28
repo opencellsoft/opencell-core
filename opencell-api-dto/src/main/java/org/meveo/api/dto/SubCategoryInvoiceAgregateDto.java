@@ -21,6 +21,7 @@ package org.meveo.api.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
 /**
@@ -45,9 +47,6 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6165612614574594919L;
 
-    /** The type. */
-    private String type;
-
     /** The item number. */
     private Integer itemNumber;
 
@@ -57,14 +56,15 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     /** The description. */
     private String description;
 
-    /** The tax percent. */
+    /** The taxes code */
+    private String taxCode;
+
+    /** The tax percent applied */
     private BigDecimal taxPercent;
 
-    /** The quantity. */
+    /** The quantity. Deprecated in v5.2 */
+    @Deprecated
     private BigDecimal quantity;
-
-    /** The discount. */
-    private BigDecimal discount;
 
     /** The amount without tax. */
     private BigDecimal amountWithoutTax;
@@ -79,53 +79,50 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     @XmlElement(required = true)
     private String invoiceSubCategoryCode;
 
-    /** The taxes codes. */
-    private List<String> taxesCodes = new ArrayList<String>();
-
-    /** The user account code. */
+    /** The user account code */
     private String userAccountCode;
 
     /** The rated transactions. */
     @XmlElementWrapper
     @XmlElement(name = "ratedTransaction")
-    private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
-
-    /** The discount plan code. */
-    private String discountPlanCode;
-
-    /** The discount plan item code. */
-    private String discountPlanItemCode;
-
-    /** The discount percent. */
-    private BigDecimal discountPercent;
+    private List<RatedTransactionDto> ratedTransactions;
 
     /**
-     * Instantiates a new sub category invoice agregate dto.
+     * Instantiates a new sub category invoice aggregate dto.
      *
-     * @param subCategoryInvoiceAgregate the SubCategoryInvoiceAgregate entity
+     * @param subCategoryInvoiceAgregate SubCategory invoice aggregate
+     * @param includeTransactions Should Rated transactions be detailed
      */
-    public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
-        if (subCategoryInvoiceAgregate != null) {
-            discountPlanCode = subCategoryInvoiceAgregate.getDiscountPlanItem().getDiscountPlan().getCode();
-            discountPlanItemCode = subCategoryInvoiceAgregate.getDiscountPlanItem().getCode();
-            discountPercent = subCategoryInvoiceAgregate.getDiscountPercent();
-            itemNumber = subCategoryInvoiceAgregate.getItemNumber();
-            if (subCategoryInvoiceAgregate.getAccountingCode() != null) {
-                accountingCode = subCategoryInvoiceAgregate.getAccountingCode().getCode();
-            }
-            description = subCategoryInvoiceAgregate.getDescription();
-            taxPercent = subCategoryInvoiceAgregate.getTaxPercent();
-            quantity = subCategoryInvoiceAgregate.getQuantity();
-            amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
-            amountTax = subCategoryInvoiceAgregate.getAmountTax();
-            amountWithTax = subCategoryInvoiceAgregate.getAmountTax();
+    @SuppressWarnings("deprecation")
+    public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate, boolean includeTransactions) {
+        itemNumber = subCategoryInvoiceAgregate.getItemNumber();
+        if (subCategoryInvoiceAgregate.getAccountingCode() != null) {
+            accountingCode = subCategoryInvoiceAgregate.getAccountingCode().getCode();
+        }
+        description = subCategoryInvoiceAgregate.getDescription();
+        taxPercent = subCategoryInvoiceAgregate.getTaxPercent();
+        if (subCategoryInvoiceAgregate.getTax() != null) {
+            this.taxCode = subCategoryInvoiceAgregate.getTax().getCode();
+        }
+        quantity = subCategoryInvoiceAgregate.getQuantity();
+        amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
+        amountTax = subCategoryInvoiceAgregate.getAmountTax();
+        amountWithTax = subCategoryInvoiceAgregate.getAmountWithTax();
 
-            if (subCategoryInvoiceAgregate.getInvoiceSubCategory() != null) {
-                invoiceSubCategoryCode = subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode();
+        invoiceSubCategoryCode = subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode();
+
+        if (subCategoryInvoiceAgregate.getUserAccount() != null) {
+            userAccountCode = subCategoryInvoiceAgregate.getUserAccount().getCode();
+        }
+
+        if (includeTransactions) {
+            ratedTransactions = new ArrayList<>();
+
+            for (RatedTransaction ratedTransaction : subCategoryInvoiceAgregate.getRatedtransactions()) {
+                ratedTransactions.add(new RatedTransactionDto(ratedTransaction));
             }
-            if (subCategoryInvoiceAgregate.getUserAccount() != null) {
-                userAccountCode = subCategoryInvoiceAgregate.getUserAccount().getCode();
-            }
+
+            ratedTransactions.sort(Comparator.comparing(RatedTransactionDto::getUsageDate).thenComparing(RatedTransactionDto::getId));
         }
     }
 
@@ -191,57 +188,59 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     }
 
     /**
-     * Gets the tax percent.
+     * Gets the tax percent applied
      *
-     * @return the tax percent
+     * @return The tax percent applied
      */
     public BigDecimal getTaxPercent() {
         return taxPercent;
     }
 
     /**
-     * Sets the tax percent.
+     * Sets the tax percent applied
      *
-     * @param taxPercent the new tax percent
+     * @param taxPercent The tax percent applied
      */
     public void setTaxPercent(BigDecimal taxPercent) {
         this.taxPercent = taxPercent;
     }
 
     /**
-     * Gets the quantity.
+     * Gets the code of a tax applied
+     *
+     * @return the taxes codes
+     */
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    /**
+     * Sets the code of a tax applied
+     *
+     * @param taxCode Code of a tax applied
+     */
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    /**
+     * Gets the quantity. Deprecated in v5.2
      *
      * @return the quantity
      */
+    @Deprecated
     public BigDecimal getQuantity() {
         return quantity;
     }
 
     /**
-     * Sets the quantity.
+     * Sets the quantity. Deprecated in v5.2
      *
      * @param quantity the new quantity
      */
+    @Deprecated
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
-    }
-
-    /**
-     * Gets the discount.
-     *
-     * @return the discount
-     */
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
-    /**
-     * Sets the discount.
-     *
-     * @param discount the new discount
-     */
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
     }
 
     /**
@@ -317,24 +316,6 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     }
 
     /**
-     * Gets the type.
-     *
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Sets the type.
-     *
-     * @param type the new type
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
      * Gets the invoice sub category code.
      *
      * @return the invoice sub category code
@@ -353,24 +334,6 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     }
 
     /**
-     * Gets the taxes codes.
-     *
-     * @return the taxes codes
-     */
-    public List<String> getTaxesCodes() {
-        return taxesCodes;
-    }
-
-    /**
-     * Sets the taxes codes.
-     *
-     * @param taxesCodes the new taxes codes
-     */
-    public void setTaxesCodes(List<String> taxesCodes) {
-        this.taxesCodes = taxesCodes;
-    }
-
-    /**
      * Gets the user account code.
      *
      * @return the user account code
@@ -386,59 +349,5 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
      */
     public void setUserAccountCode(String userAccountCode) {
         this.userAccountCode = userAccountCode;
-    }
-
-    /**
-     * Gets the discount plan code.
-     *
-     * @return the discount plan code
-     */
-    public String getDiscountPlanCode() {
-        return discountPlanCode;
-    }
-
-    /**
-     * Sets the discount plan code.
-     *
-     * @param discountPlanCode the new discount plan code
-     */
-    public void setDiscountPlanCode(String discountPlanCode) {
-        this.discountPlanCode = discountPlanCode;
-    }
-
-    /**
-     * Gets the discount plan item code.
-     *
-     * @return the discount plan item code
-     */
-    public String getDiscountPlanItemCode() {
-        return discountPlanItemCode;
-    }
-
-    /**
-     * Sets the discount plan item code.
-     *
-     * @param discountPlanItemCode the new discount plan item code
-     */
-    public void setDiscountPlanItemCode(String discountPlanItemCode) {
-        this.discountPlanItemCode = discountPlanItemCode;
-    }
-
-    /**
-     * Gets the discount percent.
-     *
-     * @return the discount percent
-     */
-    public BigDecimal getDiscountPercent() {
-        return discountPercent;
-    }
-
-    /**
-     * Sets the discount percent.
-     *
-     * @param discountPercent the new discount percent
-     */
-    public void setDiscountPercent(BigDecimal discountPercent) {
-        this.discountPercent = discountPercent;
     }
 }
