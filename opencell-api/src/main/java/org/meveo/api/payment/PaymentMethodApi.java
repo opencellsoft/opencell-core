@@ -36,7 +36,8 @@ import org.primefaces.model.SortOrder;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.2.1
  */
 @Stateless
 public class PaymentMethodApi extends BaseApi {
@@ -252,9 +253,6 @@ public class PaymentMethodApi extends BaseApi {
                     throw new InvalidDTOException("Missing account owner.");
                 }
 
-                if (StringUtils.isBlank(bankCoordinates.getBankName())) {
-                    throw new InvalidDTOException("Missing bank name.");
-                }
                 CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
                 org.meveo.model.crm.Customer cust = null;
                 if (customerAccount == null) {
