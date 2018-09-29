@@ -9,8 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
-import org.apache.tika.Tika;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductOffering;
@@ -224,9 +227,8 @@ public class PictureServlet extends HttpServlet {
                 if (mimeType != null) {
                     resp.setContentType(mimeType);
                 } else {
-                	Tika tika = new Tika();
-                	mimeType = tika.detect(destFile.toFile());
-                	log.debug("tika.detect mimeType found={}", mimeType);
+                	mimeType = "image/" + getImageFormat(destFile.toFile());
+                	log.debug("getImageFormat mimeType found={}", mimeType);
                 }
             } catch (IOException e) {
                 log.error("Failed to determine mime type for {}", destFile, e);
@@ -254,6 +256,27 @@ public class PictureServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpStatus.SC_NOT_FOUND);
         }
+    }
+    
+    private String getImageFormat(File file) throws IOException {
+		// create an image input stream from the specified file
+		ImageInputStream iis = ImageIO.createImageInputStream(file);
+
+		// get all currently registered readers that recognize the image format
+		Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+
+		if (!iter.hasNext()) {
+			log.error("No reader found for image");
+		}
+
+		// get the first reader
+		ImageReader reader = iter.next();
+		String formatName = reader.getFormatName();
+
+		// close stream
+		iis.close();
+		
+		return formatName;
     }
 
     private byte[] loadImage(String imageFile) {
