@@ -232,7 +232,7 @@ public class PictureServlet extends HttpServlet {
                 log.error("Failed to determine mime type for {}", destFile, e);
             }
             
-			// modifies response
+			/*// modifies response
 			resp.setContentType(mimeType);
 			resp.setContentLength(data.length);
 
@@ -252,7 +252,37 @@ public class PictureServlet extends HttpServlet {
 			} finally {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(out);
-			}
+			}*/
+            
+            // obtains response's output stream
+ 			OutputStream outStream = null;
+ 			InputStream inStream = null;
+ 			try {
+ 				outStream = resp.getOutputStream();
+ 				inStream = new ByteArrayInputStream(data);
+ 				
+ 				// modifies response
+ 				resp.setContentType(mimeType);
+ 				resp.setContentLength((int) destFile.toFile().length());
+
+ 				// forces download
+ 				String headerKey = "Content-Disposition";
+ 				String headerValue = String.format("attachment; filename=\"%s\"", destFile.toFile().getName());
+ 				resp.setHeader(headerKey, headerValue);
+
+ 				byte[] buffer = new byte[4096];
+ 				int bytesRead = -1;
+ 				
+ 				while ((bytesRead = inStream.read(buffer)) != -1) {
+ 					outStream.write(buffer, 0, bytesRead);
+ 				}
+ 			} catch (Exception e) {
+ 				log.error("Failed to read picture, info "
+ 						+ (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
+ 			} finally {
+ 				IOUtils.closeQuietly(inStream);
+ 				IOUtils.closeQuietly(outStream);
+ 			}
 
 			resp.setStatus(HttpStatus.SC_OK);
 
