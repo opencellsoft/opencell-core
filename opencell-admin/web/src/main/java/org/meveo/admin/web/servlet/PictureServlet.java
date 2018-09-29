@@ -224,41 +224,41 @@ public class PictureServlet extends HttpServlet {
             try {
                 mimeType = Files.probeContentType(destFile);
                 log.debug("Files.probeContentType mimeType found={}", mimeType);
-                if (mimeType != null) {
-                    resp.setContentType(mimeType);
-                } else {
+                if (mimeType == null) {
                 	mimeType = "image/" + getImageFormat(destFile.toFile());
                 	log.debug("getImageFormat mimeType found={}", mimeType);
-                	if(mimeType != null) {
-                		resp.setContentType(mimeType);
-                	}
                 }
             } catch (IOException e) {
                 log.error("Failed to determine mime type for {}", destFile, e);
             }
+            
+			// modifies response
+			resp.setContentType(mimeType);
+			resp.setContentLength(data.length);
 
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                in = new ByteArrayInputStream(data);
-                out = resp.getOutputStream();
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                while ((len = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, len);
-                }
-                out.flush();
-            } catch (Exception e) {
-                log.error("Failed to read picture, info " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-            } finally {
-                IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(out);
-            }
-            resp.setStatus(HttpStatus.SC_OK);
+			InputStream in = null;
+			OutputStream out = null;
+			try {
+				in = new ByteArrayInputStream(data);
+				out = resp.getOutputStream();
+				byte[] buffer = new byte[1024];
+				int len = 0;
+				while ((len = in.read(buffer)) != -1) {
+					out.write(buffer, 0, len);
+				}
+			} catch (Exception e) {
+				log.error("Failed to read picture, info "
+						+ (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
+			} finally {
+				IOUtils.closeQuietly(in);
+				IOUtils.closeQuietly(out);
+			}
 
-        } else {
-            resp.setStatus(HttpStatus.SC_NOT_FOUND);
-        }
+			resp.setStatus(HttpStatus.SC_OK);
+
+		} else {
+			resp.setStatus(HttpStatus.SC_NOT_FOUND);
+		}
     }
     
     private String getImageFormat(File file) throws IOException {
@@ -283,11 +283,11 @@ public class PictureServlet extends HttpServlet {
     }
 
     private byte[] loadImage(String imageFile) {
-        log.debug("Loading image: " + imageFile);
+        log.debug("Loading image: {}", imageFile);
         File file = new File(imageFile);
         byte imageByteArray[] = null;
         if (!file.exists()) {
-            log.debug("Image file does not exist: " + imageFile);
+            log.debug("Image file does not exist: {}", imageFile);
         }
         try {
             imageByteArray = ModuleUtil.readPicture(imageFile);
