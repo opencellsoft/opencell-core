@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
+import org.apache.tika.Tika;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductOffering;
@@ -180,9 +181,9 @@ public class PictureServlet extends HttpServlet {
         if (imagePath != null) {
         	log.debug("imagePath found={}", imagePath);
             data = loadImage(imagePath);
+        } else {
+        	log.debug("imagePath is null");
         }
-        
-        log.debug("imagePath is null");
 
         // Load a default image if not found
         if (data == null) {
@@ -219,9 +220,13 @@ public class PictureServlet extends HttpServlet {
             
             try {
                 mimeType = Files.probeContentType(destFile);
-                log.debug("mimeType found={}", mimeType);
+                log.debug("Files.probeContentType mimeType found={}", mimeType);
                 if (mimeType != null) {
                     resp.setContentType(mimeType);
+                } else {
+                	Tika tika = new Tika();
+                	mimeType = tika.detect(destFile.toFile());
+                	log.debug("tika.detect mimeType found={}", mimeType);
                 }
             } catch (IOException e) {
                 log.error("Failed to determine mime type for {}", destFile, e);
