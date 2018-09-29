@@ -229,6 +229,9 @@ public class PictureServlet extends HttpServlet {
                 } else {
                 	mimeType = "image/" + getImageFormat(destFile.toFile());
                 	log.debug("getImageFormat mimeType found={}", mimeType);
+                	if(mimeType != null) {
+                		resp.setContentType(mimeType);
+                	}
                 }
             } catch (IOException e) {
                 log.error("Failed to determine mime type for {}", destFile, e);
