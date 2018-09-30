@@ -263,7 +263,7 @@ public class PictureServlet extends HttpServlet {
  				
  				// modifies response
  				resp.setContentType(mimeType);
- 				resp.setContentLength((int) destFile.toFile().length());
+ 				resp.setContentLength(data.length);
 
  				// forces download
  				String headerKey = "Content-Disposition";
