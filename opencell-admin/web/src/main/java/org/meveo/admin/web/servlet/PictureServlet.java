@@ -230,8 +230,8 @@ public class PictureServlet extends HttpServlet {
             }
             
 			// modifies response
-//			resp.setContentType(mimeType);
-//			resp.setContentLength(data.length);
+			resp.setContentType(mimeType);
+			resp.setContentLength(data.length);
 
 //			try (InputStream in = new ByteArrayInputStream(data)) {
 //				try (OutputStream out = resp.getOutputStream()) {
