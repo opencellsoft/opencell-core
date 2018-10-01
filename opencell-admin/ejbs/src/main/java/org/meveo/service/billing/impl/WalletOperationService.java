@@ -21,7 +21,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -35,6 +38,7 @@ import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.cache.WalletCacheContainerProvider;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -54,7 +58,6 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -1123,9 +1126,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         log.debug("Will apply recurring charge {} for supplement charge agreement for {} - {}", chargeInstance.getId(), applyChargeFromDate, endAgreementDate);
 
         Date applyChargeOnDate = applyChargeFromDate;
-        
+
         Date nextChargeDate = null;
-        while (applyChargeOnDate.getTime() < endAgreementDate.getTime() && (nextChargeDate = cal.nextCalendarDate(applyChargeOnDate)) != null ) {
+        while (applyChargeOnDate.getTime() < endAgreementDate.getTime() && (nextChargeDate = cal.nextCalendarDate(applyChargeOnDate)) != null) {
             Double prorataRatio = null;
             ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
             BigDecimal inputQuantity = chargeInstance.getQuantity();
@@ -1270,59 +1273,154 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         }
     }
 
-    // charging
-    private List<WalletOperation> chargeOnWalletIds(List<Long> walletIds, WalletOperation op) throws BusinessException {
+    /**
+     * Charge wallet operation on prepaid wallets
+     * 
+     * @param chargeInstance Charge instance
+     * @param op Wallet operation
+     * @return A list of wallet operations containing a single original wallet operation or multiple wallet operations if had to be split among various wallets
+     * @throws BusinessException General business exception
+     */
+    private List<WalletOperation> chargeOnPrepaidWallets(ChargeInstance chargeInstance, WalletOperation op) throws BusinessException {
+
         List<WalletOperation> result = new ArrayList<>();
+        Map<Long, BigDecimal> walletLimits = walletService.getWalletIds(chargeInstance);
+
+        // Handles negative amounts (recharge) - apply recharge to the first wallet
+        if (op.getAmountWithTax().compareTo(BigDecimal.ZERO) <= 0) {
+
+            Long walletId = walletLimits.keySet().iterator().next();
+            op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
+            log.debug("prepaid walletoperation fit in walletInstance {}", walletId);
+            create(op);
+            result.add(op);
+            walletCacheContainerProvider.updateBalance(op);
+            return result;
+        }
+
+        log.debug("chargeWalletOperation chargeInstanceId found with {} wallet ids", walletLimits.size());
+
+        Map<Long, BigDecimal> balances = walletService.getWalletReservedBalances(walletLimits.keySet());
+
+        Map<Long, BigDecimal> woAmounts = new HashMap<>();
+
         BigDecimal remainingAmountToCharge = op.getAmountWithTax();
-        BigDecimal totalBalance = walletService.getWalletReservedBalance(walletIds);
-        log.debug("chargeOnWalletIds remainingAmountToCharge={}, totalBalance={}", remainingAmountToCharge, totalBalance);
-        if (remainingAmountToCharge.compareTo(totalBalance) > 0) {
+
+        // First iterate over balances that have credit
+        for (Long walletId : balances.keySet()) {
+
+            BigDecimal balance = balances.get(walletId);
+            if (balance.compareTo(BigDecimal.ZERO) < 0) {
+                BigDecimal negatedBalance = balance.negate();
+                // Case when amount to deduct (5) is less than or equal to a negated balance amount -(-10)
+                if (remainingAmountToCharge.compareTo(negatedBalance) <= 0) {
+                    woAmounts.put(walletId, remainingAmountToCharge);
+                    balances.put(walletId, balance.add(remainingAmountToCharge));
+                    remainingAmountToCharge = BigDecimal.ZERO;
+                    break;
+
+                    // Case when amount to deduct (10) is more tan a negated balance amount -(-5)
+                } else {
+                    woAmounts.put(walletId, negatedBalance);
+                    balances.put(walletId, BigDecimal.ZERO);
+                    remainingAmountToCharge = remainingAmountToCharge.add(balance);
+                }
+            }
+        }
+
+        // If not all the amount was deducted, then iterate again checking if any of the balances can be reduced pass the Zero up to a rejection limit as defined in a wallet.
+        if (remainingAmountToCharge.compareTo(BigDecimal.ZERO) > 0) {
+
+            for (Long walletId : balances.keySet()) {
+
+                BigDecimal balance = balances.get(walletId);
+                BigDecimal rejectLimit = walletLimits.get(walletId);
+
+                // There is no limit upon which further consumption should be rejected
+                if (rejectLimit == null) {
+                    if (woAmounts.containsKey(walletId)) {
+                        woAmounts.put(walletId, woAmounts.get(walletId).add(remainingAmountToCharge));
+                    } else {
+                        woAmounts.put(walletId, remainingAmountToCharge);
+                    }
+                    balances.put(walletId, balance.add(remainingAmountToCharge));
+                    remainingAmountToCharge = BigDecimal.ZERO;
+                    break;
+
+                    // Limit is not exceeded yet
+                } else if (rejectLimit.compareTo(balance) > 0) {
+
+                    BigDecimal remainingLimit = rejectLimit.subtract(balance);
+
+                    // Case when amount to deduct (5) is less than or equal to a remaining limit (10)
+                    if (remainingAmountToCharge.compareTo(remainingLimit) <= 0) {
+                        if (woAmounts.containsKey(walletId)) {
+                            woAmounts.put(walletId, woAmounts.get(walletId).add(remainingAmountToCharge));
+                        } else {
+                            woAmounts.put(walletId, remainingAmountToCharge);
+                        }
+
+                        balances.put(walletId, balance.add(remainingAmountToCharge));
+                        remainingAmountToCharge = BigDecimal.ZERO;
+                        break;
+
+                        // Case when amount to deduct (10) is more tan a remaining limit (5)
+                    } else {
+
+                        if (woAmounts.containsKey(walletId)) {
+                            woAmounts.put(walletId, woAmounts.get(walletId).add(remainingLimit));
+                        } else {
+                            woAmounts.put(walletId, remainingLimit);
+                        }
+
+                        balances.put(walletId, rejectLimit);
+                        remainingAmountToCharge = remainingAmountToCharge.subtract(remainingLimit);
+                    }
+                }
+            }
+        }
+
+        // Not possible to deduct all WO amount, so throw an Insufficient balance error
+        if (remainingAmountToCharge.compareTo(BigDecimal.ZERO) > 0) {
             throw new InsufficientBalanceException();
         }
-        for (Long walletId : walletIds) {
-            BigDecimal balance = walletService.getWalletReservedBalance(walletId);
-            log.debug("chargeOnWalletIds walletId={}, reserved balance={}", walletId, balance);
-            if (balance.compareTo(BigDecimal.ZERO) > 0 || remainingAmountToCharge.compareTo(BigDecimal.ZERO) < 0) {
-                if (balance.compareTo(op.getAmountWithTax()) >= 0) {
-                    op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
-                    log.debug("prepaid walletoperation fit in walletInstance {}", op.getWallet());
-                    create(op);
-                    result.add(op);
-                    walletCacheContainerProvider.updateBalance(op);
-                    break;
-                } else {
-                    BigDecimal newOverOldCoeff = balance.divide(op.getAmountWithTax(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                    remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
-                    BigDecimal newOpAmountWithTax = balance;
-                    BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
-                    if (appProvider.getRounding() != null && appProvider.getRounding() > 0) {
-                        newOpAmountWithoutTax = NumberUtils.round(newOpAmountWithoutTax, appProvider.getRounding());
-                        newOpAmountWithTax = NumberUtils.round(newOpAmountWithTax, appProvider.getRounding());
-                    }
-                    BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
-                    BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);
 
-                    BigDecimal opAmountWithTax = remainingAmountToCharge;
-                    BigDecimal opAmountTax = op.getAmountTax().subtract(newOpAmountTax);
-                    BigDecimal opAmountWithoutTax = opAmountWithTax.subtract(opAmountTax);
-                    BigDecimal opQuantity = op.getQuantity().subtract(newOpQuantity);
+        // All charge was over one wallet
+        if (woAmounts.size() == 1) {
+            Long walletId = woAmounts.keySet().iterator().next();
+            op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
+            log.debug("prepaid walletoperation fit in walletInstance {}", walletId);
+            create(op);
+            result.add(op);
+            walletCacheContainerProvider.updateBalance(op);
 
-                    WalletOperation newOp = op.getUnratedClone();
-                    newOp.setWallet(getEntityManager().find(WalletInstance.class, walletId));
-                    newOp.setAmountWithTax(newOpAmountWithTax);
-                    newOp.setAmountTax(newOpAmountTax);
-                    newOp.setAmountWithoutTax(newOpAmountWithoutTax);
-                    newOp.setQuantity(newOpQuantity);
-                    log.debug("prepaid walletoperation partially fit in walletInstance {}, we charge {} and remains ", newOp.getWallet(), newOpAmountTax, opAmountTax);
-                    create(newOp);
-                    result.add(newOp);
-                    walletCacheContainerProvider.updateBalance(newOp);
+            // Charge was over multiple wallets
+        } else {
 
-                    op.setAmountWithTax(opAmountWithTax);
-                    op.setAmountTax(opAmountTax);
-                    op.setAmountWithoutTax(opAmountWithoutTax);
-                    op.setQuantity(opQuantity);
+            for (Entry<Long, BigDecimal> amountInfo : woAmounts.entrySet()) {
+                Long walletId = amountInfo.getKey();
+                BigDecimal walletAmount = amountInfo.getValue();
+
+                BigDecimal newOverOldCoeff = walletAmount.divide(op.getAmountWithTax(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                BigDecimal newOpAmountWithTax = walletAmount;
+                BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
+                if (appProvider.getRounding() != null && appProvider.getRounding() > 0) {
+                    newOpAmountWithoutTax = NumberUtils.round(newOpAmountWithoutTax, appProvider.getRounding());
+                    newOpAmountWithTax = NumberUtils.round(newOpAmountWithTax, appProvider.getRounding());
                 }
+                BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
+                BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);
+
+                WalletOperation newOp = op.getUnratedClone();
+                newOp.setWallet(getEntityManager().find(WalletInstance.class, walletId));
+                newOp.setAmountWithTax(newOpAmountWithTax);
+                newOp.setAmountTax(newOpAmountTax);
+                newOp.setAmountWithoutTax(newOpAmountWithoutTax);
+                newOp.setQuantity(newOpQuantity);
+                log.debug("prepaid walletoperation partially fit in walletInstance {}, we charge {} of  ", newOp.getWallet(), newOpAmountTax, op.getAmountWithTax());
+                create(newOp);
+                result.add(newOp);
+                walletCacheContainerProvider.updateBalance(newOp);
             }
         }
         return result;
@@ -1353,26 +1451,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             result.add(op);
             create(op);
 
-            // Prepaid usage charges only
-        } else if (chargeInstance instanceof UsageChargeInstance) {
-            List<Long> walletIds = walletService.getWalletIds((UsageChargeInstance) chargeInstance);
-            log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
-            result = chargeOnWalletIds(walletIds, op);
-            log.debug("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
-
-            // The usage charge is taken care of in IF before, as it is cached
             // Prepaid charges only
-        } else if (chargeInstance instanceof RecurringChargeInstance || chargeInstance instanceof OneShotChargeInstance) {
-            List<Long> walletIds = new ArrayList<>();
-            List<WalletInstance> walletInstances = chargeInstance.getWalletInstances();
-            for (WalletInstance wallet : walletInstances) {
-                walletIds.add(wallet.getId());
-            }
-            result = chargeOnWalletIds(walletIds, op);
-
         } else {
-            log.error("chargeWalletOperation wallet not found for chargeInstance {} ", chargeInstanceId);
-            throw new BusinessException("WALLET_NOT_FOUND");
+            result = chargeOnPrepaidWallets(chargeInstance, op);
+            log.debug("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
         }
         return result;
     }
@@ -1481,5 +1563,4 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             return null;
         }
     }
-
 }

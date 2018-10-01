@@ -783,7 +783,7 @@
        </addColumn>
     </changeSet>
     
-<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
+    <changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
        <sql splitStatements="false" stripComments="false"><![CDATA[    
        CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
              BEGIN
@@ -795,23 +795,35 @@
         ]]></sql>
     </changeSet>
     <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
-    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
-     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
-        <sql splitStatements="false" stripComments="false"><![CDATA[         
-            create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
-                            returns varchar(2000)
-                            begin                
-                                set @textvalue =  input_text;
-                                set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
-                                set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
-                                set @count = length(@withaccents);
-                                
-                                while @count > 0 do
-                                    set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
-                                    set @count = @count - 1;
-                                end while;                    
-                                return @textvalue;                
-            end;
-        ]]></sql>
-</changeSet>      
+        <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+         <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+            <sql splitStatements="false" stripComments="false"><![CDATA[         
+                create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
+                                returns varchar(2000)
+                                begin                
+                                    set @textvalue =  input_text;
+                                    set @withaccents = 'çÇâàÂÀéèêÉÈÊîÎûÛôÔ';
+                                    set @withoutaccents = 'cCaaAAeeeEEEiIuUoO';
+                                    set @count = length(@withaccents);
+                                    
+                                    while @count > 0 do
+                                        set @textvalue = replace(@textvalue, substring(@withaccents, @count, 1), substring(@withoutaccents, @count, 1));
+                                        set @count = @count - 1;
+                                    end while;                    
+                                    return @textvalue;                
+                end;
+            ]]></sql>
+    </changeSet>      
+
+    <changeSet id="#3459_20180702" author="AndriusKarpavicius">
+       <addColumn tableName="cat_wallet_template">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+       <addColumn tableName="billing_wallet">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+        <sql>update ${db.schema.adapted}cat_wallet_template set reject_level=0 where reject_level is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
+    </changeSet>
+    
 </databaseChangeLog> 
