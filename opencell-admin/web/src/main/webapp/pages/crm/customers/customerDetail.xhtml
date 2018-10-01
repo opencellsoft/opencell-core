@@ -67,10 +67,8 @@
 
 							<hftl:formField label="#{messages['customer.jobTitle']}"
 								field="jobTitle" newLine="true" />
-							<hftl:formField label="#{messages['customer.vatNo']}"
-								field="vatNo" />
-							<hftl:formField label="#{messages['customer.registrationNo']}"
-								field="registrationNo" />
+							<hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
+							<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
 
 									<hftl:formField
 										label="#{messages['customer.customerCategory']}"
@@ -83,7 +81,7 @@
 										listBean="#{customerBrandBean}" />
 									<hftl:formField id="parentSelectId"
 										label="#{messages['seller.parent']}" field="seller"
-										valueLabelField="descriptionOrCode" required="true" listBean="#{sellerBean}" listenerUpdate="@this"/> 
+										valueLabelField="descriptionOrCode" listBean="#{sellerBean}" listenerUpdate="@this"/> 
 <!--                                         popup="true" popupId="sellerParentPopup" /> -->
 								
 							</p:tab>

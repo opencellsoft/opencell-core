@@ -26,7 +26,9 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder.Operator;
 import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -43,6 +45,9 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
 import org.slf4j.Logger;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 
 /**
  * Provides functionality to interact with Elastic Search cluster
@@ -395,8 +400,25 @@ public class ElasticClient {
         if (StringUtils.isBlank(query)) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
         } else {
-            reqBuilder.setQuery(QueryBuilders.queryStringQuery(query).lenient(true));
+            Map<String, String> queryValues = null;
+            try {
+                queryValues = Splitter.onPattern("\\+").omitEmptyStrings().trimResults().withKeyValueSeparator(":").split(query.replace("*", ""));
+            } catch (IllegalArgumentException e) {
+                queryValues = Maps.newHashMap();
+            }
+            if (!queryValues.isEmpty()) {
+                BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+                for (Entry<String, ?> fieldValue : queryValues.entrySet()) {
+                    boolQuery.must(QueryBuilders.matchQuery(fieldValue.getKey(), fieldValue.getValue()).operator(MatchQueryBuilder.Operator.AND));
+                }
+                reqBuilder.setQuery(boolQuery);
+            } else if (query.contains("+")) {
+                reqBuilder.setQuery(QueryBuilders.queryStringQuery(query.replace("+", " ")).lenient(true).defaultOperator(Operator.AND));
+            } else {
+                reqBuilder.setQuery(QueryBuilders.queryStringQuery(query).lenient(true));
+            }
         }
+
         SearchResponse response = reqBuilder.execute().actionGet();
 
         String result = response.toString();

@@ -57,6 +57,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -347,7 +348,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             oneShotChargeInstance.setSubscription(entity);
-            oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            oneShotChargeInstance.setSeller(entity.getSeller());
             oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
             oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
 
@@ -1078,10 +1079,23 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		return (si == null || si.isEmpty()) ? true : false;
 	}
     
+    public List<Seller> listProductSellers() {
+        if(productInstance != null && productInstance.getProductTemplate() != null) {
+            if(productInstance.getProductTemplate().getSellers().size() > 0) {
+                return productInstance.getProductTemplate().getSellers();
+            } else {
+                return sellerService.list();
+            }
+        } else {
+            return new ArrayList<Seller>();
+        }
+    }
+    
     public List<Seller> listSellers() {
         if(entity.getOffer() != null) {
-            if(entity.getOffer().getSellers().size() > 0) {
-                return entity.getOffer().getSellers();
+            OfferTemplate offer = offerTemplateService.findByCode(entity.getOffer().getCode());
+            if(offer.getSellers().size() > 0) {
+                return offer.getSellers();
             } else {
                 return sellerService.list();
             }

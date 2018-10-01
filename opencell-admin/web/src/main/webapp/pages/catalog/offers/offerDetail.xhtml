@@ -301,20 +301,9 @@
                         style="margin-left: 10px;" rendered="#{offerTemplateBean.edit}" />
                 </f:facet>
                 <!-- custom fields -->
-                <c:if
-                    test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() == 1}">
-                    <hftl:customFields backingBean="#{offerTemplateBean}"
+                <hftl:customFields backingBean="#{offerTemplateBean}"
                         messagesId=":offerForm:messages"
                         defaultTabLabel="#{messages['commons.parameters']}" />
-                </c:if>
-                <c:if
-                    test="#{customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size() > 1}">
-                    <p:tabView>
-                        <hftl:customFields backingBean="#{offerTemplateBean}"
-                            messagesId=":offerForm:messages"
-                            defaultTabLabel="#{messages['commons.parameters']}" />
-                    </p:tabView>
-                </c:if>
                 <hftl:displayWorkflowsHistory entity="#{offerTemplateBean.entity}" />
             </p:panel>
 
@@ -375,7 +364,7 @@
 
 								<hftl:formLanguageFields entity="${ost.serviceTemplate}"
 									componentWidth="100" field="longDescription" multiLang="false"
-									idSufix="ost#{loopStatus.index}"
+									idSufix="ost#{loopStatus.index}" displayOneLine="false" cols="50"
 									label="#{messages['offerTemplate.longDescription']}" />
 								<hftl:formField label="#{messages['commons.image']}"
 									entity="${ost.serviceTemplate}" required="false"
@@ -397,24 +386,11 @@
                                     </hftl:decorateFormField>
 
                                     <!-- custom fields -->
-                                    <c:if
-                                        test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) == 1}">
-                                        <hftl:customFields backingBean="#{serviceTemplateBean}"
-                                            entity="#{ost.serviceTemplate}"
-                                            messagesId=":offerForm:messages"
-                                            defaultTabLabel="#{messages['commons.parameters']}"
-                                            prefix="cf_#{loopStatus.index}" />
-                                    </c:if>
-                                    <c:if
-                                        test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) > 1}">
-                                        <p:tabView id="cf_tabView_#{loopStatus.index}">
-                                            <hftl:customFields backingBean="#{serviceTemplateBean}"
-                                                entity="#{ost.serviceTemplate}"
-                                                messagesId=":offerForm:messages"
-                                                defaultTabLabel="#{messages['commons.parameters']}"
-                                                prefix="tab_cf_#{loopStatus.index}" />
-                                        </p:tabView>
-                                    </c:if>
+                                   	<hftl:customFields backingBean="#{serviceTemplateBean}"
+                                       entity="#{ost.serviceTemplate}"
+                                       messagesId=":offerForm:messages"
+                                       defaultTabLabel="#{messages['commons.parameters']}"
+                                       prefix="tab_cf_#{loopStatus.index}" />
                                 </c:if>
                             </p:panel>
                         </h:panelGrid>

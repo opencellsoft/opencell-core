@@ -44,6 +44,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ProductTemplate;
 
 @Entity
@@ -83,6 +84,10 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
 
     public ProductInstance() {
         super();
@@ -183,6 +188,14 @@ public class ProductInstance extends BusinessCFEntity {
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { productTemplate };
+    }
+    
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 
 }

@@ -150,6 +150,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         oneShotChargeInstance.setCriteria1(criteria1);
         oneShotChargeInstance.setCriteria2(criteria2);
         oneShotChargeInstance.setCriteria3(criteria3);
+        oneShotChargeInstance.setSeller(subscription.getSeller());
 
         if (walletCode == null) {
             oneShotChargeInstance.setPrepaid(false);

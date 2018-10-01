@@ -30,18 +30,13 @@ public class PDFDocumentHelper {
      */
     public static String generatePDF(PDFDocumentRequestDto postData, String rootDir) throws Exception {
         
-        String documentDir = postData.getDocumentDestinationDir();
+        // directory where the pdf file will be generated :
+        String documentDir = getDocumentDirectoryAbsolutePath(postData, rootDir);
+        File documentDirFile = new File( documentDir );
+        if (!documentDirFile.exists()) {
+            documentDirFile.mkdirs();  
+        }
         
-        if (!postData.isAbsolutePaths()) {
-            if ("/".equals(documentDir) ) { // to avoid having paths like : aa/bb//cc
-                documentDir = rootDir;
-            } else {
-                documentDir = rootDir + documentDir;
-            }
-        }
-        if ( !new File(documentDir).exists() ) {
-            throw new FileNotFoundException(documentDir + " (No such directory) ");
-        }
         String documentNamePrefix = StringUtils.defaultIfEmpty(postData.getDocumentNamePrefix(), "doc");
         
         try (PDDocument mainTemplateDoc = new PDDocument() ) {
@@ -75,6 +70,23 @@ public class PDFDocumentHelper {
             LOG.error("error on generatePDF {} ", e.getMessage(), e);
             throw e;
         }
+    }
+
+    private static String getDocumentDirectoryAbsolutePath(PDFDocumentRequestDto postData, String rootDir) {
+        
+        String documentDir = postData.getDocumentDestinationDir();
+        if (!documentDir.startsWith(File.separator)) {
+            documentDir =  File.separator +  documentDir;
+        }
+        
+        if (!postData.isAbsolutePaths()) {
+            if (File.separator.equals(documentDir) ) { // to avoid having paths like : aa/bb//cc
+                documentDir = rootDir;
+            } else {
+                documentDir = rootDir + documentDir;
+            }
+        }
+        return documentDir;
     }
 
     /**

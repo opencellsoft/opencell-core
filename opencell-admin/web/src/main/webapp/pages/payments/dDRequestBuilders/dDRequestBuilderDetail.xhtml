@@ -47,7 +47,8 @@
 	                                   rendered="#{dDRequestBuilderBean.entity.type==DDRequestBuilderTypeEnum.NATIF}"  autocompleteBean="#{dDRequestBuilderBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>																				
 					</h:panelGroup>	
 					<hftl:formField label="#{messages['dDRequestBuilder.nbOperationPerFile']}" field="nbOperationPerFile" />
-					<hftl:formField label="#{messages['dDRequestBuilder.maxSizeFile']}" field="maxSizeFile" />				
+					<hftl:formField label="#{messages['dDRequestBuilder.maxSizeFile']}" field="maxSizeFile" />
+					<hftl:formField label="#{messages['dDRequestBuilder.paymentLevel']}" field="paymentLevel" />				
 				</p:tab>
 				<hftl:customFields backingBean="#{dDRequestBuilderBean}" messagesId=":formDDRequestBuilder:messages" />
 			</p:tabView>								

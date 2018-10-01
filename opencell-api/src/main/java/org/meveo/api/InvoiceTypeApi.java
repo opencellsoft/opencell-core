@@ -129,14 +129,26 @@ public class InvoiceTypeApi extends BaseApi {
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setCode(postData.getCode());
         
-        InvoiceSequence invoiceSequence = postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto();
-        if(invoiceSequence != null) {
-            invoiceSequence.setCode(invoiceType.getCode());
-            invoiceSequenceService.create(invoiceSequence);
-            invoiceType.setInvoiceSequence(invoiceSequence);
-            invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
+        if(postData.getSequenceDto() != null) {
+            if(StringUtils.isBlank(postData.getSequenceDto().getInvoiceSequenceCode())) {
+            	// v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
+    	        InvoiceSequence invoiceSequence = postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto();
+    	        if(invoiceSequence != null) {
+    	            invoiceSequence.setCode(invoiceType.getCode());
+    	            invoiceSequenceService.create(invoiceSequence);
+    	            invoiceType.setInvoiceSequence(invoiceSequence);
+    	            invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
+    	        }
+            } else {
+            	InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(postData.getSequenceDto().getInvoiceSequenceCode());
+            	if (invoiceSequence == null) {
+    	            throw new EntityDoesNotExistsException(InvoiceSequence.class, postData.getSequenceDto().getInvoiceSequenceCode());
+    	        }
+                invoiceType.setInvoiceSequence(invoiceSequence);
+                invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
+            }
         }
-        
+	        
         invoiceType.setDescription(postData.getDescription());
         invoiceType.setOccTemplate(occTemplate);
         invoiceType.setOccTemplateNegative(occTemplateNegative);
@@ -226,9 +238,9 @@ public class InvoiceTypeApi extends BaseApi {
                 invoiceSequence.setCode(invoiceType.getCode());
                 invoiceSequenceService.update(invoiceSequence);
             } else {
-                InvoiceSequence invoiceSequenceFromDto = invoiceTypeDto.getSequenceDto().fromDto();
-                invoiceSequenceFromDto.setCode(invoiceType.getCode());
-                invoiceSequenceService.create(invoiceSequence);
+                InvoiceSequence newInvoiceSequence = invoiceTypeDto.getSequenceDto().fromDto();
+                newInvoiceSequence.setCode(invoiceType.getCode());
+                invoiceSequenceService.create(newInvoiceSequence);
             }
             invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
         }

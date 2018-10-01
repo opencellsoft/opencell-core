@@ -43,6 +43,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.rating.EDR;
@@ -274,6 +275,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     @Transient
     private OfferTemplate offerTemplate;
@@ -322,7 +327,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax,
             BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet,
             BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription,
-            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate, Date endDate) {
+            String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller) {
 
         super();
 
@@ -362,6 +367,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.edr = edr;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.seller = seller;
+
 
         if (unityDescription != null) {
             this.unityDescription = unityDescription;
@@ -709,5 +716,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+    
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 }

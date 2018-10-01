@@ -121,7 +121,7 @@ public class ChargeInstance extends BusinessEntity {
     protected List<WalletOperation> walletOperations = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller_id", nullable = true)
     protected Seller seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -180,7 +180,7 @@ public class ChargeInstance extends BusinessEntity {
         this.amountWithTax = amountWithTax;
         this.userAccount = serviceInstance.getSubscription().getUserAccount();
         this.subscription = serviceInstance.getSubscription();
-        this.seller = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        this.seller = subscription.getSeller();
         this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
         this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
         this.chargeTemplate = chargeTemplate;

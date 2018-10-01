@@ -188,7 +188,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     private BillingRun billingRun;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = true)
+    @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
     @Transient
@@ -304,7 +304,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[] { offer, userAccount };
+        return new ICustomFieldEntity[] { offer, seller, userAccount };
     }
 
     /**
@@ -548,4 +548,5 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
+
 }

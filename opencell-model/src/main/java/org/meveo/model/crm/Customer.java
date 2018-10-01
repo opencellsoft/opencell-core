@@ -74,6 +74,7 @@ public class Customer extends AccountEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
+    @Deprecated
     private Seller seller;
     
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -102,10 +103,12 @@ public class Customer extends AccountEntity {
         accountType = ACCOUNT_TYPE;
     }
 
+    @Deprecated
     public Seller getSeller() {
         return seller;
     }
 
+    @Deprecated
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
