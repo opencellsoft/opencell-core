@@ -143,4 +143,17 @@ public class PaynumFile implements DDRequestBuilderInterface {
         byte[] hash = digest.digest(code.getBytes("UTF-8"));
         return Base64.encodeBase64URLSafeString(hash);
     }
+
+    @Override
+    public void generateSCTRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+        // TODO : Request the need to implement in case of SCT paynum file
+        generateDDRequestLotFile(ddRequestLot, appProvider);
+        
+    }
+
+    @Override
+    public String getSCTFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {        
+        // TODO : Request the need to implement in case of SCT paynum file
+        return getDDFileName(ddRequestLot, appProvider);
+    }
 }
