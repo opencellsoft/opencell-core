@@ -18,22 +18,22 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="ChequeDelivery1Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="MLDB"/>
- *     &lt;enumeration value="MLCD"/>
- *     &lt;enumeration value="MLFA"/>
- *     &lt;enumeration value="CRDB"/>
- *     &lt;enumeration value="CRCD"/>
- *     &lt;enumeration value="CRFA"/>
- *     &lt;enumeration value="PUDB"/>
- *     &lt;enumeration value="PUCD"/>
- *     &lt;enumeration value="PUFA"/>
- *     &lt;enumeration value="RGDB"/>
- *     &lt;enumeration value="RGCD"/>
- *     &lt;enumeration value="RGFA"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ChequeDelivery1Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="MLDB"/&gt;
+ *     &lt;enumeration value="MLCD"/&gt;
+ *     &lt;enumeration value="MLFA"/&gt;
+ *     &lt;enumeration value="CRDB"/&gt;
+ *     &lt;enumeration value="CRCD"/&gt;
+ *     &lt;enumeration value="CRFA"/&gt;
+ *     &lt;enumeration value="PUDB"/&gt;
+ *     &lt;enumeration value="PUCD"/&gt;
+ *     &lt;enumeration value="PUFA"/&gt;
+ *     &lt;enumeration value="RGDB"/&gt;
+ *     &lt;enumeration value="RGCD"/&gt;
+ *     &lt;enumeration value="RGFA"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

@@ -18,26 +18,26 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="CashAccountType4Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="CASH"/>
- *     &lt;enumeration value="CHAR"/>
- *     &lt;enumeration value="COMM"/>
- *     &lt;enumeration value="TAXE"/>
- *     &lt;enumeration value="CISH"/>
- *     &lt;enumeration value="TRAS"/>
- *     &lt;enumeration value="SACC"/>
- *     &lt;enumeration value="CACC"/>
- *     &lt;enumeration value="SVGS"/>
- *     &lt;enumeration value="ONDP"/>
- *     &lt;enumeration value="MGLD"/>
- *     &lt;enumeration value="NREX"/>
- *     &lt;enumeration value="MOMA"/>
- *     &lt;enumeration value="LOAN"/>
- *     &lt;enumeration value="SLRY"/>
- *     &lt;enumeration value="ODFT"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="CashAccountType4Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="CASH"/&gt;
+ *     &lt;enumeration value="CHAR"/&gt;
+ *     &lt;enumeration value="COMM"/&gt;
+ *     &lt;enumeration value="TAXE"/&gt;
+ *     &lt;enumeration value="CISH"/&gt;
+ *     &lt;enumeration value="TRAS"/&gt;
+ *     &lt;enumeration value="SACC"/&gt;
+ *     &lt;enumeration value="CACC"/&gt;
+ *     &lt;enumeration value="SVGS"/&gt;
+ *     &lt;enumeration value="ONDP"/&gt;
+ *     &lt;enumeration value="MGLD"/&gt;
+ *     &lt;enumeration value="NREX"/&gt;
+ *     &lt;enumeration value="MOMA"/&gt;
+ *     &lt;enumeration value="LOAN"/&gt;
+ *     &lt;enumeration value="SLRY"/&gt;
+ *     &lt;enumeration value="ODFT"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

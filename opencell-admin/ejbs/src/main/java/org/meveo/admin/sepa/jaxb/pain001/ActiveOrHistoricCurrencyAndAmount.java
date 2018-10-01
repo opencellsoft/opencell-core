@@ -22,13 +22,13 @@ import javax.xml.bind.annotation.XmlValue;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ActiveOrHistoricCurrencyAndAmount">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;urn:iso:std:iso:20022:tech:xsd:pain.001.001.03>ActiveOrHistoricCurrencyAndAmount_SimpleType">
- *       &lt;attribute name="Ccy" use="required" type="{urn:iso:std:iso:20022:tech:xsd:pain.001.001.03}ActiveOrHistoricCurrencyCode" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="ActiveOrHistoricCurrencyAndAmount"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;urn:iso:std:iso:20022:tech:xsd:pain.001.001.03&gt;ActiveOrHistoricCurrencyAndAmount_SimpleType"&gt;
+ *       &lt;attribute name="Ccy" use="required" type="{urn:iso:std:iso:20022:tech:xsd:pain.001.001.03}ActiveOrHistoricCurrencyCode" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

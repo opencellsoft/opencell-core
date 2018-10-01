@@ -18,15 +18,15 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="ChequeType2Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="CCHQ"/>
- *     &lt;enumeration value="CCCH"/>
- *     &lt;enumeration value="BCHQ"/>
- *     &lt;enumeration value="DRFT"/>
- *     &lt;enumeration value="ELDR"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ChequeType2Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="CCHQ"/&gt;
+ *     &lt;enumeration value="CCCH"/&gt;
+ *     &lt;enumeration value="BCHQ"/&gt;
+ *     &lt;enumeration value="DRFT"/&gt;
+ *     &lt;enumeration value="ELDR"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

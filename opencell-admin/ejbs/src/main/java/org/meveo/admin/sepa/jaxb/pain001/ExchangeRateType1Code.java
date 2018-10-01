@@ -18,13 +18,13 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="ExchangeRateType1Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="SPOT"/>
- *     &lt;enumeration value="SALE"/>
- *     &lt;enumeration value="AGRD"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ExchangeRateType1Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="SPOT"/&gt;
+ *     &lt;enumeration value="SALE"/&gt;
+ *     &lt;enumeration value="AGRD"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

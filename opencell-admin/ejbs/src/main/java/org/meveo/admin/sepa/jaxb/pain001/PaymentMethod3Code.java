@@ -18,13 +18,13 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="PaymentMethod3Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="CHK"/>
- *     &lt;enumeration value="TRF"/>
- *     &lt;enumeration value="TRA"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="PaymentMethod3Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="CHK"/&gt;
+ *     &lt;enumeration value="TRF"/&gt;
+ *     &lt;enumeration value="TRA"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

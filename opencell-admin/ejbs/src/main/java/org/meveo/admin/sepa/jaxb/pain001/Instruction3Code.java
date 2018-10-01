@@ -18,14 +18,14 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="Instruction3Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="CHQB"/>
- *     &lt;enumeration value="HOLD"/>
- *     &lt;enumeration value="PHOB"/>
- *     &lt;enumeration value="TELB"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="Instruction3Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="CHQB"/&gt;
+ *     &lt;enumeration value="HOLD"/&gt;
+ *     &lt;enumeration value="PHOB"/&gt;
+ *     &lt;enumeration value="TELB"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

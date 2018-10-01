@@ -18,14 +18,14 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="Authorisation1Code">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="AUTH"/>
- *     &lt;enumeration value="FDET"/>
- *     &lt;enumeration value="FSUM"/>
- *     &lt;enumeration value="ILEV"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="Authorisation1Code"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="AUTH"/&gt;
+ *     &lt;enumeration value="FDET"/&gt;
+ *     &lt;enumeration value="FSUM"/&gt;
+ *     &lt;enumeration value="ILEV"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */
