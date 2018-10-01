@@ -1600,6 +1600,12 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_ddrequest_builder_seq values(1)</sql>
      </changeSet>
+     
+	<changeSet id="#3613_20180903" author="EdwardPLegaspi">
+		<addColumn tableName="billing_invoice">
+			<column name="subscription_id" type="bigint" />
+		</addColumn>
+	</changeSet>
 
     <changeSet id="#3508_20180828 - Migration for sequences - postgresql" author="AbdelmounaimAkadid" dbms="postgresql">
         <sql endDelimiter="$$" splitStatements="false"><![CDATA[

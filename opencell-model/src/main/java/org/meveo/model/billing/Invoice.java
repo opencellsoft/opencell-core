@@ -228,6 +228,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
@@ -726,4 +730,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.seller = seller;
     }
 	
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 }
