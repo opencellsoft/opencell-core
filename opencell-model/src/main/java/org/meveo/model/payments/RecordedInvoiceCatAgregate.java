@@ -25,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
 @Entity
 @DiscriminatorValue(value = "IC")
@@ -39,6 +40,10 @@ public class RecordedInvoiceCatAgregate extends RecordedInvoice {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat_inv_agregate_id")
     private  CategoryInvoiceAgregate categoryInvoiceAgregate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_cat_inv_agregate_id")
+    private  SubCategoryInvoiceAgregate subCategoryInvoiceAgregate;
 
     /**
      * @return the recordedInvoice
@@ -66,6 +71,20 @@ public class RecordedInvoiceCatAgregate extends RecordedInvoice {
      */
     public void setCategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
         this.categoryInvoiceAgregate = categoryInvoiceAgregate;
+    }
+
+    /**
+     * @return the subCategoryInvoiceAgregate
+     */
+    public SubCategoryInvoiceAgregate getSubCategoryInvoiceAgregate() {
+        return subCategoryInvoiceAgregate;
+    }
+
+    /**
+     * @param subCategoryInvoiceAgregate the subCategoryInvoiceAgregate to set
+     */
+    public void setSubCategoryInvoiceAgregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+        this.subCategoryInvoiceAgregate = subCategoryInvoiceAgregate;
     }
     
     

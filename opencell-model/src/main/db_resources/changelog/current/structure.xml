@@ -1818,4 +1818,23 @@
     	<modifyDataType columnName="cust_no_prefix" newDataType="varchar(255)" tableName="crm_provider"/>
     </changeSet>
 
+     <changeSet id="#3272_20180930" author="anasseh">     
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="occ_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="occ_templ_negative_id" type="bigint" />
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="occ_template_id" baseTableName="billing_invoice_sub_cat" constraintName="fk_occ_sub_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+        <addForeignKeyConstraint baseColumnNames="occ_templ_negative_id" baseTableName="billing_invoice_sub_cat" constraintName="fk_occ_neg_sub_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" /> 
+            
+       <addColumn tableName="ar_account_operation">
+            <column name="sub_cat_inv_agregate_id" type="bigint" />
+        </addColumn>
+        
+                <addForeignKeyConstraint baseColumnNames="sub_cat_inv_agregate_id" baseTableName="ar_account_operation" constraintName="fk_inv_sub_cat_agregate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />                        
+     </changeSet>
 </databaseChangeLog>
