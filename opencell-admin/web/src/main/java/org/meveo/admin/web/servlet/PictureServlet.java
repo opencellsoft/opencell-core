@@ -243,9 +243,13 @@ public class PictureServlet extends HttpServlet {
 //				}
 //			}
 			
-			BufferedImage img = ImageIO.read(destFile.toFile());
-	        ImageIO.write(img, filename.substring(filename.indexOf('.') + 1), resp.getOutputStream());
-
+			try {
+				BufferedImage img = ImageIO.read(destFile.toFile());
+				ImageIO.write(img, filename.substring(filename.indexOf('.') + 1), resp.getOutputStream());
+			} catch (Exception le) {
+				log.error("Failed loading file {}. {}", destFile, le.getMessage());
+			}
+			
 			resp.setStatus(HttpStatus.SC_OK);
 
 		} else {
