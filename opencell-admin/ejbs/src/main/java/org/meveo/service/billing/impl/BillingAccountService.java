@@ -407,6 +407,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return null;
     }
     
+    /**
+     * Update billing account total amounts.
+     *
+     * @param billingAccountId the billing account id
+     * @param billingRun the billing run
+     * @return true, if successful
+     * @throws BusinessException the business exception
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateEntityTotalAmounts(IBillableEntity entity, BillingRun billingRun) throws BusinessException {
@@ -1014,12 +1022,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                                     break;
                                                 }
                                             }
-
                                             BigDecimal unitAmountWithoutTax = appProvider.isEntreprise() ? rtMinAmount
                                                     : rtMinAmount.subtract(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                                             BigDecimal unitAmountWithTax = appProvider.isEntreprise()
-                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP))
-                                                    : rtMinAmount;
+                                                    ? rtMinAmount.add(rtMinAmount.multiply(taxPercent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)) : rtMinAmount;
                                             BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
                                             BigDecimal amountWithoutTax = unitAmountWithoutTax;
                                             BigDecimal amountWithTax = unitAmountWithTax;
@@ -1161,7 +1167,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             BigDecimal billingAccountAmountWithTax = entry.getValue().get("billingAccountAmountWithTax");
             InvoiceSubCategory invoiceSubCategory = entry.getKey();
 
-            if (!StringUtils.isBlank(billingAccount.getMinimumAmountEl()) && billingAccountAmountWithoutTax != null && billingAccountAmountWithoutTax != BigDecimal.ZERO) {
+            if (!StringUtils.isBlank(billingAccount.getMinimumAmountEl()) && billingAccountAmountWithoutTax != null
+                    && billingAccountAmountWithoutTax.compareTo(BigDecimal.ZERO) != 0) {
                 BigDecimal billingAccountMinAmount = new BigDecimal(evaluateDoubleExpression(billingAccount.getMinimumAmountEl(), billingAccount));
                 String billingAccountMinLabel = evaluateStringExpression(billingAccount.getMinimumLabelEl(), billingAccount);
 

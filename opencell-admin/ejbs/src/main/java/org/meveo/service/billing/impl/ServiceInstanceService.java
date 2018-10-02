@@ -840,7 +840,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		return qb.getQuery(getEntityManager()).getResultList();
 	}
 	
-	/**
+    /**
      * Find a list of service instance by subscription entity, service template codes and service instance status list.
      * 
      * @param codes the service template codes

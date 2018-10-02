@@ -1403,4 +1403,17 @@
 		</addColumn>
 	</changeSet>
 
+     
+
+    <changeSet id="#3459_20180702" author="AndriusKarpavicius">
+       <addColumn tableName="cat_wallet_template">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+       <addColumn tableName="billing_wallet">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+        <sql>update ${db.schema.adapted}cat_wallet_template set reject_level=0 where reject_level is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
+    </changeSet>
+    
 </databaseChangeLog>
