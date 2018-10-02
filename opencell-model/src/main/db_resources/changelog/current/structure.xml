@@ -1843,4 +1843,17 @@
                 <addForeignKeyConstraint baseColumnNames="sub_cat_inv_agregate_id" baseTableName="ar_account_operation" constraintName="fk_inv_sub_cat_agregate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />                        
      </changeSet>
+     
+
+    <changeSet id="#3459_20180702" author="AndriusKarpavicius">
+       <addColumn tableName="cat_wallet_template">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+       <addColumn tableName="billing_wallet">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+        <sql>update ${db.schema.adapted}cat_wallet_template set reject_level=0 where reject_level is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
+    </changeSet>
+    
 </databaseChangeLog>
