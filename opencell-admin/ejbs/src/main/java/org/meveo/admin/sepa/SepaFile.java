@@ -191,7 +191,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", "CORE"));
         paymentTypeInformation.setSeqTp(SequenceType1Code.FRST);
 
-        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
+        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // à revoir
 
         BankCoordinates providerBC = appProvider.getBankCoordinates();
         if (providerBC == null) {
@@ -231,10 +231,11 @@ public class SepaFile implements DDRequestBuilderInterface {
         CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
         PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
         BankCoordinates bankCoordiates = null;
-        if (preferedPaymentMethod instanceof DDPaymentMethod) {
-            bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+        if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
+            throw new BusinessException("Payment method not valid!");
         }
-
+        bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+        
         DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
         paymentInformation.getDrctDbtTxInf().add(directDebitTransactionInformation);
         PaymentIdentification1 PaymentIdentification = new PaymentIdentification1();
@@ -250,10 +251,9 @@ public class SepaFile implements DDRequestBuilderInterface {
         MandateRelatedInformation6 mandateRelatedInformation = new MandateRelatedInformation6();
         directDebitTransaction.setMndtRltdInf(mandateRelatedInformation);
        
-        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
-            mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
-        }
+        mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
+        mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
+        
         BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
         directDebitTransactionInformation.setDbtrAgt(debtorAgent);
         FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();

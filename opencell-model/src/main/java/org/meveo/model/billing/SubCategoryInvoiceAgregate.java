@@ -37,55 +37,78 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+/**
+ * The Class SubCategoryInvoiceAgregate.
+ */
 @Entity
 @DiscriminatorValue("F")
 public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The invoice sub category. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicesubcategory")
     private InvoiceSubCategory invoiceSubCategory;
 
+    /** The sub category taxes. */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoice_agregate_taxes", joinColumns = @JoinColumn(name = "sub_cat_invoice_aggregat_id"), inverseJoinColumns = @JoinColumn(name = "tax_id"))
     private Set<Tax> subCategoryTaxes = new HashSet<>();
 
+    /** The category invoice agregate. */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_invoice_agregate")
     private CategoryInvoiceAgregate categoryInvoiceAgregate;
 
+    /** The wallet. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
 
+    /** The ratedtransactions. */
     @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
+    /** The discount plan code. */
     @Column(name = "discount_plan_code", length = 50)
     @Size(max = 50)
     private String discountPlanCode;
 
+    /** The discount plan item code. */
     @Column(name = "discount_plan_item_code", length = 50)
     @Size(max = 50)
     private String discountPlanItemCode;
 	
+	/** The sub category taxes transient. */
 	@Transient
 	private Set<Tax> subCategoryTaxesTransient;
 
+    /** The discount percent. */
     @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountPercent;
 
+    /** The old amount without tax. */
     @Transient
     private BigDecimal oldAmountWithoutTax;
 
+    /** The old amount with tax. */
     @Transient
     private BigDecimal oldAmountWithTax;
 
+    /**
+     * Instantiates a new sub category invoice agregate.
+     */
     public SubCategoryInvoiceAgregate() {
 
     }
 
+    /**
+     * Instantiates a new sub category invoice agregate.
+     *
+     * @param subCategoryInvoiceAgregate the sub category invoice agregate
+     */
     public SubCategoryInvoiceAgregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
         this.setAccountingCode(subCategoryInvoiceAgregate.getAccountingCode());
         this.setInvoiceSubCategory(subCategoryInvoiceAgregate.getInvoiceSubCategory());
@@ -101,18 +124,38 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.setDiscountAggregate(false);
     }
 
+    /**
+     * Gets the invoice sub category.
+     *
+     * @return the invoice sub category
+     */
     public InvoiceSubCategory getInvoiceSubCategory() {
         return invoiceSubCategory;
     }
 
+    /**
+     * Sets the invoice sub category.
+     *
+     * @param invoiceSubCategory the new invoice sub category
+     */
     public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
         this.invoiceSubCategory = invoiceSubCategory;
     }
 
+    /**
+     * Gets the category invoice agregate.
+     *
+     * @return the category invoice agregate
+     */
     public CategoryInvoiceAgregate getCategoryInvoiceAgregate() {
         return categoryInvoiceAgregate;
     }
 
+    /**
+     * Sets the category invoice agregate.
+     *
+     * @param categoryInvoiceAgregate the new category invoice agregate
+     */
     public void setCategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
         this.categoryInvoiceAgregate = categoryInvoiceAgregate;
         if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
@@ -120,30 +163,65 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         }
     }
 
+    /**
+     * Gets the ratedtransactions.
+     *
+     * @return the ratedtransactions
+     */
     public List<RatedTransaction> getRatedtransactions() {
         return ratedtransactions;
     }
 
+    /**
+     * Sets the ratedtransactions.
+     *
+     * @param ratedtransactions the new ratedtransactions
+     */
     public void setRatedtransactions(List<RatedTransaction> ratedtransactions) {
         this.ratedtransactions = ratedtransactions;
     }
 
+    /**
+     * Gets the wallet.
+     *
+     * @return the wallet
+     */
     public WalletInstance getWallet() {
         return wallet;
     }
 
+    /**
+     * Sets the wallet.
+     *
+     * @param wallet the new wallet
+     */
     public void setWallet(WalletInstance wallet) {
         this.wallet = wallet;
     }
 
+    /**
+     * Gets the sub category taxes.
+     *
+     * @return the sub category taxes
+     */
     public Set<Tax> getSubCategoryTaxes() {
         return subCategoryTaxes;
     }
 
+    /**
+     * Sets the sub category taxes.
+     *
+     * @param subCategoryTaxes the new sub category taxes
+     */
     public void setSubCategoryTaxes(Set<Tax> subCategoryTaxes) {
         this.subCategoryTaxes = subCategoryTaxes;
     }
 
+    /**
+     * Adds the sub category tax.
+     *
+     * @param subCategoryTax the sub category tax
+     */
     public void addSubCategoryTax(Tax subCategoryTax) {
         if (subCategoryTaxes == null) {
             subCategoryTaxes = new HashSet<Tax>();
@@ -153,46 +231,99 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         }
     }
 
+    /**
+     * Gets the discount plan code.
+     *
+     * @return the discount plan code
+     */
     public String getDiscountPlanCode() {
         return discountPlanCode;
     }
 
+    /**
+     * Sets the discount plan code.
+     *
+     * @param discountPlanCode the new discount plan code
+     */
     public void setDiscountPlanCode(String discountPlanCode) {
         this.discountPlanCode = discountPlanCode;
     }
 
+    /**
+     * Gets the discount plan item code.
+     *
+     * @return the discount plan item code
+     */
     public String getDiscountPlanItemCode() {
         return discountPlanItemCode;
     }
 
+    /**
+     * Sets the discount plan item code.
+     *
+     * @param discountPlanItemCode the new discount plan item code
+     */
     public void setDiscountPlanItemCode(String discountPlanItemCode) {
         this.discountPlanItemCode = discountPlanItemCode;
     }
 
+    /**
+     * Gets the discount percent.
+     *
+     * @return the discount percent
+     */
     public BigDecimal getDiscountPercent() {
         return discountPercent;
     }
 
+    /**
+     * Sets the discount percent.
+     *
+     * @param discountPercent the new discount percent
+     */
     public void setDiscountPercent(BigDecimal discountPercent) {
         this.discountPercent = discountPercent;
     }
 
+    /**
+     * Gets the old amount without tax.
+     *
+     * @return the old amount without tax
+     */
     public BigDecimal getOldAmountWithoutTax() {
         return oldAmountWithoutTax;
     }
 
+    /**
+     * Sets the old amount without tax.
+     *
+     * @param oldAmountWithoutTax the new old amount without tax
+     */
     public void setOldAmountWithoutTax(BigDecimal oldAmountWithoutTax) {
         this.oldAmountWithoutTax = oldAmountWithoutTax;
     }
 
+    /**
+     * Gets the old amount with tax.
+     *
+     * @return the old amount with tax
+     */
     public BigDecimal getOldAmountWithTax() {
         return oldAmountWithTax;
     }
 
+    /**
+     * Sets the old amount with tax.
+     *
+     * @param oldAmountWithTax the new old amount with tax
+     */
     public void setOldAmountWithTax(BigDecimal oldAmountWithTax) {
         this.oldAmountWithTax = oldAmountWithTax;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.model.BaseEntity#hashCode()
+     */
     @Override
     public int hashCode() {
         if (id != null)
@@ -206,6 +337,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.model.billing.InvoiceAgregate#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
 
@@ -243,14 +377,29 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
                 + oldAmountWithoutTax + ", oldAmountWithTax=" + oldAmountWithTax + "]";
     }
 
+	/**
+     * Gets the sub category taxes transient.
+     *
+     * @return the sub category taxes transient
+     */
 	public Set<Tax> getSubCategoryTaxesTransient() {
 		return subCategoryTaxesTransient;
 	}
 
+	/**
+     * Sets the sub category taxes transient.
+     *
+     * @param subCategoryTaxesTransient the new sub category taxes transient
+     */
 	public void setSubCategoryTaxesTransient(Set<Tax> subCategoryTaxesTransient) {
 		this.subCategoryTaxesTransient = subCategoryTaxesTransient;
 	}
 	
+	/**
+     * Adds the sub category tax transient.
+     *
+     * @param subCategoryTax the sub category tax
+     */
 	public void addSubCategoryTaxTransient(Tax subCategoryTax) {
 		if (subCategoryTaxesTransient == null) {
 			subCategoryTaxesTransient = new HashSet<>();

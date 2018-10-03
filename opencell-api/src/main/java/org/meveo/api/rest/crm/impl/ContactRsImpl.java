@@ -126,10 +126,10 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	}
 
 	@Override
-	public ContactsResponseDto importLinkedInFromText(String context) {
+	public ContactsResponseDto importCSVText(String context) {
 		ContactsResponseDto result = new ContactsResponseDto();
 		try {
-			ContactsDto contacts = contactApi.importLinkedInFromText(context);
+			ContactsDto contacts = contactApi.importCSVText(context);
 			result.setContacts(contacts);
 			if(result.getContacts() != null && !result.getContacts().getContact().isEmpty())
 				result.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, "The following contacts have failed to persist"));
@@ -142,7 +142,7 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	}
 
 	@Override
-	public ActionStatus importLinkedInFile() {
+	public ActionStatus importCSVFile() {
 		// TODO Auto-generated method stub
 		return null;
 	}

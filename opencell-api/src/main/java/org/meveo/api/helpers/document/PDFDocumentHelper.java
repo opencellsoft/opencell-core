@@ -72,9 +72,19 @@ public class PDFDocumentHelper {
         }
     }
 
+    
+    /**
+     * Gets the document directory absolute path.
+     *
+     * @param postData : API inputs
+     * @param rootDir the provider root directory
+     * @return the absolute path where pdf file will be generated
+     */
     private static String getDocumentDirectoryAbsolutePath(PDFDocumentRequestDto postData, String rootDir) {
-        
         String documentDir = postData.getDocumentDestinationDir();
+        if (StringUtils.isEmpty(documentDir)) {
+            return rootDir;
+        }
         if (!documentDir.startsWith(File.separator)) {
             documentDir =  File.separator +  documentDir;
         }

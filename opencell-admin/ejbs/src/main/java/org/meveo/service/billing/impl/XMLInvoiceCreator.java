@@ -1287,8 +1287,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     Element subCategory = null;
                     if(subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory()) == null) {
                         subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), doc.createElement("subCategory"));
-                    } 
-                    	
+                    }
+    
                     subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());	
                     subCategory.setAttribute("label", ratedTransaction.getInvoiceSubCategory().getDescription());
                     subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());

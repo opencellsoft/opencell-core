@@ -38,6 +38,13 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
     
     private String taxScriptScode;
 
+    /** The occ template code. */
+    @XmlElement(required = true)
+    private String occTemplateCode;
+
+    /** The occ template negative code. */
+    private String occTemplateNegativeCode;   
+    
     /**
      * Instantiates a new invoice sub category dto.
      */
@@ -62,6 +69,14 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
         }
         customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
+        
+        if(invoiceSubCategory.getOccTemplate() != null) {
+            occTemplateCode = invoiceSubCategory.getOccTemplate().getCode();
+        }
+        
+        if(invoiceSubCategory.getOccTemplateNegative() != null) {
+            occTemplateNegativeCode = invoiceSubCategory.getOccTemplateNegative().getCode();
+        }
     }
 
     /**
@@ -149,5 +164,33 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
 	public void setTaxScriptScode(String taxScriptScode) {
 		this.taxScriptScode = taxScriptScode;
 	}
+
+    /**
+     * @return the occTemplateCode
+     */
+    public String getOccTemplateCode() {
+        return occTemplateCode;
+    }
+
+    /**
+     * @param occTemplateCode the occTemplateCode to set
+     */
+    public void setOccTemplateCode(String occTemplateCode) {
+        this.occTemplateCode = occTemplateCode;
+    }
+
+    /**
+     * @return the occTemplateNegativeCode
+     */
+    public String getOccTemplateNegativeCode() {
+        return occTemplateNegativeCode;
+    }
+
+    /**
+     * @param occTemplateNegativeCode the occTemplateNegativeCode to set
+     */
+    public void setOccTemplateNegativeCode(String occTemplateNegativeCode) {
+        this.occTemplateNegativeCode = occTemplateNegativeCode;
+    }
 
 }
