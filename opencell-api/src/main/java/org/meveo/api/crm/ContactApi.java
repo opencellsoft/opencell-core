@@ -114,16 +114,18 @@ public class ContactApi extends AccountEntityApi {
 		
 		Customer customer = null;
 		if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
-			customer = customerService.findByCode(postData.getCode());
-		}
-		else {
-			customer = customerService.findByCompanyName(postData.getCompany());
-		}
-		if(customer != null) {
+			customer = customerService.findByCompanyName("UNASSIGNED");
+			if(customer == null) customer = contactService.createUnassignedCustomer();
 			contact.setAddressBook(customer.getAddressbook());
 		}
 		else {
-			customer = contactService.createCustomerFromContact(contact);
+			customer = customerService.findByCompanyName(contact.getCompany());
+			if(customer != null) {
+				contact.setAddressBook(customer.getAddressbook());
+			}
+			else {
+				customer = contactService.createCustomerFromContact(contact);
+			}
 		}
 			
 		contactService.create(contact);
@@ -216,18 +218,21 @@ public class ContactApi extends AccountEntityApi {
 			contact.setCompany(postData.getCompany());
 			Customer customer = null;
 			if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
-				customer = customerService.findByCode(postData.getCode());
-			}
-			else {
-				customer = customerService.findByCompanyName(postData.getCompany());
-			}
-			if(customer != null) {
+				customer = customerService.findByCompanyName("UNASSIGNED");
+				if(customer == null) customer = contactService.createUnassignedCustomer();
 				contact.setAddressBook(customer.getAddressbook());
 			}
 			else {
-				customer = contactService.createCustomerFromContact(contact);
+				customer = customerService.findByCompanyName(contact.getCompany());
+				if(customer != null) {
+					contact.setAddressBook(customer.getAddressbook());
+				}
+				else {
+					customer = contactService.createCustomerFromContact(contact);
+				}
 			}
 		}
+		
 		
 		contact = contactService.update(contact);
 		return contact;
