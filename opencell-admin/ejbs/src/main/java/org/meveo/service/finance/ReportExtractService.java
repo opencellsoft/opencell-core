@@ -34,9 +34,10 @@ import org.meveo.service.script.finance.ReportExtractScript;
  * Service for managing ReportExtract entity.
  * 
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2.1
  **/
 @Stateless
 public class ReportExtractService extends BusinessService<ReportExtract> {
@@ -124,11 +125,10 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 log.debug("{} record/s found", resultList.size());
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
                     writeAsFile(filename, reportDir, resultList);
-                    reportExtractExecutionResult.setLineCount(resultList.size());
-
                 } else {
                     writeAsHtml(filename, reportDir, resultList, entity);
                 }
+                reportExtractExecutionResult.setLineCount(resultList.size());
             }
 
         } else {

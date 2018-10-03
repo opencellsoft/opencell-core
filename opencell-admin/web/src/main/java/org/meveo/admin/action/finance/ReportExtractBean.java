@@ -30,9 +30,10 @@ import org.primefaces.model.StreamedContent;
  * Controller to manage detail view of {@link ReportExtract}.
  * 
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2.1
  **/
 @Named
 @ViewScoped
@@ -79,10 +80,27 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
     protected IPersistenceService<ReportExtract> getPersistenceService() {
         return reportExtractService;
     }
+    
+    private boolean isValidFileExtension() {
+        if (!StringUtils.isBlank(entity.getFilenameFormat()) && entity.getReportExtractResultType() != null) {
+            String fileExtension = entity.getFilenameFormat().substring(entity.getFilenameFormat().lastIndexOf(".") + 1);
+            if (!StringUtils.isBlank(fileExtension) && fileExtension.equalsIgnoreCase(entity.getReportExtractResultType().name())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        // check the conformity between the result type and file name format
+        if (!isValidFileExtension()) {
+            messages.error(new BundleKey("messages", "reportExtract.invalidFormat"));
+            return null;
+        }
+
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
             entity.setScriptInstance(null);
         } else {
