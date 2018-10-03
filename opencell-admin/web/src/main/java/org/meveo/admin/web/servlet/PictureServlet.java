@@ -1,8 +1,10 @@
 package org.meveo.admin.web.servlet;
 
-import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -233,22 +235,22 @@ public class PictureServlet extends HttpServlet {
 			resp.setContentType(mimeType);
 			resp.setContentLength(data.length);
 
-//			try (InputStream in = new ByteArrayInputStream(data)) {
-//				try (OutputStream out = resp.getOutputStream()) {
-//					byte[] buffer = new byte[1024];
-//					int len = 0;
-//					while ((len = in.read(buffer)) != -1) {
-//						out.write(buffer, 0, len);
-//					}
-//				}
-//			}
-			
-			try {
-				BufferedImage img = ImageIO.read(destFile.toFile());
-				ImageIO.write(img, filename.substring(filename.indexOf('.') + 1), resp.getOutputStream());
-			} catch (Exception le) {
-				log.error("Failed loading file {}. {}", destFile, le);
+			try (InputStream in = new ByteArrayInputStream(data)) {
+				try (OutputStream out = resp.getOutputStream()) {
+					byte[] buffer = new byte[1024];
+					int len = -1;
+					while ((len = in.read(buffer)) > 0) {
+						out.write(buffer, 0, len);
+					}
+				}
 			}
+			
+//			try {
+//				BufferedImage img = ImageIO.read(destFile.toFile());
+//				ImageIO.write(img, filename.substring(filename.indexOf('.') + 1), resp.getOutputStream());
+//			} catch (Exception le) {
+//				log.error("Failed loading file {}. {}", destFile, le);
+//			}
 			
 			resp.setStatus(HttpStatus.SC_OK);
 
