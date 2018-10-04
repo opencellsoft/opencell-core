@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-
     <changeSet id="#2428_20180105" author="EdwardPLegaspi">
         <addColumn tableName="adm_notif_webhooks">
             <column name="http_protocol" type="varchar(10)" />
@@ -1843,4 +1842,19 @@
                 <addForeignKeyConstraint baseColumnNames="sub_cat_inv_agregate_id" baseTableName="ar_account_operation" constraintName="fk_inv_sub_cat_agregate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />                        
      </changeSet>
+     
+    <changeSet id="#3671_20181003" author="anasseh">
+        <addColumn tableName="ar_payment_gateway">
+            <column name="marchand_id" type="varchar(256)" />
+        </addColumn>     
+        <addColumn tableName="ar_payment_gateway">
+            <column name="secret_key" type="varchar(256)" />
+        </addColumn>   
+        <addColumn tableName="ar_payment_gateway">
+            <column name="api_key" type="varchar(256)" />
+        </addColumn>   
+        <addColumn tableName="ar_payment_gateway">
+            <column name="profile" type="varchar(256)" />
+        </addColumn>            
+     </changeSet>                          
 </databaseChangeLog>

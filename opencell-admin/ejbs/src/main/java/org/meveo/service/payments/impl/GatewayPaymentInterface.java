@@ -11,6 +11,7 @@ import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -19,6 +20,13 @@ import org.meveo.model.payments.PaymentMethodEnum;
  *
  */
 public interface GatewayPaymentInterface {
+    
+    /**
+     * Set the payment gateway to use.
+     * 
+     * @param paymentGateway
+     */
+    public void setPaymentGateway(PaymentGateway paymentGateway);
 
     /**
      * Declare a card on the psp and return the token for the future uses.

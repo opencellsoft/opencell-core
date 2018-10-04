@@ -156,6 +156,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         String cardNumber = cardPaymentMethod.getCardNumber();       
         GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod,null);
+        if (paymentGateway == null) {
+            throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+        }
         try {
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {

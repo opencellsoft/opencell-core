@@ -60,6 +60,13 @@
 						<hftl:formField label="#{messages['paymentGateway.errorsToReplay']}" field="errorsToReplay" />
 					</p:fieldset> -->
 				</p:tab>
+				<p:tab  title="#{messages['paymentGateway.account']}" >
+					<hftl:formField label="#{messages['paymentGateway.marchandId']}" field="marchandId" />
+					<hftl:formField label="#{messages['paymentGateway.secretKey']}" field="secretKey" />
+					<hftl:formField label="#{messages['paymentGateway.apiKey']}" field="apiKey" />
+					<hftl:formField label="#{messages['paymentGateway.profile']}" field="profile" />
+					
+				</p:tab>
 				<hftl:customFields backingBean="#{paymentGatewayBean}" messagesId=":formPaymentGateway:messages" />
 			</p:tabView>								
 		</hftl:formPanel>
