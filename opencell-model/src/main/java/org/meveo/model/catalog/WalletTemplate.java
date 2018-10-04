@@ -25,6 +25,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -36,63 +38,107 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 
+/**
+ * Prepaid wallet template
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @Cacheable
 @ObservableEntity
-@ExportIdentifier({ "code"})
-@Table(name = "cat_wallet_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_wallet_template_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "cat_wallet_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_wallet_template_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "WalletTemplate.listPrepaidBySubscription", query = "select distinct wi.walletTemplate from ChargeInstance ci JOIN ci.walletInstances wi where wi.walletTemplate.walletType='PREPAID' and ci.subscription=:subscription order by wi.walletTemplate.code") })
 public class WalletTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final String PRINCIPAL = "PRINCIPAL";
+    public static final String PRINCIPAL = "PRINCIPAL";
 
-	@Column(name = "wallet_type")
-	@Enumerated(EnumType.STRING)
-	private BillingWalletTypeEnum walletType;
+    /**
+     * Wallet type
+     */
+    @Column(name = "wallet_type")
+    @Enumerated(EnumType.STRING)
+    private BillingWalletTypeEnum walletType;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "consumption_alert_set")
-	private boolean consumptionAlertSet;
+    private boolean consumptionAlertSet;
 
-	@Column(name = "fast_rating_level")
-	private int fastRatingLevel;
-	
+    @Column(name = "fast_rating_level")
+    private int fastRatingLevel;
+
+    /**
+     * Balance level at which LowBalance event should be fired
+     */
     @Column(name = "low_balance_level", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal lowBalanceLevel;
-    
 
-	public BillingWalletTypeEnum getWalletType() {
-		return walletType;
-	}
+    /**
+     * Balance level at which further consumption should be rejected
+     */
+    @Column(name = "reject_level", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal rejectLevel;
 
-	public void setWalletType(BillingWalletTypeEnum walletType) {
-		this.walletType = walletType;
-	}
+    /**
+     * @return Wallet type
+     */
+    public BillingWalletTypeEnum getWalletType() {
+        return walletType;
+    }
 
-	public boolean isConsumptionAlertSet() {
-		return consumptionAlertSet;
-	}
+    /**
+     * @param walletType Wallet type
+     */
+    public void setWalletType(BillingWalletTypeEnum walletType) {
+        this.walletType = walletType;
+    }
 
-	public void setConsumptionAlertSet(boolean consumptionAlertSet) {
-		this.consumptionAlertSet = consumptionAlertSet;
-	}
+    public boolean isConsumptionAlertSet() {
+        return consumptionAlertSet;
+    }
 
-	public int getFastRatingLevel() {
-		return fastRatingLevel;
-	}
+    public void setConsumptionAlertSet(boolean consumptionAlertSet) {
+        this.consumptionAlertSet = consumptionAlertSet;
+    }
 
-	public void setFastRatingLevel(int fastRatingLevel) {
-		this.fastRatingLevel = fastRatingLevel;
-	}
+    public int getFastRatingLevel() {
+        return fastRatingLevel;
+    }
 
+    public void setFastRatingLevel(int fastRatingLevel) {
+        this.fastRatingLevel = fastRatingLevel;
+    }
+
+    /**
+     * @return Balance level at which LowBalance event should be fired
+     */
     public BigDecimal getLowBalanceLevel() {
         return lowBalanceLevel;
     }
 
+    /**
+     * @param lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
     public void setLowBalanceLevel(BigDecimal lowBalanceLevel) {
         this.lowBalanceLevel = lowBalanceLevel;
     }
 
+    /**
+     * @return Balance level at which further consumption should be rejected
+     */
+    public BigDecimal getRejectLevel() {
+        return rejectLevel;
+    }
+
+    /**
+     * @param rejectLevel Balance level at which further consumption should be rejected
+     */
+    public void setRejectLevel(BigDecimal rejectLevel) {
+        this.rejectLevel = rejectLevel;
+    }
 }

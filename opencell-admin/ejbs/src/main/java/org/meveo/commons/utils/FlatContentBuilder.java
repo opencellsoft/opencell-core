@@ -1,7 +1,7 @@
 package org.meveo.commons.utils;
 
 /**
- * A builder class to get a flat content based on a position & length.
+ * A builder class to get a flat content based on a position and length.
  */
 public class  FlatContentBuilder {
     

@@ -21,14 +21,14 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
-import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.billing.impl.UsageChargeInstanceService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.WalletService;
 import org.slf4j.Logger;
 
@@ -48,8 +48,8 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     @Inject
     protected Logger log;
 
-    @EJB
-    private UsageChargeInstanceService usageChargeInstanceService;
+    @Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
     @EJB
     private WalletService walletService;
@@ -75,7 +75,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
      * &lt;WalletInstance.id&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-usageChargeInstanceWallet")
-    private Cache<CacheKeyLong, List<Long>> usageChargeInstanceWalletCache;
+    private Cache<CacheKeyLong, Map<Long, BigDecimal>> chargeInstanceWalletCache;
 
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
@@ -91,9 +91,38 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Populate wallet balance, reserved balanced and charge association caches from DB
+     * Populate wallet to charge association caches from DB
      */
-    private void populateWalletCache() {
+    private void populateWalletIdCache() {
+
+        if (!usePrepaidBalanceCache) {
+            log.info("Prepaid balance cache population will be skipped as cache will not be used");
+            return;
+        }
+
+        boolean prepopulatePrepaidBalanceCache = Boolean.parseBoolean(paramBean.getProperty("cache.cachePrepaidBalance.prepopulate", "true"));
+
+        if (!prepopulatePrepaidBalanceCache) {
+            log.info("Prepaid balance cache pre-population will be skipped");
+            return;
+        }
+
+        // for each prepaid Usage chargeInstance of active subscription we create association
+        String currentProvider = currentUser.getProviderCode();
+        log.debug("Start to pre-populate Prepaid wallet id cache for provider {}", currentProvider);
+
+        List<ChargeInstance> charges = chargeInstanceService.getPrepaidChargeInstancesForCache();
+        for (ChargeInstance charge : charges) {
+            addChargeInstanceNoBalances(charge);
+        }
+
+        log.info("Wallet cache populated for provider {} with {} usagecharges", currentProvider, charges.size());
+    }
+
+    /**
+     * Populate wallet balance and reserved balanced caches from DB
+     */
+    private void populateBalanceCache() {
 
         if (!usePrepaidBalanceCache) {
             log.info("Prepaid balance cache population will be skipped as cache will not be used");
@@ -111,21 +140,43 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         String currentProvider = currentUser.getProviderCode();
         log.debug("Start to pre-populate Prepaid balance cache for provider {}", currentProvider);
 
-        // jobInstanceService.registerJob(job);
-        List<UsageChargeInstance> charges = usageChargeInstanceService.getPrepaidUsageChargeInstancesForCache();
-        for (UsageChargeInstance charge : charges) {
-            addUsageChargeInstance(charge);
+        // Populate cache with prepaid wallet balance and reserved balance
+        List<Object[]> balanceInfos = walletService.getOpenAndReservedBalancesForCache();
+        for (Object[] balanceInfo : balanceInfos) {
+
+            CacheKeyLong cacheKey = new CacheKeyLong(currentUser.getProviderCode(), (Long) balanceInfo[0]);
+
+            balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, (BigDecimal) balanceInfo[1]);
+            reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, (BigDecimal) balanceInfo[2]);
         }
 
-        // Populate cache with prepaid wallet balance and reserved balance
-        List<Long> walletIds = walletService.getWalletsIdsForCache();
-        for (Long walletId : walletIds) {
-            if (!balanceCache.containsKey(new CacheKeyLong(currentProvider, walletId))) {
-                initializeBalanceCachesForWallet(walletId);
+        log.info("Wallet cache populated for provider {} with  {} wallets", currentProvider, balanceInfos.size());
+    }
+
+    /**
+     * Add association between usage charge instance and prepaid wallets. Do not populate wallet balance.
+     * 
+     * @param chargeInstance usage charge instance.
+     */
+    // @Lock(LockType.WRITE)
+    private void addChargeInstanceNoBalances(ChargeInstance chargeInstance) {
+
+        String currentProvider = currentUser.getProviderCode();
+
+        Map<Long, BigDecimal> walletLimits = new HashMap<>();
+
+        for (WalletInstance wallet : chargeInstance.getWalletInstances()) {
+            if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                walletLimits.put(wallet.getId(), wallet.getRejectLevel());
             }
         }
 
-        log.info("Wallet cache populated for provider {} with {} usagecharges and {} wallets", currentProvider, charges.size(), walletIds.size());
+        log.debug("Update chargeInstanceWallet cache with charge {} wallets:{}", chargeInstance.getId(), walletLimits.size());
+
+        // If no value are left in the map - LEAVE, as cache can be populated at runtime instead of at application start and need to distinguish
+        // between not cached key and key with no records
+        chargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyLong(currentProvider, chargeInstance.getId()), walletLimits);
+
     }
 
     /**
@@ -135,33 +186,32 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
      * @return A list of wallets ids
      */
     // @Lock(LockType.WRITE)
-    public List<Long> addUsageChargeInstance(UsageChargeInstance usageChargeInstance) {
+    public Map<Long, BigDecimal> addChargeInstance(ChargeInstance usageChargeInstance) {
 
         if (!usePrepaidBalanceCache || !usageChargeInstance.getPrepaid()) {
             return null;
         }
 
-        List<WalletInstance> wallets = usageChargeInstance.getWalletInstances();
-        List<Long> walletIds = new ArrayList<>();
+        Map<Long, BigDecimal> walletLimits = new HashMap<>();
 
         String currentProvider = currentUser.getProviderCode();
 
-        for (WalletInstance wallet : wallets) {
-            if (!walletIds.contains(wallet.getId()) && wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                walletIds.add(wallet.getId());
+        for (WalletInstance wallet : usageChargeInstance.getWalletInstances()) {
+            if (wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
+                walletLimits.put(wallet.getId(), wallet.getRejectLevel());
                 if (!balanceCache.containsKey(new CacheKeyLong(currentProvider, wallet.getId()))) {
                     initializeBalanceCachesForWallet(wallet.getId());
                 }
             }
         }
 
-        log.debug("Update usageChargeInstanceWallet cache with charge {} wallets:{}", usageChargeInstance.getId(), walletIds.size());
+        log.debug("Update chargeInstanceWallet cache with charge {} wallets:{}", usageChargeInstance.getId(), walletLimits.size());
 
         // If no value are left in the map - LEAVE, as cache can be populated at runtime instead of at application start and need to distinguish
         // between not cached key and key with no records
-        usageChargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyLong(currentProvider, usageChargeInstance.getId()), walletIds);
+        chargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyLong(currentProvider, usageChargeInstance.getId()), walletLimits);
 
-        return walletIds;
+        return walletLimits;
     }
 
     /**
@@ -172,22 +222,15 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
      */
     // @Lock(LockType.WRITE)
     public BigDecimal initializeBalanceCachesForWallet(Long walletId) {
-        BigDecimal balance = walletService.calculateWalletBalance(walletId);
-        if (balance == null) {
-            balance = BigDecimal.ZERO;
-        }
+        BigDecimal[] balances = walletService.calculateWalletBalances(walletId);
+
         CacheKeyLong cacheKey = new CacheKeyLong(currentUser.getProviderCode(), walletId);
 
-        balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, balance);
+        balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, balances[0] == null ? BigDecimal.ZERO : balances[0]);
+        reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, balances[1] == null ? BigDecimal.ZERO : balances[1]);
 
-        BigDecimal reservedBalance = walletService.calculateWalletReservedBalance(walletId);
-        if (reservedBalance == null) {
-            reservedBalance = BigDecimal.ZERO;
-        }
-        reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, reservedBalance);
-
-        log.debug("Added to balance caches walletId:{} balance:{} reservedBalance:{}", walletId, balance, reservedBalance);
-        return balance;
+        log.debug("Added to balance caches walletId:{} balance:{} reservedBalance:{}", walletId, balances[0], balances[1]);
+        return balances[0];
     }
 
     /**
@@ -213,8 +256,8 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
             return;
         }
 
-        // Cache deals with usage and prepaid charges only.
-        if (!(op.getChargeInstance() instanceof UsageChargeInstance && op.getChargeInstance().getPrepaid())) {
+        // Cache deals with prepaid charges only.
+        if (!op.getChargeInstance().getPrepaid()) {
             return;
         }
 
@@ -235,9 +278,9 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
             oldValue = reservedBalanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
             if (op.getStatus() == WalletOperationStatusEnum.CANCELED) {
-                newValue = oldValue.add(op.getAmountWithTax());
-            } else {
                 newValue = oldValue.subtract(op.getAmountWithTax());
+            } else {
+                newValue = oldValue.add(op.getAmountWithTax());
             }
 
             log.debug("Update reservedBalance Cache for wallet {} {}->{}", op.getWallet().getId(), oldValue, newValue);
@@ -248,14 +291,14 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         if (!(op instanceof WalletReservation) || (op.getStatus() == WalletOperationStatusEnum.OPEN)) {
 
             oldValue = balanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-            newValue = oldValue.subtract(op.getAmountWithTax());
+            newValue = oldValue.add(op.getAmountWithTax());
 
-            log.debug("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel());
+            log.debug("Update balance Cache for wallet {} {}->{} lowBalanceLevel:{} rejectLevel: {}", op.getWallet().getId(), oldValue, newValue, op.getWallet().getLowBalanceLevel(), op.getWallet().getRejectLevel());
 
             balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, newValue);
 
             if (op.getWallet().getLowBalanceLevel() != null) {
-                if (op.getWallet().getLowBalanceLevel().compareTo(newValue) >= 0 && op.getWallet().getLowBalanceLevel().compareTo(oldValue) < 0) {
+                if (op.getWallet().getLowBalanceLevel().compareTo(newValue) <= 0 && op.getWallet().getLowBalanceLevel().compareTo(oldValue) > 0) {
                     lowBalanceEventProducer.fire(op.getWallet());
                 }
             }
@@ -291,8 +334,8 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
      * @param usageChargeInstanceId Usage charge instance id
      * @return A list of wallets ids
      */
-    public List<Long> getWalletIds(Long usageChargeInstanceId) {
-        return usageChargeInstanceWalletCache.get(new CacheKeyLong(currentUser.getProviderCode(), usageChargeInstanceId));
+    public Map<Long, BigDecimal> getWalletIdAndLimits(Long usageChargeInstanceId) {
+        return chargeInstanceWalletCache.get(new CacheKeyLong(currentUser.getProviderCode(), usageChargeInstanceId));
     }
 
     /**
@@ -306,7 +349,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(balanceCache.getName(), balanceCache);
         summaryOfCaches.put(reservedBalanceCache.getName(), reservedBalanceCache);
-        summaryOfCaches.put(usageChargeInstanceWalletCache.getName(), usageChargeInstanceWalletCache);
+        summaryOfCaches.put(chargeInstanceWalletCache.getName(), chargeInstanceWalletCache);
 
         return summaryOfCaches;
     }
@@ -320,12 +363,15 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName == null || cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName())
-                || cacheName.equals(usageChargeInstanceWalletCache.getName()) || cacheName.contains(balanceCache.getName()) || cacheName.contains(reservedBalanceCache.getName())
-                || cacheName.contains(usageChargeInstanceWalletCache.getName())) {
+        if (cacheName == null || cacheName.equals(chargeInstanceWalletCache.getName()) || cacheName.contains(chargeInstanceWalletCache.getName())) {
+            clearWalletIdCache();
+            populateWalletIdCache();
+        }
+        if (cacheName == null || cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName()) || cacheName.contains(balanceCache.getName())
+                || cacheName.contains(reservedBalanceCache.getName())) {
 
-            clear();
-            populateWalletCache();
+            clearBalanceCache();
+            populateBalanceCache();
         }
     }
 
@@ -337,36 +383,49 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     // @Override
     public void populateCache(String cacheName) {
 
-        if (cacheName == null || cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName())
-                || cacheName.equals(usageChargeInstanceWalletCache.getName()) || cacheName.contains(balanceCache.getName()) || cacheName.contains(reservedBalanceCache.getName())
-                || cacheName.contains(usageChargeInstanceWalletCache.getName())) {
+        if (cacheName == null || cacheName.equals(chargeInstanceWalletCache.getName()) || cacheName.contains(chargeInstanceWalletCache.getName())) {
 
-            populateWalletCache();
+            populateWalletIdCache();
+        }
+        if (cacheName == null || cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName()) || cacheName.contains(balanceCache.getName())
+                || cacheName.contains(reservedBalanceCache.getName())) {
+
+            populateBalanceCache();
         }
     }
 
     /**
-     * Clear the current provider data from cache
+     * Clear the current provider data from wallet id cache
      * 
      */
-    private void clear() {
+    private void clearWalletIdCache() {
+        String currentProvider = currentUser.getProviderCode();
+
+        // chargeInstanceWalletCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+
+        for (CacheKeyLong elem : cleanCache(chargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            chargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
+    }
+
+    /**
+     * Clear the current provider data from balance and reserved balance cache
+     * 
+     */
+    private void clearBalanceCache() {
         String currentProvider = currentUser.getProviderCode();
         // balanceCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
         // reservedBalanceCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
-        // usageChargeInstanceWalletCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
-        for (CacheKeyLong elem : cleanCache(balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
-            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
-            balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
-        }
 
         for (CacheKeyLong elem : cleanCache(reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
             log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
             reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
         }
 
-        for (CacheKeyLong elem : cleanCache(usageChargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
+        for (CacheKeyLong elem : cleanCache(chargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
             log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
-            usageChargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+            chargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
         }
     }
 
@@ -388,13 +447,4 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         }
         return itemsToBeRemoved;
     }
-
-    // /**
-    // * Clear all the data from cache
-    // */
-    // private void clearAll() {
-    // balanceCache.clear();
-    // reservedBalanceCache.clear();
-    // usageChargeInstanceWalletCache.clear();
-    // }
 }

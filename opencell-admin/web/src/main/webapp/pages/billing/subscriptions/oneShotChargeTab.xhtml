@@ -54,7 +54,7 @@
             </hftl:entityPopup>
 
             <hftl:entityPopup id="popupWalletTemplates" header="#{messages['oneShotChargeTmp.popup.header']}" backingBean="#{walletTemplateBean}" lazy="false"
-                dataModel="#{subscriptionBean.findBySubscriptionChargeTemplate()}" searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code"
+                dataModel="#{subscriptionBean.findWalletTemplatesForOneShot()}" searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code"
                 searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description" column1Label="#{messages['BusinessEntity.code']}" column1="code"
                 column2Label="#{messages['BusinessEntity.description']}" column2="description" selection="#{subscriptionBean.selectedWalletTemplate}"
                 updateField=":#{p:component('chargeWalletSelectId_text')}">
@@ -79,11 +79,13 @@
                         <p:outputLabel for="chargeWalletSelectId_text" value="#{messages['menu.wallet']}" />
                         <h:panelGroup layout="block" styleClass="formFieldItem2Lines" style="width: 100%;">
                             <p:inputText id="chargeWalletSelectId_text" required="false" value="#{subscriptionBean.selectedWalletTemplateCode}" />
-                            <p:commandButton id="chargeWalletSelectId_selectLink" disabled="#{subscriptionBean.oneShotChargeInstance.code eq null}" onclick="PF('dlg_popupWalletTemplates').show()"
+                            <p:commandButton id="chargeWalletSelectId_selectLink" onclick="PF('dlg_popupWalletTemplates').show()"
                                 icon="ui-icon-search" type="button" />
                         </h:panelGroup>
                     </h:panelGroup>
                 </h:panelGroup>
+                <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{!subscriptionBean.oneShotChargeInstance.transient and subscriptionBean.oneShotChargeInstance.prepaid}" componentWidth="50" /> 
+                
                 <hftl:formField label="#{messages['oneShotChargeInstance.amountWithoutTax']}" field="amountWithoutTax"
                     rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and appProvider.entreprise}" converter="bigDecimalConverter" />
 
@@ -93,7 +95,7 @@
                         disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
                     </p:inputText>
                 </hftl:decorateFormField>
-                <hftl:formField label="#{messages['oneShotChargeInstance.criteria1']}" field="criteria1" />
+                <hftl:formField label="#{messages['oneShotChargeInstance.criteria1']}" field="criteria1" newLine="true"/>
                 <hftl:formField label="#{messages['oneShotChargeInstance.criteria2']}" field="criteria2" />
                 <hftl:formField label="#{messages['oneShotChargeInstance.criteria3']}" field="criteria3" />
 
@@ -104,7 +106,6 @@
                     <span style="height: 1px" />
                     <h:outputText value="#{messages['commons.noItems']}" rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
                     <h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
-                        <!--                                                                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" /> -->
                         <hftl:decorateFormField label="#{messages['chargeApplication.applicationDate']}">
                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].operationDate}" styleClass="field-value">
                                 <f:convertDateTime pattern="#{paramBean.dateFormat}" />
@@ -114,10 +115,10 @@
                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].description}" styleClass="field-value" />
                         </hftl:decorateFormField>
                         <hftl:decorateFormField label="#{messages['invoice.summary.totalAmountWithoutTax']}" rendered="#{appProvider.entreprise}">
-                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithoutTax}" styleClass="field-value" />
+                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithoutTax}" styleClass="field-value" converter="bigDecimal12DigitsConverter" />
                         </hftl:decorateFormField>
                         <hftl:decorateFormField rendered="#{!appProvider.entreprise}" label="#{messages['walletOperation.amountWithTax']}">
-                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithTax}" styleClass="field-value" />
+                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithTax}" styleClass="field-value" converter="bigDecimal12DigitsConverter" />
                         </hftl:decorateFormField>
                         <hftl:decorateFormField label="#{messages['chargeApplication.status']}">
                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].status}" styleClass="field-value" />

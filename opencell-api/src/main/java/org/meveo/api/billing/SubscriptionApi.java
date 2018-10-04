@@ -192,14 +192,15 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getSubscriptionDate())) {
-            missingParameters.add("subscriptionDate");
-        }
 
         handleMissingParametersAndValidate(postData);
 
         if (subscriptionService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
+        }
+
+        if (StringUtils.isBlank(postData.getSubscriptionDate())) {
+            postData.setSubscriptionDate(new Date());
         }
 
         UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount());
@@ -552,7 +553,7 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
                 for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
                     if (!StringUtils.isBlank(chargeInstanceOverrideDto.getChargeInstanceCode())) {
-                        ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndService(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription.getId(),
+                        ChargeInstance chargeInstance = chargeInstanceService.findByCodeAndSubscription(chargeInstanceOverrideDto.getChargeInstanceCode(), subscription,
                             InstanceStatusEnum.INACTIVE);
                         if (chargeInstance == null) {
                             throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
@@ -713,11 +714,12 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
         }
-        if (postData.getOperationDate() == null) {
-            missingParameters.add("operationDate");
-        }
 
         handleMissingParametersAndValidate(postData);
+
+        if (postData.getOperationDate() == null) {
+            postData.setOperationDate(new Date());
+        }
 
         OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getOneShotCharge());
         if (oneShotChargeTemplate == null) {
@@ -758,6 +760,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Apply a product charge on a subscription
+     * 
      * @param postData Apply product request dto
      * @return List wallet operation generated
      * @throws MeveoApiException meveo api exception
@@ -822,6 +825,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Terminate subscription
+     * 
      * @param postData Terminate subscription request dto
      * @param orderNumber order number
      * @throws MeveoApiException Meveo api exception
@@ -865,6 +869,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Terminate services
+     * 
      * @param terminateSubscriptionDto Terminate subscription services request dto
      * @throws MeveoApiException Meveo api exception
      */
@@ -931,6 +936,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * List subscription by user account
+     * 
      * @param userAccountCode user account code
      * @param mergedCF true/false (true if we want the merged CF in return)
      * @param sortBy name of column to be sorted
@@ -965,6 +971,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * List subbscriptions
+     * 
      * @param mergedCF truf if merging inherited CF
      * @param pagingAndFiltering paging and filtering.
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
@@ -1006,6 +1013,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Find subscription by code
+     * 
      * @param subscriptionCode code of subscription to find
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
@@ -1016,6 +1024,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Find subscription
+     * 
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
      * @param inheritCF Custom field inheritance type
@@ -1059,6 +1068,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Convert subscription entity to dto
+     * 
      * @param subscription instance of Subscription to be mapped
      * @return instance of SubscriptionDto.
      */
@@ -1068,6 +1078,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Convert subscription dto to entity
+     * 
      * @param subscription instance of Subscription to be mapped
      * @param inheritCF choose whether CF values are inherited and/or merged
      * @return instance of SubscriptionDto
@@ -1315,6 +1326,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Suspend subscription
+     * 
      * @param subscriptionCode subscription code
      * @param suspensionDate suspension date
      * @throws MissingParameterException Missing parameter exception
@@ -1338,6 +1350,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Resume subscription
+     * 
      * @param subscriptionCode subscription code
      * @param suspensionDate suspension data
      * @throws MissingParameterException missiong parameter exeption
@@ -1361,6 +1374,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Suspend services
+     * 
      * @param provisionningServicesRequestDto provisioning service request.
      *
      * @throws IncorrectSusbcriptionException incorrect subscription exception
@@ -1375,6 +1389,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Resume services
+     * 
      * @param provisionningServicesRequestDto provisioning service request.
      *
      * @throws IncorrectSusbcriptionException incorrect subscription exception

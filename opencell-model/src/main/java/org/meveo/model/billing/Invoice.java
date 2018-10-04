@@ -67,7 +67,8 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @Entity
 @ObservableEntity
@@ -240,7 +241,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     
     
     /**
-     * 3583 : dueDate &  invoiceDate should be truncated before persist or update
+     * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
     @PreUpdate

@@ -766,7 +766,8 @@
                     <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="chargeTemplate" valueLabelField="code" edit="false" />
                     <hftl:formField label="#{messages['commons.status']}" field="status" edit="false" />
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" edit="false" />
-
+                    <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}" componentWidth="50" /> 
+                    
                     <hftl:formField label="#{messages['chargeInstance.criteria1']}" field="criteria1" edit="false" isMessage="false" newLine="true" />
                     <hftl:formField label="#{messages['chargeInstance.criteria2']}" field="criteria2" edit="false" isMessage="false" />
                     <hftl:formField label="#{messages['chargeInstance.criteria3']}" field="criteria3" edit="false" isMessage="false" />
@@ -802,6 +803,7 @@
                             popupId="recurringChargeTmpPopup" edit="false" />
                         <hftl:formField label="#{messages['businessEntity.description']}" field="description" size="50" disabled="true" componentWidth="40" />
                         <hftl:formField label="#{messages['recurringChargeInstance.subscriptionDate']}" field="subscriptionDate" edit="false" componentWidth="15" />
+                        <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{subscriptionBean.recurringChargeInstance.prepaid}" componentWidth="50" /> 
                         <hftl:formField label="#{messages['serviceInstance.quantity']}" field="quantity" edit="false" />
                         <hftl:formField label="#{messages['recurringChargeInstance.amountWithoutTax']}" field="amountWithoutTax" rendered="#{appProvider.entreprise}" disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}"  />
                         <hftl:formField label="#{messages['recurringChargeInstance.amountWithTax']}" field="amountWithTax" rendered="#{!appProvider.entreprise}" disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}"  />
@@ -822,10 +824,10 @@
 <!-- 								disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}"> -->
 <!-- 							</p:inputText> -->
 <!-- 						</hftl:decorateFormField> -->
-                    <hftl:formField label="#{messages['recurringChargeInstance.criteria1']}" field="criteria1" />
+                    <hftl:formField label="#{messages['recurringChargeInstance.criteria1']}" field="criteria1" newLine="true"/>
                     <hftl:formField label="#{messages['recurringChargeInstance.criteria2']}" field="criteria2" />
                     <hftl:formField label="#{messages['recurringChargeInstance.criteria3']}" field="criteria3" />
-                    <hftl:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" edit="false" />
+                    <hftl:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" edit="false" newLine="true" />
                     <hftl:formField label="#{messages['recurringChargeInstance.nextChargeDate']}" field="nextChargeDate" edit="false" />
 
                     <ui:param name="buttons" value="true" />
