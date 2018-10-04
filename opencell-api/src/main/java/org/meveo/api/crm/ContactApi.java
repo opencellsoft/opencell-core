@@ -83,16 +83,17 @@ public class ContactApi extends AccountEntityApi {
 			missingParameters.add("email");
 			missingParameters.add("code");
 		}
+		else if(StringUtils.isBlank(postData.getEmail())) {
+			missingParameters.add("email");
+		}
 
 		handleMissingParameters();
 
 		Contact contact = new Contact();
 		populate(postData, contact);
 
-		if (StringUtils.isBlank(postData.getEmail()) && !StringUtils.isBlank(postData.getCode()))
+		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode()))
 			contact.setCode(postData.getEmail());
-		else if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode()))
-			contact.setEmail(postData.getCode());
 		else {
 			contact.setCode(postData.getCode());
 			contact.setEmail(postData.getEmail());
@@ -158,12 +159,8 @@ public class ContactApi extends AccountEntityApi {
 
 		updateAccount(contact, postData);
 
-		if (!StringUtils.isBlank(postData.getCompany())) {
-			contact.setCompany(postData.getCompany());
-		}
-
-		if (!StringUtils.isBlank(postData.getCompany())) {
-			contact.setCompany(postData.getCompany());
+		if (!StringUtils.isBlank(postData.getEmail())) {
+			contact.setEmail(postData.getEmail());
 		}
 
 		if (!StringUtils.isBlank(postData.getDescription())) {
