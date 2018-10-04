@@ -57,6 +57,12 @@ public class GenerateInvoiceResultDto {
 
     /** The discount. */
     private BigDecimal discount;
+    
+    /** Code fo the billingAccount */
+    private String billingAccountCode;
+    
+    /** Code of the subscription. */
+    private String subscriptionCode;
 
     /** The discount aggregates. */
     @XmlElementWrapper(name = "discountAggregates")
@@ -318,5 +324,21 @@ public class GenerateInvoiceResultDto {
     @Override
     public String toString() {
         return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + " ,invoiceId:" + invoiceId + "]";
+    }
+
+    public String getBillingAccountCode() {
+        return billingAccountCode;
+    }
+
+    public void setBillingAccountCode(String billingAccountCode) {
+        this.billingAccountCode = billingAccountCode;
+    }
+
+    public String getSubscriptionCode() {
+        return subscriptionCode;
+    }
+
+    public void setSubscriptionCode(String subscriptionCode) {
+        this.subscriptionCode = subscriptionCode;
     }    
 }

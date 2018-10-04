@@ -36,6 +36,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.InitialTermTypeEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -362,6 +363,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		for (Subscription e : inactiveSubscriptions) {
 			remove(e);
 		}
+	}
+
+	public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
+		entity.setSubscribedTillDate(null);
+		entity.setSubscriptionTerminationReason(null);
+		entity.getSubscriptionRenewal().setInitialyActiveFor(null);
+		entity.setSubscriptionRenewal(new SubscriptionRenewal());
 	}
 
 }

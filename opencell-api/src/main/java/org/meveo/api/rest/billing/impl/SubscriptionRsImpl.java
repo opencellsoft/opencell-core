@@ -380,4 +380,17 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         return result;
 	}
 
+	@Override
+	public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
 }

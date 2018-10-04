@@ -83,7 +83,7 @@ public class ContactBean extends BaseBean<Contact> {
 		String message = null;
 	    	try {
 				fileContent = new Scanner(file.getInputStream()).useDelimiter("\\A").next();
-		    	contactApi.importLinkedInFromText(fileContent);
+		    	contactApi.importCSVText(fileContent);
 		    	message = FileUtils.getFileAsString(System.getProperty("jboss.server.temp.dir") + "\\LastContactError.log");
 		    	
 		    	if(message != null)

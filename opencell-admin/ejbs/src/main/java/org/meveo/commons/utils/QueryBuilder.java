@@ -43,6 +43,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
  * billingStatus).addCriterionEnum("a.networkStatus", networkStatus).addCriterionEntity("a.terminalInstance", terminalInstance) .addPaginationConfiguration(configuration);
  * 
  * @author Richard Hallier
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @lastModifiedVersion 5.1
@@ -64,7 +65,7 @@ public class QueryBuilder {
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
-    
+
     private Class<?> clazz;
 
     public enum QueryLikeStyleEnum {
@@ -500,9 +501,9 @@ public class QueryBuilder {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        
+
         Date start = c.getTime();
-        
+
         c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
@@ -527,7 +528,7 @@ public class QueryBuilder {
         calFrom.set(Calendar.MINUTE, 0);
         calFrom.set(Calendar.SECOND, 0);
         calFrom.set(Calendar.MILLISECOND, 0);
-        
+
         Date start = calFrom.getTime();
 
         String startDateParameterName = "start" + field.replace(".", "");
@@ -565,7 +566,7 @@ public class QueryBuilder {
         calTo.set(Calendar.MINUTE, 0);
         calTo.set(Calendar.SECOND, 0);
         calTo.set(Calendar.MILLISECOND, 0);
-        
+
         Date end = calTo.getTime();
 
         String endDateParameterName = "end" + field.replace(".", "");
@@ -595,12 +596,12 @@ public class QueryBuilder {
         Date start = cal.getTime();
         cal.set(year, month, date, 23, 59, 59);
         Date end = cal.getTime();
-        
+
         String startDateParameterName = "start" + startField.replace(".", "");
         String endDateParameterName = "end" + endField.replace(".", "");
-        
-        return addSqlCriterion("(" +startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
-                .addSqlCriterion("(" +endField + "<=:" + endDateParameterName  + " OR " + endField + " IS NULL )", endDateParameterName, end);
+
+        return addSqlCriterion("(" + startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
+            .addSqlCriterion("(" + endField + "<=:" + endDateParameterName + " OR " + endField + " IS NULL )", endDateParameterName, end);
     }
 
     /**
@@ -618,7 +619,7 @@ public class QueryBuilder {
         } else {
             q.append(" ORDER BY " + orderColumn);
         }
-        
+
         if (ascending) {
             q.append(" ASC ");
         } else {

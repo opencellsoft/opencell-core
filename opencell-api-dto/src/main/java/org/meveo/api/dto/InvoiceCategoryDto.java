@@ -57,7 +57,7 @@ public class InvoiceCategoryDto extends BusinessEntityDto {
             setOccTemplateCode(invoiceCategory.getOccTemplate().getCode());
         }
         if(invoiceCategory.getOccTemplateNegative() != null) {
-            setOccTemplateCode(invoiceCategory.getOccTemplateNegative().getCode());
+            setOccTemplateNegativeCode(invoiceCategory.getOccTemplateNegative().getCode());
         }
     }
 

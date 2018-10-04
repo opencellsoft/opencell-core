@@ -34,12 +34,17 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 public class DateUtils {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DateUtils.class);
 
     private static long lastTime = System.currentTimeMillis() / 1000;
 
@@ -629,5 +634,41 @@ public class DateUtils {
         }
 
         return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
+    }
+    
+    /**
+     * Format DDMMY : <br>
+     * SimpleDateFormat way is not working for this format. e.g : with sfd, 2009 will return '9' but 2018 will return 18<br>
+     * BUT the need here is to return always the last digit of the year !
+     *
+     * @param date the date
+     * @return the string
+     */
+    public static String formatDDMMY (Date date) {
+        
+        String ddMM = formatDateWithPattern(date, "ddMM");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String y = String.valueOf(calendar.get(Calendar.YEAR) % 10);
+        
+        return ddMM+y;
+    }
+    
+    public static Date truncateTime(Date date) {
+        try {
+            if (date == null) {
+                return null;
+            }
+            Calendar cal = Calendar.getInstance(); // locale-specific
+            cal.setTime(date);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTime();
+        } catch (Exception e) {
+            LOG.error(" error on truncateTime : [{}] ", e.getMessage());
+            return date;
+        }
     }
 }
