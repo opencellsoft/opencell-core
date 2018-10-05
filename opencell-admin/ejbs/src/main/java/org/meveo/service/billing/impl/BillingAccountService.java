@@ -996,6 +996,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                     for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                                         if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
                                             taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                            if (!StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL()) && (invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null) != null)) {
+                                                taxPercent = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null).getPercent();
+                                            }
                                             break;
                                         }
                                     }
@@ -1085,6 +1088,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                             for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                                 if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
                                     taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                    if (!StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL()) && (invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null) != null)) {
+                                        taxPercent = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null).getPercent();
+                                    }
                                     break;
                                 }
                             }
@@ -1191,6 +1197,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	                    for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
 	                        if (invoiceSubcategoryCountry.getTradingCountry() == billingAccount.getTradingCountry()) {
 	                            taxPercent = invoiceSubcategoryCountry.getTax().getPercent();
+                                if (!StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL()) && (invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null) != null)) {
+                                    taxPercent = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), null,  billingAccount, null).getPercent();
+                                }
 	                            break;
 	                        }
 	                    }
