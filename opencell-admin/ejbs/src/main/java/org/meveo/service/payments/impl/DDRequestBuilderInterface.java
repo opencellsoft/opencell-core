@@ -68,7 +68,7 @@ public interface DDRequestBuilderInterface {
     /**
      * Build SCT request file name.
      *
-     * @param methodContext the method context
+     * @param ddRequestLot The DDRequestLot to process.
      * @param appProvider The provider
      * @return the SCT file name
      * @throws BusinessException the business exception
