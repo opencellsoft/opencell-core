@@ -880,14 +880,20 @@ public class CustomFieldDataEntryBean implements Serializable {
 			Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
-            if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
-                messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
+			if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+                final BundleKey message = new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY));
+                messages.info(message);
+                log.info("A message to show after entity custom action execution (RESULT_GUI_MESSAGE_KEY) is : {}", message);
 
             } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
-                messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
+                String message = (String) result.get(Script.RESULT_GUI_MESSAGE);
+                messages.info(message);
+                log.info("A message to show after entity custom action execution (RESULT_GUI_MESSAGE) is : {}", message);
 
             } else {
-                messages.info(new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull"), action.getLabel());
+                final BundleKey message = new BundleKey("messages", "scriptInstance.actionExecutionSuccessfull");
+                messages.info(message, action.getLabel());
+                log.info("A message to show after entity custom action execution is : {}", (String) result.get(Script.RESULT_GUI_MESSAGE));
             }
 
             if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
