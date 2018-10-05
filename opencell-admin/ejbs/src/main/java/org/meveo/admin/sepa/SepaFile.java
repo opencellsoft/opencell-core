@@ -271,4 +271,16 @@ public class SepaFile implements DDRequestBuilderInterface {
         debtorAccount.setId(identification);
 
     }
+
+    @Override
+    public void generateSCTRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public String getSCTFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
