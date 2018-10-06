@@ -925,16 +925,6 @@
         <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
 	</changeSet>
-	
-	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
-		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
-	</changeSet>
-	
-    <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
-       <addColumn tableName="ar_payment_history">
-           <column name="customer_code" type="varchar(256)" />
-       </addColumn>
-    </changeSet>
 
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="postgresql">
 		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_quote_id</sql>

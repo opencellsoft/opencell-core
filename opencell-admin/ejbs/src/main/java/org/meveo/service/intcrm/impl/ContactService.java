@@ -185,15 +185,23 @@ public class ContactService extends BusinessService<Contact> {
 	}
 
 	public void create(Contact contact) throws BusinessException {
+		
 		Customer customer = null;
-		if(!StringUtils.isBlank(contact.getCompany()))
-			customer = customerService.findByCompanyName(contact.getCompany());
-		if(customer != null) {
+		if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
+			customer = customerService.findByCompanyName("UNASSIGNED");
+			if(customer == null) customer = createUnassignedCustomer();
 			contact.setAddressBook(customer.getAddressbook());
 		}
 		else {
-			customer = createCustomerFromContact(contact);
+			customer = customerService.findByCompanyName(contact.getCompany());
+			if(customer != null) {
+				contact.setAddressBook(customer.getAddressbook());
+			}
+			else {
+				customer = createCustomerFromContact(contact);
+			}
 		}
+		
 		super.create(contact);
 	}
 	
@@ -256,6 +264,34 @@ public class ContactService extends BusinessService<Contact> {
 		
 		contact.setAddressBook(addressBook);
 		
+		return customer;
+	}
+	
+	public Customer createUnassignedCustomer() throws BusinessException  {
+		Customer customer = new Customer();
+		CustomerBrand customerBrand = customerBrandService.findByCode("DEFAULT");
+		Seller seller = sellerService.findByCode("MAIN_SELLER");
+		CustomerCategory customerCategory = customerCategoryService.findByCode("PROSPECT");
+		
+		customer.setCustomerBrand(customerBrand);
+		customer.setSeller(seller);
+		customer.setCustomerCategory(customerCategory);
+		
+		customer.setCode("UNASSIGNED");
+
+        
+        AdditionalDetails additionalDetails = new AdditionalDetails();
+        additionalDetails.setCompanyName("UNASSIGNED");
+        additionalDetails.setPosition("UNASSIGNED");
+        additionalDetailsService.create(additionalDetails);
+        
+        AddressBook addressBook = new AddressBook("C_UNASSIGNED");
+        addressBookService.create(addressBook);
+        
+        customer.setAdditionalDetails(additionalDetails);
+        customer.setAddressbook(addressBook);	        
+		customerService.create(customer);
+				
 		return customer;
 	}
 	

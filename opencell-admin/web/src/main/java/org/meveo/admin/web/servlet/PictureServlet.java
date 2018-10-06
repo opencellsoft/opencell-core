@@ -126,7 +126,7 @@ public class PictureServlet extends HttpServlet {
         byte[] data = null;
         String imagePath = null;
 
-        if (filename.indexOf(".") > 0) {
+        if (filename.indexOf('.') > -1) {
             imagePath = rootPath + File.separator + filename;
 
         } else {
@@ -173,6 +173,7 @@ public class PictureServlet extends HttpServlet {
                 imagePath = productTemplate.getImagePath();
 
             }
+            
             if (imagePath != null) {
                 imagePath = rootPath + File.separator + imagePath;
             }
@@ -181,12 +182,14 @@ public class PictureServlet extends HttpServlet {
         if (imagePath != null) {
         	log.debug("imagePath found={}", imagePath);
             data = loadImage(imagePath);
+            
         } else {
         	log.debug("imagePath is null");
         }
 
         // Load a default image if not found
         if (data == null) {
+        	log.debug("image data is null");
 
             String defaultImage = null;
             if ("offerCategory".equals(groupname)) {
@@ -216,7 +219,7 @@ public class PictureServlet extends HttpServlet {
 
         if (data != null) {
             Path destFile = Paths.get(imagePath);
-            log.debug("data is not null, loading imagePath={}", imagePath);
+            log.debug("data is not null, loading imagePath={} with length={}", imagePath, data.length);
             
             try {
                 mimeType = Files.probeContentType(destFile);
@@ -231,13 +234,12 @@ public class PictureServlet extends HttpServlet {
             
 			// modifies response
 			resp.setContentType(mimeType);
-			resp.setContentLength(data.length);
 
 //			try (InputStream in = new ByteArrayInputStream(data)) {
 //				try (OutputStream out = resp.getOutputStream()) {
 //					byte[] buffer = new byte[1024];
-//					int len = 0;
-//					while ((len = in.read(buffer)) != -1) {
+//					int len = -1;
+//					while ((len = in.read(buffer)) > 0) {
 //						out.write(buffer, 0, len);
 //					}
 //				}

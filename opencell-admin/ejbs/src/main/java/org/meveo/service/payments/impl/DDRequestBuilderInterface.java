@@ -56,5 +56,24 @@ public interface DDRequestBuilderInterface {
      */
     public DDRejectFileInfos processDDRejectedFile(File file) throws BusinessException;
 
+    /**
+     * Generate the SCT Request file for a given DDRequestLot.
+     * 
+     * @param ddRequestLot The DDRequestLot to process.
+     * @param appProvider The provider
+     * @throws BusinessException the BusinessException.
+     */
+    void generateSCTRequestLotFile(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException;
+
+    /**
+     * Build SCT request file name.
+     *
+     * @param ddRequestLot The DDRequestLot to process.
+     * @param appProvider The provider
+     * @return the SCT file name
+     * @throws BusinessException the business exception
+     */
+    String getSCTFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException;
+
    
 }

@@ -228,4 +228,20 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return null;
         }
     }
+    
+    /**
+     * Find by order number.
+     *
+     * @param orderNumber The order number
+     * @return account operation.
+     */
+    public AccountOperation findByOrderNumber(String orderNumber) {
+        try {
+            QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a");
+            qb.addCriterion("orderNumber", "=", orderNumber, false);
+            return (AccountOperation) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException ne) {
+            return null;
+        }
+    }
 }
