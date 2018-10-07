@@ -52,50 +52,56 @@
 
             function populateMRR(mrrOnSubscriptionsValues) {
 
-				var regular = {
+            	var dimension1 = mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.dimensions && mrrOnSubscriptionsValues.dimensions["dimension1"];
+            	var dimension2 = mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.dimensions && mrrOnSubscriptionsValues.dimensions["dimension2"];
+            	var dimension3 = mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.dimensions && mrrOnSubscriptionsValues.dimensions["dimension3"];
+            	var dimension4 = mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.dimensions && mrrOnSubscriptionsValues.dimensions["dimension4"];
+            	
+				var dataDimension1 = {
 					type: 'bar',
-					label: 'Regular',
-					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.regular || [],
+					label: dimension1 || "",
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.dimension1 || [],
 					backgroundColor: 'rgba(  0, 32, 80, 0.8)',
 					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.9)',
 					borderWidth: 0
 				};
 
-				var newSubscriptions = {
+				var dataDimension2 = {
 					type: 'bar',
-					label: 'New',
-					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets["new"] || [],
+					label: dimension2 || "",
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets["dimension2"] || [],
 					backgroundColor: 'rgba(  64, 192, 64, 0.8)',
 					hoverBackgroundColor: 'rgba( 32, 128, 32, 0.9)',
 					borderWidth: 0
 				};
 
-				var upsell = {
+				var dataDimension3 = {
 					type: 'bar',
-					label: 'Upsell',
-					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.upsell || [],
+					label: dimension3 || "",
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.dimension3 || [],
 					backgroundColor: 'rgba( 64, 192, 64, 0.6)',
 					hoverBackgroundColor: 'rgba( 32, 128, 32, 0.7)',
 					borderWidth: 0
 				};
 
-				var cancelled = {
+				var dataDimension4 = {
 					type: 'bar',
-					label: 'Cancelled',
-					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.cancelled || [],
+					label: dimension4 || "",
+					data: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.datasets && mrrOnSubscriptionsValues.datasets.dimension4 || [],
 					backgroundColor: 'rgba(231, 61, 59, 0.6)',
 					hoverBackgroundColor: 'rgba(128, 32, 32, 0.7)',
 					borderWidth: 0
 				};
 
+				const mydatasets = [];
+				if(dimension1) mydatasets.push(dataDimension1);
+				if(dimension2) mydatasets.push(dataDimension2);
+				if(dimension3) mydatasets.push(dataDimension3);
+				if(dimension4) mydatasets.push(dataDimension4);
+				
 				var mrrData = {
 					labels: mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.chartLabels || [],
-					datasets: [
-						regular,
-						cancelled,
-						upsell,
-                        newSubscriptions
-					]
+					datasets: mydatasets
 				};
 
 				var mrrOptions = {
@@ -123,25 +129,51 @@
 
             function populateChurn(churnValues) {
 
-            	var subscriptions = {
+            	var dimension1 = churnValues && churnValues.dimensions && churnValues.dimensions.dimension1;
+            	var dimension2 = churnValues && churnValues.dimensions && churnValues.dimensions.dimension2;
+            	var dimension3 = churnValues && churnValues.dimensions && churnValues.dimensions.dimension3;
+            	var dimension4 = churnValues && churnValues.dimensions && churnValues.dimensions.dimension4;
+            	
+            	var dataDimension1 = {
 					type: 'bar',
-					label: 'Subscriptions',
-					data: churnValues && churnValues.datasets && churnValues.datasets.subscriptions || [],
+					label: dimension1 || "",
+					data: churnValues && churnValues.datasets && churnValues.datasets.dimension1 || [],
 					backgroundColor: 'rgba(  0, 32, 80, 0.6)',
 					hoverBackgroundColor: 'rgba(  0, 32, 80, 0.8)',
 					borderColor: 'rgba(  0, 32, 80, 1)',
 					borderWidth: 0
 				};
 
-				var terminations = {
+				var dataDimension2 = {
 					type: 'bar',
-					label: 'Terminations',
-					data: churnValues && churnValues.datasets && churnValues.datasets.terminations || [],
+					label: dimension2 || "",
+					data: churnValues && churnValues.datasets && churnValues.datasets.dimension2 || [],
 					backgroundColor: 'rgba(231, 61, 59, 0.6)',
 					hoverBackgroundColor: 'rgba(231, 61, 59, 0.8)',
 					borderColor: 'rgba(231, 61, 59, 1)',
 					borderWidth: 0
 				};
+				
+				var dataDimension3 = {
+						type: 'bar',
+						label: dimension3 || "",
+						data: churnValues && churnValues.datasets && churnValues.datasets.dimension3 || [],
+						backgroundColor: 'rgba(  0, 32, 80, 0.8)',
+						hoverBackgroundColor: 'rgba( 0, 24, 64, 0.9)',
+						borderColor: 'rgba(  0, 32, 80, 1)',
+						borderWidth: 0
+				};
+				
+				var dataDimension4 = {
+						type: 'bar',
+						label: dimension4 || "",
+						data: churnValues && churnValues.datasets && churnValues.datasets.dimension4 || [],
+						backgroundColor: 'rgba(  64, 192, 64, 0.8)',
+						hoverBackgroundColor: 'rgba( 32, 128, 32, 0.9)',
+						borderColor: 'rgba(231, 61, 59, 1)',
+						borderWidth: 0
+				};
+					
 				var trend = {
 					type: 'line',
 					label: "Trend",
@@ -164,13 +196,16 @@
 					spanGaps: true
 				};
 
+				const mydatasets = [];
+				if(dimension1) mydatasets.push(dataDimension1);
+				if(dimension2) mydatasets.push(dataDimension2);
+				if(dimension3) mydatasets.push(dataDimension3);
+				if(dimension4) mydatasets.push(dataDimension4);
+				mydatasets.push(trend);
+				
 				var churnData = {
 					labels: churnValues && churnValues.chartLabels || [],
-					datasets: [
-						subscriptions,
-						terminations,
-						trend
-					]
+					datasets: mydatasets
 				};
 				var churnOptions = {
 					scales: {
@@ -200,37 +235,37 @@
 
             	var mrrPerOfferLabels = mrrPerOffer && mrrPerOffer.legendLabels || [];
 
-				var mrrOffer1 = {
+				var dataDimension1 = {
 					type: 'bar',
 					label: mrrPerOfferLabels[0],
-					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer1 || [],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.dimension1 || [],
 					backgroundColor: 'rgba(  0, 32, 80, 0.8)',
 					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.9)',
 					borderColor: 'rgba(  0, 32, 80, 1)',
 					borderWidth: 0
 				};
-				var mrrOffer2 = {
+				var dataDimension2 = {
 					type: 'bar',
 					label: mrrPerOfferLabels[1],
-					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer2 || [],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.dimension2 || [],
 					backgroundColor: 'rgba(  0, 32, 80, 0.6)',
 					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.7)',
 					borderColor: 'rgba(  0, 32, 80, 1)',
 					borderWidth: 0
 				};
-				var mrrOffer3 = {
+				var dataDimension3 = {
 					type: 'bar',
 					label: mrrPerOfferLabels[2],
-					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer3 || [],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.dimension3 || [],
 					backgroundColor: 'rgba(  0, 32, 80, 0.4)',
 					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.5)',
 					borderColor: 'rgba(  0, 32, 80, 1)',
 					borderWidth: 0
 				};
-				var mrrOffer4 = {
+				var dataDimension4 = {
 					type: 'bar',
 					label: mrrPerOfferLabels[3],
-					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.offer4 || [],
+					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.dimension4 || [],
 					backgroundColor: 'rgba(  0, 32, 80, 0.2)',
 					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.3)',
 					borderColor: 'rgba(  0, 32, 80, 1)',
@@ -238,7 +273,7 @@
                 };
 				var mrrOthers = {
 					type: 'bar',
-					label: mrrPerOfferLabels[4],
+					label: mrrPerOfferLabels[4] || mrrPerOfferLabels[3] || mrrPerOfferLabels[2] || mrrPerOfferLabels[1],
 					data: mrrPerOffer && mrrPerOffer.datasets && mrrPerOffer.datasets.others || [],
 					backgroundColor: 'rgba(  0, 32, 80, 0.1)',
 					hoverBackgroundColor: 'rgba( 0, 24, 64, 0.2)',
@@ -267,16 +302,22 @@
 					spanGaps: true
                 };
 
+            	var dimension1 = mrrPerOffer && mrrPerOffer.dimensions && mrrPerOffer.dimensions.dimension1;
+            	var dimension2 = mrrPerOffer && mrrPerOffer.dimensions && mrrPerOffer.dimensions.dimension2;
+            	var dimension3 = mrrPerOffer && mrrPerOffer.dimensions && mrrPerOffer.dimensions.dimension3;
+            	var dimension4 = mrrPerOffer && mrrPerOffer.dimensions && mrrPerOffer.dimensions.dimension4;
+            	
+            	const mydatasets = [];
+				if(dimension1) mydatasets.push(dataDimension1);
+				if(dimension2) mydatasets.push(dataDimension2);
+				if(dimension3) mydatasets.push(dataDimension3);
+				if(dimension4) mydatasets.push(dataDimension4);
+				mydatasets.push(mrrOthers);
+				mydatasets.push(mrrTotal);
+            	
 				var mrrPerOfferData = {
 					labels: mrrPerOffer && mrrPerOffer.chartLabels || [],
-					datasets: [
-						mrrOffer1,
-						mrrOffer2,
-						mrrOffer3,
-                        mrrOffer4,
-                        mrrOthers,
-                        mrrTotal
-					]
+					datasets: mydatasets
 				};
 				var mrrPerOfferOptions = {
 					scales: {
