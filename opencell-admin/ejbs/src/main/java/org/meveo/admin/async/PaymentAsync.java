@@ -3,10 +3,14 @@
  */
 package org.meveo.admin.async;
 
+import static org.meveo.service.script.payment.AccountOperationFilterScript.LIST_AO_TO_PAY;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -26,12 +30,14 @@ import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.script.payment.AccountOperationFilterScript;
 
 /**
  * The Class PaymentAsync.
  *
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 
 @Stateless
@@ -73,7 +79,8 @@ public class PaymentAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> caIds, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
-            OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, String paymentPerAOorCA, Date fromDueDate, Date toDueDate) {
+            OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, String paymentPerAOorCA, Date fromDueDate, Date toDueDate,
+            AccountOperationFilterScript aoFilterScript) { // TODO : nbr of method arguments is disturbing , refactor it by using a dedicated bean/dto
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         BigDecimal oneHundred = new BigDecimal("100");
@@ -84,7 +91,7 @@ public class PaymentAsync {
            
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                listAoToPayOrRefund = accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID);
+                listAoToPayOrRefund = filterAoToPay(aoFilterScript, accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID));
             } else {
                 listAoToPayOrRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
             }
@@ -112,5 +119,14 @@ public class PaymentAsync {
 
         }
         return new AsyncResult<String>("OK");
+    }
+
+    private List<AccountOperation> filterAoToPay(AccountOperationFilterScript aoFilterScript, List<AccountOperation> listAoToPayOrRefund) {
+        if (aoFilterScript != null){
+            Map<String, Object> methodContext = new HashMap<>();
+            methodContext.put(LIST_AO_TO_PAY, listAoToPayOrRefund);
+            return aoFilterScript.filterAoToPay(methodContext);
+        }
+        return listAoToPayOrRefund;
     }
 }

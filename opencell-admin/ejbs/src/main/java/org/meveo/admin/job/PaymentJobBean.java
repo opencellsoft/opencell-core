@@ -27,13 +27,17 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
+import org.meveo.service.script.payment.AccountOperationFilterScript;
 import org.slf4j.Logger;
 
 /**
  * The Class PaymentJobBean, PaymentJob implementation.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class PaymentJobBean extends BaseJobBean {
@@ -49,6 +53,9 @@ public class PaymentJobBean extends BaseJobBean {
 
     @Inject
     private PaymentGatewayService paymentGatewayService;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
     @CurrentUser
@@ -89,7 +96,8 @@ public class PaymentJobBean extends BaseJobBean {
                 fromDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_fromDueDate");
                 toDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_toDueDate");
                 paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
-
+                
+                
             } catch (Exception e) {
                 nbRuns = new Long(1);
                 waitingMillis = new Long(0);
@@ -102,7 +110,7 @@ public class PaymentJobBean extends BaseJobBean {
             if (toDueDate == null) {
                 toDueDate = DateUtils.addYearsToDate(fromDueDate, 1000);
             }
-
+            
             List<Long> caIds = new ArrayList<Long>();
             if (OperationCategoryEnum.CREDIT == operationCategory) {
                 caIds = customerAccountService.getCAidsForPayment(paymentMethodType, fromDueDate,toDueDate);
@@ -118,9 +126,11 @@ public class PaymentJobBean extends BaseJobBean {
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
             MeveoUser lastCurrentUser = currentUser.unProxy();
+            
+            AccountOperationFilterScript aoFilterScript = getAOScriptInstance(jobInstance);
             while (subListCreator.isHasNext()) {
                 futures.add(paymentAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
-                    paymentMethodType, lastCurrentUser, paymentPerAOorCA, fromDueDate,toDueDate));
+                    paymentMethodType, lastCurrentUser, paymentPerAOorCA, fromDueDate,toDueDate, aoFilterScript));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());
@@ -149,6 +159,23 @@ public class PaymentJobBean extends BaseJobBean {
             result.registerError(e.getMessage());
             result.addReport(e.getMessage());
         }
+    }
+
+    private AccountOperationFilterScript getAOScriptInstance(JobInstance jobInstance) {
+        try {
+            final  String aoFilterScriptCode =  ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_aoFilterScript")).getCode();
+           
+            if (aoFilterScriptCode != null) {
+                log.debug(" looking for ScriptInstance with aoFilterScriptCode :  [{}] ", aoFilterScriptCode);
+                ScriptInterface si = scriptInstanceService.getScriptInstance(aoFilterScriptCode);
+                if (si != null && si instanceof AccountOperationFilterScript) {
+                    return (AccountOperationFilterScript) si;
+                }
+            }
+        } catch (Exception e) {
+            log.error(" Error on newAoFilterScriptInstance : [{}]" , e.getMessage());
+        }
+        return null;
     }
 
 }

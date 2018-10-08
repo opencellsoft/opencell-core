@@ -30,6 +30,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -39,7 +40,11 @@ import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
 import org.reflections.Reflections;
 
-
+/**
+ * 
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
+ */
 @Named
 @ViewScoped
 public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldTemplate> {
@@ -133,6 +138,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, false, null, null);
         entities.addAll(calendarsAsCustomEntities(query)); // #3603 : Allow reference Custom Fields to Calendar
+        entities.addAll(scriptsAsCustomEntities(query)); 
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
@@ -141,6 +147,22 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         return clazzNames;
     }
     
+    private Collection<? extends CustomizedEntity> scriptsAsCustomEntities(String entityName) {
+        Reflections reflections = new Reflections("org.meveo.model.scripts");
+        
+        List<CustomizedEntity> targetTypes = new ArrayList<>();
+        targetTypes.add(new CustomizedEntity(ScriptInstance.class));
+        
+        Set<Class<? extends ScriptInstance>> foundClasses = reflections.getSubTypesOf(ScriptInstance.class);
+        for (Class<? extends ScriptInstance> calendarClass : foundClasses) {
+            String classSimpleName = calendarClass.getSimpleName();
+            if ( !Modifier.isAbstract(calendarClass.getModifiers()) && ( (isEmpty(entityName) || classSimpleName.toLowerCase().contains(entityName)) ) ) {
+                targetTypes.add(new CustomizedEntity(calendarClass));
+            }
+        }
+        return targetTypes;
+    }
+
     private Collection<? extends CustomizedEntity> calendarsAsCustomEntities(String entityName) {
         Reflections reflections = new Reflections("org.meveo.model.catalog");
         Set<Class<? extends Calendar>> calendarClasses = reflections.getSubTypesOf(Calendar.class);
