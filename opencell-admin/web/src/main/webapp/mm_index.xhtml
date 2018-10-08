@@ -1,5 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 template="/layout/template.xhtml">
@@ -11,7 +12,9 @@
         <div class="no-border-radius ui-grid-responsive">
             <div class="chart-row">
                 <div class="text-center box no-border no-border-radius ui-grid-col-6">
-                    <div class="box-title">#{messages['marketingManager.home.mrrLabel']}
+                <c:set var="resourceName" value="#{chartBean.mrrOnSubscriptionsValues}" />
+                    <div class="box-title">
+                    	<span id="mrrTitle"/>
                         <span id="mrrTrend" title="#{messages['marketingManager.home.mrrTrendLabel']}" class="trend" />
                     </div>
                     <div class="draw">
@@ -19,7 +22,8 @@
                     </div>
                 </div>
                 <div class="text-center box no-border no-border-radius ui-grid-col-6">
-                    <div class="box-title">#{messages['marketingManager.home.churnLabel']}
+                    <div class="box-title">
+                    	<span id="churnTitle"/>
                         <span id="churnTrend" title="#{messages['marketingManager.home.churnTrendLabel']}" class="trend" />
                     </div>
                     <div class="draw">
@@ -29,7 +33,8 @@
             </div>
             <div class="chart-row">
                 <div class="text-center box no-border no-border-radius ui-grid-col-6">
-                    <div class="box-title">#{messages['marketingManager.home.mrrPerOfferLabel']}
+                    <div class="box-title">
+                    	<span id="mrrOfferTitle"/>
                         <span id="mrrPerOfferTrend" title="#{messages['marketingManager.home.mrrPerOfferTrendLabel']}" class="trend" />
                     </div>
                     <div class="draw">
@@ -37,7 +42,8 @@
                     </div>
                 </div>
                 <div class="text-center box no-border no-border-radius ui-grid-col-6">
-                    <div class="box-title">#{messages['marketingManager.home.ordersByStatusLabel']}
+                    <div class="box-title">#{chartBean.ordersByStatus[title]}
+                    	<span id="orderTitle"/>
                         <span id="ordersByStatusTrend" title="#{messages['marketingManager.home.ordersByStatusTrendLabel']}" class="trend"/>
                     </div>
                     <div class="draw">
@@ -125,6 +131,8 @@
 						options: mrrOptions
 					}
 				);
+				var mrrTitle = document.getElementById("mrrTitle");
+				mrrTitle.innerHTML = mrrOnSubscriptionsValues && mrrOnSubscriptionsValues.title || "";
             }
 
             function populateChurn(churnValues) {
@@ -229,6 +237,8 @@
 				);
 				var churnTrend = document.getElementById("churnTrend");
 				churnTrend.innerHTML = formatTrendValue(churnValues.trendValue);
+				var churnTitle = document.getElementById("churnTitle");
+				churnTitle.innerHTML = churnValues && churnValues.title || "";
             }
 
             function populateMRRPerOffer(mrrPerOffer) {
@@ -345,6 +355,8 @@
 				mrrTrend.innerHTML = formatTrendValue(mrrPerOffer.trendValue);
 				var mrrPerOfferTrend = document.getElementById("mrrPerOfferTrend");
 				mrrPerOfferTrend.innerHTML = formatTrendValue(mrrPerOffer.trendValue);
+				var mrrOfferTitle = document.getElementById("mrrOfferTitle");
+				mrrOfferTitle.innerHTML = mrrPerOffer.title;
             }
 
             function populateOrdersByStatus(ordersByStatus) {
@@ -397,6 +409,8 @@
 				);
 				var ordersByStatusTrend = document.getElementById("ordersByStatusTrend");
 				ordersByStatusTrend.innerHTML = formatTrendValue(ordersByStatus.trendValue);
+				var orderTitle = document.getElementById("orderTitle");
+				orderTitle.innerHTML = ordersByStatus && ordersByStatus.title || "";
             }
 
             function formatTrendValue(trend){
@@ -419,6 +433,7 @@
             populateChurn(#{chartBean.churnValues});
             populateMRRPerOffer(#{chartBean.mrrOnOffers});
             populateOrdersByStatus(#{chartBean.ordersByStatus});
+            
 
 			//]]>
         </script>

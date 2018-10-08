@@ -193,6 +193,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             if (dimension4 != null && !"null".equals(dimension4)) {
                 hasDimension4 = true;
             }
+            jsModel.setTitle(mq.getDescription());
         }
 
         List<BigDecimal> data = new ArrayList<>();
@@ -318,6 +319,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             jsModel.getDimensions().put(DIMENSION_2, "null".equals(dimension2) ? null : dimension2);
             jsModel.getDimensions().put(DIMENSION_3, "null".equals(dimension3) ? null : dimension3);
             jsModel.getDimensions().put(DIMENSION_4, "null".equals(dimension4) ? null : dimension4);
+            jsModel.setTitle(mq.getDescription());
         }
 
         jsModel.getDatasets().put(DIMENSION_1, new ArrayList<BigDecimal>());

@@ -20,6 +20,7 @@ public class ChartJsModel {
     private Map<String, List<BigDecimal>> datasets;
     private Map<String, String> dimensions;
     private BigDecimal trendValue;
+    private String title;
 
     public List<String> getChartLabels() {
         if (chartLabels == null) {
@@ -72,4 +73,16 @@ public class ChartJsModel {
     public void setTrendValue(BigDecimal trendValue) {
         this.trendValue = trendValue;
     }
+
+    public String getTitle() {
+        return title;
+    }
+    public String gettitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
 }
