@@ -21,6 +21,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -268,5 +269,9 @@ public interface CustomerRs extends IBaseRs {
 	@POST
 	@Path("customerNumberSequence")
 	GenericSequenceValueResponseDto getNextCustomerNumber();
+	
+	@POST
+	@Path("/account/customer/sequence")
+	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
 	
 }

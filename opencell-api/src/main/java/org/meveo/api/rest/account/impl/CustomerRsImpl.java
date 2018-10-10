@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.api.account.CustomerApi;
+import org.meveo.api.account.CustomerSequenceApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
@@ -15,6 +16,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -33,6 +35,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
     @Inject
     private CustomerApi customerApi;
+    
+    @Inject
+    private CustomerSequenceApi customerSequenceApi;
 
     @Override
     public ActionStatus create(CustomerDto postData) {
@@ -304,6 +309,19 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 			result = customerApi.getNextCustomerNumber();
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerSequenceApi.createCustomerSequence(postData);
+		} catch (Exception e) {
+			processException(e, result);
 		}
 
 		return result;
