@@ -270,8 +270,31 @@ public interface CustomerRs extends IBaseRs {
 	@Path("customerNumberSequence")
 	GenericSequenceValueResponseDto getNextCustomerNumber();
 	
+	/**
+	 * Creates a new customer sequence.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
 	@POST
 	@Path("/account/customer/sequence")
 	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
+	
+	/**
+	 * Updates a new customer sequence with a given code.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@PUT
+	@Path("/account/customer/sequence")
+	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
+	
+	/**
+	 * Generates the next customer sequence number.
+	 * @param code code of the sequence
+	 * @return sequence value dto
+	 */
+	@POST
+	@Path("/account/customer/sequence/{code}/next")
+	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
 	
 }

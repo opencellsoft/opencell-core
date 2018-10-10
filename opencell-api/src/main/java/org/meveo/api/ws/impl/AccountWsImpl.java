@@ -14,6 +14,7 @@ import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.account.BillingAccountApi;
 import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.account.CustomerApi;
+import org.meveo.api.account.CustomerSequenceApi;
 import org.meveo.api.account.TitleApi;
 import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
@@ -62,6 +63,7 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -113,6 +115,9 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     
     @Inject
     private RumSequenceApi rumSequenceApi;
+    
+    @Inject
+    private CustomerSequenceApi customerSequenceApi;
 
     @Override
     public ActionStatus createCustomer(CustomerDto postData) {
@@ -1255,6 +1260,45 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
 		try {
 			result = customerApi.getNextCustomerNumber();
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerSequenceApi.createCustomerSequence(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateCustomerSequence(CustomerSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerSequenceApi.updateCustomerSequence(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public GenericSequenceValueResponseDto getNextCustomerSequenceNumber(String code) {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+		try {
+			result = customerSequenceApi.getNextNumber(code);
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 		}

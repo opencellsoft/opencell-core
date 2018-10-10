@@ -1859,6 +1859,8 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="code" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -1870,6 +1872,7 @@
     	</createTable>
     	
         <createSequence sequenceName="crm_customer_sequence_seq" />
+        <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id"/>
     </changeSet>
     
 </databaseChangeLog>

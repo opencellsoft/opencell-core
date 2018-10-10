@@ -326,5 +326,31 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
 		return result;
 	}
+
+	@Override
+	public ActionStatus updateCustomerSequence(CustomerSequenceDto postData) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			customerSequenceApi.updateCustomerSequence(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public GenericSequenceValueResponseDto getNextCustomerSequenceNumber(String code) {
+		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+
+		try {
+			result = customerSequenceApi.getNextNumber(code);
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
 	
 }

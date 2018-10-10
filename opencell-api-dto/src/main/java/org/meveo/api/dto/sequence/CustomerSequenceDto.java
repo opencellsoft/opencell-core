@@ -1,5 +1,7 @@
 package org.meveo.api.dto.sequence;
 
+import javax.validation.constraints.NotNull;
+
 import org.meveo.api.dto.BusinessEntityDto;
 
 /**
@@ -15,6 +17,7 @@ public class CustomerSequenceDto extends BusinessEntityDto {
 	private GenericSequenceDto genericSequence;
 
 	/** Code of the seller */
+	@NotNull
 	private String seller;
 
 	public String getSeller() {

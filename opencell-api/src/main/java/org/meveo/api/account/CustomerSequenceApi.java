@@ -14,9 +14,11 @@ import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.sequence.GenericSequenceApi;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.CustomerSequence;
+import org.meveo.model.sequence.GenericSequence;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.CustomerSequenceService;
 
@@ -38,10 +40,11 @@ public class CustomerSequenceApi extends BaseApi {
 	public void createCustomerSequence(CustomerSequenceDto postData) throws MeveoApiException, BusinessException {
 		validateCustomerSequence(postData);
 
-		CustomerSequence customerSequence = toCustomerSequence(postData, null);
-		if (customerSequence != null) {
+		if ((customerSequenceService.findByCode(postData.getCode())) != null) {
 			throw new EntityAlreadyExistsException(CustomerSequence.class, postData.getCode());
 		}
+
+		CustomerSequence customerSequence = toCustomerSequence(postData, null);
 
 		customerSequenceService.create(customerSequence);
 	}
@@ -49,10 +52,12 @@ public class CustomerSequenceApi extends BaseApi {
 	public void updateCustomerSequence(CustomerSequenceDto postData) throws BusinessException, MeveoApiException {
 		validateCustomerSequence(postData);
 
-		CustomerSequence customerSequence = toCustomerSequence(postData, null);
+		CustomerSequence customerSequence = customerSequenceService.findByCode(postData.getCode());
 		if (customerSequence == null) {
 			throw new EntityDoesNotExistsException(CustomerSequence.class, postData.getCode());
 		}
+
+		toCustomerSequence(postData, customerSequence);
 
 		customerSequenceService.update(customerSequence);
 	}
@@ -63,19 +68,36 @@ public class CustomerSequenceApi extends BaseApi {
 		if (customerSequences != null && !customerSequences.isEmpty()) {
 			result = customerSequences.stream().map(p -> fromCustomerSequence(p, null)).collect(Collectors.toList());
 		}
-		
+
 		return result;
 	}
 
-	public GenericSequenceValueResponseDto getNextMandateNumber() throws BusinessException {
+	public GenericSequenceValueResponseDto getNextNumber(String code)
+			throws MissingParameterException, EntityDoesNotExistsException {
 		GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
-		// GenericSequence rumSequence = providerService.getNextMandateNumber();
-		// String rumSequenceNumber =
-		// StringUtils.getLongAsNChar(rumSequence.getCurrentSequenceNb(),
-		// rumSequence.getSequenceSize());
-		// result.setSequence(GenericSequenceApi.fromGenericSequence(rumSequence));
-		// result.setValue(rumSequence.getPrefix() + rumSequenceNumber);
+		if (StringUtils.isBlank(code)) {
+			missingParameters.add("code");
+		}
+
+		handleMissingParameters();
+
+		CustomerSequence customerSequence = customerSequenceService.findByCode(code);
+		if (customerSequence == null) {
+			throw new EntityDoesNotExistsException(CustomerSequence.class, code);
+		}
+
+		customerSequenceService.getNextNumber(customerSequence);
+
+		if (customerSequence.getSeller() != null) {
+			result.setSeller(customerSequence.getSeller().getCode());
+		}
+
+		GenericSequence genericSequence = customerSequence.getGenericSequence();
+		String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(),
+				genericSequence.getSequenceSize());
+		result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
+		result.setValue(genericSequence.getPrefix() + sequenceNumber);
 
 		return result;
 	}
@@ -89,6 +111,9 @@ public class CustomerSequenceApi extends BaseApi {
 		}
 		if (postData.getGenericSequence().getSequenceSize() > 20) {
 			throw new MeveoApiException("sequenceSize must be <= 20.");
+		}
+		if (StringUtils.isBlank(postData.getSeller())) {
+			missingParameters.add("seller");
 		}
 
 		handleMissingParameters();
