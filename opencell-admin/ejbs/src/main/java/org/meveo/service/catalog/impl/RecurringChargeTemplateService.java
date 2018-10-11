@@ -27,7 +27,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -106,7 +105,7 @@ public class RecurringChargeTemplateService extends ChargeTemplateService<Recurr
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
-            result = (Boolean) res;
+            result = res != null ? (Boolean) res : false;
         } catch (Exception e) {
             throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
         }
