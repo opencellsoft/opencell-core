@@ -323,6 +323,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         int filesToGenerate = ddrequestItems.size() == 0 ? 0 : (int) Math.ceil(ddrequestItems.size() / (double) operationsByFile);
         int opToGenerate = 0;
         int generatedOps = 0;
+        int opWithErrors = 0;
         BigDecimal totalAmount;
         List<String> generatedFilesNames = new ArrayList<>();
         String fileName;
@@ -343,17 +344,20 @@ public class SepaFile implements DDRequestBuilderInterface {
                     } else {
                         log.error("ddrequestItem with id = " + ddrequestItem.getId() + " has Errors :" + ddrequestItem.getErrorMsg() + ". The file " + fileName
                                 + "will not contain all payment informations.");
+                        opWithErrors++;
                     }
                     opToGenerate++;
                     generatedOps++;
                 }
-                message.getGrpHdr().setCtrlSum(totalAmount.setScale(2, RoundingMode.HALF_UP));
-                message.getGrpHdr().setNbOfTxs(String.valueOf(opToGenerate));
-                String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008",
-                    "https://github.com/w2c/sepa-sdd-xml-generator/blob/master/validation_schemes/pain.008.001.02.xsd");
+                if (opToGenerate > opWithErrors) { // The file is generated only if it contains at least one operation without errors
+                    message.getGrpHdr().setCtrlSum(totalAmount.setScale(2, RoundingMode.HALF_UP));
+                    message.getGrpHdr().setNbOfTxs(String.valueOf(opToGenerate));
+                    // the Pain001 jaxb classes are generated from the xsd located at: https://www.iso20022.org/documents/messages/1_0_version/pain/schemas/pain.001.001.03.zip
+                    String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain001", "https://github.com/digitick/php-sepa-xml/blob/master/tests/pain.001.001.03.xsd");
 
-                JAXBUtils.marshaller(document, new File(fileName), schemaLocation);
-                generatedFilesNames.add(fileName);
+                    JAXBUtils.marshaller(document, new File(fileName), schemaLocation);
+                    generatedFilesNames.add(fileName);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new BusinessException(e.getMessage());
