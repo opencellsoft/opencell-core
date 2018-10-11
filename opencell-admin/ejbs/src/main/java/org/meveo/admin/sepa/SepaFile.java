@@ -343,7 +343,7 @@ public class SepaFile implements DDRequestBuilderInterface {
                         addSctPaymentInformation(message, ddrequestItem, appProvider);
                     } else {
                         log.error("ddrequestItem with id = " + ddrequestItem.getId() + " has Errors :" + ddrequestItem.getErrorMsg() + ". The file " + fileName
-                                + "will not contain all payment informations.");
+                                + " will not contain all payment informations.");
                         opWithErrors++;
                     }
                     opToGenerate++;
