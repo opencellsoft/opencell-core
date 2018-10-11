@@ -37,7 +37,7 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2.1
+ * @lastModifiedVersion 5.2
  */
 @Stateless
 public class PaymentMethodApi extends BaseApi {
