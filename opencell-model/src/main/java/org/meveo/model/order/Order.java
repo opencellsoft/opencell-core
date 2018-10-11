@@ -32,6 +32,7 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
@@ -43,6 +44,7 @@ import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 
 @Entity
+@ObservableEntity
 @ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "ORDER")
 @Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
