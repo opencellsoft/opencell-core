@@ -47,6 +47,24 @@ public class CustomDDRequestBuilder implements DDRequestBuilderInterface {
         return ddRequestBuilderScriptInterface.getDDFileName(scriptContext);
         
     }
+    
+    @Override
+    public void generateSCTRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);    
+        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider);    
+        ddRequestBuilderScriptInterface.generateSCTRequestLotFile(scriptContext);        
+    }
+
+  
+    @Override
+    public String getSCTFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(DDRequestBuilderScript.DD_REQUEST_LOT, ddRequestLot);  
+        scriptContext.put(DDRequestBuilderScript.PROVIDER, appProvider); 
+        return ddRequestBuilderScriptInterface.getSCTFileName(scriptContext);
+        
+    }
 
     @Override
     public String getDDRejectFilePrefix() throws BusinessException {

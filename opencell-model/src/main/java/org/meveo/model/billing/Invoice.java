@@ -67,7 +67,8 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Said Ramli
+ * @lastModifiedVersion 5.2
  */
 @Entity
 @ObservableEntity
@@ -228,6 +229,10 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
@@ -236,7 +241,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     
     
     /**
-     * #3583 : dueDate &  invoiceDate should be truncated before persist or update
+     * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
     @PreUpdate
@@ -726,4 +731,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.seller = seller;
     }
 	
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 }

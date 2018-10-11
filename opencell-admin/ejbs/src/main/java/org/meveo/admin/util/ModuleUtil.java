@@ -84,11 +84,11 @@ public class ModuleUtil {
     public static byte[] readPicture(String filename) throws IOException {
         File file = new File(filename);
         if (!file.exists()) {
-            return null;
+            return new byte[] { };
         }
         BufferedImage img = ImageIO.read(file);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write(img, filename.substring(filename.indexOf(".") + 1), out);
+        ImageIO.write(img, filename.substring(filename.indexOf('.') + 1), out);
         return out.toByteArray();
     }
 

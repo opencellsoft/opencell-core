@@ -20,9 +20,7 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,6 +43,11 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.WalletTemplate;
 
+/**
+ * Wallet instance
+ * 
+ * @author Andrius Karpavicius
+ */
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code", "userAccount.code" })
@@ -74,8 +77,17 @@ public class WalletInstance extends BusinessEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextMatchingDate;
 
+    /**
+     * Balance level at which LowBalance event should be fired
+     */
     @Column(name = "low_balance_level", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal lowBalanceLevel;
+
+    /**
+     * Balance level at which further consumption should be rejected
+     */
+    @Column(name = "reject_level", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal rejectLevel;
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<WalletOperation> operations;
@@ -83,16 +95,23 @@ public class WalletInstance extends BusinessEntity {
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<RatedTransaction> ratedTransactions;
 
+    /**
+     * @return Wallet template associated to the wallet instance
+     */
     public WalletTemplate getWalletTemplate() {
         return walletTemplate;
     }
 
+    /**
+     * @param walletTemplate Wallet template associated to the wallet instance
+     */
     public void setWalletTemplate(WalletTemplate walletTemplate) {
         this.walletTemplate = walletTemplate;
         if (walletTemplate != null) {
             this.code = walletTemplate.getCode();
             this.description = walletTemplate.getDescription();
             this.lowBalanceLevel = walletTemplate.getLowBalanceLevel();
+            this.rejectLevel = walletTemplate.getRejectLevel();
         } else {
             this.code = null;
             this.description = null;
@@ -106,10 +125,16 @@ public class WalletInstance extends BusinessEntity {
             userAccount != null ? userAccount.getId() : null);
     }
 
+    /**
+     * @return Associated user account
+     */
     public UserAccount getUserAccount() {
         return userAccount;
     }
 
+    /**
+     * @param userAccount Associated user account
+     */
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
@@ -130,14 +155,6 @@ public class WalletInstance extends BusinessEntity {
         this.operations = operations;
     }
 
-    public Set<InvoiceSubCategory> getInvoiceSubCategories() {
-        Set<InvoiceSubCategory> invoiceSubCategories = new HashSet<InvoiceSubCategory>();
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            invoiceSubCategories.add(ratedTransaction.getInvoiceSubCategory());
-        }
-        return invoiceSubCategories;
-    }
-
     public Date getCreditExpiryDate() {
         return creditExpiryDate;
     }
@@ -154,12 +171,32 @@ public class WalletInstance extends BusinessEntity {
         this.nextMatchingDate = nextMatchingDate;
     }
 
+    /**
+     * @return Balance level at which LowBalance event should be fired
+     */
     public BigDecimal getLowBalanceLevel() {
         return lowBalanceLevel;
     }
 
+    /**
+     * @param lowBalanceLevel Balance level at which LowBalance event should be fired
+     */
     public void setLowBalanceLevel(BigDecimal lowBalanceLevel) {
         this.lowBalanceLevel = lowBalanceLevel;
+    }
+
+    /**
+     * @return Balance level at which further consumption should be rejected
+     */
+    public BigDecimal getRejectLevel() {
+        return rejectLevel;
+    }
+
+    /**
+     * @param rejectLevel Balance level at which further consumption should be rejected
+     */
+    public void setRejectLevel(BigDecimal rejectLevel) {
+        this.rejectLevel = rejectLevel;
     }
 
     public boolean equals(Object obj) {

@@ -57,4 +57,23 @@ public interface DDRequestBuilderScriptInterface extends ScriptInterface {
      */
     public DDRejectFileInfos processDDRejectedFile(Map<String, Object> methodContext) throws BusinessException;
 
+
+    /**
+     * Generate the SCT request file.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void generateSCTRequestLotFile(Map<String, Object> methodContext) throws BusinessException;
+
+
+    /**
+     * Build SCT request file name.
+     *
+     * @param methodContext the method context
+     * @return the SCT file name
+     * @throws BusinessException the business exception
+     */
+    String getSCTFileName(Map<String, Object> methodContext) throws BusinessException;
+
 }
