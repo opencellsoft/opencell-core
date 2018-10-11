@@ -14,6 +14,10 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.sequence.GenericSequence;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.2
+ */
 @Entity
 @ExportIdentifier({ "code", "seller.code" })
 @Table(name = "crm_customer_sequence")
