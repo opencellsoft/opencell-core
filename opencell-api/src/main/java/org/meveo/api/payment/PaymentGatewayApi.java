@@ -60,27 +60,25 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
     @Override
     public PaymentGateway create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
         String code = null;
-        if (paymentGatewayDto == null) {
-            missingParameters.add("paymentGatewayDto");
-            handleMissingParameters();
-            return null;
-        } else if (paymentGatewayDto != null) {
-            code = paymentGatewayDto.getCode();
-            if (StringUtils.isBlank(code)) {
-                missingParameters.add("code");
-            }
-            
-            if (paymentGatewayDto.getType() == null) {
-                missingParameters.add("type");
-            }
 
-            if (paymentGatewayDto.getPaymentMethodType() == null) {
-                missingParameters.add("paymentMethodType");
-            }
+        missingParameters.add("paymentGatewayDto");
+        handleMissingParameters();
 
-            if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM && StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
-                missingParameters.add("scriptInstanceCode");
-            }
+        code = paymentGatewayDto.getCode();
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        if (paymentGatewayDto.getType() == null) {
+            missingParameters.add("type");
+        }
+
+        if (paymentGatewayDto.getPaymentMethodType() == null) {
+            missingParameters.add("paymentMethodType");
+        }
+
+        if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM && StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
+            missingParameters.add("scriptInstanceCode");
         }
 
         handleMissingParameters();
@@ -124,7 +122,10 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setScriptInstance(scriptInstance);
         paymentGateway.setCountry(country);
         paymentGateway.setTradingCurrency(tradingCurrency);
-
+        paymentGateway.setMarchandId(paymentGatewayDto.getMarchandId());
+        paymentGateway.setSecretKey(paymentGatewayDto.getSecretKey());
+        paymentGateway.setApiKey(paymentGatewayDto.getApiKey());
+        paymentGateway.setProfile(paymentGatewayDto.getProfile());
         if (paymentGatewayDto.isDisabled() != null) {
             paymentGateway.setDisabled(paymentGatewayDto.isDisabled());
         }
@@ -201,6 +202,20 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (paymentGatewayDto.getPaymentMethodType() != null) {
             paymentGateway.setPaymentMethodType(paymentGatewayDto.getPaymentMethodType());
         }
+
+        if (!StringUtils.isBlank(paymentGatewayDto.getMarchandId())) {
+            paymentGateway.setMarchandId(paymentGatewayDto.getMarchandId());
+        }
+        if (!StringUtils.isBlank(paymentGatewayDto.getSecretKey())) {
+            paymentGateway.setSecretKey(paymentGatewayDto.getSecretKey());
+        }
+        if (!StringUtils.isBlank(paymentGatewayDto.getApiKey())) {
+            paymentGateway.setApiKey(paymentGatewayDto.getApiKey());
+        }
+        if (!StringUtils.isBlank(paymentGatewayDto.getProfile())) {
+            paymentGateway.setProfile(paymentGatewayDto.getProfile());
+        }
+
         paymentGateway.setCode(StringUtils.isBlank(paymentGatewayDto.getUpdatedCode()) ? code : paymentGatewayDto.getUpdatedCode());
 
         try {

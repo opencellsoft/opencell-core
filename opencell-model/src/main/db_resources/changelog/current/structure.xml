@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-
     <changeSet id="#2428_20180105" author="EdwardPLegaspi">
         <addColumn tableName="adm_notif_webhooks">
             <column name="http_protocol" type="varchar(10)" />
@@ -2063,4 +2062,19 @@
         <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id"/>
     </changeSet>
     
+    <changeSet id="#3671_20181003" author="anasseh">
+        <addColumn tableName="ar_payment_gateway">
+            <column name="marchand_id" type="varchar(256)" />
+        </addColumn>     
+        <addColumn tableName="ar_payment_gateway">
+            <column name="secret_key" type="varchar(256)" />
+        </addColumn>   
+        <addColumn tableName="ar_payment_gateway">
+            <column name="api_key" type="varchar(256)" />
+        </addColumn>   
+        <addColumn tableName="ar_payment_gateway">
+            <column name="profile" type="varchar(256)" />
+        </addColumn>            
+     </changeSet>                          
+
 </databaseChangeLog>
