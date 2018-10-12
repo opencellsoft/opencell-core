@@ -39,7 +39,8 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @throws BusinessException the business exception
      */
     @SuppressWarnings("unchecked")
-    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {       
+    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {   
+        PaymentGateway paymentGateway = null;
         try {
             CreditCardTypeEnum cardTypeToCheck = null;
             if (paymentMethod == null) {
@@ -67,11 +68,12 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                         return pg;
                     }
                 }
-            }            
+            }     
+            paymentGateway = paymentGateways.get(0);
         } catch (Exception e) {
             log.error("Error on getPaymentGateway:", e);
         }
-        return null;
+        return paymentGateway;
     }
 
     private boolean matchExpression(String expression, CustomerAccount customerAccount, PaymentMethod paymentMethod, PaymentGateway paymentGateway) throws BusinessException {
