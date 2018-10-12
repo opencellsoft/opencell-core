@@ -61,10 +61,10 @@
 					</p:fieldset> -->
 				</p:tab>
 				<p:tab  title="#{messages['paymentGateway.account']}" >
-					<hftl:formField label="#{messages['paymentGateway.marchandId']}" field="marchandId" />
-					<hftl:formField label="#{messages['paymentGateway.secretKey']}" field="secretKey" />
-					<hftl:formField label="#{messages['paymentGateway.apiKey']}" field="apiKey" />
-					<hftl:formField label="#{messages['paymentGateway.profile']}" field="profile" />
+					<hftl:formField label="#{messages['paymentGateway.marchandId']}" field="marchandId" maxlength="255" />
+					<hftl:formField label="#{messages['paymentGateway.secretKey']}" field="secretKey" maxlength="255" />
+					<hftl:formField label="#{messages['paymentGateway.apiKey']}" field="apiKey"  maxlength="255"/>
+					<hftl:formField label="#{messages['paymentGateway.profile']}" field="profile" maxlength="255" />
 					
 				</p:tab>
 				<hftl:customFields backingBean="#{paymentGatewayBean}" messagesId=":formPaymentGateway:messages" />
