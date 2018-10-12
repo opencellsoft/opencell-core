@@ -161,12 +161,21 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
     public List<RecordedInvoice> getRecordedInvoices(CustomerAccount customerAccount, MatchingStatusEnum o, boolean dunningExclusion) {
         List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
         try {
-            // FIXME Mbarek use NamedQuery
-            invoices = (List<RecordedInvoice>) getEntityManager()
-                .createQuery("from " + RecordedInvoice.class.getSimpleName()
-                        + " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus and excludedFromDunning=:dunningExclusion order by dueDate")
-                .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", o).setParameter("dunningExclusion", dunningExclusion)
-                .getResultList();
+
+            if (dunningExclusion) {
+                invoices = (List<RecordedInvoice>) getEntityManager()
+                        .createQuery("from " + RecordedInvoice.class.getSimpleName()
+                                + " where customerAccount.id=:customerAccountId and matchingStatus= " + MatchingStatusEnum.I + " order by dueDate")
+                        .setParameter("customerAccountId", customerAccount.getId())
+                        .getResultList();
+            } else {
+                invoices = (List<RecordedInvoice>) getEntityManager()
+                        .createQuery("from " + RecordedInvoice.class.getSimpleName()
+                                + " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus order by dueDate")
+                        .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", o)
+                        .getResultList();
+            }
+
         } catch (Exception e) {
 
         }
