@@ -49,10 +49,13 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderHistoryService;
+import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
+import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
@@ -101,6 +104,18 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      */
     @Inject
     ServiceTemplateService serviceTemplateService;
+    
+    /**
+     * PaymentScheduleInstanceService
+     */
+    @Inject
+    private PaymentScheduleInstanceService paymentScheduleInstanceService;
+    
+    /**
+     * PaymentScheduleTemplateService
+     */
+    @Inject
+    private PaymentScheduleTemplateService paymentScheduleTemplateService;
     
     
     ParamBean paramBean = ParamBean.getInstance();
@@ -458,6 +473,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
             orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
         }
+        
+        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
+        if(paymentScheduleTemplate != null) {
+            paymentScheduleInstanceService.instanciateFromService(paymentScheduleTemplate,serviceInstance);
+        }
     }
 
     /**
@@ -587,6 +607,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (terminationReason != null) {
             serviceInstance.setSubscriptionTerminationReason(terminationReason);
         }
+        
+        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
+        if(paymentScheduleTemplate != null) {
+            paymentScheduleInstanceService.terminate(serviceInstance,terminationDate);
+        }
+        
         update(serviceInstance);
     }
 

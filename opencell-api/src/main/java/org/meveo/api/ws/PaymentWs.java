@@ -23,6 +23,11 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
+import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
+import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
@@ -34,8 +39,9 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
  * The Interface PaymentWs.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.2
  */
+@SuppressWarnings("deprecation")
 @WebService
 public interface PaymentWs extends IBaseWs {
 
@@ -341,6 +347,7 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentHistoriesDto listHistory(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+
    
     /********************************************/
     /**** DDRequest Builder                 ****/
@@ -417,5 +424,97 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus disableDDRequestBuilder(@WebParam(name = "code") String code);
+    
+    /************************************************************************************************/
+    /****                           Payment Schedules                                            ****/
+    /************************************************************************************************/
+    /**
+     * Create or update payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus createOrUpdatePaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateDto") PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    /**
+     * Create  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus createPaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateDto") PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    
+    /**
+     * remove  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateCode payment Schedule Template Code  to remove
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus removePaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateCode") String paymentScheduleTemplateCode);
+    
+    /**
+     * find  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateCode payment Schedule Template Code  to find
+     * @return Request processing status
+     */
+    @WebMethod
+    public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateCode") String paymentScheduleTemplateCode);
+    
+    /**
+     * Update  payment Schedules template.
+     * 
+     * @param paymentScheduleTemplateDto payment Schedule Template Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus updatePaymentScheduleTemplate(@WebParam(name = "paymentScheduleTemplateDto") PaymentScheduleTemplateDto paymentScheduleTemplateDto);
+    
+    /**
+     * List payment PaymentScheduleTemplate matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An paymentScheduleTemplate dto list
+     */
+    @WebMethod
+    public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * Update  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus updatePaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * List payment PaymentScheduleInstance matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An paymentScheduleInstance dto list
+     */
+    @WebMethod
+    public PaymentScheduleInstancesDto listPaymentScheduleInstance(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * Terminate  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus terminatePaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
+    
+    /**
+     * Cancel  payment Schedules instance.
+     * 
+     * @param paymentScheduleInstanceDto payment Schedule Instance Dto 
+     * @return Request processing status
+     */
+    @WebMethod
+    public ActionStatus cancelPaymentScheduleInstance(@WebParam(name = "paymentScheduleInstanceDto") PaymentScheduleInstanceDto paymentScheduleInstanceDto);
 
 }

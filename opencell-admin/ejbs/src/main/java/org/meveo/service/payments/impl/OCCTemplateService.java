@@ -18,14 +18,25 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
@@ -75,4 +86,97 @@ public class OCCTemplateService extends BusinessService<OCCTemplate> {
             return null;
         }
     }
+    
+    public OCCTemplate getOccTemplateFromInvoiceType(BigDecimal amount, InvoiceType invoiceType, Invoice invoice,BillingRun billingRun) throws BusinessException {
+        OCCTemplate occTemplate = null;
+        if(invoiceType == null) {
+            throw new BusinessException("Cant find OccTemplate when invoiceType is null");
+        }
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            String occTemplateCode = evaluateStringExpression(invoiceType.getOccTemplateNegativeCodeEl(), invoice, billingRun);
+            if (!StringUtils.isBlank(occTemplateCode)) {
+                occTemplate = findByCode(occTemplateCode);
+            }
+
+            if(occTemplate == null) {
+                occTemplate = invoiceType.getOccTemplateNegative();
+            }
+
+            if (occTemplate == null) {
+                throw new BusinessException("Cant find negative OccTemplate");
+            }
+        } else {
+            String occTemplateCode = evaluateStringExpression(invoiceType.getOccTemplateCodeEl(), invoice, billingRun);
+            if (!StringUtils.isBlank(occTemplateCode)) {
+                occTemplate = findByCode(occTemplateCode);
+            }
+
+            if(occTemplate == null) {
+                occTemplate = invoiceType.getOccTemplate();
+            }
+            
+            if (occTemplate == null) {
+                throw new BusinessException("Cant find OccTemplate");
+            }
+        }
+        return occTemplate;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param invoice invoice
+     * @param billingRun billingRun
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    public String evaluateStringExpression(String expression, Invoice invoice, BillingRun billingRun) throws BusinessException {
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, invoice, billingRun);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
+        }
+        return result;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param invoice invoice
+     * @param billingRun billingRun
+     * @return userMap userMap
+     */
+    private Map<Object, Object> constructElContext(String expression, Invoice invoice, BillingRun billingRun) {
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        BillingAccount billingAccount = invoice.getBillingAccount();
+
+        if (expression.indexOf("invoice") >= 0) {
+            userMap.put("invoice", invoice);
+        }
+        if (expression.indexOf("br") >= 0) {
+            userMap.put("br", billingRun);
+        }
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", billingAccount);
+        }
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount.getCustomerAccount());
+        }
+        if (expression.indexOf("c") >= 0) {
+            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
+        }
+        if (expression.indexOf("prov") >= 0) {
+            userMap.put("prov", appProvider);
+        }
+
+        return userMap;
+    }
+
 }

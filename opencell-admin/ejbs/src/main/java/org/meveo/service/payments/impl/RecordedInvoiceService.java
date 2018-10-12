@@ -189,6 +189,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         }
     }
 
+
     /**
      * @param expression EL expression
      * @param invoice invoice
@@ -246,6 +247,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         return userMap;
     }
 
+
     /**
      * @param invoice invoice used to generate
      * @throws InvoiceExistException invoice exist exception
@@ -254,6 +256,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
+        @SuppressWarnings("unchecked")
         List<CategoryInvoiceAgregate> cats = (List<CategoryInvoiceAgregate>) invoiceAgregateService.listByInvoiceAndType(invoice, "R");
         List<RecordedInvoiceCatAgregate> listRecordedInvoiceCatAgregate = new ArrayList<RecordedInvoiceCatAgregate>();
 
@@ -333,6 +336,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
         RecordedInvoice recordedInvoice = createRecordedInvoice(remainingAmountWithoutTaxForRecordedIncoice, remainingAmountWithTaxForRecordedIncoice,
             remainingAmountTaxForRecordedIncoice, invoice.getNetToPay(), invoice, occTemplate, true);
+
         create(recordedInvoice);
 
         for (RecordedInvoiceCatAgregate recordedInvoiceCatAgregate : listRecordedInvoiceCatAgregate) {
@@ -342,6 +346,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         invoice.setRecordedInvoice(recordedInvoice);
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends RecordedInvoice> T createRecordedInvoice(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, BigDecimal netToPay, Invoice invoice,
             OCCTemplate occTemplate, boolean isRecordedIvoince) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
@@ -445,5 +450,13 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 
         return recordedInvoice;
+    }
+
+    /**
+     * @return
+     */
+    public List<Long> queryInvoiceIdsForPS() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

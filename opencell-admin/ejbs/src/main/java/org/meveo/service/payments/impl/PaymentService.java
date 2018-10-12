@@ -358,8 +358,10 @@ public class PaymentService extends PersistenceService<Payment> {
                 errorType = PaymentErrorTypeEnum.REJECT;
                 log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
             }
-            paymentHistoryService.addHistory(customerAccount, findById(aoPaymentId), refundService.findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto.getErrorCode(),
+
+            paymentHistoryService.addHistory(customerAccount, aoPaymentId == null ? null : findById(aoPaymentId), aoPaymentId == null ? null :  refundService.findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto.getErrorCode(),
                 doPaymentResponseDto.getErrorMessage(), errorType, operationCat, paymentGateway.getCode(), preferredMethod);
+
 
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
