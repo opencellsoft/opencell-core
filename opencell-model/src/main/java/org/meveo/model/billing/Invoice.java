@@ -28,7 +28,6 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -61,7 +60,6 @@ import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
 
@@ -187,10 +185,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
+
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
 
     @ManyToMany
     @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
@@ -200,9 +201,26 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<>();
 
+    /**
+     * Quote that invoice was produced for
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
+
+    /**
+     * Subscription that invoice was produced for
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
+    /**
+     * Order that invoice was produced for
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     /**
      * XML file name. Might contain subdirectories relative to directory where all XML files are located.
@@ -221,33 +239,28 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
-    
+
     @Column(name = "due_balance", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal dueBalance;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription_id")
-    private Subscription subscription;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
     @Transient
     private Long invoiceAdjustmentCurrentProviderNb;
-    
-    
+
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
     @PreUpdate
     public void prePersistOrUpdate() {
-        this.dueDate =  DateUtils.truncateTime(this.dueDate);
-        this.invoiceDate =  DateUtils.truncateTime(this.invoiceDate);
+        this.dueDate = DateUtils.truncateTime(this.dueDate);
+        this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
     }
 
     public List<RatedTransaction> getRatedTransactions() {
@@ -558,6 +571,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -573,12 +589,22 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    @Override
     public String clearUuid() {
         String oldUuid = uuid;
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { billingRun };
@@ -593,16 +619,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     public void addInvoiceAggregate(InvoiceAgregate obj) {
-        if (!invoiceAgregates.contains(obj)) {
-            invoiceAgregates.add(obj);
-        }
+        invoiceAgregates.add(obj);
     }
 
     public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
         List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
 
         for (InvoiceAgregate invoiceAggregate : invoiceAgregates) {
-            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && invoiceAggregate.isDiscountAggregate()) {
+            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAggregate).isDiscountAggregate()) {
                 aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
             }
         }
@@ -624,28 +648,29 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return the quote
+     * @return Quote that invoice was produced for
      */
     public Quote getQuote() {
         return quote;
     }
 
     /**
-     * @param quote the quote to set
+     * @param quote Quote that invoice was produced for
      */
     public void setQuote(Quote quote) {
         this.quote = quote;
     }
 
     /**
-     * Return a PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
-     * 
-     * @return PDF file name
+     * @return PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
      */
     public String getPdfFilename() {
         return pdfFilename;
     }
 
+    /**
+     * @param pdfFilename PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
+     */
     public void setPdfFilename(String pdfFilename) {
         this.pdfFilename = pdfFilename;
     }
@@ -666,14 +691,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * Return a XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
-     * 
-     * @return XML file name
+     * @return XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
      */
     public String getXmlFilename() {
         return xmlFilename;
     }
 
+    /**
+     * @param xmlFilename XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
+     */
     public void setXmlFilename(String xmlFilename) {
         this.xmlFilename = xmlFilename;
     }
@@ -715,13 +741,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
     }
 
-	public BigDecimal getDueBalance() {
-		return dueBalance;
-	}
+    public BigDecimal getDueBalance() {
+        return dueBalance;
+    }
 
-	public void setDueBalance(BigDecimal dueBalance) {
-		this.dueBalance = dueBalance;
-	}
+    public void setDueBalance(BigDecimal dueBalance) {
+        this.dueBalance = dueBalance;
+    }
 
     public Seller getSeller() {
         return seller;
@@ -730,13 +756,33 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-	
 
+    /**
+     * @return Subscription that invoice was produced for
+     */
     public Subscription getSubscription() {
         return subscription;
     }
 
+    /**
+     * @param subscription Subscription that invoice was produced for
+     */
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+
+    /**
+     * 
+     * @return Order that invoice was produced for
+     */
+    public Order getOrder() {
+        return order;
+    }
+
+    /**
+     * @param order Order that invoice was produced for
+     */
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

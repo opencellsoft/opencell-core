@@ -48,6 +48,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
@@ -59,7 +60,7 @@ import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SELLER")
+@CustomFieldEntity(cftCodePrefix = "SELLER", inheritCFValuesFrom = "seller", inheritFromProvider = true)
 @ExportIdentifier({ "code" })
 @Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

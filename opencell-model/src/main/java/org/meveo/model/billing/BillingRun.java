@@ -28,13 +28,14 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -45,19 +46,20 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
+@NamedQueries({ @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc") })
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -136,6 +138,9 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date invoiceDate;
 
+    /**
+     * Include in invoice Rated transactions up to that date
+     */
     @Column(name = "last_transaction_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTransactionDate;
@@ -167,11 +172,15 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
 
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
-    
-    @Convert(converter = CustomFieldValuesConverter.class)
+
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
-    
+
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
@@ -317,10 +326,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         this.invoiceDate = invoiceDate;
     }
 
+    /**
+     * @return Include in invoice Rated transactions up to that date
+     */
     public Date getLastTransactionDate() {
         return lastTransactionDate;
     }
 
+    /**
+     * @param lastTransactionDate Include in invoice Rated transactions up to that date
+     */
     public void setLastTransactionDate(Date lastTransactionDate) {
         this.lastTransactionDate = lastTransactionDate;
     }
@@ -431,7 +446,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         }
         rejectedBillingAccounts.add(rejectedBillingAccount);
     }
-    
+
     @Override
     public CustomFieldValues getCfValues() {
         return cfValues;
@@ -440,6 +455,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override
@@ -463,7 +488,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
     public int hashCode() {
         return 961 + (("BR" + (id == null ? "" : id)).hashCode());

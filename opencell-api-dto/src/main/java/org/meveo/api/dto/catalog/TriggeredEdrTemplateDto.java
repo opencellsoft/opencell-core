@@ -23,27 +23,49 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
     /** The subscription el. */
     private String subscriptionEl;
 
+    /** The subscription el. */
+    private String subscriptionElSpark;
+
     /** The meveo instance code. */
     private String meveoInstanceCode;
 
     /** The condition el. */
     private String conditionEl;
 
+    /** The condition el. */
+    private String conditionElSpark;
+
     /** The quantity el. */
     @XmlElement(required = true)
     private String quantityEl;
 
+    /** The quantity el. */
+    @XmlElement()
+    private String quantityElSpark;
+
     /** The param 1 el. */
     private String param1El;
+
+    /** The param 1 el. */
+    private String param1ElSpark;
 
     /** The param 2 el. */
     private String param2El;
 
+    /** The param 2 el. */
+    private String param2ElSpark;
+
     /** The param 3 el. */
     private String param3El;
 
+    /** The param 3 el. */
+    private String param3ElSpark;
+
     /** The param 4 el. */
     private String param4El;
+
+    /** The param 4 el. */
+    private String param4ElSpark;
 
     /**
      * Instantiates a new triggered edr template dto.
@@ -63,160 +85,235 @@ public class TriggeredEdrTemplateDto extends BusinessEntityDto {
         subscriptionEl = triggeredEDRTemplate.getSubscriptionEl();
         meveoInstanceCode = triggeredEDRTemplate.getMeveoInstance() == null ? null : triggeredEDRTemplate.getMeveoInstance().getCode();
         conditionEl = triggeredEDRTemplate.getConditionEl();
+        conditionElSpark = triggeredEDRTemplate.getConditionElSpark();
         quantityEl = triggeredEDRTemplate.getQuantityEl();
+        quantityElSpark = triggeredEDRTemplate.getQuantityElSpark();
         param1El = triggeredEDRTemplate.getParam1El();
+        param1ElSpark = triggeredEDRTemplate.getParam1ElSpark();
         param2El = triggeredEDRTemplate.getParam2El();
+        param2ElSpark = triggeredEDRTemplate.getParam2ElSpark();
         param3El = triggeredEDRTemplate.getParam3El();
+        param3ElSpark = triggeredEDRTemplate.getParam3ElSpark();
         param4El = triggeredEDRTemplate.getParam4El();
+        param4ElSpark = triggeredEDRTemplate.getParam4ElSpark();
     }
 
     /**
-     * Gets the subscription el.
-     *
-     * @return the subscription el
+     * @return Expression to evaluate subscription code
      */
     public String getSubscriptionEl() {
         return subscriptionEl;
     }
 
     /**
-     * Sets the subscription el.
-     *
-     * @param subscriptionEl the new subscription el
+     * @param subscriptionEl Expression to evaluate subscription code
      */
     public void setSubscriptionEl(String subscriptionEl) {
         this.subscriptionEl = subscriptionEl;
     }
 
     /**
-     * Gets the meveo instance code.
-     *
-     * @return the meveo instance code
+     * @return Expression to evaluate subscription code - for Spark
+     */
+    public String getSubscriptionElSpark() {
+        return subscriptionElSpark;
+    }
+
+    /**
+     * @param subscriptionElSpark Expression to evaluate subscription code - for Spark
+     */
+    public void setSubscriptionElSpark(String subscriptionElSpark) {
+        this.subscriptionElSpark = subscriptionElSpark;
+    }
+
+    /**
+     * @return Meveo instance code to register a new EDR on. If not empty, EDR will be send via API
      */
     public String getMeveoInstanceCode() {
         return meveoInstanceCode;
     }
 
     /**
-     * Sets the meveo instance code.
-     *
-     * @param meveoInstanceCode the new meveo instance code
+     * @param meveoInstanceCode Meveo instance to register a new EDR on. If not empty, EDR will be send via API
      */
     public void setMeveoInstanceCode(String meveoInstanceCode) {
         this.meveoInstanceCode = meveoInstanceCode;
     }
 
     /**
-     * Gets the condition el.
-     *
-     * @return the condition el
+     * @return Expression to determine if EDR applies
      */
     public String getConditionEl() {
         return conditionEl;
     }
 
     /**
-     * Sets the condition el.
-     *
-     * @param conditionEl the new condition el
+     * @param conditionEl Expression to determine if EDR applies
      */
     public void setConditionEl(String conditionEl) {
         this.conditionEl = conditionEl;
     }
 
     /**
-     * Gets the quantity el.
-     *
-     * @return the quantity el
+     * @return Expression to determine if EDR applies - for Spark
+     */
+    public String getConditionElSpark() {
+        return conditionElSpark;
+    }
+
+    /**
+     * @param conditionElSpark Expression to determine if EDR applies - for Spark
+     */
+    public void setConditionElSpark(String conditionElSpark) {
+        this.conditionElSpark = conditionElSpark;
+    }
+
+    /**
+     * @return Expression to determine the quantity
      */
     public String getQuantityEl() {
         return quantityEl;
     }
 
     /**
-     * Sets the quantity el.
-     *
-     * @param quantityEl the new quantity el
+     * @param quantityEl Expression to determine the quantity
      */
     public void setQuantityEl(String quantityEl) {
         this.quantityEl = quantityEl;
     }
 
     /**
-     * Gets the param 1 el.
-     *
-     * @return the param 1 el
+     * @return Expression to determine the quantity - for Spark
+     */
+    public String getQuantityElSpark() {
+        return quantityElSpark;
+    }
+
+    /**
+     * @param quantityElSpark Expression to determine the quantity - for Spark
+     */
+    public void setQuantityElSpark(String quantityElSpark) {
+        this.quantityElSpark = quantityElSpark;
+    }
+
+    /**
+     * @return Expression to determine parameter 1 value
      */
     public String getParam1El() {
         return param1El;
     }
 
     /**
-     * Sets the param 1 el.
-     *
-     * @param param1El the new param 1 el
+     * @param param1El Expression to determine parameter 1 value
      */
     public void setParam1El(String param1El) {
         this.param1El = param1El;
     }
 
     /**
-     * Gets the param 2 el.
-     *
-     * @return the param 2 el
+     * @return Expression to determine parameter 1 value - for Spark
+     */
+    public String getParam1ElSpark() {
+        return param1ElSpark;
+    }
+
+    /**
+     * @param param1ElSpark Expression to determine parameter 1 value - for Sparl
+     */
+    public void setParam1ElSpark(String param1ElSpark) {
+        this.param1ElSpark = param1ElSpark;
+    }
+
+    /**
+     * @return Expression to determine parameter 2 value
      */
     public String getParam2El() {
         return param2El;
     }
 
     /**
-     * Sets the param 2 el.
-     *
-     * @param param2El the new param 2 el
+     * @param param2El Expression to determine parameter 2 value
      */
     public void setParam2El(String param2El) {
         this.param2El = param2El;
     }
 
     /**
-     * Gets the param 3 el.
-     *
-     * @return the param 3 el
+     * @return Expression to determine parameter 2 value - for Spark
+     */
+    public String getParam2ElSpark() {
+        return param2ElSpark;
+    }
+
+    /**
+     * @param param2ElSpark Expression to determine parameter 2 value - for Sparl
+     */
+    public void setParam2ElSpark(String param2ElSpark) {
+        this.param2ElSpark = param2ElSpark;
+    }
+
+    /**
+     * @return Expression to determine parameter 3 value
      */
     public String getParam3El() {
         return param3El;
     }
 
     /**
-     * Sets the param 3 el.
-     *
-     * @param param3El the new param 3 el
+     * @param param3El Expression to determine parameter 3 value
      */
     public void setParam3El(String param3El) {
         this.param3El = param3El;
     }
 
     /**
-     * Gets the param 4 el.
-     *
-     * @return the param 4 el
+     * @return Expression to determine parameter 3 value - for Spark
+     */
+    public String getParam3ElSpark() {
+        return param3ElSpark;
+    }
+
+    /**
+     * @param param3ElSpark Expression to determine parameter 3 value - for Sparl
+     */
+    public void setParam3ElSpark(String param3ElSpark) {
+        this.param3ElSpark = param3ElSpark;
+    }
+
+    /**
+     * @return Expression to determine parameter 4 value
      */
     public String getParam4El() {
         return param4El;
     }
 
     /**
-     * Sets the param 4 el.
-     *
-     * @param param4El the new param 4 el
+     * @param param4El Expression to determine parameter 4 value
      */
     public void setParam4El(String param4El) {
         this.param4El = param4El;
     }
 
+    /**
+     * @return Expression to determine parameter 4 value - for Spark
+     */
+    public String getParam4ElSpark() {
+        return param4ElSpark;
+    }
+
+    /**
+     * @param param4ElSpark Expression to determine parameter 4 value - for Sparl
+     */
+    public void setParam4ElSpark(String param4ElSpark) {
+        this.param4ElSpark = param4ElSpark;
+    }
+
     @Override
     public String toString() {
-        return "TriggeredEdrTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", subscriptionEl=" + subscriptionEl + ", conditionEl=" + conditionEl
-                + ", quantityEl=" + quantityEl + ", param1El=" + param1El + ", param2El=" + param2El + ", param3El=" + param3El + ", param4El=" + param4El + "]";
+        return "TriggeredEdrTemplateDto [subscriptionEl=" + subscriptionEl + ", subscriptionElSpark=" + subscriptionElSpark + ", meveoInstanceCode=" + meveoInstanceCode
+                + ", conditionEl=" + conditionEl + ", conditionElSpark=" + conditionElSpark + ", quantityEl=" + quantityEl + ", quantityElSpark=" + quantityElSpark + ", param1El="
+                + param1El + ", param1ElSpark=" + param1ElSpark + ", param2El=" + param2El + ", param2ElSpark=" + param2ElSpark + ", param3El=" + param3El + ", param3ElSpark="
+                + param3ElSpark + ", param4El=" + param4El + ", param4ElSpark=" + param4ElSpark + ", id=" + id + ", code=" + code + ", description=" + description
+                + ", updatedCode=" + updatedCode + "]";
     }
 }

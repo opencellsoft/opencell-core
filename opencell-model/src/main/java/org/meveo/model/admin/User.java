@@ -33,7 +33,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -57,6 +56,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -68,7 +68,6 @@ import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 
@@ -127,10 +126,13 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
+
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
 
     @Transient
     private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
@@ -141,7 +143,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
     public User() {
     }
-    
+
     public AddressBook getAddressbook() {
 		return addressbook;
 	}
@@ -150,7 +152,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 		this.addressbook = addressbook;
 	}
 
-	public Set<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
@@ -295,6 +297,9 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -307,6 +312,16 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     @Override
     public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
     }
 
     @Override

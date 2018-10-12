@@ -36,7 +36,7 @@ public class InvoicingJobBean extends BaseJobBean {
         log.debug("Running for parameter={}", jobInstance.getParametres());
 
         try {
-            List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.NEW, BillingRunStatusEnum.PREVALIDATED, BillingRunStatusEnum.POSTVALIDATED);
+            List<BillingRun> billingRuns = billingRunService.listByNamedQuery("BillingRun.getForInvoicing");
             log.info("BillingRuns to process={}", billingRuns.size());
             result.setNbItemsToProcess(billingRuns.size());
             Long nbRuns = new Long(1);

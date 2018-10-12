@@ -20,9 +20,9 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -37,7 +37,7 @@ public class InvoicingAsync {
 
     /** The billing account service. */
     @Inject
-    private BillingAccountService billingAccountService;
+    private RatedTransactionService ratedTransactionService;
 
     /** The invoice service. */
     @Inject
@@ -76,12 +76,12 @@ public class InvoicingAsync {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            IBillableEntity billableEntity = billingAccountService.updateEntityTotalAmounts(entity, billingRun);
+            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmounts(entity, billingRun);
             if (billableEntity != null) {
-            	billableEntities.add(billableEntity);
+                billableEntities.add(billableEntity);
             }
         }
-        log.info("WorkSet billable entities: " + billableEntities.size());
+        log.info("WorkSet billable entities {}", billableEntities.size());
         return new AsyncResult<List<IBillableEntity>>(billableEntities);
     }
 
@@ -97,26 +97,26 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<?> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        for (IBillableEntity entity : (List<IBillableEntity>) entities) {
+        for (IBillableEntity entity : entities) {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-            	if(entity.getMinRatedTransactions().size() >0) {
-            		System.out.println("createAgregatesAndInvoiceAsync amount");
-            	}
+                if (entity.getMinRatedTransactions().size() > 0) {
+                    System.out.println("createAgregatesAndInvoiceAsync amount");
+                }
                 invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false);
             } catch (Exception e) {
-                log.error("Error for entity=" + entity + " : " + e);
+                log.error("Error for entity {}/{}", entity.getClass().getSimpleName(), entity.getId(), e);
             }
         }
         return new AsyncResult<String>("OK");
     }
-    
+
     /**
      * Assign invoice number and increment BA invoice dates async. One invoice at a time in a separate transaction.
      *

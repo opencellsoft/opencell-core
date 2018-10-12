@@ -36,9 +36,17 @@ public class BillingCycleDto extends BusinessEntityDto {
     @XmlElement(required = true)
     private Integer dueDateDelay;
 
-    /** The due date delay EL. */
+    /**
+     * Expression to calculate the due date delay
+     */
     @XmlElement(required = false)
     private String dueDateDelayEL;
+
+    /**
+     * Expression to calculate the due date delay - for Spark
+     */
+    @XmlElement(required = false)
+    private String dueDateDelayELSpark;
 
     /** The invoice date production delay. */
     @XmlElement(required = false)
@@ -59,9 +67,19 @@ public class BillingCycleDto extends BusinessEntityDto {
     /** The invoice type code. */
     private String invoiceTypeCode;
 
+    /**
+     * Expression to resolve invoice type code
+     */
+    private String invoiceTypeEl;
+
+    /**
+     * Expression to resolve invoice type code - for Spark
+     */
+    private String invoiceTypeElSpark;
+
     /** The custom fields. */
     private CustomFieldsDto customFields;
-    
+
     /** The billing cycle type. */
     @XmlElement
     private BillingEntityTypeEnum type;
@@ -92,6 +110,8 @@ public class BillingCycleDto extends BusinessEntityDto {
             transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
             invoicingThreshold = billingCycleEntity.getInvoicingThreshold();
             type = billingCycleEntity.getType();
+            invoiceTypeEl = billingCycleEntity.getInvoiceTypeEl();
+            invoiceTypeElSpark = billingCycleEntity.getInvoiceTypeElSpark();
 
             if (billingCycleEntity.getInvoiceType() != null) {
                 invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
@@ -151,7 +171,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     /**
      * Sets the due date delay.
      *
-     * @param dueDateDelay the new due date delay
+     * @param dueDateDelay Invoice due date delay
      */
     public void setDueDateDelay(Integer dueDateDelay) {
         this.dueDateDelay = dueDateDelay;
@@ -248,6 +268,34 @@ public class BillingCycleDto extends BusinessEntityDto {
     }
 
     /**
+     * @return Expression to resolve invoice type code
+     */
+    public String getInvoiceTypeEl() {
+        return invoiceTypeEl;
+    }
+
+    /**
+     * @param invoiceTypeEl Expression to resolve invoice type code
+     */
+    public void setInvoiceTypeEl(String invoiceTypeEl) {
+        this.invoiceTypeEl = invoiceTypeEl;
+    }
+
+    /**
+     * @return Expression to resolve invoice type code for Spark
+     */
+    public String getInvoiceTypeElSpark() {
+        return invoiceTypeElSpark;
+    }
+
+    /**
+     * @param invoiceTypeElSpark Expression to resolve invoice type code for Spark
+     */
+    public void setInvoiceTypeElSpark(String invoiceTypeElSpark) {
+        this.invoiceTypeElSpark = invoiceTypeElSpark;
+    }
+
+    /**
      * Gets the custom fields.
      *
      * @return the custom fields
@@ -265,7 +313,9 @@ public class BillingCycleDto extends BusinessEntityDto {
         this.customFields = customFields;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -277,21 +327,39 @@ public class BillingCycleDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the due date delay EL.
+     * Gets the expression to calculate the due date delay
      *
-     * @return the due date delay EL
+     * @return Expression to calculate the due date delay
      */
     public String getDueDateDelayEL() {
         return dueDateDelayEL;
     }
 
     /**
-     * Sets the due date delay EL.
+     * Sets the expression to calculate the due date delay
      *
-     * @param dueDateDelayEL the new due date delay EL
+     * @param dueDateDelayEL Expression to calculate the due date delay
      */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    /**
+     * Gets the expression to calculate the due date delay - for Spark
+     * 
+     * @return Expression to calculate the due date delay - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
+
+    /**
+     * Sets the expression to calculate the due date delay - for Spark
+     * 
+     * @param dueDateDelaySpark Expression to calculate the due date delay - for Spark
+     */
+    public void setDueDateDelaySpark(String dueDateDelaySpark) {
+        this.dueDateDelayELSpark = dueDateDelaySpark;
     }
 
     /**
@@ -311,7 +379,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
-    
+
     /**
      * Gets the billing cycle type.
      *

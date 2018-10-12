@@ -1,9 +1,5 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:hftl="http://hftl.org"  xmlns:s="http://jboss.org/seam/faces" 
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:s="http://jboss.org/seam/faces" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -11,47 +7,36 @@
         </f:metadata>
     </ui:define>
 
-	<ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem outcome="triggeredEdrTemplates"
-					value="#{messages['menu.triggeredEdrTemplates']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['triggeredEDRTemplate']}"
-					disabled="true" rendered="#{triggeredEDRTemplateBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['triggeredEDRTemplate']} #{messages['commons.configuration']} - #{triggeredEDRTemplateBean.entity.code}"
-					disabled="true" rendered="#{!triggeredEDRTemplateBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="triggeredEdrTemplates" value="#{messages['menu.triggeredEdrTemplates']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['triggeredEDRTemplate']}" disabled="true" rendered="#{triggeredEDRTemplateBean.entity.transient}" />
+                <p:menuitem value="#{messages['triggeredEDRTemplate']} #{messages['commons.configuration']} - #{triggeredEDRTemplateBean.entity.code}" disabled="true"
+                    rendered="#{!triggeredEDRTemplateBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:formPanel id="formPanel" formId="triggeredTemplateId"
-			label="#{messages['menu.triggeredEdrTemplates']}"
-			backingBean="#{triggeredEDRTemplateBean}">
-				<hftl:formField label="#{messages['businessEntity.code']}" field="code"
-					required="true" validateUnique="true" />
-				<hftl:formField label="#{messages['businessEntity.description']}"
-					field="description" id="description" />
-				<hftl:formField label="#{messages['triggeredEdrTemplate.conditionEl']}"
-					field="conditionEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>
-				<hftl:formField label="#{messages['triggeredEdrTemplate.quantityEl']}"
-					field="quantityEl"  textArea="true" rows="1" maxlength="2000" componentWidth="50" required="true"/>
-				<hftl:formField label="#{messages['triggeredEdrTemplate.param1El']}"
-					field="param1El"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
-				<hftl:formField label="#{messages['triggeredEdrTemplate.param2El']}"
-					field="param2El"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
-				<hftl:formField label="#{messages['triggeredEdrTemplate.param3El']}"
-					field="param3El"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
-				<hftl:formField label="#{messages['triggeredEdrTemplate.param4El']}"
-					field="param4El"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
-				<hftl:formField
-					label="#{messages['triggeredEdrTemplate.subscriptionEl']}"
-					field="subscriptionEl"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
-			   	<hftl:formField
-							label="#{messages['meveoModule.meveoInstance']}"
-							field="meveoInstance" valueLabelField="code" required="false" popup="false"
-							listBean="#{meveoInstanceBean}" />		
-		</hftl:formPanel>
+        <hftl:formPanel id="formPanel" formId="triggeredTemplateId" label="#{messages['menu.triggeredEdrTemplates']}" backingBean="#{triggeredEDRTemplateBean}">
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.conditionEl']}" field="conditionEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.conditionElSpark']}" field="conditionElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
+            <hftl:formField label="#{messages['triggeredEdrTemplate.quantityEl']}" field="quantityEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" required="true" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.quantityElSpark']}" field="quantityElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" required="true" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param1El']}" field="param1El" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param1ElSpark']}" field="param1ElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param2El']}" field="param2El" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param2ElSpark']}" field="param2ElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param3El']}" field="param3El" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param3ElSpark']}" field="param3ElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param4El']}" field="param4El" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.param4ElSpark']}" field="param4ElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.subscriptionEl']}" field="subscriptionEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['triggeredEdrTemplate.subscriptionElSpark']}" field="subscriptionElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+            <hftl:formField label="#{messages['meveoModule.meveoInstance']}" field="meveoInstance" valueLabelField="code" required="false" popup="false" listBean="#{meveoInstanceBean}" newLine="true" />
+        </hftl:formPanel>
 
-	</ui:define>
+    </ui:define>
 </ui:composition>

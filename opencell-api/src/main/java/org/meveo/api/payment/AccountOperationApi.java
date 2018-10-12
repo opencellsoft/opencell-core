@@ -27,6 +27,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -242,7 +243,7 @@ public class AccountOperationApi extends BaseApi {
             List<AccountOperation> accountOperations = accountOperationService.list(paginationConfiguration);
             if (accountOperations != null) {
                 for (AccountOperation accountOperation : accountOperations) {
-                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, true));
+                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                     result.getAccountOperations().getAccountOperation().add(accountOperationDto);
                 }
             }
@@ -408,7 +409,7 @@ public class AccountOperationApi extends BaseApi {
     public AccountOperationDto find(Long id) throws MeveoApiException {
         AccountOperation ao = accountOperationService.findById(id);
         if (ao != null) {
-            return new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, true));
+            return new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } else {
             throw new EntityDoesNotExistsException(AccountOperation.class, id);
         }

@@ -82,9 +82,9 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         if (expression.indexOf("ba") >= 0) {
             userMap.put("ba", billingAccount);
         }
-        if (expression.indexOf("iv") >= 0) {
+        if (expression.indexOf("iv") >= 0 || expression.indexOf("invoice") >= 0) {
             userMap.put("iv", invoice);
-
+            userMap.put("invoice", invoice);
         }
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
@@ -107,6 +107,7 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         }
         if (expression.indexOf("cust") >= 0) {
             userMap.put("cust", billingAccount.getCustomerAccount().getCustomer());
+            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
         }
         if (expression.indexOf("ca") >= 0) {
             userMap.put("ca", billingAccount.getCustomerAccount());
@@ -117,8 +118,9 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         if (expression.indexOf("ua") >= 0) {
             userMap.put("ua", userAccount);
         }
-        if (expression.indexOf("iv") >= 0) {
+        if (expression.indexOf("iv") >= 0 || expression.indexOf("invoice") >= 0) {
             userMap.put("iv", invoice);
+            userMap.put("invoice", invoice);
         }
         if (expression.indexOf("date") >= 0) {
             userMap.put("date", invoice == null ? new Date() : invoice.getInvoiceDate());

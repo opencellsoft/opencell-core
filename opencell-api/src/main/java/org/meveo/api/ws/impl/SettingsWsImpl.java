@@ -106,6 +106,7 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 import org.meveo.api.hierarchy.UserHierarchyLevelApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -171,7 +172,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private InvoiceTypeApi invoiceTypeApi;
-    
+
     @Inject
     private InvoiceSequenceApi invoiceSequenceApi;
 
@@ -389,11 +390,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country) {
+    public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
         GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
         try {
-            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country));
+            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -402,11 +403,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String country) {
+    public ActionStatus removeInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country);
+            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -588,11 +589,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetSellerResponse findSeller(String sellerCode) {
+    public GetSellerResponse findSeller(String sellerCode,CustomFieldInheritanceEnum inheritCF) {
         GetSellerResponse result = new GetSellerResponse();
 
         try {
-            result.setSeller(sellerApi.find(sellerCode));
+            result.setSeller(sellerApi.find(sellerCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1585,7 +1586,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public GetInvoiceTypesResponse listInvoiceTypes() {
         GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
@@ -1597,7 +1598,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public ActionStatus createInvoiceSequence(InvoiceSequenceDto invoiceSequenceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1631,7 +1632,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public ActionStatus createOrUpdateInvoiceSequence(InvoiceSequenceDto invoiceSequenceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1642,7 +1643,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
-    
+
     @Override
     public GetInvoiceSequencesResponse listInvoiceSequences() {
         GetInvoiceSequencesResponse result = new GetInvoiceSequencesResponse();
@@ -2096,10 +2097,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus getSystemProperties() {
-    	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             result.setMessage(configurationApi.getPropertiesAsJsonString());

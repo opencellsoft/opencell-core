@@ -60,8 +60,8 @@ public class DiscountPlanItemApi extends BaseApi {
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
-        if (postData.getPercent() == null) {
-            missingParameters.add("percent");
+        if (postData.getPercent() == null && postData.getDiscountPercentEl() == null && postData.getDiscountPercentElSpark() == null) {
+            missingParameters.add("percent, discountPercentEl or discountPercentElSpark");
         }
 
         handleMissingParameters();
@@ -228,8 +228,14 @@ public class DiscountPlanItemApi extends BaseApi {
         if (dto.getExpressionEl() != null) {
             discountPlanItem.setExpressionEl(dto.getExpressionEl());
         }
+        if (dto.getExpressionElSpark() != null) {
+            discountPlanItem.setExpressionElSpark(dto.getExpressionElSpark());
+        }
         if (dto.getDiscountPercentEl() != null) {
             discountPlanItem.setDiscountPercentEl(dto.getDiscountPercentEl());
+        }
+        if (dto.getDiscountPercentElSpark() != null) {
+            discountPlanItem.setDiscountPercentElSpark(dto.getDiscountPercentElSpark());
         }
 
         return discountPlanItem;

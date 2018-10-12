@@ -27,10 +27,10 @@
         <modifyDataType tableName="billing_charge_instance" columnName="termination_date" newDataType="datetime" />
         <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime" />
     </changeSet>
-
-    <changeSet id="#3196_20180131-migration" author="AndriusKarpavicius">
+    
+    <changeSet id="#3196_20180131-migration" author="AndriusKarpavicius">    
         <sql>update ${db.schema.adapted}billing_recurring_charge_inst set next_charge_date = date(next_charge_date) + cast(subscription_date as time)
-            where recurring_chrg_tmpl_id in (select chrgt.id from ${db.schema.adapted}cat_recurring_charge_templ chrgt join ${db.schema.adapted}cat_calendar cal on chrgt.calendar_id = cal.id where cal.cal_type='PERIOD')</sql>
+        where recurring_chrg_tmpl_id in (select chrgt.id from ${db.schema.adapted}cat_recurring_charge_templ chrgt join ${db.schema.adapted}cat_calendar cal on chrgt.calendar_id = cal.id where cal.cal_type='PERIOD')</sql>
     </changeSet>
 
     <changeSet id="#2819_20180212" author="AbdelmounaimAkadid">
@@ -902,7 +902,7 @@
         <dropColumn tableName="wf_transition" columnName="updater" />
 
     </changeSet>
-
+    
     <changeSet id="#3326_20180502" author="EdwardPLegaspi">
     	<addColumn tableName="dwh_report_extract">
     		<column name="result_type" type="varchar(10)"></column>
@@ -925,7 +925,7 @@
         <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
 	</changeSet>
-
+	
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="postgresql">
 		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_quote_id</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
@@ -1040,7 +1040,7 @@
            <column name="start_date" type="datetime" />
            <column name="end_date" type="datetime" />
        </addColumn>
-    </changeSet> 
+    </changeSet>
     <changeSet id="#3311_02042018" author="SaidRamli">
         <addColumn tableName="meveo_job_instance">
             <column name="exclude_inv_without_amount" type="${type.boolean}" />
@@ -1048,7 +1048,7 @@
     </changeSet>
     
 	<changeSet id="#3254_accuentuated_search_postgresql" author="anasseh" dbms="postgresql">
-	   <sql splitStatements="false" stripComments="false"><![CDATA[	
+        <sql splitStatements="false" stripComments="false"><![CDATA[
 	   CREATE OR REPLACE FUNCTION ${db.schema.adapted}fn_unaccent(str TEXT) RETURNS TEXT AS $$
 	         BEGIN
 	         	RETURN  translate($1,
@@ -1057,11 +1057,11 @@
 	        END;
 			$$ LANGUAGE plpgsql;
 		]]></sql>
-	</changeSet>
+    </changeSet>
     <changeSet id="#3254_accuentuated_search_mySql" author="anasseh" dbms="mysql">
-    <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
-     <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
-	    <sql splitStatements="false" stripComments="false"><![CDATA[	     
+        <sql>delete from   ${db.schema.adapted}crm_provider_pay_methods  where payment_method='NONE' ;</sql>
+        <sql> drop function if exists ${db.schema.adapted}fn_unaccent;</sql>
+        <sql splitStatements="false" stripComments="false"><![CDATA[
 			create function ${db.schema.adapted}fn_unaccent( input_text varchar(2000) )
 							returns varchar(2000)
 							begin				
@@ -1077,8 +1077,8 @@
 								return @textvalue;				
 			end;
 		]]></sql>
-		
-	</changeSet>
+
+	</changeSet>    
 	<changeSet id="#2870_20180129 - Convert to EnableBussEntity" author="EdwardLegaspi">
 		<addColumn tableName="dwh_report_extract">
 			<column name="uuid" type="varchar(60)"/>
@@ -1091,7 +1091,7 @@
     <changeSet id="#2577_20180322" author="anasseh">
         <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
         <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
-    </changeSet>
+    </changeSet> 
 
 	<changeSet author="SaidRamli" id="#3457_04062018">
 		<modifyDataType columnName="phone" newDataType="varchar(50)" tableName="ar_customer_account" />
@@ -1217,7 +1217,7 @@
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.rating_unit_description=cat_charge_template.rating_unit_description where billing_wallet_operation.rating_unit_description is null</sql>
         <sql>update ${db.schema.adapted}billing_wallet_operation join ${db.schema.adapted}billing_charge_instance on billing_wallet_operation.charge_instance_id=billing_charge_instance.id join ${db.schema.adapted}cat_charge_template on billing_charge_instance.charge_template_id=cat_charge_template.id set billing_wallet_operation.invoice_sub_category_id=cat_charge_template.invoice_sub_category where billing_wallet_operation.invoice_sub_category_id is null</sql>
     </changeSet>
-    
+
     <changeSet id="#3291_20180620" author="EdwardPLegaspi">
     	<addColumn tableName="billing_invoice">
     		<column name="due_balance" type="numeric(23, 12)"></column>
@@ -1371,12 +1371,12 @@
      	</addColumn>
      </changeSet>
      
-    <changeSet id="#3225_22062018" author="SaidRamli">
+      <changeSet id="#3225_22062018" author="SaidRamli">
         <addColumn tableName="crm_custom_field_tmpl">
             <column name="cf_protectable" type="${type.boolean}" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#3575_20180803 - Customer No Sequence" author="EdwardLegaspi">
      	<addColumn tableName="crm_provider">
     		<column name="cust_no_prefix" type="varchar(255)" />
@@ -1396,20 +1396,20 @@
         </addColumn>
         <sql><![CDATA[
         update ${db.schema.adapted}account_entity e set email = (select email from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        update ${db.schema.adapted}account_entity e set fax = (select fax from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        update ${db.schema.adapted}account_entity e set mobile = (select mobile from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        update ${db.schema.adapted}account_entity e set phone = (select phone from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
-        
-        update ${db.schema.adapted}account_entity e set email = (select email from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
-        update ${db.schema.adapted}account_entity e set phone = (select phone from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
-        
-        update ${db.schema.adapted}account_entity e set email = (select email from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        update ${db.schema.adapted}account_entity e set fax = (select fax from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        update ${db.schema.adapted}account_entity e set mobile = (select mobile from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        update ${db.schema.adapted}account_entity e set phone = (select phone from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
-        
-        update ${db.schema.adapted}account_entity e set registration_no = (select registration_no from crm_customer c where c.id=e.id);
-        update ${db.schema.adapted}account_entity e set vat_no = (select vat_no from crm_customer c where c.id=e.id);
+		update ${db.schema.adapted}account_entity e set fax = (select fax from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		update ${db.schema.adapted}account_entity e set mobile = (select mobile from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		update ${db.schema.adapted}account_entity e set phone = (select phone from crm_customer c where c.id=e.id) where account_type='ACCT_CUST';
+		
+		update ${db.schema.adapted}account_entity e set email = (select email from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+		update ${db.schema.adapted}account_entity e set phone = (select phone from billing_billing_account b where b.id=e.id) where account_type='ACCT_BA';
+		
+		update ${db.schema.adapted}account_entity e set email = (select email from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update ${db.schema.adapted}account_entity e set fax = (select fax from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update ${db.schema.adapted}account_entity e set mobile = (select mobile from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		update ${db.schema.adapted}account_entity e set phone = (select phone from ar_customer_account c where c.id=e.id) where account_type='ACCT_CA';
+		
+		update ${db.schema.adapted}account_entity e set registration_no = (select registration_no from crm_customer c where c.id=e.id);
+		update ${db.schema.adapted}account_entity e set vat_no = (select vat_no from crm_customer c where c.id=e.id);
 		]]></sql>
         <dropColumn tableName="crm_customer" columnName="email" />
         <dropColumn tableName="crm_customer" columnName="fax" />
@@ -1452,7 +1452,7 @@
         <createSequence sequenceName="bill_seq_invoice_seq" />
         <createTable tableName="billing_seq_invoice">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_seq_invoice" />
+            	<constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_seq_invoice" />
             </column>
             <column name="sequence_size" type="int4" />
             <column name="current_invoice_nb" type="bigint" />
@@ -1497,7 +1497,7 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_product_instance" constraintName="fk_billing_product_instance_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
-        
+         
         <addColumn tableName="billing_rated_transaction">
             <column name="seller_id" type="bigint" />
         </addColumn>
@@ -1505,7 +1505,7 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
  
      </changeSet>
-     
+
      <changeSet id="#3485_20180725" author="Edwardlegaspi">
     	<createTable tableName="adm_gdpr_configuration">
     		<column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -1572,7 +1572,7 @@
      		<column name="cf_values" type="${type.json}"/>   
      	</addColumn>
      	<sql><![CDATA[update billing_invoice_type set uuid=concat('InvoiceType-',code)]]></sql>
-     	<addNotNullConstraint columnDataType="varchar(60)" tableName="billing_invoice_type" columnName="uuid"/>
+     	<addNotNullConstraint tableName="billing_invoice_type" columnName="uuid" columnDataType="varchar(60)"/>
      </changeSet>
      
      <changeSet id="#2449_20180822" author="EdwardPLegaspi">
@@ -1597,144 +1597,144 @@
 		</addColumn>
 	</changeSet>
 
-    <changeSet id="#3508_20180828 - Migration for sequences - postgresql" author="AbdelmounaimAkadid" dbms="postgresql">
+     <changeSet id="#3508_20180828 - Migration for sequences - postgresql" author="AbdelmounaimAkadid" dbms="postgresql">
         <sql endDelimiter="$$" splitStatements="false"><![CDATA[
-        DO $$
-        DECLARE 
-            rec_seq RECORD;
-            seqId text;
-        BEGIN
-            FOR rec_seq IN
-                 SELECT its.id its_id, it.code invoice_type_code, s.code seller_code, its.sequence_size sequence_size, its.current_invoice_nb current_invoice_nb 
-                 FROM ${db.schema.adapted}billing_seq_invtyp_sell its JOIN ${db.schema.adapted}billing_invoice_type it ON it.id=its.invoicetype_id JOIN ${db.schema.adapted}crm_seller s ON s.id=its.seller_id
-                 WHERE its.sequence_size IS NOT NULL
-            LOOP
-                seqId := nextval('bill_seq_invoice_seq');
-                EXECUTE 'INSERT INTO ${db.schema.adapted}billing_seq_invoice (id, sequence_size, current_invoice_nb, code, creator, created) VALUES (' || seqId || ', ' || rec_seq.sequence_size || ',' || CASE WHEN rec_seq.current_invoice_nb IS NULL THEN 0 ELSE rec_seq.current_invoice_nb END || ',''' || rec_seq.invoice_type_code || '_' || rec_seq.seller_code || ''', ''MIGRATION_SCRIPT'', NOW())';
-                EXECUTE 'UPDATE ${db.schema.adapted}billing_seq_invtyp_sell SET invoice_sequence_id =''' || seqId || ''' WHERE id='||rec_seq.its_id;
-            END LOOP;  
-        END$$;
-        ]]></sql>
+		DO $$
+		DECLARE 
+			rec_seq RECORD;
+		    seqId text;
+		BEGIN
+		 	FOR rec_seq IN
+		         SELECT its.id its_id, it.code invoice_type_code, s.code seller_code, its.sequence_size sequence_size, its.current_invoice_nb current_invoice_nb 
+		         FROM ${db.schema.adapted}billing_seq_invtyp_sell its JOIN ${db.schema.adapted}billing_invoice_type it ON it.id=its.invoicetype_id JOIN ${db.schema.adapted}crm_seller s ON s.id=its.seller_id
+		         WHERE its.sequence_size IS NOT NULL
+		 	LOOP
+		    	seqId := nextval('bill_seq_invoice_seq');
+		    	EXECUTE 'INSERT INTO ${db.schema.adapted}billing_seq_invoice (id, sequence_size, current_invoice_nb, code, creator, created) VALUES (' || seqId || ', ' || rec_seq.sequence_size || ',' || CASE WHEN rec_seq.current_invoice_nb IS NULL THEN 0 ELSE rec_seq.current_invoice_nb END || ',''' || rec_seq.invoice_type_code || '_' || rec_seq.seller_code || ''', ''MIGRATION_SCRIPT'', NOW())';
+		  	    EXECUTE 'UPDATE ${db.schema.adapted}billing_seq_invtyp_sell SET invoice_sequence_id =''' || seqId || ''' WHERE id='||rec_seq.its_id;
+		    END LOOP;  
+		END$$;
+		]]></sql>
         <dropColumn tableName="billing_seq_invtyp_sell" columnName="sequence_size" />
         <dropColumn tableName="billing_seq_invtyp_sell" columnName="current_invoice_nb" />
     
         <sql endDelimiter="$$" splitStatements="false"><![CDATA[        
         DO $$
-        DECLARE 
-            rec_seq RECORD;
-            seqId text;
-        BEGIN
-            FOR rec_seq IN
-                 SELECT invtype.id invtype_id, invtype.code invtype_code, invtype.sequence_size invtype_seqsize, invtype.current_invoice_nb current_invoice_nb
-                 FROM ${db.schema.adapted}billing_invoice_type invtype WHERE invtype.sequence_size IS NOT NULL
-            LOOP
-                seqId := nextval('bill_seq_invoice_seq');
-                EXECUTE 'INSERT INTO ${db.schema.adapted}billing_seq_invoice (id, sequence_size, current_invoice_nb, code, creator, created) VALUES (' || seqId || ', ' || rec_seq.invtype_seqsize || ',' || CASE WHEN rec_seq.current_invoice_nb IS NULL THEN 0 ELSE rec_seq.current_invoice_nb END || ',''' || rec_seq.invtype_code || ''', ''MIGRATION_SCRIPT'', NOW())';
-                EXECUTE 'UPDATE ${db.schema.adapted}billing_invoice_type SET invoice_sequence_id =''' || seqId || ''' WHERE id='||rec_seq.invtype_id;
-            END LOOP;  
-        END$$;
-        ]]></sql>
+		DECLARE 
+		    rec_seq RECORD;
+		    seqId text;
+		BEGIN
+		    FOR rec_seq IN
+		         SELECT invtype.id invtype_id, invtype.code invtype_code, invtype.sequence_size invtype_seqsize, invtype.current_invoice_nb current_invoice_nb
+		         FROM ${db.schema.adapted}billing_invoice_type invtype WHERE invtype.sequence_size IS NOT NULL
+		    LOOP
+		        seqId := nextval('bill_seq_invoice_seq');
+		        EXECUTE 'INSERT INTO ${db.schema.adapted}billing_seq_invoice (id, sequence_size, current_invoice_nb, code, creator, created) VALUES (' || seqId || ', ' || rec_seq.invtype_seqsize || ',' || CASE WHEN rec_seq.current_invoice_nb IS NULL THEN 0 ELSE rec_seq.current_invoice_nb END || ',''' || rec_seq.invtype_code || ''', ''MIGRATION_SCRIPT'', NOW())';
+		        EXECUTE 'UPDATE ${db.schema.adapted}billing_invoice_type SET invoice_sequence_id =''' || seqId || ''' WHERE id='||rec_seq.invtype_id;
+		    END LOOP;  
+		END$$;
+		]]></sql>
         <dropColumn tableName="billing_invoice_type" columnName="sequence_size" />
         <dropColumn tableName="billing_invoice_type" columnName="current_invoice_nb" />
         
      </changeSet>
      
      <changeSet id="#3508_20180828 - Migration for sequences - mysql" author="AbdelmounaimAkadid" dbms="mysql">
-        <sql endDelimiter="$$" splitStatements="false"><![CDATA[
-            DROP PROCEDURE IF EXISTS proc_seq_migration$$
-            CREATE PROCEDURE proc_seq_migration()
-            BEGIN
-                DECLARE invtype_seller_id BIGINT;
-                DECLARE invtype_seller_seqsize BIGINT;
-                DECLARE invtype_seller_current_invoice_nb BIGINT;
-                DECLARE invtype_seller_code VARCHAR(255);
-                DECLARE cur_seq CURSOR FOR SELECT its.id invtype_seller_id, CONCAT(it.code, '_', s.code) AS invtype_seller_code, its.sequence_size invtype_seller_seqsize, its.current_invoice_nb invtype_seller_current_invoice_nb 
-                     FROM ${db.schema.adapted}billing_seq_invtyp_sell its JOIN ${db.schema.adapted}billing_invoice_type it ON it.id=its.invoicetype_id JOIN ${db.schema.adapted}crm_seller s ON s.id=its.seller_id
-                     WHERE its.sequence_size IS NOT NULL
-                        
-                OPEN cur_seq;
-                         
-                Reading_Seqs: LOOP
-                    FETCH cur_seq INTO invtype_seller_id, invtype_seller_code, invtype_seller_seqsize, invtype_seller_current_invoice_nb;
-                    INSERT INTO ${db.schema.adapted}billing_seq_invoice (sequence_size, current_invoice_nb, code, creator, created) VALUES (invtype_seller_seqsize, invtype_seller_current_invoice_nb, invtype_seller_code, 'MIGRATION_SCRIPT', NOW());
-                    UPDATE ${db.schema.adapted}billing_seq_invtyp_sell SET invoice_sequence_id = LAST_INSERT_ID() WHERE id = invtype_seller_id;
-                END LOOP;
-            
-                CLOSE cur_seq;
-            END;
-            
-            CALL proc_seq_migration()
-            ]]></sql>
-         <dropColumn tableName="billing_seq_invtyp_sell" columnName="sequence_size" />
-         <dropColumn tableName="billing_seq_invtyp_sell" columnName="current_invoice_nb" />
+     	<sql endDelimiter="$$" splitStatements="false"><![CDATA[
+			DROP PROCEDURE IF EXISTS proc_seq_migration$$
+			CREATE PROCEDURE proc_seq_migration()
+			BEGIN
+			  	DECLARE invtype_seller_id BIGINT;
+			  	DECLARE invtype_seller_seqsize BIGINT;
+			  	DECLARE invtype_seller_current_invoice_nb BIGINT;
+			  	DECLARE invtype_seller_code VARCHAR(255);
+				DECLARE cur_seq CURSOR FOR SELECT its.id invtype_seller_id, CONCAT(it.code, '_', s.code) AS invtype_seller_code, its.sequence_size invtype_seller_seqsize, its.current_invoice_nb invtype_seller_current_invoice_nb 
+			         FROM ${db.schema.adapted}billing_seq_invtyp_sell its JOIN ${db.schema.adapted}billing_invoice_type it ON it.id=its.invoicetype_id JOIN ${db.schema.adapted}crm_seller s ON s.id=its.seller_id
+			         WHERE its.sequence_size IS NOT NULL
+					    
+				OPEN cur_seq;
+					     
+				Reading_Seqs: LOOP
+			    	FETCH cur_seq INTO invtype_seller_id, invtype_seller_code, invtype_seller_seqsize, invtype_seller_current_invoice_nb;
+			        INSERT INTO ${db.schema.adapted}billing_seq_invoice (sequence_size, current_invoice_nb, code, creator, created) VALUES (invtype_seller_seqsize, invtype_seller_current_invoice_nb, invtype_seller_code, 'MIGRATION_SCRIPT', NOW());
+					UPDATE ${db.schema.adapted}billing_seq_invtyp_sell SET invoice_sequence_id = LAST_INSERT_ID() WHERE id = invtype_seller_id;
+				END LOOP;
+			
+				CLOSE cur_seq;
+			END;
+			
+			CALL proc_seq_migration()
+			]]></sql>
+	     <dropColumn tableName="billing_seq_invtyp_sell" columnName="sequence_size" />
+	     <dropColumn tableName="billing_seq_invtyp_sell" columnName="current_invoice_nb" />
         
-         <sql endDelimiter="$$" splitStatements="false"><![CDATA[  
-            DROP PROCEDURE IF EXISTS proc_seq_migration$$
-            CREATE PROCEDURE proc_seq_migration()
-            BEGIN
-                DECLARE invtype_id BIGINT;
-                DECLARE invtype_seqsize BIGINT;
-                DECLARE invtype_current_invoice_nb BIGINT;
-                DECLARE invtype_code VARCHAR(255);
-                DECLARE cur_seq CURSOR FOR SELECT invtype.id invtype_id, invtype.code invtype_code, invtype.sequence_size invtype_seqsize, invtype.current_invoice_nb invtype_current_invoice_nb
-                             FROM ${db.schema.adapted}billing_invoice_type invtype WHERE invtype.sequence_size IS NOT NULL;
-                        
-                OPEN cur_seq;
-                         
-                Reading_Seqs: LOOP
-                    FETCH cur_seq INTO invtype_id, invtype_code, invtype_seqsize, invtype_current_invoice_nb;
-                    INSERT INTO ${db.schema.adapted}billing_seq_invoice (sequence_size, current_invoice_nb, code, creator, created) VALUES (invtype_seqsize, invtype_current_invoice_nb, invtype_code, 'MIGRATION_SCRIPT', NOW());
-                    UPDATE ${db.schema.adapted}billing_invoice_type SET invoice_sequence_id = LAST_INSERT_ID() WHERE id = invtype_id;
-                END LOOP;
-            
-                CLOSE cur_seq;
-            END;
-            
-            CALL proc_seq_migration()
-        ]]>
-        </sql>
-        <dropColumn tableName="billing_invoice_type" columnName="sequence_size" />
+	     <sql endDelimiter="$$" splitStatements="false"><![CDATA[  
+			DROP PROCEDURE IF EXISTS proc_seq_migration$$
+			CREATE PROCEDURE proc_seq_migration()
+			BEGIN
+			  	DECLARE invtype_id BIGINT;
+			  	DECLARE invtype_seqsize BIGINT;
+			  	DECLARE invtype_current_invoice_nb BIGINT;
+			  	DECLARE invtype_code VARCHAR(255);
+				DECLARE cur_seq CURSOR FOR SELECT invtype.id invtype_id, invtype.code invtype_code, invtype.sequence_size invtype_seqsize, invtype.current_invoice_nb invtype_current_invoice_nb
+					         FROM ${db.schema.adapted}billing_invoice_type invtype WHERE invtype.sequence_size IS NOT NULL;
+					    
+				OPEN cur_seq;
+					     
+				Reading_Seqs: LOOP
+			    	FETCH cur_seq INTO invtype_id, invtype_code, invtype_seqsize, invtype_current_invoice_nb;
+			        INSERT INTO ${db.schema.adapted}billing_seq_invoice (sequence_size, current_invoice_nb, code, creator, created) VALUES (invtype_seqsize, invtype_current_invoice_nb, invtype_code, 'MIGRATION_SCRIPT', NOW());
+					UPDATE ${db.schema.adapted}billing_invoice_type SET invoice_sequence_id = LAST_INSERT_ID() WHERE id = invtype_id;
+				END LOOP;
+			
+				CLOSE cur_seq;
+			END;
+			
+			CALL proc_seq_migration()
+		]]>
+		</sql>
+		<dropColumn tableName="billing_invoice_type" columnName="sequence_size" />
         <dropColumn tableName="billing_invoice_type" columnName="current_invoice_nb" />
         
-    </changeSet>
-    
+	</changeSet>
+	
     <changeSet id="#3508_20180828 - Migration for seller" author="AbdelmounaimAkadid">
         <sql><![CDATA[
-            UPDATE ${db.schema.adapted}billing_invoice invu SET seller_id = (
-                SELECT c.seller_id FROM ${db.schema.adapted}billing_invoice inv 
-                JOIN ${db.schema.adapted}billing_billing_account ba ON inv.billing_account_id = ba.id 
-                JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
-                JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE inv.id = invu.id
-            ) WHERE seller_id IS NULL;
-        ]]>
-        </sql>
+			UPDATE ${db.schema.adapted}billing_invoice invu SET seller_id = (
+				SELECT c.seller_id FROM ${db.schema.adapted}billing_invoice inv 
+				JOIN ${db.schema.adapted}billing_billing_account ba ON inv.billing_account_id = ba.id 
+				JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
+				JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE inv.id = invu.id
+			) WHERE seller_id IS NULL;
+		]]>
+		</sql>			
         <addNotNullConstraint tableName="billing_invoice" columnName="seller_id"/>
-    
+	
         <sql><![CDATA[
-            UPDATE ${db.schema.adapted}billing_subscription subu SET seller_id = (
-                SELECT c.seller_id FROM ${db.schema.adapted}billing_subscription sub 
-                JOIN ${db.schema.adapted}billing_user_account ua ON sub.user_account_id = ua.id 
-                JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
-                JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
-                JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE sub.id = subu.id
-            ) WHERE seller_id IS NULL;
-        ]]>
-        </sql>        
+			UPDATE ${db.schema.adapted}billing_subscription subu SET seller_id = (
+				SELECT c.seller_id FROM ${db.schema.adapted}billing_subscription sub 
+				JOIN ${db.schema.adapted}billing_user_account ua ON sub.user_account_id = ua.id 
+				JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
+				JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
+				JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE sub.id = subu.id
+			) WHERE seller_id IS NULL;
+		]]>
+		</sql>			
         <addNotNullConstraint tableName="billing_subscription" columnName="seller_id"/>
-        
-        <sql><![CDATA[
-            UPDATE ${db.schema.adapted}billing_product_instance bpiu SET seller_id = (
-                SELECT c.seller_id FROM ${db.schema.adapted}billing_product_instance bpi 
-                JOIN ${db.schema.adapted}billing_user_account ua ON bpi.user_account_id = ua.id 
-                JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
-                JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
-                JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE bpi.id = bpiu.id
-            ) WHERE seller_id IS NULL;
-        ]]>
-        </sql>    
+		
+		<sql><![CDATA[
+			UPDATE ${db.schema.adapted}billing_product_instance bpiu SET seller_id = (
+				SELECT c.seller_id FROM ${db.schema.adapted}billing_product_instance bpi 
+				JOIN ${db.schema.adapted}billing_user_account ua ON bpi.user_account_id = ua.id 
+				JOIN ${db.schema.adapted}billing_billing_account ba ON ua.billing_account_id = ba.id 
+				JOIN ${db.schema.adapted}ar_customer_account ca ON ba.customer_account_id = ca.id
+				JOIN ${db.schema.adapted}crm_customer c ON ca.customer_id = c.id WHERE bpi.id = bpiu.id
+			) WHERE seller_id IS NULL;
+		]]>
+		</sql>			
         <addNotNullConstraint tableName="billing_product_instance" columnName="seller_id"/>
-              
-    </changeSet>
+     </changeSet>
+
      
      <changeSet id="#3554_20180812 payment sepa as file" author="anasseh">
      	 <createSequence sequenceName="ar_ddrequest_builder_seq" />                            
@@ -1875,4 +1875,278 @@
         <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id"/>
     </changeSet>
     
-</databaseChangeLog>
+    <changeSet id="#3464_20180522" author="AndriusKarpavicius">
+        <addColumn tableName="crm_provider">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="adm_user">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_cat">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_tax">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="medina_access">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_filter">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cust_cei">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template_category">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_product_instance">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ord_order">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ord_quote">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn> 
+        <addColumn tableName="ar_payment_gateway">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="dwh_report_extract">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ar_ddrequest_builder">
+            <column name="cf_values_accum" type="${type.json}"></column>
+        </addColumn>
+        
+        <sql>update ${db.schema.adapted}crm_provider set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}account_entity set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}adm_user set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ar_account_operation set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_cycle set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_cat set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_sub_cat set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_service_instance set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_subscription set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_tax set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_charge_template set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_offer_template set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_service_template set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}crm_seller set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}medina_access set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}meveo_filter set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cust_cei set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}cat_offer_template_category set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_product_instance set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ord_order set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ord_quote set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ar_payment_gateway set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_billing_run set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}dwh_report_extract set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_type set cf_values_accum=cf_values</sql>
+        <sql>update ${db.schema.adapted}ar_ddrequest_builder set cf_values_accum=cf_values</sql>
+    </changeSet>
+    
+    <changeSet id="#3464_20180701" author="AndriusKarpavicius">
+        <addColumn tableName="cat_usage_charge_template">
+            <column name="filter_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="cat_triggered_edr">
+            <column name="condition_el_sp" type="varchar(2000)" />
+            <column name="subscription_el_sp" type="varchar(2000)" />
+            <column name="param_1_el_sp" type="varchar(2000)" />
+            <column name="param_2_el_sp" type="varchar(2000)" />
+            <column name="param_3_el_sp" type="varchar(2000)" />
+            <column name="param_4_el_sp" type="varchar(2000)" />
+            <column name="quantity_el_sp" type="varchar(2000)" />
+        </addColumn>     
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="criteria_el_sp" type="varchar(2000)" />
+            <column name="rating_el_with_tax_sp" type="varchar(2000)" />
+            <column name="rating_el_without_tax_sp" type="varchar(2000)" />
+            <column name="minimum_amount_without_tax_el_sp" type="varchar(2000)" />
+            <column name="minimum_amount_with_tax_el_sp" type="varchar(2000)" />
+            <column name="amount_without_tax_el_sp" type="varchar(2000)" />
+            <column name="amount_with_tax_el_sp" type="varchar(2000)" />
+            <column name="wo_description_el_sp" type="varchar(2000)" />
+        </addColumn>   
+        <addColumn tableName="crm_customer_category">
+            <column name="exoneration_tax_el_sp" type="varchar(2000)" />
+        </addColumn>   
+        <addColumn tableName="billing_inv_sub_cat_country">
+            <column name="tax_code_el_sp" type="varchar(2000)" />
+        </addColumn>  
+    </changeSet>    
+    
+    <changeSet id="#3577_20180727" author="AndriusKarpavicius">
+        <addColumn tableName="ord_order">
+            <column name="order_number " type="varchar(255)" />            
+            <column name="due_date_delay_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}ord_order set order_number = case when external_id is not null then external_id else code end where order_number is null</sql>
+        <addColumn tableName="billing_billing_account">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="billing_subscription">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+        </addColumn>  
+        <addColumn tableName="billing_rated_transaction">
+            <column name="charge_instance_id" type="bigint" />
+            <column name="tax_id" type="bigint" />
+            <column name="tax_percent" type="numeric(23, 12)" />
+            <column name="user_account_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_rt_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" /> 
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />  
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" /> 
+        <addColumn tableName="billing_wallet_operation">
+            <column name="tax_id" type="bigint" />
+        </addColumn>           
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />           
+        <addColumn tableName="billing_cycle">     
+            <column name="due_date_delay_el_sp" type="varchar(2000)" />
+            <column name="invoice_type_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="ar_customer_account">     
+            <column name="due_date_delay_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="order_id" type="bigint" />
+        </addColumn>               
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_invoice" constraintName="fk_inv_subscription" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />             
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_invoice" constraintName="fk_inv_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />             
+        <addColumn tableName="cat_discount_plan_item">     
+            <column name="expression_el_sp" type="varchar(2000)" />
+            <column name="discount_percent_el_sp" type="varchar(2000)" />
+        </addColumn>        
+        <addColumn tableName="billing_invoice_agregate">
+            <column name="discount_plan_item_id" type="bigint" />
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_agregate" constraintName="fk_ia_dpi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" /> 
+        <addDefaultValue columnName="rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
+        <addDefaultValue columnName="invoice_rounding_mode" tableName="crm_provider" defaultValue="NEAREST"/>
+        <sql>update ${db.schema.adapted}crm_provider set rounding_mode='NEAREST' where rounding_mode is null</sql>
+        <sql>update ${db.schema.adapted}crm_provider set invoice_rounding_mode='NEAREST' where invoice_rounding_mode is null</sql>
+        <sql>update ${db.schema.adapted}crm_provider set rating_rounding=2 where rating_rounding is null</sql>
+        <sql>update ${db.schema.adapted}crm_provider set invoice_rounding=2 where invoice_rounding is null</sql>
+        <addNotNullConstraint tableName="crm_provider" columnName="rounding_mode" columnDataType="varchar(50)"/>
+        <addNotNullConstraint tableName="crm_provider" columnName="invoice_rounding_mode" columnDataType="varchar(50)"/>
+        <addNotNullConstraint tableName="crm_provider" columnName="rating_rounding" columnDataType="int4"/>
+        <addNotNullConstraint tableName="crm_provider" columnName="invoice_rounding" columnDataType="int4"/>
+    </changeSet>
+    
+    <changeSet id="#3577_20180727_migration_P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id from ${db.schema.adapted}billing_wallet_operation where
+            billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id and
+            billing_rated_transaction.wallet_operation_id is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_invoice_agregate set discount_plan_item_id = cat_discount_plan_item.id from ${db.schema.adapted}cat_discount_plan_item where
+            cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code and
+            billing_invoice_agregate.discount_plan_item_code is not null
+        </sql>        
+        <sql>update ${db.schema.adapted}billing_invoice_agregate set tax_id = billing_invoice_agregate_taxes.tax_id from ${db.schema.adapted}billing_invoice_agregate_taxes where
+            billing_invoice_agregate.id=billing_invoice_agregate_taxes.sub_cat_invoice_aggregat_id and billing_invoice_agregate.tax_id is null</sql>
+        
+        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_wallet.user_account_id from ${db.schema.adapted}billing_wallet where
+            billing_rated_transaction.wallet_id=billing_wallet.id and
+            billing_rated_transaction.wallet_id is not null and billing_rated_transaction.user_account_id is null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_subscription.user_account_id from ${db.schema.adapted}billing_subscription where
+            billing_rated_transaction.subscription_id=billing_subscription.id and
+            billing_rated_transaction.subscription_id is not null and billing_rated_transaction.user_account_id is null                       
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_charge_instance.user_account_id from ${db.schema.adapted}billing_charge_instance where
+            billing_rated_transaction.charge_instance_id=billing_charge_instance.id and
+            billing_rated_transaction.charge_instance_id is not null and billing_rated_transaction.user_account_id is null    
+        </sql>        
+    </changeSet>
+
+    <changeSet id="#3577_20180727_migration_M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id where billing_rated_transaction.wallet_operation_id is not null</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}cat_discount_plan_item on cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code set discount_plan_item_id = cat_discount_plan_item.id where billing_invoice_agregate.discount_plan_item_code is not null</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}billing_invoice_agregate_taxes on billing_invoice_agregate.id=sub_cat_invoice_aggregat_id set tax_id = billing_invoice_agregate_taxes.tax_id where billing_invoice_agregate.tax_id is null</sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet on billing_rated_transaction.wallet_id=billing_wallet.id set user_account_id = billing_wallet.user_account_id where billing_rated_transaction.wallet_id is not null and billing_rated_transaction.user_account_id is null </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_subscription on billing_rated_transaction.subscription_id=billing_subscription.id set user_account_id = billing_subscription.user_account_id where billing_rated_transaction.subscription_id is not null and billing_rated_transaction.user_account_id is null </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_charge_instance on billing_rated_transaction.charge_instance_id=billing_charge_instance.id set user_account_id = billing_charge_instance.user_account_id where billing_rated_transaction.charge_instance_id is not null and billing_rated_transaction.user_account_id is null </sql>
+        
+    </changeSet>
+    
+    <changeSet id="#3577_20180827" author="AndriusKarpavicius">
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="seller_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="seller_id" columnDataType="bigint"/>
+        <dropTable tableName="billing_invoice_agregate_taxes"/>
+    </changeSet>
+    
+    <changeSet id="spark_P" author="AndriusKarpavicius" dbms="postgresql">
+        <addDefaultValue tableName="job_execution" columnName="id" defaultValueSequenceNext="job_execution_seq"/>
+        <addDefaultValue tableName="rating_edr" columnName="id" defaultValueSequenceNext="rating_edr_seq"/>
+        <addDefaultValue tableName="billing_rated_transaction" columnName="id" defaultValueSequenceNext="billing_rated_transaction_seq"/>
+        <addDefaultValue tableName="billing_invoice" columnName="id" defaultValueSequenceNext="billing_invoice_seq"/>
+        <addDefaultValue tableName="billing_invoice_agregate" columnName="id" defaultValueSequenceNext="billing_invoice_agregate_seq"/>
+    </changeSet>    
+</databaseChangeLog> 

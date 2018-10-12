@@ -234,8 +234,8 @@ public class CatalogHierarchyBuilderService {
             // set custom fields
             if (customFieldValues != null) {
                 newProductTemplate.getCfValuesNullSafe().setValuesByCode(customFieldValues);
-            } else {
-                newProductTemplate.setCfValues(productTemplate.getCfValues());
+            } else if (productTemplate.getCfValues() != null) {
+                newProductTemplate.getCfValuesNullSafe().setValuesByCode(productTemplate.getCfValues().getValuesByCode());
             }
 
             // needs a refresh here so CF will not be saved.
@@ -422,9 +422,9 @@ public class CatalogHierarchyBuilderService {
 
             // set custom fields
             if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
-                newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceConfiguration.getCfValues());
-            } else {
-                newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
+                newServiceTemplate.getCfValuesNullSafe().setValues(serviceConfiguration.getCfValues());
+            } else if (serviceTemplate.getCfValues() != null) {
+                newServiceTemplate.getCfValuesNullSafe().setValues(serviceTemplate.getCfValues().getValuesByCode());
             }
 
             serviceTemplateService.refresh(serviceTemplate);

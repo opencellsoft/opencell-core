@@ -21,6 +21,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
@@ -55,7 +56,7 @@ public abstract class ProductOfferingApi<E extends ProductOffering, T extends Bu
             for (ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
                 if (productChargeTemplate != null) {
                     productChargeTemplate.setProductTemplates(Arrays.asList(productTemplate));
-                    productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, true));
+                    productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                     chargeDtos.add(productChargeTemplateDto);
                 }
             }

@@ -60,7 +60,7 @@ import org.meveo.model.shared.ContactInformation;
  * @lastModifiedVersion 5.2
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "CA")
+@CustomFieldEntity(cftCodePrefix = "CA", inheritCFValuesFrom = "customer")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "ar_customer_account")
@@ -73,72 +73,82 @@ import org.meveo.model.shared.ContactInformation;
             "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0")})
 public class CustomerAccount extends AccountEntity {
 
-	public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
+    public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 	@OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "crm_address_book_id")
 	private AddressBook addressbook;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_currency_id")
-	private TradingCurrency tradingCurrency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id")
+    private TradingCurrency tradingCurrency;
 
-	@Column(name = "status", length = 10)
-	@Enumerated(EnumType.STRING)
-	private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
+    @Column(name = "status", length = 10)
+    @Enumerated(EnumType.STRING)
+    private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "credit_category_id")
-	private CreditCategory creditCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "credit_category_id")
+    private CreditCategory creditCategory;
 
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<BillingAccount> billingAccounts = new ArrayList<>();
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<BillingAccount> billingAccounts = new ArrayList<>();
 
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<AccountOperation> accountOperations = new ArrayList<>();
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<AccountOperation> accountOperations = new ArrayList<>();
 
-	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<ActionDunning> actionDunnings = new ArrayList<>();
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<ActionDunning> actionDunnings = new ArrayList<>();
 
-	@Column(name = "date_status")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateStatus = new Date();
+    @Column(name = "date_status")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateStatus = new Date();
 
-	@Column(name = "date_dunning_level")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateDunningLevel;
+    @Column(name = "date_dunning_level")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateDunningLevel;
 
 	@Embedded
 	private ContactInformation contactInformation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_id")
-	private Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-	@Column(name = "dunning_level")
-	@Enumerated(EnumType.STRING)
-	private DunningLevelEnum dunningLevel = DunningLevelEnum.R0;
+    @Column(name = "dunning_level")
+    @Enumerated(EnumType.STRING)
+    private DunningLevelEnum dunningLevel = DunningLevelEnum.R0;
 
-	@Column(name = "password", length = 10)
-	@Size(max = 10)
-	private String password = "";
+    @Column(name = "password", length = 10)
+    @Size(max = 10)
+    private String password = "";
 
-	@Column(name = "due_date_delay_el", length = 2000)
-	@Size(max = 2000)
-	private String dueDateDelayEL;
+    /**
+     * Expression to calculate Invoice due date delay value
+     */
+    @Column(name = "due_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String dueDateDelayEL;
 
-	public CustomerAccount() {
-		accountType = ACCOUNT_TYPE;
-	}
-	
+    /**
+     * Expression to calculate Invoice due date delay value - for Spark
+     */
+    @Column(name = "due_date_delay_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String dueDateDelayELSpark;
+
+    public CustomerAccount() {
+        accountType = ACCOUNT_TYPE;
+    }
+
 	public AddressBook getAddressbook() {
 		return addressbook;
 	}
@@ -147,67 +157,67 @@ public class CustomerAccount extends AccountEntity {
 		this.addressbook = addressbook;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PaymentMethod> paymentMethods = new ArrayList<PaymentMethod>();
+    @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentMethod> paymentMethods = new ArrayList<PaymentMethod>();
 
-	@Type(type = "numeric_boolean")
-	@Column(name = "excluded_from_payment")
-	private boolean excludedFromPayment;
+    @Type(type = "numeric_boolean")
+    @Column(name = "excluded_from_payment")
+    private boolean excludedFromPayment;
 
-	public Customer getCustomer() {
-		return customer;
-	}
+    public Customer getCustomer() {
+        return customer;
+    }
 
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
-	}
+    public TradingCurrency getTradingCurrency() {
+        return tradingCurrency;
+    }
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
-	}
+    public void setTradingCurrency(TradingCurrency tradingCurrency) {
+        this.tradingCurrency = tradingCurrency;
+    }
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public CustomerAccountStatusEnum getStatus() {
-		return status;
-	}
+    public CustomerAccountStatusEnum getStatus() {
+        return status;
+    }
 
-	public void setStatus(CustomerAccountStatusEnum status) {
-		if (this.status != status) {
-			this.dateStatus = new Date();
-		}
-		this.status = status;
-	}
+    public void setStatus(CustomerAccountStatusEnum status) {
+        if (this.status != status) {
+            this.dateStatus = new Date();
+        }
+        this.status = status;
+    }
 
-	public Date getDateStatus() {
-		return dateStatus;
-	}
+    public Date getDateStatus() {
+        return dateStatus;
+    }
 
-	public void setDateStatus(Date dateStatus) {
-		this.dateStatus = dateStatus;
-	}
+    public void setDateStatus(Date dateStatus) {
+        this.dateStatus = dateStatus;
+    }
 
-	public List<BillingAccount> getBillingAccounts() {
-		return billingAccounts;
-	}
+    public List<BillingAccount> getBillingAccounts() {
+        return billingAccounts;
+    }
 
-	public void setBillingAccounts(List<BillingAccount> billingAccounts) {
-		this.billingAccounts = billingAccounts;
-	}
+    public void setBillingAccounts(List<BillingAccount> billingAccounts) {
+        this.billingAccounts = billingAccounts;
+    }
 
-	public List<AccountOperation> getAccountOperations() {
-		return accountOperations;
-	}
+    public List<AccountOperation> getAccountOperations() {
+        return accountOperations;
+    }
 
-	public void setAccountOperations(List<AccountOperation> accountOperations) {
-		this.accountOperations = accountOperations;
-	}
+    public void setAccountOperations(List<AccountOperation> accountOperations) {
+        this.accountOperations = accountOperations;
+    }
 
 	public ContactInformation getContactInformation() {
 		return contactInformation;
@@ -217,280 +227,297 @@ public class CustomerAccount extends AccountEntity {
 		this.contactInformation = contactInformation;
 	}
 
-	public void setDunningLevel(DunningLevelEnum dunningLevel) {
-		this.dunningLevel = dunningLevel;
-	}
+    public void setDunningLevel(DunningLevelEnum dunningLevel) {
+        this.dunningLevel = dunningLevel;
+    }
 
-	public DunningLevelEnum getDunningLevel() {
-		return dunningLevel;
-	}
+    public DunningLevelEnum getDunningLevel() {
+        return dunningLevel;
+    }
 
-	public Date getDateDunningLevel() {
-		return dateDunningLevel;
-	}
+    public Date getDateDunningLevel() {
+        return dateDunningLevel;
+    }
 
-	public void setDateDunningLevel(Date dateDunningLevel) {
-		this.dateDunningLevel = dateDunningLevel;
-	}
+    public void setDateDunningLevel(Date dateDunningLevel) {
+        this.dateDunningLevel = dateDunningLevel;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public List<ActionDunning> getActionDunnings() {
-		return actionDunnings;
-	}
+    public List<ActionDunning> getActionDunnings() {
+        return actionDunnings;
+    }
 
-	public void setActionDunnings(List<ActionDunning> actionDunnings) {
-		this.actionDunnings = actionDunnings;
-	}
+    public void setActionDunnings(List<ActionDunning> actionDunnings) {
+        this.actionDunnings = actionDunnings;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
-	public CreditCategory getCreditCategory() {
-		return creditCategory;
-	}
+    public CreditCategory getCreditCategory() {
+        return creditCategory;
+    }
 
-	public void setCreditCategory(CreditCategory creditCategory) {
-		this.creditCategory = creditCategory;
-	}
+    public void setCreditCategory(CreditCategory creditCategory) {
+        this.creditCategory = creditCategory;
+    }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return new ICustomFieldEntity[] { customer };
-	}
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[] { customer };
+    }
 
-	@Override
-	public BusinessEntity getParentEntity() {
-		return customer;
-	}
+    @Override
+    public BusinessEntity getParentEntity() {
+        return customer;
+    }
 
-	@Override
-	public Class<? extends BusinessEntity> getParentEntityType() {
-		return Customer.class;
-	}
+    @Override
+    public Class<? extends BusinessEntity> getParentEntityType() {
+        return Customer.class;
+    }
 
-	public String getDueDateDelayEL() {
-		return dueDateDelayEL;
-	}
+    /**
+     * @return Expression to calculate Invoice due date delay value
+     */
+    public String getDueDateDelayEL() {
+        return dueDateDelayEL;
+    }
 
-	public void setDueDateDelayEL(String dueDateDelayEL) {
-		this.dueDateDelayEL = dueDateDelayEL;
-	}
+    /**
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
+     */
+    public void setDueDateDelayEL(String dueDateDelayEL) {
+        this.dueDateDelayEL = dueDateDelayEL;
+    }
 
-	public List<PaymentMethod> getPaymentMethods() { 
-		return paymentMethods;
-	}
+    /**
+     * @return Expression to calculate Invoice due date delay value - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
 
-	public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
-		this.paymentMethods = paymentMethods;
-	}
+    /**
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     */
+    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+        this.dueDateDelayELSpark = dueDateDelayELSpark;
+    }
 
+    public List<PaymentMethod> getPaymentMethods() {
+        return paymentMethods;
+    }
 
-	public void addPaymentMethod(PaymentMethod paymentMethod) {
-		if (paymentMethods == null) {
-			paymentMethods = new ArrayList<>();
-		}
-		paymentMethods.add(paymentMethod);
-	}
+    public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
+        this.paymentMethods = paymentMethods;
+    }
 
-	public boolean isExcludedFromPayment() {
-		return excludedFromPayment;
-	}
+    public void addPaymentMethod(PaymentMethod paymentMethod) {
+        if (paymentMethods == null) {
+            paymentMethods = new ArrayList<>();
+        }
+        paymentMethods.add(paymentMethod);
+    }
 
-	public void setExcludedFromPayment(boolean excludedFromPayment) {
-		this.excludedFromPayment = excludedFromPayment;
-	}
+    public boolean isExcludedFromPayment() {
+        return excludedFromPayment;
+    }
 
-	/**
-	 * Get a payment method marked as preferred
-	 * 
-	 * @return Payment method marked as preferred
-	 */
-	public PaymentMethod getPreferredPaymentMethod() {
-		if (getPaymentMethods() != null) {
-			for (PaymentMethod paymentMethod : getPaymentMethods()) {
-				if (paymentMethod.isPreferred()) {
-					return paymentMethod;
-				}
-			}
+    public void setExcludedFromPayment(boolean excludedFromPayment) {
+        this.excludedFromPayment = excludedFromPayment;
+    }
 
-			if (!getPaymentMethods().isEmpty() && !getPaymentMethods().get(0).isDisabled()) {
-				return getPaymentMethods().get(0);
-			}
-		}
+    /**
+     * Get a payment method marked as preferred
+     * 
+     * @return Payment method marked as preferred
+     */
+    public PaymentMethod getPreferredPaymentMethod() {
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod.isPreferred()) {
+                    return paymentMethod;
+                }
+            }
 
-		return null;
-	}
+            if (!getPaymentMethods().isEmpty() && !getPaymentMethods().get(0).isDisabled()) {
+                return getPaymentMethods().get(0);
+            }
+        }
 
-	public PaymentMethodEnum getPreferredPaymentMethodType() {
-		PaymentMethod paymentMethod = getPreferredPaymentMethod();
-		if (paymentMethod != null) {
-			return paymentMethod.getPaymentType();
-		}
+        return null;
+    }
 
-		return null;
-	}
+    public PaymentMethodEnum getPreferredPaymentMethodType() {
+        PaymentMethod paymentMethod = getPreferredPaymentMethod();
+        if (paymentMethod != null) {
+            return paymentMethod.getPaymentType();
+        }
 
-	/**
-	 * Get a list of card type payment methods
-	 * 
-	 * @param noTokenOnly Retrieve only those that don't have a token
-	 * @return A list of card type payment methods
-	 */
-	public List<CardPaymentMethod> getCardPaymentMethods(boolean noTokenOnly) {
+        return null;
+    }
 
-		List<CardPaymentMethod> cardPaymentMethods = new ArrayList<>();
+    /**
+     * Get a list of card type payment methods
+     * 
+     * @param noTokenOnly Retrieve only those that don't have a token
+     * @return A list of card type payment methods
+     */
+    public List<CardPaymentMethod> getCardPaymentMethods(boolean noTokenOnly) {
 
-		if (getPaymentMethods() != null) {
-			for (PaymentMethod paymentMethod : getPaymentMethods()) {
-				if (paymentMethod instanceof CardPaymentMethod) {
-					if (noTokenOnly && ((CardPaymentMethod) paymentMethod).getTokenId() == null) {
-						cardPaymentMethods.add((CardPaymentMethod) paymentMethod);
-					} else if (!noTokenOnly) {
-						cardPaymentMethods.add((CardPaymentMethod) paymentMethod);
-					}
-				}
-			}
-		}
+        List<CardPaymentMethod> cardPaymentMethods = new ArrayList<>();
 
-		return cardPaymentMethods;
-	}
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof CardPaymentMethod) {
+                    if (noTokenOnly && ((CardPaymentMethod) paymentMethod).getTokenId() == null) {
+                        cardPaymentMethods.add((CardPaymentMethod) paymentMethod);
+                    } else if (!noTokenOnly) {
+                        cardPaymentMethods.add((CardPaymentMethod) paymentMethod);
+                    }
+                }
+            }
+        }
 
-	public List<DDPaymentMethod> getDDPaymentMethods() {
-		List<DDPaymentMethod> ddPaymentMethods = new ArrayList<>();
-		if (getPaymentMethods() != null) {
-			for (PaymentMethod paymentMethod : getPaymentMethods()) {
-				if (paymentMethod instanceof DDPaymentMethod) {
-					ddPaymentMethods.add((DDPaymentMethod) paymentMethod);
-				}
-			}
-		}
-		return ddPaymentMethods;
-	}
+        return cardPaymentMethods;
+    }
 
-	public List<WirePaymentMethod> getWirePaymentMethods() {
-		List<WirePaymentMethod> wirePaymentMethods = new ArrayList<>();
-		if (getPaymentMethods() != null) {
-			for (PaymentMethod paymentMethod : getPaymentMethods()) {
-				if (paymentMethod instanceof WirePaymentMethod) {
-					wirePaymentMethods.add((WirePaymentMethod) paymentMethod);
-				}
-			}
-		}
-		return wirePaymentMethods;
-	}
+    public List<DDPaymentMethod> getDDPaymentMethods() {
+        List<DDPaymentMethod> ddPaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof DDPaymentMethod) {
+                    ddPaymentMethods.add((DDPaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return ddPaymentMethods;
+    }
 
-	public List<CheckPaymentMethod> getCheckPaymentMethods() {
-		List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
-		if (getPaymentMethods() != null) {
-			for (PaymentMethod paymentMethod : getPaymentMethods()) {
-				if (paymentMethod instanceof CheckPaymentMethod) {
-					checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);                    
-				}
-			}
-		}
-		return checkPaymentMethods;
-	}
+    public List<WirePaymentMethod> getWirePaymentMethods() {
+        List<WirePaymentMethod> wirePaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof WirePaymentMethod) {
+                    wirePaymentMethods.add((WirePaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return wirePaymentMethods;
+    }
 
+    public List<CheckPaymentMethod> getCheckPaymentMethods() {
+        List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof CheckPaymentMethod) {
+                    checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return checkPaymentMethods;
+    }
 
-	/**
-	 * Mark currently valid card payment as preferred
-	 * 
-	 * @return A currently valid card payment
-	 */
-	public PaymentMethod markCurrentlyValidCardPaymentAsPreferred() {
-		if (getPaymentMethods() == null) {
-			return null;
-		}
-		PaymentMethod matchedPaymentMethod = null;
-		for (PaymentMethod paymentMethod : getPaymentMethods()) {
-			if (paymentMethod instanceof CardPaymentMethod) {
-				if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date()) && !paymentMethod.isDisabled() ) {
-					paymentMethod.setPreferred(true);
-					matchedPaymentMethod = paymentMethod;
-					break;
-				}
-			}
-		}
-		if (matchedPaymentMethod == null) {
-			return null;
-		}
-		for (PaymentMethod paymentMethod : getPaymentMethods()) {
-			if (!paymentMethod.equals(matchedPaymentMethod)) {
-				paymentMethod.setPreferred(false);
-			}
-		}
-		return matchedPaymentMethod;
-	}
+    /**
+     * Mark currently valid card payment as preferred
+     * 
+     * @return A currently valid card payment
+     */
+    public PaymentMethod markCurrentlyValidCardPaymentAsPreferred() {
+        if (getPaymentMethods() == null) {
+            return null;
+        }
+        PaymentMethod matchedPaymentMethod = null;
+        for (PaymentMethod paymentMethod : getPaymentMethods()) {
+            if (paymentMethod instanceof CardPaymentMethod) {
+                if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date()) && !paymentMethod.isDisabled()) {
+                    paymentMethod.setPreferred(true);
+                    matchedPaymentMethod = paymentMethod;
+                    break;
+                }
+            }
+        }
+        if (matchedPaymentMethod == null) {
+            return null;
+        }
+        for (PaymentMethod paymentMethod : getPaymentMethods()) {
+            if (!paymentMethod.equals(matchedPaymentMethod)) {
+                paymentMethod.setPreferred(false);
+            }
+        }
+        return matchedPaymentMethod;
+    }
 
-	/**
-	 * Ensure that one and only one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card
-	 * payment method if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
-	 * 
-	 * @return A preferred payment method
-	 */
+    /**
+     * Ensure that one and only one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card
+     * payment method if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
+     * 
+     * @return A preferred payment method
+     */
 
-	public PaymentMethod ensureOnePreferredPaymentMethod() {
-		if (getPaymentMethods() == null) {
-			return null;
-		}
+    public PaymentMethod ensureOnePreferredPaymentMethod() {
+        if (getPaymentMethods() == null) {
+            return null;
+        }
 
+        PaymentMethod paymentMethodMatched = null;
 
-		PaymentMethod paymentMethodMatched = null;
+        for (PaymentMethod paymentMethod : paymentMethods) {
 
-		for (PaymentMethod paymentMethod : paymentMethods) {
+            // Ensure that only one payment method is preferred (the first one found, or in case of CC - the first valid if currently preffered CC is expired)
+            if (paymentMethod.isPreferred()) {
+                // If currently preferred payment method has expired, select a new valid card payment method if available. If not available - continue as is
+                if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
+                    paymentMethodMatched = markCurrentlyValidCardPaymentAsPreferred();
+                    if (paymentMethodMatched == null) {
+                        paymentMethodMatched = paymentMethod;
+                    }
+                    break;
+                }
+                paymentMethodMatched = paymentMethod;
+                break;
+            }
+        }
 
-			// Ensure that only one payment method is preferred (the first one found, or in case of CC - the first valid if currently preffered CC is expired)
-			if (paymentMethod.isPreferred()) {
-				// If currently preferred payment method has expired, select a new valid card payment method if available. If not available - continue as is
-				if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
-					paymentMethodMatched = markCurrentlyValidCardPaymentAsPreferred();
-					if (paymentMethodMatched == null) {
-						paymentMethodMatched = paymentMethod;
-					}
-					break;
-				}
-				paymentMethodMatched = paymentMethod;
-				break;
-			}
-		}
+        if (paymentMethodMatched != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (!paymentMethod.equals(paymentMethodMatched)) {
+                    paymentMethod.setPreferred(false);
+                }
+            }
 
-		if (paymentMethodMatched != null) {
-			for (PaymentMethod paymentMethod : paymentMethods) {
-				if (!paymentMethod.equals(paymentMethodMatched)) {
-					paymentMethod.setPreferred(false);
-				}
-			}
+            return paymentMethodMatched;
+        }
 
-			return paymentMethodMatched;
-		}
+        // As no preferred payment method was found, mark the first available payment method as preferred
 
-		// As no preferred payment method was found, mark the first available payment method as preferred
+        if (!getPaymentMethods().get(0).isDisabled()) {
+            getPaymentMethods().get(0).setPreferred(true);
+            return getPaymentMethods().get(0);
+        }
+        return null;
 
-		if(!getPaymentMethods().get(0).isDisabled()){
-			getPaymentMethods().get(0).setPreferred(true);
-			return getPaymentMethods().get(0);
-		}
-		return null;
+    }
 
-	}
-
-	/**
-	 * Check if no more valid Card paymentMethod.
-	 * 
-	 * @return true if no more valid card.
-	 */
+    /**
+     * Check if no more valid Card paymentMethod.
+     * 
+     * @return true if no more valid card.
+     */
     public boolean isNoMoreValidCard() {
         for (CardPaymentMethod card : getCardPaymentMethods(false)) {
             if (!card.isDisabled() && card.isValidForDate(new Date())) {

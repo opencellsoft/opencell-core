@@ -53,7 +53,7 @@ public interface ServiceTemplateRs extends IBaseRs {
      * Find a service template with a given code.
      * 
      * @param serviceTemplateCode The service template's code
-     * @param inheritCF Custom field inheritance type
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return Return serviceTemplate
      */
     @Path("/")

@@ -25,7 +25,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
@@ -62,6 +61,13 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "external_id", length = 100)
     @Size(max = 100)
     private String externalId;
+
+    /**
+     * Order number
+     */
+    @Column(name = "order_number", length = 255)
+    @Size(max = 255)
+    private String orderNumber;
 
     /**
      * Delivery instructions
@@ -151,9 +157,19 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
     private List<Invoice> invoices = new ArrayList<>();
 
-    @Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+    /**
+     * Expression to calculate Invoice due date delay value
+     */
+    @Column(name = "due_date_delay_el", length = 2000)
     @Size(max = 2000)
     private String dueDateDelayEL;
+
+    /**
+     * Expression to calculate Invoice due date delay value - for Spark
+     */
+    @Column(name = "due_date_delay_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String dueDateDelayELSpark;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id")
@@ -162,11 +178,11 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
@@ -333,8 +349,18 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
         return userAccounts;
     }
 
+    /**
+     * @return Order number
+     */
     public String getOrderNumber() {
-        return StringUtils.isBlank(externalId) ? code : externalId;
+        return orderNumber;
+    }
+
+    /**
+     * @param orderNumber Order number
+     */
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public Address getShippingAddress() {
@@ -344,12 +370,32 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
         return null;
     }
 
+    /**
+     * @return Expression to calculate Invoice due date delay value
+     */
     public String getDueDateDelayEL() {
         return dueDateDelayEL;
     }
 
+    /**
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
+     */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    /**
+     * @return Expression to calculate Invoice due date delay value - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
+
+    /**
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     */
+    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+        this.dueDateDelayELSpark = dueDateDelayELSpark;
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -367,7 +413,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     public void setQuote(Quote quote) {
         this.quote = quote;
     }
-    
+
     public BillingCycle getBillingCycle() {
         return billingCycle;
     }
@@ -375,7 +421,7 @@ public class Order extends BusinessCFEntity implements IBillableEntity {
     public void setBillingCycle(BillingCycle billingCycle) {
         this.billingCycle = billingCycle;
     }
-    
+
     public BillingRun getBillingRun() {
         return billingRun;
     }

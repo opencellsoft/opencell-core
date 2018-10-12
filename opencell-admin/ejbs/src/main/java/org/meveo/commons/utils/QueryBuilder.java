@@ -543,7 +543,6 @@ public class QueryBuilder {
     public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
         return addCriterionDateRangeToTruncatedToDay(field, valueTo, true);
     }
-    
 
     /**
      * Adds the criterion date range to truncated to day.
@@ -560,7 +559,7 @@ public class QueryBuilder {
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(valueTo);
         if (includeEndDate) {
-            calTo.add(Calendar.DATE, 1);    
+            calTo.add(Calendar.DATE, 1);
         }
         calTo.set(Calendar.HOUR_OF_DAY, 0);
         calTo.set(Calendar.MINUTE, 0);
@@ -645,41 +644,29 @@ public class QueryBuilder {
     }
 
     /**
-     * @param orderColumn orderBy column
-     * @param ascending true/false
-     * @param orderColumn2 orderBy column 2
-     * @param ascending2 true/false
+     * Append an ORDER BY clause for multiple fields
+     * 
+     * @param orderRules An array of column name and order direction combinations. Order direction is expressed as a boolean with True for ascending order. E.g. "NAME,
+     *        false,ID,true" will sort by NAME field descending and then by "ID" field ascending.
      * @return instance of QueryBuilder
      */
-    public QueryBuilder addOrderDoubleCriterion(String orderColumn, boolean ascending, String orderColumn2, boolean ascending2) {
-        q.append(" ORDER BY " + orderColumn);
-        if (ascending) {
-            q.append(" ASC ");
-        } else {
-            q.append(" DESC ");
-        }
-        q.append(", " + orderColumn2);
-        if (ascending2) {
-            q.append(" ASC ");
-        } else {
-            q.append(" DESC ");
-        }
-        return this;
-    }
+    public QueryBuilder addOrderMultiCriterion(Object... orderRules) {
 
-    /**
-     * @param orderColumn order column
-     * @param ascending true/false
-     * @return instance of QueryBuilder.
-     */
-    public QueryBuilder addOrderUniqueCriterion(String orderColumn, boolean ascending) {
-        q.append(" ORDER BY " + orderColumn);
-        if (ascending) {
-            q.append(" ASC ");
-        } else {
-            q.append(" DESC ");
+        q.append(" ORDER BY ");
+
+        for (int i = 0; i < orderRules.length; i = i + 2) {
+            if (i > 0) {
+                q.append(", ");
+            }
+            q.append(orderRules[i]);
+            if (Boolean.TRUE.equals(orderRules[i + 1])) {
+                q.append(" ASC ");
+            } else {
+                q.append(" DESC ");
+            }
         }
         return this;
+
     }
 
     /**

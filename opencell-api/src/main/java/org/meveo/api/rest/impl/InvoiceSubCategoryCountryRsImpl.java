@@ -49,11 +49,11 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
     }
 
     @Override
-    public GetInvoiceSubCategoryCountryResponse find(String invoiceSubCategoryCode, String country) {
+    public GetInvoiceSubCategoryCountryResponse find(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
         GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
         try {
-            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country));
+            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -62,11 +62,11 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
     }
 
     @Override
-    public ActionStatus remove(String invoiceSubCategoryCode, String country) {
+    public ActionStatus remove(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country);
+            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode);
         } catch (Exception e) {
             processException(e, result);
         }

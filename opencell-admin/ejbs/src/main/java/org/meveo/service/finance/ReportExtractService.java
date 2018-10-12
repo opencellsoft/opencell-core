@@ -273,25 +273,16 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     }
 
     private String evaluateStringExpression(String expression, ReportExtract re) throws BusinessException {
-        if (!expression.startsWith("#{")) {
-            return expression;
-        }
-
-        String result = null;
+        
         if (StringUtils.isBlank(expression)) {
-            return result;
+            return null;
         }
 
         Map<Object, Object> userMap = new HashMap<>();
         userMap.put("re", re);
 
-        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
-        try {
-            result = (String) res;
-        } catch (Exception e) {
-            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
-        }
-        return result;
+        return ValueExpressionWrapper.evaluateToStringMultiVariable(expression, "re", re);
+        
     }
 
     public String getReporFile(ReportExtract entity) throws BusinessException {

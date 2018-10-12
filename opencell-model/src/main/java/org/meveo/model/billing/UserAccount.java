@@ -53,12 +53,11 @@ import org.meveo.model.ICustomFieldEntity;
  * @lastModifiedVersion 5.2
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "UA")
+@CustomFieldEntity(cftCodePrefix = "UA", inheritCFValuesFrom = "billingAccount")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")
-@NamedQueries({
-    @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'")})
+@NamedQueries({ @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'") })
 public class UserAccount extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -89,9 +88,6 @@ public class UserAccount extends AccountEntity {
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<Subscription> subscriptions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
@@ -193,14 +189,6 @@ public class UserAccount extends AccountEntity {
 
     public void setCounters(Map<String, CounterInstance> counters) {
         this.counters = counters;
-    }
-
-    public List<InvoiceAgregate> getInvoiceAgregates() {
-        return invoiceAgregates;
-    }
-
-    public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
-        this.invoiceAgregates = invoiceAgregates;
     }
 
     public SubscriptionTerminationReason getTerminationReason() {

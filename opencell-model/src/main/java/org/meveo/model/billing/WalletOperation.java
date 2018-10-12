@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -47,12 +48,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.rating.EDR;
 
 @Entity
@@ -88,14 +91,13 @@ import org.meveo.model.rating.EDR;
                 + " and w.id IN :notBilledWalletIdList"),
         @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"), 
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount")
-})
+                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount") })
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -128,6 +130,16 @@ public class WalletOperation extends BusinessEntity {
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
+    /**
+     * Tax applied
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
+
+    /**
+     * Tax percent applied
+     */
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal taxPercent;
 
@@ -228,25 +240,25 @@ public class WalletOperation extends BusinessEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
-    
+
     @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithoutTax;
-    
+
     @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithTax;
 
-    @Transient
-    private BillingAccount billingAccount;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
+
+    @Transient
+    private BillingAccount billingAccount;
 
     @Transient
     private BillingRun billingRun;
@@ -302,10 +314,30 @@ public class WalletOperation extends BusinessEntity {
         this.currency = currency;
     }
 
+    /**
+     * @return Tax applied
+     */
+    public Tax getTax() {
+        return tax;
+    }
+
+    /**
+     * @param tax Tax applied
+     */
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
+    /**
+     * @return Tax percent applied
+     */
     public BigDecimal getTaxPercent() {
         return taxPercent;
     }
 
+    /**
+     * @param taxPercent Tax percent applied
+     */
     public void setTaxPercent(BigDecimal taxPercent) {
         this.taxPercent = taxPercent;
     }
@@ -451,10 +483,16 @@ public class WalletOperation extends BusinessEntity {
         this.subscriptionDate = subscriptionDate;
     }
 
+    /**
+     * @return Seller associated to wallet operation
+     */
     public Seller getSeller() {
         return seller;
     }
 
+    /**
+     * @param seller Seller associated to wallet operation
+     */
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
@@ -524,6 +562,7 @@ public class WalletOperation extends BusinessEntity {
         result.setStartDate(startDate);
         result.setStatus(WalletOperationStatusEnum.OPEN);
         result.setSubscriptionDate(subscriptionDate);
+        result.setTax(tax);
         result.setTaxPercent(taxPercent);
         result.setType(type);
         result.setUnitAmountTax(unitAmountTax);
@@ -538,10 +577,16 @@ public class WalletOperation extends BusinessEntity {
         return result;
     }
 
+    /**
+     * @return Billing account associated to wallet operation
+     */
     public BillingAccount getBillingAccount() {
         return billingAccount;
     }
 
+    /**
+     * @param billingAccount Billing account associated to wallet operation
+     */
     public void setBillingAccount(BillingAccount billingAccount) {
         this.billingAccount = billingAccount;
     }
@@ -633,7 +678,7 @@ public class WalletOperation extends BusinessEntity {
     public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
         this.rawAmountWithTax = rawAmountWithTax;
     }
-    
+
     public Subscription getSubscription() {
         return subscription;
     }
@@ -642,4 +687,24 @@ public class WalletOperation extends BusinessEntity {
         this.subscription = subscription;
     }
 
+    /**
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax unitAmountWithoutTax/unitAmountWithTax/unitAmountTax
+     * 
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     */
+    public void computeDerivedAmounts(boolean isEnterprise, int rounding, RoundingModeEnum roundingMode) {
+
+        // Unit amount calculation is left with higher precision
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithTax, taxPercent, isEnterprise, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        unitAmountWithoutTax = amounts[0];
+        unitAmountWithTax = amounts[1];
+        unitAmountTax = amounts[2];
+
+        amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, isEnterprise, rounding, roundingMode.getRoundingMode());
+        amountWithoutTax = amounts[0];
+        amountWithTax = amounts[1];
+        amountTax = amounts[2];
+    }
 }

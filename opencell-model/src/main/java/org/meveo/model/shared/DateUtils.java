@@ -79,10 +79,10 @@ public class DateUtils {
     }
 
     /**
-     * Evaluates a date inside a pre-determined delimiters in a string.
+     * Replaces a date format string in text with a current date. E.g. sales-#{re.id}-[yyyy_MM_dd].html changes to sales-#{re.id}-2018-05-18.html
      * 
-     * @param input string that contains the date
-     * @return Result of date evaluate
+     * @param input string that contains the date format
+     * @return Text with date value replaced
      */
     public static String evaluteDateFormat(String input) {
         if (!(input.contains(START_DATE_DELIMITER) && input.contains(END_DATE_DELIMITER))) {

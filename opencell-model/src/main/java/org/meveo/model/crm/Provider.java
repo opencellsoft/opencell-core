@@ -28,7 +28,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -68,7 +67,6 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.shared.InterBankTitle;
 
@@ -151,23 +149,27 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Enumerated(EnumType.STRING)
     private List<PaymentMethodEnum> paymentMethods = new ArrayList<PaymentMethodEnum>();
 
-    /** The Rating rounding. */
-    @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2")
-    private Integer rounding = 2;
-    
-    /** The Rating rounding mode*/
-    @Column (name = "rounding_mode")
-    @Enumerated(EnumType.STRING)
-    private RoundingModeEnum roundingMode; 
+    /** The Rating amount rounding. */
+    @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    @NotNull
+    private int rounding = 2;
 
-    /** The invoice rounding. */
-    @Column(name = "invoice_rounding", columnDefinition = "int DEFAULT 2")
-    private Integer invoiceRounding = 2;
-    
-    /** The invoice rounding mode. */
-    @Column (name = "invoice_rounding_mode")
+    /** The Rating amount rounding mode */
+    @Column(name = "rounding_mode", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoundingModeEnum invoiceRoundingMode; 
+    @NotNull
+    private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST;
+
+    /** The invoice amount rounding. */
+    @Column(name = "invoice_rounding", columnDefinition = "int DEFAULT 2", nullable = false)
+    @NotNull
+    private int invoiceRounding = 2;
+
+    /** The invoice amount rounding mode. */
+    @Column(name = "invoice_rounding_mode", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private RoundingModeEnum invoiceRoundingMode = RoundingModeEnum.NEAREST;
 
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
@@ -223,29 +225,32 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
 
-    // @Type(type = "json")
-    @Convert(converter = CustomFieldValuesConverter.class)
+    @Type(type = "cfjson")
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
-    
+
     @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
     private GdprConfiguration gdprConfiguration;
-    
+
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
     @Embedded
-	@AttributeOverrides({ //
-			@AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), //
-			@AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")), //
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "prefix", column = @Column(name = "rum_prefix")), //
+            @AttributeOverride(name = "sequenceSize", column = @Column(name = "rum_sequence_size")), //
 			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "rum_current_sequence_nb"))
-	})
-	private GenericSequence rumSequence = new GenericSequence();
-    
+    })
+    private GenericSequence rumSequence = new GenericSequence();
+
     @Embedded
-	@AttributeOverrides({ //
-			@AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), //
-			@AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")), //
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "prefix", column = @Column(name = "cust_no_prefix")), //
+            @AttributeOverride(name = "sequenceSize", column = @Column(name = "cust_no_sequence_size")), //
 			@AttributeOverride(name = "currentSequenceNb", column = @Column(name = "cust_no_current_sequence_nb"))
-	})
-	private GenericSequence customerNoSequence = new GenericSequence();
+    })
+    private GenericSequence customerNoSequence = new GenericSequence();
 
     public String getCode() {
         return code;
@@ -383,10 +388,16 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         this.interBankTitle = interBankTitle;
     }
 
+    /**
+     * @return Rating amount rounding precision
+     */
     public Integer getRounding() {
         return rounding;
     }
 
+    /**
+     * @param rounding Rating amount rounding precision
+     */
     public void setRounding(Integer rounding) {
         this.rounding = rounding;
     }
@@ -519,6 +530,9 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         return uuid;
     }
 
+    /**
+     * @param uuid Unique identifier
+     */
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
@@ -541,82 +555,86 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     }
 
     /**
-     * @return the roundingMode
+     * @return Rating amount rounding mode
      */
     public RoundingModeEnum getRoundingMode() {
         return roundingMode;
     }
 
     /**
-     * @param roundingMode the roundingMode to set
+     * @param roundingMode Rating amount rounding mode
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
     }
 
     /**
-     * @return the invoiceRounding
+     * @return Invoice and invoice aggregate amount rounding precision
      */
-    public Integer getInvoiceRounding() {
-        if (this.invoiceRounding == null) {
-            this.invoiceRounding = this.rounding;
-        }
+    public int getInvoiceRounding() {
         return invoiceRounding;
     }
 
     /**
-     * @return the invoiceRoundingMode
+     * @param invoiceRounding Invoice and invoice aggregate amount rounding precision
      */
-    public RoundingModeEnum getInvoiceRoundingMode() {
-        if (this.invoiceRoundingMode == null) {
-            this.invoiceRoundingMode = this.roundingMode;
-        }
-        return invoiceRoundingMode;
-    }
-
-    /**
-     * @param invoiceRounding the invoiceRounding to set
-     */
-    public void setInvoiceRounding(Integer invoiceRounding) {
+    public void setInvoiceRounding(int invoiceRounding) {
         this.invoiceRounding = invoiceRounding;
     }
 
     /**
-     * @param invoiceRoundingMode the invoiceRoundingMode to set
+     * @return Invoice and invoice aggregate amount rounding mode
+     */
+    public RoundingModeEnum getInvoiceRoundingMode() {
+        return invoiceRoundingMode;
+    }
+
+    /**
+     * @param invoiceRoundingMode Invoice and invoice aggregate amount rounding mode
      */
     public void setInvoiceRoundingMode(RoundingModeEnum invoiceRoundingMode) {
         this.invoiceRoundingMode = invoiceRoundingMode;
     }
 
-	public GdprConfiguration getGdprConfiguration() {
-		return gdprConfiguration;
-	}
+    public GdprConfiguration getGdprConfiguration() {
+        return gdprConfiguration;
+    }
 
-	public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
-		this.gdprConfiguration = gdprConfiguration;
-	}
-	
-	public GdprConfiguration getGdprConfigurationNullSafe() {
-		if (gdprConfiguration == null) {
-			gdprConfiguration = new GdprConfiguration();
-		}
+    public void setGdprConfiguration(GdprConfiguration gdprConfiguration) {
+        this.gdprConfiguration = gdprConfiguration;
+    }
 
-		return gdprConfiguration;
-	}
+    public GdprConfiguration getGdprConfigurationNullSafe() {
+        if (gdprConfiguration == null) {
+            gdprConfiguration = new GdprConfiguration();
+        }
+
+        return gdprConfiguration;
+    }
 
     public GenericSequence getRumSequence() {
-		return rumSequence;
-	}
+        return rumSequence;
+    }
 
-	public void setRumSequence(GenericSequence rumSequence) {
-		this.rumSequence = rumSequence;
-	}
+    public void setRumSequence(GenericSequence rumSequence) {
+        this.rumSequence = rumSequence;
+    }
 
-	public GenericSequence getCustomerNoSequence() {
-		return customerNoSequence;
-	}
+    public GenericSequence getCustomerNoSequence() {
+        return customerNoSequence;
+    }
 
-	public void setCustomerNoSequence(GenericSequence customerNoSequence) {
-		this.customerNoSequence = customerNoSequence;
-	}
+    public void setCustomerNoSequence(GenericSequence customerNoSequence) {
+        this.customerNoSequence = customerNoSequence;
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
 }

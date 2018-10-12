@@ -26,6 +26,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
@@ -37,6 +38,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -45,6 +47,7 @@ import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteItemProductOffering;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -59,7 +62,6 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
-import org.slf4j.Logger;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
@@ -89,6 +91,9 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private SellerService sellerService;
 
     @Inject
     private QuoteService quoteService;
@@ -613,6 +618,18 @@ public class QuoteApi extends BaseApi {
             }
         }
 
+        String sellerCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_SELLER.getCharacteristicName(), String.class, null);
+        if (sellerCode != null) {
+            Seller seller = sellerService.findByCode(sellerCode);
+            if (seller != null) {
+                subscription.setSeller(seller);
+            } else {
+                throw new InvalidParameterException("seller", sellerCode);
+            }
+        } else {
+            subscription.setSeller(quoteItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        }
+
         // Validate and populate customFields
         CustomFieldsDto customFields = extractCustomFields(product, Subscription.class);
         try {
@@ -648,8 +665,19 @@ public class QuoteApi extends BaseApi {
         String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class, null);
         String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class, null);
 
+        String sellerCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_SELLER.getCharacteristicName(), String.class, null);
+        Seller seller = null;
+        if (sellerCode != null) {
+            seller = sellerService.findByCode(sellerCode);
+            if (seller == null) {
+                throw new InvalidParameterException("seller", sellerCode);
+            }
+        } else {
+            seller = quoteItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+
         ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
-            productTemplate.getDescription(), null);
+            productTemplate.getDescription(), null, seller);
         productInstance.setOrderNumber(quoteItem.getQuote().getCode());
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
@@ -906,7 +934,7 @@ public class QuoteApi extends BaseApi {
             productQuoteItems.add(quoteItemToDto(quoteItem));
         }
 
-        productQuote.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote, true));
+        productQuote.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         if (quote.getInvoices() != null && !quote.getInvoices().isEmpty()) {
             productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());

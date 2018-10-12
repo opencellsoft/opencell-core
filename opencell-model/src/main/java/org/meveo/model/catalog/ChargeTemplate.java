@@ -103,9 +103,15 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
     protected BigDecimal unitMultiplicator;
 
+    /**
+     * EDR and WO quantity field value precision
+     */
     @Column(name = "unit_nb_decimal")
     protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
 
+    /**
+     * EDR and WO quantity field value rounding
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "rounding_mode")
     protected RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST;
@@ -184,23 +190,29 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
         this.unitMultiplicator = unitMultiplicator;
     }
 
+    /**
+     * @return EDR and WO quantity field value precision
+     */
     public int getUnitNbDecimal() {
         return unitNbDecimal;
     }
 
+    /**
+     * @param unitNbDecimal EDR and WO quantity field value precision
+     */
     public void setUnitNbDecimal(int unitNbDecimal) {
         this.unitNbDecimal = unitNbDecimal;
     }
 
     /**
-     * @return the roundingMode
+     * @return EDR and WO quantity field value rounding
      */
     public RoundingModeEnum getRoundingMode() {
         return roundingMode;
     }
 
     /**
-     * @param roundingMode the roundingMode to set
+     * @param roundingMode EDR and WO quantity field value rounding
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;

@@ -46,7 +46,7 @@ import org.meveo.model.payments.CustomerAccount;
  * @lastModifiedVersion 5.2
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "CUST")
+@CustomFieldEntity(cftCodePrefix = "CUST", inheritCFValuesFrom = "seller")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
@@ -61,11 +61,11 @@ public class Customer extends AccountEntity {
     @JoinColumn(name = "address_book_id")
     private AddressBook addressbook;
     
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_brand_id")
     private CustomerBrand customerBrand;
 
@@ -76,7 +76,7 @@ public class Customer extends AccountEntity {
     @JoinColumn(name = "seller_id")
     @Deprecated
     private Seller seller;
-    
+
     @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")
     private AdditionalDetails additionalDetails;
@@ -151,7 +151,7 @@ public class Customer extends AccountEntity {
     public Class<? extends BusinessEntity> getParentEntityType() {
         return Seller.class;
     }
-	
+
 	@Override
 	public void anonymize(String code) {
 		super.anonymize(code);
@@ -159,8 +159,8 @@ public class Customer extends AccountEntity {
 		if (getCustomerAccounts() != null) {
 			for (CustomerAccount ca : getCustomerAccounts()) {
 				ca.anonymize(code);
-			}
-		}
+	}
+	}
 	}
 
-}
+	}

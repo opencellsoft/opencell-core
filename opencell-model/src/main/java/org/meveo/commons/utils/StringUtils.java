@@ -57,6 +57,12 @@ public class StringUtils {
         return ((value == null) || ((value instanceof String) && ((String) value).trim().length() == 0));
     }
 
+    /**
+     * Value is null or empty
+     * 
+     * @param value Value to check
+     * @return True if value is null or is empty
+     */
     public static boolean isBlank(String value) {
         return (value == null || value.trim().length() == 0);
     }

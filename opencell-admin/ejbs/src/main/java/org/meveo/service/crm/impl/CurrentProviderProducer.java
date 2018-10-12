@@ -46,6 +46,7 @@ public class CurrentProviderProducer {
         provider = PersistenceUtils.initializeAndUnproxy(provider);
 
         providerService.detach(provider);
+
         return provider;
     }
 }

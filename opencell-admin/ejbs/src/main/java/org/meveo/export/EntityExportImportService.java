@@ -752,8 +752,8 @@ public class EntityExportImportService implements Serializable {
                 String name = null;
                 if (convertedFile != null) {
                     name = convertedFile.getName();
-                }
-                
+            }
+
                 return importEntities(convertedFile, name, preserveId, ignoreNotFoundFK, forceToProvider);
             }
 
@@ -1674,11 +1674,11 @@ public class EntityExportImportService implements Serializable {
             }
         }
         if (classToCheck != null) {
-            for (Field field : classToCheck.getDeclaredFields()) {
-                if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
-                    return true;
-                }
+        for (Field field : classToCheck.getDeclaredFields()) {
+            if (!field.isAnnotationPresent(Transient.class) && IEntity.class.isAssignableFrom(field.getDeclaringClass()) && field.getType().isAssignableFrom(classToMatch)) {
+                return true;
             }
+        }
         }
         return false;
     }

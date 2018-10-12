@@ -6,9 +6,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -19,6 +21,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarDaily;
@@ -29,6 +33,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
@@ -48,6 +53,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @Inject
     private ElasticClient elasticClient;
 
+    @EJB
+    private CfValueAccumulator cfValueAccumulator;
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
+
     static boolean useCFTCache = true;
 
     @PostConstruct
@@ -59,7 +70,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * Find a list of custom field templates corresponding to a given entity
      * 
      * @param entity Entity that custom field templates apply to
-     * @return A list of custom field templates mapped by a template key
+     * @return A list of custom field templates mapped by a template key. Will return an empty map if no fields were found
      */
     public Map<String, CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity) {
         try {
@@ -192,6 +203,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         elasticClient.updateCFMapping(cft);
+        boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
+        if (reaccumulateCFValues) {
+
+            clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
+            cfValueAccumulator.cftCreated(cft);
+        }
     }
 
     @Override
@@ -217,6 +234,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public void remove(CustomFieldTemplate cft) throws BusinessException {
         customFieldsCache.removeCustomFieldTemplate(cft);
         super.remove(cft);
+        cfValueAccumulator.refreshCfAccumulationRules(cft);
     }
 
     @Override
@@ -444,5 +462,16 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         create(cftCopy);
 
         return cftCopy;
+    }
+
+    /**
+     * Get a list of custom fields to construct Custom field value accumulation rule. Only those fields that repeat over different entity classes are considered for acumulation.
+     * 
+     * @param appliesToValues AppliesTo values to filter only those entity classes that have custom field inheritance
+     * @return A list of custom field templates
+     */
+    public List<CustomFieldTemplate> getCustomFieldsForAcumulation(Set<String> appliesToValues) {
+        return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTsForAccumulation", CustomFieldTemplate.class).setParameter("appliesTo", appliesToValues)
+            .getResultList();
     }
 }

@@ -64,8 +64,16 @@ public class ProductOrder implements Serializable {
     @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
+    /**
+     * Expression to calculate Invoice due date delay value
+     */
     private String dueDateDelayEL;
-    
+
+    /**
+     * Expression to calculate Invoice due date delay value - for Spark
+     */
+    private String dueDateDelayELSpark;
+
     /** The billing cycle. */
     private String billingCycle;
 
@@ -213,12 +221,32 @@ public class ProductOrder implements Serializable {
         this.paymentMethods = paymentMethods;
     }
 
+    /**
+     * @return Expression to calculate Invoice due date delay value
+     */
     public String getDueDateDelayEL() {
         return dueDateDelayEL;
     }
 
+    /**
+     * @param dueDateDelayEL Expression to calculate Invoice due date delay value
+     */
     public void setDueDateDelayEL(String dueDateDelayEL) {
         this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    /**
+     * @return Expression to calculate Invoice due date delay value - for Spark
+     */
+    public String getDueDateDelayELSpark() {
+        return dueDateDelayELSpark;
+    }
+
+    /**
+     * @param dueDateDelayELSpark Expression to calculate Invoice due date delay value - for Spark
+     */
+    public void setDueDateDelayELSpark(String dueDateDelayELSpark) {
+        this.dueDateDelayELSpark = dueDateDelayELSpark;
     }
 
     public String getBillingCycle() {

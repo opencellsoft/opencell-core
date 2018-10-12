@@ -59,7 +59,7 @@ public class DiscountPlanItem extends EnableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     @Min(0)
     @Max(100)
-    private BigDecimal percent = new BigDecimal(0);
+    private BigDecimal percent = BigDecimal.ZERO;
 
     /**
      * @deprecated As of version 5.0. No replacement.
@@ -69,13 +69,33 @@ public class DiscountPlanItem extends EnableEntity {
     @Size(max = 255)
     private String accountingCode;
 
+    /**
+     * Expression to determine if discount applies
+     */
     @Column(name = "expression_el", length = 2000)
     @Size(max = 2000)
     private String expressionEl;
 
+    /**
+     * Expression to determine if discount applies - for Spark
+     */
+    @Column(name = "expression_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String expressionElSpark;
+
+    /**
+     * Expression to calculate discount percentage
+     */
     @Column(name = "discount_percent_el", length = 2000)
     @Size(max = 2000)
     private String discountPercentEl;
+
+    /**
+     * Expression to calculate discount percentage - for Spark
+     */
+    @Column(name = "discount_percent_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String discountPercentElSpark;
 
     public DiscountPlan getDiscountPlan() {
         return discountPlan;
@@ -117,12 +137,32 @@ public class DiscountPlanItem extends EnableEntity {
         this.code = code;
     }
 
+    /**
+     * @return Expression to determine if discount applies
+     */
     public String getExpressionEl() {
         return expressionEl;
     }
 
+    /**
+     * @param expressionEl Expression to determine if discount applies
+     */
     public void setExpressionEl(String expressionEl) {
         this.expressionEl = expressionEl;
+    }
+
+    /**
+     * @return Expression to determine if discount applies - for Spark
+     */
+    public String getExpressionElSpark() {
+        return expressionElSpark;
+    }
+
+    /**
+     * @param expressionElSpark Expression to determine if discount applies - for Spark
+     */
+    public void setExpressionElSpark(String expressionElSpark) {
+        this.expressionElSpark = expressionElSpark;
     }
 
     @Override
@@ -163,12 +203,32 @@ public class DiscountPlanItem extends EnableEntity {
         this.accountingCode = accountingCode;
     }
 
+    /**
+     * @return Expression to calculate discount percentage
+     */
     public String getDiscountPercentEl() {
         return discountPercentEl;
     }
 
+    /**
+     * @param discountPercentEl Expression to calculate discount percentage
+     */
     public void setDiscountPercentEl(String discountPercentEl) {
         this.discountPercentEl = discountPercentEl;
+    }
+
+    /**
+     * @return Expression to calculate discount percentage - for Spark
+     */
+    public String getDiscountPercentElSpark() {
+        return discountPercentElSpark;
+    }
+
+    /**
+     * @param discountPercentElSpark Expression to calculate discount percentage - for Spark
+     */
+    public void setDiscountPercentElSpark(String discountPercentElSpark) {
+        this.discountPercentElSpark = discountPercentElSpark;
     }
 
 }

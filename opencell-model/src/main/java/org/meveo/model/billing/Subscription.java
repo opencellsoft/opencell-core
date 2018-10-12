@@ -70,7 +70,7 @@ import org.meveo.model.shared.DateUtils;
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "SUB")
+@CustomFieldEntity(cftCodePrefix = "SUB", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -142,7 +142,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
@@ -171,22 +171,42 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     @Column(name = "renewal_notified_date")
     private Date renewalNotifiedDate;
 
+    /**
+     * Expression to determine minimum amount value
+     */
     @Column(name = "minimum_amount_el", length = 2000)
     @Size(max = 2000)
     private String minimumAmountEl;
 
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     @Column(name = "minimum_label_el", length = 2000)
     @Size(max = 2000)
     private String minimumLabelEl;
-    
+
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_cycle")
     private BillingCycle billingCycle;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run")
     private BillingRun billingRun;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
@@ -379,22 +399,62 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         this.notifyOfRenewalDate = notifyOfRenewalDate;
     }
 
+    /**
+     * @return Expression to determine minimum amount value
+     */
     public String getMinimumAmountEl() {
         return minimumAmountEl;
     }
 
+    /**
+     * @param minimumAmountEl Expression to determine minimum amount value
+     */
     public void setMinimumAmountEl(String minimumAmountEl) {
         this.minimumAmountEl = minimumAmountEl;
     }
 
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value
+     */
     public String getMinimumLabelEl() {
         return minimumLabelEl;
     }
 
+    /**
+     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
+     */
     public void setMinimumLabelEl(String minimumLabelEl) {
         this.minimumLabelEl = minimumLabelEl;
     }
-    
+
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
     public BillingCycle getBillingCycle() {
         return billingCycle;
     }
@@ -428,7 +488,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
 
         return subscribedTillDate != null && DateUtils.setTimeToZero(subscribedTillDate).compareTo(DateUtils.setTimeToZero(new Date())) <= 0;
     }
-    
+
     /**
      * Auto update end of engagement date.
      */
@@ -441,35 +501,35 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     /**
      * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
      */
-	public void updateSubscribedTillAndRenewalNotifyDates() {
-		if (isRenewed()) {
-			return;
-		}
-		if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
-			if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
-				if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
-					getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
-				}
-				Calendar calendar = new GregorianCalendar();
-				calendar.setTime(getSubscriptionDate());
-				calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
-				setSubscribedTillDate(calendar.getTime());
+    public void updateSubscribedTillAndRenewalNotifyDates() {
+        if (isRenewed()) {
+            return;
+        }
+        if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.RECURRING)) {
+            if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
+                if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
+                    getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+                }
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(getSubscriptionDate());
+                calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
+                setSubscribedTillDate(calendar.getTime());
 
-			} else {
-				setSubscribedTillDate(null);
-			}
-		}
+            } else {
+                setSubscribedTillDate(null);
+            }
+        }
 
-		if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(getSubscribedTillDate());
-			calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
-			setNotifyOfRenewalDate(calendar.getTime());
-		} else {
-			setNotifyOfRenewalDate(null);
-		}
+        if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(getSubscribedTillDate());
+            calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
+            setNotifyOfRenewalDate(calendar.getTime());
+        } else {
+            setNotifyOfRenewalDate(null);
+        }
 		this.autoUpdateEndOfEngagementDate();
-	} 
+    }
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
@@ -477,7 +537,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
         }
 
     }
-    
+
     public BillingRun getBillingRun() {
         return billingRun;
     }
@@ -485,7 +545,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity {
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
     }
-    
+
 	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
 		minRatedTransactions = ratedTransactions;
 	}

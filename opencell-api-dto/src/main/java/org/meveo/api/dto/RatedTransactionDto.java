@@ -20,12 +20,16 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.billing.RatedTransaction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Dto class for Rated Transaction informations
@@ -41,6 +45,13 @@ public class RatedTransactionDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7627662294414998797L;
+
+    /**
+     * Record identifier
+     */
+    @XmlTransient
+    @JsonIgnore
+    private Long id;
 
     /** The usage date. */
     @XmlElement(required = true)
@@ -85,13 +96,12 @@ public class RatedTransactionDto extends BaseEntityDto {
 
     /** The do not trigger invoicing. */
     private boolean doNotTriggerInvoicing = false;
-    
+
     /** The start date. */
     private Date startDate;
 
     /** The end date. */
     private Date endDate;
-
 
     /** parameter1 : used to set more onformations in case of "DETAILLED" invoice. */
     private String parameter1;
@@ -106,6 +116,26 @@ public class RatedTransactionDto extends BaseEntityDto {
     private String userAccountCode;
 
     /**
+     * Tax applied - code
+     */
+    private String taxCode;
+
+    /**
+     * Tax percent
+     */
+    private BigDecimal taxPercent;
+
+    /**
+     * Invoice subcategory code
+     */
+    private String invoiceSubCategoryCode;
+
+    /**
+     * Seller code
+     */
+    private String sellerCode;
+
+    /**
      * Instantiates a new rated transaction dto.
      */
     public RatedTransactionDto() {
@@ -118,6 +148,7 @@ public class RatedTransactionDto extends BaseEntityDto {
      * @param ratedTransaction the rated transaction
      */
     public RatedTransactionDto(RatedTransaction ratedTransaction) {
+        this.id = ratedTransaction.getId();
         this.setUsageDate(ratedTransaction.getUsageDate());
         this.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithoutTax());
         this.setUnitAmountWithTax(ratedTransaction.getUnitAmountWithTax());
@@ -135,18 +166,30 @@ public class RatedTransactionDto extends BaseEntityDto {
         this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
         this.setStartDate(ratedTransaction.getStartDate());
         this.setEndDate(ratedTransaction.getEndDate());
+        if (ratedTransaction.getTax() != null) {
+            this.setTaxCode(ratedTransaction.getTax().getCode());
+        }
+        this.setTaxPercent(ratedTransaction.getTaxPercent());
     }
-    
+
     /**
-     * Instantiates a new rated transaction dto.
+     * Instantiates a new rated transaction dto from an entity
      *
-     * @param ratedTransaction the rated transaction
-     * @param withUserAccountCode the with user account code
+     * @param ratedTransaction Rated transaction to convert
+     * @param includeUserAccount Include user account code
+     * @param includeSeller Include seller code
+     * @param includeInvoiceSubCategory Include Invoice subcategory code
      */
-    public RatedTransactionDto(RatedTransaction ratedTransaction, Boolean withUserAccountCode) {
+    public RatedTransactionDto(RatedTransaction ratedTransaction, boolean includeUserAccount, boolean includeSeller, boolean includeInvoiceSubCategory) {
         this(ratedTransaction);
-        if(withUserAccountCode != null && withUserAccountCode) {
+        if (includeUserAccount && ratedTransaction.getWallet() != null) {
             this.userAccountCode = ratedTransaction.getWallet().getUserAccount().getCode();
+        }
+        if (includeInvoiceSubCategory) {
+            this.invoiceSubCategoryCode = ratedTransaction.getInvoiceSubCategory().getCode();
+        }
+        if (includeSeller && ratedTransaction.getSeller() != null) {
+            this.sellerCode = ratedTransaction.getSeller().getCode();
         }
     }
 
@@ -419,8 +462,7 @@ public class RatedTransactionDto extends BaseEntityDto {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-    
-    
+
     /**
      * Gets the parameter 1.
      *
@@ -489,4 +531,73 @@ public class RatedTransactionDto extends BaseEntityDto {
         this.userAccountCode = userAccountCode;
     }
 
+    /**
+     * @return Tax applied - code
+     */
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    /**
+     * @param taxCode Tax applied - code
+     */
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    /**
+     * @return Tax percent applied
+     */
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
+
+    /**
+     * @param taxPercent Tax percent applied
+     */
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
+
+    /**
+     * @return Record identifier
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id Record identifier
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return Invoice subcategory code
+     */
+    public String getInvoiceSubCategoryCode() {
+        return invoiceSubCategoryCode;
+    }
+
+    /**
+     * @param invoiceSubCategoryCode Invoice subcategory code
+     */
+    public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
+        this.invoiceSubCategoryCode = invoiceSubCategoryCode;
+    }
+
+    /**
+     * @return Seller code
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * @param sellerCode Seller code
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
 }
