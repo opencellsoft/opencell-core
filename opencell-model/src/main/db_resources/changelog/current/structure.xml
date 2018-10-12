@@ -1846,6 +1846,7 @@
         <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
     </changeSet>
     
+<<<<<<< HEAD
 
     <changeSet id="#3511_20180803 - paymennt schedule" author="anasseh">
         <createTable tableName="ar_payment_schedule_tmpl">
@@ -2034,6 +2035,8 @@
         <sql>insert into ${db.schema.adapted}ar_payment_schedule_inst_item_seq values(1)</sql>                                              
     </changeSet>
 
+=======
+>>>>>>> branch 'integration' of http://git.assembla.com/meveo.git
     <changeSet id="#3631_20181008" author="EdwardLegaspi">
     	<createTable tableName="crm_customer_sequence">
     		<column name="id" type="bigint" autoIncrement="${id.auto}">

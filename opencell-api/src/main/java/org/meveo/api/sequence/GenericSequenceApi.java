@@ -35,5 +35,5 @@ public class GenericSequenceApi {
 
 		return target;
 	}
-	
+
 }

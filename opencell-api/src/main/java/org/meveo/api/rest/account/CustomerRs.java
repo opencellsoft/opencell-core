@@ -21,6 +21,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -268,5 +269,32 @@ public interface CustomerRs extends IBaseRs {
 	@POST
 	@Path("customerNumberSequence")
 	GenericSequenceValueResponseDto getNextCustomerNumber();
+	
+	/**
+	 * Creates a new customer sequence.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@POST
+	@Path("/account/customer/sequence")
+	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
+	
+	/**
+	 * Updates a new customer sequence with a given code.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@PUT
+	@Path("/account/customer/sequence")
+	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
+	
+	/**
+	 * Generates the next customer sequence number.
+	 * @param code code of the sequence
+	 * @return sequence value dto
+	 */
+	@POST
+	@Path("/account/customer/sequence/{code}/next")
+	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
 	
 }
