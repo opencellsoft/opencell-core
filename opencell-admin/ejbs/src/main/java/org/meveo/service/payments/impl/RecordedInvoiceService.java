@@ -32,6 +32,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -264,45 +265,48 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         BigDecimal remainingAmountWithTaxForRecordedIncoice = invoice.getAmountWithTax();
         BigDecimal remainingAmountTaxForRecordedIncoice = invoice.getAmountTax();
 
-        for (CategoryInvoiceAgregate catAgregate : cats) {
-            BigDecimal remainingAmountWithoutTaxForCat = BigDecimal.ZERO;
-            BigDecimal remainingAmountWithTaxForCat = BigDecimal.ZERO;
-            BigDecimal remainingAmountTaxForCat = BigDecimal.ZERO;
-            for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : catAgregate.getSubCategoryInvoiceAgregates()) {
-                if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
-                        || (subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative() != null
-                                && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
-                    RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(subCategoryInvoiceAgregate.getAmountWithoutTax(),
-                        subCategoryInvoiceAgregate.getAmountWithTax(), subCategoryInvoiceAgregate.getAmountTax(), null, invoice,
-                        subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate()
-                                : subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative(),
-                        false);
-                    recordedInvoiceCatAgregate.setSubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
-
-                    listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
-                    remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithoutTax());
-                    remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithTax());
-                    remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountTax());
-                } else {
-                    remainingAmountWithoutTaxForCat = remainingAmountWithoutTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
-                    remainingAmountWithTaxForCat = remainingAmountWithTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithTax());
-                    remainingAmountTaxForCat = remainingAmountTaxForCat.add(subCategoryInvoiceAgregate.getAmountTax());
+        boolean allowMultipleAOperInvoice = "true".equalsIgnoreCase(ParamBean.getInstance().getProperty("ao.generateMultipleAOperInvoice", "true"));
+        if(allowMultipleAOperInvoice) {
+            for (CategoryInvoiceAgregate catAgregate : cats) {
+                BigDecimal remainingAmountWithoutTaxForCat = BigDecimal.ZERO;
+                BigDecimal remainingAmountWithTaxForCat = BigDecimal.ZERO;
+                BigDecimal remainingAmountTaxForCat = BigDecimal.ZERO;
+                for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : catAgregate.getSubCategoryInvoiceAgregates()) {
+                    if ((subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate() != null && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
+                            || (subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative() != null
+                                    && subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
+                        RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(subCategoryInvoiceAgregate.getAmountWithoutTax(),
+                            subCategoryInvoiceAgregate.getAmountWithTax(), subCategoryInvoiceAgregate.getAmountTax(), null, invoice,
+                            subCategoryInvoiceAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplate()
+                                    : subCategoryInvoiceAgregate.getInvoiceSubCategory().getOccTemplateNegative(),
+                            false);
+                        recordedInvoiceCatAgregate.setSubCategoryInvoiceAgregate(subCategoryInvoiceAgregate);
+    
+                        listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
+                        remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithoutTax());
+                        remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountWithTax());
+                        remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(subCategoryInvoiceAgregate.getAmountTax());
+                    } else {
+                        remainingAmountWithoutTaxForCat = remainingAmountWithoutTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
+                        remainingAmountWithTaxForCat = remainingAmountWithTaxForCat.add(subCategoryInvoiceAgregate.getAmountWithTax());
+                        remainingAmountTaxForCat = remainingAmountTaxForCat.add(subCategoryInvoiceAgregate.getAmountTax());
+                    }
                 }
+                if ((catAgregate.getInvoiceCategory().getOccTemplate() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
+                        || (catAgregate.getInvoiceCategory().getOccTemplateNegative() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
+                    RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(remainingAmountWithoutTaxForCat, remainingAmountWithTaxForCat,
+                        remainingAmountTaxForCat, null, invoice, catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
+                                : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
+                        false);
+                    recordedInvoiceCatAgregate.setCategoryInvoiceAgregate(catAgregate);
+                    listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
+    
+                    remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(remainingAmountWithoutTaxForCat);
+                    remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(remainingAmountWithTaxForCat);
+                    remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(remainingAmountTaxForCat);
+                }
+    
             }
-            if ((catAgregate.getInvoiceCategory().getOccTemplate() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)
-                    || (catAgregate.getInvoiceCategory().getOccTemplateNegative() != null && catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) < 0)) {
-                RecordedInvoiceCatAgregate recordedInvoiceCatAgregate = createRecordedInvoice(remainingAmountWithoutTaxForCat, remainingAmountWithTaxForCat,
-                    remainingAmountTaxForCat, null, invoice, catAgregate.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0 ? catAgregate.getInvoiceCategory().getOccTemplate()
-                            : catAgregate.getInvoiceCategory().getOccTemplateNegative(),
-                    false);
-                recordedInvoiceCatAgregate.setCategoryInvoiceAgregate(catAgregate);
-                listRecordedInvoiceCatAgregate.add(recordedInvoiceCatAgregate);
-
-                remainingAmountWithoutTaxForRecordedIncoice = remainingAmountWithoutTaxForRecordedIncoice.subtract(remainingAmountWithoutTaxForCat);
-                remainingAmountWithTaxForRecordedIncoice = remainingAmountWithTaxForRecordedIncoice.subtract(remainingAmountWithTaxForCat);
-                remainingAmountTaxForRecordedIncoice = remainingAmountTaxForRecordedIncoice.subtract(remainingAmountTaxForCat);
-            }
-
         }
 
         OCCTemplate occTemplate = null;
