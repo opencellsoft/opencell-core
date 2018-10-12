@@ -16,7 +16,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.Sequence;
+import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -220,7 +220,7 @@ public class ServiceSingleton {
         return invoiceType;
     }
 
-	@Lock(LockType.WRITE)
+    @Lock(LockType.WRITE)
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public GenericSequence getNextSequenceNumber(SequenceTypeEnum type) {
@@ -236,6 +236,16 @@ public class ServiceSingleton {
 		sequence.setCurrentSequenceNb(sequence.getCurrentSequenceNb() + 1L);
 
 		return sequence;
+	}
+    
+	@Lock(LockType.WRITE)
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public CustomerSequence getNextCustomerSequenceNumber(CustomerSequence customerSequence) {
+		customerSequence.getGenericSequence()
+				.setCurrentSequenceNb(customerSequence.getGenericSequence().getCurrentSequenceNb() + 1L);
+
+		return customerSequence;
 	}
 
 }
