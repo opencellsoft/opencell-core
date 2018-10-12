@@ -42,7 +42,7 @@
                     <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" listenerUpdate="@this" />
 
                     <h:panelGroup>
-                        <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;" value="#{sellerBean.entity.invoiceTypeSequence}"
+                        <p:dataTable id="sellerSequenceTable" label="#{messages['inboundRequest.responseHeaders']}" value="#{sellerBean.entity.invoiceTypeSequence}"
                             var="invoiceTypeSeq" paginator="false" resizableColumns="true">
                             <f:facet name="header">#{messages['seller.invoiceTypeSequences']}</f:facet>
                             <p:column headerText="#{messages['invoiceType.panel']}">
@@ -77,6 +77,65 @@
 			                <h:panelGroup layout="block" styleClass="form-panel-actions">
 			                    <p:commandButton action="#{sellerBean.saveOrUpdateSequence}" value="#{messages['action.save']}" update="@form :sellerFormId:tabView:sellerSequenceTable :sellerFormId:messages" />
 			                	<p:commandButton action="#{sellerBean.resetSequenceField}" value="#{messages['action.cancel']}" update="@form :sellerFormId:tabView:sellerSequenceTable" immediate="true" />
+			                </h:panelGroup>
+			        	</p:panel>
+			        </h:panelGroup>
+                    
+                    <h:panelGroup>
+                        <p:dataTable id="customerSequenceTable" value="#{sellerBean.entity.customerSequences}"
+                            var="customerSeq" paginator="false" resizableColumns="true">
+                            <f:facet name="header">#{messages['customerSequence.list']}</f:facet>
+                            <p:column headerText="#{messages['businessEntity.code']}">
+                                <h:outputText value="#{customerSeq.code}" />
+                            </p:column>
+                            <p:column headerText="#{messages['businessEntity.description']}">
+                                <h:outputText value="#{customerseq.description}" />
+                            </p:column>
+                            <p:column headerText="#{messages['customerSequence.prefix']}">
+                                <h:outputText value="#{customerSeq.genericSequence.prefix}" />
+                            </p:column>
+                            <p:column headerText="#{messages['customerSequence.sequenceSize']}">
+                                <h:outputText value="#{customerSeq.genericSequence.sequenceSize}" />
+                            </p:column>
+                            <p:column headerText="#{messages['customerSequence.currentSequenceNb']}">
+                                <h:outputText value="#{customerSeq.genericSequence.currentSequenceNb}" />
+                            </p:column>
+                            <p:column width="60px;" headerText="#{messages['commons.actions']}">
+                                <p:commandButton action="#{sellerBean.selectCustomerSequence(customerSeq)}" update=":sellerFormId:tabView:customerSequenceDetails" icon="ui-icon-document" immediate="true" />
+                                <p:commandButton action="#{sellerBean.deleteCustomerSequence(customerSeq)}" icon="ui-icon-trash" update="@form" />
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="#{messages['commons.addNew']}" update=":sellerFormId:tabView:customerSequenceDetails" action="#{sellerBean.newCustomerSequence}">
+                        </p:commandButton>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup id="customerSequenceDetails">
+			        	 <p:panel header="#{messages['customerSequence']}" rendered="#{sellerBean.selectedCustomerSequence != null}">
+			                <p:outputPanel styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
+			                	<hftl:decorateFormField label="#{messages['businessEntity.code']}" fieldId="csCode">
+									<p:inputText id="csCode" value="#{sellerBean.selectedCustomerSequence.code}">
+									</p:inputText>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['businessEntity.description']}" fieldId="csDescription">
+									<p:inputText id="csDescription" value="#{sellerBean.selectedCustomerSequence.description}">
+									</p:inputText>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['customerSequence.prefix']}" fieldId="csPrefix">
+									<p:inputText id="csPrefix" value="#{sellerBean.selectedCustomerSequence.genericSequence.prefix}">
+									</p:inputText>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['customerSequence.sequenceSize']}" fieldId="csSequenceSize">
+									<p:spinner id="csSequenceSize" value="#{sellerBean.selectedCustomerSequence.genericSequence.sequenceSize}">
+									</p:spinner>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField label="#{messages['customerSequence.currentSequenceNb']}" fieldId="csCurrentSequenceNb">
+									<p:inputText readonly="true" id="csCurrentSequenceNb" value="#{sellerBean.selectedCustomerSequence.genericSequence.currentSequenceNb}">
+									</p:inputText>
+								</hftl:decorateFormField>
+			                </p:outputPanel>
+			                <h:panelGroup layout="block" styleClass="form-panel-actions">
+			                    <p:commandButton action="#{sellerBean.saveOrUpdateCustomerSequence}" value="#{messages['action.save']}" update="@form :sellerFormId:tabView:customerSequenceTable :sellerFormId:messages" />
+			                	<p:commandButton action="#{sellerBean.resetCustomerSequence}" value="#{messages['action.cancel']}" update="@form :sellerFormId:tabView:customerSequenceTable" immediate="true" />
 			                </h:panelGroup>
 			        	</p:panel>
 			        </h:panelGroup>

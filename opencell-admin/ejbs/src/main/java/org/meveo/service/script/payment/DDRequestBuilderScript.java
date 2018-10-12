@@ -37,6 +37,15 @@ public abstract class  DDRequestBuilderScript extends Script implements DDReques
     public String getDDFileName(Map<String, Object> methodContext) throws BusinessException { 
         return null;
     }
+    
+    @Override
+    public void generateSCTRequestLotFile(Map<String, Object> methodContext) throws BusinessException {        
+    }
+   
+    @Override
+    public String getSCTFileName(Map<String, Object> methodContext) throws BusinessException { 
+        return null;
+    }
 
     @Override
     public String getDDRejectFilePrefix(Map<String, Object> methodContext) throws BusinessException {

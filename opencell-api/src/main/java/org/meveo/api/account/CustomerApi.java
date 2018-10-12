@@ -35,6 +35,7 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -124,6 +125,9 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private ProviderService providerService;
+
+    @Inject
+    private CustomerSequenceApi customerSequenceApi;
 
     public void create(CustomerDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);

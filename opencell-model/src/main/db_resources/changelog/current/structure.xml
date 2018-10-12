@@ -926,16 +926,6 @@
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
 	</changeSet>
 	
-	<changeSet id="#3436_20180508" author="EdwardPLegaspi">
-		<modifyDataType tableName="dwh_measurable_quant" columnName="sql_query" newDataType="text" />
-	</changeSet>
-	
-    <changeSet id="#3446_20180512 secure payment history list api" author="anasseh">
-       <addColumn tableName="ar_payment_history">
-           <column name="customer_code" type="varchar(256)" />
-       </addColumn>
-    </changeSet>
-
 	<changeSet id="perf_cgi_20180426" author="Wassim" dbms="postgresql">
 		<sql>DROP INDEX IF EXISTS ${db.schema.adapted}billing_invoice_quote_id</sql>
         <sql>CREATE INDEX billing_invoice_quote_id ON ${db.schema.adapted}billing_invoice(quote_id)</sql>
@@ -1854,6 +1844,35 @@
        </addColumn>
         <sql>update ${db.schema.adapted}cat_wallet_template set reject_level=0 where reject_level is null</sql>
         <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
+    </changeSet>
+    
+    <changeSet id="#3631_20181008" author="EdwardLegaspi">
+    	<createTable tableName="crm_customer_sequence">
+    		<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_crm_customer_sequence" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+    		<column name="prefix" type="varchar(255)" />
+            <column name="sequence_size" type="bigint" />
+			<column name="current_sequence_nb" type="bigint" />
+			<column name="seller_id" type="bigint" />
+    	</createTable>
+    	
+        <createSequence sequenceName="crm_customer_sequence_seq" />
+        <addForeignKeyConstraint constraintName="fk_crm_customer_sequence_seller" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="crm_customer_sequence" referencedColumnNames="id"/>
     </changeSet>
     
     <changeSet id="#3464_20180522" author="AndriusKarpavicius">

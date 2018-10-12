@@ -50,6 +50,7 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -607,4 +608,29 @@ public interface AccountWs extends IBaseWs {
      */
     @WebMethod
     GenericSequenceValueResponseDto getNextCustomerNumberSequence();
+
+	/**
+	 * Creates a new customer sequence.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@WebMethod
+	ActionStatus createCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
+
+	/**
+	 * Updates a new customer sequence with a given code.
+	 * @param postData customer sequence data
+	 * @return request status
+	 */
+	@WebMethod
+	ActionStatus updateCustomerSequence(@WebParam(name = "customerSequence") CustomerSequenceDto postData);
+
+	/**
+	 * Generates the next customer sequence number.
+	 * @param code code of the sequence
+	 * @return sequence value dto
+	 */
+	@WebMethod
+	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@WebParam(name = "code") String code);
+	
 }

@@ -35,15 +35,18 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CustomerSequenceService;
 
 /**
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 @Named
 @ViewScoped
@@ -56,8 +59,12 @@ public class SellerBean extends CustomFieldBean<Seller> {
      */
     @Inject
     private SellerService sellerService;
+    
+    @Inject
+    private CustomerSequenceService customerSequenceService;
 
     private InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence;
+    private CustomerSequence selectedCustomerSequence;
     private String prefixEl;
     private InvoiceType invoiceType;
     private InvoiceSequence invoiceSequence;
@@ -162,6 +169,35 @@ public class SellerBean extends CustomFieldBean<Seller> {
         invoiceSequence = null;
         editSellerSequence = false;
     }
+	
+	public void newCustomerSequence() {
+        selectedCustomerSequence = new CustomerSequence();
+        selectedCustomerSequence.setSeller(getEntity());
+    }
+    
+    public void resetCustomerSequence() {
+        selectedCustomerSequence = null;
+    }
+    
+	public void saveOrUpdateCustomerSequence() throws BusinessException {
+		if (selectedCustomerSequence.isTransient()) {
+			customerSequenceService.create(selectedCustomerSequence);
+		} else {
+			customerSequenceService.update(selectedCustomerSequence);
+		}
+		
+		entity = sellerService.refreshOrRetrieve(entity);
+		resetCustomerSequence();
+	}
+	
+	public void selectCustomerSequence(CustomerSequence customerSequence) {
+		this.selectedCustomerSequence = customerSequence;
+	}
+	
+	public void deleteCustomerSequence(CustomerSequence customerSequence) throws BusinessException {
+		this.customerSequenceService.remove(customerSequence);
+		entity = sellerService.refreshOrRetrieve(entity);
+	}
 
     public String getPrefixEl() {
         return prefixEl;
@@ -201,6 +237,14 @@ public class SellerBean extends CustomFieldBean<Seller> {
 
 	public void setSelectedInvoiceTypeSellerSequence(InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence) {
 		this.selectedInvoiceTypeSellerSequence = selectedInvoiceTypeSellerSequence;
+	}
+
+	public CustomerSequence getSelectedCustomerSequence() {
+		return selectedCustomerSequence;
+	}
+
+	public void setSelectedCustomerSequence(CustomerSequence selectedCustomerSequence) {
+		this.selectedCustomerSequence = selectedCustomerSequence;
 	}
 
 }
