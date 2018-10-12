@@ -45,7 +45,7 @@
         <tag-name>decorateFormField</tag-name>
         <source>decorateFormField.xhtml</source>
     </tag>
-
+	
     <tag>
         <tag-name>customFieldValueField</tag-name>
         <source>customFieldValueField.xhtml</source>
@@ -73,6 +73,10 @@
     <tag>
         <tag-name>customFieldFormOrPanel</tag-name>
         <source>customFieldFormOrPanel.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>customFieldTab</tag-name>
+        <source>customFieldTab.xhtml</source>
     </tag>
     <tag>
         <tag-name>customFieldPeriods</tag-name>

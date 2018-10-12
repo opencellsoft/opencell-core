@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -158,13 +159,12 @@ public interface SubscriptionRs extends IBaseRs {
      * Search for a subscription with a given code.
      * 
      * @param subscriptionCode The subscription's code
-     * @param mergedCF true if merge inherited custom fields.
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return A subscription
      */
     @GET
     @Path("/")
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode,
-            @Deprecated @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
@@ -190,7 +190,7 @@ public interface SubscriptionRs extends IBaseRs {
     /**
      * Create or update subscription information WITH access, services and products. Terminates subscription if termination date is provided on subscription. Terminates service if
      * termination date is provided on service. Activates inactive service if service subscription date is provided. Instantiates service if no matching service found. Updates
-     * service if matching service found. Only those services, access and products passed will be afected. 
+     * service if matching service found. Only those services, access and products passed will be afected.
      * 
      * @param subscriptionDto Subscription information
      * @return Request processing status
@@ -296,13 +296,22 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("/dueDateDelay")
     GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
-    
+
     @POST
     @Path("/rate")
     RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData);
-    
+
     @POST
     @Path("/activate")
     ActionStatus activate(String subscriptionCode);
 
+    /**
+     * Cancels the renewal term of an active subscription.
+     * 
+     * @param subscriptionCode code of the subscription
+     * @return status of the request
+     */
+    @POST
+    @Path("/cancelSubscriptionRenewal/{subscriptionCode}")
+    ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode);
 }

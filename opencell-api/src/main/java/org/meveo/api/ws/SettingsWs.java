@@ -75,6 +75,7 @@ import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -182,8 +183,15 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus updateSeller(@WebParam(name = "seller") SellerDto postData);
 
+    /**
+     * Find seller by its code
+     * 
+     * @param sellerCode Seller code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @return Seller information
+     */
     @WebMethod
-    GetSellerResponse findSeller(@WebParam(name = "sellerCode") String sellerCode);
+    GetSellerResponse findSeller(@WebParam(name = "sellerCode") String sellerCode, @WebParam(name = "inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     @WebMethod
     ActionStatus removeSeller(@WebParam(name = "sellerCode") String sellerCode);

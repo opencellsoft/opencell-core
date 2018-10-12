@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -42,11 +43,13 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.rating.EDR;
 
 @Entity
@@ -150,6 +153,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @JoinColumn(name = "billing_account__id", nullable = false)
     @NotNull
     private BillingAccount billingAccount;
+
+    /**
+     * User account associated to rated transaction
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
     /**
      * Seller associated to rated transaction
@@ -316,6 +326,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public RatedTransaction(RatedTransaction ratedTransaction) {
         this.setWallet(ratedTransaction.getWallet());
         this.setBillingAccount(ratedTransaction.getBillingAccount());
+        this.setUserAccount(ratedTransaction.getUserAccount());
         this.setWalletOperationId(ratedTransaction.getWalletOperationId());
         this.setChargeInstance(ratedTransaction.getChargeInstance());
         this.setUsageDate(ratedTransaction.getUsageDate());
@@ -352,7 +363,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity,
-            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
+            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount, UserAccount userAccount,
             InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription,
             String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description, Date startDate,
             Date endDate, Seller seller, Tax tax, BigDecimal taxPercent) {
@@ -372,6 +383,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.status = status;
         this.wallet = wallet;
         this.billingAccount = billingAccount;
+        this.userAccount = userAccount;
         this.invoiceSubCategory = invoiceSubCategory;
         this.parameter1 = parameter1;
         this.parameter2 = parameter2;
@@ -415,7 +427,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.amountTax = walletOperation.getAmountTax();
         this.status = RatedTransactionStatusEnum.OPEN;
         this.wallet = walletOperation.getWallet();
-        this.billingAccount = walletOperation.getWallet().getUserAccount().getBillingAccount();
+        this.userAccount = walletOperation.getWallet().getUserAccount();
+        this.billingAccount = userAccount.getBillingAccount();
         this.seller = walletOperation.getSeller();
         this.invoiceSubCategory = walletOperation.getInvoiceSubCategory();
         this.parameter1 = walletOperation.getParameter1();
@@ -601,6 +614,20 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     /**
+     * @return User account associated to rated transaction
+     */
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    /**
+     * @param userAccount User account associated to rated transaction
+     */
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    /**
      * @return Seller associated to rated transaction
      */
     public Seller getSeller() {
@@ -738,6 +765,27 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         if (!isEnterprise) {
             amountWithTax = unitAmountWithTax.multiply(quantity);
         }
+    }
+
+    /**
+     * Recompute derived amounts amountWithoutTax/amountWithTax/amountTax unitAmountWithoutTax/unitAmountWithTax/unitAmountTax
+     * 
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     */
+    public void computeDerivedAmounts(boolean isEnterprise, int rounding, RoundingModeEnum roundingMode) {
+
+        // Unit amount calculation is left with higher precision
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitAmountWithoutTax, unitAmountWithTax, taxPercent, isEnterprise, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        unitAmountWithoutTax = amounts[0];
+        unitAmountWithTax = amounts[1];
+        unitAmountTax = amounts[2];
+
+        amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxPercent, isEnterprise, rounding, roundingMode.getRoundingMode());
+        amountWithoutTax = amounts[0];
+        amountWithTax = amounts[1];
+        amountTax = amounts[2];
     }
 
     public OfferTemplate getOfferTemplate() {

@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
@@ -31,6 +32,8 @@ import org.meveo.model.catalog.RoundingModeEnum;
  * @lastModifiedVersion 5.1
  */
 public class NumberUtils {
+
+    private static final BigDecimal HUNDRED = new BigDecimal("100");
 
     public static BigDecimal round(BigDecimal what, int howmuch, RoundingModeEnum roundingModeEnum) {
         if (what == null) {
@@ -104,5 +107,43 @@ public class NumberUtils {
         }
         amount = amount.setScale(scale, roundingMode.getRoundingMode());
         return amount.toPlainString();
+    }
+
+    /**
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax
+     * 
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param taxPercent Tax percent
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     * @return Calculated amount values as array [amountWithoutTax, amountWithTax, amountTax]
+     */
+    public static BigDecimal[] computeDerivedAmounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal taxPercent, boolean isEnterprise, int rounding,
+            RoundingMode roundingMode) {
+
+        if (taxPercent==null || taxPercent.compareTo(BigDecimal.ZERO) == 0) {
+            if (isEnterprise) {
+                amountWithoutTax = amountWithoutTax.setScale(rounding, roundingMode);
+            } else {
+                amountWithTax = amountWithTax.setScale(rounding, roundingMode);
+            }
+            return new BigDecimal[] { isEnterprise ? amountWithoutTax : amountWithTax, isEnterprise ? amountWithoutTax : amountWithTax, BigDecimal.ZERO };
+        }
+
+        if (isEnterprise) {
+            amountWithoutTax = amountWithoutTax.setScale(rounding, roundingMode);
+            amountWithTax = amountWithoutTax.add(amountWithoutTax.multiply(taxPercent).divide(new BigDecimal(100), rounding, roundingMode));
+
+        } else {
+            amountWithTax = amountWithTax.setScale(rounding, roundingMode);
+            BigDecimal percentPlusOne = BigDecimal.ONE.add(taxPercent.divide(NumberUtils.HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+            amountWithoutTax = amountWithTax.divide(percentPlusOne, rounding, roundingMode);
+        }
+
+        BigDecimal amountTax = amountWithTax.subtract(amountWithoutTax);
+
+        return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
     }
 }

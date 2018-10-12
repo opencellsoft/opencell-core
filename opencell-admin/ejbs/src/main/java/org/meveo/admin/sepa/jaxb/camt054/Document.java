@@ -11,6 +11,7 @@ package org.meveo.admin.sepa.jaxb.camt054;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Document", propOrder = {
     "bkToCstmrDbtCdtNtfctn"
 })
+@XmlRootElement(name = "Document",namespace="urn:iso:std:iso:20022:tech:xsd:camt.054.001.02")
 public class Document {
 
     @XmlElement(name = "BkToCstmrDbtCdtNtfctn", required = true)

@@ -29,6 +29,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -258,7 +259,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
+        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }

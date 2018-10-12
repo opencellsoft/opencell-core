@@ -67,7 +67,7 @@ public class SellerDto extends BusinessEntityDto {
     private CustomFieldsDto customFields;
 
     /** The invoice type sequences. */
-    private Map<String, SequenceDto> invoiceTypeSequences = new HashMap<String, SequenceDto>();
+    private Map<String, SequenceDto> invoiceTypeSequences = new HashMap<>();
 
     /** The business account model. */
     @XmlElement(name = "businessAccountModel")

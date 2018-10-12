@@ -295,7 +295,6 @@ public class InvoiceAgregateHandler {
             invoiceAgregateTax.setTax(currentTax);
             invoiceAgregateTax.setAccountingCode(currentTax.getAccountingCode());
             invoiceAgregateTax.setTaxPercent(currentTax.getPercent());
-            invoiceAgregateTax.setUserAccount(userAccount);
             invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
             invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
             invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);

@@ -263,7 +263,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
         serviceTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
-        serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountEl());
+        serviceTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));

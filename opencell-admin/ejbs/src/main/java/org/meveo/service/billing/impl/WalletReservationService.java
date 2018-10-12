@@ -44,7 +44,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     private enum BalanceTypeEnum {
 
         /**
-         * Current balance - open or reserved
+         * Available balance - open or reserved
          */
         CURRENT,
 
@@ -60,7 +60,8 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     }
 
     /**
-     * Calculate current balance. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should be provided.
+     * Calculate available balance (open or reserved) of prepaid wallets. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and
+     * only one of them should be provided. walletId and walletCode parameters are mutually exclusive and are optional.
      * 
      * @param seller Seller
      * @param customer Customer
@@ -69,16 +70,19 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date for balance calculation
      * @param endDate End date for balance calculation
+     * @param walletId Wallet identifier - optional
+     * @param walletCode Wallet code - optional
      * @return A current balance
      */
     public Amounts getCurrentBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate) {
+            Date endDate, Long walletId, String walletCode) {
 
-        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.CURRENT);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, walletId, walletCode, BalanceTypeEnum.CURRENT);
     }
 
     /**
-     * Calculate reserved balance. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should be provided.
+     * Calculate reserved balance of prepaid wallets. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them
+     * should be provided. walletId and walletCode parameters are mutually exclusive and are optional.
      * 
      * @param seller Seller
      * @param customer Customer
@@ -87,16 +91,19 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date for balance calculation
      * @param endDate End date for balance calculation
+     * @param walletId Wallet identifier - optional
+     * @param walletCode Wallet code - optional
      * @return A reserved balance
      */
     public Amounts getReservedBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate) {
+            Date endDate, Long walletId, String walletCode) {
 
-        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.RESERVED);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, walletId, walletCode, BalanceTypeEnum.RESERVED);
     }
 
     /**
-     * Calculate open balance. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should be provided.
+     * Calculate open balance of prepaid wallets. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should
+     * be provided. walletId and walletCode parameters are mutually exclusive and are optional.
      * 
      * @param seller Seller
      * @param customer Customer
@@ -105,12 +112,14 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date for balance calculation
      * @param endDate End date for balance calculation
+     * @param walletId Wallet identifier - optional
+     * @param walletCode Wallet code - optional
      * @return An open balance
      */
     public Amounts getOpenBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate) {
+            Date endDate, Long walletId, String walletCode) {
 
-        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.OPEN);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, walletId, walletCode, BalanceTypeEnum.OPEN);
     }
 
     public void updateReservationStatus(Long reservationId, WalletOperationStatusEnum status) {
@@ -147,7 +156,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
         startDate = cal.previousCalendarDate(subscriptionDate);
         endDate = cal.nextCalendarDate(subscriptionDate);
 
-        BigDecimal ratedAmount = getCurrentBalance(seller, null, null, null, userAccount, startDate, endDate).getAmount(isWithTax);
+        BigDecimal ratedAmount = getCurrentBalance(seller, null, null, null, userAccount, startDate, endDate, null, null).getAmount(isWithTax);
 
         return ratedAmount;
     }
@@ -191,12 +200,13 @@ public class WalletReservationService extends PersistenceService<WalletReservati
      * @param userAccount User account
      * @param startDate Start date
      * @param endDate End date
-     * @param amountWithTax Amount with tax
+     * @param walletId Wallet identifier
+     * @param walletCode Wallet code
      * @param mode Balance type
      * @return balance amount.
      */
     private Amounts getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate, BalanceTypeEnum mode) {
+            Date endDate, Long walletId, String walletCode, BalanceTypeEnum mode) {
 
         Amounts result = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO);
 
@@ -219,37 +229,44 @@ public class WalletReservationService extends PersistenceService<WalletReservati
             strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithTax), SUM(r.amountWithoutTax)) from WalletOperation r " + "WHERE 1=1 ");
 
             if (startDate != null) {
-                strQuery.append("AND r.operationDate>=:startDate ");
+                strQuery.append(" AND r.operationDate>=:startDate ");
             }
             if (endDate != null) {
-                strQuery.append("AND r.operationDate<:endDate ");
+                strQuery.append(" AND r.operationDate<:endDate ");
             }
             if (mode == BalanceTypeEnum.CURRENT) {
-                strQuery.append("AND (r.status=:open OR r.status=:reserved) ");
+                strQuery.append(" AND (r.status='OPEN' OR r.status='RESERVED' OR r.status='TREATED') ");
             } else if (mode == BalanceTypeEnum.RESERVED) {
-                strQuery.append("AND (r.status=:reserved) ");
+                strQuery.append(" AND r.status='RESERVED' ");
             } else if (mode == BalanceTypeEnum.OPEN) {
-                strQuery.append("AND (r.status=:open) ");
+                strQuery.append(" AND (r.status='OPEN' OR r.status='TREATED')  ");
+            }
+            if (walletId != null) {
+                strQuery.append(" AND r.wallet.id=:walletId ");
+            } else {
+                strQuery.append(" AND r.wallet.walletTemplate.walletType='PREPAID' ");
+            }
+            if (walletCode != null) {
+                strQuery.append(" AND r.wallet.code =:walletCode ");
             }
 
-            // + "AND (r.status=:open OR r.status=:treated) "
             switch (level) {
             case BILLING_ACCOUNT:
-                strQuery.append("AND r.wallet.userAccount.billingAccount=:billingAccount ");
+                strQuery.append(" AND r.wallet.userAccount.billingAccount=:billingAccount ");
                 break;
             case CUSTOMER:
-                strQuery.append("AND r.wallet.userAccount.billingAccount.customerAccount.customer=:customer ");
+                strQuery.append(" AND r.wallet.userAccount.billingAccount.customerAccount.customer=:customer ");
                 break;
             case CUSTOMER_ACCOUNT:
-                strQuery.append("AND r.wallet.userAccount.billingAccount.customerAccount=:customerAccount ");
+                strQuery.append(" AND r.wallet.userAccount.billingAccount.customerAccount=:customerAccount ");
                 break;
             case PROVIDER:
                 break;
             case SELLER:
-                strQuery.append("AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ");
+                strQuery.append(" AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ");
                 break;
             case USER_ACCOUNT:
-                strQuery.append("AND r.wallet.userAccount=:userAccount ");
+                strQuery.append(" AND r.wallet.userAccount=:userAccount ");
                 break;
             default:
                 break;
@@ -257,19 +274,17 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
             TypedQuery<Amounts> query = getEntityManager().createQuery(strQuery.toString(), Amounts.class);
 
-            if (mode == BalanceTypeEnum.CURRENT) {
-                query.setParameter("open", WalletOperationStatusEnum.OPEN);
-                query.setParameter("reserved", WalletOperationStatusEnum.RESERVED);
-            } else if (mode == BalanceTypeEnum.RESERVED) {
-                query.setParameter("reserved", WalletOperationStatusEnum.RESERVED);
-            } else if (mode == BalanceTypeEnum.OPEN) {
-                query.setParameter("open", WalletOperationStatusEnum.OPEN);
+            if (walletId != null) {
+                query.setParameter("walletId", walletId);
             }
             if (startDate != null) {
                 query.setParameter("startDate", startDate);
             }
             if (endDate != null) {
                 query.setParameter("endDate", endDate);
+            }
+            if (walletCode != null) {
+                query.setParameter("walletCode", walletCode);
             }
 
             switch (level) {

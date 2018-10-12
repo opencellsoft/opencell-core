@@ -32,8 +32,7 @@ import javax.validation.constraints.Size;
 public class AutomatedPayment extends Payment {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "bank_lot", length = 255)
-    @Size(max = 255)
+    @Column(name = "bank_lot", columnDefinition = "text")
     private String bankLot;
 
     @Column(name = "bank_reference", length = 255)

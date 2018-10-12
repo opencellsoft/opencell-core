@@ -29,23 +29,66 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+/**
+ * Invoice category aggregate for the invoice
+ */
 @Entity
 @DiscriminatorValue("R")
 public class CategoryInvoiceAgregate extends InvoiceAgregate {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The invoice category
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicecategory")
     private InvoiceCategory invoiceCategory;
 
+    /**
+     * User account
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
+
+    /**
+     * The sub category invoice aggregate
+     */
     @OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new HashSet<>();
 
+    /**
+     * Instantiates a new category invoice aggregate.
+     */
     public CategoryInvoiceAgregate() {
 
     }
 
+    /**
+     * Instantiates a new category invoice aggregate
+     * 
+     * @param invoiceCategory Invoice category
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param invoice Invoice
+     */
+    public CategoryInvoiceAgregate(InvoiceCategory invoiceCategory, BillingAccount billingAccount, UserAccount userAccount, Invoice invoice) {
+        super();
+        this.invoiceCategory = invoiceCategory;
+        this.billingAccount = billingAccount;
+        this.userAccount = userAccount;
+        this.invoice = invoice;
+        if (invoice != null) {
+            this.billingRun = invoice.getBillingRun();
+        }
+    }
+
+    /**
+     * Copies invoice category aggregate
+     *
+     * @param categoryInvoiceAgregate The category invoice aggregate to copy
+     */
     public CategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
         this.setInvoiceCategory(categoryInvoiceAgregate.getInvoiceCategory());
         this.setItemNumber(categoryInvoiceAgregate.getItemNumber());
@@ -57,22 +100,53 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
         this.setUserAccount(categoryInvoiceAgregate.getUserAccount());
     }
 
+    /**
+     * @return The invoice category
+     */
     public InvoiceCategory getInvoiceCategory() {
         return invoiceCategory;
     }
 
+    /**
+     * @param invoiceCategory Invoice category
+     */
     public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
         this.invoiceCategory = invoiceCategory;
     }
 
+    /**
+     * @return User account
+     */
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    /**
+     * @param userAccount User account
+     */
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    /**
+     * @return A parent sub category invoice aggregate
+     */
     public Set<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {
         return subCategoryInvoiceAgregates;
     }
 
+    /**
+     * @param subCategoryInvoiceAgregates A parent sub category invoice aggregate
+     */
     public void setSubCategoryInvoiceAgregates(Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) {
         this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
     }
 
+    /**
+     * Adds the sub category invoice aggregate. Increments item number and amountWithoutTax/amountWithTax/amountTax fields
+     *
+     * @param subCategoryInvoiceAgregate the sub category invoice aggregate
+     */
     public void addSubCategoryInvoiceAggregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
         if (subCategoryInvoiceAgregates == null) {
             subCategoryInvoiceAgregates = new HashSet<SubCategoryInvoiceAgregate>();
@@ -81,6 +155,15 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
         if (subCategoryInvoiceAgregate != null) {
             if (!subCategoryInvoiceAgregates.contains(subCategoryInvoiceAgregate)) {
                 subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+                subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(this);
+                if (itemNumber == null) {
+                    itemNumber = 0;
+                }
+                itemNumber = itemNumber + subCategoryInvoiceAgregate.getItemNumber();
+
+                amountWithoutTax = amountWithoutTax.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
+                amountWithTax = amountWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
+                amountTax = amountTax.add(subCategoryInvoiceAgregate.getAmountTax());
             }
         }
     }
@@ -113,11 +196,10 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
             return true;
         }
         if (invoiceCategory == null) {
-            if (other.getInvoiceCategory() != null)
-                return false;
-        } else if (!invoiceCategory.equals(other.getInvoiceCategory()))
             return false;
-        return true;
-    }
+        }
 
+        return this.getInvoiceCategory().getId().equals(other.getInvoiceCategory().getId()) && ((this.getUserAccount() == null && other.getUserAccount() == null)
+                || (this.getUserAccount() != null && other.getUserAccount() != null && this.getUserAccount().getId().equals(other.getUserAccount().getId())));
+    }
 }

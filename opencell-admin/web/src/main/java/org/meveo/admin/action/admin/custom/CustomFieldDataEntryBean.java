@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
- * @lastModifiedVersion 5.0.1
+ * @lastModifiedVersion 5.1.2
  */
 @Named
 @ViewScoped
@@ -1602,4 +1602,14 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
         return componentId;
     }
+    
+	public boolean hasVisibleTabs(List<GroupedCustomField> children, ICustomFieldEntity entity,
+			CustomFieldValueHolder cfValueHolder) {
+		for (GroupedCustomField cfTab : children) {
+			if (cfTab.hasVisibleCustomFields(entity, cfValueHolder)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

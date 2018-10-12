@@ -47,6 +47,12 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ProductTemplate;
 
+/**
+ * Product instance
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE", inheritCFValuesFrom = "productTemplate")
@@ -84,17 +90,33 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = true)
+    @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+    /**
+     * Instantiate a product instance
+     */
     public ProductInstance() {
         super();
     }
 
+    /**
+     * Instantiate a product instance
+     * 
+     * @param userAccount User account
+     * @param subscription Subscription if tied to one
+     * @param productTemplate Product template
+     * @param quantity Quantity
+     * @param applicationDate Application date
+     * @param code Code to assign
+     * @param description Description
+     * @param orderNumber Order number if tied to one
+     * @param seller Seller. Defaults to subscription.seller in case product instance is tied to a subscription.
+     */
     public ProductInstance(UserAccount userAccount, Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate, String code,
-            String description, String orderNumber) {
+            String description, String orderNumber, Seller seller) {
         this.applicationDate = applicationDate;
         this.code = code;
         this.description = description;
@@ -105,8 +127,10 @@ public class ProductInstance extends BusinessCFEntity {
         this.subscription = subscription;
         if (subscription == null) {
             this.userAccount = userAccount;
+            this.seller = seller;
         } else {
             this.userAccount = subscription.getUserAccount();
+            this.seller = subscription.getSeller();
         }
     }
 
@@ -189,7 +213,7 @@ public class ProductInstance extends BusinessCFEntity {
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { productTemplate };
     }
-    
+
     public Seller getSeller() {
         return seller;
     }

@@ -106,6 +106,7 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 import org.meveo.api.hierarchy.UserHierarchyLevelApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -588,11 +589,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetSellerResponse findSeller(String sellerCode) {
+    public GetSellerResponse findSeller(String sellerCode,CustomFieldInheritanceEnum inheritCF) {
         GetSellerResponse result = new GetSellerResponse();
 
         try {
-            result.setSeller(sellerApi.find(sellerCode));
+            result.setSeller(sellerApi.find(sellerCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

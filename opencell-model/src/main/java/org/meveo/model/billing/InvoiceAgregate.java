@@ -51,54 +51,50 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_account_id")
-    private BillingAccount billingAccount;
+    protected BillingAccount billingAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
-    private Invoice invoice;
+    protected Invoice invoice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
-    private BillingRun billingRun;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_account_id")
-    private UserAccount userAccount;
+    protected BillingRun billingRun;
 
     @Column(name = "item_number")
-    private Integer itemNumber;
+    protected Integer itemNumber;
 
     @Column(name = "description", length = 255)
     @Size(max = 255)
-    private String description;
+    protected String description;
 
     @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal amount;
 
     @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal amountWithoutTax;
+    protected BigDecimal amountWithoutTax = BigDecimal.ZERO;
 
     @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal amountTax;
+    protected BigDecimal amountTax = BigDecimal.ZERO;
 
     @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal amountWithTax;
+    protected BigDecimal amountWithTax = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency_id")
-    private TradingCurrency tradingCurrency;
+    protected TradingCurrency tradingCurrency;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country_id")
-    private TradingCountry tradingCountry;
+    protected TradingCountry tradingCountry;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
-    private TradingLanguage tradingLanguage;
+    protected TradingLanguage tradingLanguage;
 
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
-    private String prDescription;
+    protected String prDescription;
 
     public TradingCurrency getTradingCurrency() {
         return tradingCurrency;
@@ -146,14 +142,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
-    }
-
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
     }
 
     public Integer getItemNumber() {
@@ -253,38 +241,4 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         setAmountWithoutTax(new BigDecimal(0));
         setAmountWithTax(new BigDecimal(0));
     }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof InvoiceAgregate)) {
-            return false;
-        }
-
-        InvoiceAgregate other = (InvoiceAgregate) obj;
-        if (id != null && other.getId() != null && id.equals(other.getId())) {
-            return true;
-        }
-
-        if (other instanceof CategoryInvoiceAgregate && this instanceof CategoryInvoiceAgregate) {
-            CategoryInvoiceAgregate temp1 = (CategoryInvoiceAgregate) this;
-            CategoryInvoiceAgregate temp2 = (CategoryInvoiceAgregate) other;
-            return temp1.getInvoiceCategory().getCode().equals(temp2.getInvoiceCategory().getCode());
-        } else if (other instanceof SubCategoryInvoiceAgregate && this instanceof SubCategoryInvoiceAgregate) {
-            SubCategoryInvoiceAgregate temp1 = (SubCategoryInvoiceAgregate) this;
-            SubCategoryInvoiceAgregate temp2 = (SubCategoryInvoiceAgregate) other;
-            return temp1.getInvoiceSubCategory().getCode().equals(temp2.getInvoiceSubCategory().getCode());
-        } else if (other instanceof TaxInvoiceAgregate && this instanceof TaxInvoiceAgregate) {
-            TaxInvoiceAgregate temp1 = (TaxInvoiceAgregate) this;
-            TaxInvoiceAgregate temp2 = (TaxInvoiceAgregate) other;
-            return temp1.getTax().getCode().equals(temp2.getTax().getCode());
-        }
-
-        return false;
-    }
-
 }

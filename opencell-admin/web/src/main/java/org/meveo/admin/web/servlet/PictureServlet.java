@@ -1,16 +1,18 @@
 package org.meveo.admin.web.servlet;
 
-import java.io.ByteArrayInputStream;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -94,7 +95,7 @@ public class PictureServlet extends HttpServlet {
         showPicture(req, resp);
     }
 
-    private void showPicture(HttpServletRequest req, HttpServletResponse resp) {
+    private void showPicture(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String url = req.getRequestURI();
         String[] path = url.split("/");
         if (path == null || (path.length < 5)) {
@@ -114,11 +115,11 @@ public class PictureServlet extends HttpServlet {
                 rootPath = ModuleUtil.getPicturePath(provider, groupname, false);
                 filename = path[5];
             } else {
-                log.error("error context path " + url);
+                log.error("error context path {}", url);
                 return;
             }
         } catch (Exception e) {
-            log.error("error when read picture path. Reason " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+            log.error("error when read picture path. Reason {}", (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
             return;
         }
 
@@ -135,7 +136,7 @@ public class PictureServlet extends HttpServlet {
             if ("offerCategory".equals(groupname)) {
                 OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findById(id);
                 if (offerTemplateCategory == null) {
-                    log.error("Offer category with ID " + id + " does not exist");
+                    log.error("Offer category with ID {} does not exist", id);
                     resp.setStatus(HttpStatus.SC_NOT_FOUND);
                     return;
                 }
@@ -145,7 +146,7 @@ public class PictureServlet extends HttpServlet {
             } else if ("offer".equals(groupname)) {
                 ProductOffering offering = productOfferingService.findById(id);
                 if (offering == null) {
-                    log.error("Offer with ID " + id + " does not exist");
+                    log.error("Offer with ID {} does not exist", id);
                     resp.setStatus(HttpStatus.SC_NOT_FOUND);
                     return;
                 }
@@ -155,7 +156,7 @@ public class PictureServlet extends HttpServlet {
             } else if ("service".equals(groupname)) {
                 ServiceTemplate serviceTemplate = serviceTemplateService.findById(id);
                 if (serviceTemplate == null) {
-                    log.error("Service with ID " + id + " does not exist");
+                    log.error("Service with ID {} does not exist", id);
                     resp.setStatus(HttpStatus.SC_NOT_FOUND);
                     return;
                 }
@@ -164,7 +165,7 @@ public class PictureServlet extends HttpServlet {
             } else if ("product".equals(groupname)) {
                 ProductTemplate productTemplate = productTemplateService.findById(id);
                 if (productTemplate == null) {
-                    log.error("Product with ID " + id + " does not exist");
+                    log.error("Product with ID {} does not exist", id);
                     resp.setStatus(HttpStatus.SC_NOT_FOUND);
                     return;
                 }
@@ -178,7 +179,10 @@ public class PictureServlet extends HttpServlet {
         }
 
         if (imagePath != null) {
+        	log.debug("imagePath found={}", imagePath);
             data = loadImage(imagePath);
+        } else {
+        	log.debug("imagePath is null");
         }
 
         // Load a default image if not found
@@ -199,6 +203,7 @@ public class PictureServlet extends HttpServlet {
                 return;
             }
 
+            log.debug("pull data from cache");
             // load from cached default images
             data = cachedDefaultImages.get(defaultImage);
             imagePath = rootPath + File.separator + defaultImage;
@@ -211,51 +216,83 @@ public class PictureServlet extends HttpServlet {
 
         if (data != null) {
             Path destFile = Paths.get(imagePath);
+            log.debug("data is not null, loading imagePath={}", imagePath);
+            
             try {
                 mimeType = Files.probeContentType(destFile);
-                if (mimeType != null) {
-                    resp.setContentType(mimeType);
+                log.debug("Files.probeContentType mimeType found={}", mimeType);
+                if (mimeType == null) {
+                	mimeType = "image/" + getImageFormat(destFile.toFile());
+                	log.debug("getImageFormat mimeType found={}", mimeType);
                 }
             } catch (IOException e) {
                 log.error("Failed to determine mime type for {}", destFile, e);
             }
+            
+			// modifies response
+			resp.setContentType(mimeType);
+			resp.setContentLength(data.length);
 
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                in = new ByteArrayInputStream(data);
-                out = resp.getOutputStream();
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                while ((len = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, len);
-                }
-                out.flush();
-            } catch (Exception e) {
-                log.error("Failed to read picture, info " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-            } finally {
-                IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(out);
-            }
-            resp.setStatus(HttpStatus.SC_OK);
+//			try (InputStream in = new ByteArrayInputStream(data)) {
+//				try (OutputStream out = resp.getOutputStream()) {
+//					byte[] buffer = new byte[1024];
+//					int len = 0;
+//					while ((len = in.read(buffer)) != -1) {
+//						out.write(buffer, 0, len);
+//					}
+//				}
+//			}
+			
+			try {
+				BufferedImage img = ImageIO.read(destFile.toFile());
+				ImageIO.write(img, filename.substring(filename.indexOf('.') + 1), resp.getOutputStream());
+			} catch (Exception le) {
+				log.error("Failed loading file {}. {}", destFile, le);
+			}
+			
+			resp.setStatus(HttpStatus.SC_OK);
 
-        } else {
-            resp.setStatus(HttpStatus.SC_NOT_FOUND);
-        }
+		} else {
+			resp.setStatus(HttpStatus.SC_NOT_FOUND);
+		}
+    }
+    
+    private String getImageFormat(File file) throws IOException {
+		// create an image input stream from the specified file
+		ImageInputStream iis = ImageIO.createImageInputStream(file);
+
+		// get all currently registered readers that recognize the image format
+		Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+
+		if (!iter.hasNext()) {
+			log.error("No reader found for image");
+		}
+
+		// get the first reader
+		ImageReader reader = iter.next();
+		String formatName = reader.getFormatName();
+
+		// close stream
+		iis.close();
+		
+		return formatName;
     }
 
-    private byte[] loadImage(String imageFile) {
-        log.debug("Loading image: " + imageFile);
-        File file = new File(imageFile);
-        byte imageByteArray[] = null;
-        if (!file.exists()) {
-            log.debug("Image file does not exist: " + imageFile);
-        }
-        try {
-            imageByteArray = ModuleUtil.readPicture(imageFile);
-        } catch (IOException e) {
-            log.error("Error loading image: " + imageFile + " , info " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
-        }
-        return imageByteArray;
-    }
+	private byte[] loadImage(String imageFile) {
+		log.debug("Loading image: {}", imageFile);
+		File file = new File(imageFile);
+		if (!file.exists()) {
+			log.debug("Image file does not exist: {}", imageFile);
+		}
+
+		byte[] imageByteArray = null;
+		try {
+			imageByteArray = ModuleUtil.readPicture(imageFile);
+
+		} catch (IOException e) {
+			log.error("Error loading image: " + imageFile + " , info "
+					+ (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
+		}
+		return imageByteArray;
+	}
 }

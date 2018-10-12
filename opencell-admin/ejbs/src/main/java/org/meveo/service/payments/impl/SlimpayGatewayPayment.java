@@ -8,6 +8,7 @@ import javax.json.JsonObjectBuilder;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.EjbUtils;
@@ -370,5 +371,11 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     @Override
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
-    }   
+    }
+
+    @Override
+    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
+        return null;
+    }
+
 }

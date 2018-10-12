@@ -34,6 +34,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -57,6 +59,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
+@NamedQueries({ @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc") })
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -116,7 +119,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity {
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
     private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
 
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
 
     @Enumerated(value = EnumType.STRING)

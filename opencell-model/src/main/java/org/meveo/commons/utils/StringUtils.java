@@ -284,5 +284,9 @@ public class StringUtils {
         newValue = newValue.replaceAll("\\s+", "_");
         return newValue;
     }
+    
+    public static final String getDefaultIfEmpty(String value ,String defaultValue) {
+        return org.apache.commons.lang3.StringUtils.isNotEmpty(value) ? value : defaultValue;
+    }
 
 }

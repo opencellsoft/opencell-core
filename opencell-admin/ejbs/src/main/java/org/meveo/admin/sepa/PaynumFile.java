@@ -38,13 +38,11 @@ public class PaynumFile implements DDRequestBuilderInterface {
         String codeCreancier_paramKey = "paynum.codeCreancier";
         String codeCreancier = paramBean.getProperty(codeCreancier_paramKey, null);
         fileName = DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")
-                + "_" + (ddRequestLot.getInvoicesNumber() - ddRequestLot.getRejectedInvoices()) + "_" + (ddRequestLot.getInvoicesAmount()
-                    .setScale((appProvider.getRounding() == null ? 2 : appProvider.getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())
+                + "_" + (ddRequestLot.getNbItemsOk() - ddRequestLot.getNbItemsKo()) + "_" + (ddRequestLot.getTotalAmount()
+                    .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()).multiply(new BigDecimal(100)).longValue())
                 + "_ppf_factures_" + codeCreancier + ".csv";
 
-        String outputDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
-
-        outputDir = outputDir + File.separator + appProvider.getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
+        String outputDir =  ArConfig.getDDRequestOutputDirectory();
         outputDir = outputDir.replaceAll("\\..", "");
 
         log.info("DDRequest output directory=" + outputDir);
@@ -95,8 +93,8 @@ public class PaynumFile implements DDRequestBuilderInterface {
                 String codeFacture = fields[3];
                 String causeRejet = fields[12];
 
-                ddRejectFileInfos.setDdRequestLotId(ddRequestLotId);
-                ddRejectFileInfos.getListInvoiceRefsRejected().put(codeFacture, causeRejet);
+                ddRejectFileInfos.setDdRequestLotId(new Long(ddRequestLotId));
+                ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(codeFacture), causeRejet);
             }
         } catch (Exception e) {            
             throw new BusinessException(e.getMessage());
@@ -107,7 +105,7 @@ public class PaynumFile implements DDRequestBuilderInterface {
     private String[] ddRequestItemToRecord(DDRequestItem ddrequestItem) throws Exception {
         String[] lineAsArray = new String[14];
         // code débiteur (optionnel)
-        lineAsArray[0] = getSecretCode(ddrequestItem.getRecordedInvoice().getCustomerAccount());
+        lineAsArray[0] = getSecretCode(ddrequestItem.getAccountOperations().get(0).getCustomerAccount());
         // nom débiteur (optionnel)
         lineAsArray[1] = "";
         // prénom débiteur (optionnel)
@@ -117,14 +115,14 @@ public class PaynumFile implements DDRequestBuilderInterface {
         // email débiteur (optionnel)
         lineAsArray[4] = "";
         // code facture
-        lineAsArray[5] = ddrequestItem.getReference();
+        lineAsArray[5] = ""+ddrequestItem.getId();
         // code facture secondaire (optionnel)
         lineAsArray[6] = ddrequestItem.getReference();
         // montant en centimes
-        lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale((/* appProvider.getRounding() == null ? 2 : appProvider.getRounding() */2), RoundingMode.HALF_UP)
+        lineAsArray[7] = "" + (ddrequestItem.getAmount().setScale(2, RoundingMode.HALF_UP)
             .multiply(new BigDecimal(100)).longValue());
         // devise (code ISO sur 3 caractères, exemples: "EUR", "USD")
-        lineAsArray[8] = ddrequestItem.getRecordedInvoice().getCustomerAccount().getTradingCurrency().getCurrencyCode();
+        lineAsArray[8] = ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getTradingCurrency().getCurrencyCode();
         // date émission (optionnel)
         lineAsArray[9] = "";
         // date échéance (optionnel)

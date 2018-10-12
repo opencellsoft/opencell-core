@@ -39,6 +39,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -59,6 +61,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.quote.Quote;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -157,7 +160,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
 
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     @Column(name = "comment", length = 1200)
@@ -240,7 +243,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private BigDecimal dueBalance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = true)
+    @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
     @Transient
@@ -248,6 +251,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
     @Transient
     private Long invoiceAdjustmentCurrentProviderNb;
+
+    /**
+     * 3583 : dueDate & invoiceDate should be truncated before persist or update
+     */
+    @PrePersist
+    @PreUpdate
+    public void prePersistOrUpdate() {
+        this.dueDate = DateUtils.truncateTime(this.dueDate);
+        this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
+    }
 
     public List<RatedTransaction> getRatedTransactions() {
         return ratedTransactions;
@@ -605,16 +618,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     }
 
     public void addInvoiceAggregate(InvoiceAgregate obj) {
-        if (!invoiceAgregates.contains(obj)) {
-            invoiceAgregates.add(obj);
-        }
+        invoiceAgregates.add(obj);
     }
 
     public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
         List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
 
         for (InvoiceAgregate invoiceAggregate : invoiceAgregates) {
-            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate)invoiceAggregate).isDiscountAggregate()) {
+            if (invoiceAggregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAggregate).isDiscountAggregate()) {
                 aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
             }
         }

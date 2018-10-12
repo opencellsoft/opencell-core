@@ -110,6 +110,8 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
             responseBuilder.entity(e.getLocalizedMessage());
         } catch (BusinessException e) {
             log.error("Failed to execute a script {}", scriptInstanceCode , e);
+            responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result);
+            responseBuilder.entity(e.getLocalizedMessage());
         }
         Response response = responseBuilder.build();
         return response;

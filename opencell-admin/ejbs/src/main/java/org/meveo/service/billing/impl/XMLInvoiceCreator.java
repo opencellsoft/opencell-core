@@ -497,7 +497,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String billingAccountCode = billingAccount.getCode() + "";
         billingAccountTag.setAttribute("id", billingAccountId);
         billingAccountTag.setAttribute("code", billingAccountCode);
-        billingAccountTag.setAttribute("description", billingAccount.getDescription() + "");
+        billingAccountTag.setAttribute("description", billingAccount.getDescription() != null ? billingAccount.getDescription() : "");
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
         billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
@@ -1287,8 +1287,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     Element subCategory = null;
                     if(subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory()) == null) {
                         subCategoriesMap.put(ratedTransaction.getInvoiceSubCategory(), doc.createElement("subCategory"));
-                    } 
-                    	
+                    }
+    
                     subCategory = subCategoriesMap.get(ratedTransaction.getInvoiceSubCategory());	
                     subCategory.setAttribute("label", ratedTransaction.getInvoiceSubCategory().getDescription());
                     subCategory.setAttribute("code", ratedTransaction.getInvoiceSubCategory().getCode());

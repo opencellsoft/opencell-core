@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +27,6 @@ import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
-import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
@@ -49,7 +47,6 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
@@ -71,6 +68,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.order.OrderService;
@@ -84,7 +82,7 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
- * @lastModifiedVersion 5.1 
+ * @lastModifiedVersion 5.1
  */
 @Stateless
 public class InvoiceApi extends BaseApi {
@@ -96,8 +94,11 @@ public class InvoiceApi extends BaseApi {
     private BillingAccountService billingAccountService;
 
     @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
     private SubscriptionService subscriptionService;
-    
+
     @Inject
     private OrderService orderService;
 
@@ -160,7 +161,7 @@ public class InvoiceApi extends BaseApi {
         BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
         Invoice invoice = new Invoice();
         invoice.setBillingAccount(billingAccount);
-
+        invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
         invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());
         invoice.setDueDate(invoiceDTO.getDueDate());
 
@@ -186,13 +187,22 @@ public class InvoiceApi extends BaseApi {
             }
         }
         invoice = invoiceService.update(invoice);
-        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-        if (userAccounts == null || userAccounts.isEmpty()) {
-            throw new BusinessApiException("BillingAccount " + invoiceDTO.getBillingAccountCode() + " has no userAccount");
-        }
-        // TODO : userAccount on dto ?
-        UserAccount userAccount = userAccounts.get(0);
+
         for (CategoryInvoiceAgregateDto catInvAgrDto : invoiceDTO.getCategoryInvoiceAgregates()) {
+
+            UserAccount userAccount = null;
+            if (catInvAgrDto.getUserAccountCode() != null) {
+                userAccount = userAccountService.findByCode(catInvAgrDto.getUserAccountCode());
+                if (userAccount == null) {
+                    throw new EntityDoesNotExistsException(UserAccount.class, catInvAgrDto.getUserAccountCode());
+                } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
+                    throw new InvalidParameterException(
+                        "User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
+                }
+            } else {
+                userAccount = billingAccount.getUsersAccounts().get(0);
+            }
+
             BigDecimal catAmountWithoutTax = BigDecimal.ZERO;
             BigDecimal catAmountTax = BigDecimal.ZERO;
             BigDecimal catAmountWithTax = BigDecimal.ZERO;
@@ -243,33 +253,34 @@ public class InvoiceApi extends BaseApi {
                 }
 
                 boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name());
+                if (subCatInvAgrDTO.getRatedTransactions() != null) {
+                    for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
 
-                for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
+                        BigDecimal amountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
+                        BigDecimal amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
+                        BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
 
-                    BigDecimal amountWithoutTax = ratedTransactionDto.getUnitAmountWithoutTax().multiply(ratedTransactionDto.getQuantity());
-                    BigDecimal amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
-                    BigDecimal amountTax = getAmountTax(amountWithTax, amountWithoutTax);
+                        RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
+                            ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
+                            amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null, null, null, null,
+                            null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
+                            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, currentTax, currentTax.getPercent());
 
-                    RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
-                        ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
-                        amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null, null, null, null,
-                        ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-                        ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, currentTax, currentTax.getPercent());
+                        meveoRatedTransaction.setInvoice(invoice);
+                        meveoRatedTransaction.setWallet(userAccount.getWallet());
+                        // #3355 : setting params 1,2,3
+                        if (isDetailledInvoiceMode) {
+                            meveoRatedTransaction.setParameter1(ratedTransactionDto.getParameter1());
+                            meveoRatedTransaction.setParameter2(ratedTransactionDto.getParameter2());
+                            meveoRatedTransaction.setParameter3(ratedTransactionDto.getParameter3());
+                        }
 
-                    meveoRatedTransaction.setInvoice(invoice);
-                    meveoRatedTransaction.setWallet(userAccount.getWallet());
-                    // #3355 : setting params 1,2,3
-                    if (isDetailledInvoiceMode) {
-                        meveoRatedTransaction.setParameter1(ratedTransactionDto.getParameter1());
-                        meveoRatedTransaction.setParameter2(ratedTransactionDto.getParameter2());
-                        meveoRatedTransaction.setParameter3(ratedTransactionDto.getParameter3());
+                        ratedTransactionService.create(meveoRatedTransaction);
+
+                        subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
+                        subCatAmountTax = subCatAmountTax.add(amountTax);
+                        subCatAmountWithTax = subCatAmountWithTax.add(amountWithTax);
                     }
-
-                    ratedTransactionService.create(meveoRatedTransaction);
-
-                    subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
-                    subCatAmountTax = subCatAmountTax.add(amountTax);
-                    subCatAmountWithTax = subCatAmountWithTax.add(amountWithTax);
                 }
                 if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
                     List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory);
@@ -289,8 +300,10 @@ public class InvoiceApi extends BaseApi {
                 invoiceAgregateSubcat.setInvoice(invoice);
                 invoiceAgregateSubcat.setDescription(subCatInvAgrDTO.getDescription());
                 invoiceAgregateSubcat.setBillingRun(null);
-                invoiceAgregateSubcat.setWallet(userAccount.getWallet());
-                invoiceAgregateSubcat.setUserAccount(userAccount);
+                if (userAccount != null) {
+                    invoiceAgregateSubcat.setWallet(userAccount.getWallet());
+                    invoiceAgregateSubcat.setUserAccount(userAccount);
+                }
                 invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
                 invoiceAgregateSubcat.setAuditable(auditable);
                 invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
@@ -323,12 +336,10 @@ public class InvoiceApi extends BaseApi {
                         invoiceAgregateTax.setTax(tax);
                         invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
                         invoiceAgregateTax.setTaxPercent(tax.getPercent());
-                        invoiceAgregateTax.setUserAccount(userAccount);
                         invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
                         invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
                         invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
                         invoiceAgregateTax.setBillingAccount(billingAccount);
-                        invoiceAgregateTax.setUserAccount(userAccount);
                         invoiceAgregateTax.setAuditable(auditable);
                     }
                     invoiceAgregateTax.setAmountWithoutTax(invoiceAgregateTax.getAmountWithoutTax().add(invoiceAgregateSubcat.getAmountWithoutTax()));
@@ -354,22 +365,22 @@ public class InvoiceApi extends BaseApi {
         for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
             invoiceAgregateService.create(entry.getValue());
         }
-        
+
         int invoiceRounding = appProvider.getInvoiceRounding();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-        
-        invoice.setAmountWithoutTax( round(invoiceAmountWithoutTax, invoiceRounding, invoiceRoundingMode) );
-        invoice.setAmountTax( round(invoiceAmountTax, invoiceRounding, invoiceRoundingMode) );
-        invoice.setAmountWithTax( round(invoiceAmountWithTax, invoiceRounding, invoiceRoundingMode) );
+
+        invoice.setAmountWithoutTax(round(invoiceAmountWithoutTax, invoiceRounding, invoiceRoundingMode));
+        invoice.setAmountTax(round(invoiceAmountTax, invoiceRounding, invoiceRoundingMode));
+        invoice.setAmountWithTax(round(invoiceAmountWithTax, invoiceRounding, invoiceRoundingMode));
 
         BigDecimal netToPay = invoice.getAmountWithTax();
-        if (!appProvider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
+        if (!appProvider.isEntreprise() && invoiceDTO.isIncludeBalance() != null && invoiceDTO.isIncludeBalance()) {
             BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
 
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
             }
-            netToPay = invoice.getAmountWithTax().add( round(balance, invoiceRounding, invoiceRoundingMode) );
+            netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
 
@@ -384,7 +395,12 @@ public class InvoiceApi extends BaseApi {
             throw e;
         }
 
+        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
+            invoiceService.assignInvoiceNumber(invoice);
+        }
+
         invoice = invoiceService.update(invoice);
+
         CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
         response.setInvoiceId(invoice.getId());
         response.setAmountWithoutTax(invoice.getAmountWithoutTax());
@@ -393,23 +409,21 @@ public class InvoiceApi extends BaseApi {
         response.setDueDate(invoice.getDueDate());
         response.setInvoiceDate(invoice.getInvoiceDate());
         response.setNetToPay(invoice.getNetToPay());
+        response.setInvoiceNumber(invoice.getInvoiceNumber());
 
         // pdf and xml are added to response if requested
-        if (invoiceDTO.isAutoValidation()) {
-            response.setInvoiceNumber(validateInvoice(invoice.getId()));
-            if (invoiceDTO.isReturnXml() || invoiceDTO.isReturnPdf()) {
-                invoiceService.produceInvoiceXml(invoice);
-                String invoiceXml = invoiceService.getInvoiceXml(invoice);
-                response.setXmlInvoice(invoiceXml);
-                response.setXmlFilename(invoice.getXmlFilename());
-            }
+        if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml()) || (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf())) {
+            invoiceService.produceInvoiceXml(invoice);
+            String invoiceXml = invoiceService.getInvoiceXml(invoice);
+            response.setXmlInvoice(invoiceXml);
+            response.setXmlFilename(invoice.getXmlFilename());
+        }
 
-            if (invoiceDTO.isReturnPdf()) {
-                invoice = invoiceService.produceInvoicePdf(invoice);
-                byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
-                response.setPdfInvoice(invoicePdf);
-                response.setPdfFilename(invoice.getPdfFilename());
-            }
+        if (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf()) {
+            invoice = invoiceService.produceInvoicePdf(invoice);
+            byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
+            response.setPdfInvoice(invoicePdf);
+            response.setPdfFilename(invoice.getPdfFilename());
         }
 
         return response;
@@ -507,8 +521,8 @@ public class InvoiceApi extends BaseApi {
             handleMissingParameters();
             return null;
         } else {
-        	if(StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-        		if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
+            if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+                if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetCode())) {
                     missingParameters.add("targetCode");
                 }
                 if (StringUtils.isBlank(generateInvoiceRequestDto.getTargetType())) {
@@ -518,26 +532,26 @@ public class InvoiceApi extends BaseApi {
                 if (generateInvoiceRequestDto.getInvoicingDate() == null) {
                     missingParameters.add("invoicingDate");
                 }
-            }            
+            }
         }
 
         handleMissingParameters();
 
         IBillableEntity entity = null;
-        if(StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
-	        if(BillingEntityTypeEnum.BILLINGACCOUNT.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-	            entity = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
-	        } else if(BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-	            entity = subscriptionService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
-	        } else if(BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
-	            entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getTargetCode());
-	        }
+        if (StringUtils.isBlank(generateInvoiceRequestDto.getBillingAccountCode())) {
+            if (BillingEntityTypeEnum.BILLINGACCOUNT.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+                entity = billingAccountService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+            } else if (BillingEntityTypeEnum.SUBSCRIPTION.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+                entity = subscriptionService.findByCode(generateInvoiceRequestDto.getTargetCode(), Arrays.asList("billingRun"));
+            } else if (BillingEntityTypeEnum.ORDER.toString().equalsIgnoreCase(generateInvoiceRequestDto.getTargetType())) {
+                entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getTargetCode());
+            }
         } else {
-        	if(!StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
-        		entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getOrderNumber());
-        	} else {
-        		entity = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
-        	}
+            if (!StringUtils.isBlank(generateInvoiceRequestDto.getOrderNumber())) {
+                entity = orderService.findByCodeOrExternalId(generateInvoiceRequestDto.getOrderNumber());
+            } else {
+                entity = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
+            }
         }
 
         if (entity == null) {
@@ -560,40 +574,32 @@ public class InvoiceApi extends BaseApi {
                 generateInvoiceRequestDto.setGenerateAO(Boolean.FALSE);
             }
         }
-        
+
         boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
                 || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-        List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<GenerateInvoiceResultDto>();
+        List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
-        for(Invoice invoice : invoices) {
-            this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
-            invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
-            
-            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
-            invoicesDtos.add(generateInvoiceResultDto);
-            if (isDraft) {
-                invoiceService.cancelInvoice(invoice);
+        if (invoices != null) {
+            for (Invoice invoice : invoices) {
+                this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+                invoiceService.produceFilesAndAO(produceXml, producePdf, generateAO, invoice, isDraft);
+
+                GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
+                invoicesDtos.add(generateInvoiceResultDto);
+                if (isDraft) {
+                    invoiceService.cancelInvoice(invoice);
+                }
             }
-            
         }
-        
+
         return invoicesDtos;
     }
-    
+
     public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf) throws BusinessException {
-        GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto();
-        dto.setInvoiceId(invoice.getId());
-        dto.setInvoiceNumber(invoice.getInvoiceNumber());
-        dto.setTemporaryInvoiceNumber(invoice.getTemporaryInvoiceNumber());
-        dto.setInvoiceTypeCode(invoice.getInvoiceType().getCode());
-        dto.setAmount(invoice.getAmount());
-        dto.setAmountWithoutTax(invoice.getAmountWithoutTax());
-        dto.setAmountWithTax(invoice.getAmountWithTax());
-        dto.setAmountTax(invoice.getAmountTax());
-        dto.setDiscount(invoice.getDiscount());
+        GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto(invoice, false);
 
         if (invoiceService.isInvoicePdfExist(invoice)) {
             dto.setPdfFilename(invoice.getPdfFilename());
@@ -604,18 +610,6 @@ public class InvoiceApi extends BaseApi {
 
         if (invoiceService.isInvoiceXmlExist(invoice)) {
             dto.setXmlFilename(invoice.getXmlFilename());
-        }
-
-        if (invoice.getRecordedInvoice() != null) {
-            dto.setAccountOperationId(invoice.getRecordedInvoice().getId());
-        }
-
-        List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
-        subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
-
-        for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-            SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto(subCategoryInvoiceAgregate, false);
-            dto.getDiscountAggregates().add(subCategoryInvoiceAgregateDto);
         }
 
         return dto;
@@ -837,9 +831,8 @@ public class InvoiceApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions)
-            throws MeveoApiException, BusinessException {
-       return this.find(id, invoiceNumber, invoiceTypeCode, includeTransactions, false, false);
+    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions) throws MeveoApiException, BusinessException {
+        return this.find(id, invoiceNumber, invoiceTypeCode, includeTransactions, false, false);
     }
 
     /**
@@ -861,7 +854,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             if (id != null) {
                 throw new EntityDoesNotExistsException(Invoice.class, id);
-                
+
             } else {
                 throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceType");
             }
@@ -876,7 +869,8 @@ public class InvoiceApi extends BaseApi {
      * @return amount with tax.
      */
     private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
-        BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
+        BigDecimal ttc = amountWithoutTax
+            .add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
         return ttc;
     }
 
@@ -919,7 +913,6 @@ public class InvoiceApi extends BaseApi {
             pdfFileExists = invoiceService.isInvoicePdfExist(invoice);
         }
         if (pdfFileExists) {
-            invoiceDto.setPdfPresent(true);
             invoiceDto.setPdfFilename(invoice.getPdfFilename());
             if (includePdf) {
                 try {
@@ -967,7 +960,7 @@ public class InvoiceApi extends BaseApi {
             }
         } else {
             invoiceDto.setXmlFilename(null);
-        }        
+        }
     }
 
     public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf) {

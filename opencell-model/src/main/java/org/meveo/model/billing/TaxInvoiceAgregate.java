@@ -44,10 +44,37 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
+    /**
+     * Instantiates a new tax aggregate
+     */
     public TaxInvoiceAgregate() {
 
     }
 
+    /**
+     * Instantiates a new tax aggregate
+     * 
+     * @param billingAccount Billing account
+     * @param tax Tax applied
+     * @param taxPercent Tax percent applied
+     * @param invoice Invoice
+     */
+    public TaxInvoiceAgregate(BillingAccount billingAccount, Tax tax, BigDecimal taxPercent, Invoice invoice) {
+        this.setBillingAccount(billingAccount);
+        this.setTax(tax);
+        this.setTaxPercent(taxPercent);
+        this.setAccountingCode(tax.getAccountingCode());
+        this.invoice = invoice;
+        if (invoice != null) {
+            this.billingRun = invoice.getBillingRun();
+        }
+    }
+
+    /**
+     * Copies tax aggregate
+     * 
+     * @param taxInvoiceAgregate Tax aggregate to copy
+     */
     public TaxInvoiceAgregate(TaxInvoiceAgregate taxInvoiceAgregate) {
         this.setItemNumber(taxInvoiceAgregate.getItemNumber());
         this.setAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax());
@@ -56,7 +83,6 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
         this.setTaxPercent(taxInvoiceAgregate.getTaxPercent());
         this.setBillingAccount(taxInvoiceAgregate.getBillingAccount());
         this.setBillingRun(taxInvoiceAgregate.getBillingRun());
-        this.setUserAccount(taxInvoiceAgregate.getUserAccount());
     }
 
     public Tax getTax() {
@@ -81,5 +107,27 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof TaxInvoiceAgregate)) {
+            return false;
+        }
+
+        TaxInvoiceAgregate other = (TaxInvoiceAgregate) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (this.getTax() == null) {
+            return false;
+        }
+
+        return this.getTax().getId().equals(other.getTax().getId()) && this.getTaxPercent().compareTo(other.getTaxPercent()) == 0;
     }
 }

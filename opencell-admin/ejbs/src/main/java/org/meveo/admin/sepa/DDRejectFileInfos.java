@@ -17,7 +17,7 @@ public class DDRejectFileInfos {
     private String fileName;
     
     /** The dd request lot id. */
-    private String ddRequestLotId;
+    private Long ddRequestLotId;
     
     /** The DD request file was rejected. */
     private boolean theDDRequestFileWasRejected = false;
@@ -26,14 +26,14 @@ public class DDRejectFileInfos {
     private String returnStatusCode;
     
     /** The list of invoice refs rejected and reason reject. */
-    private Map<String,String> listInvoiceRefsRejected = new HashMap<String,String>();
+    private Map<Long,String> listInvoiceRefsRejected = new HashMap<Long,String>();
 
     /**
      * Gets the dd request lot id.
      *
      * @return the ddRequestLotId
      */
-    public String getDdRequestLotId() {
+    public Long getDdRequestLotId() {
         return ddRequestLotId;
     }
 
@@ -42,7 +42,7 @@ public class DDRejectFileInfos {
      *
      * @param ddRequestLotId the ddRequestLotId to set
      */
-    public void setDdRequestLotId(String ddRequestLotId) {
+    public void setDdRequestLotId(Long ddRequestLotId) {
         this.ddRequestLotId = ddRequestLotId;
     }
 
@@ -85,14 +85,14 @@ public class DDRejectFileInfos {
      /**
      * @return the listInvoiceRefsRejected
      */
-    public Map<String, String> getListInvoiceRefsRejected() {
+    public Map<Long, String> getListInvoiceRefsRejected() {
         return listInvoiceRefsRejected;
     }
 
     /**
      * @param listInvoiceRefsRejected the listInvoiceRefsRejected to set
      */
-    public void setListInvoiceRefsRejected(Map<String, String> listInvoiceRefsRejected) {
+    public void setListInvoiceRefsRejected(Map<Long, String> listInvoiceRefsRejected) {
         this.listInvoiceRefsRejected = listInvoiceRefsRejected;
     }
 

@@ -28,6 +28,7 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SubscriptionWs;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -182,11 +183,11 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode,CustomFieldInheritanceEnum inheritCF) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -315,5 +316,18 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
         return result;
     }
+
+	@Override
+	public ActionStatus cancelSubscriptionRenewal(String subscriptionCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.cancelSubscriptionRenewal(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
 
 }

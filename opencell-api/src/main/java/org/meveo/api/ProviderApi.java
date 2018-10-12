@@ -57,6 +57,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
@@ -144,7 +145,7 @@ public class ProviderApi extends BaseApi {
 
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
         if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider, true));
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
@@ -242,7 +243,7 @@ public class ProviderApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null) {
             for (Tax tax : taxes) {
-                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, true)));
+                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
 
@@ -250,7 +251,7 @@ public class ProviderApi extends BaseApi {
         List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list();
         if (invoiceCategories != null) {
             for (InvoiceCategory invoiceCategory : invoiceCategories) {
-                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, true)));
+                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
 
@@ -259,7 +260,7 @@ public class ProviderApi extends BaseApi {
         if (invoiceSubCategories != null) {
             for (InvoiceSubCategory invoiceSubCategory : invoiceSubCategories) {
                 result.getInvoiceSubCategories().getInvoiceSubCategory()
-                    .add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory, true)));
+                    .add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
 
@@ -267,7 +268,7 @@ public class ProviderApi extends BaseApi {
         List<BillingCycle> billingCycles = billingCycleService.list();
         if (billingCycles != null) {
             for (BillingCycle billingCycle : billingCycles) {
-                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsDTO(billingCycle, true)));
+                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsDTO(billingCycle, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
             }
         }
 
@@ -350,7 +351,7 @@ public class ProviderApi extends BaseApi {
 
         Provider provider = providerService.findById(appProvider.getId());
         if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider, true), false);
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false);
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
@@ -606,7 +607,7 @@ public class ProviderApi extends BaseApi {
         if (totalCount > 0) {
             List<Provider> providers = providerService.list(paginationConfig);
             for (Provider provider : providers) {
-                result.getProviders().add(new ProviderDto(provider, appProvider.getId().equals(provider.getId()) ? entityToDtoConverter.getCustomFieldsDTO(provider, true) : null));
+                result.getProviders().add(new ProviderDto(provider, appProvider.getId().equals(provider.getId()) ? entityToDtoConverter.getCustomFieldsDTO(provider, CustomFieldInheritanceEnum.INHERIT_NO_MERGE) : null));
             }
         }
 

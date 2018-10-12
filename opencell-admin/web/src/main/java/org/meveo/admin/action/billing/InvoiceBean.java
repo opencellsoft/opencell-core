@@ -438,7 +438,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
             if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
                 for (Invoice invoice : getSelectedEntities()) {
-                    invoiceService.deleteInvoice(invoice);
+                    invoiceService.cancelInvoice(invoice);
                     billingrun.getInvoices().remove(invoice);
                 }
                 messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
@@ -646,7 +646,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, new Date());
+            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {

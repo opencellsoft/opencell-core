@@ -13586,7 +13586,7 @@ public class Action1 extends Script {
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 3</label>
   <script code="Action3">
-    <auditable created="*" creator="*"/>
+    <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
@@ -31670,7 +31670,7 @@ public class Action1 extends Script {
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 3 - updated</label>
   <script code="Action34">
-    <auditable created="*" creator="*"/>
+    <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
     <script>import org.meveo.service.script.Script;
@@ -34240,7 +34240,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="c7b043a6-bdc1-4428-8a92-776285a55efa">
-              <con:configuration/>
+              <con:configuration>
+                <token/>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="7a845b2b-2023-4ea0-8e6a-e78c3a815985" name="Contains 2">
               <con:configuration>
@@ -34332,7 +34336,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>38</con:value>
+        <con:value>43</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36963,7 +36967,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>78</con:value>
+        <con:value>80</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -37453,16 +37457,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
-      <ws:createAccountingCode>\r
-         <!--Optional:-->\r
+      <ws:createOrUpdateAccountingCode>\r
          <accountingCode code="ACC_CODE" description="ACC_CODE">\r
             <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
-            <!--Optional:-->\r
             <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
-            <!--Optional:-->\r
             <reportingAccount>sales</reportingAccount>\r
          </accountingCode>\r
-      </ws:createAccountingCode>\r
+      </ws:createOrUpdateAccountingCode>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
@@ -38082,16 +38083,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
-      <ws:createAccountingCode>\r
-         <!--Optional:-->\r
+      <ws:createOrUpdateAccountingCode>\r
          <accountingCode code="1234" description="1234">\r
             <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
-            <!--Optional:-->\r
             <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
-            <!--Optional:-->\r
             <reportingAccount>sales</reportingAccount>\r
          </accountingCode>\r
-      </ws:createAccountingCode>\r
+      </ws:createOrUpdateAccountingCode>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
@@ -38518,7 +38516,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>45</con:value>
+        <con:value>50</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39741,7 +39739,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>39</con:value>
+        <con:value>41</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -42027,6 +42025,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -42156,6 +42155,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH1</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -42285,6 +42285,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH2</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -42420,6 +42421,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -42500,6 +42502,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH1</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -42580,6 +42583,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH2</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -42660,6 +42664,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomer>\r
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CUST</customerCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomer>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -42723,6 +42728,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomer>\r
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CUST_NO_CF</customerCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomer>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -42768,6 +42774,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -42954,6 +42961,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_NO_CF</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43052,6 +43060,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_SELLER_CH2</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43150,6 +43159,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43345,6 +43355,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA_NO_CF</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43452,6 +43463,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA_NO_CF_AB</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43526,6 +43538,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findUserAccount>\r
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA</userAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findUserAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43626,6 +43639,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findUserAccount>\r
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA_NO_CF</userAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findUserAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43695,6 +43709,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findUserAccount>\r
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA_NO_CF_AB</userAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findUserAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43758,6 +43773,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findUserAccount>\r
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA_NO_CF_C</userAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findUserAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43821,6 +43837,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findUserAccount>\r
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA_NO_CF_D</userAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findUserAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -43884,6 +43901,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44071,6 +44089,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44189,6 +44208,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF_AB</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44283,6 +44303,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF_C</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44389,6 +44410,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF_D</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44526,6 +44548,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay4" id="c5a4b474-9afd-4896-941f-909a5e721ca8">
+        <con:settings/>
+        <con:config>
+          <delay>15000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find provider - AB change" id="b4b3abe1-c526-4412-a3dc-00be95227ed2">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -44587,12 +44615,6 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="delay" name="Delay4" id="c5a4b474-9afd-4896-941f-909a5e721ca8">
-        <con:settings/>
-        <con:config>
-          <delay>2000</delay>
-        </con:config>
-      </con:testStep>
       <con:testStep type="request" name="Find customer account - AB change" id="802d205b-30b9-48f7-af10-b18179797b50">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -44609,6 +44631,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44703,6 +44726,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_NO_CF</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44752,6 +44776,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -44947,6 +44972,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA_NO_CF</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45054,6 +45080,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA_NO_CF_AB</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45128,6 +45155,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45315,6 +45343,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45433,6 +45462,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF_AB</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45563,6 +45593,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay3" id="b0842c73-4081-48dd-946b-618a6bab2146">
+        <con:settings/>
+        <con:config>
+          <delay>5000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find customer account - C change" id="524e2a91-f326-4a89-a58e-32659af74f41">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -45579,6 +45615,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45657,12 +45694,6 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="delay" name="Delay3" id="b0842c73-4081-48dd-946b-618a6bab2146">
-        <con:settings/>
-        <con:config>
-          <delay>2000</delay>
-        </con:config>
-      </con:testStep>
       <con:testStep type="request" name="Find billing account - C change" id="7a4259f6-ef58-4aee-be57-ca13ff81f294">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -45679,6 +45710,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45874,6 +45906,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA_NO_CF</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -45981,6 +46014,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -46168,6 +46202,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -46286,6 +46321,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF_C</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -46451,6 +46487,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomer>\r
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CUST</customerCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomer>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -46501,7 +46538,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <con:testStep type="delay" name="Delay1" id="86ad4515-84f2-4d1e-b619-3e522adac52c">
         <con:settings/>
         <con:config>
-          <delay>2000</delay>
+          <delay>15000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find billing account - D change" id="28e15ce9-2f91-460c-beb8-20c5f81f87b0">
@@ -46520,6 +46557,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -46715,6 +46753,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA_NO_CF</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -46822,6 +46861,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findUserAccount>\r
          <userAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_UA_NO_CF_D</userAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findUserAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -46940,6 +46980,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -47033,7 +47074,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <con:testStep type="delay" name="Delay2" id="9b7fe24c-487a-41de-a110-12140219ec36">
         <con:settings/>
         <con:config>
-          <delay>2000</delay>
+          <delay>15000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find billing account - C add" id="29b10d59-2bf9-4cd7-b2ff-9772080d9276">
@@ -47052,6 +47093,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -47259,6 +47301,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findBillingAccount>\r
          <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_BA_NO_CF</billingAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findBillingAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -47378,6 +47421,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -47565,6 +47609,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -47683,6 +47728,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findSubscription>\r
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SUB_NO_CF_C</subscriptionCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSubscription>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -47934,7 +47980,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <con:testStep type="delay" name="Delay" id="f02f9755-d383-4f15-8bc7-c790b51ce3c3">
         <con:settings/>
         <con:config>
-          <delay>2000</delay>
+          <delay>15000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find seller - EF change" id="e9a8874c-1fc6-4a31-84a7-f69bfb78c5dd">
@@ -47953,6 +47999,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -48088,6 +48135,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH1</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -48223,6 +48271,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_CH2</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -48364,6 +48413,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -48450,6 +48500,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_NO_CF_CH1</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -48536,6 +48587,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -48671,6 +48723,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_NO_CF</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -48763,6 +48816,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_SELLER_CH2</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -49365,7 +49419,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <con:testStep type="delay" name="Delay" id="34f08097-2efc-48a5-ad25-81241b9cc3b3">
         <con:settings/>
         <con:config>
-          <delay>1000</delay>
+          <delay>5000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Create CF on Seller with default and applicable" id="9d88f38e-19d8-43da-bddd-1d4612aa3475">
@@ -49415,7 +49469,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <con:testStep type="delay" name="Delay 2" id="4a6e4820-6c17-4266-9b7a-fe81a68ee16e">
         <con:settings/>
         <con:config>
-          <delay>1000</delay>
+          <delay>5000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find seller" id="14e7c5ff-2b71-4bbc-8c9b-9c1ca0676e3b">
@@ -49434,6 +49488,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_DEF</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -49492,6 +49547,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>
       <ws:findSeller>         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_SELLER_DEF_APPLICABLE</sellerCode>
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findSeller>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -49553,6 +49609,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_DEF</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -49685,7 +49742,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <con:testStep type="delay" name="Delay 3" id="a808865e-f026-4043-a00c-2dacb0d36796">
         <con:settings/>
         <con:config>
-          <delay>1000</delay>
+          <delay>5000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find customer account 2" id="29f3394e-cc6d-4eae-9b98-b84fd6bb99fa">
@@ -49704,6 +49761,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Body>\r
       <ws:findCustomerAccount>\r
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_AC_CA_DEF</customerAccountCode>\r
+         <inheritCF>ACCUMULATED</inheritCF>
       </ws:findCustomerAccount>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -49903,7 +49961,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>24</con:value>
+        <con:value>33</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

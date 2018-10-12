@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.PriceELErrorException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
@@ -39,7 +38,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -231,8 +229,8 @@ public class RatingService extends BusinessService<WalletOperation> {
      */
     public WalletOperation prerateChargeApplication(ChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity,
-            BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, String languageCode, Tax tax, BigDecimal discountPercent,
-            Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
+            BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, String languageCode, Tax tax, BigDecimal discountPercent, Date nextApplicationDate,
+            InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
             ChargeApplicationModeEnum mode, UserAccount userAccount) throws BusinessException {
 
         WalletOperation walletOperation = new WalletOperation();
@@ -271,11 +269,11 @@ public class RatingService extends BusinessService<WalletOperation> {
 
                 walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
             }
-            
-            if(chargeInstance.getSeller() != null) {
-            	walletOperation.setSeller(chargeInstance.getSeller());
+
+            if (chargeInstance.getSeller() != null) {
+                walletOperation.setSeller(chargeInstance.getSeller());
             } else {
-            	walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+                walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
             }
         }
 
@@ -352,9 +350,9 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @throws BusinessException business exception
      */
     public WalletOperation rateChargeApplication(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
-            BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, Tax tax,
-            BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber,
-            Date startdate, Date endDate, ChargeApplicationModeEnum mode, boolean forSchedule, boolean isVirtual) throws BusinessException {
+            BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, Tax tax, BigDecimal discountPercent,
+            Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
+            ChargeApplicationModeEnum mode, boolean forSchedule, boolean isVirtual) throws BusinessException {
         Date subscriptionDate = null;
 
         if (chargeInstance instanceof RecurringChargeInstance) {
@@ -414,8 +412,8 @@ public class RatingService extends BusinessService<WalletOperation> {
                             edrService.create(newEdr);
                         }
                     } else {
-                    	// removed for the case of product instance on user account without subscription
-                        //throw new BusinessException("cannot find subscription for the trigerred EDR with code " + triggeredEDRTemplate.getCode());
+                        // removed for the case of product instance on user account without subscription
+                        // throw new BusinessException("cannot find subscription for the trigerred EDR with code " + triggeredEDRTemplate.getCode());
                     }
                 } else {
                     CDR cdr = new CDR();
@@ -620,70 +618,41 @@ public class RatingService extends BusinessService<WalletOperation> {
      */
     public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) throws BusinessException {
 
-        BigDecimal unitAmountTax = BigDecimal.ZERO;
-        BigDecimal amountTax = BigDecimal.ZERO;
-        BigDecimal priceWithoutTax = null;
-        BigDecimal priceWithTax = null;
-
         Integer rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
 
         // Calculate and round total prices and taxes:
         // [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax)
         // [B2B] amountWithTax = round(amountWithoutTax) + round(amountTax)
-        // Unit prices and taxes are not rounded
-        if (appProvider.isEntreprise()) {
+        // Unit prices and unit taxes are not rounded
 
-            priceWithoutTax = walletOperation.getQuantity().multiply(unitPriceWithoutTax);
+        BigDecimal amount = null;
+        BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
 
-            // process ratingEL here
-            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingWithoutTaxEL())) {
-                priceWithoutTax = BigDecimal.valueOf(
-                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingWithoutTaxEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
+        // process ratingEL here
+        if (walletOperation.getPriceplan() != null) {
+            String ratingEl = appProvider.isEntreprise() ? walletOperation.getPriceplan().getRatingWithoutTaxEL() : walletOperation.getPriceplan().getRatingWithTaxEL();
+            if (!StringUtils.isBlank(ratingEl)) {
+                amount = BigDecimal.valueOf(evaluateDoubleExpression(ratingEl, walletOperation, walletOperation.getWallet().getUserAccount()));
             }
-            priceWithoutTax = round(priceWithoutTax, rounding, roundingMode);
-
-            if (walletOperation.getTaxPercent() != null) {
-                unitAmountTax = unitPriceWithoutTax.multiply(walletOperation.getTaxPercent().divide(HUNDRED));
-
-                amountTax = priceWithoutTax.multiply(walletOperation.getTaxPercent().divide(HUNDRED));
-                amountTax = round(amountTax, rounding, roundingMode);
-            }
-
-            unitPriceWithTax = unitPriceWithoutTax.add(unitAmountTax);
-            priceWithTax = priceWithoutTax.add(amountTax);
-
-        } else {
-
-            priceWithTax = walletOperation.getQuantity().multiply(unitPriceWithTax);
-            
-            // process ratingEL here
-            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingWithTaxEL())) {
-            	priceWithTax = BigDecimal.valueOf(
-                    evaluateDoubleExpression(walletOperation.getPriceplan().getRatingWithTaxEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
-            }
-            
-            priceWithTax = round(priceWithTax, rounding, roundingMode);
-
-            if (walletOperation.getTaxPercent() != null) {
-                BigDecimal percentPlusOne = BigDecimal.ONE.add(walletOperation.getTaxPercent().divide(HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-
-                // Unit amount calculation is left with higher precision
-                unitAmountTax = unitPriceWithTax.subtract(unitPriceWithTax.divide(percentPlusOne, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-                amountTax = priceWithTax.subtract(priceWithTax.divide(percentPlusOne, rounding, roundingMode.getRoundingMode()));
-            }
-
-            unitPriceWithoutTax = unitPriceWithTax.subtract(unitAmountTax);
-            priceWithoutTax = priceWithTax.subtract(amountTax);
-
         }
 
-        walletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
-        walletOperation.setUnitAmountWithTax(unitPriceWithTax);
-        walletOperation.setUnitAmountTax(unitAmountTax);
-        walletOperation.setAmountWithoutTax(priceWithoutTax);
-        walletOperation.setAmountWithTax(priceWithTax);
-        walletOperation.setAmountTax(amountTax);
+        if (amount == null) {
+            amount = walletOperation.getQuantity().multiply(unitPrice);
+        }
+
+        // Unit prices and unit taxes are with higher precision
+        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(unitPrice, unitPrice, walletOperation.getTaxPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS,
+            RoundingMode.HALF_UP);
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amount, amount, walletOperation.getTaxPercent(), appProvider.isEntreprise(), rounding,
+            roundingMode.getRoundingMode());
+
+        walletOperation.setUnitAmountWithoutTax(unitAmounts[0]);
+        walletOperation.setUnitAmountWithTax(unitAmounts[1]);
+        walletOperation.setUnitAmountTax(unitAmounts[2]);
+        walletOperation.setAmountWithoutTax(amounts[0]);
+        walletOperation.setAmountWithTax(amounts[1]);
+        walletOperation.setAmountTax(amounts[2]);
     }
 
     /**
@@ -694,8 +663,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @return matrix of price plan
      * @throws BusinessException business exception
      */
-    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency)
-            throws BusinessException {
+    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency) throws BusinessException {
         // FIXME: the price plan properties could be null !
         // log.info("ratePrice rate " + bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
@@ -900,7 +868,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                 ChargeInstance chargeInstance = operationToRerate.getChargeInstance();
 
                 Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, operation.getOperationDate());
-                
+
                 operation.setTax(tax);
                 operation.setTaxPercent(tax.getPercent());
 

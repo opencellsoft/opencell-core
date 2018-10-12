@@ -19,7 +19,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
-import org.meveo.service.payments.impl.DDRequestItemService;
+import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.slf4j.Logger;
 
 /**
@@ -36,9 +36,9 @@ public class SepaRejectedTransactionsJobBean {
     @Inject
     private Logger log;
 
-    /** The ddRequestItemService service. */
+    /** The ddRequestLotService service. */
     @Inject
-    private DDRequestItemService ddRequestItemService;
+    private DDRequestLOTService ddRequestLotService;
 
     /** The file name. */
     String fileName;
@@ -90,7 +90,7 @@ public class SepaRejectedTransactionsJobBean {
             log.info(file.getName() + " in progress");
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());            
             DDRejectFileInfos ddRejectFileInfos = ddRequestBuilderInterface.processDDRejectedFile(currentFile);
-            ddRequestItemService.processRejectFile(ddRejectFileInfos);
+            ddRequestLotService.processRejectFile(ddRejectFileInfos);
 
             FileUtils.moveFile(archiveDir, currentFile, fileName);
             log.info("Processing " + file.getName() + " done");

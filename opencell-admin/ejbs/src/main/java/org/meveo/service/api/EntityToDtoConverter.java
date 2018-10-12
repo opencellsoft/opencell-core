@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -16,6 +17,7 @@ import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -57,6 +59,13 @@ public class EntityToDtoConverter {
     @ApplicationProvider
     protected Provider appProvider;
 
+    static boolean accumulateCF = true;
+
+    @PostConstruct
+    private void init() {
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "true"));
+    }
+
     /**
      * Gets the custom fields DTO.
      *
@@ -64,43 +73,7 @@ public class EntityToDtoConverter {
      * @return the custom fields DTO
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity) {
-        return getCustomFieldsDTO(entity, false);
-    }
-
-    /**
-     * Gets the custom fields DTO.
-     *
-     * @param entity the entity
-     * @param includeInheritedCF the include inherited CF
-     * @return the custom fields DTO
-     */
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
-        return getCustomFieldsDTO(entity, includeInheritedCF, false);
-    }
-
-    /**
-     * Gets the custom fields DTO.
-     *
-     * @param entity the entity
-     * @param includeInheritedCF the include inherited CF
-     * @param mergeMapValues the merge map values
-     * @return the custom fields DTO
-     */
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF, boolean mergeMapValues) {
-        return getCustomFieldsDTO(entity, null, includeInheritedCF, mergeMapValues);
-    }
-
-    /**
-     * Gets the custom fields DTO.
-     *
-     * @param entity entity
-     * @param cfValuesByCode List of custom field values by code. If null, value from entity.getCFValues() will be used.
-     * @param includeInheritedCF If true, also returns the inherited cfs
-     * @param mergeMapValues If true, merge the map values between instance cf and parent. Use to show a single list of values.
-     * @return Custom fields values as DTOs
-     */
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, boolean includeInheritedCF, boolean mergeMapValues) {
-        return getCustomFieldsDTO(entity, cfValuesByCode, CustomFieldInheritanceEnum.getInheritCF(includeInheritedCF, mergeMapValues));
+        return getCustomFieldsDTO(entity, CustomFieldInheritanceEnum.INHERIT_NONE);
     }
 
     /**
@@ -124,6 +97,15 @@ public class EntityToDtoConverter {
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValues, CustomFieldInheritanceEnum inheritCF) {
 
+        if (inheritCF == null) {
+            inheritCF = CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
+        }
+
+        // Accumulated type is allowed only when value accumulation is turned on
+        if (inheritCF == CustomFieldInheritanceEnum.ACCUMULATED && !accumulateCF) {
+            inheritCF = CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
+        }
+
         if (cfValues == null && entity.getCfValues() != null) {
             cfValues = entity.getCfValues().getValuesByCode();
         }
@@ -138,30 +120,107 @@ public class EntityToDtoConverter {
 
         logger.trace("Get Custom fields for \nEntity: {}/{}\nCustom Field Values: {}", entity.getClass().getSimpleName(), ((IEntity) entity).getId(), cfValues);
 
-        if (cfValues != null && !cfValues.isEmpty()) {
-            for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValues.entrySet()) {
-                String cfCode = cfValueInfo.getKey();
-                // Return only those values that have cft
-                if (!cfts.containsKey(cfCode)) {
-                    continue;
+        // In case of INHERIT_MERGED scenario current values are merged with inherited values
+        if (accumulateCF && inheritCF == CustomFieldInheritanceEnum.INHERIT_MERGED) {
+            if (entity.getCfAccumulatedValues() != null) {
+                for (Entry<String, List<CustomFieldValue>> cfValueInfo : entity.getCfAccumulatedValues().getValuesByCode().entrySet()) {
+                    String cfCode = cfValueInfo.getKey();
+                    // Return only those values that have cft
+                    if (!cfts.containsKey(cfCode)) {
+                        continue;
+                    }
+                    for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+                        currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                    }
                 }
-                for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                    currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+            }
+
+        } else {
+            if (cfValues != null && !cfValues.isEmpty()) {
+                for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValues.entrySet()) {
+                    String cfCode = cfValueInfo.getKey();
+                    // Return only those values that have cft
+                    if (!cfts.containsKey(cfCode)) {
+                        continue;
+                    }
+                    for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+                        currentEntityCFs.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                    }
                 }
             }
         }
 
-        // add parent cf values if inherited
-        if (inheritCF != CustomFieldInheritanceEnum.INHERIT_NONE && entity.getCfAccumulatedValues() != null) {
+        // Add parent CF values if inherited
 
-            for (Entry<String, List<CustomFieldValue>> cfValueInfo : entity.getCfAccumulatedValues().getValuesByCode().entrySet()) {
-                String cfCode = cfValueInfo.getKey();
-                // Return only those values that have cft
-                if (!cfts.containsKey(cfCode)) {
-                    continue;
+        // In case of ACCUMULATED scenario, inherited values contain merged current and inherited values
+        if (inheritCF == CustomFieldInheritanceEnum.ACCUMULATED) {
+
+            if (entity.getCfAccumulatedValues() != null) {
+                for (Entry<String, List<CustomFieldValue>> cfValueInfo : entity.getCfAccumulatedValues().getValuesByCode().entrySet()) {
+                    String cfCode = cfValueInfo.getKey();
+                    // Return only those values that have cft
+                    if (!cfts.containsKey(cfCode)) {
+                        continue;
+                    }
+                    // Add only those that are really inherited values
+                    for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+                        currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                    }
                 }
-                for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                    currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+            }
+
+        } else if (inheritCF != CustomFieldInheritanceEnum.INHERIT_NONE) {
+            ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
+            if (parentEntities != null) {
+                for (ICustomFieldEntity parentEntity : parentEntities) {
+                    if (parentEntity instanceof Provider && ((Provider) parentEntity).getCode() == null) {
+                        parentEntity = appProvider;
+                    }
+                    // logger.trace("Parent entity: {}", parentEntity);
+
+                    // Append inherited values only
+                    if (accumulateCF) {
+                        if (parentEntity.getCfAccumulatedValues() != null) {
+                            for (Entry<String, List<CustomFieldValue>> cfValueInfo : parentEntity.getCfAccumulatedValues().getValuesByCode().entrySet()) {
+                                String cfCode = cfValueInfo.getKey();
+                                // Return only those values that have cft
+                                if (!cfts.containsKey(cfCode)) {
+                                    continue;
+                                }
+                                for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+                                    currentEntityCFs.getInheritedCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                                }
+                            }
+                        }
+                    } else {
+
+                        // inherit the parent entity's custom fields
+                        // the current entity's inherited fields are empty so just add all parent CFs directly
+                        CustomFieldsDto parentCFs = getCustomFieldsDTO(parentEntity, null, inheritCF);
+                        if (parentCFs != null) {
+                            // only add the parent CFs to the current entity's inherited custom fields if the current
+                            // entity's CFTs match with the parent's CF code
+                            for (CustomFieldDto parentCF : parentCFs.getCustomField()) {
+                                CustomFieldTemplate template = cfts.get(parentCF.getCode());
+                                if (template != null) {
+                                    currentEntityCFs.getInheritedCustomField().add(parentCF);
+                                }
+                            }
+
+                            // inherit the parent entity's inherited custom fields
+                            // we expect at this point that some of the inherited values are overridden so we need to add only
+                            // the parent entity's inherited CFs that do not exist in the current entity's inherited CFs
+                            mergeMapValues(parentCFs.getInheritedCustomField(), currentEntityCFs.getInheritedCustomField());
+
+                            // Takes care of merging inherited values to current values for INHERIT_MERGED type when CF value accumulation is not turned on
+                            if (inheritCF == CustomFieldInheritanceEnum.INHERIT_MERGED) {
+                                // if merge is needed, we merge parent CF values first
+                                mergeMapValues(parentCFs.getCustomField(), currentEntityCFs.getCustomField());
+                                // then merge also with the parent's inherited CFs
+                                mergeMapValues(parentCFs.getInheritedCustomField(), currentEntityCFs.getCustomField());
+                            }
+                        }
+                    }
                 }
             }
         }

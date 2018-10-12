@@ -43,7 +43,6 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.util.DDRequestBuilderClass;
@@ -138,7 +137,7 @@ public class SepaFile implements DDRequestBuilderInterface {
             }
             String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
 
-            ddRejectFileInfos.setDdRequestLotId(dDRequestLOTrefSplited[1]);
+            ddRejectFileInfos.setDdRequestLotId(new Long(dDRequestLOTrefSplited[1]));
 
             if (orgnlGrpInfAndSts.getGrpSts() != null && "RJCT".equals(orgnlGrpInfAndSts.getGrpSts())) {
                 ddRejectFileInfos.setTheDDRequestFileWasRejected(true);
@@ -148,7 +147,7 @@ public class SepaFile implements DDRequestBuilderInterface {
             OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
             for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
                 if ("RJCT".equals(txInfAndSts.getTxSts())) {
-                    ddRejectFileInfos.getListInvoiceRefsRejected().put(txInfAndSts.getOrgnlEndToEndId(), "RJCT");
+                    ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), "RJCT");
                 }
             }
 
@@ -165,7 +164,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + "-" + ddRequestLOT.getId());
         groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
         groupHeader.setNbOfTxs(String.valueOf(ddRequestLOT.getDdrequestItems().size()));
-        groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2, RoundingMode.HALF_UP));
+        groupHeader.setCtrlSum(ddRequestLOT.getTotalAmount().setScale(2, RoundingMode.HALF_UP));
         PartyIdentification32 initgPty = new PartyIdentification32();
         initgPty.setNm(appProvider.getDescription());
         groupHeader.setInitgPty(initgPty);
@@ -192,7 +191,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         localInstrument.setCd(paramBean.getProperty("sepa.LclInstrm", "CORE"));
         paymentTypeInformation.setSeqTp(SequenceType1Code.FRST);
 
-        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
+        paymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(new Date())); // à revoir
 
         BankCoordinates providerBC = appProvider.getBankCoordinates();
         if (providerBC == null) {
@@ -225,35 +224,40 @@ public class SepaFile implements DDRequestBuilderInterface {
         PersonIdentificationSchemeName1Choice schemeName = new PersonIdentificationSchemeName1Choice();
         other.setSchmeNm(schemeName);
         schemeName.setPrtry("SEPA");
-        addTransaction(dDRequestItem.getRecordedInvoice(), paymentInformation);
+        addTransaction(dDRequestItem, paymentInformation);
     }
 
-    private void addTransaction(RecordedInvoice invoice, PaymentInstructionInformation4 paymentInformation) throws Exception {
-        CustomerAccount ca = invoice.getCustomerAccount();
-
+    private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
+        CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
+        PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+        BankCoordinates bankCoordiates = null;
+        if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
+            throw new BusinessException("Payment method not valid!");
+        }
+        bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+        
         DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
         paymentInformation.getDrctDbtTxInf().add(directDebitTransactionInformation);
         PaymentIdentification1 PaymentIdentification = new PaymentIdentification1();
         directDebitTransactionInformation.setPmtId(PaymentIdentification);
-        PaymentIdentification.setInstrId(invoice.getReference());
-        PaymentIdentification.setEndToEndId(invoice.getReference());
+        PaymentIdentification.setInstrId(""+dDRequestItem.getId());
+        PaymentIdentification.setEndToEndId(""+dDRequestItem.getId());
         ActiveOrHistoricCurrencyAndAmount instructedAmount = new ActiveOrHistoricCurrencyAndAmount();
         directDebitTransactionInformation.setInstdAmt(instructedAmount);
-        instructedAmount.setValue(invoice.getAmount().setScale(2, RoundingMode.HALF_UP));
+        instructedAmount.setValue(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
         instructedAmount.setCcy("EUR");
         DirectDebitTransaction6 directDebitTransaction = new DirectDebitTransaction6();
         directDebitTransactionInformation.setDrctDbtTx(directDebitTransaction);
         MandateRelatedInformation6 mandateRelatedInformation = new MandateRelatedInformation6();
         directDebitTransaction.setMndtRltdInf(mandateRelatedInformation);
-        PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
-            mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
-        }
+       
+        mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
+        mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
+        
         BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
         directDebitTransactionInformation.setDbtrAgt(debtorAgent);
         FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();
-        financialInstitutionIdentification.setBIC(invoice.getPaymentInfo6());
+        financialInstitutionIdentification.setBIC(bankCoordiates.getBic());
         debtorAgent.setFinInstnId(financialInstitutionIdentification);
 
         PartyIdentification32 debtor = new PartyIdentification32();
@@ -263,7 +267,7 @@ public class SepaFile implements DDRequestBuilderInterface {
         CashAccount16 debtorAccount = new CashAccount16();
         directDebitTransactionInformation.setDbtrAcct(debtorAccount);
         AccountIdentification4Choice identification = new AccountIdentification4Choice();
-        identification.setIBAN(invoice.getPaymentInfo());
+        identification.setIBAN(bankCoordiates.getIban());
         debtorAccount.setId(identification);
 
     }

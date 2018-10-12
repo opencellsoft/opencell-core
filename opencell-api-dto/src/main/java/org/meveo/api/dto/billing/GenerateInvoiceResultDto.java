@@ -1,29 +1,22 @@
 package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.model.billing.Invoice;
 
 /**
- * The Class GenerateInvoiceResultDto.
+ * Invoice generate request DTO
  */
 @XmlRootElement(name = "GenerateInvoiceResult")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GenerateInvoiceResultDto {
+public class GenerateInvoiceResultDto extends InvoiceDto {
 
-    /** The invoice id. */
-    private Long invoiceId;
-
-    /** The invoice number. */
-    private String invoiceNumber;
+    private static final long serialVersionUID = 3593774505433626017L;
 
     /** The temporary invoice number. */
     private String temporaryInvoiceNumber;
@@ -34,51 +27,30 @@ public class GenerateInvoiceResultDto {
     /** The amount. */
     private BigDecimal amount;
 
-    /** The amount without tax. */
-    private BigDecimal amountWithoutTax;
-
-    /** The amount with tax. */
-    private BigDecimal amountWithTax;
-
-    /** The amount tax. */
-    private BigDecimal amountTax;
-
-    /** The pdf. */
-    private byte[] pdf;
-
-    /** Invoice XML filename. */
-    private String xmlFilename;
-
-    /** Invoice PDF filename. */
-    private String pdfFilename;
-
     /** The account operation id. */
     private Long accountOperationId;
 
-    /** The discount. */
-    private BigDecimal discount;
-
-    /** The discount aggregates. */
-    @XmlElementWrapper(name = "discountAggregates")
-    @XmlElement(name = "discountAggregate")
-    private List<SubCategoryInvoiceAgregateDto> discountAggregates = new ArrayList<>();
-
     /**
-     * Gets the invoice number.
-     *
-     * @return the invoiceNumber
+     * Instantiates a new generate invoice response dto
      */
-    public String getInvoiceNumber() {
-        return invoiceNumber;
+    public GenerateInvoiceResultDto() {
+        super();
     }
 
     /**
-     * Sets the invoice number.
-     *
-     * @param invoiceNumber the invoiceNumber to set
+     * Instantiates a new generate invoice response dto. Note: does not fill in XML and PDF information
+     * 
+     * @param invoice Invoice
+     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
      */
-    public void setInvoiceNumber(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
+    public GenerateInvoiceResultDto(Invoice invoice, boolean includeTransactions) {
+        super(invoice, includeTransactions);
+        this.temporaryInvoiceNumber = invoice.getTemporaryInvoiceNumber();
+        this.invoiceTypeCode = invoice.getInvoiceType().getCode();
+        this.amount = invoice.getAmount();
+        if (invoice.getRecordedInvoice() != null) {
+            accountOperationId = invoice.getRecordedInvoice().getId();
+        }
     }
 
     /**
@@ -136,78 +108,6 @@ public class GenerateInvoiceResultDto {
     }
 
     /**
-     * Gets the amount without tax.
-     *
-     * @return the amount without tax
-     */
-    public BigDecimal getAmountWithoutTax() {
-        return amountWithoutTax;
-    }
-
-    /**
-     * Sets the amount without tax.
-     *
-     * @param amountWithoutTax the new amount without tax
-     */
-    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.amountWithoutTax = amountWithoutTax;
-    }
-
-    /**
-     * Gets the amount with tax.
-     *
-     * @return the amount with tax
-     */
-    public BigDecimal getAmountWithTax() {
-        return amountWithTax;
-    }
-
-    /**
-     * Sets the amount with tax.
-     *
-     * @param amountWithTax the new amount with tax
-     */
-    public void setAmountWithTax(BigDecimal amountWithTax) {
-        this.amountWithTax = amountWithTax;
-    }
-
-    /**
-     * Gets the amount tax.
-     *
-     * @return the amount tax
-     */
-    public BigDecimal getAmountTax() {
-        return amountTax;
-    }
-
-    /**
-     * Sets the amount tax.
-     *
-     * @param amountTax the new amount tax
-     */
-    public void setAmountTax(BigDecimal amountTax) {
-        this.amountTax = amountTax;
-    }
-
-    /**
-     * Gets the pdf.
-     *
-     * @return the pdf
-     */
-    public byte[] getPdf() {
-        return pdf;
-    }
-
-    /**
-     * Sets the pdf.
-     *
-     * @param pdf the pdf to set
-     */
-    public void setPdf(byte[] pdf) {
-        this.pdf = pdf;
-    }
-
-    /**
      * Gets the account operation id.
      *
      * @return the account operation id
@@ -225,98 +125,8 @@ public class GenerateInvoiceResultDto {
         this.accountOperationId = accountOperationId;
     }
 
-    /**
-     * Gets the invoice id.
-     *
-     * @return the invoice id
-     */
-    public Long getInvoiceId() {
-        return invoiceId;
-    }
-
-    /**
-     * Sets the invoice id.
-     *
-     * @param invoiceId the new invoice id
-     */
-    public void setInvoiceId(Long invoiceId) {
-        this.invoiceId = invoiceId;
-    }
-
-    /**
-     * Gets the discount.
-     *
-     * @return the discount
-     */
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
-    /**
-     * Sets the discount.
-     *
-     * @param discount the new discount
-     */
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
-    }
-
-    /**
-     * Gets the discount aggregates.
-     *
-     * @return the discount aggregates
-     */
-    public List<SubCategoryInvoiceAgregateDto> getDiscountAggregates() {
-        return discountAggregates;
-    }
-
-    /**
-     * Sets the discount aggregates.
-     *
-     * @param discountAggregates the new discount aggregates
-     */
-    public void setDiscountAggregates(List<SubCategoryInvoiceAgregateDto> discountAggregates) {
-        this.discountAggregates = discountAggregates;
-    }
-
-    /**
-     * Gets the xml filename.
-     *
-     * @return the xml filename
-     */
-    public String getXmlFilename() {
-        return xmlFilename;
-    }
-
-    /**
-     * Sets the xml filename.
-     *
-     * @param xmlFilename the new xml filename
-     */
-    public void setXmlFilename(String xmlFilename) {
-        this.xmlFilename = xmlFilename;
-    }
-
-    /**
-     * Gets the pdf filename.
-     *
-     * @return the pdf filename
-     */
-    public String getPdfFilename() {
-        return pdfFilename;
-    }
-
-    /**
-     * Sets the pdf filename.
-     *
-     * @param pdfFilename the new pdf filename
-     */
-    public void setPdfFilename(String pdfFilename) {
-        this.pdfFilename = pdfFilename;
-    }
-    
     @Override
     public String toString() {
         return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + " ,invoiceId:" + invoiceId + "]";
-    }    
+    }
 }

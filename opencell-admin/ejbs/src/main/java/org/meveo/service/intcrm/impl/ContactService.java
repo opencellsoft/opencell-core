@@ -11,8 +11,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +44,11 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVReaderHeaderAware;
+
+
 @Stateless
 public class ContactService extends BusinessService<Contact> {
 
@@ -66,55 +73,97 @@ public class ContactService extends BusinessService<Contact> {
 	@Inject
 	private AdditionalDetailsService additionalDetailsService;
 	
-
-	public Set<Contact> parseLinkedInFromText(String context) throws IOException {
+	
+	
+	public List<Contact> parseCSVText(String context) throws IOException {
 		log.debug(context);
-		Set<Contact> contacts = new HashSet<Contact>();
+		
+		CSVReader reader = new CSVReader(new StringReader(context));
+	    List<String[]> lines = reader.readAll();
+		List<Contact> contacts = new ArrayList<Contact>();
 
-		try (BufferedReader br = new BufferedReader(new StringReader(context))) {
-
-			String available;
-			boolean headerLine = true;
-			Title title = titleService.findByCode("MR");
-			while ((available = br.readLine()) != null) {
-				if (headerLine)
-					headerLine = false;
-				else {
-					List<String> line = CSVUtils.parseLine(available);
-					Contact c = new Contact();
-
-					String firstName = line.get(0);
-					String lastName = line.get(1);
-					String strAddress = line.get(2);
-					String email = line.get(3);
-					String code = line.get(3);
-					String company = line.get(4);
-					String position = line.get(5);
-					// Date connectedOn = new Date(line.get(6));
-					String websiteUrl = line.get(7);
-					String instantMessengers = line.get(8);
-					String importedBy = this.currentUser.getFullName();
-					List<Message> messages = new ArrayList<Message>();
-					Message message = new Message();
-					messages.add(message);
-
-					c.setName(new Name(title, firstName, lastName));
-					c.setEmail(email);
-					c.setCode(code);
-					c.setPosition(position);
-					c.setCompany(company);
-					c.setWebsiteUrl(websiteUrl);
-					c.setSocialIdentifier(instantMessengers);
-					c.setImportedBy(importedBy);
-					Address address = new Address(strAddress, "", "", "", "", null, "");
-					c.setAddress(address);
-					c.setAgreedToUA(false);
-					c.setMessages(messages);
-
-					contacts.add(c);
+		boolean headerLine = true;
+		Title title = titleService.findByCode("MR");
+		
+		int firstNameIndex = -1;
+		int lastNameIndex = -1;
+		int strAddressIndex = -1;
+		int emailIndex = -1;
+		int codeIndex = -1;
+		int companyIndex = -1;
+		int positionIndex = -1;
+		int websiteUrlIndex = -1;
+		int instantMessengersIndex = -1;
+		
+		String firstName = null;
+		String lastName = null;
+		String strAddress = null;
+		String email = null;
+		String code = null;
+		String company = null;
+		String position = null;
+		String websiteUrl = null;
+		String instantMessengers = null;
+		
+		for (String[] line : lines) {
+			if (headerLine) {
+				headerLine = false;
+				
+				for(int i = 0; i < line.length; i++) {
+					if(line[i].matches("First Name|Given Name")) firstNameIndex = i;
+					else if(line[i].matches("Last Name|Family Name")) lastNameIndex = i;
+					else if(line[i].matches("Address|Address 1 - Formatted|Business Address")) strAddressIndex = i;
+					else if(line[i].matches("Email Address|E-mail 1 - Value|E-mail Address")) emailIndex = i;
+					else if(line[i].matches("Company|Organization 1 - Name")) companyIndex = i;
+					else if(line[i].matches("Position|Organization 1 - Title|Job Title")) positionIndex = i;
+					else if(line[i].matches("Websites|Website 1 - Value|Web Page")) websiteUrlIndex = i;
+					else if(line[i].matches("Instant Messengers|IM 1 - Value")) instantMessengersIndex = i;
 				}
 			}
+			else {
+				Contact c = new Contact();
+				
+				if(firstNameIndex > -1)
+					firstName = line[firstNameIndex];
+				if(lastNameIndex > -1)
+					lastName = line[lastNameIndex];
+				if(strAddressIndex > -1)
+					strAddress = line[strAddressIndex];
+				if(emailIndex > -1)
+					email = line[emailIndex];
+				if(companyIndex > -1)
+					company = line[companyIndex];
+				if(positionIndex > -1)
+					position = line[positionIndex];
+				//if(connectedOnINdex > -1)
+					// Date connectedOn = new Date(line[6));
+				if(websiteUrlIndex > -1)
+					websiteUrl = line[websiteUrlIndex];
+				if(instantMessengersIndex > -1)
+					instantMessengers = line[instantMessengersIndex];
+					
+				String importedBy = this.currentUser.getFullName();
+				List<Message> messages = new ArrayList<Message>();
+				Message message = new Message();
+				messages.add(message);
+
+				c.setName(new Name(title, firstName, lastName));
+				c.setEmail(email);
+				c.setCode(email);
+				c.setPosition(position);
+				c.setCompany(company);
+				c.setWebsiteUrl(websiteUrl);
+				c.setSocialIdentifier(instantMessengers);
+				c.setImportedBy(importedBy);
+				Address address = new Address(strAddress, "", "", "", "", null, "");
+				c.setAddress(address);
+				c.setAgreedToUA(false);
+				c.setMessages(messages);
+
+				contacts.add(c);
+			}
 		}
+		
 
 		return contacts;
 	}
@@ -149,9 +198,9 @@ public class ContactService extends BusinessService<Contact> {
 	}
 	
 	
-	public Set<Contact> parseLinkedInFile(File file) {
+	public List<Contact> parseCSVFile(File file) {
 		String csvPath;
-		Set<Contact> contacts = null;
+		List<Contact> contacts = null;
 		if (file == null) {
 			csvPath = System.getProperty("jboss.server.temp.dir") + "\\Connections.csv";
 			file = new File(csvPath);
@@ -161,7 +210,7 @@ public class ContactService extends BusinessService<Contact> {
 
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
-			contacts = parseLinkedInFromText(new String(encoded, Charset.defaultCharset()));
+			contacts = parseCSVText(new String(encoded, Charset.defaultCharset()));
 		} catch (IOException e) {
 			log.error("Failed parsing file={}", e.getMessage());
 		}
@@ -213,24 +262,18 @@ public class ContactService extends BusinessService<Contact> {
 	public void logContactError(List<String> contactErrors) throws IOException {
 		String path1 = System.getProperty("jboss.server.temp.dir") + "\\ContactError.log";
 		String path2 = System.getProperty("jboss.server.temp.dir") + "\\LastContactError.log";
-		
-		try {
-			FileWriter fw1 = new FileWriter(path1, true);
-		    BufferedWriter bw1 = new BufferedWriter(fw1);
-		    PrintWriter pwout1 = new PrintWriter(bw1);
-		    
-		    PrintWriter pwout2 = new PrintWriter(path2);
-	
-			for(String contactError : contactErrors) {
-				pwout1.println(new Date().toString() + " | " + contactError);
-				pwout2.println(new Date().toString() + " | " + contactError);
-				
+
+		try (FileWriter fw1 = new FileWriter(path1, true)) {
+			try (BufferedWriter bw1 = new BufferedWriter(fw1)) {
+				try (PrintWriter pwout1 = new PrintWriter(bw1)) {
+					try (PrintWriter pwout2 = new PrintWriter(path2)) {
+						for (String contactError : contactErrors) {
+							pwout1.println(new Date().toString() + " | " + contactError);
+							pwout2.println(new Date().toString() + " | " + contactError);
+						}
+					}
+				}
 			}
-			pwout1.close();
-			pwout2.close();
-			
-		} catch (IOException e) {	
-		    
 		}
 	}
 	

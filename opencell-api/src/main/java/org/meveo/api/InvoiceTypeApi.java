@@ -22,6 +22,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
@@ -129,22 +130,24 @@ public class InvoiceTypeApi extends BaseApi {
         InvoiceType invoiceType = new InvoiceType();
         invoiceType.setCode(postData.getCode());
         
-        if(StringUtils.isBlank(postData.getSequenceDto().getInvoiceSequenceCode())) {
-        	// v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
-	        InvoiceSequence invoiceSequence = postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto();
-	        if(invoiceSequence != null) {
-	            invoiceSequence.setCode(invoiceType.getCode());
-	            invoiceSequenceService.create(invoiceSequence);
-	            invoiceType.setInvoiceSequence(invoiceSequence);
-	            invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
-	        }
-        } else {
-        	InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(postData.getSequenceDto().getInvoiceSequenceCode());
-        	if (invoiceSequence == null) {
-	            throw new EntityDoesNotExistsException(InvoiceSequence.class, postData.getSequenceDto().getInvoiceSequenceCode());
-	        }
-            invoiceType.setInvoiceSequence(invoiceSequence);
-            invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
+        if(postData.getSequenceDto() != null) {
+            if(StringUtils.isBlank(postData.getSequenceDto().getInvoiceSequenceCode())) {
+            	// v5.2 : code for API backward compatibility call, invoice sequence code must be mandatory in future versions
+    	        InvoiceSequence invoiceSequence = postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto();
+    	        if(invoiceSequence != null) {
+    	            invoiceSequence.setCode(invoiceType.getCode());
+    	            invoiceSequenceService.create(invoiceSequence);
+    	            invoiceType.setInvoiceSequence(invoiceSequence);
+    	            invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
+    	        }
+            } else {
+            	InvoiceSequence invoiceSequence = invoiceSequenceService.findByCode(postData.getSequenceDto().getInvoiceSequenceCode());
+            	if (invoiceSequence == null) {
+    	            throw new EntityDoesNotExistsException(InvoiceSequence.class, postData.getSequenceDto().getInvoiceSequenceCode());
+    	        }
+                invoiceType.setInvoiceSequence(invoiceSequence);
+                invoiceType.setPrefixEL(postData.getSequenceDto().getPrefixEL());
+            }
         }
 	        
         invoiceType.setDescription(postData.getDescription());
@@ -236,9 +239,9 @@ public class InvoiceTypeApi extends BaseApi {
                 invoiceSequence.setCode(invoiceType.getCode());
                 invoiceSequenceService.update(invoiceSequence);
             } else {
-                InvoiceSequence invoiceSequenceFromDto = invoiceTypeDto.getSequenceDto().fromDto();
-                invoiceSequenceFromDto.setCode(invoiceType.getCode());
-                invoiceSequenceService.create(invoiceSequence);
+                InvoiceSequence newInvoiceSequence = invoiceTypeDto.getSequenceDto().fromDto();
+                newInvoiceSequence.setCode(invoiceType.getCode());
+                invoiceSequenceService.create(newInvoiceSequence);
             }
             invoiceType.setPrefixEL(invoiceTypeDto.getSequenceDto().getPrefixEL());
         }
@@ -379,7 +382,7 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
         }
-        result = new InvoiceTypeDto(invoiceType, entityToDtoConverter.getCustomFieldsDTO(invoiceType, true));
+        result = new InvoiceTypeDto(invoiceType, entityToDtoConverter.getCustomFieldsDTO(invoiceType, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
         return result;
     }
 
@@ -434,7 +437,7 @@ public class InvoiceTypeApi extends BaseApi {
         List<InvoiceType> invoiceTypees = invoiceTypeService.list();
         if (invoiceTypees != null && !invoiceTypees.isEmpty()) {
             for (InvoiceType t : invoiceTypees) {
-                InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto(t, entityToDtoConverter.getCustomFieldsDTO(t, true));
+                InvoiceTypeDto invoiceTypeDto = new InvoiceTypeDto(t, entityToDtoConverter.getCustomFieldsDTO(t, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 invoiceTypeesDto.getInvoiceTypes().add(invoiceTypeDto);
             }
         }

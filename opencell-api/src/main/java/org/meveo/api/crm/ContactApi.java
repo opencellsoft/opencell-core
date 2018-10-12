@@ -94,8 +94,8 @@ public class ContactApi extends AccountEntityApi {
 		else if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode()))
 			contact.setEmail(postData.getCode());
 		else {
-			contact.setCode(postData.getEmail());
-			contact.setEmail(postData.getCode());
+			contact.setCode(postData.getCode());
+			contact.setEmail(postData.getEmail());
 		}
 
 		contact.setCompany(postData.getCompany());
@@ -112,7 +112,13 @@ public class ContactApi extends AccountEntityApi {
 		contact.setAgreedToUA(postData.isAgreedToUA());
 		contact.setTags(postData.getTags()	);
 		
-		Customer customer = customerService.findByCompanyName(postData.getCompany());
+		Customer customer = null;
+		if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
+			customer = customerService.findByCode(postData.getCode());
+		}
+		else {
+			customer = customerService.findByCompanyName(postData.getCompany());
+		}
 		if(customer != null) {
 			contact.setAddressBook(customer.getAddressbook());
 		}
@@ -208,7 +214,13 @@ public class ContactApi extends AccountEntityApi {
 
 		if(contact.getCompany() != postData.getCompany()) {
 			contact.setCompany(postData.getCompany());
-			Customer customer = customerService.findByCompanyName(postData.getCompany());
+			Customer customer = null;
+			if(contact.getCompany() == null || contact.getCompany().isEmpty()) {
+				customer = customerService.findByCode(postData.getCode());
+			}
+			else {
+				customer = customerService.findByCompanyName(postData.getCompany());
+			}
 			if(customer != null) {
 				contact.setAddressBook(customer.getAddressbook());
 			}
@@ -320,12 +332,12 @@ public class ContactApi extends AccountEntityApi {
 		return result;
 	}
 
-	public ContactsDto importLinkedInFromText(String context) throws IOException {
-		Set<Contact> failedToPersist = new HashSet<Contact>();
-		Set<Contact> contacts = null;
+	public ContactsDto importCSVText(String context) throws IOException {
+		List<Contact> failedToPersist = new ArrayList<Contact>();
+		List<Contact> contacts = null;
 		List<String> failedToPersistLog = new ArrayList<String>();
 
-		contacts = contactService.parseLinkedInFromText(context);
+		contacts = contactService.parseCSVText(context);
 		
 		for(Contact contact : contacts) {
 			if(StringUtils.isBlank(contact.getName().getFirstName())) {

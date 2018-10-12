@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.Timeout;
@@ -18,7 +19,6 @@ import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.enterprise.event.Event;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -83,6 +83,13 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    static boolean accumulateCF = true;
+
+    @PostConstruct
+    private void init() {
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "true"));
+    }
+
     // Previous comments
     // /**
     // * Convert BusinessEntityWrapper to an entity by doing a lookup in DB
@@ -112,16 +119,17 @@ public class CustomFieldInstanceService extends BaseService {
      * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;:"
      * @param wildcode Filter by entity code
      * @return A list of entities
-     * @throws ClassNotFoundException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
      */
     @SuppressWarnings("unchecked") // TODO review location
-    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public List<BusinessEntity> findBusinessEntityForCFVByCode(String classNameAndCode, String wildcode)
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Query query = null;
-        
+
         Class<?> clazz = Class.forName(classNameAndCode);
-        
+
         if (classNameAndCode.startsWith(CustomEntityTemplate.class.getName())) {
             String cetCode = CustomFieldTemplate.retrieveCetCode(classNameAndCode);
             query = getEntityManager().createQuery("select e from CustomEntityInstance e where cetCode=:cetCode and lower(e.code) like :code");
@@ -129,11 +137,11 @@ public class CustomFieldInstanceService extends BaseService {
 
         } else if (clazz.isInstance(BusinessEntity.class)) {
             query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code");
-            
+
         } else {
-        	ReferenceIdentifierCode referenceIdentifier = clazz.getAnnotation(ReferenceIdentifierCode.class);
-        	String field = referenceIdentifier.value(); 
-			query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e." + field + ") like :code");
+            ReferenceIdentifierCode referenceIdentifier = clazz.getAnnotation(ReferenceIdentifierCode.class);
+            String field = referenceIdentifier.value();
+            query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e." + field + ") like :code");
         }
 
         query.setParameter("code", "%" + wildcode.toLowerCase() + "%");
@@ -252,10 +260,7 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = null;
-        if (entity.getCfValues() != null) {
-            value = entity.getCfValues().getValue(cfCode);
-        }
+        Object value = entity.getCfValue(cfCode);
 
         // Create such CF with default value if one is specified on CFT and other conditions match
         if (value == null && instantiateDefaultValue) {
@@ -309,10 +314,7 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = null;
-        if (entity.getCfValues() != null) {
-            value = entity.getCfValues().getValue(cfCode, date);
-        }
+        Object value = entity.getCfValue(cfCode, date);
 
         // Create such CF with default value if one is specified on CFT and other conditions match
         if (value == null && instantiateDefaultValue) {
@@ -350,20 +352,29 @@ public class CustomFieldInstanceService extends BaseService {
         String sep = "";
         Map<String, CustomFieldTemplate> cfts = null;
 
-        if (entity.getCfValues() != null) {
-            cfts = cfTemplateService.findByAppliesTo(entity);
-            result = entity.getCfValues().asJson(cfts);
-            sep = ",";
-        }
+        if (accumulateCF && includeParent) {
+            if (entity.getCfAccumulatedValues() != null) {
+                cfts = cfTemplateService.findByAppliesTo(entity);
+                result = entity.getCfAccumulatedValues().asJson(cfts);
+                sep = ",";
+            }
 
-        if (includeParent) {
-            ICustomFieldEntity[] parentCFEntities = getHierarchyParentCFEntities(entity);
-            if (parentCFEntities != null && parentCFEntities.length > 0) {
-                for (ICustomFieldEntity parentCF : parentCFEntities) {
-                    if (parentCF.getCfValues() != null) {
-                        cfts = cfTemplateService.findByAppliesTo(parentCF);
-                        result += sep + parentCF.getCfValues().asJson(cfts);
-                        sep = ",";
+        } else {
+            if (entity.getCfValues() != null) {
+                cfts = cfTemplateService.findByAppliesTo(entity);
+                result = entity.getCfValues().asJson(cfts);
+                sep = ",";
+            }
+
+            if (includeParent) {
+                ICustomFieldEntity[] parentCFEntities = getHierarchyParentCFEntities(entity);
+                if (parentCFEntities != null && parentCFEntities.length > 0) {
+                    for (ICustomFieldEntity parentCF : parentCFEntities) {
+                        if (parentCF.getCfValues() != null) {
+                            cfts = cfTemplateService.findByAppliesTo(parentCF);
+                            result += sep + parentCF.getCfValues().asJson(cfts);
+                            sep = ",";
+                        }
                     }
                 }
             }
@@ -400,26 +411,32 @@ public class CustomFieldInstanceService extends BaseService {
 
         Element customFieldsTag = doc.createElement("customFields");
 
-        if (entity.getCfValues() == null) {
-            return customFieldsTag;
-        }
-
         Map<String, CustomFieldTemplate> cfts = cfTemplateService.findByAppliesTo(entity);
 
-        entity.getCfValues().asDomElement(doc, customFieldsTag, cfts);
+        if (accumulateCF && includeParent) {
+            if (entity.getCfAccumulatedValues() != null) {
+                entity.getCfAccumulatedValues().asDomElement(doc, customFieldsTag, cfts);
+            }
 
-        if (includeParent) {
-            ICustomFieldEntity[] parentCFEntities = getHierarchyParentCFEntities(entity);
-            if (parentCFEntities != null && parentCFEntities.length > 0) {
-                for (ICustomFieldEntity parentCF : parentCFEntities) {
-                    if (parentCF.getCfValues() != null) {
-                        cfts = cfTemplateService.findByAppliesTo(parentCF);
-                        parentCF.getCfValues().asDomElement(doc, customFieldsTag, cfts);
+        } else {
+            if (entity.getCfValues() == null) {
+                return customFieldsTag;
+            }
+
+            entity.getCfValues().asDomElement(doc, customFieldsTag, cfts);
+
+            if (includeParent) {
+                ICustomFieldEntity[] parentCFEntities = getHierarchyParentCFEntities(entity);
+                if (parentCFEntities != null && parentCFEntities.length > 0) {
+                    for (ICustomFieldEntity parentCF : parentCFEntities) {
+                        if (parentCF.getCfValues() != null) {
+                            cfts = cfTemplateService.findByAppliesTo(parentCF);
+                            parentCF.getCfValues().asDomElement(doc, customFieldsTag, cfts);
+                        }
                     }
                 }
             }
         }
-
         return customFieldsTag;
     }
 
@@ -670,29 +687,39 @@ public class CustomFieldInstanceService extends BaseService {
 
         List<CustomFieldValue> allValues = new ArrayList<>();
 
-        if (entity.getCfValues() != null) {
-            List<CustomFieldValue> entityValues = entity.getCfValues().getValuesByCode().get(cfCode);
-            if (entityValues != null) {
-                allValues.addAll(entityValues);
+        if (accumulateCF) {
+            if (entity.getCfAccumulatedValues() != null) {
+                List<CustomFieldValue> entityValues = entity.getCfAccumulatedValues().getValuesByCode().get(cfCode);
+                if (entityValues != null) {
+                    allValues.addAll(entityValues);
+                }
+            }
+
+        } else {
+
+            if (entity.getCfValues() != null) {
+                List<CustomFieldValue> entityValues = entity.getCfValues().getValuesByCode().get(cfCode);
+                if (entityValues != null) {
+                    allValues.addAll(entityValues);
+                }
+            }
+
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    allValues.addAll(getInheritedAllCFValues(parentCfEntity, cfCode));
+                }
             }
         }
-
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                allValues.addAll(getInheritedAllCFValues(parentCfEntity, cfCode));
-            }
-        }
-
         return allValues;
     }
 
@@ -780,29 +807,37 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        boolean hasValue = hasCFValue(entity, cfCode);
-        if (hasValue) {
-            return true;
-        }
+        if (accumulateCF) {
+            if (entity.getCfAccumulatedValues() != null) {
+                return entity.getCfAccumulatedValues().hasCfValue(cfCode);
+            }
+        } else {
 
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                hasValue = hasInheritedCFValue(parentCfEntity, cfCode);
-                if (hasValue) {
-                    return true;
+            boolean hasValue = hasCFValue(entity, cfCode);
+            if (hasValue) {
+                return true;
+            }
+
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    hasValue = hasInheritedCFValue(parentCfEntity, cfCode);
+                    if (hasValue) {
+                        return true;
+                    }
                 }
             }
         }
+
         return false;
     }
 
@@ -887,16 +922,29 @@ public class CustomFieldInstanceService extends BaseService {
 
         List<Object> cfValues = new ArrayList<>();
 
-        ICustomFieldEntity[] parentCfEntities = getHierarchyParentCFEntities(entity);
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                if (parentCfEntity.getCfValues() != null) {
-                    Object value = parentCfEntity.getCfValues().getValue(cfCode);
+        if (accumulateCF) {
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    Object value = parentCfEntity.getCfAccumulatedValue(cfCode);
                     if (value != null) {
                         cfValues.add(value);
+                    }
+                }
+            }
+
+        } else {
+            ICustomFieldEntity[] parentCfEntities = getHierarchyParentCFEntities(entity);
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    if (parentCfEntity.getCfValues() != null) {
+                        Object value = parentCfEntity.getCfValue(cfCode);
+                        if (value != null) {
+                            cfValues.add(value);
+                        }
                     }
                 }
             }
@@ -973,29 +1021,38 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        // Get value without instantiating a default value if value not found
-        if (entity.getCfValues() != null) {
-            Object value = entity.getCfValues().getValue(cfCode);
+        if (accumulateCF) {
+            if (entity.getCfAccumulatedValues() != null) {
+                Object value = entity.getCfAccumulatedValues().getValue(cfCode);
+                if (value != null) {
+                    return value;
+                }
+            }
+
+        } else {
+
+            // Get value without instantiating a default value if value not found
+            Object value = entity.getCfValue(cfCode);
             if (value != null) {
                 return value;
             }
-        }
 
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode);
-                if (cfeValue != null) {
-                    return cfeValue;
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
         }
@@ -1020,33 +1077,39 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        // Get value without instantiating a default value if value not found
-        if (entity.getCfValues() != null) {
-            Object value = entity.getCfValues().getValue(cfCode, date);
+        if (accumulateCF) {
+            Object value = entity.getCfAccumulatedValue(cfCode, date);
             if (value != null) {
                 return value;
             }
-        }
 
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode, date);
-                if (cfeValue != null) {
-                    return cfeValue;
+        } else {
+
+            // Get value without instantiating a default value if value not found
+            Object value = entity.getCfValue(cfCode, date);
+            if (value != null) {
+                return value;
+            }
+
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode, date);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
         }
-
         // Instantiate default value if applicable
         return instantiateCFWithDefaultValue(entity, cfCode, date);
     }
@@ -1069,29 +1132,36 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = getCFValueByClosestMatch(entity, cfCode, keyToMatch);
-        if (value != null) {
+        if (accumulateCF) {
+            Object value = getCFValueByClosestMatch(entity, cfCode, true, keyToMatch);
+
             return value;
-        }
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, cfCode, keyToMatch);
-                if (cfeValue != null) {
-                    return cfeValue;
+
+        } else {
+            Object value = getCFValueByClosestMatch(entity, cfCode, false, keyToMatch);
+            if (value != null) {
+                return value;
+            }
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, cfCode, keyToMatch);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     /**
@@ -1113,29 +1183,35 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = getCFValueByClosestMatch(entity, code, date, keyToMatch);
-        if (value != null) {
+        if (accumulateCF) {
+            Object value = getCFValueByClosestMatch(entity, code, date, true, keyToMatch);
             return value;
-        }
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, code, date, keyToMatch);
-                if (cfeValue != null) {
-                    return cfeValue;
+
+        } else {
+            Object value = getCFValueByClosestMatch(entity, code, date, false, keyToMatch);
+            if (value != null) {
+                return value;
+            }
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, code, date, keyToMatch);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     /**
@@ -1157,29 +1233,35 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = getCFValueByKey(entity, cfCode, keys);
-        if (value != null) {
+        if (accumulateCF) {
+            Object value = getCFValueByKey(entity, cfCode, true, keys);
             return value;
-        }
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValueByKey(parentCfEntity, cfCode, keys);
-                if (cfeValue != null) {
-                    return cfeValue;
+
+        } else {
+            Object value = getCFValueByKey(entity, cfCode, false, keys);
+            if (value != null) {
+                return value;
+            }
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValueByKey(parentCfEntity, cfCode, keys);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     /**
@@ -1202,29 +1284,35 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = getCFValueByKey(entity, cfCode, date, keys);
-        if (value != null) {
+        if (accumulateCF) {
+            Object value = getCFValueByKey(entity, cfCode, date, true, keys);
             return value;
-        }
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValueByKey(parentCfEntity, cfCode, date, keys);
-                if (cfeValue != null) {
-                    return cfeValue;
+
+        } else {
+            Object value = getCFValueByKey(entity, cfCode, date, false, keys);
+            if (value != null) {
+                return value;
+            }
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValueByKey(parentCfEntity, cfCode, date, keys);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     /**
@@ -1244,29 +1332,34 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = getCFValueByRangeOfNumbers(entity, cfCode, numberToMatch);
-        if (value != null) {
+        if (accumulateCF) {
+            Object value = getCFValueByRangeOfNumbers(entity, cfCode, true, numberToMatch);
             return value;
-        }
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, cfCode, numberToMatch);
-                if (cfeValue != null) {
-                    return cfeValue;
+        } else {
+            Object value = getCFValueByRangeOfNumbers(entity, cfCode, false, numberToMatch);
+            if (value != null) {
+                return value;
+            }
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, cfCode, numberToMatch);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     /**
@@ -1287,29 +1380,35 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        Object value = getCFValueByRangeOfNumbers(entity, cfCode, date, numberToMatch);
-        if (value != null) {
+        if (accumulateCF) {
+            Object value = getCFValueByRangeOfNumbers(entity, cfCode, date, true, numberToMatch);
             return value;
-        }
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
-                if (parentCfEntity instanceof Provider) {
-                    parentCfEntity = providerService.findById(appProvider.getId());
-                } else {
-                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }
-                Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, cfCode, date, numberToMatch);
-                if (cfeValue != null) {
-                    return cfeValue;
+
+        } else {
+            Object value = getCFValueByRangeOfNumbers(entity, cfCode, date, false, numberToMatch);
+            if (value != null) {
+                return value;
+            }
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                    if (parentCfEntity instanceof Provider) {
+                        parentCfEntity = providerService.findById(appProvider.getId());
+                    } else {
+                        parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    }
+                    Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, cfCode, date, numberToMatch);
+                    if (cfeValue != null) {
+                        return cfeValue;
+                    }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     /**
@@ -1387,17 +1486,33 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Map value that closely matches map key
      */
     public Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, String keyToMatch) {
+        return getCFValueByClosestMatch(entity, cfCode, false, keyToMatch);
+    }
+
+    /**
+     * Match for a given entity's custom field (non-versionable values) as close as possible map's key to the key provided and return a map value. Match is performed by matching a
+     * full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     *
+     * @param entity Entity to match
+     * @param cfCode Custom field code
+     * @param accumulated True if accumulated value be checked instead
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    private Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, boolean accumulated, String keyToMatch) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
         }
 
-        Object valueMatched = entity.getCFValueByClosestMatch(cfCode, keyToMatch);
+        Object valueMatched = accumulated ? entity.getCFAccumulatedValueByClosestMatch(cfCode, keyToMatch) : entity.getCFValueByClosestMatch(cfCode, keyToMatch);
         log.trace("Found closest match value {} for keyToMatch={}", valueMatched, keyToMatch);
 
         // Need to check if it is a multi-value type value and convert it to a map
@@ -1424,17 +1539,34 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Map value that closely matches map key
      */
     public Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, Date date, String keyToMatch) {
+        return getCFValueByClosestMatch(entity, cfCode, date, false, keyToMatch);
+    }
+
+    /**
+     * Match for a given date (versionable values) for a given entity's custom field as close as possible map's key to the key provided and return a map value. Match is performed
+     * by matching a full string and then reducing one by one symbol until a match is found.
+     * 
+     * TODO can be an issue with lower/upper case mismatch
+     *
+     * @param entity Entity to match
+     * @param cfCode Custom field code
+     * @param date Date
+     * @param accumulated True if accumulated value be checked instead
+     * @param keyToMatch Key to match
+     * @return Map value that closely matches map key
+     */
+    private Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, String keyToMatch) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
         }
 
-        Object valueMatched = entity.getCFValueByClosestMatch(cfCode, date, keyToMatch);
+        Object valueMatched = accumulated ? entity.getCFAccumulatedValueByClosestMatch(cfCode, date, keyToMatch) : entity.getCFValueByClosestMatch(cfCode, date, keyToMatch);
         log.trace("Found closest match value {} for period {} and keyToMatch={}", valueMatched, date, keyToMatch);
 
         // Need to check if it is a multi-value type value and convert it to a map
@@ -1460,15 +1592,32 @@ public class CustomFieldInstanceService extends BaseService {
      * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
      * @return Map value that matches the map key (map key or matrix formated map key)
      */
-    @SuppressWarnings("unchecked")
     public Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
+        return getCFValueByKey(entity, cfCode, false, keys);
+    }
+
+    /**
+     * Match for a given entity's custom field (non-versionable values) map's key (map or matrix) and return a map value.
+     * 
+     * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;matrix xx key&gt;|&lt;range of numbers for the third key&gt;
+     *
+     * @param entity Entity to match
+     * @param cfCode Custom field code
+     * @param accumulated True if accumulated value be checked instead
+     * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
+     * @return Map value that matches the map key (map key or matrix formated map key)
+     */
+    @SuppressWarnings("unchecked")
+    private Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, boolean accumulated, Object... keys) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
         }
 
@@ -1487,7 +1636,7 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        Map<String, Object> value = (Map<String, Object>) entity.getCfValues().getValue(cfCode);
+        Map<String, Object> value = accumulated ? (Map<String, Object>) entity.getCfAccumulatedValue(cfCode) : (Map<String, Object>) entity.getCfValue(cfCode);
         if (value == null) {
             return null;
         }
@@ -1538,15 +1687,33 @@ public class CustomFieldInstanceService extends BaseService {
      * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
      * @return Map value that matches the map key (map key or matrix formated map key)
      */
-    @SuppressWarnings("unchecked")
     public Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
+        return getCFValueByKey(entity, cfCode, date, false, keys);
+    }
+
+    /**
+     * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key (map or matrix) and return a map value.
+     * 
+     * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * &lt;matrix first key&gt;|&lt;matrix second key&gt;|&lt;matrix xx key&gt;|&lt;range of numbers for the third key&gt;
+     *
+     * @param entity Entity to match
+     * @param cfCode Custom field code
+     * @param date Date to match
+     * @param accumulated True if accumulated value be checked instead
+     * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
+     * @return Map value that matches the map key (map key or matrix formated map key)
+     */
+    @SuppressWarnings("unchecked")
+    public Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, Object... keys) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
         }
 
@@ -1565,7 +1732,7 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        Map<String, Object> value = (Map<String, Object>) entity.getCfValues().getValue(cfCode, date);
+        Map<String, Object> value = accumulated ? (Map<String, Object>) entity.getCfAccumulatedValue(cfCode, date) : (Map<String, Object>) entity.getCfValue(cfCode, date);
         if (value == null) {
             return null;
         }
@@ -1612,15 +1779,30 @@ public class CustomFieldInstanceService extends BaseService {
      * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
      * @return Map value that matches the range of numbers in a map key
      */
-    @SuppressWarnings("unchecked")
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Object numberToMatch) {
+        return getCFValueByRangeOfNumbers(entity, cfCode, false, numberToMatch);
+    }
+
+    /**
+     * Match for a given entity's custom field (non-versionable values) map's key as a range of numbers value and return a map value.
+     * 
+     * Number ranges is assumed to be the following format: &lt;number from&gt;&gt;&lt;number to&gt;
+     *
+     * @param entity Entity to match
+     * @param cfCode Custom field code
+     * @param accumulated True if accumulated value be checked instead
+     * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
+     * @return Map value that matches the range of numbers in a map key
+     */
+    @SuppressWarnings("unchecked")
+    public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, boolean accumulated, Object numberToMatch) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
         }
 
@@ -1635,7 +1817,7 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        Map<String, Object> value = (Map<String, Object>) entity.getCfValues().getValue(cfCode);
+        Map<String, Object> value = accumulated ? (Map<String, Object>) entity.getCfAccumulatedValue(cfCode) : (Map<String, Object>) entity.getCfValue(cfCode);
         Object valueMatched = CustomFieldInstanceService.matchRangeOfNumbersValue(value, numberToMatch);
 
         log.trace("Found map value match {} for numberToMatch={}", valueMatched, numberToMatch);
@@ -1655,13 +1837,29 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Map value that matches the range of numbers in a map key
      */
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Date date, Object numberToMatch) {
+        return getCFValueByRangeOfNumbers(entity, cfCode, date, false, numberToMatch);
+    }
+
+    /**
+     * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key as a range of numbers value and return a map value.
+     * 
+     * Number ranges is assumed to be the following format: &lt;number from&gt;&gt;&lt;number to&gt;
+     *
+     * @param entity Entity to match
+     * @param cfCode Custom field code
+     * @param date Date to match
+     * @param accumulated True if accumulated value be checked instead
+     * @param numberToMatch Number (long, integer, double, bigdecimal) value to match
+     * @return Map value that matches the range of numbers in a map key
+     */
+    private Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, Object numberToMatch) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return null;
         }
 
@@ -1676,7 +1874,7 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
-        Object value = entity.getCfValues().getValue(cfCode, date);
+        Object value = accumulated ? entity.getCfAccumulatedValue(cfCode, date) : entity.getCfValue(cfCode, date);
         Object valueMatched = CustomFieldInstanceService.matchRangeOfNumbersValue(value, numberToMatch);
 
         log.trace("Found matrix value match {} for period {} and numberToMatch={}", valueMatched, date, numberToMatch);
@@ -1693,34 +1891,36 @@ public class CustomFieldInstanceService extends BaseService {
      *
      * @param cft Custom field template
      * @param value Value to inspect
-     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
+     * @param filterKeys Keys to match. The order must correspond to the order of the keys during data entry
      * @return A value matched
      */
     @SuppressWarnings("unchecked")
-    public static Object matchMatrixValue(CustomFieldTemplate cft, Object value, Object... keys) {
-        if (value == null || !(value instanceof Map) || keys == null || keys.length == 0) {
+    public static Object matchMatrixValue(CustomFieldTemplate cft, Object value, Object... filterKeys) {
+        if (!(value instanceof Map) || filterKeys == null || filterKeys.length == 0) {
             return null;
         }
 
         Object valueMatched = null;
 
         for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
-            String[] keysParsed = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
-            if (keysParsed.length != keys.length) {
+            String[] matrixKeys = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+            if (matrixKeys.length != filterKeys.length) {
                 continue;
             }
 
-            boolean allMatched = true;
-            for (int i = 0; i < keysParsed.length; i++) {
+            boolean isMatchedAllKeys = true;
+            for (int i = 0; i < matrixKeys.length; i++) {
                 CustomFieldMatrixColumn matrixColumn = cft.getMatrixColumnByIndex(i);
-                if (matrixColumn == null || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.STRING && !keysParsed[i].equals(keys[i]))
-                        || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.RON && !isNumberRangeMatch(keysParsed[i], keys[i]))) {
-                    allMatched = false;
+                if (matrixColumn == null
+                        || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.STRING && !matrixKeys[i].equals(filterKeys[i])
+                                && !matrixKeys[i].equals(CustomFieldValue.WILDCARD_MATCH_ALL))
+                        || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.RON && !isNumberRangeMatch(matrixKeys[i], filterKeys[i]))) {
+                    isMatchedAllKeys = false;
                     break;
                 }
             }
 
-            if (allMatched) {
+            if (isMatchedAllKeys) {
                 valueMatched = valueInfo.getValue();
                 break;
             }
@@ -1831,6 +2031,10 @@ public class CustomFieldInstanceService extends BaseService {
     private static boolean isNumberRangeMatch(String numberRange, Object numberToMatchObj) {
         if (numberToMatchObj == null) {
             return false;
+        }
+
+        if (numberRange.equals(CustomFieldValue.WILDCARD_MATCH_ALL)) {
+            return true;
         }
 
         String[] rangeInfo = numberRange.split(CustomFieldValue.RON_VALUE_SEPARATOR);
@@ -2052,15 +2256,27 @@ public class CustomFieldInstanceService extends BaseService {
      * @param keys Key or keys (in case of matrix) to match
      * @return True if CF value has a given key
      */
-    @SuppressWarnings("unchecked")
     public boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
+        return isCFValueHasKey(entity, cfCode, false, keys);
+    }
+
+    /**
+     * Check if a given entity has a CF value of type Map or Matrix with a given key.
+     *
+     * @param entity Entity
+     * @param cfCode Custom field code
+     * @param keys Key or keys (in case of matrix) to match
+     * @return True if CF value has a given key
+     */
+    @SuppressWarnings("unchecked")
+    private boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, boolean accumulated, Object... keys) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return false;
         }
 
@@ -2079,7 +2295,7 @@ public class CustomFieldInstanceService extends BaseService {
             return false;
         }
 
-        Map<String, Object> value = (Map<String, Object>) entity.getCfValues().getValue(cfCode);
+        Map<String, Object> value = accumulated ? (Map<String, Object>) entity.getCfAccumulatedValue(cfCode) : (Map<String, Object>) entity.getCfValue(cfCode);
         if (value == null) {
             return false;
         }
@@ -2118,15 +2334,29 @@ public class CustomFieldInstanceService extends BaseService {
      * @param keys Key or keys (in case of matrix) to match
      * @return True if CF value has a given key at a given period date
      */
-    @SuppressWarnings("unchecked")
     public boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
+        return isCFValueHasKey(entity, cfCode, date, false, keys);
+    }
+
+    /**
+     * Check if a given entity at a given period date has a CF value of type Map or Matrix with a given key.
+     *
+     * @param entity Entity
+     * @param cfCode Custom field code
+     * @param date Date
+     * @param accumulated True if accumulated value be checked instead
+     * @param keys Key or keys (in case of matrix) to match
+     * @return True if CF value has a given key at a given period date
+     */
+    @SuppressWarnings("unchecked")
+    private boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, Date date, boolean accumulated, Object... keys) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
 
-        if (entity.getCfValues() == null) {
+        if ((accumulated && entity.getCfAccumulatedValues() == null) || (!accumulated && entity.getCfValues() == null)) {
             return false;
         }
 
@@ -2145,7 +2375,7 @@ public class CustomFieldInstanceService extends BaseService {
             return false;
         }
 
-        Map<String, Object> value = (Map<String, Object>) entity.getCfValues().getValue(cfCode, date);
+        Map<String, Object> value = accumulated ? (Map<String, Object>) entity.getCfAccumulatedValue(cfCode, date) : (Map<String, Object>) entity.getCfValue(cfCode, date);
         if (value == null) {
             return false;
         }
@@ -2191,25 +2421,31 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        boolean hasKey = isCFValueHasKey(entity, cfCode, keys);
-        if (hasKey) {
-            return true;
-        }
+        if (accumulateCF) {
+            boolean hasKey = isCFValueHasKey(entity, cfCode, true, keys);
+            return hasKey;
 
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                hasKey = isInheritedCFValueHasKey(parentCfEntity, cfCode, keys);
-                if (hasKey) {
-                    return true;
+        } else {
+            boolean hasKey = isCFValueHasKey(entity, cfCode, false, keys);
+            if (hasKey) {
+                return true;
+            }
+
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    hasKey = isInheritedCFValueHasKey(parentCfEntity, cfCode, keys);
+                    if (hasKey) {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
-        return false;
     }
 
     /**
@@ -2228,25 +2464,30 @@ public class CustomFieldInstanceService extends BaseService {
             entity = providerService.findById(appProvider.getId());
         }
 
-        boolean hasKey = isCFValueHasKey(entity, cfCode, date, keys);
-        if (hasKey) {
-            return true;
-        }
+        if (accumulateCF) {
+            boolean hasKey = isCFValueHasKey(entity, cfCode, date, true, keys);
+            return hasKey;
+        } else {
+            boolean hasKey = isCFValueHasKey(entity, cfCode, date, false, keys);
+            if (hasKey) {
+                return true;
+            }
 
-        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
-        if (parentCfEntities != null) {
-            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
-                if (parentCfEntity == null) {
-                    continue;
-                }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                hasKey = isInheritedCFValueHasKey(parentCfEntity, cfCode, date, keys);
-                if (hasKey) {
-                    return true;
+            ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+            if (parentCfEntities != null) {
+                for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                    if (parentCfEntity == null) {
+                        continue;
+                    }
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                    hasKey = isInheritedCFValueHasKey(parentCfEntity, cfCode, date, keys);
+                    if (hasKey) {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
-        return false;
     }
 
     /**

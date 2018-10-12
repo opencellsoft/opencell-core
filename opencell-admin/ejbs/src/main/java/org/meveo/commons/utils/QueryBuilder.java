@@ -43,6 +43,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
  * billingStatus).addCriterionEnum("a.networkStatus", networkStatus).addCriterionEntity("a.terminalInstance", terminalInstance) .addPaginationConfiguration(configuration);
  * 
  * @author Richard Hallier
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
  * @lastModifiedVersion 5.1

@@ -15,6 +15,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -208,7 +209,7 @@ public class BillingCycleApi extends BaseApi {
             throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
         }
 
-        result = new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsDTO(billingCycle, true));
+        result = new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsDTO(billingCycle, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
     }

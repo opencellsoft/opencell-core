@@ -22,6 +22,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
@@ -441,7 +442,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, true));
+        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
     public List<PricePlanMatrixDto> list(String eventCode) throws MeveoApiException {
@@ -457,7 +458,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         List<PricePlanMatrixDto> pricePlanDtos = new ArrayList<>();
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, true)));
+            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
         }
 
         return pricePlanDtos;

@@ -1375,7 +1375,7 @@
     
     <changeSet id="#2670_20180716 - RUM Sequence" author="EdwardLegaspi">
      	<addColumn tableName="crm_provider">
-    		<column name="rum_prefix" type="varchar(15)" />
+    		<column name="rum_prefix" type="varchar(255)" />
             <column name="rum_sequence_size" type="bigint" />
 			<column name="rum_current_sequence_nb" type="bigint" />
      	</addColumn>
@@ -1389,7 +1389,7 @@
 
     <changeSet id="#3575_20180803 - Customer No Sequence" author="EdwardLegaspi">
      	<addColumn tableName="crm_provider">
-    		<column name="cust_no_prefix" type="varchar(15)" />
+    		<column name="cust_no_prefix" type="varchar(255)" />
             <column name="cust_no_sequence_size" type="bigint" />
 			<column name="cust_no_current_sequence_nb" type="bigint" />
      	</addColumn>
@@ -1501,6 +1501,7 @@
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
         
+         
         <addColumn tableName="billing_product_instance">
             <column name="seller_id" type="bigint" />
         </addColumn>
@@ -1512,6 +1513,7 @@
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_crm_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+ 
      </changeSet>
 
      <changeSet id="#3485_20180725" author="Edwardlegaspi">
@@ -1583,6 +1585,28 @@
      	<addNotNullConstraint tableName="billing_invoice_type" columnName="uuid" columnDataType="varchar(60)"/>
      </changeSet>
      
+     <changeSet id="#2449_20180822" author="EdwardPLegaspi">
+     	<renameColumn tableName="cat_price_plan_matrix" columnDataType="varchar(2000)" oldColumnName="rating_el" newColumnName="rating_el_without_tax"/>
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="rating_el_with_tax" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
+    
+     <changeSet id="#3554_20180812_2 payment sepa as file" author="anasseh" dbms="mysql">
+           <createTable tableName="ar_ddrequest_builder_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ddrequest_builder_seq_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_ddrequest_builder_seq values(1)</sql>
+     </changeSet>
+     
+	<changeSet id="#3613_20180903" author="EdwardPLegaspi">
+		<addColumn tableName="billing_invoice">
+			<column name="subscription_id" type="bigint" />
+		</addColumn>
+	</changeSet>
+
      <changeSet id="#3508_20180828 - Migration for sequences - postgresql" author="AbdelmounaimAkadid" dbms="postgresql">
         <sql endDelimiter="$$" splitStatements="false"><![CDATA[
 		DO $$
@@ -1694,6 +1718,7 @@
 			) WHERE seller_id IS NULL;
 		]]>
 		</sql>			
+        <addNotNullConstraint tableName="billing_invoice" columnName="seller_id"/>
 	
         <sql><![CDATA[
 			UPDATE ${db.schema.adapted}billing_subscription subu SET seller_id = (
@@ -1705,6 +1730,7 @@
 			) WHERE seller_id IS NULL;
 		]]>
 		</sql>			
+        <addNotNullConstraint tableName="billing_subscription" columnName="seller_id"/>
 		
 		<sql><![CDATA[
 			UPDATE ${db.schema.adapted}billing_product_instance bpiu SET seller_id = (
@@ -1716,23 +1742,9 @@
 			) WHERE seller_id IS NULL;
 		]]>
 		</sql>			
-	</changeSet>
-
-     <changeSet id="#2449_20180822" author="EdwardPLegaspi">
-     	<renameColumn tableName="cat_price_plan_matrix" columnDataType="varchar(2000)" oldColumnName="rating_el" newColumnName="rating_el_without_tax"/>
-        <addColumn tableName="cat_price_plan_matrix">
-            <column name="rating_el_with_tax" type="varchar(2000)" />
-        </addColumn>
-    </changeSet>
-     
-     <changeSet id="#3554_20180812_2 payment sepa as file" author="anasseh" dbms="mysql">
-           <createTable tableName="ar_ddrequest_builder_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ddrequest_builder_seq_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}ar_ddrequest_builder_seq values(1)</sql>
+        <addNotNullConstraint tableName="billing_product_instance" columnName="seller_id"/>
      </changeSet>
+
      
      <changeSet id="#3554_20180812 payment sepa as file" author="anasseh">
      	 <createSequence sequenceName="ar_ddrequest_builder_seq" />                            
@@ -1793,6 +1805,57 @@
         <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="text" />
         <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="text" />        
     </changeSet>    
+   
+    <changeSet id="#3626 - Payment Sepa (by invoice or CA)_20180912" author="anasseh">    
+    		<dropColumn tableName="ar_ddrequest_item" columnName="account_operation_id" />
+    		<addColumn tableName="ar_ddrequest_builder">
+     		<column name="payment_level" type="varchar(100)"></column>     		
+     	</addColumn>
+    		<addColumn tableName="ar_account_operation">
+     		<column name="ddrequest_item_id" type="bigint"></column>     		
+     	</addColumn>
+    		 <addForeignKeyConstraint baseColumnNames="ddrequest_item_id" baseTableName="ar_account_operation" constraintName="fk_ao_ddreq_item_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_ddrequest_item" />
+         <sql><![CDATA[update ${db.schema.adapted}ar_ddrequest_builder set payment_level='AO']]></sql>                                 
+    </changeSet>
+    
+    <changeSet id="2670_20180920 - Increase sequence length" author="EdwardPLegaspi">
+    	<modifyDataType columnName="rum_prefix" newDataType="varchar(255)" tableName="crm_provider"/>
+    	<modifyDataType columnName="cust_no_prefix" newDataType="varchar(255)" tableName="crm_provider"/>
+    </changeSet>
+
+     <changeSet id="#3272_20180930" author="anasseh">     
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="occ_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="occ_templ_negative_id" type="bigint" />
+        </addColumn>        
+        <addForeignKeyConstraint baseColumnNames="occ_template_id" baseTableName="billing_invoice_sub_cat" constraintName="fk_occ_sub_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" />
+        <addForeignKeyConstraint baseColumnNames="occ_templ_negative_id" baseTableName="billing_invoice_sub_cat" constraintName="fk_occ_neg_sub_cat_inv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_occ_template" /> 
+            
+       <addColumn tableName="ar_account_operation">
+            <column name="sub_cat_inv_agregate_id" type="bigint" />
+        </addColumn>
+        
+                <addForeignKeyConstraint baseColumnNames="sub_cat_inv_agregate_id" baseTableName="ar_account_operation" constraintName="fk_inv_sub_cat_agregate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />                        
+     </changeSet>
+     
+
+    <changeSet id="#3459_20180702" author="AndriusKarpavicius">
+       <addColumn tableName="cat_wallet_template">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+       <addColumn tableName="billing_wallet">
+           <column name="reject_level" type="numeric(23, 12)" />
+       </addColumn>
+        <sql>update ${db.schema.adapted}cat_wallet_template set reject_level=0 where reject_level is null</sql>
+        <sql>update ${db.schema.adapted}billing_wallet set reject_level=0 where reject_level is null</sql>
+    </changeSet>
+    
     <changeSet id="#3464_20180522" author="AndriusKarpavicius">
         <addColumn tableName="crm_provider">
             <column name="cf_values_accum" type="${type.json}"></column>
@@ -1970,11 +2033,14 @@
             <column name="charge_instance_id" type="bigint" />
             <column name="tax_id" type="bigint" />
             <column name="tax_percent" type="numeric(23, 12)" />
+            <column name="user_account_id" type="bigint" />
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_rt_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" /> 
         <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" /> 
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />  
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" /> 
         <addColumn tableName="billing_wallet_operation">
             <column name="tax_id" type="bigint" />
         </addColumn>           
@@ -1988,7 +2054,6 @@
             <column name="due_date_delay_el_sp" type="varchar(2000)" />
         </addColumn>
         <addColumn tableName="billing_invoice">
-            <column name="subscription_id" type="bigint" />
             <column name="order_id" type="bigint" />
         </addColumn>               
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_invoice" constraintName="fk_inv_subscription" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -2026,13 +2091,30 @@
             billing_invoice_agregate.discount_plan_item_code is not null
         </sql>        
         <sql>update ${db.schema.adapted}billing_invoice_agregate set tax_id = billing_invoice_agregate_taxes.tax_id from ${db.schema.adapted}billing_invoice_agregate_taxes where
-        billing_invoice_agregate.id=billing_invoice_agregate_taxes.sub_cat_invoice_aggregat_id and billing_invoice_agregate.tax_id is null</sql>
+            billing_invoice_agregate.id=billing_invoice_agregate_taxes.sub_cat_invoice_aggregat_id and billing_invoice_agregate.tax_id is null</sql>
+        
+        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_wallet.user_account_id from ${db.schema.adapted}billing_wallet where
+            billing_rated_transaction.wallet_id=billing_wallet.id and
+            billing_rated_transaction.wallet_id is not null and billing_rated_transaction.user_account_id is null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_subscription.user_account_id from ${db.schema.adapted}billing_subscription where
+            billing_rated_transaction.subscription_id=billing_subscription.id and
+            billing_rated_transaction.subscription_id is not null and billing_rated_transaction.user_account_id is null                       
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_charge_instance.user_account_id from ${db.schema.adapted}billing_charge_instance where
+            billing_rated_transaction.charge_instance_id=billing_charge_instance.id and
+            billing_rated_transaction.charge_instance_id is not null and billing_rated_transaction.user_account_id is null    
+        </sql>        
     </changeSet>
 
     <changeSet id="#3577_20180727_migration_M" author="AndriusKarpavicius" dbms="mysql">
         <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id where billing_rated_transaction.wallet_operation_id is not null</sql>
         <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}cat_discount_plan_item on cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code set discount_plan_item_id = cat_discount_plan_item.id where billing_invoice_agregate.discount_plan_item_code is not null</sql>
         <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}billing_invoice_agregate_taxes on billing_invoice_agregate.id=sub_cat_invoice_aggregat_id set tax_id = billing_invoice_agregate_taxes.tax_id where billing_invoice_agregate.tax_id is null</sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet on billing_rated_transaction.wallet_id=billing_wallet.id set user_account_id = billing_wallet.user_account_id where billing_rated_transaction.wallet_id is not null and billing_rated_transaction.user_account_id is null </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_subscription on billing_rated_transaction.subscription_id=billing_subscription.id set user_account_id = billing_subscription.user_account_id where billing_rated_transaction.subscription_id is not null and billing_rated_transaction.user_account_id is null </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_charge_instance on billing_rated_transaction.charge_instance_id=billing_charge_instance.id set user_account_id = billing_charge_instance.user_account_id where billing_rated_transaction.charge_instance_id is not null and billing_rated_transaction.user_account_id is null </sql>
+        
     </changeSet>
     
     <changeSet id="#3577_20180827" author="AndriusKarpavicius">

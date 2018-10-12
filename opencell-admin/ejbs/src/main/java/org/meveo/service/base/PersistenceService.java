@@ -45,6 +45,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -462,7 +463,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        log.debug("start of entity={}", entity.getClass().getSimpleName());
+        log.debug("start of create {}", entity.getClass().getSimpleName());
 
         if (entity instanceof ISearchable) {
             validateCode((ISearchable) entity);
@@ -1177,81 +1178,81 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void remove(Class parentClass, Object parentId) {
-		Field idField = getIdField(parentClass);
-		if (idField != null) {
-			List<Field> oneToManyFields = getOneToManyFields(parentClass);
-			for (Field field : oneToManyFields) {
-				Class childClass = getFirstActualTypeArgument(field);
-				if (childClass != null) {
-					Field manyToOneField = getManyToOneField(childClass, parentClass);
-					Field childClassIdField = getIdField(childClass);
-					if (manyToOneField != null && childClassIdField != null) {
-						List<Long> childIds = getEntityManager().createQuery(String.format("select c.%s from %s c where c.%s.%s = :pid", childClassIdField.getName(),
-								childClass.getSimpleName(), manyToOneField.getName(), idField.getName())).setParameter("pid", parentId).getResultList();
-						for (Long childId : childIds) {
-							getEntityManager().createQuery(String.format("delete from %s c where c.%s = :id", childClass.getSimpleName(), childClassIdField.getName()))
-									.setParameter("id", childId).executeUpdate();
-						}
-					}
-				}
-			}
-			getEntityManager().createQuery(String.format("delete from %s e where e.%s = :id", parentClass.getSimpleName(), idField.getName())).setParameter("id", parentId)
-					.executeUpdate();
-		}
-	}
+    @Override
+    public void remove(Class parentClass, Object parentId) {
+        Field idField = getIdField(parentClass);
+        if (idField != null) {
+            List<Field> oneToManyFields = getOneToManyFields(parentClass);
+            for (Field field : oneToManyFields) {
+                Class childClass = getFirstActualTypeArgument(field);
+                if (childClass != null) {
+                    Field manyToOneField = getManyToOneField(childClass, parentClass);
+                    Field childClassIdField = getIdField(childClass);
+                    if (manyToOneField != null && childClassIdField != null) {
+                        List<Long> childIds = getEntityManager().createQuery(String.format("select c.%s from %s c where c.%s.%s = :pid", childClassIdField.getName(),
+                            childClass.getSimpleName(), manyToOneField.getName(), idField.getName())).setParameter("pid", parentId).getResultList();
+                        for (Long childId : childIds) {
+                            getEntityManager().createQuery(String.format("delete from %s c where c.%s = :id", childClass.getSimpleName(), childClassIdField.getName()))
+                                .setParameter("id", childId).executeUpdate();
+                        }
+                    }
+                }
+            }
+            getEntityManager().createQuery(String.format("delete from %s e where e.%s = :id", parentClass.getSimpleName(), idField.getName())).setParameter("id", parentId)
+                .executeUpdate();
+        }
+    }
 
-	@SuppressWarnings("rawtypes")
-	private Class getFirstActualTypeArgument(Field field) {
-		Type genericType = field.getGenericType();
-		if (genericType instanceof ParameterizedType) {
-			ParameterizedType parameterizedType = (ParameterizedType) genericType;
-			Type[] typeArguments = parameterizedType.getActualTypeArguments();
-			if (typeArguments.length > 0) {
-				return (Class<?>) typeArguments[0];
-			}
-		}
-		return null;
-	}
+    @SuppressWarnings("rawtypes")
+    private Class getFirstActualTypeArgument(Field field) {
+        Type genericType = field.getGenericType();
+        if (genericType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) genericType;
+            Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            if (typeArguments.length > 0) {
+                return (Class<?>) typeArguments[0];
+            }
+        }
+        return null;
+    }
 
-	@SuppressWarnings("rawtypes")
-	private Field getManyToOneField(Class clazz, Class parentClass) {
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field field : declaredFields) {
-			if (field.isAnnotationPresent(ManyToOne.class)) {
-				Class<?> type = field.getType();
-				if (parentClass.equals(type)) {
-					return field;
-				}
-			}
-		}
-		return null;
-	}
+    @SuppressWarnings("rawtypes")
+    private Field getManyToOneField(Class clazz, Class parentClass) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(ManyToOne.class)) {
+                Class<?> type = field.getType();
+                if (parentClass.equals(type)) {
+                    return field;
+                }
+            }
+        }
+        return null;
+    }
 
-	@SuppressWarnings("rawtypes")
-	private Field getIdField(Class clazz) {
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field field : declaredFields) {
-			if (field.isAnnotationPresent(Id.class)) {
-				return field;
-			}
-		}
-		return null;
-	}
+    @SuppressWarnings("rawtypes")
+    private Field getIdField(Class clazz) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                return field;
+            }
+        }
+        return null;
+    }
 
-	@SuppressWarnings("rawtypes")
-	private List<Field> getOneToManyFields(Class clazz) {
-		List<Field> fields = new LinkedList<>();
-		Field[] declaredFields = clazz.getDeclaredFields();
-		for (Field field : declaredFields) {
-			if (field.isAnnotationPresent(OneToMany.class)) {
-				fields.add(field);
-			}
-		}
-		return fields;
-	}
-    
+    @SuppressWarnings("rawtypes")
+    private List<Field> getOneToManyFields(Class clazz) {
+        List<Field> fields = new LinkedList<>();
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(OneToMany.class)) {
+                fields.add(field);
+            }
+        }
+        return fields;
+    }
+
     /**
      * Find entities that reference a given class and ID. Used when deleting entities to determine what FK constraints are preventing to remove a given entity
      * 
@@ -1306,5 +1307,23 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         return matchedEntityInfo;
+    }
+
+    /**
+     * Get a list of entities from a named query
+     * 
+     * @param queryName Named query name
+     * @param parameters A list of parameters in a form or parameter name, value, parameter name, value,..
+     * @return A list of entities
+     */
+    public List<E> listByNamedQuery(String queryName, Object... parameters) {
+
+        TypedQuery<E> query = getEntityManager().createNamedQuery(queryName, entityClass);
+
+        for (int i = 0; i < parameters.length; i = i + 2) {
+            query.setParameter((String) parameters[i], parameters[i + 1]);
+        }
+
+        return query.getResultList();
     }
 }

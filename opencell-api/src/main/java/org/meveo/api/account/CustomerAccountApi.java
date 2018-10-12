@@ -40,14 +40,10 @@ import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
-import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
@@ -87,15 +83,6 @@ public class CustomerAccountApi extends AccountEntityApi {
     @Inject
     private BillingAccountApi billingAccountApi;
     
-    @Inject
-    private RatedTransactionService ratedTransactionService;
-    
-    @Inject
-    private WalletOperationService walletOperationService;
-
-    @Inject
-    private AccountOperationService accountOperationService;
-
 	@Inject
 	private AddressBookService addressBookService;
 
@@ -182,16 +169,6 @@ public class CustomerAccountApi extends AccountEntityApi {
         customerAccount.setExternalRef2(postData.getExternalRef2());
         customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
         customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
-
-        if (postData.getContactInformation() != null) {
-            if (customerAccount.getContactInformation() == null) {
-                customerAccount.setContactInformation(new ContactInformation());
-            }
-            customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
-            customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
-            customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-            customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
-        }
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
@@ -283,24 +260,6 @@ public class CustomerAccountApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
             }
             customerAccount.setTradingLanguage(tradingLanguage);
-        }
-
-        if (postData.getContactInformation() != null) {
-            if (customerAccount.getContactInformation() == null) {
-                customerAccount.setContactInformation(new ContactInformation());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
-                customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getPhone())) {
-                customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
-                customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
-            }
-            if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
-                customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
-            }
         }
 
         updateAccount(customerAccount, postData, checkCustomFields);
@@ -661,6 +620,12 @@ public class CustomerAccountApi extends AccountEntityApi {
                 if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getFax())) {
                     existedCustomerAccountDto.getContactInformation().setFax(customerAccountDto.getContactInformation().getFax());
                 }
+            }
+            if (!StringUtils.isBlank(customerAccountDto.getVatNo())) {
+            	existedCustomerAccountDto.setVatNo(customerAccountDto.getVatNo());
+            }
+            if (!StringUtils.isBlank(customerAccountDto.getRegistrationNo())) {
+            	existedCustomerAccountDto.setRegistrationNo(customerAccountDto.getRegistrationNo());
             }
             accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto);
             if (customerAccountDto.getCustomFields() != null && !customerAccountDto.getCustomFields().isEmpty()) {

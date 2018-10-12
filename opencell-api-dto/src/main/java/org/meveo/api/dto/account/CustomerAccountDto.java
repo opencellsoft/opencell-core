@@ -21,8 +21,9 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * Customer Account DTO.
- *
+ * @author Edward P. Legaspi
  * @author anasseh
+ * @lastModifiedVersion 5.2
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,9 +56,6 @@ public class CustomerAccountDto extends AccountDto {
 
     /** The date dunning level. */
     private Date dateDunningLevel;
-
-    /** The contact information. */
-    private ContactInformationDto contactInformation;
 
     /** The dunning level. */
     private DunningLevelEnum dunningLevel;
@@ -299,24 +297,6 @@ public class CustomerAccountDto extends AccountDto {
      */
     public void setDateDunningLevel(Date dateDunningLevel) {
         this.dateDunningLevel = dateDunningLevel;
-    }
-
-    /**
-     * Gets the contact information.
-     *
-     * @return the contactInformation
-     */
-    public ContactInformationDto getContactInformation() {
-        return contactInformation;
-    }
-
-    /**
-     * Sets the contact information.
-     *
-     * @param contactInformation the contactInformation to set
-     */
-    public void setContactInformation(ContactInformationDto contactInformation) {
-        this.contactInformation = contactInformation;
     }
 
     /**
@@ -566,7 +546,7 @@ public class CustomerAccountDto extends AccountDto {
     @Override
     public String toString() {
         return "CustomerAccountDto [code=" + code + ", customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory="
-                + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel="
+                + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + getContactInformation() + ", dunningLevel="
                 + dunningLevel + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
     }
 

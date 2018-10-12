@@ -35,10 +35,14 @@ public class WalletTemplateDto extends BusinessEntityDto {
     private BigDecimal lowBalanceLevel;
 
     /**
+     * Balance level at which further consumption should be rejected
+     */
+    private BigDecimal rejectLevel;
+
+    /**
      * Instantiates a new wallet template dto.
      */
     public WalletTemplateDto() {
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -52,6 +56,7 @@ public class WalletTemplateDto extends BusinessEntityDto {
         consumptionAlertSet = walletTemplate.isConsumptionAlertSet();
         fastRatingLevel = walletTemplate.getFastRatingLevel();
         lowBalanceLevel = walletTemplate.getLowBalanceLevel();
+        rejectLevel = walletTemplate.getRejectLevel();
     }
 
     /**
@@ -109,27 +114,36 @@ public class WalletTemplateDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the low balance level.
-     *
-     * @return the low balance level
+     * @return Balance level at which LowBalance event should be fired
      */
     public BigDecimal getLowBalanceLevel() {
         return lowBalanceLevel;
     }
 
     /**
-     * Sets the low balance level.
-     *
-     * @param lowBalanceLevel the new low balance level
+     * @param lowBalanceLevel Balance level at which LowBalance event should be fired
      */
     public void setLowBalanceLevel(BigDecimal lowBalanceLevel) {
         this.lowBalanceLevel = lowBalanceLevel;
     }
 
+    /**
+     * @return Balance level at which further consumption should be rejected
+     */
+    public BigDecimal getRejectLevel() {
+        return rejectLevel;
+    }
+
+    /**
+     * @param rejectLevel Balance level at which further consumption should be rejected
+     */
+    public void setRejectLevel(BigDecimal rejectLevel) {
+        this.rejectLevel = rejectLevel;
+    }
+
     @Override
     public String toString() {
         return "WalletTemplateDto [code=" + code + ", description=" + description + ", walletType=" + walletType + ", consumptionAlertSet=" + consumptionAlertSet
-                + ", fastRatingLevel=" + fastRatingLevel + ", lowBalanceLevel=" + lowBalanceLevel + "]";
+                + ", fastRatingLevel=" + fastRatingLevel + ", lowBalanceLevel=" + lowBalanceLevel + ", rejectLevel=" + rejectLevel + "]";
     }
-
 }
