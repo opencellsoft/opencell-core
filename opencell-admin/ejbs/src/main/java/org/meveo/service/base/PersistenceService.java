@@ -37,6 +37,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -130,6 +131,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Entity list search parameter name - parameter's value contains filter parameters
      */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
+
+    static boolean accumulateCF = true;
+
+    @PostConstruct
+    private void init() {
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "true"));
+    }
 
     @Inject
     @MeveoJpa
@@ -422,7 +430,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         Set<String> dirtyCfValues = null;
         Set<String> dirtyCfPeriods = null;
-        if (entity instanceof ICustomFieldEntity) {
+        if (accumulateCF && entity instanceof ICustomFieldEntity) {
             CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
             if (cfValues != null) {
                 dirtyCfValues = cfValues.getDirtyCfValues();
@@ -440,8 +448,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
-        if (entity instanceof ICustomFieldEntity && dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
-            CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
+        if (accumulateCF && entity instanceof ICustomFieldEntity && dirtyCfValues != null && !dirtyCfValues.isEmpty()) {
+            // CustomFieldValues cfValues = ((ICustomFieldEntity) entity).getCfValues();
             cfValueAccumulator.entityUpdated((ICustomFieldEntity) entity, dirtyCfValues, dirtyCfPeriods);
         }
 
@@ -489,7 +497,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
 
-        if (entity instanceof ICustomFieldEntity) {
+        if (accumulateCF && entity instanceof ICustomFieldEntity) {
             cfValueAccumulator.entityCreated((ICustomFieldEntity) entity);
         }
 
