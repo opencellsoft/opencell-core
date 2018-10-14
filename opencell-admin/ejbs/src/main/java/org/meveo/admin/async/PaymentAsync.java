@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -20,9 +21,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.job.UnitPaymentJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -74,6 +77,7 @@ public class PaymentAsync {
      * @param paymentPerAOorCA make payment for each AO or all AO for each CA
      * @param fromDueDate the from due date
      * @param toDueDate the to due date
+     * @param aoFilterScript custom script to use in order to filter AOs to pay or refund
      * @return future result
      */
     @Asynchronous
@@ -91,9 +95,11 @@ public class PaymentAsync {
            
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                listAoToPayOrRefund = filterAoToPay(aoFilterScript, accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID));
+                List<AccountOperation> listAoToPay = accountOperationService.getAOsToPay(paymentMethodType, fromDueDate,toDueDate, caID);
+                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, paymentMethodType, OperationCategoryEnum.DEBIT);
             } else {
-                listAoToPayOrRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
+                List<AccountOperation> listAoToRefund = accountOperationService.getAOsToRefund(paymentMethodType, fromDueDate,toDueDate, caID);
+                listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, paymentMethodType, OperationCategoryEnum.CREDIT);
             }
             if ("CA".equals(paymentPerAOorCA)) {
                 List<Long> aoIds = new ArrayList<Long>();
@@ -116,17 +122,24 @@ public class PaymentAsync {
                     }
                 }
             }
-
         }
         return new AsyncResult<String>("OK");
     }
 
-    private List<AccountOperation> filterAoToPay(AccountOperationFilterScript aoFilterScript, List<AccountOperation> listAoToPayOrRefund) {
-        if (aoFilterScript != null){
+    private List<AccountOperation> filterAoToPayOrRefund(AccountOperationFilterScript aoFilterScript, List<AccountOperation> listAoToPay, PaymentMethodEnum paymentMethodType, OperationCategoryEnum aoCategory) {
+        if (aoFilterScript != null) {
             Map<String, Object> methodContext = new HashMap<>();
-            methodContext.put(LIST_AO_TO_PAY, listAoToPayOrRefund);
-            return aoFilterScript.filterAoToPay(methodContext);
+            methodContext.put(LIST_AO_TO_PAY, listAoToPay);
+            List<AccountOperation> filteredAOs = aoFilterScript.filterAoToPay(methodContext);
+            if (CollectionUtils.isNotEmpty(filteredAOs)) {
+                return filteredAOs.stream().filter( (ao) ->
+                        ( ao.getPaymentMethod() == paymentMethodType && 
+                          ao.getTransactionCategory() == aoCategory  && 
+                         (ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)
+                         ))
+                    .collect(Collectors.toList());
+            }
         }
-        return listAoToPayOrRefund;
+        return listAoToPay;
     }
 }

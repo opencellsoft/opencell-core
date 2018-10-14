@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An abstract class extending ScriptInterface, to be used in order by a custom script, basically to filter AOs to pay
+ * An abstract class extending ScriptInterface, to be used by a custom script, basically to filter AOs to pay
  * 
  * @author Said Ramli
  */
