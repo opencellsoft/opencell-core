@@ -388,11 +388,13 @@ public class ImportCustomersJobBean {
             }
 
             if (customer != null) {
-                if (!customer.getSeller().getCode().equals(sell.getCode())) {
-                    createCustomerError(sell, cust, "The customer already exists but is attached to a different seller.");
-                    nbCustomersError++;
-                    log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
-                    return;
+                if(customer.getSeller() != null) {
+                    if (!customer.getSeller().getCode().equals(sell.getCode())) {
+                        createCustomerError(sell, cust, "The customer already exists but is attached to a different seller.");
+                        nbCustomersError++;
+                        log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
+                        return;
+                    }
                 }
 
                 nbCustomersUpdated++;

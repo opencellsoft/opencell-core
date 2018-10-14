@@ -1017,20 +1017,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // BigDecimal discountAmountWithoutTax=amount.multiply(discountPlanItem.getPercent().divide(HUNDRED)).negate();
             List<Tax> taxes = new ArrayList<Tax>();
             for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCat.getInvoiceSubcategoryCountries()) {
-                if ((invoicesubcatCountry.getSellingCountry() == null
-                        || (billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry() != null && invoicesubcatCountry.getSellingCountry().getCountryCode()
-                            .equalsIgnoreCase(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry().getCountryCode())))
-                        && (invoicesubcatCountry.getTradingCountry() == null
-                                || invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode()))
+                if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
                         && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-                    if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
-                        taxes.add(invoicesubcatCountry.getTax());
-                    } else {
-                        taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, invoice));
+                    Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, invoice, new Date());
+                    if (tax != null) {
+                        taxes.add(tax);
                     }
                 }
             }
-
+            
             SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
             BigDecimal discountAmountTax = BigDecimal.ZERO;
             if (!isExonerated) {
