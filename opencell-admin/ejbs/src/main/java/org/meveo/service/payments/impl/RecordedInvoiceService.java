@@ -150,7 +150,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             invoices = (List<RecordedInvoice>) getEntityManager()
                 .createQuery("from " + RecordedInvoice.class.getSimpleName()
                         + " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus and excludedFromDunning=:dunningExclusion order by dueDate")
-                .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", o).setParameter("dunningExclusion", dunningExclusion)
+                .setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", MatchingStatusEnum.O).setParameter("dunningExclusion", dunningExclusion)
                 .getResultList();
         } catch (Exception e) {
 
