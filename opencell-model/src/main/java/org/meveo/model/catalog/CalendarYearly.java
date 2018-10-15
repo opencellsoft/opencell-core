@@ -59,6 +59,10 @@ public class CalendarYearly extends Calendar {
 	 * @return Next calendar date.
 	 */
 	public Date nextCalendarDate(Date date) {
+	    //Empty Calendar Case 
+	    if(days == null || days.isEmpty()) {
+	        return null;
+	    }
 		Date future = DateUtils.newDate(3000, 0, 1, 0, 0, 0);
 		Date result = future;
 		int currentYear = DateUtils.getYearFromDate(date);

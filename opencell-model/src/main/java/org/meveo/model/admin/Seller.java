@@ -46,13 +46,15 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.CustomerSequence;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
 /**
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.2
  **/
 
 @Entity
@@ -92,11 +94,14 @@ public class Seller extends BusinessCFEntity {
     private Seller seller;
 
     @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<InvoiceTypeSellerSequence>();
+    private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bam_id")
     private BusinessAccountModel businessAccountModel;
+    
+    @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CustomerSequence> customerSequences = new ArrayList<>();
 
     public Seller() {
         super();
@@ -240,4 +245,12 @@ public class Seller extends BusinessCFEntity {
 
         return getSeller().findSellerForInvoiceNumberingSequence(cfName, date, invoiceType);
     }
+
+	public List<CustomerSequence> getCustomerSequences() {
+		return customerSequences;
+	}
+
+	public void setCustomerSequences(List<CustomerSequence> customerSequences) {
+		this.customerSequences = customerSequences;
+	}
 }
