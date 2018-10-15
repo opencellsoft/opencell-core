@@ -29,7 +29,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -39,8 +38,6 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * AccountOperation service implementation.
- * @author Said Ramli
- * @lastModifiedVersion 5.2
  */
 @Stateless
 public class AccountOperationService extends PersistenceService<AccountOperation> {
@@ -246,15 +243,5 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         } catch (NoResultException ne) {
             return null;
         }
-    }
-
-    /**
-     * For some clients cases , there is one invoice per AO , one user account per ba and one subscription per UA :
-     * @param ao
-     * @return One subscription retalted to the given AO
-     */
-    public Subscription getOneSubscription(AccountOperation ao) {
-        ao = this.retrieveIfNotManaged(ao);
-        return ao.getInvoices().get(0).getBillingAccount().getUsersAccounts().get(0).getSubscriptions().get(0);
     }
 }
