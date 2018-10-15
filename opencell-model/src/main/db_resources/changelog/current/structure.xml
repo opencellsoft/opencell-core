@@ -2075,6 +2075,10 @@
         <addColumn tableName="ar_payment_gateway">
             <column name="profile" type="varchar(256)" />
         </addColumn>            
-     </changeSet>                          
+     </changeSet>        
+    
+    <changeSet id="#3692_20181015" author="HatimOudad">
+     <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="ar_payment_token "/>
+    </changeSet>                 
 
 </databaseChangeLog>
