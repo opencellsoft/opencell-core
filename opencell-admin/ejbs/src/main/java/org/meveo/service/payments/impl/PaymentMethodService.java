@@ -41,6 +41,7 @@ import org.meveo.service.base.PersistenceService;
  * PaymentMethod service implementation.
  * 
  * @author anasseh
+ * @author Mounir Bahije
  * @lastModifiedVersion 5.2
  */
 @Stateless
@@ -235,6 +236,12 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             throw new BusinessException("Can't found CustomerAccount with code:" + hostedCheckoutInput.getCustomerAccountCode());
         }
 
+        if ( ( customerAccount.getTradingCurrency() != null ) && (!StringUtils.isBlank(customerAccount.getTradingCurrency().getCurrencyCode()))) {
+            hostedCheckoutInput.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+        }
+        if ( ( customerAccount.getAddress() != null ) && ( customerAccount.getAddress().getCountry() != null ) && (!StringUtils.isBlank(customerAccount.getAddress().getCountry().getCountryCode()))) {
+            hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
+        }
         GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
         if (matchedPaymentGatewayForTheCA == null) {
@@ -250,4 +257,23 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         return hostedCheckoutUrl;
     }
+
+    public Object getClient(Long customerAccountId) throws BusinessException {
+        CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
+        if (customerAccount == null) {
+            throw new BusinessException("Can't found CustomerAccount with Id:" + customerAccountId);
+        }
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
+        if (matchedPaymentGatewayForTheCA == null) {
+                throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
+            }
+        try {
+                gatewayPaymentInterface = gatewayPaymentFactory.getInstance(matchedPaymentGatewayForTheCA);
+            } catch (Exception e1) {
+                throw new BusinessException("Can't build gatewayPaymentInterface");
+            }
+        return gatewayPaymentInterface.getClientObject();
+    }
+
 }

@@ -473,11 +473,11 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentGateway/getHostedCheckoutUrl")
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
                                                                  @QueryParam("returnUrl") String returnUrl,
-                                                                 @DefaultValue("en_GB") @QueryParam("locale") String locale,
+                                                                 @DefaultValue("fr_FR") @QueryParam("locale") String locale,
                                                                  @DefaultValue("100") @QueryParam("amount") String amount,
                                                                  @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode,
                                                                  @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
-                                                                 @DefaultValue("US") @QueryParam("countryCode") String countryCode,
+                                                                 @DefaultValue("fr") @QueryParam("countryCode") String countryCode,
                                                                  @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
                                                                  @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName,
                                                                  @DefaultValue("101") @QueryParam("variant") String variant

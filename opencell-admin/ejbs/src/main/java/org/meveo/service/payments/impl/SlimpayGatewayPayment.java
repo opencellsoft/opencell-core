@@ -41,8 +41,9 @@ import com.slimpay.hapiclient.http.auth.Oauth2BasicAuthentication;
 import com.slimpay.hapiclient.util.EntityConverter;
 
 /**
- * 
+ *
  * @author anasseh
+ * @author Mounir Bahije
  * @lastModifiedVersion 5.2
  *
  */
@@ -102,6 +103,11 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     private HapiClient getClient() {
         return connect();
+    }
+
+    @Override
+    public Object getClientObject() {
+        return null;
     }
 
     @Override
