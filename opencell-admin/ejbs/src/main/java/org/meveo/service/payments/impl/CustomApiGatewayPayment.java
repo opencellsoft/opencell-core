@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 
  *  @author anasseh
+ *  @author Mounir Bahije
  *  @lastModifiedVersion 5.2
  */
 
@@ -36,6 +37,11 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 
     public CustomApiGatewayPayment(PaymentScriptInterface paymentScriptInterface) {
         this.paymentScriptInterface = paymentScriptInterface;      
+    }
+
+    @Override
+    public Object getClientObject() {
+        return null;
     }
 
     @Override

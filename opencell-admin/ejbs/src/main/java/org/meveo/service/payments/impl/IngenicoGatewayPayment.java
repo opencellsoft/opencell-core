@@ -53,6 +53,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardD
  * The Class IngenicoGatewayPayment.
  *
  * @author anasseh
+ * @author Mounir Bahije
  * @lastModifiedVersion 5.2
  */
 @PaymentGatewayClass
@@ -91,13 +92,25 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
      *
      * @return the client
      */
-    public  Client getClient() {
+    private  Client getClient() {
         if (client == null) {
             connect();
         }
         return client;
     }
 
+    /**
+     * Gets the client object
+     *
+     * @return the client object
+     */
+    @Override
+    public  Object getClientObject() {
+        if (client == null) {
+            connect();
+        }
+        return client;
+    }
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
