@@ -681,6 +681,32 @@ public class QueryBuilder {
         }
         return this;
     }
+    
+    /**
+     * Append an ORDER BY clause for multiple fields
+     * 
+     * @param orderRules An array of column name and order direction combinations. Order direction is expressed as a boolean with True for ascending order. E.g. "NAME,
+     *        false,ID,true" will sort by NAME field descending and then by "ID" field ascending.
+     * @return instance of QueryBuilder
+     */
+    public QueryBuilder addOrderMultiCriterion(Object... orderRules) {
+
+        q.append(" ORDER BY ");
+
+        for (int i = 0; i < orderRules.length; i = i + 2) {
+            if (i > 0) {
+                q.append(", ");
+            }
+            q.append(orderRules[i]);
+            if (Boolean.TRUE.equals(orderRules[i + 1])) {
+                q.append(" ASC ");
+            } else {
+                q.append(" DESC ");
+            }
+        }
+        return this;
+
+    }
 
     /**
      * @return instance QueryBuilder.

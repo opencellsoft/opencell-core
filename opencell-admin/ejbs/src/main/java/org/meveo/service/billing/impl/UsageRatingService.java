@@ -197,34 +197,14 @@ public class UsageRatingService implements Serializable {
 
         ChargeTemplate chargeTemplate = usageChargeInstance.getChargeTemplate();// em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplateId());
 
-        // log.debug("AKK URS line 202");
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(chargeTemplate.getInvoiceSubCategory(),
-            tradingCountry, edr.getEventDate());
-
-        if (invoiceSubcategoryCountry == null) {
-            throw new NoTaxException(
-                "No tax defined for country=" + tradingCountry.getCountryCode() + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategory().getCode());
-        }
-
-        // log.debug("AKK URS line 211");
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
-        // log.debug("AKK URS line 213");
 
         walletOperation.setSeller(chargeInstance.getSeller());
 
         TradingCurrency currency = chargeInstance.getCurrency();
         
+        Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, edr.getEventDate());
         
-        Tax tax = null;
-        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
-            tax = invoiceSubcategoryCountry.getTax();
-        } else {
-            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), userAccount, billingAccount, null);
-        }
-        if (tax == null) {
-            throw new NoTaxException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
-        }
-
         walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
         walletOperation.setRatingUnitDescription(usageChargeInstance.getRatingUnitDescription());
         walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());

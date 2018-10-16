@@ -127,7 +127,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
         BigDecimal amount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount();
-        BigDecimal amounts[] = getAmounts(invoiceSubCat, amount, billingAccount.getTradingCountry(), userAccount);
+        BigDecimal amounts[] = getAmounts(invoiceSubCat, amount, paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller().getTradingCountry(), billingAccount.getTradingCountry(), userAccount);
         List<Long> aoIdsToPay = new ArrayList<Long>();
         Invoice invoice = null;
         RecordedInvoice recordedInvoicePS = null;
@@ -211,7 +211,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         UserAccount userAccount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
-        BigDecimal amounts[] = getAmounts(invoiceSubCat, paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), billingAccount.getTradingCountry(), userAccount);
+        BigDecimal amounts[] = getAmounts(invoiceSubCat, paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller().getTradingCountry(), billingAccount.getTradingCountry(), userAccount);
         String paymentlabel = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel();
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
@@ -295,22 +295,23 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      *
      * @param invoiceSubCategory the invoice sub category
      * @param amountWithTax the amount with tax
-     * @param tradingCountry the trading country
+     * @param sellersCountry Seller's trading country
+     * @param buyersCountry Buyer's trading country
      * @param userAccount the user account
      * @return the amounts
      * @throws BusinessException the business exception
      */
-    private BigDecimal[] getAmounts(InvoiceSubCategory invoiceSubCategory, BigDecimal amountWithTax, TradingCountry tradingCountry, UserAccount userAccount)
+    private BigDecimal[] getAmounts(InvoiceSubCategory invoiceSubCategory, BigDecimal amountWithTax, TradingCountry sellersCountry, TradingCountry buyersCountry, UserAccount userAccount)
             throws BusinessException {
         BigDecimal[] amounts = new BigDecimal[3];
         BigDecimal amountTax, amountWithoutTax;
         Integer rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
         Tax tax = null;
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, new Date());
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, sellersCountry, buyersCountry, new Date());
         if (invoiceSubcategoryCountry == null) {
             throw new BusinessException(
-                "No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + tradingCountry.getCountryCode());
+                "No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country=" + buyersCountry.getCountryCode());
         }
         if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
             tax = invoiceSubcategoryCountry.getTax();
