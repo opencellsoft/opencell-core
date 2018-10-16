@@ -2181,7 +2181,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return CreateInvoiceResponseDto
      * @throws MeveoApiException Meveo Api exception
      * @throws BusinessException Business exception
-     * @throws Exception exception
      */
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException {
        
