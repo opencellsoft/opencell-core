@@ -78,7 +78,10 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
                 throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
             }
         }
-
+        
+        TradingCountry sellingCountry = null;
+        sellingCountry = tradingCountryService.findByTradingCountryCode(postData.getSellingCountry());
+        
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
         invoiceSubcategoryCountry.setInvoiceSubCategory(invoiceSubCategory);
         invoiceSubcategoryCountry.setTax(tax);
@@ -88,6 +91,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
         invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
         invoiceSubcategoryCountry.setPriority(postData.getPriority());
+        invoiceSubcategoryCountry.setSellingCountry(sellingCountry);
 
         invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
     }
@@ -144,6 +148,9 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         invoiceSubcategoryCountry.setTax(tax);
         invoiceSubcategoryCountry.setTaxCodeEL(postData.getTaxCodeEL());
+        
+        TradingCountry sellingCountry = tradingCountryService.findByTradingCountryCode(postData.getSellingCountry());
+        invoiceSubcategoryCountry.setSellingCountry(sellingCountry);
 
         invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
     }
