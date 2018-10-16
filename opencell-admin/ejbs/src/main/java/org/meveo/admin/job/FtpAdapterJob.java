@@ -43,6 +43,7 @@ public class FtpAdapterJob extends Job {
         String ftpUsername = null;
         String ftpPassword = null;
         String ftpProtocol = null;
+        String operation = null;
 
         try {
             distDirectory = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_distDirectory")).replaceAll("\\..", "");
@@ -54,12 +55,13 @@ public class FtpAdapterJob extends Job {
             ftpUsername = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpUsername");
             ftpPassword = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpPassword");
             ftpProtocol = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_ftpProtocol");
+            operation = (String) this.getParamOrCFValue(jobInstance, "FtpAdapterJob_operation");
 
         } catch (Exception e) {
             log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
         }
         ftpAdapterJobBean.execute(result, jobInstance, distDirectory, remoteServer, remotePort, "true".equalsIgnoreCase(removeDistantFile), ftpInputDirectory, ftpExtension,
-            ftpUsername, ftpPassword, ftpProtocol);
+            ftpUsername, ftpPassword, ftpProtocol, operation);
     }
 
     @Override
@@ -165,6 +167,19 @@ public class FtpAdapterJob extends Job {
         ftpProtocol.setListValues(ftpProtocolListValues);
         ftpProtocol.setValueRequired(true);
         result.put("FtpAdapterJob_ftpProtocol", ftpProtocol);
+
+        CustomFieldTemplate operation = new CustomFieldTemplate();
+        operation.setCode("FtpAdapterJob_operation");
+        operation.setAppliesTo("JOB_FtpAdapterJob");
+        operation.setActive(true);
+        operation.setDescription(resourceMessages.getString("FtpAdapter.operation"));
+        operation.setFieldType(CustomFieldTypeEnum.LIST);
+        Map<String, String> operationlListValues = new HashMap<String, String>();
+        operationlListValues.put("IMPORT", "IMPORT");
+        operationlListValues.put("EXPORT", "EXPORT");
+        operation.setListValues(operationlListValues);
+        operation.setValueRequired(true);
+        result.put("FtpAdapterJob_operation", operation);
 
         return result;
     }

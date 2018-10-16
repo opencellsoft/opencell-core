@@ -849,7 +849,7 @@
         <dropColumn tableName="ar_credit_category" columnName="disabled" />
         <dropColumn tableName="crm_customer_brand" columnName="disabled" />
         <dropColumn tableName="crm_customer_category" columnName="disabled" />
-        <dropColumn tableName="ftp_imported_file" columnName="disabled" />
+        <dropColumn tableName="ftp_transferred_file" columnName="disabled" />
         <dropColumn tableName="hierarchy_entity" columnName="disabled" />
         <dropColumn tableName="adm_inbound_request" columnName="disabled" />
         <dropColumn tableName="billing_invoice_type" columnName="disabled" />

@@ -117,7 +117,7 @@
         <createSequence sequenceName="cust_cei_seq" />
         <createSequence sequenceName="meveo_module_seq" startValue="1" />
         <createSequence sequenceName="meveo_module_item_seq" startValue="1" />
-        <createSequence sequenceName="ftp_imported_file_seq" startValue="1" />
+        <createSequence sequenceName="ftp_transferred_file_seq" startValue="1" />
         <createSequence sequenceName="cat_offer_template_category_seq" />
         <createSequence sequenceName="cat_offer_serv_templt_seq" />
         <createSequence sequenceName="ar_revenue_recog_rule_seq" />
@@ -830,12 +830,12 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}meveo_module_item_seq values(1)</sql>
-        <createTable tableName="ftp_imported_file_seq">
+        <createTable tableName="ftp_transferred_file_seq">
             <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_imported_file_seq_pk" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_transferred_file_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema.adapted}ftp_imported_file_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ftp_transferred_file_seq values(1)</sql>
         <createTable tableName="cat_offer_template_category_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_template_category_seq_pk" />
@@ -5104,9 +5104,9 @@
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-303">
-        <createTable tableName="ftp_imported_file">
+        <createTable tableName="ftp_transferred_file">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_imported_file_pkey" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_transferred_file_pkey" />
             </column>
             <column name="version" type="int4" />
             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
@@ -5127,8 +5127,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="size" type="bigint" />
-            <column name="import_date" type="datetime" />
+            <column name="transfer_date" type="datetime" />
             <column name="last_modification" type="datetime" />
+            <column name="operation" type="varchar(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-304">

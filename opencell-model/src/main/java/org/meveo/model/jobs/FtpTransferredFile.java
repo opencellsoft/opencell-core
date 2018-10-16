@@ -2,11 +2,7 @@ package org.meveo.model.jobs;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -15,9 +11,9 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "ftp_imported_file")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ftp_imported_file_seq"), })
-public class FtpImportedFile extends BusinessEntity {
+@Table(name = "ftp_transferred_file")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ftp_transferred_file_seq"), })
+public class FtpTransferredFile extends BusinessEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
     @Column(name = "uri", length = 2000, nullable = false)
@@ -29,15 +25,19 @@ public class FtpImportedFile extends BusinessEntity {
     private Long size;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "import_date")
-    private Date importDate = new Date();
+    @Column(name = "transfer_date")
+    private Date transferDate = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_modification")
     private Date lastModification;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operation")
+    private FtpOperationEnum operation;
 
-    public FtpImportedFile(){
+
+    public FtpTransferredFile(){
     }
 
 
@@ -71,17 +71,17 @@ public class FtpImportedFile extends BusinessEntity {
     }
 
     /**
-     * @return the importDate
+     * @return the transferDate
      */
-    public Date getImportDate() {
-        return importDate;
+    public Date getTransferDate() {
+        return transferDate;
     }
 
     /**
-     * @param importDate the importDate to set
+     * @param transferDate the transferDate to set
      */
-    public void setImportDate(Date importDate) {
-        this.importDate = importDate;
+    public void setTransferDate(Date transferDate) {
+        this.transferDate = transferDate;
     }
 
     /**
@@ -98,14 +98,27 @@ public class FtpImportedFile extends BusinessEntity {
         this.lastModification = lastModification;
     }
 
+    /**
+     * @return Ftp operation : IMPORT or EXPORT
+     */
+    public FtpOperationEnum getOperation() {
+        return operation;
+    }
 
+    /**
+     * operation : IMPORT or EXPORT
+     * @param operation FTP operation
+     */
+    public void setOperation(FtpOperationEnum operation) {
+        this.operation = operation;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "FtpImportedFile [uri=" + uri + ", size=" + size + ", importDate=" + importDate + ", lastModification=" + lastModification + ", code=" + code + ", description=" + description + ", appendGeneratedCode=" + appendGeneratedCode + ", id=" + id + "]";
+        return "FtpTransferredFile [uri=" + uri + ", size=" + size + ", transferDate=" + transferDate + ", lastModification=" + lastModification + ", code=" + code + ", description=" + description + ", appendGeneratedCode=" + appendGeneratedCode + ", id=" + id + "]";
     }
 
 
