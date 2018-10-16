@@ -27,7 +27,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.apache.poi.hssf.record.RecalcIdRecord;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
@@ -57,7 +56,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private AccountOperationService accountOperationService;
-    
+
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
 
@@ -78,15 +77,15 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal amountCredit = amount;
         BigDecimal amountDebit = amount;
         boolean fullMatch = false;
-        PaymentScheduleInstanceItem paymentScheduleInstanceItem = null;
+        List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
 
         // log.debug("AKK will match for amount {} partial match is for {}", amount, aoToMatchLast != null ? aoToMatchLast.getId() + "_" + aoToMatchLast.getReference() : null);
         for (AccountOperation accountOperation : listOcc) {
 
-            if(accountOperation instanceof RecordedInvoice && ((RecordedInvoice)accountOperation).getPaymentScheduleInstanceItem() != null) {
-                paymentScheduleInstanceItem = ((RecordedInvoice)accountOperation).getPaymentScheduleInstanceItem();
+            if (accountOperation instanceof RecordedInvoice && ((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem() != null) {
+                listPaymentScheduleInstanceItem.add(((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem());
             }
-            
+
             if (aoToMatchLast != null && accountOperation.getId().equals(aoToMatchLast.getId())) {
                 continue;
             }
@@ -136,8 +135,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             AccountOperation accountOperation = accountOperationService.findById(aoToMatchLast.getId());
             amountToMatch = BigDecimal.ZERO;
             fullMatch = false;
-            if(accountOperation instanceof RecordedInvoice && ((RecordedInvoice)accountOperation).getPaymentScheduleInstanceItem() != null) {
-                paymentScheduleInstanceItem = ((RecordedInvoice)accountOperation).getPaymentScheduleInstanceItem();
+            if (accountOperation instanceof RecordedInvoice && ((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem() != null) {
+                listPaymentScheduleInstanceItem.add(((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem());
             }
 
             MatchingAmount matchingAmount = new MatchingAmount();
@@ -181,8 +180,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         matchingCode.setMatchingDate(new Date());
         matchingCode.setMatchingType(matchingTypeEnum);
         create(matchingCode);
-        if(paymentScheduleInstanceItem != null) {
-            paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
+        if (!listPaymentScheduleInstanceItem.isEmpty()) {
+            for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : listPaymentScheduleInstanceItem) {
+                paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
+            }
         }
 
     }
@@ -210,7 +211,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      */
     public void unmatching(Long idMatchingCode) throws BusinessException {
         log.info("start cancelMatching with id {}", idMatchingCode);
-        PaymentScheduleInstanceItem  paymentScheduleInstanceItem = null;
+        PaymentScheduleInstanceItem paymentScheduleInstanceItem = null;
         if (idMatchingCode == null) {
             throw new BusinessException("Error when idMatchingCode is null!");
         }
@@ -228,8 +229,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 if (operation.getMatchingStatus() != MatchingStatusEnum.P && operation.getMatchingStatus() != MatchingStatusEnum.L) {
                     throw new BusinessException("Error:matchingCode containt unMatching operation");
                 }
-                if(operation instanceof RecordedInvoice && ((RecordedInvoice)operation).getPaymentScheduleInstanceItem() != null) {
-                    paymentScheduleInstanceItem = ((RecordedInvoice)operation).getPaymentScheduleInstanceItem();
+                if (operation instanceof RecordedInvoice && ((RecordedInvoice) operation).getPaymentScheduleInstanceItem() != null) {
+                    paymentScheduleInstanceItem = ((RecordedInvoice) operation).getPaymentScheduleInstanceItem();
                 }
                 operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
                 operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
@@ -245,7 +246,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         }
         log.info("remove matching code ....");
         remove(matchingCode);
-        if(paymentScheduleInstanceItem != null) {
+        if (paymentScheduleInstanceItem != null) {
             paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
         }
         log.info("successfully end cancelMatching!");
@@ -293,7 +294,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         List<AccountOperation> listOcc = new ArrayList<AccountOperation>();
         MatchingReturnObject matchingReturnObject = new MatchingReturnObject();
         matchingReturnObject.setOk(false);
-        
+
         int cptOccDebit = 0, cptOccCredit = 0, cptPartialAllowed = 0;
         AccountOperation accountOperationForPartialMatching = null;
 
