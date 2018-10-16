@@ -181,6 +181,19 @@ public class PaymentJob extends Job {
         aoFilterScript.setValueRequired(false);
         aoFilterScript.setDefaultValue("");
         result.put(cfAoFilterScriptCode, aoFilterScript);
+        
+        // CF to set a custom script computing Due date range 
+        CustomFieldTemplate dueDateRangeScript = new CustomFieldTemplate();
+        final String cfDueDateRangeScriptCode = "PaymentJob_dueDateRangeScript";
+        dueDateRangeScript.setCode(cfDueDateRangeScriptCode);
+        dueDateRangeScript.setAppliesTo(APPLIES_TO_NAME);
+        dueDateRangeScript.setActive(true);
+        dueDateRangeScript.setDescription(resourceMessages.getString("paymentJob.dueDateRangeScript"));
+        dueDateRangeScript.setFieldType(CustomFieldTypeEnum.ENTITY);
+        dueDateRangeScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
+        dueDateRangeScript.setValueRequired(false);
+        dueDateRangeScript.setDefaultValue("");
+        result.put(cfAoFilterScriptCode, dueDateRangeScript);
 
         return result;
     }

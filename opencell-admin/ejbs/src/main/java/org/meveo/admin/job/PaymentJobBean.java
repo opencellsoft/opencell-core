@@ -2,6 +2,7 @@ package org.meveo.admin.job;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -19,6 +20,7 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.DueDate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -30,6 +32,7 @@ import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
+import org.meveo.service.script.payment.DateRangeScript;
 import org.slf4j.Logger;
 
 /**
@@ -93,17 +96,24 @@ public class PaymentJobBean extends BaseJobBean {
                 }
                 createAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_createAO"));
                 matchingAO = "YES".equals((String) this.getParamOrCFValue(jobInstance, "PaymentJob_matchingAO"));
-                fromDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_fromDueDate");
-                toDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_toDueDate");
                 paymentPerAOorCA = (String) this.getParamOrCFValue(jobInstance, "PaymentJob_AOorCA");
                 
+                DateRangeScript dateRangeScript = this.getDueDateRangeScript(jobInstance);
+                if (dateRangeScript != null) {
+                    DateRange dueDateRange = dateRangeScript.computeDateRange(new HashMap<>()); // no addtional params are needed right now for computeDateRange, may be in the future.
+                    fromDueDate = dueDateRange.getFrom();
+                    toDueDate =  dueDateRange.getTo();
+                } else {
+                    fromDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_fromDueDate");
+                    toDueDate = (Date) this.getParamOrCFValue(jobInstance, "PaymentJob_toDueDate"); 
+                }
                 
             } catch (Exception e) {
                 nbRuns = new Long(1);
                 waitingMillis = new Long(0);
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
-           
+            
             if (fromDueDate == null) {
                 fromDueDate = new Date(1);
             }
@@ -161,21 +171,30 @@ public class PaymentJobBean extends BaseJobBean {
         }
     }
 
+    
     private AccountOperationFilterScript getAOScriptInstance(JobInstance jobInstance) {
+        return (AccountOperationFilterScript) this.getJobScriptByCfCode(jobInstance, "PaymentJob_aoFilterScript", AccountOperationFilterScript.class);
+    }
+    
+    private DateRangeScript getDueDateRangeScript(JobInstance jobInstance) {
+        return (DateRangeScript) this.getJobScriptByCfCode(jobInstance, "PaymentJob_dueDateRangeScript", DateRangeScript.class);
+    }
+
+    private ScriptInterface getJobScriptByCfCode(JobInstance jobInstance,String scriptCfCode, Class clazz) {
         try {
-            final  String aoFilterScriptCode =  ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "PaymentJob_aoFilterScript")).getCode();
-           
-            if (aoFilterScriptCode != null) {
-                log.debug(" looking for ScriptInstance with aoFilterScriptCode :  [{}] ", aoFilterScriptCode);
-                ScriptInterface si = scriptInstanceService.getScriptInstance(aoFilterScriptCode);
-                if (si != null && si instanceof AccountOperationFilterScript) {
-                    return (AccountOperationFilterScript) si;
+            final  String scriptCode =  ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, scriptCfCode)).getCode();
+            if (scriptCode != null) {
+                log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+                ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
+                if (si != null && clazz.isInstance(si)) {
+                    return si;
                 }
             }
         } catch (Exception e) {
-            log.error(" Error on newAoFilterScriptInstance : [{}]" , e.getMessage());
+            log.error(" Error on getJobScriptByCfCode : [{}]" , e.getMessage());
         }
         return null;
     }
 
+    
 }
