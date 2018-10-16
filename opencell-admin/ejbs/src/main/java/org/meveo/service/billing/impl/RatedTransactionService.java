@@ -45,6 +45,7 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -285,6 +286,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
+        Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+        Date invoiceDate = invoice.getInvoiceDate();
+        
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -440,57 +444,43 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 // start aggregate T
                 if (!isExonerated) {
 
-                    List<Tax> taxes = new ArrayList<Tax>();
-                    List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategory.getInvoiceSubcategoryCountries();
+                    Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, billingAccount, invoiceDate, false);
 
-                    for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubcategoryCountries) {
+                    TaxInvoiceAgregate invoiceAgregateTax = null;
+                    Long taxId = tax.getId();
 
-                        if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
-                                && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-                            Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, invoice, new Date());
-                            if (tax != null) {
-                                taxes.add(tax);
-                            }
+                    if (taxInvoiceAgregateMap.containsKey(taxId)) {
+                        invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
+                    } else {
+                        invoiceAgregateTax = new TaxInvoiceAgregate();
+                        invoiceAgregateTax.updateAudit(currentUser);
+                        invoiceAgregateTax.setInvoice(invoice);
+                        if (!isVirtual) {
+                            invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
+                        }
+                        invoiceAgregateTax.setTax(tax);
+                        invoiceAgregateTax.setTaxPercent(tax.getPercent());
+                        invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+
+                        taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
+                    }
+
+                    if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0) {
+                        invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
+                        invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
+                        invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithoutTax());
+                    }
+
+                    fillAgregates(invoiceAgregateTax, userAccount);
+
+                    if (invoiceAgregateTax.getId() == null) {
+                        if (!isVirtual) {
+                            // No need to save here. Aggregates will be saved together with an invoice
+                            // invoiceAgregateService.create(invoiceAgregateTax);
                         }
                     }
 
-                    for (Tax tax : taxes) {
-                        TaxInvoiceAgregate invoiceAgregateTax = null;
-                        Long taxId = tax.getId();
-
-                        if (taxInvoiceAgregateMap.containsKey(taxId)) {
-                            invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
-                        } else {
-                            invoiceAgregateTax = new TaxInvoiceAgregate();
-                            invoiceAgregateTax.updateAudit(currentUser);
-                            invoiceAgregateTax.setInvoice(invoice);
-                            if (!isVirtual) {
-                                invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
-                            }
-                            invoiceAgregateTax.setTax(tax);
-                            invoiceAgregateTax.setTaxPercent(tax.getPercent());
-                            invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-
-                            taxInvoiceAgregateMap.put(taxId, invoiceAgregateTax);
-                        }
-
-                        if (tax.getPercent().compareTo(BigDecimal.ZERO) == 0) {
-                            invoiceAgregateTax.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
-                            invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
-                            invoiceAgregateTax.addAmountWithTax(invoiceAgregateSubcat.getAmountWithoutTax());
-                        }
-
-                        fillAgregates(invoiceAgregateTax, userAccount);
-
-                        if (invoiceAgregateTax.getId() == null) {
-                            if (!isVirtual) {
-                                // No need to save here. Aggregates will be saved together with an invoice
-                                // invoiceAgregateService.create(invoiceAgregateTax);
-                            }
-                        }
-
-                        invoiceAgregateSubcat.addSubCategoryTax(tax);
-                    }
+                    invoiceAgregateSubcat.addSubCategoryTax(tax);
                 }
                 // end aggregate T
 
